@@ -1,0 +1,3 @@
+[[constraint]]
+  name = "github.com/pulumi/pulumi"
+  version = "v0.15.0"
