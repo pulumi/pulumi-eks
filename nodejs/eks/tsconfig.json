@@ -16,6 +16,7 @@
     },
     "files": [
         "cluster.ts",
+        "index.ts",
         "servicerole.ts",
         "storageclass.ts"
     ]
