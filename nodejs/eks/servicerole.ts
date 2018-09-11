@@ -58,7 +58,7 @@ export class ServiceRole extends pulumi.ComponentResource {
      * @param opts A bag of options that control this copmonent's behavior.
      */
     constructor(name: string, args: ServiceRoleArgs, opts?: pulumi.ResourceOptions) {
-        super("ServiceRole", name, args, opts);
+        super("eks:index:ServiceRole", name, args, opts);
 
         const assumeRolePolicy = pulumi.output(args.service).apply(service => JSON.stringify({
             Version: "2012-10-17",
