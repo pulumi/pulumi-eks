@@ -276,28 +276,12 @@ export class Cluster extends pulumi.ComponentResource {
             .apply(([id]) => id);
 
         const awsRegion = pulumi.output(aws.getRegion({}, { parent: this }));
-        const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority])
-            .apply(([region, clusterName, clusterEndpoint, clusterCertificateAuthority]) => {
-                return `#!/bin/bash -xe
+        const clusterCaData = eksCluster.certificateAuthority.apply(ca => Buffer.from(ca.data).toString("base64"));
+        const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, clusterCaData])
+            .apply(([region, clusterName, clusterEndpoint, clusterCa]) => {
+                return `#!/bin/bash
 
-CA_CERTIFICATE_DIRECTORY=/etc/kubernetes/pki
-CA_CERTIFICATE_FILE_PATH=$CA_CERTIFICATE_DIRECTORY/ca.crt
-mkdir -p $CA_CERTIFICATE_DIRECTORY
-echo "${clusterCertificateAuthority.data}" | base64 -d >  $CA_CERTIFICATE_FILE_PATH
-INTERNAL_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
-sed -i s,MASTER_ENDPOINT,${clusterEndpoint},g /var/lib/kubelet/kubeconfig
-sed -i s,CLUSTER_NAME,${clusterName},g /var/lib/kubelet/kubeconfig
-sed -i s,REGION,${region.name},g /etc/systemd/system/kubelet.service
-sed -i s,MAX_PODS,20,g /etc/systemd/system/kubelet.service
-sed -i s,MASTER_ENDPOINT,${clusterEndpoint},g /etc/systemd/system/kubelet.service
-sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kubelet.service
-DNS_CLUSTER_IP=10.100.0.10
-if [[ $INTERNAL_IP == 10.* ]] ; then DNS_CLUSTER_IP=172.20.0.10; fi
-sed -i s,DNS_CLUSTER_IP,$DNS_CLUSTER_IP,g /etc/systemd/system/kubelet.service
-sed -i s,CERTIFICATE_AUTHORITY_FILE,$CA_CERTIFICATE_FILE_PATH,g /var/lib/kubelet/kubeconfig
-sed -i s,CLIENT_CA_FILE,$CA_CERTIFICATE_FILE_PATH,g  /etc/systemd/system/kubelet.service
-systemctl daemon-reload
-systemctl restart kubelet kube-proxy
+/etc/eks/bootstrap.sh ${clusterName} --apiserver-endpoint ${clusterEndpoint} --b64-cluster-ca ${clusterCa}
 `;
             });
         const eksWorkerAmi = aws.getAmi({
