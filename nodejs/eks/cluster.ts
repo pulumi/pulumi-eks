@@ -15,11 +15,13 @@
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
+import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
 
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
+import transform from "./transform";
 
 /**
  * ClusterOptions describes the configuration options accepted by an EKSCluster component.
@@ -41,6 +43,18 @@ export interface ClusterOptions {
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+
+    /**
+     * Public key material for SSH node access. See allowed formats at:
+     * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+     * If not provided, no SSH access is enabled on VMs.
+     */
+    instancePublicKey?: pulumi.Input<string>;
+
+    /**
+     * The size in GiB of a cluster node's root volume. Defaults to 20.
+     */
+    instanceRootVolumeSize?: pulumi.Input<number>;
 
     /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
@@ -109,6 +123,16 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly provider: k8s.Provider;
 
     /**
+     * The security group for the EKS cluster.
+     */
+    public readonly clusterSecurityGroup: aws.ec2.SecurityGroup;
+
+    /**
+     * The security group for the cluster's nodes.
+     */
+    public readonly instanceSecurityGroup: aws.ec2.SecurityGroup;
+
+    /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
      * requested.
      *
@@ -132,7 +156,7 @@ export class Cluster extends pulumi.ComponentResource {
         }
 
         // Create the EKS service role
-        const eksRole = new ServiceRole("eksRole", {
+        const eksRole = new ServiceRole(`${name}-eksRole`, {
             service: "eks.amazonaws.com",
             description: "Allows EKS to manage clusters on your behalf.",
             managedPolicyArns: [
@@ -149,19 +173,20 @@ export class Cluster extends pulumi.ComponentResource {
             protocol: "-1",  // all
             cidrBlocks: [ "0.0.0.0/0" ],
         };
-        const eksClusterSecurityGroup = new aws.ec2.SecurityGroup("eksClusterSecurityGroup", {
+        const eksClusterSecurityGroup = new aws.ec2.SecurityGroup(`${name}-eksClusterSecurityGroup`, {
             vpcId: vpcId,
             egress: [ allEgress ],
         }, { parent: this });
+        this.clusterSecurityGroup = eksClusterSecurityGroup;
 
         // Create the EKS cluster
-        const eksCluster = new aws.eks.Cluster("eksCluster", {
+        const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
             roleArn: eksRole.role.apply(r => r.arn),
             vpcConfig: { securityGroupIds: [ eksClusterSecurityGroup.id ], subnetIds: subnetIds },
         }, { parent: this });
 
         // Create the instance role we'll use for worker nodes.
-        const instanceRole = new ServiceRole("instanceRole", {
+        const instanceRole = new ServiceRole(`${name}-instanceRole`, {
             service: "ec2.amazonaws.com",
             managedPolicyArns: [
                 "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
@@ -209,12 +234,12 @@ export class Cluster extends pulumi.ComponentResource {
 
         // Create the Kubernetes provider we'll use to manage the config map we need to allow worker nodes to access
         // the EKS cluster.
-        const k8sProvider = new k8s.Provider("eks-k8s", {
+        const k8sProvider = new k8s.Provider(`${name}-eks-k8s`, {
             kubeconfig: myKubeconfig.apply(JSON.stringify),
         }, { parent: this });
 
         // Enable access to the EKS cluster for worker nodes.
-        const eksNodeAccess = new k8s.core.v1.ConfigMap("nodeAccess", {
+        const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
             apiVersion: "v1",
             metadata: {
                 name: "aws-auth",
@@ -229,18 +254,18 @@ export class Cluster extends pulumi.ComponentResource {
         const storageClasses = args.storageClasses || "gp2";
         if (typeof storageClasses === "string") {
             const storageClass = { type: storageClasses, default: true };
-            createStorageClass(storageClasses, storageClass, { parent: this, provider: k8sProvider });
+            createStorageClass(`${name.toLowerCase()}-${storageClasses}`, storageClass, { parent: this, provider: k8sProvider });
         } else {
             for (const key of Object.keys(storageClasses)) {
-                createStorageClass(key, storageClasses[key], { parent: this, provider: k8sProvider });
+                createStorageClass(`${name.toLowerCase()}-${key}`, storageClasses[key], { parent: this, provider: k8sProvider });
             }
         }
 
         // Create the cluster's worker nodes.
-        const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
+        const instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
             role: instanceRole.role,
         }, { parent: this });
-        const instanceSecurityGroup = new aws.ec2.SecurityGroup("instanceSecurityGroup", {
+        const instanceSecurityGroup = new aws.ec2.SecurityGroup(`${name}-instanceSecurityGroup`, {
             vpcId: vpcId,
             ingress: [
                 {
@@ -257,13 +282,20 @@ export class Cluster extends pulumi.ComponentResource {
                     protocol: "tcp",
                     securityGroups: [ eksClusterSecurityGroup.id ],
                 },
+                {
+                    description: "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
+                    fromPort: 443,
+                    toPort: 443,
+                    protocol: "tcp",
+                    securityGroups: [ eksClusterSecurityGroup.id ],
+                },
             ],
             egress: [ allEgress ],
             tags: eksCluster.name.apply(n => <aws.Tags>{
                 [`kubernetes.io/cluster/${n}`]: "owned",
             }),
         }, { parent: this });
-        const eksClusterIngressRule = new aws.ec2.SecurityGroupRule("eksClusterIngressRule", {
+        const eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
             description: "Allow pods to communicate with the cluster API Server",
             type: "ingress",
             fromPort: 443,
@@ -274,14 +306,26 @@ export class Cluster extends pulumi.ComponentResource {
         }, { parent: this });
         const instanceSecurityGroupId = pulumi.all([instanceSecurityGroup.id, eksClusterIngressRule.id])
             .apply(([id]) => id);
+        this.instanceSecurityGroup = instanceSecurityGroup;
+
+        // If requested, add a new EC2 KeyPair for SSH access to the instances.
+        let keyName: pulumi.Output<string> | undefined;
+        if (args.instancePublicKey) {
+            const key = new aws.ec2.KeyPair(`${name}-keyPair`, {
+                publicKey: args.instancePublicKey,
+            }, { parent: this });
+            keyName = key.keyName;
+        }
+
+        const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent: this });
 
         const awsRegion = pulumi.output(aws.getRegion({}, { parent: this }));
-        const clusterCaData = eksCluster.certificateAuthority.apply(ca => Buffer.from(ca.data).toString("base64"));
-        const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, clusterCaData])
-            .apply(([region, clusterName, clusterEndpoint, clusterCa]) => {
+        const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName])
+            .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName]) => {
                 return `#!/bin/bash
 
-/etc/eks/bootstrap.sh ${clusterName} --apiserver-endpoint ${clusterEndpoint} --b64-cluster-ca ${clusterCa}
+/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"
+/opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
 `;
             });
         const eksWorkerAmi = aws.getAmi({
@@ -292,41 +336,65 @@ export class Cluster extends pulumi.ComponentResource {
             mostRecent: true,
             owners: [ "602401143452" ], // Amazon
         }, { parent: this });
-        const instanceLaunchConfiguration = new aws.ec2.LaunchConfiguration("instanceLaunchConfiguration", {
+        const instanceLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-instanceLaunchConfiguration`, {
             associatePublicIpAddress: true,
             imageId: eksWorkerAmi.then(r => r.imageId),
             instanceType: args.instanceType || "t2.medium",
             iamInstanceProfile: instanceProfile.id,
+            keyName: keyName,
             securityGroups: [ instanceSecurityGroupId ],
+            rootBlockDevice: {
+                volumeSize: args.instanceRootVolumeSize || 20, // GiB
+                volumeType: "gp2", // default is "standard"
+                deleteOnTermination: true,
+            },
             userData: userdata,
         }, { parent: this });
-        const autoscalingGroup = new aws.autoscaling.Group("autoscalingGroup", {
-            desiredCapacity: args.desiredCapacity || 2,
-            launchConfiguration: instanceLaunchConfiguration.id,
-            maxSize: args.maxSize || 2,
-            minSize: args.minSize || 1,
-            vpcZoneIdentifiers: subnetIds,
-            tags: [
-                {
-                    key: eksCluster.name.apply(n => `kubernetes.io/cluster/${n}`),
-                    value: "owned",
-                    propagateAtLaunch: true,
-                },
-                {
-                    key: "Name",
-                    value: eksCluster.name.apply(n => `${n}-worker`),
-                    propagateAtLaunch: true,
-                },
-            ],
+
+        const cfnSubnetIds = pulumi.output(subnetIds).apply(ids => pulumi.all(ids.map(pulumi.output))).apply(ids => JSON.stringify(ids));
+        const cfnTemplateBody = pulumi.all([
+            instanceLaunchConfiguration.id,
+            pulumi.output(args.desiredCapacity || 2),
+            pulumi.output(args.minSize || 1),
+            pulumi.output(args.maxSize || 2),
+            eksCluster.name,
+            cfnSubnetIds,
+        ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
+                AWSTemplateFormatVersion: '2010-09-09'
+                Resources:
+                    NodeGroup:
+                        Type: AWS::AutoScaling::AutoScalingGroup
+                        Properties:
+                          DesiredCapacity: ${desiredCapacity}
+                          LaunchConfigurationName: ${launchConfig}
+                          MinSize: ${minSize}
+                          MaxSize: ${maxSize}
+                          VPCZoneIdentifier: ${vpcSubnetIds}
+                          Tags:
+                          - Key: Name
+                            Value: ${clusterName}-worker
+                            PropagateAtLaunch: 'true'
+                          - Key: kubernetes.io/cluster/${clusterName}
+                            Value: 'owned'
+                            PropagateAtLaunch: 'true'
+                        UpdatePolicy:
+                          AutoScalingRollingUpdate:
+                            MinInstancesInService: '1'
+                            MaxBatchSize: '1'
+                `);
+
+        const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
+            name: cfnStackName,
+            templateBody: cfnTemplateBody,
         }, { parent: this, dependsOn: eksNodeAccess });
 
         // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
         // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
-        this.kubeconfig = pulumi.all([autoscalingGroup.id, myKubeconfig]).apply(([_, kubeconfig]) => kubeconfig);
+        this.kubeconfig = pulumi.all([cfnStack.id, myKubeconfig]).apply(([_, kubeconfig]) => kubeconfig);
 
         // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
         // in order to help ensure that worker nodes are available before the provider can be used.
-        this.provider = new k8s.Provider("provider", {
+        this.provider = new k8s.Provider(`${name}-provider`, {
             kubeconfig: this.kubeconfig.apply(JSON.stringify),
         }, { parent: this });
 
@@ -339,12 +407,12 @@ export class Cluster extends pulumi.ComponentResource {
                 path.join(__dirname, "dashboard", "influxdb.yaml"),
                 path.join(__dirname, "dashboard", "heapster-rbac.yaml"),
             ].map(filePath => fs.readFileSync(filePath).toString());
-            const dashboard = new k8s.yaml.ConfigGroup("dashboard", {
+            const dashboard = new k8s.yaml.ConfigGroup(`${name}-dashboard`, {
                 yaml: dashboardYaml,
             }, { parent: this, providers: { kubernetes: this.provider } });
 
             // Create a service account for admin access.
-            const adminAccount = new k8s.core.v1.ServiceAccount("eks-admin", {
+            const adminAccount = new k8s.core.v1.ServiceAccount(`${name}-eks-admin`, {
                 metadata: {
                     name: "eks-admin",
                     namespace: "kube-system",
@@ -352,7 +420,7 @@ export class Cluster extends pulumi.ComponentResource {
             }, { parent: this, provider: this.provider });
 
             // Create a role binding for the admin account.
-            const adminRoleBinding = new k8s.rbac.v1.ClusterRoleBinding("eks-admin", {
+            const adminRoleBinding = new k8s.rbac.v1.ClusterRoleBinding(`${name}-eks-admin`, {
                 metadata: {
                     name: "eks-admin",
                 },

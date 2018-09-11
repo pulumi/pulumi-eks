@@ -99,7 +99,6 @@ export function createStorageClass(name: string, storageClass: StorageClass, opt
     // Compute the storage class's metadata, including its name and default storage class annotation.
     const metadata = pulumi.all([storageClass.metadata || {}, storageClass.default])
         .apply(([m, isDefault]) => {
-            m.name = m.name || name;
             if (isDefault) {
                 m.annotations = { ...m.annotations || {}, "storageclass.kubernetes.io/is-default-class": "true" };
             }
