@@ -42,19 +42,19 @@ export interface ClusterOptions {
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
-    instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+    nodeInstanceType?: pulumi.Input<aws.ec2.InstanceType>;
 
     /**
      * Public key material for SSH node access. See allowed formats at:
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
      * If not provided, no SSH access is enabled on VMs.
      */
-    instancePublicKey?: pulumi.Input<string>;
+    nodePublicKey?: pulumi.Input<string>;
 
     /**
      * The size in GiB of a cluster node's root volume. Defaults to 20.
      */
-    instanceRootVolumeSize?: pulumi.Input<number>;
+    nodeRootVolumeSize?: pulumi.Input<number>;
 
     /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
@@ -130,7 +130,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The security group for the cluster's nodes.
      */
-    public readonly instanceSecurityGroup: aws.ec2.SecurityGroup;
+    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
 
     /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
@@ -265,7 +265,7 @@ export class Cluster extends pulumi.ComponentResource {
         const instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
             role: instanceRole.role,
         }, { parent: this });
-        const instanceSecurityGroup = new aws.ec2.SecurityGroup(`${name}-instanceSecurityGroup`, {
+        const nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
             vpcId: vpcId,
             ingress: [
                 {
@@ -302,17 +302,17 @@ export class Cluster extends pulumi.ComponentResource {
             toPort: 443,
             protocol: "tcp",
             securityGroupId: eksClusterSecurityGroup.id,
-            sourceSecurityGroupId: instanceSecurityGroup.id,
+            sourceSecurityGroupId: nodeSecurityGroup.id,
         }, { parent: this });
-        const instanceSecurityGroupId = pulumi.all([instanceSecurityGroup.id, eksClusterIngressRule.id])
+        const nodeSecurityGroupId = pulumi.all([nodeSecurityGroup.id, eksClusterIngressRule.id])
             .apply(([id]) => id);
-        this.instanceSecurityGroup = instanceSecurityGroup;
+        this.nodeSecurityGroup = nodeSecurityGroup;
 
         // If requested, add a new EC2 KeyPair for SSH access to the instances.
         let keyName: pulumi.Output<string> | undefined;
-        if (args.instancePublicKey) {
+        if (args.nodePublicKey) {
             const key = new aws.ec2.KeyPair(`${name}-keyPair`, {
-                publicKey: args.instancePublicKey,
+                publicKey: args.nodePublicKey,
             }, { parent: this });
             keyName = key.keyName;
         }
@@ -336,15 +336,15 @@ export class Cluster extends pulumi.ComponentResource {
             mostRecent: true,
             owners: [ "602401143452" ], // Amazon
         }, { parent: this });
-        const instanceLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-instanceLaunchConfiguration`, {
+        const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
             associatePublicIpAddress: true,
             imageId: eksWorkerAmi.then(r => r.imageId),
-            instanceType: args.instanceType || "t2.medium",
+            instanceType: args.nodeInstanceType || "t2.medium",
             iamInstanceProfile: instanceProfile.id,
             keyName: keyName,
-            securityGroups: [ instanceSecurityGroupId ],
+            securityGroups: [ nodeSecurityGroupId ],
             rootBlockDevice: {
-                volumeSize: args.instanceRootVolumeSize || 20, // GiB
+                volumeSize: args.nodeRootVolumeSize || 20, // GiB
                 volumeType: "gp2", // default is "standard"
                 deleteOnTermination: true,
             },
@@ -353,10 +353,10 @@ export class Cluster extends pulumi.ComponentResource {
 
         const cfnSubnetIds = pulumi.output(subnetIds).apply(ids => pulumi.all(ids.map(pulumi.output))).apply(ids => JSON.stringify(ids));
         const cfnTemplateBody = pulumi.all([
-            instanceLaunchConfiguration.id,
-            pulumi.output(args.desiredCapacity || 2),
-            pulumi.output(args.minSize || 1),
-            pulumi.output(args.maxSize || 2),
+            nodeLaunchConfiguration.id,
+            args.desiredCapacity || 2,
+            args.minSize || 1,
+            args.maxSize || 2,
             eksCluster.name,
             cfnSubnetIds,
         ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `

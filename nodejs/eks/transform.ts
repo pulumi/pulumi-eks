@@ -15,6 +15,9 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 
+/**
+ * Transform is a dynamic resource that evaluates a function when its inputs change and exports the result.
+ */
 class Transform<T, U> extends dynamic.Resource {
     public readonly output: pulumi.Output<U>;
 
@@ -37,6 +40,10 @@ class Transform<T, U> extends dynamic.Resource {
     }
 }
 
+/**
+ * transform evaluates the given function on the given input iff the input's value has changed and returns the result
+ * as an output.
+ */
 export default function transform<T, U>(name: string, input: T, func: (v: T) => U, opts?: pulumi.CustomResourceOptions): pulumi.Output<U> {
     return (new Transform(name, input, func, opts)).output;
 }
