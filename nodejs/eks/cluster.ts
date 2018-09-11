@@ -42,10 +42,10 @@ export interface ClusterOptions {
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
-    nodeInstanceType?: pulumi.Input<aws.ec2.InstanceType>;
+    instanceType?: pulumi.Input<aws.ec2.InstanceType>;
 
     /**
-     * Public key material for SSH node access. See allowed formats at:
+     * Public key material for SSH access to worker nodes. See allowed formats at:
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
      * If not provided, no SSH access is enabled on VMs.
      */
@@ -339,7 +339,7 @@ export class Cluster extends pulumi.ComponentResource {
         const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
             associatePublicIpAddress: true,
             imageId: eksWorkerAmi.then(r => r.imageId),
-            instanceType: args.nodeInstanceType || "t2.medium",
+            instanceType: args.instanceType || "t2.medium",
             iamInstanceProfile: instanceProfile.id,
             keyName: keyName,
             securityGroups: [ nodeSecurityGroupId ],
