@@ -303,7 +303,7 @@ systemctl restart kubelet kube-proxy
         const eksWorkerAmi = aws.getAmi({
             filters: [{
                 name: "name",
-                values: [ "eks-worker-*" ],
+                values: [ "amazon-eks-node-*" ],
             }],
             mostRecent: true,
             owners: [ "602401143452" ], // Amazon
