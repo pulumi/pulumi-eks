@@ -54,11 +54,11 @@
     read-package-tree "^5.2.1"
     resolve "^1.7.1"
 
-"@pulumi/kubernetes@^v0.17.0-rc1":
-  version "0.17.0-rc1"
-  resolved "https://registry.yarnpkg.com/@pulumi/kubernetes/-/kubernetes-0.17.0-rc1.tgz#4f8770a4267ccdd7a92c825fbec1523230b61d9c"
+"@pulumi/kubernetes@^v0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/kubernetes/-/kubernetes-0.17.0.tgz#0d740a72aaad3cde61f9072eaa6a687e64c70865"
   dependencies:
-    "@pulumi/pulumi" "^0.15.1-rc"
+    "@pulumi/pulumi" "^0.15.1"
     "@types/glob" "^5.0.35"
     "@types/js-yaml" "^3.11.2"
     "@types/mocha" "^5.2.5"
@@ -69,7 +69,7 @@
     shell-quote "^1.6.1"
     tmp "^0.0.33"
 
-"@pulumi/pulumi@^0.15.1", "@pulumi/pulumi@^0.15.1-rc":
+"@pulumi/pulumi@^0.15.1":
   version "0.15.1"
   resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-0.15.1.tgz#1b94077ec0bfb8fef868d6aa66643d7f726c0678"
   dependencies:
