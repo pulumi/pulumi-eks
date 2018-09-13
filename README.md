@@ -35,7 +35,7 @@ import * as eks from "@pulumi/eks";
 
 const cluster = new eks.Cluster("cluster");
 
-export kubeconfig = cluster.kubeconfig;
+export const kubeconfig = cluster.kubeconfig;
 ```
 
 Once the cluster is created, you can deploy into the cluster using "@pulumi/kubernetes", kubectl, helm, etc.
