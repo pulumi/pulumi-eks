@@ -130,7 +130,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The service role used by the EKS cluster.
      */
-    public readonly instanceRole: ServiceRole;
+    public readonly instanceRole: pulumi.Output<aws.iam.Role>;
 
     /**
      * The security group for the cluster's nodes.
@@ -191,15 +191,15 @@ export class Cluster extends pulumi.ComponentResource {
         }, { parent: this });
 
         // Create the instance role we'll use for worker nodes.
-        this.instanceRole = new ServiceRole(`${name}-instanceRole`, {
+        this.instanceRole = (new ServiceRole(`${name}-instanceRole`, {
             service: "ec2.amazonaws.com",
             managedPolicyArns: [
                 "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
                 "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
                 "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
             ],
-        }, { parent: this });
-        const instanceRoleARN = this.instanceRole.role.apply(r => r.arn);
+        }, { parent: this })).role;
+        const instanceRoleARN = this.instanceRole.apply(r => r.arn);
 
         // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
         // depend on the autoscaling group we'll create later so that nothing attempts to use the EKS cluster before
@@ -268,7 +268,7 @@ export class Cluster extends pulumi.ComponentResource {
 
         // Create the cluster's worker nodes.
         const instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
-            role: this.instanceRole.role,
+            role: this.instanceRole,
         }, { parent: this });
         const nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
             vpcId: vpcId,
