@@ -11,9 +11,9 @@
     "homepage": "https://pulumi.io",
     "repository": "https://github.com/pulumi/eks",
     "dependencies": {
-        "@pulumi/aws": "dev",
+        "@pulumi/aws": "^0.16.0",
         "@pulumi/kubernetes": "^v0.17.0",
-        "@pulumi/pulumi": "dev"
+        "@pulumi/pulumi": "^0.16.0"
     },
     "devDependencies": {
         "@types/node": "^8.0.26",
