@@ -57,6 +57,12 @@ export interface ClusterOptions {
     nodeRootVolumeSize?: pulumi.Input<number>;
 
     /**
+     * Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node
+     * signals its readiness to the managing CloudFormation stack.
+     */
+    nodeUserData?: pulumi.Input<string>;
+
+    /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      */
     desiredCapacity?: pulumi.Input<number>;
@@ -325,11 +331,22 @@ export class Cluster extends pulumi.ComponentResource {
         const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent: this });
 
         const awsRegion = pulumi.output(aws.getRegion({}, { parent: this }));
-        const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName])
-            .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName]) => {
+        const userDataArg = args.nodeUserData || pulumi.output("");
+        const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName, userDataArg])
+            .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
+                if (customUserData !== "") {
+                    customUserData = `cat >/opt/user-data <<${stackName}-user-data
+${customUserData}
+${stackName}-user-data
+chmod +x /opt/user-data
+/opt/user-data
+`;
+                }
+
                 return `#!/bin/bash
 
 /etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"
+${customUserData}
 /opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
 `;
             });
