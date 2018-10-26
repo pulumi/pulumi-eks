@@ -58,7 +58,8 @@ export interface ClusterOptions {
 
     /**
      * Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node
-     * signals its readiness to the managing CloudFormation stack.
+     * signals its readiness to the managing CloudFormation stack. This code must be a typical user data script:
+     * critically it must begin with an interpreter directive (i.e. a `#!`).
      */
     nodeUserData?: pulumi.Input<string>;
 
