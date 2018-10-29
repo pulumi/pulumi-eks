@@ -27,6 +27,63 @@ import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass"
 import transform from "./transform";
 
 /**
+ * ClusterOptions describes the configuration options accepted by an EKSCluster component.
+ */
+export interface NodeGroupOptions {
+    workerAmiArgs?: aws.GetAmiArgs;
+    subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    spotPrice?: pulumi.Input<string>;
+
+    /**
+     * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+     */
+    instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+
+    /**
+     * Public key material for SSH access to worker nodes. See allowed formats at:
+     * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+     * If not provided, no SSH access is enabled on VMs.
+     */
+    nodePublicKey?: pulumi.Input<string>;
+
+    /**
+     * The size in GiB of a cluster node's root volume. Defaults to 20.
+     */
+    nodeRootVolumeSize?: pulumi.Input<number>;
+
+    /**
+     * The number of worker nodes that should be running in the cluster. Defaults to 2.
+     */
+    desiredCapacity?: pulumi.Input<number>;
+
+    /**
+     * The minimum number of worker nodes running in the cluster. Defaults to 1.
+     */
+    minSize?: pulumi.Input<number>;
+
+    /**
+     * The maximum number of worker nodes running in the cluster. Defaults to 2.
+     */
+    maxSize?: pulumi.Input<number>;
+
+    /**
+     * An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map,
+     * a single StorageClass will be created for that volume type and made the cluster's default StorageClass.
+     *
+     * Defaults to "gp2".
+     */
+    storageClasses?: { [name: string]: StorageClass } | EBSVolumeType;
+
+    /**
+     * Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node
+     * signals its readiness to the managing CloudFormation stack. This code must be a typical user data script:
+     * critically it must begin with an interpreter directive (i.e. a `#!`).
+     */
+    nodeUserData?: pulumi.Input<string>;
+}
+
+/**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
  */
 export interface RoleMapping {
@@ -70,6 +127,8 @@ export interface UserMapping {
  * ClusterOptions describes the configuration options accepted by an EKSCluster component.
  */
 export interface ClusterOptions {
+    skipDefaultNodeGroup?: boolean;
+
     /**
      * The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the
      * default VPC.
@@ -169,11 +228,20 @@ export interface ClusterOptions {
     deployDashboard?: boolean;
 }
 
+
 /**
  * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker
  * nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
  */
 export class Cluster extends pulumi.ComponentResource {
+    public readonly name: string;
+
+    public readonly eksCluster: aws.eks.Cluster;
+
+    public readonly eksNodeAccess: k8s.core.v1.ConfigMap;
+
+    public readonly vpcCni: VpcCni;
+
     /**
      * A kubeconfig that can be used to connect to the EKS cluster. This must be serialized as a string before passing
      * to the Kubernetes provider.
@@ -215,6 +283,7 @@ export class Cluster extends pulumi.ComponentResource {
      */
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:Cluster", name, args, opts);
+        this.name = name;
 
         args = args || {};
 
@@ -265,6 +334,7 @@ export class Cluster extends pulumi.ComponentResource {
             roleArn: eksRole.role.apply(r => r.arn),
             vpcConfig: { securityGroupIds: [ eksClusterSecurityGroup.id ], subnetIds: subnetIds },
         }, { parent: this });
+        this.eksCluster = eksCluster;
 
         // Create the instance role we'll use for worker nodes.
         this.instanceRole = (new ServiceRole(`${name}-instanceRole`, {
@@ -321,6 +391,7 @@ export class Cluster extends pulumi.ComponentResource {
 
         // Create the VPC CNI management resource.
         const vpcCni = new VpcCni(`${name}-vpc-cni`, myKubeconfig, args.vpcCniOptions, { parent: this });
+        this.vpcCni = vpcCni;
 
         // Enable access to the EKS cluster for worker nodes.
         const instanceRoleMapping: RoleMapping = {
@@ -356,6 +427,7 @@ export class Cluster extends pulumi.ComponentResource {
             },
             data: nodeAccessData,
         }, { parent: this, provider: k8sProvider });
+        this.eksNodeAccess = eksNodeAccess;
 
         // Add any requested StorageClasses.
         const storageClasses = args.storageClasses || "gp2";
@@ -369,9 +441,6 @@ export class Cluster extends pulumi.ComponentResource {
         }
 
         // Create the cluster's worker nodes.
-        const instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
-            role: this.instanceRole,
-        }, { parent: this });
         const nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
             vpcId: vpcId,
             ingress: [
@@ -411,104 +480,27 @@ export class Cluster extends pulumi.ComponentResource {
             securityGroupId: eksClusterSecurityGroup.id,
             sourceSecurityGroupId: nodeSecurityGroup.id,
         }, { parent: this });
-        const nodeSecurityGroupId = pulumi.all([nodeSecurityGroup.id, eksClusterIngressRule.id])
-            .apply(([id]) => id);
         this.nodeSecurityGroup = nodeSecurityGroup;
 
-        // If requested, add a new EC2 KeyPair for SSH access to the instances.
-        let keyName: pulumi.Output<string> | undefined;
-        if (args.nodePublicKey) {
-            const key = new aws.ec2.KeyPair(`${name}-keyPair`, {
-                publicKey: args.nodePublicKey,
-            }, { parent: this });
-            keyName = key.keyName;
-        }
-
-        const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent: this });
-
-        const awsRegion = pulumi.output(aws.getRegion({}, { parent: this }));
-        const userDataArg = args.nodeUserData || pulumi.output("");
-        const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName, userDataArg])
-            .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
-                if (customUserData !== "") {
-                    customUserData = `cat >/opt/user-data <<${stackName}-user-data
-${customUserData}
-${stackName}-user-data
-chmod +x /opt/user-data
-/opt/user-data
-`;
-                }
-
-                return `#!/bin/bash
-
-/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"
-${customUserData}
-/opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
-`;
+        if (args.skipDefaultNodeGroup) {
+            this.kubeconfig = pulumi.all([myKubeconfig]).apply(([kubeconfig]) => kubeconfig);
+        } else {
+            const userDataArg = args.nodeUserData || pulumi.output("");
+            const cfnStack = this.createNodeGroup("default", {
+                subnetIds: subnetIds,
+                instanceType: args.instanceType,
+                desiredCapacity: args.desiredCapacity,
+                minSize: args.minSize,
+                maxSize: args.maxSize,
+                storageClasses: args.storageClasses,
+                nodePublicKey: args.nodePublicKey,
+                nodeUserData: userDataArg,
             });
-        const eksWorkerAmi = aws.getAmi({
-            filters: [{
-                name: "name",
-                values: [ "amazon-eks-node-*" ],
-            }],
-            mostRecent: true,
-            owners: [ "602401143452" ], // Amazon
-        }, { parent: this });
-        const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
-            associatePublicIpAddress: true,
-            imageId: eksWorkerAmi.then(r => r.imageId),
-            instanceType: args.instanceType || "t2.medium",
-            iamInstanceProfile: instanceProfile.id,
-            keyName: keyName,
-            securityGroups: [ nodeSecurityGroupId ],
-            rootBlockDevice: {
-                volumeSize: args.nodeRootVolumeSize || 20, // GiB
-                volumeType: "gp2", // default is "standard"
-                deleteOnTermination: true,
-            },
-            userData: userdata,
-        }, { parent: this });
 
-        const workerSubnetIds = pulumi.output(subnetIds).apply(ids => computeWorkerSubnets(this, ids));
-        const cfnTemplateBody = pulumi.all([
-            nodeLaunchConfiguration.id,
-            args.desiredCapacity || 2,
-            args.minSize || 1,
-            args.maxSize || 2,
-            eksCluster.name,
-            workerSubnetIds.apply(JSON.stringify),
-        ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
-                AWSTemplateFormatVersion: '2010-09-09'
-                Resources:
-                    NodeGroup:
-                        Type: AWS::AutoScaling::AutoScalingGroup
-                        Properties:
-                          DesiredCapacity: ${desiredCapacity}
-                          LaunchConfigurationName: ${launchConfig}
-                          MinSize: ${minSize}
-                          MaxSize: ${maxSize}
-                          VPCZoneIdentifier: ${vpcSubnetIds}
-                          Tags:
-                          - Key: Name
-                            Value: ${clusterName}-worker
-                            PropagateAtLaunch: 'true'
-                          - Key: kubernetes.io/cluster/${clusterName}
-                            Value: 'owned'
-                            PropagateAtLaunch: 'true'
-                        UpdatePolicy:
-                          AutoScalingRollingUpdate:
-                            MinInstancesInService: '1'
-                            MaxBatchSize: '1'
-                `);
-
-        const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
-            name: cfnStackName,
-            templateBody: cfnTemplateBody,
-        }, { parent: this, dependsOn: [eksNodeAccess, vpcCni] });
-
-        // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
-        // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
-        this.kubeconfig = pulumi.all([cfnStack.id, myKubeconfig]).apply(([_, kubeconfig]) => kubeconfig);
+            // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
+            // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
+            this.kubeconfig = pulumi.all([cfnStack.id, myKubeconfig]).apply(([_, kubeconfig]) => kubeconfig);
+        }
 
         // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
         // in order to help ensure that worker nodes are available before the provider can be used.
@@ -556,6 +548,125 @@ ${customUserData}
         }
 
         this.registerOutputs({ kubeconfig: this.kubeconfig });
+    }
+
+    createNodeGroup(nodeGroupName: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
+        const name = `${this.name}-eks-${nodeGroupName}`;
+
+        const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent: this });
+
+        const awsRegion = pulumi.output(aws.getRegion({}, { parent: this }));
+
+        const userDataArg = args.nodeUserData || pulumi.output("");
+
+        const userdata = pulumi.all([awsRegion, this.eksCluster.name, this.eksCluster.endpoint, this.eksCluster.certificateAuthority, cfnStackName, userDataArg])
+            .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
+                if (customUserData !== "") {
+                    customUserData = `cat >/opt/user-data <<${stackName}-user-data
+${customUserData}
+${stackName}-user-data
+chmod +x /opt/user-data
+/opt/user-data
+`;
+                }
+
+                return `#!/bin/bash
+
+/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"
+${customUserData}
+/opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
+`;
+            });
+
+        const workerAmiArgs: aws.GetAmiArgs = args.workerAmiArgs || {
+            filters: [{
+                name: "name",
+                values: [ "amazon-eks-node-*" ],
+            }],
+            mostRecent: true,
+            owners: [ "602401143452" ], // Amazon
+        };
+        const eksWorkerAmiId = aws.getAmi(workerAmiArgs, { parent: this }).then(r => r.imageId);
+
+        const instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
+            role: this.instanceRole,
+        }, { parent: this });
+
+        // If requested, add a new EC2 KeyPair for SSH access to the instances.
+        let keyName: pulumi.Output<string> | undefined;
+        if (args.nodePublicKey) {
+            const key = new aws.ec2.KeyPair(`${name}-keyPair`, {
+                publicKey: args.nodePublicKey,
+            }, { parent: this });
+            keyName = key.keyName;
+        }
+
+        // const nodeSecurityGroupId = pulumi.all([nodeSecurityGroup.id, eksClusterIngressRule.id])
+        //     .apply(([id]) => id);
+        const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
+            associatePublicIpAddress: true,
+            imageId: eksWorkerAmiId,
+            instanceType: args.instanceType || "t2.medium",
+            iamInstanceProfile: instanceProfile.id,
+            keyName: keyName,
+            securityGroups: [ this.nodeSecurityGroup.id ],
+            spotPrice: args.spotPrice,
+            rootBlockDevice: {
+                volumeSize: args.nodeRootVolumeSize || 20, // GiB
+                volumeType: "gp2", // default is "standard"
+                deleteOnTermination: true,
+            },
+            userData: userdata,
+        }, { parent: this });
+
+        const subnetIds: pulumi.Input<pulumi.Input<string>[]> = args.subnetIds!;
+        const workerSubnetIds = pulumi.output(subnetIds).apply(ids => computeWorkerSubnets(this, ids));
+        if (args.desiredCapacity === undefined) {
+            args.desiredCapacity = 2;
+        }
+        if (args.minSize === undefined) {
+            args.minSize = 1;
+        }
+        if (args.maxSize === undefined) {
+            args.maxSize = 2;
+        }
+        const cfnTemplateBody = pulumi.all([
+            nodeLaunchConfiguration.id,
+            args.desiredCapacity,
+            args.minSize,
+            args.maxSize,
+            this.eksCluster.name,
+            workerSubnetIds.apply(JSON.stringify),
+        ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
+            AWSTemplateFormatVersion: '2010-09-09'
+            Resources:
+              NodeGroup:
+                Type: AWS::AutoScaling::AutoScalingGroup
+                Properties:
+                  DesiredCapacity: ${desiredCapacity}
+                  LaunchConfigurationName: ${launchConfig}
+                  MinSize: ${minSize}
+                  MaxSize: ${maxSize}
+                  VPCZoneIdentifier: ${vpcSubnetIds}
+                  Tags:
+                  - Key: Name
+                    Value: ${name}-worker
+                    PropagateAtLaunch: 'true'
+                  - Key: kubernetes.io/cluster/${clusterName}
+                    Value: 'owned'
+                    PropagateAtLaunch: 'true'
+                UpdatePolicy:
+                  AutoScalingRollingUpdate:
+                    MinInstancesInService: '1'
+                    MaxBatchSize: '1'
+            `);
+
+        const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
+            name: cfnStackName,
+            templateBody: cfnTemplateBody,
+        }, { parent: this, dependsOn: [this.eksNodeAccess, this.vpcCni] });
+
+        return cfnStack;
     }
 }
 

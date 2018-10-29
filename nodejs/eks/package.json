@@ -14,6 +14,7 @@
         "@pulumi/aws": "dev",
         "@pulumi/kubernetes": "^v0.17.0",
         "@pulumi/pulumi": "dev",
+        "tmp": "0.0.33",
         "which": "^1.3.1"
     },
     "devDependencies": {
