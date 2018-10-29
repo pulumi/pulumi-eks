@@ -18,6 +18,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
+import which = require("which");
 
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
@@ -156,6 +157,14 @@ export class Cluster extends pulumi.ComponentResource {
         super("eks:index:Cluster", name, args, opts);
 
         args = args || {};
+
+        // Check to ensure that aws-iam-authenticator is installed, as we'll need it in order to deploy k8s resources
+        // to the EKS cluster.
+        try {
+            which.sync("aws-iam-authenticator");
+        } catch (err) {
+            throw new pulumi.RunError("Could not find aws-iam-authenticator for EKS. See https://github.com/pulumi/eks#installing for installation instructions.");
+        }
 
         // If no VPC was specified, use the default VPC.
         let vpcId: pulumi.Input<string> = args.vpcId!;
