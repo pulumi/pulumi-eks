@@ -20,6 +20,7 @@ import * as jsyaml from "js-yaml";
 import * as path from "path";
 import * as process from "process";
 import * as tmp from "tmp";
+import which = require("which");
 
 /**
  * CniOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
@@ -122,6 +123,13 @@ function applyCniYaml(yamlPath: string, args: CniInputs) {
  */
 export class Cni extends pulumi.dynamic.Resource {
     constructor(name: string, kubeconfig: pulumi.Input<any>, args?: CniOptions, opts?: pulumi.CustomResourceOptions) {
+        // Check to ensure that kubectl is installed, as we'll need it in order to deploy k8s resources below.
+        try {
+            which.sync("kubectl");
+        } catch (err) {
+            throw new pulumi.RunError("Could not find kubectl. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.");
+        }
+
         const yamlPath = path.join(__dirname, "cni", "aws-k8s-cni.yaml");
 
         const provider = {

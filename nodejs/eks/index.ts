@@ -13,4 +13,5 @@
 // limitations under the License.
 
 export * from "./cluster";
+export { CniOptions } from "./cni";
 export * from "./storageclass";
