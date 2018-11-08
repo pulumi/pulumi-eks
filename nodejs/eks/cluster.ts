@@ -17,12 +17,53 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 import * as fs from "fs";
+import * as jsyaml from "js-yaml";
 import * as path from "path";
 import which = require("which");
 
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import transform from "./transform";
+
+/**
+ * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
+ */
+export interface RoleMapping {
+    /**
+     * The ARN of the IAM role to add.
+     */
+    roleArn: pulumi.Input<aws.ARN>;
+
+    /**
+     * The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role.
+     */
+    username: pulumi.Input<string>;
+
+    /**
+     * A list of groups within Kubernetes to which the role is mapped.
+     */
+    groups: pulumi.Input<pulumi.Input<string>[]>;
+}
+
+/**
+ * UserMapping describes a mapping from an AWS IAM user to a Kubernetes user and groups.
+ */
+export interface UserMapping {
+    /**
+     * The ARN of the IAM user to add.
+     */
+    userArn: pulumi.Input<aws.ARN>;
+
+    /**
+     * The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user.
+     */
+    username: pulumi.Input<string>;
+
+    /**
+     * A list of groups within Kubernetes to which the user is mapped to.
+     */
+    groups: pulumi.Input<pulumi.Input<string>[]>;
+}
 
 /**
  * ClusterOptions describes the configuration options accepted by an EKSCluster component.
@@ -39,6 +80,16 @@ export interface ClusterOptions {
      * default VPC's subnets.
      */
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * Optional mappings from AWS IAM roles to Kubernetes users and groups.
+     */
+    roleMappings?: pulumi.Input<pulumi.Input<RoleMapping>[]>;
+
+    /**
+     * Optional mappings from AWS IAM users to Kubernetes users and groups.
+     */
+    userMappings?: pulumi.Input<pulumi.Input<UserMapping>[]>;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -260,15 +311,38 @@ export class Cluster extends pulumi.ComponentResource {
         }, { parent: this });
 
         // Enable access to the EKS cluster for worker nodes.
+        const instanceRoleMapping: RoleMapping = {
+            roleArn: instanceRoleARN,
+            username: "system:node:{{EC2PrivateDNSName}}",
+            groups: ["system:bootstrappers", "system:nodes"],
+        };
+        const roleMappings = pulumi.all([pulumi.output(args.roleMappings || []), instanceRoleMapping])
+            .apply(([mappings, instanceMapping]) => {
+                return jsyaml.safeDump([...mappings, instanceMapping].map(m => ({
+                   rolearn: m.roleArn,
+                   username: m.username,
+                   groups: m.groups,
+                })));
+            });
+        const nodeAccessData: any = {
+            mapRoles: roleMappings,
+        };
+        if (args.userMappings !== undefined) {
+            nodeAccessData.mapUsers = pulumi.output(args.userMappings).apply(mappings => {
+                return jsyaml.safeDump(mappings.map(m => ({
+                    userarn: m.userArn,
+                    username: m.username,
+                    groups: m.groups,
+                })));
+            });
+        }
         const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
             apiVersion: "v1",
             metadata: {
                 name: "aws-auth",
                 namespace: "kube-system",
             },
-            data: {
-                mapRoles: instanceRoleARN.apply(arn => `- rolearn: ${arn}\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n`),
-            },
+            data: nodeAccessData,
         }, { parent: this, provider: k8sProvider });
 
         // Add any requested StorageClasses.
