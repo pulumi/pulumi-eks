@@ -21,7 +21,7 @@ import * as jsyaml from "js-yaml";
 import * as path from "path";
 import which = require("which");
 
-import { Cni, CniOptions } from "./cni";
+import { VpcCni, VpcCniOptions } from "./cni";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import transform from "./transform";
@@ -96,9 +96,9 @@ export interface ClusterOptions {
 
     /**
      * The configiuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
-     * for the CniOptions type.
+     * for the VpcCniOptions type.
      */
-    cniOptions?: CniOptions;
+    vpcCniOptions?: VpcCniOptions;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -319,8 +319,8 @@ export class Cluster extends pulumi.ComponentResource {
             kubeconfig: myKubeconfig.apply(JSON.stringify),
         }, { parent: this });
 
-        // Create the CNI management resource.
-        const cni = new Cni(`${name}-cni`, myKubeconfig, args.cniOptions, { parent: this });
+        // Create the VPC CNI management resource.
+        const vpcCni = new VpcCni(`${name}-vpc-cni`, myKubeconfig, args.vpcCniOptions, { parent: this });
 
         // Enable access to the EKS cluster for worker nodes.
         const instanceRoleMapping: RoleMapping = {
@@ -504,7 +504,7 @@ ${customUserData}
         const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
             name: cfnStackName,
             templateBody: cfnTemplateBody,
-        }, { parent: this, dependsOn: [eksNodeAccess, cni] });
+        }, { parent: this, dependsOn: [eksNodeAccess, vpcCni] });
 
         // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
         // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.

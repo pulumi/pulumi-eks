@@ -23,9 +23,9 @@ import * as tmp from "tmp";
 import which = require("which");
 
 /**
- * CniOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
+ * VpcCniOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
  */
-export interface CniOptions {
+export interface VpcCniOptions {
     /**
      * Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires
      * additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
@@ -66,7 +66,7 @@ export interface CniOptions {
     warmIpTarget?: pulumi.Input<number>;
 }
 
-interface CniInputs {
+interface VpcCniInputs {
     kubeconfig: string;
     nodePortSupport?: boolean;
     customNetworkConfig?: boolean;
@@ -75,8 +75,9 @@ interface CniInputs {
     warmIpTarget?: number;
 }
 
-function computeCniYaml(yamlPath: string, args: CniInputs): string {
-    // Read the CNI YAML
+function computeVpcCniYaml(yamlPath: string, args: VpcCniInputs): string {
+    // Read the CNI YAML. The original source for this YAML is
+    // https://github.com/aws/amazon-vpc-cni-k8s/tree/master/config.
     const cniYamlText = fs.readFileSync(yamlPath).toString();
     const cniYaml = jsyaml.safeLoadAll(cniYamlText);
 
@@ -102,14 +103,14 @@ function computeCniYaml(yamlPath: string, args: CniInputs): string {
     return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
 }
 
-function applyCniYaml(yamlPath: string, args: CniInputs) {
+function applyVpcCniYaml(yamlPath: string, args: VpcCniInputs) {
     // Dump the kubeconfig to a file.
     const tmpKubeconfig = tmp.fileSync();
     fs.writeFileSync(tmpKubeconfig.fd, args.kubeconfig);
 
     // Compute the required CNI YAML and dump it to a file.
     const tmpYaml = tmp.fileSync();
-    fs.writeFileSync(tmpYaml.fd, computeCniYaml(yamlPath, args));
+    fs.writeFileSync(tmpYaml.fd, computeVpcCniYaml(yamlPath, args));
 
     // Call kubectl to apply the YAML.
     childProcess.execSync(`kubectl apply -f ${tmpYaml.name}`, {
@@ -118,16 +119,16 @@ function applyCniYaml(yamlPath: string, args: CniInputs) {
 }
 
 /**
- * Cni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart. Once Pulumi is
+ * VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart. Once Pulumi is
  * able to programatically manage existing infrastructure, we can replace this with a real k8s resource.
  */
-export class Cni extends pulumi.dynamic.Resource {
-    constructor(name: string, kubeconfig: pulumi.Input<any>, args?: CniOptions, opts?: pulumi.CustomResourceOptions) {
+export class VpcCni extends pulumi.dynamic.Resource {
+    constructor(name: string, kubeconfig: pulumi.Input<any>, args?: VpcCniOptions, opts?: pulumi.CustomResourceOptions) {
         // Check to ensure that kubectl is installed, as we'll need it in order to deploy k8s resources below.
         try {
             which.sync("kubectl");
         } catch (err) {
-            throw new pulumi.RunError("Could not find kubectl. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.");
+            throw new pulumi.RunError("Could not set VPC CNI options: kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.");
         }
 
         const yamlPath = path.join(__dirname, "cni", "aws-k8s-cni.yaml");
@@ -136,11 +137,11 @@ export class Cni extends pulumi.dynamic.Resource {
             check: (state: any, inputs: any) => Promise.resolve({inputs: inputs, failedChecks: []}),
             diff: (id: pulumi.ID, state: any, inputs: any) => Promise.resolve({}),
             create: (inputs: any) => {
-                applyCniYaml(yamlPath, <CniInputs>inputs);
+                applyVpcCniYaml(yamlPath, <VpcCniInputs>inputs);
                 return Promise.resolve({id: crypto.randomBytes(8).toString("hex"), outs: {}});
             },
             update: (id: pulumi.ID, state: any, inputs: any) => {
-                applyCniYaml(yamlPath, <CniInputs>inputs);
+                applyVpcCniYaml(yamlPath, <VpcCniInputs>inputs);
                 return Promise.resolve({outs: {}});
             },
             read: (id: pulumi.ID, state: any) => Promise.resolve({id: id, props: state}),
