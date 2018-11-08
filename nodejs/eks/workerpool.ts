@@ -72,6 +72,10 @@ export interface WorkerPoolOptions {
 
     /**
      * The IDs of the subnets to attach to the worker pool.
+     *
+     * If the list of subnets includes both public and private subnets, the Kubernetes API
+     * server and the worker nodes will only be attached to the private subnets. See
+     * https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html for more details.
      */
     subnetIds: pulumi.Input<string[]>;
 
@@ -351,14 +355,14 @@ ${customUserData}
         userData: userdata,
     }, { parent: parent });
 
-    const cfnSubnetIds = pulumi.output(args.subnetIds).apply(ids => pulumi.all(ids.map(pulumi.output))).apply(ids => JSON.stringify(ids));
+    const workerSubnetIds = pulumi.output(args.subnetIds).apply(ids => computeWorkerSubnets(this, ids));
     const cfnTemplateBody = pulumi.all([
         nodeLaunchConfiguration.id,
         args.desiredCapacity || 2,
         args.minSize || 1,
         args.maxSize || 2,
         args.cluster.name,
-        cfnSubnetIds,
+        workerSubnetIds.apply(JSON.stringify),
     ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
             AWSTemplateFormatVersion: '2010-09-09'
             Resources:
@@ -393,4 +397,11 @@ ${customUserData}
         nodeSecurityGroup: nodeSecurityGroup,
         cfnStack: cfnStack,
     };
+}
+
+async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]): Promise<string[]> {
+    const subnets = await Promise.all(subnetIds.map(id => aws.ec2.getSubnet({id}, { parent: parent })));
+    const publicSubnets = subnets.filter(s => s.mapPublicIpOnLaunch);
+    const privateSubnets = subnets.filter(s => !s.mapPublicIpOnLaunch);
+    return (privateSubnets.length === 0 ? publicSubnets : privateSubnets).map(s => s.id);
 }
