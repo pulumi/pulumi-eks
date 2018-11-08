@@ -21,7 +21,7 @@ import * as path from "path";
 import { createCore } from "./core";
 import { createDashboard } from "./dashboard";
 import { EBSVolumeType, StorageClass } from "./storageclass";
-import { createWorkerPool } from "./workerpool";
+import { createWorkerPool, RoleMapping, UserMapping } from "./workerpool";
 
 /**
  * ClusterOptions describes the configuration options accepted by an EKSCluster component.
@@ -38,6 +38,16 @@ export interface ClusterOptions {
      * default VPC's subnets.
      */
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * Optional mappings from AWS IAM roles to Kubernetes users and groups.
+     */
+    roleMappings?: pulumi.Input<pulumi.Input<RoleMapping>[]>;
+
+    /**
+     * Optional mappings from AWS IAM users to Kubernetes users and groups.
+     */
+    userMappings?: pulumi.Input<pulumi.Input<UserMapping>[]>;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -174,6 +184,8 @@ export class Cluster extends pulumi.ComponentResource {
             nodeUserData: args.nodeUserData,
             minSize: args.minSize,
             maxSize: args.maxSize,
+            roleMappings: args.roleMappings,
+            userMappings: args.userMappings,
         }, this, core.provider);
         this.instanceRole = defaultPool.instanceRole;
         this.nodeSecurityGroup = defaultPool.nodeSecurityGroup;
