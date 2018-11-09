@@ -17,11 +17,54 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 import * as fs from "fs";
+import * as jsyaml from "js-yaml";
 import * as path from "path";
+import which = require("which");
 
+import { VpcCni, VpcCniOptions } from "./cni";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import transform from "./transform";
+
+/**
+ * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
+ */
+export interface RoleMapping {
+    /**
+     * The ARN of the IAM role to add.
+     */
+    roleArn: pulumi.Input<aws.ARN>;
+
+    /**
+     * The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role.
+     */
+    username: pulumi.Input<string>;
+
+    /**
+     * A list of groups within Kubernetes to which the role is mapped.
+     */
+    groups: pulumi.Input<pulumi.Input<string>[]>;
+}
+
+/**
+ * UserMapping describes a mapping from an AWS IAM user to a Kubernetes user and groups.
+ */
+export interface UserMapping {
+    /**
+     * The ARN of the IAM user to add.
+     */
+    userArn: pulumi.Input<aws.ARN>;
+
+    /**
+     * The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user.
+     */
+    username: pulumi.Input<string>;
+
+    /**
+     * A list of groups within Kubernetes to which the user is mapped to.
+     */
+    groups: pulumi.Input<pulumi.Input<string>[]>;
+}
 
 /**
  * ClusterOptions describes the configuration options accepted by an EKSCluster component.
@@ -35,9 +78,27 @@ export interface ClusterOptions {
 
     /**
      * The subnets to attach to the EKS cluster. If either vpcId or subnetIds is unset, the cluster will use the
-     * default VPC's subnets.
+     * default VPC's subnets. If the list of subnets includes both public and private subnets, the Kubernetes API
+     * server and the worker nodes will only be attached to the private subnets. See
+     * https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html for more details.
      */
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * Optional mappings from AWS IAM roles to Kubernetes users and groups.
+     */
+    roleMappings?: pulumi.Input<pulumi.Input<RoleMapping>[]>;
+
+    /**
+     * Optional mappings from AWS IAM users to Kubernetes users and groups.
+     */
+    userMappings?: pulumi.Input<pulumi.Input<UserMapping>[]>;
+
+    /**
+     * The configiuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
+     * for the VpcCniOptions type.
+     */
+    vpcCniOptions?: VpcCniOptions;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -157,6 +218,14 @@ export class Cluster extends pulumi.ComponentResource {
 
         args = args || {};
 
+        // Check to ensure that aws-iam-authenticator is installed, as we'll need it in order to deploy k8s resources
+        // to the EKS cluster.
+        try {
+            which.sync("aws-iam-authenticator");
+        } catch (err) {
+            throw new pulumi.RunError("Could not find aws-iam-authenticator for EKS. See https://github.com/pulumi/eks#installing for installation instructions.");
+        }
+
         // If no VPC was specified, use the default VPC.
         let vpcId: pulumi.Input<string> = args.vpcId!;
         let subnetIds: pulumi.Input<pulumi.Input<string>[]> = args.subnetIds!;
@@ -250,16 +319,42 @@ export class Cluster extends pulumi.ComponentResource {
             kubeconfig: myKubeconfig.apply(JSON.stringify),
         }, { parent: this });
 
+        // Create the VPC CNI management resource.
+        const vpcCni = new VpcCni(`${name}-vpc-cni`, myKubeconfig, args.vpcCniOptions, { parent: this });
+
         // Enable access to the EKS cluster for worker nodes.
+        const instanceRoleMapping: RoleMapping = {
+            roleArn: instanceRoleARN,
+            username: "system:node:{{EC2PrivateDNSName}}",
+            groups: ["system:bootstrappers", "system:nodes"],
+        };
+        const roleMappings = pulumi.all([pulumi.output(args.roleMappings || []), instanceRoleMapping])
+            .apply(([mappings, instanceMapping]) => {
+                return jsyaml.safeDump([...mappings, instanceMapping].map(m => ({
+                   rolearn: m.roleArn,
+                   username: m.username,
+                   groups: m.groups,
+                })));
+            });
+        const nodeAccessData: any = {
+            mapRoles: roleMappings,
+        };
+        if (args.userMappings !== undefined) {
+            nodeAccessData.mapUsers = pulumi.output(args.userMappings).apply(mappings => {
+                return jsyaml.safeDump(mappings.map(m => ({
+                    userarn: m.userArn,
+                    username: m.username,
+                    groups: m.groups,
+                })));
+            });
+        }
         const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
             apiVersion: "v1",
             metadata: {
                 name: "aws-auth",
                 namespace: "kube-system",
             },
-            data: {
-                mapRoles: instanceRoleARN.apply(arn => `- rolearn: ${arn}\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n`),
-            },
+            data: nodeAccessData,
         }, { parent: this, provider: k8sProvider });
 
         // Add any requested StorageClasses.
@@ -374,14 +469,14 @@ ${customUserData}
             userData: userdata,
         }, { parent: this });
 
-        const cfnSubnetIds = pulumi.output(subnetIds).apply(ids => pulumi.all(ids.map(pulumi.output))).apply(ids => JSON.stringify(ids));
+        const workerSubnetIds = pulumi.output(subnetIds).apply(ids => computeWorkerSubnets(this, ids));
         const cfnTemplateBody = pulumi.all([
             nodeLaunchConfiguration.id,
             args.desiredCapacity || 2,
             args.minSize || 1,
             args.maxSize || 2,
             eksCluster.name,
-            cfnSubnetIds,
+            workerSubnetIds.apply(JSON.stringify),
         ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
                 AWSTemplateFormatVersion: '2010-09-09'
                 Resources:
@@ -409,7 +504,7 @@ ${customUserData}
         const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
             name: cfnStackName,
             templateBody: cfnTemplateBody,
-        }, { parent: this, dependsOn: eksNodeAccess });
+        }, { parent: this, dependsOn: [eksNodeAccess, vpcCni] });
 
         // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
         // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
@@ -462,4 +557,11 @@ ${customUserData}
 
         this.registerOutputs({ kubeconfig: this.kubeconfig });
     }
+}
+
+async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]): Promise<string[]> {
+    const subnets = await Promise.all(subnetIds.map(id => aws.ec2.getSubnet({id}, { parent: parent })));
+    const publicSubnets = subnets.filter(s => s.mapPublicIpOnLaunch);
+    const privateSubnets = subnets.filter(s => !s.mapPublicIpOnLaunch);
+    return (privateSubnets.length === 0 ? publicSubnets : privateSubnets).map(s => s.id);
 }
