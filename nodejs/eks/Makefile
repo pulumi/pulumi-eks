@@ -14,6 +14,7 @@ build::
 	sed -e 's/\$${VERSION}/$(VERSION)/g' < package.json > bin/package.json
 	cp ../../README.md ../../LICENSE bin/
 	cp -R dashboard bin/
+	cp -R cni bin/
 
 lint::
 	tslint -c ../tslint.json -p tsconfig.json
