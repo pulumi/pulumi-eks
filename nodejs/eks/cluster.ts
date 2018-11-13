@@ -633,6 +633,11 @@ ${customUserData}
         if (args.maxSize === undefined) {
             args.maxSize = 2;
         }
+
+        let minInstancesInService = 1;
+        if (args.spotPrice) {
+            minInstancesInService = 0;
+        }
         const cfnTemplateBody = pulumi.all([
             nodeLaunchConfiguration.id,
             args.desiredCapacity,
@@ -660,7 +665,7 @@ ${customUserData}
                     PropagateAtLaunch: 'true'
                 UpdatePolicy:
                   AutoScalingRollingUpdate:
-                    MinInstancesInService: '1'
+                    MinInstancesInService: '${minInstancesInService}'
                     MaxBatchSize: '1'
             `);
 
