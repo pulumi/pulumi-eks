@@ -30,7 +30,10 @@ import transform from "./transform";
  * ClusterOptions describes the configuration options accepted by an EKSCluster component.
  */
 export interface NodeGroupOptions {
+    keyName?: pulumi.Input<string>;
+
     workerAmiArgs?: aws.GetAmiArgs;
+
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     spotPrice?: pulumi.Input<string>;
@@ -593,7 +596,7 @@ ${customUserData}
         }, { parent: this });
 
         // If requested, add a new EC2 KeyPair for SSH access to the instances.
-        let keyName: pulumi.Output<string> | undefined;
+        let keyName = args.keyName;
         if (args.nodePublicKey) {
             const key = new aws.ec2.KeyPair(`${name}-keyPair`, {
                 publicKey: args.nodePublicKey,
