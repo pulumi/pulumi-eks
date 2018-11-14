@@ -30,12 +30,23 @@ import transform from "./transform";
  * ClusterOptions describes the configuration options accepted by an EKSCluster component.
  */
 export interface NodeGroupOptions {
-    keyName?: pulumi.Input<string>;
-
+   /**
+     * The AMI to use for the cluster's nodes. Defaults to AWS's official eks-node AMI.
+     */
     workerAmiArgs?: aws.GetAmiArgs;
 
+    /**
+     * The subnets to attach to the node group. If the list of subnets includes
+     * both public and private subnets, the Kubernetes API server and the worker
+     * nodes will only be attached to the private subnets. See
+     * https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html for
+     * more details.
+     */
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
+    /**
+     * Bidding price for spot instance. If set, only spot instances will be added as workder node
+     */
     spotPrice?: pulumi.Input<string>;
 
     /**
@@ -49,6 +60,11 @@ export interface NodeGroupOptions {
      * If not provided, no SSH access is enabled on VMs.
      */
     nodePublicKey?: pulumi.Input<string>;
+
+    /**
+     * Name of the key pair to use for SSH access to workder nodes.
+     */
+    keyName?: pulumi.Input<string>;
 
     /**
      * The size in GiB of a cluster node's root volume. Defaults to 20.
