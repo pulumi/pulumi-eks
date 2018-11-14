@@ -95,7 +95,7 @@ export interface ClusterOptions {
     userMappings?: pulumi.Input<pulumi.Input<UserMapping>[]>;
 
     /**
-     * The configiuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
+     * The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
      * for the VpcCniOptions type.
      */
     vpcCniOptions?: VpcCniOptions;
@@ -104,6 +104,11 @@ export interface ClusterOptions {
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+
+    /**
+     * The subnets to use for worker nodes. Defaults to the value of subnetIds.
+     */
+    nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
@@ -469,7 +474,7 @@ ${customUserData}
             userData: userdata,
         }, { parent: this });
 
-        const workerSubnetIds = pulumi.output(subnetIds).apply(ids => computeWorkerSubnets(this, ids));
+        const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(subnetIds).apply(ids => computeWorkerSubnets(this, ids));
         const cfnTemplateBody = pulumi.all([
             nodeLaunchConfiguration.id,
             args.desiredCapacity || 2,
@@ -560,8 +565,30 @@ ${customUserData}
 }
 
 async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]): Promise<string[]> {
-    const subnets = await Promise.all(subnetIds.map(id => aws.ec2.getSubnet({id}, { parent: parent })));
-    const publicSubnets = subnets.filter(s => s.mapPublicIpOnLaunch);
-    const privateSubnets = subnets.filter(s => !s.mapPublicIpOnLaunch);
-    return (privateSubnets.length === 0 ? publicSubnets : privateSubnets).map(s => s.id);
+    const publicSubnets: string[] = [];
+    const privateSubnets: string[] = [];
+    for (const subnetId of subnetIds) {
+        const routeTable = await (async () => {
+            try  {
+                return await aws.ec2.getRouteTable({ subnetId: subnetId }, { parent: parent });
+            } catch {
+                const subnet = await aws.ec2.getSubnet({ id: subnetId }, { parent: parent });
+                const mainRouteTableInfo = await aws.ec2.getRouteTables({
+                    vpcId: subnet.vpcId,
+                    filters: [{
+                        name: "association.main",
+                        values: [ "true" ],
+                    }],
+                }, { parent: parent });
+                return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, { parent: parent });
+            }
+        })();
+        const hasInternetGatewayRoute = routeTable.routes.find(r => !!r.gatewayId) !== undefined;
+        if (hasInternetGatewayRoute) {
+            publicSubnets.push(subnetId);
+        } else {
+            privateSubnets.push(subnetId);
+        }
+    }
+    return privateSubnets.length === 0 ? publicSubnets : privateSubnets;
 }
