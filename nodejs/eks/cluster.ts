@@ -95,7 +95,7 @@ export interface ClusterOptions {
     userMappings?: pulumi.Input<pulumi.Input<UserMapping>[]>;
 
     /**
-     * The configiuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
+     * The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
      * for the VpcCniOptions type.
      */
     vpcCniOptions?: VpcCniOptions;
@@ -104,6 +104,11 @@ export interface ClusterOptions {
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+
+    /**
+     * The subnets to use for worker nodes. Defaults to the value of subnetIds.
+     */
+    nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
@@ -469,7 +474,7 @@ ${customUserData}
             userData: userdata,
         }, { parent: this });
 
-        const workerSubnetIds = pulumi.output(subnetIds).apply(ids => computeWorkerSubnets(this, ids));
+        const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(subnetIds).apply(ids => computeWorkerSubnets(this, ids));
         const cfnTemplateBody = pulumi.all([
             nodeLaunchConfiguration.id,
             args.desiredCapacity || 2,
@@ -559,9 +564,49 @@ ${customUserData}
     }
 }
 
+// computeWorkerSubnets attempts to determine the subset of the given subnets to use for worker nodes.
+//
+// As per https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html, an EKS cluster that is attached to public
+// and private subnets will only expose its API service to workers on the private subnets. Any workers attached to the
+// public subnets will be unable to communicate with the API server.
+//
+// If all of the given subnet IDs are public, the list of subnet IDs is returned as-is. If any private subnet is given,
+// only the IDs of the private subnets are returned. A subnet is deemed private iff it has no route in its route table
+// that routes directly to an internet gateway. If any such route exists in a subnet's route table, it is treated as
+// public.
 async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]): Promise<string[]> {
-    const subnets = await Promise.all(subnetIds.map(id => aws.ec2.getSubnet({id}, { parent: parent })));
-    const publicSubnets = subnets.filter(s => s.mapPublicIpOnLaunch);
-    const privateSubnets = subnets.filter(s => !s.mapPublicIpOnLaunch);
-    return (privateSubnets.length === 0 ? publicSubnets : privateSubnets).map(s => s.id);
+    const publicSubnets: string[] = [];
+    const privateSubnets: string[] = [];
+    for (const subnetId of subnetIds) {
+        // Fetch the route table for this subnet.
+        const routeTable = await (async () => {
+            try  {
+                // Attempt to get the explicit route table for this subnet. If there is no explicit rouute table for
+                // this subnet, this call will throw.
+                return await aws.ec2.getRouteTable({ subnetId: subnetId }, { parent: parent });
+            } catch {
+                // If we reach this point, the subnet may not have an explicitly associated route table. In this case
+                // the subnet is associated with its VPC's main route table (see
+                // https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html#RouteTables for details).
+                const subnet = await aws.ec2.getSubnet({ id: subnetId }, { parent: parent });
+                const mainRouteTableInfo = await aws.ec2.getRouteTables({
+                    vpcId: subnet.vpcId,
+                    filters: [{
+                        name: "association.main",
+                        values: [ "true" ],
+                    }],
+                }, { parent: parent });
+                return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, { parent: parent });
+            }
+        })();
+
+        // Once we have the route table, check its list of routes for a route to an internet gateway.
+        const hasInternetGatewayRoute = routeTable.routes.find(r => !!r.gatewayId) !== undefined;
+        if (hasInternetGatewayRoute) {
+            publicSubnets.push(subnetId);
+        } else {
+            privateSubnets.push(subnetId);
+        }
+    }
+    return privateSubnets.length === 0 ? publicSubnets : privateSubnets;
 }
