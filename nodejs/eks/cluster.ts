@@ -69,6 +69,11 @@ export interface ClusterOptions {
     nodePublicKey?: pulumi.Input<string>;
 
     /**
+     * The subnets to use for worker nodes. Defaults to the value of subnetIds.
+     */
+    nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
      * The size in GiB of a cluster node's root volume. Defaults to 20.
      */
     nodeRootVolumeSize?: pulumi.Input<number>;
@@ -182,9 +187,10 @@ export class Cluster extends pulumi.ComponentResource {
         // Create the worker pool and grant the workers access to the API server.
         const defaultPool = createWorkerPool(name, {
             vpcId: core.vpcId,
-            subnetIds: core.subnetIds,
+            clusterSubnetIds: core.subnetIds,
             clusterSecurityGroup: core.eksClusterSecurityGroup,
             cluster: core.eksCluster,
+            nodeSubnetIds: args.nodeSubnetIds,
             vpcCni: core.vpcCni,
             instanceType: args.instanceType,
             nodePublicKey: args.nodePublicKey,
