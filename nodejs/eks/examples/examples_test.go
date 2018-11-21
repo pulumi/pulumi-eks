@@ -45,6 +45,7 @@ func Test_Examples(t *testing.T) {
 			Dependencies: []string{
 				"@pulumi/eks",
 			},
+			ExpectRefreshChanges: true,
 		},
 	}
 	for _, ex := range examples {
