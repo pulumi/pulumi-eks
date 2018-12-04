@@ -211,6 +211,11 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
 
     /**
+     * The EKS cluster.
+     */
+    private readonly eksCluster: aws.eks.Cluster;
+
+    /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
      * requested.
      *
@@ -266,7 +271,7 @@ export class Cluster extends pulumi.ComponentResource {
         this.clusterSecurityGroup = eksClusterSecurityGroup;
 
         // Create the EKS cluster
-        const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
+        this.eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
             roleArn: eksRole.role.apply(r => r.arn),
             vpcConfig: { securityGroupIds: [ eksClusterSecurityGroup.id ], subnetIds: subnetIds },
         }, { parent: this });
@@ -285,7 +290,7 @@ export class Cluster extends pulumi.ComponentResource {
         // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
         // depend on the autoscaling group we'll create later so that nothing attempts to use the EKS cluster before
         // its worker nodes have come up.
-        const myKubeconfig = pulumi.all([eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority])
+        const myKubeconfig = pulumi.all([this.eksCluster.name, this.eksCluster.endpoint, this.eksCluster.certificateAuthority])
             .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority]) => {
                 return {
                     apiVersion: "v1",
@@ -403,7 +408,7 @@ export class Cluster extends pulumi.ComponentResource {
                 },
             ],
             egress: [ allEgress ],
-            tags: eksCluster.name.apply(n => <aws.Tags>{
+            tags: this.eksCluster.name.apply(n => <aws.Tags>{
                 [`kubernetes.io/cluster/${n}`]: "owned",
             }),
         }, { parent: this });
@@ -433,7 +438,7 @@ export class Cluster extends pulumi.ComponentResource {
 
         const awsRegion = pulumi.output(aws.getRegion({}, { parent: this }));
         const userDataArg = args.nodeUserData || pulumi.output("");
-        const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName, userDataArg])
+        const userdata = pulumi.all([awsRegion, this.eksCluster.name, this.eksCluster.endpoint, this.eksCluster.certificateAuthority, cfnStackName, userDataArg])
             .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
                 if (customUserData !== "") {
                     customUserData = `cat >/opt/user-data <<${stackName}-user-data
@@ -480,7 +485,7 @@ ${customUserData}
             args.desiredCapacity || 2,
             args.minSize || 1,
             args.maxSize || 2,
-            eksCluster.name,
+            this.eksCluster.name,
             workerSubnetIds.apply(JSON.stringify),
         ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
                 AWSTemplateFormatVersion: '2010-09-09'
