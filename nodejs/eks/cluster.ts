@@ -167,6 +167,11 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
 
     /**
+     * The EKS cluster.
+     */
+    private readonly eksCluster: aws.eks.Cluster;
+
+    /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
      * requested.
      *
@@ -183,6 +188,7 @@ export class Cluster extends pulumi.ComponentResource {
         args.storageClasses = args.storageClasses || "gp2";
         const core = createCore(name, args, this);
         this.clusterSecurityGroup = core.eksClusterSecurityGroup;
+        this.eksCluster = core.eksCluster;
 
         // Create the worker pool and grant the workers access to the API server.
         const defaultPool = createWorkerPool(name, {
