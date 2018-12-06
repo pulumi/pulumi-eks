@@ -213,7 +213,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The EKS cluster.
      */
-    private readonly eksCluster: aws.eks.Cluster;
+    public readonly eksCluster: aws.eks.Cluster;
 
     /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
