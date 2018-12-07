@@ -107,10 +107,10 @@ export interface ClusterOptions {
 
     /**
      * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
-	 * More information about teh AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	 * Use the information provided by AWS if you want to build your own AMI.
      */
-    customAmiId?: pulumi.Input<string>;
+    nodeAmiId?: pulumi.Input<string>;
 
     /**
      * The subnets to use for worker nodes. Defaults to the value of subnetIds.
@@ -464,9 +464,8 @@ ${customUserData}
 `;
             });
 
-        let amiId: pulumi.Input<string> = args.customAmiId!;
-
-        if (args.customAmiId === undefined) {
+        let amiId: pulumi.Input<string> = args.nodeAmiId!;
+        if (args.nodeAmiId === undefined) {
             const eksWorkerAmi = aws.getAmi({
                 filters: [{
                     name: "name",
