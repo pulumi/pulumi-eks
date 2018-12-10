@@ -106,6 +106,13 @@ export interface ClusterOptions {
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
 
     /**
+     * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
+	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+	 * Use the information provided by AWS if you want to build your own AMI.
+     */
+    nodeAmiId?: pulumi.Input<string>;
+
+    /**
      * The subnets to use for worker nodes. Defaults to the value of subnetIds.
      */
     nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
@@ -262,18 +269,18 @@ export class Cluster extends pulumi.ComponentResource {
             fromPort: 0,
             toPort: 0,
             protocol: "-1",  // all
-            cidrBlocks: [ "0.0.0.0/0" ],
+            cidrBlocks: ["0.0.0.0/0"],
         };
         const eksClusterSecurityGroup = new aws.ec2.SecurityGroup(`${name}-eksClusterSecurityGroup`, {
             vpcId: vpcId,
-            egress: [ allEgress ],
+            egress: [allEgress],
         }, { parent: this });
         this.clusterSecurityGroup = eksClusterSecurityGroup;
 
         // Create the EKS cluster
         this.eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
             roleArn: eksRole.role.apply(r => r.arn),
-            vpcConfig: { securityGroupIds: [ eksClusterSecurityGroup.id ], subnetIds: subnetIds },
+            vpcConfig: { securityGroupIds: [eksClusterSecurityGroup.id], subnetIds: subnetIds },
         }, { parent: this });
 
         // Create the instance role we'll use for worker nodes.
@@ -341,9 +348,9 @@ export class Cluster extends pulumi.ComponentResource {
         const roleMappings = pulumi.all([pulumi.output(args.roleMappings || []), instanceRoleMapping])
             .apply(([mappings, instanceMapping]) => {
                 return jsyaml.safeDump([...mappings, instanceMapping].map(m => ({
-                   rolearn: m.roleArn,
-                   username: m.username,
-                   groups: m.groups,
+                    rolearn: m.roleArn,
+                    username: m.username,
+                    groups: m.groups,
                 })));
             });
         const nodeAccessData: any = {
@@ -397,17 +404,17 @@ export class Cluster extends pulumi.ComponentResource {
                     fromPort: 1025,
                     toPort: 65535,
                     protocol: "tcp",
-                    securityGroups: [ eksClusterSecurityGroup.id ],
+                    securityGroups: [eksClusterSecurityGroup.id],
                 },
                 {
                     description: "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
                     fromPort: 443,
                     toPort: 443,
                     protocol: "tcp",
-                    securityGroups: [ eksClusterSecurityGroup.id ],
+                    securityGroups: [eksClusterSecurityGroup.id],
                 },
             ],
-            egress: [ allEgress ],
+            egress: [allEgress],
             tags: this.eksCluster.name.apply(n => <aws.Tags>{
                 [`kubernetes.io/cluster/${n}`]: "owned",
             }),
@@ -456,21 +463,28 @@ ${customUserData}
 /opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
 `;
             });
-        const eksWorkerAmi = aws.getAmi({
-            filters: [{
-                name: "name",
-                values: [ "amazon-eks-node-*" ],
-            }],
-            mostRecent: true,
-            owners: [ "602401143452" ], // Amazon
-        }, { parent: this });
+
+        let amiId: pulumi.Input<string> = args.nodeAmiId!;
+        if (args.nodeAmiId === undefined) {
+            const eksWorkerAmi = aws.getAmi({
+                filters: [{
+                    name: "name",
+                    values: ["amazon-eks-node-*"],
+                }],
+                mostRecent: true,
+                owners: ["602401143452"], // Amazon
+            }, { parent: this });
+
+            amiId = eksWorkerAmi.then(r => r.imageId);
+        }
+
         const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
             associatePublicIpAddress: true,
-            imageId: eksWorkerAmi.then(r => r.imageId),
+            imageId: amiId,
             instanceType: args.instanceType || "t2.medium",
             iamInstanceProfile: instanceProfile.id,
             keyName: keyName,
-            securityGroups: [ nodeSecurityGroupId ],
+            securityGroups: [nodeSecurityGroupId],
             rootBlockDevice: {
                 volumeSize: args.nodeRootVolumeSize || 20, // GiB
                 volumeType: "gp2", // default is "standard"
@@ -585,7 +599,7 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
     for (const subnetId of subnetIds) {
         // Fetch the route table for this subnet.
         const routeTable = await (async () => {
-            try  {
+            try {
                 // Attempt to get the explicit route table for this subnet. If there is no explicit rouute table for
                 // this subnet, this call will throw.
                 return await aws.ec2.getRouteTable({ subnetId: subnetId }, { parent: parent });
@@ -598,7 +612,7 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
                     vpcId: subnet.vpcId,
                     filters: [{
                         name: "association.main",
-                        values: [ "true" ],
+                        values: ["true"],
                     }],
                 }, { parent: parent });
                 return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, { parent: parent });
