@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/pulumi/eks.svg?token=eHg7Zp5zdDDJfTjY8ejq&branch=master)](https://travis-ci.com/pulumi/eks)
+[![Build Status](https://travis-ci.com/pulumi/pulumi-eks.svg?token=eHg7Zp5zdDDJfTjY8ejq&branch=master)](https://travis-ci.com/pulumi/pulumi-eks)
 
 # Pulumi Amazon Web Services (AWS) EKS Components
 
