@@ -16,13 +16,8 @@ import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
-import * as fs from "fs";
-import * as path from "path";
-import which = require("which");
 
-import { CoreData, CoreOptions, createCore } from "./core";
 import { ServiceRole } from "./servicerole";
-import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import transform from "./transform";
 
 /**
@@ -53,6 +48,16 @@ export interface WorkerPoolOptions {
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+
+    /**
+     * The instance role to use for all nodes in this workder pool.
+     */
+    instanceRole?: pulumi.Input<aws.iam.Role>;
+
+    /**
+     * The security group to use for all nodes in this workder pool.
+     */
+    nodeSecurityGroup?: aws.ec2.SecurityGroup;
 
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
@@ -114,31 +119,81 @@ export class WorkerPool extends pulumi.ComponentResource {
     constructor(name: string, args: WorkerPoolOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:WorkerPool", name, args, opts);
 
-        const pool = createWorkerPool(name, args, this, this.getProvider("kubernetes:core:v1/ConfigMap"));
+        const k8sProvider = this.getProvider("kubernetes:core:v1/ConfigMap");
+        if (k8sProvider === undefined) {
+            throw new pulumi.RunError("a 'kubernetes' provider must be specified for a 'WorkerPool'");
+        }
+        const pool = createWorkerPool(name, args, this, k8sProvider);
         this.instanceRole = pool.instanceRole;
         this.nodeSecurityGroup = pool.nodeSecurityGroup;
-
-        this.registerOutputs();
+        this.registerOutputs(undefined);
     }
 }
 
 export interface WorkerPoolData {
-    instanceRole: ServiceRole;
+    instanceRole: pulumi.Output<aws.iam.Role>;
     nodeSecurityGroup: aws.ec2.SecurityGroup;
     cfnStack: aws.cloudformation.Stack;
 }
 
-export function createWorkerPool(name: string, args: WorkerPoolOptions, parent: pulumi.ComponentResource, k8sProvider: k8s.Provider): WorkerPoolData {
+export function createWorkerPool(name: string, args: WorkerPoolOptions, parent: pulumi.ComponentResource,  k8sProvider: k8s.Provider): WorkerPoolData {
+    let instanceRole: pulumi.Output<aws.iam.Role>;
+    if (args.instanceRole) {
+        instanceRole = pulumi.output(args.instanceRole);
+    } else {
+        instanceRole = (new ServiceRole(`${name}-instanceRole`, {
+            service: "ec2.amazonaws.com",
+            managedPolicyArns: [
+                "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+                "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+                "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+            ],
+        }, { parent: parent })).role;
+    }
     // Create the instance role we'll use for worker nodes.
-    const instanceRole = (new ServiceRole(`${name}-instanceRole`, {
-        service: "ec2.amazonaws.com",
-        managedPolicyArns: [
-            "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-            "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-            "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-        ],
-    }, { parent: parent })).role;
     const instanceRoleARN = instanceRole.apply(r => r.arn);
+
+    let nodeSecurityGroup: aws.ec2.SecurityGroup;
+    if (args.nodeSecurityGroup) {
+        nodeSecurityGroup = args.nodeSecurityGroup;
+    } else {
+        nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
+            vpcId: args.vpcId,
+            ingress: [
+                {
+                    description: "Allow nodes to communicate with each other",
+                    fromPort: 0,
+                    toPort: 0,
+                    protocol: "-1", // all
+                    self: true,
+                },
+                {
+                    description: "Allow worker Kubelets and pods to receive communication from the cluster control plane",
+                    fromPort: 1025,
+                    toPort: 65535,
+                    protocol: "tcp",
+                    securityGroups: [ args.clusterSecurityGroup.id ],
+                },
+                {
+                    description: "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
+                    fromPort: 443,
+                    toPort: 443,
+                    protocol: "tcp",
+                    securityGroups: [ args.clusterSecurityGroup.id ],
+                },
+            ],
+            egress: [{
+                description: "Allow internet access.",
+                fromPort: 0,
+                toPort: 0,
+                protocol: "-1",  // all
+                cidrBlocks: [ "0.0.0.0/0" ],
+            }],
+            tags: args.cluster.name.apply(n => <aws.Tags>{
+                [`kubernetes.io/cluster/${n}`]: "owned",
+            }),
+        }, { parent: parent });
+    }
 
     // Enable access to the EKS cluster for worker nodes.
     const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
@@ -154,56 +209,20 @@ export function createWorkerPool(name: string, args: WorkerPoolOptions, parent: 
 
     // Create the cluster's worker nodes.
     const instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
-        role: this.instanceRole,
+        role: instanceRole,
     }, { parent: parent });
-    const nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
-        vpcId: args.vpcId,
-        ingress: [
-            {
-                description: "Allow nodes to communicate with each other",
-                fromPort: 0,
-                toPort: 0,
-                protocol: "-1", // all
-                self: true,
-            },
-            {
-                description: "Allow worker Kubelets and pods to receive communication from the cluster control plane",
-                fromPort: 1025,
-                toPort: 65535,
-                protocol: "tcp",
-                securityGroups: [ args.eksClusterSecurityGroup.id ],
-            },
-            {
-                description: "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
-                fromPort: 443,
-                toPort: 443,
-                protocol: "tcp",
-                securityGroups: [ args.eksClusterSecurityGroup.id ],
-            },
-        ],
-        egress: [{
-            description: "Allow internet access.",
-            fromPort: 0,
-            toPort: 0,
-            protocol: "-1",  // all
-            cidrBlocks: [ "0.0.0.0/0" ],
-        }],
-        tags: args.eksCluster.name.apply(n => <aws.Tags>{
-            [`kubernetes.io/cluster/${n}`]: "owned",
-        }),
-    }, { parent: parent });
+
     const eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
         description: "Allow pods to communicate with the cluster API Server",
         type: "ingress",
         fromPort: 443,
         toPort: 443,
         protocol: "tcp",
-        securityGroupId: args.eksClusterSecurityGroup.id,
+        securityGroupId: args.clusterSecurityGroup.id,
         sourceSecurityGroupId: nodeSecurityGroup.id,
     }, { parent: parent });
     const nodeSecurityGroupId = pulumi.all([nodeSecurityGroup.id, eksClusterIngressRule.id])
         .apply(([id]) => id);
-    this.nodeSecurityGroup = nodeSecurityGroup;
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
     let keyName: pulumi.Output<string> | undefined;
@@ -218,7 +237,7 @@ export function createWorkerPool(name: string, args: WorkerPoolOptions, parent: 
 
     const awsRegion = pulumi.output(aws.getRegion({}, { parent: parent }));
     const userDataArg = args.nodeUserData || pulumi.output("");
-    const userdata = pulumi.all([awsRegion, args.eksCluster.name, args.eksCluster.endpoint, args.eksCluster.certificateAuthority, cfnStackName, userDataArg])
+    const userdata = pulumi.all([awsRegion, args.cluster.name, args.cluster.endpoint, args.cluster.certificateAuthority, cfnStackName, userDataArg])
         .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
             if (customUserData !== "") {
                 customUserData = `cat >/opt/user-data <<${stackName}-user-data
@@ -265,7 +284,7 @@ ${customUserData}
         args.desiredCapacity || 2,
         args.minSize || 1,
         args.maxSize || 2,
-        args.eksCluster.name,
+        args.cluster.name,
         cfnSubnetIds,
     ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
             AWSTemplateFormatVersion: '2010-09-09'
@@ -297,7 +316,7 @@ ${customUserData}
     }, { parent: parent, dependsOn: eksNodeAccess });
 
     return {
-        instaceRole: instanceRole,
+        instanceRole: instanceRole,
         nodeSecurityGroup: nodeSecurityGroup,
         cfnStack: cfnStack,
     };
