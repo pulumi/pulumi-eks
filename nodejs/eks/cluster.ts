@@ -19,6 +19,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { createCore } from "./core";
+import { createDashboard } from "./dashboard";
 import { EBSVolumeType, StorageClass } from "./storageclass";
 import { createWorkerPool } from "./workerpool";
 
@@ -189,41 +190,7 @@ export class Cluster extends pulumi.ComponentResource {
 
         // If we need to deploy the Kubernetes dashboard, do so now.
         if (args.deployDashboard === undefined || args.deployDashboard) {
-            // Deploy the latest version of the k8s dashboard.
-            const dashboardYaml = [
-                path.join(__dirname, "dashboard", "kubernetes-dashboard.yaml"),
-                path.join(__dirname, "dashboard", "heapster.yaml"),
-                path.join(__dirname, "dashboard", "influxdb.yaml"),
-                path.join(__dirname, "dashboard", "heapster-rbac.yaml"),
-            ].map(filePath => fs.readFileSync(filePath).toString());
-            const dashboard = new k8s.yaml.ConfigGroup(`${name}-dashboard`, {
-                yaml: dashboardYaml,
-            }, { parent: this, providers: { kubernetes: this.provider } });
-
-            // Create a service account for admin access.
-            const adminAccount = new k8s.core.v1.ServiceAccount(`${name}-eks-admin`, {
-                metadata: {
-                    name: "eks-admin",
-                    namespace: "kube-system",
-                },
-            }, { parent: this, provider: this.provider });
-
-            // Create a role binding for the admin account.
-            const adminRoleBinding = new k8s.rbac.v1.ClusterRoleBinding(`${name}-eks-admin`, {
-                metadata: {
-                    name: "eks-admin",
-                },
-                roleRef: {
-                    apiGroup: "rbac.authorization.k8s.io",
-                    kind: "ClusterRole",
-                    name: "cluster-admin",
-                },
-                subjects: [{
-                    kind: "ServiceAccount",
-                    name: "eks-admin",
-                    namespace: "kube-system",
-                }],
-            }, { parent: this, provider: this.provider });
+            createDashboard(name, {}, this, this.provider);
         }
 
         this.registerOutputs({ kubeconfig: this.kubeconfig });
