@@ -77,6 +77,12 @@ export interface ClusterOptions {
     vpcId?: pulumi.Input<string>;
 
     /**
+     * Whether or not to associate public IP addresses with the worker nodes.
+     * If unset, the nodes will be assigned public IPs.
+     */
+    associatePublicIpAddress?: pulumi.Input<boolean>;
+
+    /**
      * The subnets to attach to the EKS cluster. If either vpcId or subnetIds is unset, the cluster will use the
      * default VPC's subnets. If the list of subnets includes both public and private subnets, the Kubernetes API
      * server and the worker nodes will only be attached to the private subnets. See
@@ -479,7 +485,7 @@ ${customUserData}
         }
 
         const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
-            associatePublicIpAddress: true,
+            associatePublicIpAddress: args.associatePublicIpAddress && true,
             imageId: amiId,
             instanceType: args.instanceType || "t2.medium",
             iamInstanceProfile: instanceProfile.id,
