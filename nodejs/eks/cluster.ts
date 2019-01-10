@@ -18,6 +18,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as fs from "fs";
 import * as path from "path";
 
+import { VpcCniOptions } from "./cni";
 import { createCore } from "./core";
 import { createDashboard } from "./dashboard";
 import { EBSVolumeType, StorageClass } from "./storageclass";
@@ -48,6 +49,12 @@ export interface ClusterOptions {
      * Optional mappings from AWS IAM users to Kubernetes users and groups.
      */
     userMappings?: pulumi.Input<pulumi.Input<UserMapping>[]>;
+
+    /**
+     * The configiuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
+     * for the VpcCniOptions type.
+     */
+    vpcCniOptions?: VpcCniOptions;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -178,6 +185,7 @@ export class Cluster extends pulumi.ComponentResource {
             subnetIds: core.subnetIds,
             clusterSecurityGroup: core.eksClusterSecurityGroup,
             cluster: core.eksCluster,
+            vpcCni: core.vpcCni,
             instanceType: args.instanceType,
             nodePublicKey: args.nodePublicKey,
             nodeRootVolumeSize: args.nodeRootVolumeSize,
