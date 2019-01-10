@@ -15,10 +15,8 @@
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
-import * as crypto from "crypto";
-import * as fs from "fs";
-import * as path from "path";
 import which = require("which");
+import { VpcCni, VpcCniOptions } from "./cni";
 
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
@@ -43,6 +41,12 @@ export interface CoreOptions {
      * a single StorageClass will be created for that volume type and made the cluster's default StorageClass.
      */
     storageClasses?: { [name: string]: StorageClass } | EBSVolumeType;
+
+    /**
+     * The configiuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
+     * for the VpcCniOptions type.
+     */
+    vpcCniOptions?: VpcCniOptions;
 }
 
 /**
@@ -90,6 +94,11 @@ export class Core extends pulumi.ComponentResource {
     public readonly cluster: aws.eks.Cluster;
 
     /**
+     * The Amazon VPC CNI plugin for this cluster.
+     */
+    public readonly vpcCni: VpcCni;
+
+    /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
      * requested.
      *
@@ -108,6 +117,7 @@ export class Core extends pulumi.ComponentResource {
         this.clusterSecurityGroup = core.eksClusterSecurityGroup;
         this.cluster = core.eksCluster;
         this.kubeconfig = core.kubeconfig;
+        this.vpcCni = core.vpcCni;
 
         // Create the Kubernetes provider we'll use to manage the config map we need to allow worker nodes to access
         // the EKS cluster.
@@ -124,6 +134,7 @@ export interface CoreData {
     eksCluster: aws.eks.Cluster;
     kubeconfig: pulumi.Output<any>;
     provider: k8s.Provider;
+    vpcCni: VpcCni;
 }
 
 export function createCore(name: string, args: CoreOptions, parent: pulumi.ComponentResource): CoreData {
@@ -225,6 +236,9 @@ export function createCore(name: string, args: CoreOptions, parent: pulumi.Compo
         }
     }
 
+    // Create the VPC CNI management resource.
+    const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent: this });
+
     return {
         vpcId: pulumi.output(vpcId),
         subnetIds: pulumi.output(subnetIds),
@@ -232,5 +246,6 @@ export function createCore(name: string, args: CoreOptions, parent: pulumi.Compo
         eksCluster: eksCluster,
         kubeconfig: kubeconfig,
         provider: provider,
+        vpcCni: vpcCni,
     };
 }

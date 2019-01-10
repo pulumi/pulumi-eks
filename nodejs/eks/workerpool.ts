@@ -18,6 +18,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 import * as jsyaml from "js-yaml";
 
+import { VpcCni } from "./cni";
 import { ServiceRole } from "./servicerole";
 import transform from "./transform";
 
@@ -146,6 +147,11 @@ export interface WorkerPoolOptions {
      * The maximum number of worker nodes running in the cluster. Defaults to 2.
      */
     maxSize?: pulumi.Input<number>;
+
+    /**
+     * The Amazon VPC CNI plugin for this worker pool's cluster.
+     */
+    vpcCni: VpcCni;
 }
 
 /**
@@ -390,7 +396,7 @@ ${customUserData}
     const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
         name: cfnStackName,
         templateBody: cfnTemplateBody,
-    }, { parent: parent, dependsOn: eksNodeAccess });
+    }, { parent: parent, dependsOn: [eksNodeAccess, args.vpcCni] });
 
     return {
         instanceRole: instanceRole,
