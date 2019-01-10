@@ -15,8 +15,6 @@
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
-import * as fs from "fs";
-import * as path from "path";
 
 import { VpcCniOptions } from "./cni";
 import { createCore, RoleMapping, UserMapping } from "./core";
@@ -36,7 +34,9 @@ export interface ClusterOptions {
 
     /**
      * The subnets to attach to the EKS cluster. If either vpcId or subnetIds is unset, the cluster will use the
-     * default VPC's subnets.
+     * default VPC's subnets. If the list of subnets includes both public and private subnets, the Kubernetes API
+     * server and the worker nodes will only be attached to the private subnets. See
+     * https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html for more details.
      */
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
@@ -51,7 +51,7 @@ export interface ClusterOptions {
     userMappings?: pulumi.Input<pulumi.Input<UserMapping>[]>;
 
     /**
-     * The configiuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
+     * The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
      * for the VpcCniOptions type.
      */
     vpcCniOptions?: VpcCniOptions;
@@ -62,12 +62,12 @@ export interface ClusterOptions {
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
 
     /**
-    * The instance role to use for all nodes in this workder pool.
+    * The instance role to use for all nodes in this worker pool.
     */
     instanceRole?: pulumi.Input<aws.iam.Role>;
 
     /**
-     * The AMI to use for default worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
+     * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
 	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	 * Use the information provided by AWS if you want to build your own AMI.
      */
@@ -241,3 +241,4 @@ export class Cluster extends pulumi.ComponentResource {
         this.registerOutputs({ kubeconfig: this.kubeconfig });
     }
 }
+

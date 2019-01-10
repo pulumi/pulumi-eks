@@ -295,7 +295,7 @@ export function createCore(name: string, args: CoreOptions, parent: pulumi.Compo
     }
 
     // Create the VPC CNI management resource.
-    const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent: this });
+    const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent: parent });
 
     // Create the instance role we'll use for worker nodes.
     let instanceRole: pulumi.Output<aws.iam.Role>;

@@ -36,7 +36,7 @@ export interface WorkerPoolOptions {
      * server and the worker nodes will only be attached to the private subnets. See
      * https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html for more details.
      */
-    clusterSubnetIds: pulumi.Input<string[]>;
+    clusterSubnetIds: pulumi.Input<pulumi.Input<string[]>>;
 
     /**
      * The IDs of the explicit node subnets to attach to the worker pool.
@@ -272,7 +272,7 @@ ${customUserData}
         userData: userdata,
     }, { parent: parent });
 
-    const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(args.clusterSubnetIds).apply(ids => computeWorkerSubnets(this, ids));
+    const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(args.clusterSubnetIds).apply(ids => computeWorkerSubnets(parent, ids));
     const cfnTemplateBody = pulumi.all([
         nodeLaunchConfiguration.id,
         args.desiredCapacity || 2,
