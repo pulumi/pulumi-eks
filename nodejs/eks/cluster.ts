@@ -19,10 +19,10 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { VpcCniOptions } from "./cni";
-import { createCore } from "./core";
+import { createCore, RoleMapping, UserMapping } from "./core";
 import { createDashboard } from "./dashboard";
 import { EBSVolumeType, StorageClass } from "./storageclass";
-import { createWorkerPool, RoleMapping, UserMapping } from "./workerpool";
+import { createWorkerPool } from "./workerpool";
 
 /**
  * ClusterOptions describes the configuration options accepted by an EKSCluster component.
@@ -60,6 +60,11 @@ export interface ClusterOptions {
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+
+    /**
+    * The instance role to use for all nodes in this workder pool.
+    */
+    instanceRole?: pulumi.Input<aws.iam.Role>;
 
     /**
      * The AMI to use for default worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
@@ -196,6 +201,7 @@ export class Cluster extends pulumi.ComponentResource {
         const core = createCore(name, args, this);
         this.clusterSecurityGroup = core.eksClusterSecurityGroup;
         this.eksCluster = core.eksCluster;
+        this.instanceRole = core.instanceProfile.role;
 
         // Create the worker pool and grant the workers access to the API server.
         const defaultPool = createWorkerPool(name, {
@@ -211,11 +217,10 @@ export class Cluster extends pulumi.ComponentResource {
             nodeUserData: args.nodeUserData,
             minSize: args.minSize,
             maxSize: args.maxSize,
-            roleMappings: args.roleMappings,
-            userMappings: args.userMappings,
+            eksNodeAccess: core.eksNodeAccess,
+            instanceProfile: core.instanceProfile,
             amiId: args.nodeAmiId,
         }, this, core.provider);
-        this.instanceRole = defaultPool.instanceRole;
         this.nodeSecurityGroup = defaultPool.nodeSecurityGroup;
 
         // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help

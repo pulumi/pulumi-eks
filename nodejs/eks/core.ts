@@ -15,11 +15,52 @@
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
+import * as jsyaml from "js-yaml";
 import which = require("which");
 import { VpcCni, VpcCniOptions } from "./cni";
 
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
+
+/**
+ * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
+ */
+export interface RoleMapping {
+    /**
+     * The ARN of the IAM role to add.
+     */
+    roleArn: pulumi.Input<aws.ARN>;
+
+     /**
+     * The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role.
+     */
+    username: pulumi.Input<string>;
+
+     /**
+     * A list of groups within Kubernetes to which the role is mapped.
+     */
+    groups: pulumi.Input<pulumi.Input<string>[]>;
+}
+
+ /**
+ * UserMapping describes a mapping from an AWS IAM user to a Kubernetes user and groups.
+ */
+export interface UserMapping {
+    /**
+     * The ARN of the IAM user to add.
+     */
+    userArn: pulumi.Input<aws.ARN>;
+
+     /**
+     * The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user.
+     */
+    username: pulumi.Input<string>;
+
+     /**
+     * A list of groups within Kubernetes to which the user is mapped to.
+     */
+    groups: pulumi.Input<pulumi.Input<string>[]>;
+}
 
 /**
  * CoreOptions describes the configuration options accepted by a Core component.
@@ -35,6 +76,21 @@ export interface CoreOptions {
      * default VPC's subnets.
      */
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * Optional mappings from AWS IAM roles to Kubernetes users and groups.
+     */
+    roleMappings?: pulumi.Input<pulumi.Input<RoleMapping>[]>;
+
+     /**
+     * Optional mappings from AWS IAM users to Kubernetes users and groups.
+     */
+    userMappings?: pulumi.Input<pulumi.Input<UserMapping>[]>;
+
+    /**
+    * The instance role to use for all nodes in this workder pool.
+    */
+    instanceRole?: pulumi.Input<aws.iam.Role>;
 
     /**
      * An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map,
@@ -83,7 +139,7 @@ export class Core extends pulumi.ComponentResource {
      */
     public readonly subnetIds: pulumi.Output<string[]>;
 
-    /**
+   /**
      * The security group for the EKS cluster.
      */
     public readonly clusterSecurityGroup: aws.ec2.SecurityGroup;
@@ -132,6 +188,8 @@ export interface CoreData {
     subnetIds: pulumi.Output<string[]>;
     eksClusterSecurityGroup: aws.ec2.SecurityGroup;
     eksCluster: aws.eks.Cluster;
+    eksNodeAccess: k8s.core.v1.ConfigMap;
+    instanceProfile: aws.iam.InstanceProfile;
     kubeconfig: pulumi.Output<any>;
     provider: k8s.Provider;
     vpcCni: VpcCni;
@@ -239,6 +297,61 @@ export function createCore(name: string, args: CoreOptions, parent: pulumi.Compo
     // Create the VPC CNI management resource.
     const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent: this });
 
+    // Create the instance role we'll use for worker nodes.
+    let instanceRole: pulumi.Output<aws.iam.Role>;
+    if (args.instanceRole) {
+        instanceRole = pulumi.output(args.instanceRole);
+    } else {
+        instanceRole = (new ServiceRole(`${name}-instanceRole`, {
+            service: "ec2.amazonaws.com",
+            managedPolicyArns: [
+                "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+                "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+                "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+            ],
+        }, { parent: parent })).role;
+    }
+    const instanceRoleARN = instanceRole.apply(r => r.arn);
+
+    // Enable access to the EKS cluster for worker nodes.
+    const instanceRoleMapping: RoleMapping = {
+        roleArn: instanceRoleARN,
+        username: "system:node:{{EC2PrivateDNSName}}",
+        groups: ["system:bootstrappers", "system:nodes"],
+    };
+    const roleMappings = pulumi.all([pulumi.output(args.roleMappings || []), instanceRoleMapping])
+        .apply(([mappings, instanceMapping]) => {
+            return jsyaml.safeDump([...mappings, instanceMapping].map(m => ({
+                rolearn: m.roleArn,
+                username: m.username,
+                groups: m.groups,
+            })));
+        });
+    const nodeAccessData: any = {
+        mapRoles: roleMappings,
+    };
+    if (args.userMappings !== undefined) {
+        nodeAccessData.mapUsers = pulumi.output(args.userMappings).apply(mappings => {
+            return jsyaml.safeDump(mappings.map(m => ({
+                userarn: m.userArn,
+                username: m.username,
+                groups: m.groups,
+            })));
+        });
+    }
+    const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
+        apiVersion: "v1",
+        metadata: {
+            name: `aws-auth`,
+            namespace: "kube-system",
+        },
+        data: nodeAccessData,
+    }, { parent: parent, provider: provider });
+
+    const instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
+        role: instanceRole,
+    }, { parent: parent });
+
     return {
         vpcId: pulumi.output(vpcId),
         subnetIds: pulumi.output(subnetIds),
@@ -247,5 +360,7 @@ export function createCore(name: string, args: CoreOptions, parent: pulumi.Compo
         kubeconfig: kubeconfig,
         provider: provider,
         vpcCni: vpcCni,
+        instanceProfile: instanceProfile,
+        eksNodeAccess: eksNodeAccess,
     };
 }
