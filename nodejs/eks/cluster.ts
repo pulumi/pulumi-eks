@@ -62,6 +62,13 @@ export interface ClusterOptions {
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
 
     /**
+     * The AMI to use for default worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
+	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+	 * Use the information provided by AWS if you want to build your own AMI.
+     */
+    nodeAmiId?: pulumi.Input<string>;
+
+    /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
      * If not provided, no SSH access is enabled on VMs.
@@ -206,6 +213,7 @@ export class Cluster extends pulumi.ComponentResource {
             maxSize: args.maxSize,
             roleMappings: args.roleMappings,
             userMappings: args.userMappings,
+            amiId: args.nodeAmiId,
         }, this, core.provider);
         this.instanceRole = defaultPool.instanceRole;
         this.nodeSecurityGroup = defaultPool.nodeSecurityGroup;
