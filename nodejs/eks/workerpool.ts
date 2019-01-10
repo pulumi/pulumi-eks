@@ -159,6 +159,13 @@ export interface WorkerPoolOptions {
      * The Amazon VPC CNI plugin for this worker pool's cluster.
      */
     vpcCni: VpcCni;
+
+    /**
+     * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
+	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+	 * Use the information provided by AWS if you want to build your own AMI.
+     */
+    amiId?: pulumi.Input<string>;
 }
 
 /**
@@ -345,17 +352,23 @@ ${customUserData}
 /opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
 `;
         });
-    const eksWorkerAmi = aws.getAmi({
-        filters: [{
-            name: "name",
-            values: [ "amazon-eks-node-*" ],
-        }],
-        mostRecent: true,
-        owners: [ "602401143452" ], // Amazon
-    }, { parent: parent });
+
+    let amiId: pulumi.Input<string> = args.amiId!;
+    if (args.amiId === undefined) {
+        const eksWorkerAmi = aws.getAmi({
+            filters: [{
+                name: "name",
+                values: [ "amazon-eks-node-*" ],
+            }],
+            mostRecent: true,
+            owners: [ "602401143452" ], // Amazon
+        }, { parent: parent });
+        amiId = eksWorkerAmi.then(r => r.imageId);
+    }
+
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
         associatePublicIpAddress: true,
-        imageId: eksWorkerAmi.then(r => r.imageId),
+        imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
         iamInstanceProfile: instanceProfile.id,
         keyName: keyName,
