@@ -150,6 +150,11 @@ export class Core extends pulumi.ComponentResource {
     public readonly cluster: aws.eks.Cluster;
 
     /**
+     * The eks node access config map used by worker nodes
+     */
+    public readonly eksNodeAccess: k8s.core.v1.ConfigMap;
+
+    /**
      * The Amazon VPC CNI plugin for this cluster.
      */
     public readonly vpcCni: VpcCni;
@@ -170,10 +175,11 @@ export class Core extends pulumi.ComponentResource {
 
         this.vpcId = core.vpcId;
         this.subnetIds = core.subnetIds;
-        this.clusterSecurityGroup = core.eksClusterSecurityGroup;
-        this.cluster = core.eksCluster;
+        this.clusterSecurityGroup = core.clusterSecurityGroup;
+        this.cluster = core.cluster;
         this.kubeconfig = core.kubeconfig;
         this.vpcCni = core.vpcCni;
+        this.eksNodeAccess = core.eksNodeAccess;
 
         // Create the Kubernetes provider we'll use to manage the config map we need to allow worker nodes to access
         // the EKS cluster.
@@ -186,8 +192,8 @@ export class Core extends pulumi.ComponentResource {
 export interface CoreData {
     vpcId: pulumi.Output<string>;
     subnetIds: pulumi.Output<string[]>;
-    eksClusterSecurityGroup: aws.ec2.SecurityGroup;
-    eksCluster: aws.eks.Cluster;
+    cluster: aws.eks.Cluster;
+    clusterSecurityGroup: aws.ec2.SecurityGroup;
     eksNodeAccess: k8s.core.v1.ConfigMap;
     instanceProfile: aws.iam.InstanceProfile;
     kubeconfig: pulumi.Output<any>;
@@ -355,8 +361,8 @@ export function createCore(name: string, args: CoreOptions, parent: pulumi.Compo
     return {
         vpcId: pulumi.output(vpcId),
         subnetIds: pulumi.output(subnetIds),
-        eksClusterSecurityGroup: eksClusterSecurityGroup,
-        eksCluster: eksCluster,
+        clusterSecurityGroup: eksClusterSecurityGroup,
+        cluster: eksCluster,
         kubeconfig: kubeconfig,
         provider: provider,
         vpcCni: vpcCni,

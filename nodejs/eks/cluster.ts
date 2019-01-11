@@ -199,26 +199,24 @@ export class Cluster extends pulumi.ComponentResource {
         // Create the core resources required by the cluster.
         args.storageClasses = args.storageClasses || "gp2";
         const core = createCore(name, args, this);
-        this.clusterSecurityGroup = core.eksClusterSecurityGroup;
-        this.eksCluster = core.eksCluster;
+        this.clusterSecurityGroup = core.clusterSecurityGroup;
+        this.eksCluster = core.cluster;
         this.instanceRole = core.instanceProfile.role;
 
         // Create the worker pool and grant the workers access to the API server.
         const defaultPool = createWorkerPool(name, {
             vpcId: core.vpcId,
             clusterSubnetIds: core.subnetIds,
-            clusterSecurityGroup: core.eksClusterSecurityGroup,
-            cluster: core.eksCluster,
+            cluster: core,
+            clusterSecurityGroup: core.clusterSecurityGroup,
+            instanceProfile: core.instanceProfile,
             nodeSubnetIds: args.nodeSubnetIds,
-            vpcCni: core.vpcCni,
             instanceType: args.instanceType,
             nodePublicKey: args.nodePublicKey,
             nodeRootVolumeSize: args.nodeRootVolumeSize,
             nodeUserData: args.nodeUserData,
             minSize: args.minSize,
             maxSize: args.maxSize,
-            eksNodeAccess: core.eksNodeAccess,
-            instanceProfile: core.instanceProfile,
             amiId: args.nodeAmiId,
         }, this, core.provider);
         this.nodeSecurityGroup = defaultPool.nodeSecurityGroup;

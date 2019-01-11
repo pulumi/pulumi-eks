@@ -17,7 +17,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 
-import { VpcCni } from "./cni";
+import { Core, CoreData } from "./core";
 import transform from "./transform";
 
 /**
@@ -53,7 +53,7 @@ export interface WorkerPoolOptions {
     /**
      * The target EKS cluster.
      */
-    cluster: aws.eks.Cluster;
+    cluster: aws.eks.Cluster | Core | CoreData;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -64,11 +64,6 @@ export interface WorkerPoolOptions {
      * The instance profile to use for all nodes in this workder pool.
      */
     instanceProfile: pulumi.Input<aws.iam.InstanceProfile>;
-
-    /**
-     * The eks node access config map used by worker nodes
-     */
-    eksNodeAccess: k8s.core.v1.ConfigMap;
 
     /**
      * The security group to use for all nodes in this workder pool.
@@ -108,11 +103,6 @@ export interface WorkerPoolOptions {
      * The maximum number of worker nodes running in the cluster. Defaults to 2.
      */
     maxSize?: pulumi.Input<number>;
-
-    /**
-     * The Amazon VPC CNI plugin for this worker pool's cluster.
-     */
-    vpcCni: VpcCni;
 
     /**
      * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
@@ -159,6 +149,23 @@ export interface WorkerPoolData {
 
 export function createWorkerPool(name: string, args: WorkerPoolOptions, parent: pulumi.ComponentResource,  k8sProvider: k8s.Provider): WorkerPoolData {
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
+    let eksCluster: aws.eks.Cluster;
+    const cfnStackDeps: Array<pulumi.Resource> = [];
+
+    const clusterArg = <any>args.cluster;
+    if (clusterArg.cluster !== undefined) {
+        eksCluster = clusterArg.cluster;
+        if (clusterArg.vpcCni !== undefined) {
+            cfnStackDeps.push(clusterArg.vpcCni);
+        }
+        if (clusterArg.eksNodeAccess !== undefined) {
+            cfnStackDeps.push(clusterArg.eksNodeAccess);
+        }
+    } else {
+        // clusterArg is aws.eks.Cluster
+        eksCluster = clusterArg;
+    }
+
     if (args.nodeSecurityGroup) {
         nodeSecurityGroup = args.nodeSecurityGroup;
     } else {
@@ -194,7 +201,7 @@ export function createWorkerPool(name: string, args: WorkerPoolOptions, parent: 
                 protocol: "-1",  // all
                 cidrBlocks: [ "0.0.0.0/0" ],
             }],
-            tags: args.cluster.name.apply(n => <aws.Tags>{
+            tags: eksCluster.name.apply(n => <aws.Tags>{
                 [`kubernetes.io/cluster/${n}`]: "owned",
             }),
         }, { parent: parent });
@@ -225,7 +232,7 @@ export function createWorkerPool(name: string, args: WorkerPoolOptions, parent: 
 
     const awsRegion = pulumi.output(aws.getRegion({}, { parent: parent }));
     const userDataArg = args.nodeUserData || pulumi.output("");
-    const userdata = pulumi.all([awsRegion, args.cluster.name, args.cluster.endpoint, args.cluster.certificateAuthority, cfnStackName, userDataArg])
+    const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName, userDataArg])
         .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
             if (customUserData !== "") {
                 customUserData = `cat >/opt/user-data <<${stackName}-user-data
@@ -278,7 +285,7 @@ ${customUserData}
         args.desiredCapacity || 2,
         args.minSize || 1,
         args.maxSize || 2,
-        args.cluster.name,
+        eksCluster.name,
         workerSubnetIds.apply(JSON.stringify),
     ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
             AWSTemplateFormatVersion: '2010-09-09'
@@ -307,7 +314,7 @@ ${customUserData}
     const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
         name: cfnStackName,
         templateBody: cfnTemplateBody,
-    }, { parent: parent, dependsOn: [args.eksNodeAccess, args.vpcCni] });
+    }, { parent: parent, dependsOn: cfnStackDeps });
 
     return {
         nodeSecurityGroup: nodeSecurityGroup,
