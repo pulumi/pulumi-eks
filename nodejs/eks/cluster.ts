@@ -194,6 +194,13 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     }
     const instanceRoleARN = instanceRole.apply(r => r.arn);
 
+    if (args.customInstanceRolePolicy) {
+        const customRolePolicy = new aws.iam.RolePolicy(`${name}-EKSWorkerCustomPolicy`, {
+            role: instanceRole,
+            policy: args.customInstanceRolePolicy,
+        });
+    }
+
     // Enable access to the EKS cluster for worker nodes.
     const instanceRoleMapping: RoleMapping = {
         roleArn: instanceRoleARN,
@@ -289,6 +296,11 @@ export interface ClusterOptions {
      * The instance role to use for all nodes in this node group.
      */
     instanceRole?: pulumi.Input<aws.iam.Role>;
+
+    /**
+     * Attach a custom role policy to worker node instance role
+     */
+    customInstanceRolePolicy?: pulumi.Input<string>;
 
     /**
      * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
