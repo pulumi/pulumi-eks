@@ -288,11 +288,20 @@ ${customUserData}
     }, { parent: parent });
 
     const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(args.clusterSubnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+    if (args.desiredCapacity === undefined) {
+        args.desiredCapacity = 2;
+    }
+    if (args.minSize === undefined) {
+        args.minSize = 1;
+    }
+    if (args.maxSize === undefined) {
+        args.maxSize = 2;
+    }
     const cfnTemplateBody = pulumi.all([
         nodeLaunchConfiguration.id,
-        args.desiredCapacity || 2,
-        args.minSize || 1,
-        args.maxSize || 2,
+        args.desiredCapacity,
+        args.minSize,
+        args.maxSize,
         eksCluster.name,
         workerSubnetIds.apply(JSON.stringify),
     ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
