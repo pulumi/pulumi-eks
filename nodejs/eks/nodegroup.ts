@@ -83,6 +83,11 @@ export interface NodeGroupOptions {
     nodePublicKey?: pulumi.Input<string>;
 
     /**
+     * Name of the key pair to use for SSH access to worker nodes.
+     */
+    keyName?: pulumi.Input<string>;
+
+    /**
      * The size in GiB of a cluster node's root volume. Defaults to 20.
      */
     nodeRootVolumeSize?: pulumi.Input<number>;
@@ -233,7 +238,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         .apply(([id]) => id);
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
-    let keyName: pulumi.Output<string> | undefined;
+    let keyName = args.keyName;
     if (args.nodePublicKey) {
         const key = new aws.ec2.KeyPair(`${name}-keyPair`, {
             publicKey: args.nodePublicKey,
