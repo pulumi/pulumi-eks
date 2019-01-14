@@ -120,6 +120,11 @@ export interface NodeGroupOptions {
 	 * Use the information provided by AWS if you want to build your own AMI.
      */
     amiId?: pulumi.Input<string>;
+
+    /**
+     * Custom k8s node labels to be attached to each woker node
+     */
+    labels?: { [key: string]: string };
 }
 
 /**
@@ -255,6 +260,18 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
 
     const awsRegion = pulumi.output(aws.getRegion({}, { parent: parent }));
     const userDataArg = args.nodeUserData || pulumi.output("");
+
+    let bootstrapExtraArgs = "";
+    if (args.labels) {
+        const parts = [];
+        for (const key of Object.keys(args.labels)) {
+            parts.push(key + "=" + args.labels[key]);
+        }
+        if (parts.length > 0) {
+            bootstrapExtraArgs = "--kubelet-extra-args --node-labels=" + parts.join();
+        }
+    }
+
     const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName, userDataArg])
         .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
             if (customUserData !== "") {
@@ -268,7 +285,7 @@ chmod +x /opt/user-data
 
             return `#!/bin/bash
 
-/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"
+/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}" ${bootstrapExtraArgs}
 ${customUserData}
 /opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
 `;
