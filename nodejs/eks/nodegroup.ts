@@ -234,6 +234,11 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         securityGroupId: args.clusterSecurityGroup.id,
         sourceSecurityGroupId: nodeSecurityGroup.id,
     }, { parent: parent });
+
+    // This apply is necessary in s.t. the launchConfiguration picks up a
+    // dependency on the eksClusterIngressRule. The nodes may fail to
+    // connect to the cluster if we attempt to create them before the
+    // ingress rule is applied.
     const nodeSecurityGroupId = pulumi.all([nodeSecurityGroup.id, eksClusterIngressRule.id])
         .apply(([id]) => id);
 
