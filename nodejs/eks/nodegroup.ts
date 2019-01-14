@@ -61,6 +61,11 @@ export interface NodeGroupOptions {
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
 
     /**
+     * Bidding price for spot instance. If set, only spot instances will be added as worker node
+     */
+    spotPrice?: pulumi.Input<string>;
+
+    /**
      * The instance profile to use for all nodes in this worker node group.
      */
     instanceProfile: pulumi.Input<aws.iam.InstanceProfile>;
@@ -279,6 +284,7 @@ ${customUserData}
         iamInstanceProfile: args.instanceProfile,
         keyName: keyName,
         securityGroups: [ nodeSecurityGroupId ],
+        spotPrice: args.spotPrice,
         rootBlockDevice: {
             volumeSize: args.nodeRootVolumeSize || 20, // GiB
             volumeType: "gp2", // default is "standard"
@@ -296,6 +302,10 @@ ${customUserData}
     }
     if (args.maxSize === undefined) {
         args.maxSize = 2;
+    }
+    let minInstancesInService = 1;
+    if (args.spotPrice) {
+        minInstancesInService = 0;
     }
     const cfnTemplateBody = pulumi.all([
         nodeLaunchConfiguration.id,
@@ -324,7 +334,7 @@ ${customUserData}
                             PropagateAtLaunch: 'true'
                         UpdatePolicy:
                           AutoScalingRollingUpdate:
-                            MinInstancesInService: '1'
+                            MinInstancesInService: '${minInstancesInService}'
                             MaxBatchSize: '1'
                 `);
 
