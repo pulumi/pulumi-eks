@@ -357,6 +357,11 @@ export interface ClusterOptions {
     storageClasses?: { [name: string]: StorageClass } | EBSVolumeType;
 
     /**
+     * If this toggle is set to true, the EKS cluster will be created without node group attached.
+     */
+    skipDefaultNodeGroup?: boolean;
+
+    /**
      * Whether or not to deploy the Kubernetes dashboard to the cluster. If the dashboard is deployed, it can be
      * accessed as follows:
      * 1. Retrieve an authentication token for the dashboard by running the following and copying the value of `token`
@@ -412,7 +417,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The security group for the cluster's nodes.
      */
-    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
+    public readonly nodeSecurityGroup?: aws.ec2.SecurityGroup;
 
     /**
      * The EKS cluster.
@@ -439,27 +444,31 @@ export class Cluster extends pulumi.ComponentResource {
         this.eksCluster = core.cluster;
         this.instanceRole = core.instanceProfile.role;
 
-        // Create the worker node group and grant the workers access to the API server.
-        const defaultGroup = createNodeGroup(name, {
-            vpcId: core.vpcId,
-            clusterSubnetIds: core.subnetIds,
-            cluster: core,
-            clusterSecurityGroup: core.clusterSecurityGroup,
-            instanceProfile: core.instanceProfile,
-            nodeSubnetIds: args.nodeSubnetIds,
-            instanceType: args.instanceType,
-            nodePublicKey: args.nodePublicKey,
-            nodeRootVolumeSize: args.nodeRootVolumeSize,
-            nodeUserData: args.nodeUserData,
-            minSize: args.minSize,
-            maxSize: args.maxSize,
-            amiId: args.nodeAmiId,
-        }, this, core.provider);
-        this.nodeSecurityGroup = defaultGroup.nodeSecurityGroup;
+        const configDeps = [core.kubeconfig];
+        if (!args.skipDefaultNodeGroup) {
+            // Create the worker node group and grant the workers access to the API server.
+            const defaultGroup = createNodeGroup(name, {
+                vpcId: core.vpcId,
+                clusterSubnetIds: core.subnetIds,
+                cluster: core,
+                clusterSecurityGroup: core.clusterSecurityGroup,
+                instanceProfile: core.instanceProfile,
+                nodeSubnetIds: args.nodeSubnetIds,
+                instanceType: args.instanceType,
+                nodePublicKey: args.nodePublicKey,
+                nodeRootVolumeSize: args.nodeRootVolumeSize,
+                nodeUserData: args.nodeUserData,
+                minSize: args.minSize,
+                maxSize: args.maxSize,
+                amiId: args.nodeAmiId,
+            }, this, core.provider);
+            this.nodeSecurityGroup = defaultGroup.nodeSecurityGroup;
+            configDeps.push(defaultGroup.cfnStack.id);
+        }
 
         // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
         // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
-        this.kubeconfig = pulumi.all([defaultGroup.cfnStack.id, core.kubeconfig]).apply(([_, kubeconfig]) => kubeconfig);
+        this.kubeconfig = pulumi.all(configDeps).apply(([kubeconfig]) => kubeconfig);
 
         // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
         // in order to help ensure that worker nodes are available before the provider can be used.
