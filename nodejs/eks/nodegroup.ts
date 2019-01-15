@@ -21,16 +21,16 @@ import { Cluster, CoreData } from "./cluster";
 import transform from "./transform";
 
 /**
- * WorkerPoolOptions describes the configuration options accepted by a WorkerPool component.
+ * NodeGroupOptions describes the configuration options accepted by a NodeGroup component.
  */
-export interface WorkerPoolOptions {
+export interface NodeGroupOptions {
     /**
-     * The VPC in which to create the worker pool.
+     * The VPC in which to create the worker node group.
      */
     vpcId: pulumi.Input<string>;
 
     /**
-     * The IDs of the cluster subnets to filter for worker pool subnet ids.
+     * The IDs of the cluster subnets to filter for worker node group subnet ids.
      *
      * If the list of subnets includes both public and private subnets, the Kubernetes API
      * server and the worker nodes will only be attached to the private subnets. See
@@ -39,7 +39,7 @@ export interface WorkerPoolOptions {
     clusterSubnetIds: pulumi.Input<pulumi.Input<string[]>>;
 
     /**
-     * The IDs of the explicit node subnets to attach to the worker pool.
+     * The IDs of the explicit node subnets to attach to the worker node group.
      *
      * This option overrides clusterSubnetIds option.
      */
@@ -61,12 +61,12 @@ export interface WorkerPoolOptions {
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
 
     /**
-     * The instance profile to use for all nodes in this workder pool.
+     * The instance profile to use for all nodes in this worker node group.
      */
     instanceProfile: pulumi.Input<aws.iam.InstanceProfile>;
 
     /**
-     * The security group to use for all nodes in this workder pool.
+     * The security group to use for all nodes in this worker node group.
      */
     nodeSecurityGroup?: aws.ec2.SecurityGroup;
 
@@ -113,9 +113,9 @@ export interface WorkerPoolOptions {
 }
 
 /**
- * WorkerPool is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
+ * NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
  */
-export class WorkerPool extends pulumi.ComponentResource {
+export class NodeGroup extends pulumi.ComponentResource {
     /**
      * The security group for the cluster's nodes.
      */
@@ -129,25 +129,25 @@ export class WorkerPool extends pulumi.ComponentResource {
      * @param args The arguments for this cluster.
      * @param opts A bag of options that control this copmonent's behavior.
      */
-    constructor(name: string, args: WorkerPoolOptions, opts?: pulumi.ComponentResourceOptions) {
-        super("eks:index:WorkerPool", name, args, opts);
+    constructor(name: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
+        super("eks:index:NodeGroup", name, args, opts);
 
         const k8sProvider = this.getProvider("kubernetes:core:v1/ConfigMap");
         if (k8sProvider === undefined) {
-            throw new pulumi.RunError("a 'kubernetes' provider must be specified for a 'WorkerPool'");
+            throw new pulumi.RunError("a 'kubernetes' provider must be specified for a 'NodeGroup'");
         }
-        const pool = createWorkerPool(name, args, this, k8sProvider);
-        this.nodeSecurityGroup = pool.nodeSecurityGroup;
+        const group = createNodeGroup(name, args, this, k8sProvider);
+        this.nodeSecurityGroup = group.nodeSecurityGroup;
         this.registerOutputs(undefined);
     }
 }
 
-export interface WorkerPoolData {
+export interface NodeGroupData {
     nodeSecurityGroup: aws.ec2.SecurityGroup;
     cfnStack: aws.cloudformation.Stack;
 }
 
-export function createWorkerPool(name: string, args: WorkerPoolOptions, parent: pulumi.ComponentResource,  k8sProvider: k8s.Provider): WorkerPoolData {
+export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource,  k8sProvider: k8s.Provider): NodeGroupData {
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
     let eksCluster: aws.eks.Cluster;
     const cfnStackDeps: Array<pulumi.Resource> = [];

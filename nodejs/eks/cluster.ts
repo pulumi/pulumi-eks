@@ -20,9 +20,9 @@ import which = require("which");
 
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
+import { createNodeGroup } from "./nodegroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
-import { createWorkerPool } from "./workerpool";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -286,8 +286,8 @@ export interface ClusterOptions {
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
 
     /**
-    * The instance role to use for all nodes in this worker pool.
-    */
+     * The instance role to use for all nodes in this node group.
+     */
     instanceRole?: pulumi.Input<aws.iam.Role>;
 
     /**
@@ -427,8 +427,8 @@ export class Cluster extends pulumi.ComponentResource {
         this.eksCluster = core.cluster;
         this.instanceRole = core.instanceProfile.role;
 
-        // Create the worker pool and grant the workers access to the API server.
-        const defaultPool = createWorkerPool(name, {
+        // Create the worker node group and grant the workers access to the API server.
+        const defaultGroup = createNodeGroup(name, {
             vpcId: core.vpcId,
             clusterSubnetIds: core.subnetIds,
             cluster: core,
@@ -443,11 +443,11 @@ export class Cluster extends pulumi.ComponentResource {
             maxSize: args.maxSize,
             amiId: args.nodeAmiId,
         }, this, core.provider);
-        this.nodeSecurityGroup = defaultPool.nodeSecurityGroup;
+        this.nodeSecurityGroup = defaultGroup.nodeSecurityGroup;
 
         // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
         // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
-        this.kubeconfig = pulumi.all([defaultPool.cfnStack.id, core.kubeconfig]).apply(([_, kubeconfig]) => kubeconfig);
+        this.kubeconfig = pulumi.all([defaultGroup.cfnStack.id, core.kubeconfig]).apply(([_, kubeconfig]) => kubeconfig);
 
         // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
         // in order to help ensure that worker nodes are available before the provider can be used.
