@@ -13,5 +13,7 @@
 // limitations under the License.
 
 export { Cluster } from "./cluster";
+export { createNodeGroup, NodeGroup } from "./nodegroup";
+export { createDashboard } from "./dashboard";
 export { VpcCniOptions } from "./cni";
 export * from "./storageclass";
