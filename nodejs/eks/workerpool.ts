@@ -17,7 +17,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 
-import { Core, CoreData } from "./core";
+import { Cluster, CoreData } from "./cluster";
 import transform from "./transform";
 
 /**
@@ -53,7 +53,7 @@ export interface WorkerPoolOptions {
     /**
      * The target EKS cluster.
      */
-    cluster: aws.eks.Cluster | Core | CoreData;
+    cluster: aws.eks.Cluster | CoreData | Cluster;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -153,17 +153,25 @@ export function createWorkerPool(name: string, args: WorkerPoolOptions, parent: 
     const cfnStackDeps: Array<pulumi.Resource> = [];
 
     const clusterArg = <any>args.cluster;
-    if (clusterArg.cluster !== undefined) {
-        eksCluster = clusterArg.cluster;
-        if (clusterArg.vpcCni !== undefined) {
+    if (clusterArg.endpoint !== undefined) {
+        // aws.eks.Cluster
+        eksCluster = clusterArg;
+    } else {
+        let core: CoreData;
+        if (clusterArg.cluster !== undefined) {
+            // ClusterData
+            core = clusterArg;
+        } else {
+            // Cluster
+            core = clusterArg.core;
+        }
+        eksCluster = core.cluster;
+        if (core.vpcCni !== undefined) {
             cfnStackDeps.push(clusterArg.vpcCni);
         }
-        if (clusterArg.eksNodeAccess !== undefined) {
+        if (core.eksNodeAccess !== undefined) {
             cfnStackDeps.push(clusterArg.eksNodeAccess);
         }
-    } else {
-        // clusterArg is aws.eks.Cluster
-        eksCluster = clusterArg;
     }
 
     if (args.nodeSecurityGroup) {

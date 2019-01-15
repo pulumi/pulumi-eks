@@ -17,7 +17,6 @@
     "files": [
         "cluster.ts",
         "cni.ts",
-        "core.ts",
         "workerpool.ts",
         "dashboard.ts",
         "index.ts",
