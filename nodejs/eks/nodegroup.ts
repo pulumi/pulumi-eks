@@ -18,6 +18,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 
 import { Cluster, CoreData } from "./cluster";
+import { createNodeGroupSecurityGroup } from "./securitygroup";
 import transform from "./transform";
 
 /**
@@ -74,6 +75,11 @@ export interface NodeGroupOptions {
      * The security group to use for all nodes in this worker node group.
      */
     nodeSecurityGroup?: aws.ec2.SecurityGroup;
+
+    /**
+     * The ingress rule that gives node group access.
+     */
+    clusterIngressRule?: aws.ec2.SecurityGroupRule;
 
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
@@ -189,56 +195,28 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         }
     }
 
+    let eksClusterIngressRule: aws.ec2.SecurityGroupRule = args.clusterIngressRule!;
     if (args.nodeSecurityGroup) {
         nodeSecurityGroup = args.nodeSecurityGroup;
+        if (eksClusterIngressRule === undefined) {
+            throw new pulumi.RunError(`invalid args for node group ${name}, eksClusterIngressRule is required when nodeSecurityGroup is manually speicified`);
+        }
     } else {
-        nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
+        nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
             vpcId: args.vpcId,
-            ingress: [
-                {
-                    description: "Allow nodes to communicate with each other",
-                    fromPort: 0,
-                    toPort: 0,
-                    protocol: "-1", // all
-                    self: true,
-                },
-                {
-                    description: "Allow worker Kubelets and pods to receive communication from the cluster control plane",
-                    fromPort: 1025,
-                    toPort: 65535,
-                    protocol: "tcp",
-                    securityGroups: [ args.clusterSecurityGroup.id ],
-                },
-                {
-                    description: "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
-                    fromPort: 443,
-                    toPort: 443,
-                    protocol: "tcp",
-                    securityGroups: [ args.clusterSecurityGroup.id ],
-                },
-            ],
-            egress: [{
-                description: "Allow internet access.",
-                fromPort: 0,
-                toPort: 0,
-                protocol: "-1",  // all
-                cidrBlocks: [ "0.0.0.0/0" ],
-            }],
-            tags: eksCluster.name.apply(n => <aws.Tags>{
-                [`kubernetes.io/cluster/${n}`]: "owned",
-            }),
+            clusterSecurityGroup: args.clusterSecurityGroup,
+            eksCluster: eksCluster,
+        }, parent);
+        eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
+            description: "Allow pods to communicate with the cluster API Server",
+            type: "ingress",
+            fromPort: 443,
+            toPort: 443,
+            protocol: "tcp",
+            securityGroupId: args.clusterSecurityGroup.id,
+            sourceSecurityGroupId: nodeSecurityGroup.id,
         }, { parent: parent });
     }
-
-    const eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
-        description: "Allow pods to communicate with the cluster API Server",
-        type: "ingress",
-        fromPort: 443,
-        toPort: 443,
-        protocol: "tcp",
-        securityGroupId: args.clusterSecurityGroup.id,
-        sourceSecurityGroupId: nodeSecurityGroup.id,
-    }, { parent: parent });
 
     // This apply is necessary in s.t. the launchConfiguration picks up a
     // dependency on the eksClusterIngressRule. The nodes may fail to
