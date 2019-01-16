@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export { Cluster } from "./cluster";
+export { Cluster, ClusterNodeGroupOptions } from "./cluster";
 export { createNodeGroup, NodeGroup } from "./nodegroup";
 export { createDashboard } from "./dashboard";
 export { VpcCniOptions } from "./cni";
