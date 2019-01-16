@@ -19,6 +19,7 @@
         "cni.ts",
         "nodegroup.ts",
         "dashboard.ts",
+        "securitygroup.ts",
         "index.ts",
         "servicerole.ts",
         "storageclass.ts"
