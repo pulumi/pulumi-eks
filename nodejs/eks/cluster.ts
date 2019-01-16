@@ -20,7 +20,7 @@ import which = require("which");
 
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
-import { createNodeGroup } from "./nodegroup";
+import { createNodeGroup, NodeGroupData } from "./nodegroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 
@@ -384,6 +384,85 @@ export interface ClusterOptions {
 }
 
 /**
+ * NodeGroupOptions describes the configuration options accepted by a cluster
+ * to create its own node groups. It's a subset of NodeGroupOptions.
+ */
+export interface ClusterNodeGroupOptions {
+    /**
+     * The IDs of the explicit node subnets to attach to the worker node group.
+     *
+     * This option overrides clusterSubnetIds option.
+     */
+    nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+     */
+    instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+
+    /**
+     * Bidding price for spot instance. If set, only spot instances will be added as worker node
+     */
+    spotPrice?: pulumi.Input<string>;
+
+   /**
+     * The security group to use for all nodes in this worker node group.
+     */
+    nodeSecurityGroup?: aws.ec2.SecurityGroup;
+
+    /**
+     * Public key material for SSH access to worker nodes. See allowed formats at:
+     * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+     * If not provided, no SSH access is enabled on VMs.
+     */
+    nodePublicKey?: pulumi.Input<string>;
+
+    /**
+     * Name of the key pair to use for SSH access to worker nodes.
+     */
+    keyName?: pulumi.Input<string>;
+
+    /**
+     * The size in GiB of a cluster node's root volume. Defaults to 20.
+     */
+    nodeRootVolumeSize?: pulumi.Input<number>;
+
+    /**
+     * Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node
+     * signals its readiness to the managing CloudFormation stack. This code must be a typical user data script:
+     * critically it must begin with an interpreter directive (i.e. a `#!`).
+     */
+    nodeUserData?: pulumi.Input<string>;
+
+    /**
+     * The number of worker nodes that should be running in the cluster. Defaults to 2.
+     */
+    desiredCapacity?: pulumi.Input<number>;
+
+    /**
+     * The minimum number of worker nodes running in the cluster. Defaults to 1.
+     */
+    minSize?: pulumi.Input<number>;
+
+    /**
+     * The maximum number of worker nodes running in the cluster. Defaults to 2.
+     */
+    maxSize?: pulumi.Input<number>;
+
+    /**
+     * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
+	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+	 * Use the information provided by AWS if you want to build your own AMI.
+     */
+    amiId?: pulumi.Input<string>;
+
+    /**
+     * Custom k8s node labels to be attached to each woker node
+     */
+    labels?: { [key: string]: string };
+}
+
+/**
  * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker
  * nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
  */
@@ -425,6 +504,11 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly eksCluster: aws.eks.Cluster;
 
     /**
+     * The EKS cluster and it's dependencies.
+     */
+    public readonly core: CoreData;
+
+    /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
      * requested.
      *
@@ -440,6 +524,7 @@ export class Cluster extends pulumi.ComponentResource {
         // Create the core resources required by the cluster.
         args.storageClasses = args.storageClasses || "gp2";
         const core = createCore(name, args, this);
+        this.core = core;
         this.clusterSecurityGroup = core.clusterSecurityGroup;
         this.eksCluster = core.cluster;
         this.instanceRole = core.instanceProfile.role;
@@ -482,5 +567,23 @@ export class Cluster extends pulumi.ComponentResource {
         }
 
         this.registerOutputs({ kubeconfig: this.kubeconfig });
+    }
+
+    createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroupData {
+        return createNodeGroup(name, {
+            vpcId: this.core.vpcId,
+            clusterSubnetIds: this.core.subnetIds,
+            cluster: this.core,
+            clusterSecurityGroup: this.core.clusterSecurityGroup,
+            instanceProfile: this.core.instanceProfile,
+            nodeSubnetIds: args.nodeSubnetIds,
+            instanceType: args.instanceType,
+            nodePublicKey: args.nodePublicKey,
+            nodeRootVolumeSize: args.nodeRootVolumeSize,
+            nodeUserData: args.nodeUserData,
+            minSize: args.minSize,
+            maxSize: args.maxSize,
+            amiId: args.amiId,
+        }, this, this.provider);
     }
 }
