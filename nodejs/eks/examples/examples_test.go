@@ -47,6 +47,16 @@ func Test_Examples(t *testing.T) {
 			},
 			ExpectRefreshChanges: true,
 		},
+		{
+			Dir: path.Join(cwd, "./nodegroup"),
+			Config: map[string]string{
+				"aws:region": region,
+			},
+			Dependencies: []string{
+				"@pulumi/eks",
+			},
+			ExpectRefreshChanges: true,
+		},
 	}
 	for _, ex := range examples {
 		example := ex.With(integration.ProgramTestOptions{
