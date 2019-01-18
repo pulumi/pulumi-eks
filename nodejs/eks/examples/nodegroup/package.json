@@ -1,0 +1,14 @@
+{
+    "name": "cluster",
+    "devDependencies": {
+        "typescript": "^2.7.2",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "^0.15.0",
+        "sync-request": "^6.0.0"
+    },
+    "peerDependencies": {
+        "@pulumi/eks": "latest"
+    }
+}
