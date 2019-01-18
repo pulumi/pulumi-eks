@@ -296,28 +296,28 @@ ${customUserData}
         eksCluster.name,
         workerSubnetIds.apply(JSON.stringify),
     ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
-            AWSTemplateFormatVersion: '2010-09-09'
-            Resources:
-                NodeGroup:
-                    Type: AWS::AutoScaling::AutoScalingGroup
-                    Properties:
-                      DesiredCapacity: ${desiredCapacity}
-                      LaunchConfigurationName: ${launchConfig}
-                      MinSize: ${minSize}
-                      MaxSize: ${maxSize}
-                      VPCZoneIdentifier: ${vpcSubnetIds}
-                      Tags:
-                      - Key: Name
-                        Value: ${clusterName}-worker
-                        PropagateAtLaunch: 'true'
-                      - Key: kubernetes.io/cluster/${clusterName}
-                        Value: 'owned'
-                        PropagateAtLaunch: 'true'
-                    UpdatePolicy:
-                      AutoScalingRollingUpdate:
-                        MinInstancesInService: '1'
-                        MaxBatchSize: '1'
-            `);
+                AWSTemplateFormatVersion: '2010-09-09'
+                Resources:
+                    NodeGroup:
+                        Type: AWS::AutoScaling::AutoScalingGroup
+                        Properties:
+                          DesiredCapacity: ${desiredCapacity}
+                          LaunchConfigurationName: ${launchConfig}
+                          MinSize: ${minSize}
+                          MaxSize: ${maxSize}
+                          VPCZoneIdentifier: ${vpcSubnetIds}
+                          Tags:
+                          - Key: Name
+                            Value: ${clusterName}-worker
+                            PropagateAtLaunch: 'true'
+                          - Key: kubernetes.io/cluster/${clusterName}
+                            Value: 'owned'
+                            PropagateAtLaunch: 'true'
+                        UpdatePolicy:
+                          AutoScalingRollingUpdate:
+                            MinInstancesInService: '1'
+                            MaxBatchSize: '1'
+                `);
 
     const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
         name: cfnStackName,
