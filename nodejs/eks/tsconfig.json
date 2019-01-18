@@ -17,6 +17,8 @@
     "files": [
         "cluster.ts",
         "cni.ts",
+        "nodegroup.ts",
+        "dashboard.ts",
         "index.ts",
         "servicerole.ts",
         "storageclass.ts"
