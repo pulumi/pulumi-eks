@@ -20,7 +20,7 @@ import which = require("which");
 
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
-import { createNodeGroup, NodeGroupData } from "./nodegroup";
+import { createNodeGroup, NodeGroupData, NodeGroupOptions } from "./nodegroup";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
@@ -595,23 +595,14 @@ export class Cluster extends pulumi.ComponentResource {
     }
 
     createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroupData {
-        return createNodeGroup(name, {
-            vpcId: this.core.vpcId,
-            clusterSubnetIds: this.core.subnetIds,
-            cluster: this.core,
-            clusterSecurityGroup: this.core.clusterSecurityGroup,
-            instanceProfile: this.core.instanceProfile,
-            nodeSubnetIds: args.nodeSubnetIds,
-            nodeSecurityGroup: this.nodeSecurityGroup,
-            clusterIngressRule: this.eksClusterIngressRule,
-            instanceType: args.instanceType,
-            nodePublicKey: args.nodePublicKey,
-            nodeRootVolumeSize: args.nodeRootVolumeSize,
-            nodeUserData: args.nodeUserData,
-            minSize: args.minSize,
-            maxSize: args.maxSize,
-            amiId: args.amiId,
-            labels: args.labels,
-        }, this, this.provider);
+        const ngArgs = args as NodeGroupOptions;
+        ngArgs.vpcId = this.core.vpcId;
+        ngArgs.clusterSubnetIds = this.core.subnetIds;
+        ngArgs.cluster = this.core;
+        ngArgs.clusterSecurityGroup = this.core.clusterSecurityGroup;
+        ngArgs.instanceProfile = this.core.instanceProfile;
+        ngArgs.nodeSecurityGroup = this.nodeSecurityGroup;
+        ngArgs.clusterIngressRule = this.eksClusterIngressRule;
+        return createNodeGroup(name, ngArgs, this, this.provider);
     }
 }
