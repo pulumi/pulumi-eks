@@ -15,4 +15,4 @@
 export { Cluster, ClusterOptions, ClusterNodeGroupOptions, CoreData, RoleMapping, UserMapping } from "./cluster";
 export { NodeGroup, NodeGroupOptions } from "./nodegroup";
 export { VpcCni, VpcCniOptions } from "./cni";
-export * from "./storageclass";
+export { StorageClass, EBSVolumeType, createStorageClass } from "./storageclass";
