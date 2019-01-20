@@ -86,7 +86,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     try {
         which.sync("aws-iam-authenticator");
     } catch (err) {
-        throw new pulumi.RunError("Could not find aws-iam-authenticator for EKS. See https://github.com/pulumi/eks#installing for installation instructions.");
+        throw new Error("Could not find aws-iam-authenticator for EKS. See https://github.com/pulumi/eks#installing for installation instructions.");
     }
 
     // If no VPC was specified, use the default VPC.

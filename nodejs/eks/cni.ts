@@ -128,7 +128,7 @@ export class VpcCni extends pulumi.dynamic.Resource {
         try {
             which.sync("kubectl");
         } catch (err) {
-            throw new pulumi.RunError("Could not set VPC CNI options: kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.");
+            throw new Error("Could not set VPC CNI options: kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.");
         }
 
         const yamlPath = path.join(__dirname, "cni", "aws-k8s-cni.yaml");
