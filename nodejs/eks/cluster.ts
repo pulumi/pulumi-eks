@@ -596,11 +596,7 @@ export class Cluster extends pulumi.ComponentResource {
 
     createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroupData {
         return createNodeGroup(name, {
-            vpcId: this.core.vpcId,
-            clusterSubnetIds: this.core.subnetIds,
             cluster: this.core,
-            clusterSecurityGroup: this.core.clusterSecurityGroup,
-            instanceProfile: this.core.instanceProfile,
             nodeSubnetIds: args.nodeSubnetIds,
             nodeSecurityGroup: this.nodeSecurityGroup,
             clusterIngressRule: this.eksClusterIngressRule,
