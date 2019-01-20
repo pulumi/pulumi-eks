@@ -109,14 +109,24 @@ export interface NodeGroupOptions {
     labels?: { [key: string]: string };
 }
 
+export interface NodeGroupData {
+    nodeSecurityGroup: aws.ec2.SecurityGroup;
+    cfnStack: aws.cloudformation.Stack;
+}
+
 /**
  * NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
  */
-export class NodeGroup extends pulumi.ComponentResource {
+export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData {
     /**
      * The security group for the cluster's nodes.
      */
     public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
+
+    /**
+     * The CloudFormation Stack which defines the Node AutoScalingGroup.
+     */
+    cfnStack: aws.cloudformation.Stack;
 
     /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
@@ -135,13 +145,9 @@ export class NodeGroup extends pulumi.ComponentResource {
         }
         const group = createNodeGroup(name, args, this, k8sProvider);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
+        this.cfnStack = group.cfnStack;
         this.registerOutputs(undefined);
     }
-}
-
-export interface NodeGroupData {
-    nodeSecurityGroup: aws.ec2.SecurityGroup;
-    cfnStack: aws.cloudformation.Stack;
 }
 
 type NodeGroupOptionsCluster = CoreData | Cluster;
