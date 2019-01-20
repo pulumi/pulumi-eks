@@ -608,6 +608,7 @@ export class Cluster extends pulumi.ComponentResource {
             amiId: args.amiId,
         }, {
             parent: this,
+            providers: { kubernetes: this.provider },
         });
     }
 }
