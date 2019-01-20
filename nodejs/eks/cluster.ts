@@ -65,16 +65,19 @@ export interface UserMapping {
     groups: pulumi.Input<pulumi.Input<string>[]>;
 }
 
+/**
+ * CoreData defines the core set of data associated with an EKS cluster, including the network in which is runs.
+ */
 export interface CoreData {
+    cluster: aws.eks.Cluster;
     vpcId: pulumi.Output<string>;
     subnetIds: pulumi.Output<string[]>;
-    cluster: aws.eks.Cluster;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
-    eksNodeAccess: k8s.core.v1.ConfigMap;
-    instanceProfile: aws.iam.InstanceProfile;
-    kubeconfig: pulumi.Output<any>;
     provider: k8s.Provider;
-    vpcCni: VpcCni;
+    instanceProfile: aws.iam.InstanceProfile;
+    eksNodeAccess?: k8s.core.v1.ConfigMap;
+    kubeconfig?: pulumi.Output<any>;
+    vpcCni?: VpcCni;
 }
 
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
@@ -556,11 +559,7 @@ export class Cluster extends pulumi.ComponentResource {
         if (!args.skipDefaultNodeGroup) {
             // Create the worker node group and grant the workers access to the API server.
             const defaultGroup = createNodeGroup(name, {
-                vpcId: core.vpcId,
-                clusterSubnetIds: core.subnetIds,
                 cluster: core,
-                clusterSecurityGroup: core.clusterSecurityGroup,
-                instanceProfile: core.instanceProfile,
                 nodeSubnetIds: args.nodeSubnetIds,
                 nodeSecurityGroup: this.nodeSecurityGroup,
                 clusterIngressRule: this.eksClusterIngressRule,
