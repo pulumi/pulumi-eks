@@ -20,7 +20,7 @@ import which = require("which");
 
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
-import { createNodeGroup, NodeGroupData } from "./nodegroup";
+import { createNodeGroup, NodeGroup } from "./nodegroup";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
@@ -593,12 +593,12 @@ export class Cluster extends pulumi.ComponentResource {
         this.registerOutputs({ kubeconfig: this.kubeconfig });
     }
 
-    createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroupData {
-        return createNodeGroup(name, {
+    createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup {
+        return new NodeGroup(name, {
             cluster: this.core,
-            nodeSubnetIds: args.nodeSubnetIds,
             nodeSecurityGroup: this.nodeSecurityGroup,
             clusterIngressRule: this.eksClusterIngressRule,
+            nodeSubnetIds: args.nodeSubnetIds,
             instanceType: args.instanceType,
             nodePublicKey: args.nodePublicKey,
             nodeRootVolumeSize: args.nodeRootVolumeSize,
@@ -606,6 +606,8 @@ export class Cluster extends pulumi.ComponentResource {
             minSize: args.minSize,
             maxSize: args.maxSize,
             amiId: args.amiId,
-        }, this, this.provider);
+        }, {
+            parent: this,
+        });
     }
 }
