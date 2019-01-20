@@ -141,7 +141,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
 
         const k8sProvider = this.getProvider("kubernetes:core:v1/ConfigMap");
         if (k8sProvider === undefined) {
-            throw new pulumi.RunError("a 'kubernetes' provider must be specified for a 'NodeGroup'");
+            throw new Error("a 'kubernetes' provider must be specified for a 'NodeGroup'");
         }
         const group = createNodeGroup(name, args, this, k8sProvider);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
@@ -173,7 +173,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     if (args.nodeSecurityGroup) {
         nodeSecurityGroup = args.nodeSecurityGroup;
         if (eksClusterIngressRule === undefined) {
-            throw new pulumi.RunError(`invalid args for node group ${name}, eksClusterIngressRule is required when nodeSecurityGroup is manually speicified`);
+            throw new Error(`invalid args for node group ${name}, eksClusterIngressRule is required when nodeSecurityGroup is manually speicified`);
         }
     } else {
         nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
