@@ -26,18 +26,24 @@ import transform from "./transform";
  */
 export interface NodeGroupOptions {
     /**
-     * The VPC in which to create the worker node group.
+     * The target EKS cluster.
      */
-    vpcId: pulumi.Input<string>;
+    cluster: aws.eks.Cluster | CoreData | Cluster;
 
     /**
-     * The IDs of the cluster subnets to filter for worker node group subnet ids.
+     * The VPC in which to create the worker node group. Required if [cluster] is a raw `aws.eks.Cluster`.
+     */
+    vpcId?: pulumi.Input<string>;
+
+    /**
+     * The IDs of the cluster subnets to filter for worker node group subnet ids.  Required if [cluster] is a raw
+     * `aws.eks.Cluster`.
      *
-     * If the list of subnets includes both public and private subnets, the Kubernetes API
-     * server and the worker nodes will only be attached to the private subnets. See
+     * If the list of subnets includes both public and private subnets, the Kubernetes API server and the worker nodes
+     * will only be attached to the private subnets. See
      * https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html for more details.
      */
-    clusterSubnetIds: pulumi.Input<pulumi.Input<string[]>>;
+    clusterSubnetIds?: pulumi.Input<pulumi.Input<string[]>>;
 
     /**
      * The IDs of the explicit node subnets to attach to the worker node group.
@@ -47,14 +53,9 @@ export interface NodeGroupOptions {
     nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
-     * The security group associated with the EKS cluster.
+     * The security group associated with the EKS cluster.  Required if [cluster] is a raw `aws.eks.Cluster`.
      */
-    clusterSecurityGroup: aws.ec2.SecurityGroup;
-
-    /**
-     * The target EKS cluster.
-     */
-    cluster: aws.eks.Cluster | CoreData | Cluster;
+    clusterSecurityGroup?: aws.ec2.SecurityGroup;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -67,9 +68,9 @@ export interface NodeGroupOptions {
     spotPrice?: pulumi.Input<string>;
 
     /**
-     * The instance profile to use for all nodes in this worker node group.
+     * The instance profile to use for all nodes in this worker node group. Required if [cluster] is a raw `aws.eks.Cluster`.
      */
-    instanceProfile: pulumi.Input<aws.iam.InstanceProfile>;
+    instanceProfile?: pulumi.Input<aws.iam.InstanceProfile>;
 
     /**
      * The security group to use for all nodes in this worker node group.
@@ -168,18 +169,48 @@ export interface NodeGroupData {
     cfnStack: aws.cloudformation.Stack;
 }
 
+type NodeGroupOptionsCluster = aws.eks.Cluster | CoreData | Cluster;
+
+function isAwsEksCluster(arg: NodeGroupOptionsCluster): arg is aws.eks.Cluster {
+    return (arg as aws.eks.Cluster).endpoint !== undefined;
+}
+
+function isCluster(arg: NodeGroupOptionsCluster): arg is CoreData {
+    return (arg as CoreData).cluster !== undefined;
+}
+
 export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource,  k8sProvider: k8s.Provider): NodeGroupData {
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
     let eksCluster: aws.eks.Cluster;
+    let vpcId: pulumi.Input<string>;
+    let clusterSecurityGroup: aws.ec2.SecurityGroup;
+    let clusterSubnetIds: pulumi.Input<pulumi.Input<string[]>>;
+    let instanceProfile: pulumi.Input<aws.iam.InstanceProfile>;
     const cfnStackDeps: Array<pulumi.Resource> = [];
 
-    const clusterArg = <any>args.cluster;
-    if (clusterArg.endpoint !== undefined) {
+    const clusterArg = args.cluster;
+    if (isAwsEksCluster(clusterArg)) {
         // aws.eks.Cluster
         eksCluster = clusterArg;
+        if (args.vpcId === undefined) {
+            throw new Error("`vpcId` must be set when using a raw `aws.eks.Cluster` to construct a `NodeGroup`");
+        }
+        if (args.clusterSecurityGroup === undefined) {
+            throw new Error("`clusterSecurityGroup` must be set when using a raw `aws.eks.Cluster` to construct a `NodeGroup`");
+        }
+        if (args.clusterSubnetIds === undefined) {
+            throw new Error("`clusterSubnetIds` must be set when using a raw `aws.eks.Cluster` to construct a `NodeGroup`");
+        }
+        if (args.instanceProfile === undefined) {
+            throw new Error("`instanceProfile` must be set when using a raw `aws.eks.Cluster` to construct a `NodeGroup`");
+        }
+        vpcId = args.vpcId;
+        clusterSecurityGroup = args.clusterSecurityGroup;
+        clusterSubnetIds = args.clusterSubnetIds;
+        instanceProfile = args.instanceProfile;
     } else {
         let core: CoreData;
-        if (clusterArg.cluster !== undefined) {
+        if (isCluster(clusterArg)) {
             // ClusterData
             core = clusterArg;
         } else {
@@ -188,11 +219,15 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         }
         eksCluster = core.cluster;
         if (core.vpcCni !== undefined) {
-            cfnStackDeps.push(clusterArg.vpcCni);
+            cfnStackDeps.push(core.vpcCni);
         }
         if (core.eksNodeAccess !== undefined) {
-            cfnStackDeps.push(clusterArg.eksNodeAccess);
+            cfnStackDeps.push(core.eksNodeAccess);
         }
+        vpcId = core.vpcId;
+        clusterSecurityGroup = core.clusterSecurityGroup;
+        clusterSubnetIds = core.subnetIds;
+        instanceProfile = core.instanceProfile;
     }
 
     let eksClusterIngressRule: aws.ec2.SecurityGroupRule = args.clusterIngressRule!;
@@ -203,8 +238,8 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         }
     } else {
         nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
-            vpcId: args.vpcId,
-            clusterSecurityGroup: args.clusterSecurityGroup,
+            vpcId: vpcId,
+            clusterSecurityGroup: clusterSecurityGroup,
             eksCluster: eksCluster,
         }, parent);
         eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
@@ -213,7 +248,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
             fromPort: 443,
             toPort: 443,
             protocol: "tcp",
-            securityGroupId: args.clusterSecurityGroup.id,
+            securityGroupId: clusterSecurityGroup.id,
             sourceSecurityGroupId: nodeSecurityGroup.id,
         }, { parent: parent });
     }
@@ -246,7 +281,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
             parts.push(key + "=" + args.labels[key]);
         }
         if (parts.length > 0) {
-            bootstrapExtraArgs = "--kubelet-extra-args --node-labels=" + parts.join();
+            bootstrapExtraArgs = " --kubelet-extra-args --node-labels=" + parts.join();
         }
     }
 
@@ -263,7 +298,7 @@ chmod +x /opt/user-data
 
             return `#!/bin/bash
 
-/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}" ${bootstrapExtraArgs}
+/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"${bootstrapExtraArgs}
 ${customUserData}
 /opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
 `;
@@ -286,7 +321,7 @@ ${customUserData}
         associatePublicIpAddress: true,
         imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
-        iamInstanceProfile: args.instanceProfile,
+        iamInstanceProfile: instanceProfile,
         keyName: keyName,
         securityGroups: [ nodeSecurityGroupId ],
         spotPrice: args.spotPrice,
@@ -298,7 +333,7 @@ ${customUserData}
         userData: userdata,
     }, { parent: parent });
 
-    const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(args.clusterSubnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+    const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(clusterSubnetIds).apply(ids => computeWorkerSubnets(parent, ids));
     if (args.desiredCapacity === undefined) {
         args.desiredCapacity = 2;
     }
