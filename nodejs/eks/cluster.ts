@@ -20,7 +20,8 @@ import which = require("which");
 
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
-import { createNodeGroup } from "./nodegroup";
+import { createNodeGroup, NodeGroup } from "./nodegroup";
+import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 
@@ -64,16 +65,19 @@ export interface UserMapping {
     groups: pulumi.Input<pulumi.Input<string>[]>;
 }
 
+/**
+ * CoreData defines the core set of data associated with an EKS cluster, including the network in which is runs.
+ */
 export interface CoreData {
+    cluster: aws.eks.Cluster;
     vpcId: pulumi.Output<string>;
     subnetIds: pulumi.Output<string[]>;
-    cluster: aws.eks.Cluster;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
-    eksNodeAccess: k8s.core.v1.ConfigMap;
-    instanceProfile: aws.iam.InstanceProfile;
-    kubeconfig: pulumi.Output<any>;
     provider: k8s.Provider;
-    vpcCni: VpcCni;
+    instanceProfile: aws.iam.InstanceProfile;
+    eksNodeAccess?: k8s.core.v1.ConfigMap;
+    kubeconfig?: pulumi.Output<any>;
+    vpcCni?: VpcCni;
 }
 
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
@@ -82,7 +86,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     try {
         which.sync("aws-iam-authenticator");
     } catch (err) {
-        throw new pulumi.RunError("Could not find aws-iam-authenticator for EKS. See https://github.com/pulumi/eks#installing for installation instructions.");
+        throw new Error("Could not find aws-iam-authenticator for EKS. See https://github.com/pulumi/eks#installing for installation instructions.");
     }
 
     // If no VPC was specified, use the default VPC.
@@ -194,6 +198,13 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     }
     const instanceRoleARN = instanceRole.apply(r => r.arn);
 
+    if (args.customInstanceRolePolicy) {
+        const customRolePolicy = new aws.iam.RolePolicy(`${name}-EKSWorkerCustomPolicy`, {
+            role: instanceRole,
+            policy: args.customInstanceRolePolicy,
+        });
+    }
+
     // Enable access to the EKS cluster for worker nodes.
     const instanceRoleMapping: RoleMapping = {
         roleArn: instanceRoleARN,
@@ -291,6 +302,11 @@ export interface ClusterOptions {
     instanceRole?: pulumi.Input<aws.iam.Role>;
 
     /**
+     * Attach a custom role policy to worker node instance role
+     */
+    customInstanceRolePolicy?: pulumi.Input<string>;
+
+    /**
      * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
 	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	 * Use the information provided by AWS if you want to build your own AMI.
@@ -345,6 +361,11 @@ export interface ClusterOptions {
     storageClasses?: { [name: string]: StorageClass } | EBSVolumeType;
 
     /**
+     * If this toggle is set to true, the EKS cluster will be created without node group attached.
+     */
+    skipDefaultNodeGroup?: boolean;
+
+    /**
      * Whether or not to deploy the Kubernetes dashboard to the cluster. If the dashboard is deployed, it can be
      * accessed as follows:
      * 1. Retrieve an authentication token for the dashboard by running the following and copying the value of `token`
@@ -364,6 +385,85 @@ export interface ClusterOptions {
      * Defaults to `true`.
      */
     deployDashboard?: boolean;
+}
+
+/**
+ * NodeGroupOptions describes the configuration options accepted by a cluster
+ * to create its own node groups. It's a subset of NodeGroupOptions.
+ */
+export interface ClusterNodeGroupOptions {
+    /**
+     * The IDs of the explicit node subnets to attach to the worker node group.
+     *
+     * This option overrides clusterSubnetIds option.
+     */
+    nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+     */
+    instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+
+    /**
+     * Bidding price for spot instance. If set, only spot instances will be added as worker node
+     */
+    spotPrice?: pulumi.Input<string>;
+
+   /**
+     * The security group to use for all nodes in this worker node group.
+     */
+    nodeSecurityGroup?: aws.ec2.SecurityGroup;
+
+    /**
+     * Public key material for SSH access to worker nodes. See allowed formats at:
+     * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+     * If not provided, no SSH access is enabled on VMs.
+     */
+    nodePublicKey?: pulumi.Input<string>;
+
+    /**
+     * Name of the key pair to use for SSH access to worker nodes.
+     */
+    keyName?: pulumi.Input<string>;
+
+    /**
+     * The size in GiB of a cluster node's root volume. Defaults to 20.
+     */
+    nodeRootVolumeSize?: pulumi.Input<number>;
+
+    /**
+     * Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node
+     * signals its readiness to the managing CloudFormation stack. This code must be a typical user data script:
+     * critically it must begin with an interpreter directive (i.e. a `#!`).
+     */
+    nodeUserData?: pulumi.Input<string>;
+
+    /**
+     * The number of worker nodes that should be running in the cluster. Defaults to 2.
+     */
+    desiredCapacity?: pulumi.Input<number>;
+
+    /**
+     * The minimum number of worker nodes running in the cluster. Defaults to 1.
+     */
+    minSize?: pulumi.Input<number>;
+
+    /**
+     * The maximum number of worker nodes running in the cluster. Defaults to 2.
+     */
+    maxSize?: pulumi.Input<number>;
+
+    /**
+     * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
+	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+	 * Use the information provided by AWS if you want to build your own AMI.
+     */
+    amiId?: pulumi.Input<string>;
+
+    /**
+     * Custom k8s node labels to be attached to each woker node
+     */
+    labels?: { [key: string]: string };
 }
 
 /**
@@ -403,9 +503,19 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
 
     /**
+     * The ingress rule that gives node group access to cluster API server
+     */
+    public readonly eksClusterIngressRule: aws.ec2.SecurityGroupRule;
+
+    /**
      * The EKS cluster.
      */
     public readonly eksCluster: aws.eks.Cluster;
+
+    /**
+     * The EKS cluster and it's dependencies.
+     */
+    public readonly core: CoreData;
 
     /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
@@ -423,31 +533,51 @@ export class Cluster extends pulumi.ComponentResource {
         // Create the core resources required by the cluster.
         args.storageClasses = args.storageClasses || "gp2";
         const core = createCore(name, args, this);
+        this.core = core;
         this.clusterSecurityGroup = core.clusterSecurityGroup;
         this.eksCluster = core.cluster;
         this.instanceRole = core.instanceProfile.role;
 
-        // Create the worker node group and grant the workers access to the API server.
-        const defaultGroup = createNodeGroup(name, {
+        // create default security group for nodegroup
+        this.nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
             vpcId: core.vpcId,
-            clusterSubnetIds: core.subnetIds,
-            cluster: core,
             clusterSecurityGroup: core.clusterSecurityGroup,
-            instanceProfile: core.instanceProfile,
-            nodeSubnetIds: args.nodeSubnetIds,
-            instanceType: args.instanceType,
-            nodePublicKey: args.nodePublicKey,
-            nodeRootVolumeSize: args.nodeRootVolumeSize,
-            nodeUserData: args.nodeUserData,
-            minSize: args.minSize,
-            maxSize: args.maxSize,
-            amiId: args.nodeAmiId,
-        }, this, core.provider);
-        this.nodeSecurityGroup = defaultGroup.nodeSecurityGroup;
+            eksCluster: core.cluster,
+        }, this);
+
+        this.eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
+            description: "Allow pods to communicate with the cluster API Server",
+            type: "ingress",
+            fromPort: 443,
+            toPort: 443,
+            protocol: "tcp",
+            securityGroupId: core.clusterSecurityGroup.id,
+            sourceSecurityGroupId: this.nodeSecurityGroup.id,
+        }, { parent: this });
+
+        const configDeps = [core.kubeconfig];
+        if (!args.skipDefaultNodeGroup) {
+            // Create the worker node group and grant the workers access to the API server.
+            const defaultGroup = createNodeGroup(name, {
+                cluster: core,
+                nodeSubnetIds: args.nodeSubnetIds,
+                nodeSecurityGroup: this.nodeSecurityGroup,
+                clusterIngressRule: this.eksClusterIngressRule,
+                instanceType: args.instanceType,
+                nodePublicKey: args.nodePublicKey,
+                nodeRootVolumeSize: args.nodeRootVolumeSize,
+                nodeUserData: args.nodeUserData,
+                minSize: args.minSize,
+                maxSize: args.maxSize,
+                amiId: args.nodeAmiId,
+            }, this, core.provider);
+            this.nodeSecurityGroup = defaultGroup.nodeSecurityGroup;
+            configDeps.push(defaultGroup.cfnStack.id);
+        }
 
         // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
         // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
-        this.kubeconfig = pulumi.all([defaultGroup.cfnStack.id, core.kubeconfig]).apply(([_, kubeconfig]) => kubeconfig);
+        this.kubeconfig = pulumi.all(configDeps).apply(([kubeconfig]) => kubeconfig);
 
         // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
         // in order to help ensure that worker nodes are available before the provider can be used.
@@ -461,5 +591,24 @@ export class Cluster extends pulumi.ComponentResource {
         }
 
         this.registerOutputs({ kubeconfig: this.kubeconfig });
+    }
+
+    createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup {
+        return new NodeGroup(name, {
+            cluster: this.core,
+            nodeSecurityGroup: this.nodeSecurityGroup,
+            clusterIngressRule: this.eksClusterIngressRule,
+            nodeSubnetIds: args.nodeSubnetIds,
+            instanceType: args.instanceType,
+            nodePublicKey: args.nodePublicKey,
+            nodeRootVolumeSize: args.nodeRootVolumeSize,
+            nodeUserData: args.nodeUserData,
+            minSize: args.minSize,
+            maxSize: args.maxSize,
+            amiId: args.amiId,
+        }, {
+            parent: this,
+            providers: { kubernetes: this.provider },
+        });
     }
 }
