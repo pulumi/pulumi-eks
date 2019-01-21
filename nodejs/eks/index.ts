@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export { Cluster } from "./cluster";
-export { VpcCniOptions } from "./cni";
-export * from "./storageclass";
+export { Cluster, ClusterOptions, ClusterNodeGroupOptions, CoreData, RoleMapping, UserMapping } from "./cluster";
+export { NodeGroup, NodeGroupOptions } from "./nodegroup";
+export { VpcCni, VpcCniOptions } from "./cni";
+export { StorageClass, EBSVolumeType, createStorageClass } from "./storageclass";
