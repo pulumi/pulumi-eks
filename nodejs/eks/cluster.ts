@@ -595,17 +595,10 @@ export class Cluster extends pulumi.ComponentResource {
 
     createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup {
         return new NodeGroup(name, {
+            ...args,
             cluster: this.core,
             nodeSecurityGroup: this.nodeSecurityGroup,
             clusterIngressRule: this.eksClusterIngressRule,
-            nodeSubnetIds: args.nodeSubnetIds,
-            instanceType: args.instanceType,
-            nodePublicKey: args.nodePublicKey,
-            nodeRootVolumeSize: args.nodeRootVolumeSize,
-            nodeUserData: args.nodeUserData,
-            minSize: args.minSize,
-            maxSize: args.maxSize,
-            amiId: args.amiId,
         }, {
             parent: this,
             providers: { kubernetes: this.provider },
