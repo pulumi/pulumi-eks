@@ -110,8 +110,18 @@ export interface NodeGroupOptions {
 }
 
 export interface NodeGroupData {
+    /**
+     * The security group for the node group.
+     */
     nodeSecurityGroup: aws.ec2.SecurityGroup;
+    /**
+     * The CloudFormation Stack which defines the node group's AutoScalingGroup.
+     */
     cfnStack: aws.cloudformation.Stack;
+    /**
+     * The AutoScalingGroup name for the node group.
+     */
+    autoScalingGroupName: pulumi.Output<string>;
 }
 
 /**
@@ -127,6 +137,11 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
      * The CloudFormation Stack which defines the Node AutoScalingGroup.
      */
     cfnStack: aws.cloudformation.Stack;
+
+    /**
+     * The AutoScalingGroup name for the Node group.
+     */
+    autoScalingGroupName: pulumi.Output<string>;
 
     /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
@@ -146,6 +161,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
         const group = createNodeGroup(name, args, this, k8sProvider);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
         this.cfnStack = group.cfnStack;
+        this.autoScalingGroupName = group.autoScalingGroupName;
         this.registerOutputs(undefined);
     }
 }
@@ -295,6 +311,9 @@ ${customUserData}
         workerSubnetIds.apply(JSON.stringify),
     ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
                 AWSTemplateFormatVersion: '2010-09-09'
+                Outputs:
+                    NodeGroup:
+                        Value: !Ref NodeGroup
                 Resources:
                     NodeGroup:
                         Type: AWS::AutoScaling::AutoScalingGroup
@@ -322,9 +341,12 @@ ${customUserData}
         templateBody: cfnTemplateBody,
     }, { parent: parent, dependsOn: cfnStackDeps });
 
+    const autoScalingGroupName = cfnStack.outputs.apply(outputs => <string>outputs["NodeGroup"]);
+
     return {
         nodeSecurityGroup: nodeSecurityGroup,
         cfnStack: cfnStack,
+        autoScalingGroupName: autoScalingGroupName,
     };
 }
 

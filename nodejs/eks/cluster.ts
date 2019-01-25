@@ -20,7 +20,7 @@ import which = require("which");
 
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
-import { createNodeGroup, NodeGroup } from "./nodegroup";
+import { createNodeGroup, NodeGroup, NodeGroupData } from "./nodegroup";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
@@ -508,6 +508,11 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly eksClusterIngressRule: aws.ec2.SecurityGroupRule;
 
     /**
+     * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
+     */
+    public readonly defaultNodeGroup: NodeGroupData | undefined;
+
+    /**
      * The EKS cluster.
      */
     public readonly eksCluster: aws.eks.Cluster;
@@ -558,7 +563,7 @@ export class Cluster extends pulumi.ComponentResource {
         const configDeps = [core.kubeconfig];
         if (!args.skipDefaultNodeGroup) {
             // Create the worker node group and grant the workers access to the API server.
-            const defaultGroup = createNodeGroup(name, {
+            this.defaultNodeGroup = createNodeGroup(name, {
                 cluster: core,
                 nodeSubnetIds: args.nodeSubnetIds,
                 nodeSecurityGroup: this.nodeSecurityGroup,
@@ -571,8 +576,8 @@ export class Cluster extends pulumi.ComponentResource {
                 maxSize: args.maxSize,
                 amiId: args.nodeAmiId,
             }, this, core.provider);
-            this.nodeSecurityGroup = defaultGroup.nodeSecurityGroup;
-            configDeps.push(defaultGroup.cfnStack.id);
+            this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
+            configDeps.push(this.defaultNodeGroup.cfnStack.id);
         }
 
         // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
