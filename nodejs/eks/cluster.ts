@@ -574,6 +574,7 @@ export class Cluster extends pulumi.ComponentResource {
                 nodeUserData: args.nodeUserData,
                 minSize: args.minSize,
                 maxSize: args.maxSize,
+                desiredCapacity: args.desiredCapacity,
                 amiId: args.nodeAmiId,
             }, this, core.provider);
             this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
