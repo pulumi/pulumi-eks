@@ -1,5 +1,12 @@
 
-## 0.16.6 (Unreleased)
+## 0.16.7 (Unreleased)
+
+## 0.16.6 (Release January 29th, 2019)
+
+### Improvements
+
+- Expose the AutoScalingGroup on NodeGroups. [#53](https://github.com/pulumi/pulumi-eks/pull/53)
+- Fix a bug where `desiredCapacity` was not being handled correctly. [#55](https://github.com/pulumi/pulumi-eks/pull/55)
 
 ## 0.16.5 (Release January 21st, 2019)
 
