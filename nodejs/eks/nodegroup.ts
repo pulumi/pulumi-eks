@@ -341,7 +341,7 @@ ${customUserData}
         templateBody: cfnTemplateBody,
     }, { parent: parent, dependsOn: cfnStackDeps });
 
-    const autoScalingGroupName = cfnStack.outputs["NodeGroup"];
+    const autoScalingGroupName = cfnStack.outputs.apply(outputs => <string>outputs["NodeGroup"]);
 
     return {
         nodeSecurityGroup: nodeSecurityGroup,
