@@ -464,6 +464,11 @@ export interface ClusterNodeGroupOptions {
      * Custom k8s node labels to be attached to each woker node
      */
     labels?: { [key: string]: string };
+
+    /**
+     * Custom k8s node taints to be attached to each worker node
+     */
+    taints?: { [key: string]: string };
 }
 
 /**

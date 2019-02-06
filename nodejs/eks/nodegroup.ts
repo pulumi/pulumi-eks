@@ -107,6 +107,11 @@ export interface NodeGroupOptions {
      * Custom k8s node labels to be attached to each woker node
      */
     labels?: { [key: string]: string };
+
+    /**
+     * Custom k8s node taints to be attached to each worker node
+     */
+    taints?: { [key: string]: string };
 }
 
 export interface NodeGroupData {
@@ -229,15 +234,28 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     const awsRegion = pulumi.output(aws.getRegion({}, { parent: parent }));
     const userDataArg = args.nodeUserData || pulumi.output("");
 
-    let bootstrapExtraArgs = "";
+    const kubeletExtraArgs: Array<string> = [];
     if (args.labels) {
         const parts = [];
         for (const key of Object.keys(args.labels)) {
             parts.push(key + "=" + args.labels[key]);
         }
         if (parts.length > 0) {
-            bootstrapExtraArgs = " --kubelet-extra-args --node-labels=" + parts.join();
+            kubeletExtraArgs.push("--node-labels=" + parts.join(","));
         }
+    }
+    if (args.taints) {
+        const parts = [];
+        for (const key of Object.keys(args.taints)) {
+            parts.push(key + "=" + args.taints[key]);
+        }
+        if (parts.length > 0) {
+            kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
+        }
+    }
+    let bootstrapExtraArgs = "";
+    if (kubeletExtraArgs.length > 0) {
+        bootstrapExtraArgs = ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
     }
 
     const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName, userDataArg])
