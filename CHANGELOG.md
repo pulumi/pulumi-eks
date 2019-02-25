@@ -1,6 +1,10 @@
 
 ## 0.16.7 (Unreleased)
 
+### Improvements
+
+- Depend on latest version of `@pulumi/pulumi` to get more precise delete before create semantics [#46](https://github.com/pulumi/pulumi-eks/issues/46)
+
 ## 0.16.6 (Release January 29th, 2019)
 
 ### Improvements
