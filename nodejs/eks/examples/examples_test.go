@@ -36,7 +36,8 @@ func Test_Examples(t *testing.T) {
 	if !assert.NoError(t, err, "expected a valid working directory: %v", err) {
 		return
 	}
-	examples := []integration.ProgramTestOptions{
+
+	shortTests := []integration.ProgramTestOptions{
 		{
 			Dir: path.Join(cwd, "./cluster"),
 			Config: map[string]string{
@@ -58,7 +59,15 @@ func Test_Examples(t *testing.T) {
 			ExpectRefreshChanges: true,
 		},
 	}
-	for _, ex := range examples {
+
+	longTests := []integration.ProgramTestOptions{}
+
+	tests := shortTests
+	if !t.Short() {
+		tests = append(tests, longTests...)
+	}
+
+	for _, ex := range tests {
 		example := ex.With(integration.ProgramTestOptions{
 			ReportStats: integration.NewS3Reporter("us-west-2", "eng.pulumi.com", "testreports"),
 			Tracing:     "https://tracing.pulumi-engineering.com/collector/api/v1/spans",
