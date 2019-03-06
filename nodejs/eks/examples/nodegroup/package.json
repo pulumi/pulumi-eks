@@ -5,7 +5,7 @@
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "^0.15.0",
+        "@pulumi/pulumi": "dev",
         "sync-request": "^6.0.0"
     },
     "peerDependencies": {

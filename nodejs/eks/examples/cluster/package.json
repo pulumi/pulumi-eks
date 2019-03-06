@@ -5,8 +5,8 @@
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "latest",
-        "@pulumi/aws-infra": "latest",
+        "@pulumi/pulumi": "dev",
+        "@pulumi/awsx": "dev",
         "sync-request": "^6.0.0"
     },
     "peerDependencies": {
