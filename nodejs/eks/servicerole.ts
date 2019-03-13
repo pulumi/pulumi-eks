@@ -55,7 +55,7 @@ export class ServiceRole extends pulumi.ComponentResource {
      *
      * @param name The _unique_ name of this component.
      * @param args The arguments for this cluster.
-     * @param opts A bag of options that control this copmonent's behavior.
+     * @param opts A bag of options that control this component's behavior.
      */
     constructor(name: string, args: ServiceRoleArgs, opts?: pulumi.ResourceOptions) {
         super("eks:index:ServiceRole", name, args, opts);
