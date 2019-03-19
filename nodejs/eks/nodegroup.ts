@@ -175,7 +175,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
      *
      * @param name The _unique_ name of this component.
      * @param args The arguments for this cluster.
-     * @param opts A bag of options that control this copmonent's behavior.
+     * @param opts A bag of options that control this component's behavior.
      */
     constructor(name: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:NodeGroup", name, args, opts);

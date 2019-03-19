@@ -374,7 +374,7 @@ export interface ClusterOptions {
      *     $ kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}'
      *     $ kubectl -n kube-system describe secret <output from previous command>
      *
-     * 2. Start the kubectl proxt:
+     * 2. Start the kubectl proxy:
      *
      *     $ kubectl proxy
      *
@@ -455,7 +455,7 @@ export class Cluster extends pulumi.ComponentResource {
      *
      * @param name The _unique_ name of this component.
      * @param args The arguments for this cluster.
-     * @param opts A bag of options that control this copmonent's behavior.
+     * @param opts A bag of options that control this component's behavior.
      */
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:Cluster", name, args, opts);
