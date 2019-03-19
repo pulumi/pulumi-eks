@@ -2,6 +2,11 @@
 
 ### Improvements
 
+## 0.17.2 (Release March 19, 2019)
+
+- Re-cut 0.17.1 as 0.17.2, due to a broken master branch caused by a pushed tag
+publishing the NPM package before master was able to.
+
 ## 0.17.1 (Release March 19, 2019)
 
 - Support for `taints` on `NodeGroups`. [#63](https://github.com/pulumi/pulumi-eks/pull/63)
