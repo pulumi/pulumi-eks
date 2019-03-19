@@ -22,13 +22,24 @@ import { createNodeGroupSecurityGroup } from "./securitygroup";
 import transform from "./transform";
 
 /**
- * NodeGroupOptions describes the configuration options accepted by a NodeGroup component.
+ * Taint represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup.  See
+ * https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
  */
-export interface NodeGroupOptions {
+export interface Taint {
     /**
-     * The target EKS cluster.
+     * The value of the taint.
      */
-    cluster: Cluster | CoreData;
+    value: string;
+    /**
+     * The effect of the taint.
+     */
+    effect: "NoSchedule" | "NoExecute" | "PreferNoSchedule";
+}
+
+/**
+ * NodeGroupArgs represents the common configuration settings for NodeGroups.
+ */
+export interface NodeGroupBaseOptions {
 
     /**
      * The IDs of the explicit node subnets to attach to the worker node group.
@@ -111,7 +122,17 @@ export interface NodeGroupOptions {
     /**
      * Custom k8s node taints to be attached to each worker node
      */
-    taints?: { [key: string]: string };
+    taints?: { [key: string]: Taint };
+}
+
+/**
+ * NodeGroupOptions describes the configuration options accepted by a NodeGroup component.
+ */
+export interface NodeGroupOptions extends NodeGroupBaseOptions {
+    /**
+     * The target EKS cluster.
+     */
+    cluster: Cluster | CoreData;
 }
 
 export interface NodeGroupData {
@@ -247,14 +268,18 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     if (args.taints) {
         const parts = [];
         for (const key of Object.keys(args.taints)) {
-            parts.push(key + "=" + args.taints[key]);
+            const taint = args.taints[key];
+            parts.push(key + "=" + taint.value + ":" + taint.effect);
         }
         if (parts.length > 0) {
             kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
         }
     }
     let bootstrapExtraArgs = "";
-    if (kubeletExtraArgs.length > 0) {
+    if (kubeletExtraArgs.length === 1) {
+        // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
+        bootstrapExtraArgs = ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
+    } else if (kubeletExtraArgs.length > 1) {
         bootstrapExtraArgs = ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
     }
 

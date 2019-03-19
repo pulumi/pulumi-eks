@@ -21,6 +21,12 @@ const spot = new eks.NodeGroup("spot", {
     instanceType: "m4.large",
     spotPrice: "1",
     labels: {"preemptible": "true"},
+    taints: {
+        "special": {
+            value: "true",
+            effect: "NoSchedule",
+        },
+    },
 }, {
     providers: { kubernetes: cluster.provider},
 });
