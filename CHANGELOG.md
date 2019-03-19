@@ -2,6 +2,8 @@
 
 ### Improvements
 
+## 0.17.1 (Release March 19, 2019)
+
 - Support for `taints` on `NodeGroups`. [#63](https://github.com/pulumi/pulumi-eks/pull/63)
 
 ## 0.17.0 (Release March 6th, 2019)
