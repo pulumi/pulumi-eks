@@ -388,7 +388,7 @@ export interface ClusterOptions {
 }
 
 /**
- * NodeGroupOptions describes the configuration options accepted by a cluster
+ * ClusterNodeGroupOptions describes the configuration options accepted by a cluster
  * to create its own node groups. It's a subset of NodeGroupOptions.
  */
 export interface ClusterNodeGroupOptions extends NodeGroupBaseOptions {}
