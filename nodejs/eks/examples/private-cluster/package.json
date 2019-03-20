@@ -1,0 +1,12 @@
+{
+    "name": "private-cluster",
+    "dependencies": {
+        "typescript": "^2.7.2",
+        "@types/node": "latest",
+        "@pulumi/pulumi": "latest",
+        "@pulumi/awsx": "latest"
+    },
+    "peerDependencies": {
+        "@pulumi/eks": "latest"
+    }
+}

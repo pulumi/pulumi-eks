@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- feat(workers): add 'nodeAssociatePublicIpAddress' to toggle public IPs
+  [#81](https://github.com/pulumi/pulumi-eks/pull/81)
+
 ## 0.17.2 (Release March 19, 2019)
 
 - Re-cut 0.17.1 as 0.17.2, due to a broken master branch caused by a pushed tag
