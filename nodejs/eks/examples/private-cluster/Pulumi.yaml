@@ -1,0 +1,3 @@
+name: private-cluster
+description: EKS cluster example in private subnets.
+runtime: nodejs
