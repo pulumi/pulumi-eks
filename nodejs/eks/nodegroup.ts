@@ -123,6 +123,14 @@ export interface NodeGroupBaseOptions {
      * Custom k8s node taints to be attached to each worker node
      */
     taints?: { [key: string]: Taint };
+
+    /**
+     * Whether or not to auto-assign public IP addresses on the EKS worker nodes.
+     * If this toggle is set to true, the EKS workers will be
+     * auto-assigned public IPs. If false, they will not be auto-assigned
+     * public IPs.
+     */
+    nodeAssociatePublicIpAddress?: boolean;
 }
 
 /**
@@ -315,8 +323,16 @@ ${customUserData}
         amiId = eksWorkerAmi.then(r => r.imageId);
     }
 
+    // Enable auto-assignment of public IP addresses on worker nodes for
+    // backwards compatibility on existing EKS clusters launched with it
+    // enabled.
+    let nodeAssociatePublicIpAddress: boolean = true;
+    if (args.nodeAssociatePublicIpAddress !== undefined) {
+        nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
+    }
+
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
-        associatePublicIpAddress: true,
+        associatePublicIpAddress: nodeAssociatePublicIpAddress,
         imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
         iamInstanceProfile: core.instanceProfile,

@@ -276,6 +276,14 @@ export interface ClusterOptions {
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
+     * Whether or not to auto-assign the EKS worker nodes public IP addresses.
+     * If this toggle is set to true, the EKS workers will be
+     * auto-assigned public IPs. If false, they will not be auto-assigned
+     * public IPs.
+     */
+    nodeAssociatePublicIpAddress?: boolean;
+
+    /**
      * Optional mappings from AWS IAM roles to Kubernetes users and groups.
      */
     roleMappings?: pulumi.Input<pulumi.Input<RoleMapping>[]>;
@@ -493,6 +501,7 @@ export class Cluster extends pulumi.ComponentResource {
             this.defaultNodeGroup = createNodeGroup(name, {
                 cluster: core,
                 nodeSubnetIds: args.nodeSubnetIds,
+                nodeAssociatePublicIpAddress: args.nodeAssociatePublicIpAddress,
                 nodeSecurityGroup: this.nodeSecurityGroup,
                 clusterIngressRule: this.eksClusterIngressRule,
                 instanceType: args.instanceType,
