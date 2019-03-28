@@ -4,6 +4,11 @@
 
 - feat(workers): add 'nodeAssociatePublicIpAddress' to toggle public IPs
   [#81](https://github.com/pulumi/pulumi-eks/pull/81)
+- fix(getAmi): allow setting master version & explicitly filter Linux AMIs
+  [#85](https://github.com/pulumi/pulumi-eks/pull/85)
+  - Fix a bug where the wrong AMI was being returned due to a loosely defined
+    regex.
+  - Add support for setting the master / control plane version of the cluster.
 
 ## 0.17.2 (Release March 19, 2019)
 
