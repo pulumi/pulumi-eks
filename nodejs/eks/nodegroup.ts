@@ -131,11 +131,6 @@ export interface NodeGroupBaseOptions {
      * public IPs.
      */
     nodeAssociatePublicIpAddress?: boolean;
-
-    /**
-     * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
-     */
-    version?: pulumi.Input<string>;
 }
 
 /**
@@ -315,47 +310,17 @@ ${customUserData}
 `;
         });
 
-    let amiId: any = args.amiId!;
-    const version: pulumi.Input<string> = args.version!;
+    let amiId: pulumi.Input<string> = args.amiId!;
     if (args.amiId === undefined) {
-        const filters: { name: string; values: string[]}[] = [
-            {
-                name: "description",
-                values: [ "*linux*", "*Linux*" ],
-            },
-            {
-                name: "description",
-                values: [ "*k8s*/bin/linux/amd64*"],
-            },
-        ];
-
-        if (version !== undefined) {
-            filters.push(
-                {
-                    name: "name",
-                    values: [ "amazon-eks-node-" + version + "*" ],
-                },
-            );
-        } else {
-            filters.push(
-                {
-                    name: "name",
-                    values: [ "amazon-eks-node-*" ],
-                },
-            );
-        }
-
-        const eksWorkerAmiIds = aws.getAmiIds({
-            filters,
+        const eksWorkerAmi = aws.getAmi({
+            filters: [{
+                name: "name",
+                values: [ "amazon-eks-node-*" ],
+            }],
+            mostRecent: true,
             owners: [ "602401143452" ], // Amazon
-            sortAscending: true,
         }, { parent: parent });
-
-        const bestAmiId = eksWorkerAmiIds.then(r => r.ids.pop());
-        if (!bestAmiId) {
-            throw new Error("No Linux AMI Id was found.");
-        }
-        amiId = bestAmiId;
+        amiId = eksWorkerAmi.then(r => r.imageId);
     }
 
     // Enable auto-assignment of public IP addresses on worker nodes for
