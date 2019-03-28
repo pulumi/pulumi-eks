@@ -126,6 +126,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
         roleArn: eksRole.role.apply(r => r.arn),
         vpcConfig: { securityGroupIds: [ eksClusterSecurityGroup.id ], subnetIds: subnetIds },
+        version: args.version,
     }, { parent: parent });
 
     // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
@@ -393,6 +394,11 @@ export interface ClusterOptions {
      * Defaults to `true`.
      */
     deployDashboard?: boolean;
+
+    /**
+     * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
+     */
+    version?: pulumi.Input<string>;
 }
 
 /**
@@ -512,6 +518,7 @@ export class Cluster extends pulumi.ComponentResource {
                 maxSize: args.maxSize,
                 desiredCapacity: args.desiredCapacity,
                 amiId: args.nodeAmiId,
+                version: args.version,
             }, this, core.provider);
             this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
             configDeps.push(this.defaultNodeGroup.cfnStack.id);
