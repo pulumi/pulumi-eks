@@ -74,6 +74,7 @@ export interface CoreData {
     subnetIds: pulumi.Output<string[]>;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
     provider: k8s.Provider;
+    instanceRole: pulumi.Output<aws.iam.Role>;
     instanceProfile: aws.iam.InstanceProfile;
     eksNodeAccess?: k8s.core.v1.ConfigMap;
     kubeconfig?: pulumi.Output<any>;
@@ -252,6 +253,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         kubeconfig: kubeconfig,
         provider: provider,
         vpcCni: vpcCni,
+        instanceRole: instanceRole,
         instanceProfile: instanceProfile,
         eksNodeAccess: eksNodeAccess,
     };
@@ -476,7 +478,7 @@ export class Cluster extends pulumi.ComponentResource {
         this.core = core;
         this.clusterSecurityGroup = core.clusterSecurityGroup;
         this.eksCluster = core.cluster;
-        this.instanceRole = core.instanceProfile.role;
+        this.instanceRole = core.instanceRole;
 
         // create default security group for nodegroup
         this.nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
