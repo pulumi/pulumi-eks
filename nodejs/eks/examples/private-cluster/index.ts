@@ -5,7 +5,7 @@ const name = "private-cluster";
 
 // Create a VPC that uses private subnets.
 const network = new awsx.Network(name, {
-    numberOfAvailabilityZones: 3,
+    numberOfAvailabilityZones: 1,
     usePrivateSubnets: true,
 });
 
