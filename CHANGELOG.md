@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- Require the explicit setting of the Worker Node AMI to use with the cluster
+  [#91](https://github.com/pulumi/pulumi-eks/pull/91)
+
 ## 0.17.3 (Release March 28, 2019)
 
 - feat(workers): add 'nodeAssociatePublicIpAddress' to toggle public IPs
