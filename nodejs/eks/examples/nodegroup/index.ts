@@ -4,6 +4,7 @@ import * as eks from "@pulumi/eks";
 const cluster = new eks.Cluster("cluster", {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
+    nodeAmiId: "ami-0e17dd7eeae729d78",
 });
 
 // There are two approaches that can be used to add additional NodeGroups.
@@ -18,6 +19,7 @@ cluster.createNodeGroup("ondemand", {
 // Create the second node group with spot m4.large instance
 const spot = new eks.NodeGroup("spot", {
     cluster: cluster,
+    nodeAmiId: "ami-0e17dd7eeae729d78",
     instanceType: "m4.large",
     spotPrice: "1",
     labels: {"preemptible": "true"},

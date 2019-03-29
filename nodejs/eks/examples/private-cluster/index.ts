@@ -7,6 +7,7 @@ const name = "private-cluster";
 const network = new awsx.Network(name, {
     numberOfAvailabilityZones: 1,
     usePrivateSubnets: true,
+    nodeAmiId: "ami-0e17dd7eeae729d78",
 });
 
 // Create a cluster with the desired specs, that does not auto assign a public
@@ -18,6 +19,7 @@ const cluster = new eks.Cluster(name, {
     vpcId: network.vpcId,
     subnetIds: network.subnetIds,
     nodeAssociatePublicIpAddress: false,
+    nodeAmiId: "ami-0e17dd7eeae729d78",
 });
 
 export const kubeconfig = cluster.kubeconfig;
