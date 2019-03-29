@@ -112,7 +112,7 @@ export interface NodeGroupBaseOptions {
 	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	 * Use the information provided by AWS if you want to build your own AMI.
      */
-    amiId?: pulumi.Input<string>;
+    amiId: pulumi.Input<string>;
 
     /**
      * Custom k8s node labels to be attached to each woker node
@@ -131,11 +131,6 @@ export interface NodeGroupBaseOptions {
      * public IPs.
      */
     nodeAssociatePublicIpAddress?: boolean;
-
-    /**
-     * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
-     */
-    version?: pulumi.Input<string>;
 }
 
 /**
@@ -315,49 +310,6 @@ ${customUserData}
 `;
         });
 
-    let amiId: any = args.amiId!;
-    const version: pulumi.Input<string> = args.version!;
-    if (args.amiId === undefined) {
-        const filters: { name: string; values: string[]}[] = [
-            {
-                name: "description",
-                values: [ "*linux*", "*Linux*" ],
-            },
-            {
-                name: "description",
-                values: [ "*k8s*/bin/linux/amd64*"],
-            },
-        ];
-
-        if (version !== undefined) {
-            filters.push(
-                {
-                    name: "name",
-                    values: [ "amazon-eks-node-" + version + "*" ],
-                },
-            );
-        } else {
-            filters.push(
-                {
-                    name: "name",
-                    values: [ "amazon-eks-node-*" ],
-                },
-            );
-        }
-
-        const eksWorkerAmiIds = aws.getAmiIds({
-            filters,
-            owners: [ "602401143452" ], // Amazon
-            sortAscending: true,
-        }, { parent: parent });
-
-        const bestAmiId = eksWorkerAmiIds.then(r => r.ids.pop());
-        if (!bestAmiId) {
-            throw new Error("No Linux AMI Id was found.");
-        }
-        amiId = bestAmiId;
-    }
-
     // Enable auto-assignment of public IP addresses on worker nodes for
     // backwards compatibility on existing EKS clusters launched with it
     // enabled.
@@ -368,7 +320,7 @@ ${customUserData}
 
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
         associatePublicIpAddress: nodeAssociatePublicIpAddress,
-        imageId: amiId,
+        imageId: args.amiId,
         instanceType: args.instanceType || "t2.medium",
         iamInstanceProfile: core.instanceProfile,
         keyName: keyName,
