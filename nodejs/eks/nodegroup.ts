@@ -315,32 +315,41 @@ ${customUserData}
 `;
         });
 
-    let amiId: any = args.amiId!;
+    let amiId: pulumi.Input<string> = args.amiId!;
     const version: pulumi.Input<string> = args.version!;
     if (args.amiId === undefined) {
         const filters: { name: string; values: string[]}[] = [
+            // Filter to target Linux arch
             {
                 name: "description",
                 values: [ "*linux*", "*Linux*" ],
             },
+            // Filter to target EKS Nodes
             {
-                name: "description",
-                values: [ "*k8s*/bin/linux/amd64*"],
+                name: "name",
+                values: [ "amazon-eks-node-*"],
+            },
+            // Filter to target General, non-GPU image class
+            {
+                name: "manifest-location",
+                values: [ "*amazon-eks-node*"],
             },
         ];
 
         if (version !== undefined) {
             filters.push(
+                // Filter to target a specific k8s version
                 {
-                    name: "name",
-                    values: [ "amazon-eks-node-" + version + "*" ],
+                    name: "description",
+                    values: [ "*k8s*" + version + "*" ],
                 },
             );
         } else {
             filters.push(
+                // Filter to target the latest / default k8s version
                 {
-                    name: "name",
-                    values: [ "amazon-eks-node-*" ],
+                    name: "description",
+                    values: [ "*k8s*" ],
                 },
             );
         }
@@ -351,7 +360,7 @@ ${customUserData}
             sortAscending: true,
         }, { parent: parent });
 
-        const bestAmiId = eksWorkerAmiIds.then(r => r.ids.pop());
+        const bestAmiId: pulumi.Input<string> = eksWorkerAmiIds.then(r => r.ids.pop()!);
         if (!bestAmiId) {
             throw new Error("No Linux AMI Id was found.");
         }
