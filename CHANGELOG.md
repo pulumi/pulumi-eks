@@ -2,6 +2,8 @@
 
 ### Improvements
 
+## 0.17.3 (Release March 28, 2019)
+
 - feat(workers): add 'nodeAssociatePublicIpAddress' to toggle public IPs
   [#81](https://github.com/pulumi/pulumi-eks/pull/81)
 - fix(getAmi): allow setting master version & explicitly filter Linux AMIs
