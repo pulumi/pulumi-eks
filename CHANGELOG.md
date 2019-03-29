@@ -2,6 +2,10 @@
 
 ### Improvements
 
+- Fix a bug where the regex used to retrieve Worker Node AMIs was not
+  returning correct AMIs when either: specifying the master / control plane
+  version, or relying on smart defaults of the lastest available image. [#92](https://github.com/pulumi/pulumi-eks/pull/92)
+
 ## 0.17.3 (Release March 28, 2019)
 
 - feat(workers): add 'nodeAssociatePublicIpAddress' to toggle public IPs
