@@ -9,9 +9,9 @@ const vpc = new awsx.Network("vpc", { usePrivateSubnets: true });
 const cluster2 = new eks.Cluster("cluster2", {
     vpcId: vpc.vpcId,
     subnetIds: vpc.subnetIds,
-    desiredCapacity: 5,
-    minSize: 5,
-    maxSize: 10,
+    desiredCapacity: 2,
+    minSize: 2,
+    maxSize: 2,
     deployDashboard: false,
 });
 
