@@ -320,7 +320,7 @@ export interface ClusterOptions {
 	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	 * Use the information provided by AWS if you want to build your own AMI.
      */
-    nodeAmiId?: pulumi.Input<string>;
+    nodeAmiId: pulumi.Input<string>;
 
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
@@ -474,7 +474,14 @@ export class Cluster extends pulumi.ComponentResource {
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:Cluster", name, args, opts);
 
-        args = args || {};
+        args = args || {} as ClusterOptions;
+        const nodeAmiId: pulumi.Input<string> = args.nodeAmiId!;
+        if (!args.nodeAmiId) {
+            throw new Error("An AMI Id 'nodeAmiId' on the EKS cluster must " +
+                "be set for the worker nodes. See the AWS EKS optimized AMI " +
+                "list for options, available at: " +
+                "https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html");
+        }
 
         // Create the core resources required by the cluster.
         args.storageClasses = args.storageClasses || "gp2";
@@ -517,8 +524,7 @@ export class Cluster extends pulumi.ComponentResource {
                 minSize: args.minSize,
                 maxSize: args.maxSize,
                 desiredCapacity: args.desiredCapacity,
-                amiId: args.nodeAmiId,
-                version: args.version,
+                amiId: nodeAmiId,
             }, this, core.provider);
             this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
             configDeps.push(this.defaultNodeGroup.cfnStack.id);
