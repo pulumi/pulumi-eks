@@ -1,11 +1,12 @@
 {
-    "name": "cluster",
+    "name": "nodegroup",
     "devDependencies": {
-        "typescript": "^2.7.2",
+        "typescript": "^3.0.0",
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "dev",
+        "@pulumi/pulumi": "latest",
+        "@pulumi/aws": "latest",
         "sync-request": "^6.0.0"
     },
     "peerDependencies": {
