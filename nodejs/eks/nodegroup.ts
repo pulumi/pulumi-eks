@@ -136,6 +136,12 @@ export interface NodeGroupBaseOptions {
      * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
      */
     version?: pulumi.Input<string>;
+
+    /**
+     * The instance profile to use for this node group. Note, the role for the instance profile
+     * must be supplied in the ClusterOptions as either: 'instanceRole', or as a role of 'instanceRoles'.
+     */
+    instanceProfile?: aws.iam.InstanceProfile;
 }
 
 /**
@@ -212,10 +218,15 @@ function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
 }
 
 export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource,  k8sProvider: k8s.Provider): NodeGroupData {
+    const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
+
+    if (!args.instanceProfile && !core.instanceProfile) {
+        throw new Error(`an instanceProfile is required`);
+    }
+
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
     const cfnStackDeps: Array<pulumi.Resource> = [];
 
-    const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
     const eksCluster = core.cluster;
     if (core.vpcCni !== undefined) {
         cfnStackDeps.push(core.vpcCni);
@@ -228,7 +239,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     if (args.nodeSecurityGroup) {
         nodeSecurityGroup = args.nodeSecurityGroup;
         if (eksClusterIngressRule === undefined) {
-            throw new Error(`invalid args for node group ${name}, eksClusterIngressRule is required when nodeSecurityGroup is manually speicified`);
+            throw new Error(`invalid args for node group ${name}, eksClusterIngressRule is required when nodeSecurityGroup is manually specified`);
         }
     } else {
         nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
@@ -379,7 +390,7 @@ ${customUserData}
         associatePublicIpAddress: nodeAssociatePublicIpAddress,
         imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
-        iamInstanceProfile: core.instanceProfile,
+        iamInstanceProfile: args.instanceProfile || core.instanceProfile,
         keyName: keyName,
         securityGroups: [ nodeSecurityGroupId ],
         spotPrice: args.spotPrice,

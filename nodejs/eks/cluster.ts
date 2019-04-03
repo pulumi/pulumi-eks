@@ -74,8 +74,7 @@ export interface CoreData {
     subnetIds: pulumi.Output<string[]>;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
     provider: k8s.Provider;
-    instanceRole: pulumi.Output<aws.iam.Role>;
-    instanceProfile: aws.iam.InstanceProfile;
+    instanceProfile?: aws.iam.InstanceProfile;
     eksNodeAccess?: k8s.core.v1.ConfigMap;
     kubeconfig?: pulumi.Output<any>;
     vpcCni?: VpcCni;
@@ -88,6 +87,10 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         which.sync("aws-iam-authenticator");
     } catch (err) {
         throw new Error("Could not find aws-iam-authenticator for EKS. See https://github.com/pulumi/eks#installing for installation instructions.");
+    }
+
+    if (args.instanceRole && args.instanceRoles) {
+        throw new Error("instanceRole and instanceRoles are mutually exclusive, and cannot both be set.");
     }
 
     // If no VPC was specified, use the default VPC.
@@ -184,12 +187,26 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // Create the VPC CNI management resource.
     const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent: parent });
 
-    // Create the instance role we'll use for worker nodes.
-    let instanceRole: pulumi.Output<aws.iam.Role>;
-    if (args.instanceRole) {
-        instanceRole = pulumi.output(args.instanceRole);
+    let instanceRoleMappings: pulumi.Output<RoleMapping[]>;
+    let instanceProfile: aws.iam.InstanceProfile | undefined;
+    // Create role mappings of the instance roles specified for aws-auth.
+    if (args.instanceRoles) {
+        instanceRoleMappings = pulumi.output(args.instanceRoles).apply(instanceRoles =>
+            instanceRoles.map(role => createInstanceRoleMapping(role.arn)),
+        );
+    } else if (args.instanceRole) {
+        // Create an instance profile if using a default node group
+        if (!args.skipDefaultNodeGroup) {
+            instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
+                role: args.instanceRole,
+            }, { parent: parent });
+        }
+
+        instanceRoleMappings = pulumi.output(args.instanceRole).apply(instanceRole =>
+            [createInstanceRoleMapping(instanceRole.arn)],
+        );
     } else {
-        instanceRole = (new ServiceRole(`${name}-instanceRole`, {
+        const instanceRole = (new ServiceRole(`${name}-instanceRole`, {
             service: "ec2.amazonaws.com",
             managedPolicyArns: [
                 "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
@@ -197,25 +214,30 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
             ],
         }, { parent: parent })).role;
-    }
-    const instanceRoleARN = instanceRole.apply(r => r.arn);
 
-    if (args.customInstanceRolePolicy) {
-        const customRolePolicy = new aws.iam.RolePolicy(`${name}-EKSWorkerCustomPolicy`, {
-            role: instanceRole,
-            policy: args.customInstanceRolePolicy,
-        });
+        // Create a new policy for the role, if specified.
+        if (args.customInstanceRolePolicy) {
+            const customRolePolicy = new aws.iam.RolePolicy(`${name}-EKSWorkerCustomPolicy`, {
+                role: instanceRole,
+                policy: args.customInstanceRolePolicy,
+            });
+        }
+
+        // Create an instance profile if using a default node group
+        if (!args.skipDefaultNodeGroup) {
+            instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
+                role: instanceRole,
+            }, { parent: parent });
+        }
+
+        instanceRoleMappings = pulumi.output(instanceRole).apply(role =>
+            [createInstanceRoleMapping(role.arn)],
+        );
     }
 
-    // Enable access to the EKS cluster for worker nodes.
-    const instanceRoleMapping: RoleMapping = {
-        roleArn: instanceRoleARN,
-        username: "system:node:{{EC2PrivateDNSName}}",
-        groups: ["system:bootstrappers", "system:nodes"],
-    };
-    const roleMappings = pulumi.all([pulumi.output(args.roleMappings || []), instanceRoleMapping])
-        .apply(([mappings, instanceMapping]) => {
-            return jsyaml.safeDump([...mappings, instanceMapping].map(m => ({
+    const roleMappings = pulumi.all([pulumi.output(args.roleMappings || []), instanceRoleMappings])
+        .apply(([mappings, instanceMappings]) => {
+            return jsyaml.safeDump([...mappings, ...instanceMappings].map(m => ({
                 rolearn: m.roleArn,
                 username: m.username,
                 groups: m.groups,
@@ -242,10 +264,6 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         data: nodeAccessData,
     }, { parent: parent, provider: provider });
 
-    const instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
-        role: instanceRole,
-    }, { parent: parent });
-
     return {
         vpcId: pulumi.output(vpcId),
         subnetIds: pulumi.output(subnetIds),
@@ -254,10 +272,23 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         kubeconfig: kubeconfig,
         provider: provider,
         vpcCni: vpcCni,
-        instanceRole: instanceRole,
         instanceProfile: instanceProfile,
         eksNodeAccess: eksNodeAccess,
     };
+}
+
+/**
+ * Enable access to the EKS cluster for worker nodes, by creating an
+ * instance role mapping to the k8s username and groups of aws-auth.
+ */
+function createInstanceRoleMapping(arn: pulumi.Input<string>): RoleMapping {
+    const instanceRoleMapping: RoleMapping = {
+        roleArn: arn,
+        username: "system:node:{{EC2PrivateDNSName}}",
+        groups: ["system:bootstrappers", "system:nodes"],
+    };
+
+    return instanceRoleMapping;
 }
 
 /**
@@ -308,11 +339,27 @@ export interface ClusterOptions {
     instanceType?: pulumi.Input<aws.ec2.InstanceType>;
 
     /**
-     * The instance role to use for all nodes in this node group.
+     * This enables the simple case of only registering a *single* IAM
+     * instance role with the cluster, that is required to be shared by
+     * *all* node groups in their instance profiles.
+     *
+     * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
      */
     instanceRole?: pulumi.Input<aws.iam.Role>;
 
     /**
+     * This enables the advanced case of registering *many* IAM instance roles
+     * with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
+     *
+     * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
+     */
+    instanceRoles?: pulumi.Input<pulumi.Input<aws.iam.Role>[]>;
+
+    /**
+     * @deprecated: This option has been replaced with the use of
+     * `instanceRole` or `instanceRoles`. The role provided to either option
+     * should already include all required policies.
+     *
      * Attach a custom role policy to worker node instance role
      */
     customInstanceRolePolicy?: pulumi.Input<string>;
@@ -484,7 +531,6 @@ export class Cluster extends pulumi.ComponentResource {
         this.core = core;
         this.clusterSecurityGroup = core.clusterSecurityGroup;
         this.eksCluster = core.cluster;
-        this.instanceRole = core.instanceRole;
 
         // create default security group for nodegroup
         this.nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
@@ -521,6 +567,7 @@ export class Cluster extends pulumi.ComponentResource {
                 desiredCapacity: args.desiredCapacity,
                 amiId: args.nodeAmiId,
                 version: args.version,
+                instanceProfile: core.instanceProfile,
             }, this, core.provider);
             this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
             configDeps.push(this.defaultNodeGroup.cfnStack.id);
