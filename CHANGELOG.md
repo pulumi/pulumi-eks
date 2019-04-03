@@ -1,4 +1,7 @@
-## 0.18.1 (Unreleased)
+### Improvements
+
+- feat(nodePools): support per-nodegroup IAM instance roles
+  [#98](https://github.com/pulumi/pulumi-eks/pull/98)
 
 ## 0.18.0 (Release March 30, 2019)
 
