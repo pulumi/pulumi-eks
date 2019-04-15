@@ -19,6 +19,10 @@
 - fix(nodegroup): filter on x86_64 arch for node AMI
   [#112](https://github.com/pulumi/pulumi-eks/pull/112)
 
+## 0.18.2 (Unreleased)
+
+- Add support for assumed roles in kubeconfig auth (nodejs)
+
 ## 0.18.1 (Release April 08, 2019)
 
 - feat(nodePools): support per-nodegroup IAM instance roles

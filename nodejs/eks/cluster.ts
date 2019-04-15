@@ -80,6 +80,42 @@ export interface CoreData {
     vpcCni?: VpcCni;
 }
 
+export interface EnvVar {
+    name: string;
+    value: string;
+}
+
+export interface KubeConfigAuth {
+    apiVersion: string;
+    command: string;
+    args: string[];
+    env: EnvVar[];
+}
+
+function translateAWSProviderToIAMAuth(clusterName: string, profile?: string, assumeRole?: { roleArn?: string }): KubeConfigAuth {
+    const result: KubeConfigAuth = {
+        apiVersion: "client.authentication.k8s.io/v1alpha1",
+        command: "aws-iam-authenticator",
+        args: ["token", "-i", clusterName],
+        env: [],
+    };
+
+    if (typeof assumeRole === "string") {
+        assumeRole = JSON.parse(<string>assumeRole);
+    }
+
+    if (assumeRole && assumeRole.roleArn) {
+        result.args.push("-r");
+        result.args.push(assumeRole.roleArn);
+    }
+
+    if (profile) {
+        result.env.push({ name: "AWS_PROFILE", value: profile });
+    }
+
+    return result;
+}
+
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
     // Check to ensure that aws-iam-authenticator is installed, as we'll need it in order to deploy k8s resources
     // to the EKS cluster.
@@ -141,8 +177,10 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
     // depend on the autoscaling group we'll create later so that nothing attempts to use the EKS cluster before
     // its worker nodes have come up.
-    const kubeconfig = pulumi.all([eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority])
-        .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority]) => {
+    const awsProvider: aws.ProviderArgs = <aws.ProviderArgs>parent.getProvider("aws:default:provider");
+    const kubeconfig = pulumi.all([eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, awsProvider.profile, awsProvider.assumeRole])
+        .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority, profile, assumeRole]) => {
+            const iamExec = translateAWSProviderToIAMAuth(clusterName, profile, assumeRole);
             return {
                 apiVersion: "v1",
                 clusters: [{
@@ -164,11 +202,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 users: [{
                     name: "aws",
                     user: {
-                        exec: {
-                            apiVersion: "client.authentication.k8s.io/v1alpha1",
-                            command: "aws-iam-authenticator",
-                            args: ["token", "-i", clusterName],
-                        },
+                        exec: iamExec,
                     },
                 }],
             };
