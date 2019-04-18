@@ -114,16 +114,20 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     }, { parent: parent });
 
     // Create the EKS cluster security group
-    const allEgress = {
+    const eksClusterSecurityGroup = new aws.ec2.SecurityGroup(`${name}-eksClusterSecurityGroup`, {
+        vpcId: vpcId,
+        ingress: [],
+        egress: [],
+    }, { parent: parent });
+
+    const eksClusterInternetEgressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterInternetEgressRule`, {
         description: "Allow internet access.",
+        type: "egress",
         fromPort: 0,
         toPort: 0,
         protocol: "-1",  // all
         cidrBlocks: [ "0.0.0.0/0" ],
-    };
-    const eksClusterSecurityGroup = new aws.ec2.SecurityGroup(`${name}-eksClusterSecurityGroup`, {
-        vpcId: vpcId,
-        egress: [ allEgress ],
+        securityGroupId: eksClusterSecurityGroup.id,
     }, { parent: parent });
 
     // Create the EKS cluster
