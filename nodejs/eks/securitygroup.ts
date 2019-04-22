@@ -35,6 +35,7 @@ export interface NodeGroupSecurityGroupOptions {
 export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecurityGroupOptions, parent: pulumi.ComponentResource): aws.ec2.SecurityGroup {
     const nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
         vpcId: args.vpcId,
+        revokeRulesOnDelete: true,
         ingress: [],
         egress: [],
         tags: args.eksCluster.name.apply(n => <aws.Tags>{
