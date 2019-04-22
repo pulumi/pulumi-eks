@@ -116,6 +116,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // Create the EKS cluster security group
     const eksClusterSecurityGroup = new aws.ec2.SecurityGroup(`${name}-eksClusterSecurityGroup`, {
         vpcId: vpcId,
+        revokeRulesOnDelete: true,
         ingress: [],
         egress: [],
     }, { parent: parent });
