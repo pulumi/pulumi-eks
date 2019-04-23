@@ -6,6 +6,8 @@
 
 ### Improvements
 
+- fix(secgroups): use standalone secgroup rules instead of in-line rules
+  [#108](https://github.com/pulumi/pulumi-eks/pull/108)
 - fix(nodegroup): filter on x86_64 arch for node AMI
   [#112](https://github.com/pulumi/pulumi-eks/pull/112)
 
