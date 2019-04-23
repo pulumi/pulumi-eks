@@ -1,5 +1,8 @@
 ### Improvements
 
+- fix(secgroups): use standalone secgroup rules instead of in-line rules
+  [#108](https://github.com/pulumi/pulumi-eks/pull/108)
+
 ## 0.18.1 (Release April 08, 2019)
 
 - feat(nodePools): support per-nodegroup IAM instance roles
