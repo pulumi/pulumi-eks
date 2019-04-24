@@ -1,3 +1,9 @@
+## Unreleased
+
+### Improvements
+
+## 0.18.2 (Release April 24, 2019)
+
 ### Improvements
 
 - fix(nodegroup): filter on x86_64 arch for node AMI
