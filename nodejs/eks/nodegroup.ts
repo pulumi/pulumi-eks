@@ -345,6 +345,11 @@ ${customUserData}
                 name: "manifest-location",
                 values: [ "*amazon-eks-node*"],
             },
+            // Filter to target architecture
+            {
+                name: "architecture",
+                values: [ "x86_64"],
+            },
         ];
 
         if (version !== undefined) {
