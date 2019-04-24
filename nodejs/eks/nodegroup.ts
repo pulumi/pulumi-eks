@@ -108,9 +108,10 @@ export interface NodeGroupBaseOptions {
     maxSize?: pulumi.Input<number>;
 
     /**
-     * The AMI to use for worker nodes. Defaults to the value of Amazon EKS - Optimized AMI if no value is provided.
-	 * More information about the AWS eks optimized ami is available at https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
-	 * Use the information provided by AWS if you want to build your own AMI.
+     * The AMI to use for worker nodes. Defaults to the current value of Amazon EKS - Optimized AMI at time of resource
+     * creation if no value is provided. More information about the AWS eks optimized ami is available at
+     * https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html. Use the information provided by AWS if
+     * you want to build your own AMI.
      */
     amiId?: pulumi.Input<string>;
 
@@ -327,6 +328,7 @@ ${customUserData}
         });
 
     let amiId: pulumi.Input<string> = args.amiId!;
+    let ignoreChanges: string[] = [];
     const version: pulumi.Input<string> = args.version!;
     if (args.amiId === undefined) {
         const filters: { name: string; values: string[]}[] = [
@@ -381,6 +383,8 @@ ${customUserData}
             throw new Error("No Linux AMI Id was found.");
         }
         amiId = bestAmiId;
+        // When we automatically pick an image to use, we want to ignore any changes to this later by default.
+        ignoreChanges = ["imageId"];
     }
 
     // Enable auto-assignment of public IP addresses on worker nodes for
@@ -405,7 +409,7 @@ ${customUserData}
             deleteOnTermination: true,
         },
         userData: userdata,
-    }, { parent: parent });
+    }, { parent: parent, ignoreChanges: ignoreChanges });
 
     const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
     if (args.desiredCapacity === undefined) {
