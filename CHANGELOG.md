@@ -2,12 +2,20 @@
 
 ### Improvements
 
+## 0.18.3 (Release April 25, 2019)
+
+### Improvements
+- fix(secgroups): use standalone secgroup rules instead of in-line rules
+  [#108](https://github.com/pulumi/pulumi-eks/pull/108). Note, because we are
+  replacing existing in-line secgroup rules with standalone rules,
+  there may be a brief period of outage where the security group rules are
+  removed before they get added back. This update happens in a matter of
+  seconds (~5 sec), so any interruptions are short-lived.
+
 ## 0.18.2 (Release April 24, 2019)
 
 ### Improvements
 
-- fix(secgroups): use standalone secgroup rules instead of in-line rules
-  [#108](https://github.com/pulumi/pulumi-eks/pull/108)
 - fix(nodegroup): filter on x86_64 arch for node AMI
   [#112](https://github.com/pulumi/pulumi-eks/pull/112)
 
