@@ -120,6 +120,11 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         revokeRulesOnDelete: true,
         ingress: [],
         egress: [],
+        tags: <aws.Tags>{
+            "Name": `${name}`,
+            ...args.tags,
+            ...args.clusterSecurityGroupTags,
+        },
     }, { parent: parent });
 
     const eksClusterInternetEgressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterInternetEgressRule`, {
@@ -390,6 +395,11 @@ export interface ClusterOptions {
      * The subnets to use for worker nodes. Defaults to the value of subnetIds.
      */
     nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * The tags to apply to the cluster security group.
+     */
+    clusterSecurityGroupTags?: { [key: string]: string };
 
     /**
      * The size in GiB of a cluster node's root volume. Defaults to 20.
