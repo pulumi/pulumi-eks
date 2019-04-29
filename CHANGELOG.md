@@ -1,4 +1,6 @@
 ## Unreleased
+- feat(control plane logging): Enable control plane logging to cloudwatch.
+  [#100](https://github.com/pulumi/pulumi-eks/pull/117).
 
 ### Improvements
 
