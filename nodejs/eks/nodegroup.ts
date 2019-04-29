@@ -153,6 +153,11 @@ export interface NodeGroupBaseOptions {
      * The tags to apply to the NodeGroup's AutoScalingGroup.
      */
     autoScalingGroupTags?: { [key: string]: string };
+
+    /**
+     * The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
+     */
+    cloudFormationTags?: { [key: string]: string };
 }
 
 /**
@@ -488,6 +493,11 @@ ${customUserData}
     const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
         name: cfnStackName,
         templateBody: cfnTemplateBody,
+        tags: <aws.Tags>{
+            "Name": `${name}-nodes`,
+            ...core.tags,
+            ...args.cloudFormationTags,
+        },
     }, { parent: parent, dependsOn: cfnStackDeps });
 
     const autoScalingGroupName = cfnStack.outputs.apply(outputs => <string>outputs["NodeGroup"]);
