@@ -148,6 +148,11 @@ export interface NodeGroupBaseOptions {
      * The tags to apply to the Worker Nodes security group.
      */
     nodeSecurityGroupTags?: { [key: string]: string };
+
+    /**
+     * The tags to apply to the NodeGroup's AutoScalingGroup.
+     */
+    autoScalingGroupTags?: { [key: string]: string };
 }
 
 /**
@@ -431,14 +436,34 @@ ${customUserData}
     if (args.spotPrice) {
         minInstancesInService = 0;
     }
+
+    // Set default Name and Kubernetes tags on the ASG's.
+    let autoScalingGroupTags = pulumi.all([
+        eksCluster.name,
+    ]).apply(([clusterName]) => `- Key: Name
+                            Value: ${clusterName}-worker
+                            PropagateAtLaunch: 'true'
+                          - Key: kubernetes.io/cluster/${clusterName}
+                            Value: 'owned'
+                            PropagateAtLaunch: 'true'`);
+
+    // Merge any cluster tags for the ASG's.
+    if (core.tags) {
+        autoScalingGroupTags = pulumi.concat(autoScalingGroupTags, tagsToAsgTags(core.tags));
+    }
+    // Merge any user supplied tags for the ASG's.
+    if (args.autoScalingGroupTags) {
+        autoScalingGroupTags = pulumi.concat(autoScalingGroupTags, tagsToAsgTags(args.autoScalingGroupTags));
+    }
+
     const cfnTemplateBody = pulumi.all([
         nodeLaunchConfiguration.id,
         args.desiredCapacity,
         args.minSize,
         args.maxSize,
-        eksCluster.name,
+        autoScalingGroupTags,
         workerSubnetIds.apply(JSON.stringify),
-    ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, clusterName, vpcSubnetIds]) => `
+    ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, asgTags, vpcSubnetIds]) => `
                 AWSTemplateFormatVersion: '2010-09-09'
                 Outputs:
                     NodeGroup:
@@ -453,12 +478,7 @@ ${customUserData}
                           MaxSize: ${maxSize}
                           VPCZoneIdentifier: ${vpcSubnetIds}
                           Tags:
-                          - Key: Name
-                            Value: ${clusterName}-worker
-                            PropagateAtLaunch: 'true'
-                          - Key: kubernetes.io/cluster/${clusterName}
-                            Value: 'owned'
-                            PropagateAtLaunch: 'true'
+                          ${asgTags}
                         UpdatePolicy:
                           AutoScalingRollingUpdate:
                             MinInstancesInService: '${minInstancesInService}'
@@ -525,4 +545,21 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
         }
     }
     return privateSubnets.length === 0 ? publicSubnets : privateSubnets;
+}
+
+/**
+ * Iterates through the tags map creating AWS ASG-style tags
+ */
+function tagsToAsgTags(tags: {[key: string]: string}): pulumi.Output<string> {
+    let output: pulumi.Input<string> = "";
+    for (const tag of Object.keys(tags)) {
+        output = pulumi.concat(output, pulumi.all([
+            tag,
+            tags[tag],
+        ]).apply(([k, v]) => `
+                          - Key: ${k}
+                            Value: ${v}
+                            PropagateAtLaunch: 'true'`));
+    }
+    return pulumi.output(output);
 }
