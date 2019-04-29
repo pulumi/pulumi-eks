@@ -13,6 +13,11 @@ const cluster2 = new eks.Cluster("cluster2", {
     minSize: 2,
     maxSize: 2,
     deployDashboard: false,
+    enabledClusterLogTypes: [
+        "api",
+        "audit",
+        "authenticator",
+    ],
 });
 
 // Export the clusters' kubeconfig.
