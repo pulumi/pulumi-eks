@@ -78,6 +78,7 @@ export interface CoreData {
     eksNodeAccess?: k8s.core.v1.ConfigMap;
     kubeconfig?: pulumi.Output<any>;
     vpcCni?: VpcCni;
+    tags?: { [key: string]: string };
 }
 
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
@@ -280,6 +281,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         vpcCni: vpcCni,
         instanceProfile: instanceProfile,
         eksNodeAccess: eksNodeAccess,
+        tags: args.tags,
     };
 }
 
@@ -449,6 +451,12 @@ export interface ClusterOptions {
      * Defaults to `true`.
      */
     deployDashboard?: boolean;
+
+    /**
+     * Key-value mapping of tags that are automatically applied to all AWS
+     * resources directly under management with this cluster, which support tagging.
+    */
+    tags?: { [key: string]: string };
 
     /**
      * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
