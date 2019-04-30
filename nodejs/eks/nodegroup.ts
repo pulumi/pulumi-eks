@@ -143,6 +143,11 @@ export interface NodeGroupBaseOptions {
      * must be supplied in the ClusterOptions as either: 'instanceRole', or as a role of 'instanceRoles'.
      */
     instanceProfile?: aws.iam.InstanceProfile;
+
+    /**
+     * The tags to apply to the Worker Nodes security group.
+     */
+    nodeSecurityGroupTags?: { [key: string]: string };
 }
 
 /**
@@ -247,6 +252,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
             vpcId: core.vpcId,
             clusterSecurityGroup: core.clusterSecurityGroup,
             eksCluster: eksCluster,
+            tags: <aws.Tags>{...core.tags, ...args.nodeSecurityGroupTags},
         }, parent);
         eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
             description: "Allow pods to communicate with the cluster API Server",

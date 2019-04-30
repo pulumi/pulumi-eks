@@ -26,6 +26,11 @@ export interface NodeGroupSecurityGroupOptions {
      */
     clusterSecurityGroup: aws.ec2.SecurityGroup;
 
+    /*
+     * Key-value mapping of tags to apply to this security group.
+     */
+    tags?: { [key: string]: string };
+
     /**
      * The security group associated with the EKS cluster.
      */
@@ -39,7 +44,9 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         ingress: [],
         egress: [],
         tags: args.eksCluster.name.apply(n => <aws.Tags>{
+            "Name": `${name}`,
             [`kubernetes.io/cluster/${n}`]: "owned",
+            ...args.tags,
         }),
     }, { parent: parent });
 
