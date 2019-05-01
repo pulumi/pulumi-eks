@@ -136,6 +136,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         roleArn: eksRole.role.apply(r => r.arn),
         vpcConfig: { securityGroupIds: [ eksClusterSecurityGroup.id ], subnetIds: subnetIds },
         version: args.version,
+        enabledClusterLogTypes: args.enabledClusterLogTypes,
     }, { parent: parent });
 
     // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
@@ -453,6 +454,13 @@ export interface ClusterOptions {
      * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
      */
     version?: pulumi.Input<string>;
+
+    /**
+     * Enable EKS control plane logging. This sends logs to cloudwatch.
+     * Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"].
+     * By default it is off.
+     */
+    enabledClusterLogTypes?: pulumi.Input<pulumi.Input<string>[]>;
 }
 
 /**
