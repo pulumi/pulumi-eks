@@ -501,16 +501,6 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly instanceRole: pulumi.Output<aws.iam.Role>;
 
     /**
-     * The security group for the cluster's nodes.
-     */
-    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
-
-    /**
-     * The ingress rule that gives node group access to cluster API server
-     */
-    public readonly eksClusterIngressRule: aws.ec2.SecurityGroupRule;
-
-    /**
      * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
      */
     public readonly defaultNodeGroup: NodeGroupData | undefined;
@@ -545,23 +535,6 @@ export class Cluster extends pulumi.ComponentResource {
         this.clusterSecurityGroup = core.clusterSecurityGroup;
         this.eksCluster = core.cluster;
 
-        // create default security group for nodegroup
-        this.nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
-            vpcId: core.vpcId,
-            clusterSecurityGroup: core.clusterSecurityGroup,
-            eksCluster: core.cluster,
-        }, this);
-
-        this.eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
-            description: "Allow pods to communicate with the cluster API Server",
-            type: "ingress",
-            fromPort: 443,
-            toPort: 443,
-            protocol: "tcp",
-            securityGroupId: core.clusterSecurityGroup.id,
-            sourceSecurityGroupId: this.nodeSecurityGroup.id,
-        }, { parent: this });
-
         const configDeps = [core.kubeconfig];
         if (!args.skipDefaultNodeGroup) {
             // Create the worker node group and grant the workers access to the API server.
@@ -569,8 +542,6 @@ export class Cluster extends pulumi.ComponentResource {
                 cluster: core,
                 nodeSubnetIds: args.nodeSubnetIds,
                 nodeAssociatePublicIpAddress: args.nodeAssociatePublicIpAddress,
-                nodeSecurityGroup: this.nodeSecurityGroup,
-                clusterIngressRule: this.eksClusterIngressRule,
                 instanceType: args.instanceType,
                 nodePublicKey: args.nodePublicKey,
                 nodeRootVolumeSize: args.nodeRootVolumeSize,
@@ -582,7 +553,6 @@ export class Cluster extends pulumi.ComponentResource {
                 version: args.version,
                 instanceProfile: core.instanceProfile,
             }, this, core.provider);
-            this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
             configDeps.push(this.defaultNodeGroup.cfnStack.id);
         }
 
@@ -608,8 +578,6 @@ export class Cluster extends pulumi.ComponentResource {
         return new NodeGroup(name, {
             ...args,
             cluster: this.core,
-            nodeSecurityGroup: this.nodeSecurityGroup,
-            clusterIngressRule: this.eksClusterIngressRule,
         }, {
             parent: this,
             providers: { kubernetes: this.provider },
