@@ -1,0 +1,3 @@
+name: tags
+description: EKS cluster and nodegroups with various types of AWS resource tagging
+runtime: nodejs

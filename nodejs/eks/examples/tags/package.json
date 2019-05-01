@@ -1,0 +1,15 @@
+{
+    "name": "nodegroup",
+    "devDependencies": {
+        "typescript": "^3.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "latest",
+        "@pulumi/aws": "latest",
+        "sync-request": "^6.0.0"
+    },
+    "peerDependencies": {
+        "@pulumi/eks": "latest"
+    }
+}
