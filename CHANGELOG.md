@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- fix(ami): only apply AMI smart-default selection on creation
+  [#114](https://github.com/pulumi/pulumi-eks/pull/114)
+
 ## 0.18.3 (Release April 25, 2019)
 
 ### Improvements
