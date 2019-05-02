@@ -1,9 +1,11 @@
 ## Unreleased
-- feat(control plane logging): Enable control plane logging to cloudwatch.
-  [#100](https://github.com/pulumi/pulumi-eks/pull/117).
 
 ### Improvements
 
+- feat(tags): Set default tags & add opts: tags, and other resource tags
+  [#122](https://github.com/pulumi/pulumi-eks/pull/122)
+- feat(control plane logging): Enable control plane logging to cloudwatch.
+  [#100](https://github.com/pulumi/pulumi-eks/pull/117).
 - fix(ami): only apply AMI smart-default selection on creation
   [#114](https://github.com/pulumi/pulumi-eks/pull/114)
 
