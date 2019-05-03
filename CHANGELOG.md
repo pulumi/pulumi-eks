@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(nodeSecurityGroupTags): only expose option through Cluster class
+  [#126](https://github.com/pulumi/pulumi-eks/pull/126)
 - fix(secgroups): do not null out ingress & egress
   [#128](https://github.com/pulumi/pulumi-eks/pull/128)
     - Note: This PR reverses the default null values used for the
