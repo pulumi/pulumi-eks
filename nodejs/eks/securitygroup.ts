@@ -42,7 +42,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         vpcId: args.vpcId,
         revokeRulesOnDelete: true,
         tags: args.eksCluster.name.apply(n => <aws.Tags>{
-            "Name": `${name}`,
+            "Name": `${name}-nodeSecurityGroup`,
             [`kubernetes.io/cluster/${n}`]: "owned",
             ...args.tags,
         }),
