@@ -60,6 +60,9 @@ export interface NodeGroupBaseOptions {
 
     /**
      * The security group to use for all nodes in this worker node group.
+     *
+     * Note: The `nodeSecurityGroup` option and the cluster option
+     * `nodeSecurityGroupTags` are mutually exclusive.
      */
     nodeSecurityGroup?: aws.ec2.SecurityGroup;
 
@@ -143,11 +146,6 @@ export interface NodeGroupBaseOptions {
      * must be supplied in the ClusterOptions as either: 'instanceRole', or as a role of 'instanceRoles'.
      */
     instanceProfile?: aws.iam.InstanceProfile;
-
-    /**
-     * The tags to apply to the Worker Nodes security group.
-     */
-    nodeSecurityGroupTags?: { [key: string]: string };
 
     /**
      * The tags to apply to the NodeGroup's AutoScalingGroup.
@@ -240,6 +238,13 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         throw new Error(`an instanceProfile is required`);
     }
 
+    if (core.nodeSecurityGroup && args.nodeSecurityGroup) {
+        if (core.nodeSecurityGroupTags &&
+            core.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
+            throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. At most, only one option can be set`);
+        }
+    }
+
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
     const cfnStackDeps: Array<pulumi.Resource> = [];
 
@@ -262,7 +267,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
             vpcId: core.vpcId,
             clusterSecurityGroup: core.clusterSecurityGroup,
             eksCluster: eksCluster,
-            tags: <aws.Tags>{...core.tags, ...args.nodeSecurityGroupTags},
+            tags: <aws.Tags>{...core.tags, ...core.nodeSecurityGroupTags},
         }, parent);
         eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
             description: "Allow pods to communicate with the cluster API Server",
