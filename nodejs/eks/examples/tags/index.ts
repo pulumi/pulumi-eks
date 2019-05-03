@@ -13,6 +13,7 @@ const cluster1 = new eks.Cluster("tags-cluster1", {
         "org": "barfoo",
     },
     clusterSecurityGroupTags: { "myClusterSecurityGroupTag1": "true" },
+    nodeSecurityGroupTags: { "myNodeSecurityGroupTag1": "true" },
     deployDashboard: false,
 });
 
@@ -31,6 +32,7 @@ const cluster2 = new eks.Cluster("tags-cluster2", {
         "org": "bar",
     },
     clusterSecurityGroupTags: { "myClusterSecurityGroupTag2": "true" },
+    nodeSecurityGroupTags: { "myNodeSecurityGroupTag2": "true" },
 });
 
 // There are two approaches that can be used to add additional NodeGroups.
@@ -45,7 +47,6 @@ cluster2.createNodeGroup("ng-tags-ondemand", {
     maxSize: 2,
     labels: {"ondemand": "true"},
     instanceProfile: instanceProfile0,
-    nodeSecurityGroupTags: { "myNodeSecurityGroupTag2": "true" },
     autoScalingGroupTags: { "myAutoScalingGroupTag2": "true" },
     cloudFormationTags: { "myCloudFormationTag2": "true" },
 });
@@ -66,7 +67,6 @@ const spot = new eks.NodeGroup("ng-tags-spot", {
             effect: "NoSchedule",
         },
     },
-    nodeSecurityGroupTags: { "myNodeSecurityGroupTag3": "true" },
     autoScalingGroupTags: { "myAutoScalingGroupTag3": "true" },
     cloudFormationTags: { "myCloudFormationTag3": "true" },
 }, {

@@ -79,6 +79,8 @@ export interface CoreData {
     kubeconfig?: pulumi.Output<any>;
     vpcCni?: VpcCni;
     tags?: { [key: string]: string };
+    nodeSecurityGroup?: aws.ec2.SecurityGroup;
+    nodeSecurityGroupTags?: { [key: string]: string };
 }
 
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
@@ -285,6 +287,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         instanceProfile: instanceProfile,
         eksNodeAccess: eksNodeAccess,
         tags: args.tags,
+        nodeSecurityGroupTags: args.nodeSecurityGroupTags,
     };
 }
 
@@ -398,6 +401,14 @@ export interface ClusterOptions {
      * The tags to apply to the cluster security group.
      */
     clusterSecurityGroupTags?: { [key: string]: string };
+
+    /**
+     * The tags to apply to the default `nodeSecurityGroup` created by the cluster.
+     *
+     * Note: The `nodeSecurityGroupTags` option and the node group option
+     * `nodeSecurityGroup` are mutually exclusive.
+     */
+    nodeSecurityGroupTags?: { [key: string]: string };
 
     /**
      * The size in GiB of a cluster node's root volume. Defaults to 20.
@@ -566,7 +577,9 @@ export class Cluster extends pulumi.ComponentResource {
             vpcId: core.vpcId,
             clusterSecurityGroup: core.clusterSecurityGroup,
             eksCluster: core.cluster,
+            tags: <aws.Tags>{...args.tags, ...args.nodeSecurityGroupTags},
         }, this);
+        core.nodeSecurityGroup = this.nodeSecurityGroup;
 
         this.eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
             description: "Allow pods to communicate with the cluster API Server",
