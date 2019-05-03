@@ -121,7 +121,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         vpcId: vpcId,
         revokeRulesOnDelete: true,
         tags: <aws.Tags>{
-            "Name": `${name}`,
+            "Name": `${name}-eksClusterSecurityGroup`,
             ...args.tags,
             ...args.clusterSecurityGroupTags,
         },
