@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.4 (Release May 02, 2019)
+
+### Improvements
+
 - feat(tags): Set default tags & add opts: tags, and other resource tags
   [#122](https://github.com/pulumi/pulumi-eks/pull/122)
 - feat(control plane logging): Enable control plane logging to cloudwatch.
