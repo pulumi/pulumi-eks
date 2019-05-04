@@ -17,7 +17,7 @@
 
 ### Improvements
 - fix(secgroups): use standalone secgroup rules instead of in-line rules
-  [#108](https://github.com/pulumi/pulumi-eks/pull/108). Note, because we are
+  [#109](https://github.com/pulumi/pulumi-eks/pull/109). Note, because we are
   replacing existing in-line secgroup rules with standalone rules,
   there may be a brief period of outage where the security group rules are
   removed before they get added back. This update happens in a matter of
