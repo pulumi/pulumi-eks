@@ -41,8 +41,6 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
     const nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
         vpcId: args.vpcId,
         revokeRulesOnDelete: true,
-        ingress: [],
-        egress: [],
         tags: args.eksCluster.name.apply(n => <aws.Tags>{
             "Name": `${name}`,
             [`kubernetes.io/cluster/${n}`]: "owned",

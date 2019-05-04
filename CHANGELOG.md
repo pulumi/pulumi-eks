@@ -2,6 +2,18 @@
 
 ### Improvements
 
+- fix(secgroups): do not null out ingress & egress
+  [#128](https://github.com/pulumi/pulumi-eks/pull/128)
+    - Note: This PR reverses the default null values used for the
+      ingress and egress in-line rules of the secgroups, introduced in `v0.18.3`.
+      The null default was required to move to standalone secgroup rules, but it
+      has introduced [issues](https://github.com/pulumi/pulumi-eks/issues/127), and thus is being removed in this PR.
+    - Upgrade Path - This is a breaking change **unless** you do the following steps:
+      - If using >= `v0.18.3`: update using the typical package update path.
+      - If using <= `v0.18.2`:
+        1. First, update your cluster from using your current version to `v0.18.4`.
+        1. Next, update your cluster from `v0.18.4` to `v0.18.5` (or higher) using the typical package update path.
+
 ## 0.18.4 (Release May 02, 2019)
 
 ### Improvements
