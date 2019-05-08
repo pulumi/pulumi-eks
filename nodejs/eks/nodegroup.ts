@@ -260,7 +260,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     if (args.nodeSecurityGroup) {
         nodeSecurityGroup = args.nodeSecurityGroup;
         if (eksClusterIngressRule === undefined) {
-            throw new Error(`invalid args for node group ${name}, eksClusterIngressRule is required when nodeSecurityGroup is manually specified`);
+            throw new Error(`invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`);
         }
     } else {
         nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
