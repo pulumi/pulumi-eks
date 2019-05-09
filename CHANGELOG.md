@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.5 (Released May 09, 2019)
+
+### Improvements
+
 - fix(nodeSecurityGroupTags): only expose option through Cluster class
   [#126](https://github.com/pulumi/pulumi-eks/pull/126)
 - fix(secgroups): do not null out ingress & egress
