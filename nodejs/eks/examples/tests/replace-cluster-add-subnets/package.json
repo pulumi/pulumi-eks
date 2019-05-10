@@ -1,0 +1,14 @@
+{
+    "name": "test-replace-cluster-add-subnets",
+    "devDependencies": {
+        "typescript": "^3.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "latest",
+        "@pulumi/awsx": "latest"
+    },
+    "peerDependencies": {
+        "@pulumi/eks": "latest"
+    }
+}
