@@ -62,6 +62,32 @@ func Test_AllTests(t *testing.T) {
 				},
 			},
 		},
+		/*
+			// TODO(metral): Uncomment / add back in once
+			// https://github.com/pulumi/pulumi-eks/issues/107 is resolved.
+			{
+				Dir: path.Join(cwd, "tests", "replace-cluster-add-subnets"),
+				Config: map[string]string{
+					"aws:region": region,
+				},
+				Dependencies: []string{
+					"@pulumi/eks",
+				},
+				ExpectRefreshChanges: true,
+				EditDirs: []integration.EditDir{
+					{
+						Dir:      path.Join(cwd, "tests", "replace-cluster-add-subnets", "step1"),
+						Additive: true,
+						ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+							utils.RunEKSSmokeTest(t,
+								info.Deployment.Resources,
+								info.Outputs["kubeconfig"],
+							)
+						},
+					},
+				},
+			},
+		*/
 	}
 
 	longTests := []integration.ProgramTestOptions{}
