@@ -22,10 +22,12 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/pulumi/pulumi-eks/utils"
 	"github.com/pulumi/pulumi/pkg/testing/integration"
 )
 
 func Test_Examples(t *testing.T) {
+	t.Parallel()
 	region := os.Getenv("AWS_REGION")
 	if region == "" {
 		t.Skipf("Skipping test due to missing AWS_REGION environment variable")
@@ -47,6 +49,13 @@ func Test_Examples(t *testing.T) {
 				"@pulumi/eks",
 			},
 			ExpectRefreshChanges: true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
 		},
 		{
 			Dir: path.Join(cwd, "./nodegroup"),
@@ -57,6 +66,13 @@ func Test_Examples(t *testing.T) {
 				"@pulumi/eks",
 			},
 			ExpectRefreshChanges: true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
 		},
 		{
 			Dir: path.Join(cwd, "./private-cluster"),
@@ -67,6 +83,12 @@ func Test_Examples(t *testing.T) {
 				"@pulumi/eks",
 			},
 			ExpectRefreshChanges: true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
 		},
 		{
 			Dir: path.Join(cwd, "./tags"),
@@ -77,6 +99,13 @@ func Test_Examples(t *testing.T) {
 				"@pulumi/eks",
 			},
 			ExpectRefreshChanges: true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
 		},
 	}
 
