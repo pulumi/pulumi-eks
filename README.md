@@ -19,8 +19,7 @@ or `yarn`:
 
 
 This package requires `aws-iam-authenticator` for Amazon EKS in order to deploy resources to EKS clusters. Install this
-tool using the [official instructions](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html#eks-prereqs)
-under "To install aws-iam-authenticator for Amazon EKS".
+tool using the [official instructions](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html).
 
 `kubectl` is also required if any VPC CNI options are configured; installation instructions are [here](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl).
 
