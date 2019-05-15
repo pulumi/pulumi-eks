@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- fix(cluster): export missing instanceRoles in the cluster's CoreData
+  [#133](https://github.com/pulumi/pulumi-eks/pull/133)
+
 ## 0.18.5 (Released May 09, 2019)
 
 ### Improvements

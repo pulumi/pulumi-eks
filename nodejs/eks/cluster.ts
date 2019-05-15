@@ -74,6 +74,7 @@ export interface CoreData {
     subnetIds: pulumi.Output<string[]>;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
     provider: k8s.Provider;
+    instanceRoles?: pulumi.Output<aws.iam.Role[]>;
     instanceProfile?: aws.iam.InstanceProfile;
     eksNodeAccess?: k8s.core.v1.ConfigMap;
     kubeconfig?: pulumi.Output<any>;
@@ -200,12 +201,14 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent: parent });
 
     let instanceRoleMappings: pulumi.Output<RoleMapping[]>;
+    let instanceRoles: pulumi.Output<aws.iam.Role[]>;
     let instanceProfile: aws.iam.InstanceProfile | undefined;
     // Create role mappings of the instance roles specified for aws-auth.
     if (args.instanceRoles) {
-        instanceRoleMappings = pulumi.output(args.instanceRoles).apply(instanceRoles =>
-            instanceRoles.map(role => createInstanceRoleMapping(role.arn)),
+        instanceRoleMappings = pulumi.output(args.instanceRoles).apply(roles =>
+            roles.map(role => createInstanceRoleMapping(role.arn)),
         );
+        instanceRoles = pulumi.output(args.instanceRoles);
     } else if (args.instanceRole) {
         // Create an instance profile if using a default node group
         if (!args.skipDefaultNodeGroup) {
@@ -217,6 +220,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         instanceRoleMappings = pulumi.output(args.instanceRole).apply(instanceRole =>
             [createInstanceRoleMapping(instanceRole.arn)],
         );
+        instanceRoles = pulumi.output([args.instanceRole]);
     } else {
         const instanceRole = (new ServiceRole(`${name}-instanceRole`, {
             service: "ec2.amazonaws.com",
@@ -226,6 +230,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
             ],
         }, { parent: parent })).role;
+        instanceRoles = pulumi.output([instanceRole]);
 
         // Create a new policy for the role, if specified.
         if (args.customInstanceRolePolicy) {
@@ -284,6 +289,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         kubeconfig: kubeconfig,
         provider: provider,
         vpcCni: vpcCni,
+        instanceRoles: instanceRoles,
         instanceProfile: instanceProfile,
         eksNodeAccess: eksNodeAccess,
         tags: args.tags,
