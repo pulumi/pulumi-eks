@@ -13,12 +13,12 @@ import * as iam from "./iam";
 //   - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 //   - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 //   - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-const role0 = iam.createRole("myrole0");
-const instanceProfile0 = new aws.iam.InstanceProfile("myInstanceProfile0", {role: role0});
+const role0 = iam.createRole("example-role0");
+const instanceProfile0 = new aws.iam.InstanceProfile("example-instanceProfile0", {role: role0});
 
 // Create an EKS cluster with a shared IAM instance role to register with the
 // cluster auth.
-const cluster1 = new eks.Cluster("nodegroup-iam-simple", {
+const cluster1 = new eks.Cluster("example-nodegroup-iam-simple", {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
     instanceRole: role0,
@@ -30,8 +30,8 @@ const cluster1 = new eks.Cluster("nodegroup-iam-simple", {
 
 // Create the node group using an `instanceProfile` tied to the shared, cluster
 // instance role registered with the cluster auth through `instanceRole`.
-cluster1.createNodeGroup("ng-simple-ondemand", {
-    instanceType: "t2.large",
+cluster1.createNodeGroup("example-ng-simple-ondemand", {
+    instanceType: "t2.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -39,10 +39,10 @@ cluster1.createNodeGroup("ng-simple-ondemand", {
     instanceProfile: instanceProfile0,
 });
 
-// Create the second node group with spot m4.large instance
-const spot = new eks.NodeGroup("ng-simple-spot", {
+// Create the second node group with spot t2.medium instance
+const spot = new eks.NodeGroup("example-ng-simple-spot", {
     cluster: cluster1,
-    instanceType: "m4.large",
+    instanceType: "t2.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -67,13 +67,13 @@ export const kubeconfig1 = cluster1.kubeconfig;
  * role and profile.
  */
 
-const role1 = iam.createRole("myrole1");
-const role2 = iam.createRole("myrole2");
-const instanceProfile1 = new aws.iam.InstanceProfile("myInstanceProfile1", {role: role1});
-const instanceProfile2 = new aws.iam.InstanceProfile("myInstanceProfile2", {role: role2});
+const role1 = iam.createRole("example-role1");
+const role2 = iam.createRole("example-role2");
+const instanceProfile1 = new aws.iam.InstanceProfile("example-instanceProfile1", {role: role1});
+const instanceProfile2 = new aws.iam.InstanceProfile("example-instanceProfile2", {role: role2});
 
 // Create an EKS cluster with many IAM roles to register with the cluster auth.
-const cluster2 = new eks.Cluster("nodegroup-iam-advanced", {
+const cluster2 = new eks.Cluster("example-nodegroup-iam-advanced", {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
     instanceRoles: [role1, role2],
@@ -81,8 +81,8 @@ const cluster2 = new eks.Cluster("nodegroup-iam-advanced", {
 
 // Create node groups using a different `instanceProfile` tied to one of the many
 // instance roles registered with the cluster auth through `instanceRoles`.
-cluster2.createNodeGroup("ng-advanced-ondemand", {
-    instanceType: "t2.large",
+cluster2.createNodeGroup("example-ng-advanced-ondemand", {
+    instanceType: "t2.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -90,9 +90,9 @@ cluster2.createNodeGroup("ng-advanced-ondemand", {
     instanceProfile: instanceProfile1,
 });
 
-const spot2 = new eks.NodeGroup("ng-advanced-spot", {
+const spot2 = new eks.NodeGroup("example-ng-advanced-spot", {
     cluster: cluster2,
-    instanceType: "m4.large",
+    instanceType: "t2.medium",
     desiredCapacity: 1,
     spotPrice: "1",
     minSize: 1,

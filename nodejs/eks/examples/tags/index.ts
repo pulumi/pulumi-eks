@@ -3,7 +3,7 @@ import * as eks from "@pulumi/eks";
 import * as iam from "./iam";
 
 // Create an EKS cluster with cluster and resource tags.
-const cluster1 = new eks.Cluster("tags-cluster1", {
+const cluster1 = new eks.Cluster("example-tags-cluster1", {
     instanceType: "t2.medium",
     desiredCapacity: 1,
     minSize: 1,
@@ -21,9 +21,9 @@ const cluster1 = new eks.Cluster("tags-cluster1", {
 export const kubeconfig1 = cluster1.kubeconfig;
 
 // Create an EKS cluster with no default node group.
-const role0 = iam.createRole("tags-myrole0");
-const instanceProfile0 = new aws.iam.InstanceProfile("tags-myInstanceProfile0", {role: role0});
-const cluster2 = new eks.Cluster("tags-cluster2", {
+const role0 = iam.createRole("example-tags-role0");
+const instanceProfile0 = new aws.iam.InstanceProfile("example-tags-instanceProfile0", {role: role0});
+const cluster2 = new eks.Cluster("example-tags-cluster2", {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
     instanceRole: role0,
@@ -40,7 +40,7 @@ const cluster2 = new eks.Cluster("tags-cluster2", {
 // 2. A `NodeGroup` resource which accepts an `eks.Cluster` as input
 
 // Create the node group using an on-demand instance and resource tags.
-cluster2.createNodeGroup("ng-tags-ondemand", {
+cluster2.createNodeGroup("example-ng-tags-ondemand", {
     instanceType: "t2.medium",
     desiredCapacity: 1,
     minSize: 1,
@@ -52,7 +52,7 @@ cluster2.createNodeGroup("ng-tags-ondemand", {
 });
 
 // Create the second node group using a spot price instance and resource tags.
-const spot = new eks.NodeGroup("ng-tags-spot", {
+const spot = new eks.NodeGroup("example-ng-tags-spot", {
     cluster: cluster2,
     instanceType: "t2.medium",
     desiredCapacity: 1,

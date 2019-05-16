@@ -1,5 +1,5 @@
 {
-    "name": "private-cluster",
+    "name": "example-private-subnets-cluster",
     "dependencies": {
         "typescript": "^2.7.2",
         "@types/node": "latest",
