@@ -1,5 +1,5 @@
 {
-    "name": "cluster",
+    "name": "example-cluster",
     "devDependencies": {
         "typescript": "^2.7.2",
         "@types/node": "latest"

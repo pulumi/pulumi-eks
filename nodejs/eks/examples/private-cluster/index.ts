@@ -1,7 +1,7 @@
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 
-const name = "private-cluster";
+const name = "example-private-subnets-cluster";
 
 // Create a VPC that uses private subnets.
 const network = new awsx.Network(name, {
