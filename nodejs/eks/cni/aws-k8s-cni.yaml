@@ -44,7 +44,8 @@ subjects:
   namespace: kube-system
 ---
 kind: DaemonSet
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
+# kubernetes versions before 1.9.0 should use extensions/v1beta1
 metadata:
   name: aws-node
   namespace: kube-system
@@ -68,7 +69,7 @@ spec:
       tolerations:
       - operator: Exists
       containers:
-      - image: 602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:1.3.0
+      - image: 602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.4.1
         imagePullPolicy: Always
         ports:
         - containerPort: 61678
@@ -120,9 +121,11 @@ metadata:
 spec:
   scope: Cluster
   group: crd.k8s.amazonaws.com
-  version: v1alpha1
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
   names:
     plural: eniconfigs
     singular: eniconfig
     kind: ENIConfig
-
