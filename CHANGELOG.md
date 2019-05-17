@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- update(aws-k8s-cni): move from 1.3.0 -> 1.4.1 
+  [#134](https://github.com/pulumi/pulumi-eks/pull/134)
 - fix(cluster): export missing instanceRoles in the cluster's CoreData
   [#133](https://github.com/pulumi/pulumi-eks/pull/133)
 
