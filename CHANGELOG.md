@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(cluster): rm dupe default storage class
+  [#136](https://github.com/pulumi/pulumi-eks/pull/136)
 - Expand nodejs SDK tests coverage, and add Kubernetes Smoke Tests for examples
   & tests [#130](https://github.com/pulumi/pulumi-eks/pull/130)
 - update(aws-k8s-cni): move from 1.3.0 -> 1.4.1 
