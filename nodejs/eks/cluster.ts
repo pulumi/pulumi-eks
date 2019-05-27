@@ -572,7 +572,6 @@ export class Cluster extends pulumi.ComponentResource {
         args = args || {};
 
         // Create the core resources required by the cluster.
-        args.storageClasses = args.storageClasses || "gp2";
         const core = createCore(name, args, this);
         this.core = core;
         this.clusterSecurityGroup = core.clusterSecurityGroup;
