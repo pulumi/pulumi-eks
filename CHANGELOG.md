@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.6 (Released June 04, 2019)
+
+### Improvements
+
 - fix(cluster): rm dupe default storage class
   [#136](https://github.com/pulumi/pulumi-eks/pull/136)
 - Expand nodejs SDK tests coverage, and add Kubernetes Smoke Tests for examples
