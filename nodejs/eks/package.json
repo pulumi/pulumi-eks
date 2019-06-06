@@ -12,7 +12,7 @@
     "repository": "https://github.com/pulumi/pulumi-eks",
     "dependencies": {
         "@pulumi/aws": "^0.18.3",
-        "@pulumi/kubernetes": "^0.21.0",
+        "@pulumi/kubernetes": "^0.24.0",
         "@pulumi/pulumi": "^0.17.8",
         "which": "^1.3.1"
     },
