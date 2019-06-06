@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- update(aws-k8s-cni): move from 1.4.1 -> 1.5.0
+  [#148](https://github.com/pulumi/pulumi-eks/pull/148)
+
 ## 0.18.6 (Released June 04, 2019)
 
 ### Improvements
@@ -10,7 +13,7 @@
   [#136](https://github.com/pulumi/pulumi-eks/pull/136)
 - Expand nodejs SDK tests coverage, and add Kubernetes Smoke Tests for examples
   & tests [#130](https://github.com/pulumi/pulumi-eks/pull/130)
-- update(aws-k8s-cni): move from 1.3.0 -> 1.4.1 
+- update(aws-k8s-cni): move from 1.3.0 -> 1.4.1
   [#134](https://github.com/pulumi/pulumi-eks/pull/134)
 - fix(cluster): export missing instanceRoles in the cluster's CoreData
   [#133](https://github.com/pulumi/pulumi-eks/pull/133)
