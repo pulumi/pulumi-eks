@@ -74,7 +74,7 @@ export interface CoreData {
     subnetIds: pulumi.Output<string[]>;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
     provider: k8s.Provider;
-    instanceRoles?: pulumi.Output<aws.iam.Role[]>;
+    instanceRoles: pulumi.Output<aws.iam.Role[]>;
     instanceProfile?: aws.iam.InstanceProfile;
     eksNodeAccess?: k8s.core.v1.ConfigMap;
     kubeconfig?: pulumi.Output<any>;
@@ -530,9 +530,9 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly clusterSecurityGroup: aws.ec2.SecurityGroup;
 
     /**
-     * The service role used by the EKS cluster.
+     * The service roles used by the EKS cluster.
      */
-    public readonly instanceRole: pulumi.Output<aws.iam.Role>;
+    public readonly instanceRoles: pulumi.Output<aws.iam.Role[]>;
 
     /**
      * The security group for the cluster's nodes.
@@ -577,6 +577,7 @@ export class Cluster extends pulumi.ComponentResource {
         this.core = core;
         this.clusterSecurityGroup = core.clusterSecurityGroup;
         this.eksCluster = core.cluster;
+        this.instanceRoles = core.instanceRoles;
 
         // create default security group for nodegroup
         this.nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
