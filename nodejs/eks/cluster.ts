@@ -145,7 +145,12 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
         roleArn: eksRole.role.apply(r => r.arn),
-        vpcConfig: { securityGroupIds: [ eksClusterSecurityGroup.id ], subnetIds: subnetIds },
+        vpcConfig: {
+            securityGroupIds: [eksClusterSecurityGroup.id],
+            subnetIds: subnetIds,
+            endpointPrivateAccess: args.endpointPrivateAccess,
+            endpointPublicAccess: args.endpointPublicAccess,
+        },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
     }, { parent: parent });
@@ -499,6 +504,16 @@ export interface ClusterOptions {
      * By default it is off.
      */
     enabledClusterLogTypes?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`.
+     */
+    endpointPublicAccess?: boolean;
+
+    /**
+     * Indicates whether or not the Amazon EKS private API server endpoint is enabled.  The default is `false`.
+     */
+    endpointPrivateAccess?: boolean;
 }
 
 /**
