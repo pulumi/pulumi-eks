@@ -58,7 +58,16 @@ export interface StorageClass {
     kmsKeyId?: pulumi.Input<string>;
 
     /**
-     * True if this storage class should be the default storage class for the cluster.
+     * True if this storage class should be a default storage class for the cluster.
+     *
+     * Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will
+     * always be created automatically for the cluster by the EKS service. See
+     * https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
+     *
+     * Please note that at most one storage class can be marked as default. If
+     * two or more of them are marked as default, a PersistentVolumeClaim
+     * without `storageClassName` explicitly specified cannot be created. See:
+     * https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/#changing-the-default-storageclass
      */
     default?: pulumi.Input<boolean>;
 
@@ -95,7 +104,7 @@ export interface StorageClass {
 }
 
 // createStorageClass creates a single StorageClass from the given inputs.
-export function createStorageClass(name: string, storageClass: StorageClass, opts: pulumi.CustomResourceOptions) {
+export function createStorageClass(name: string, storageClass: StorageClass, opts: pulumi.CustomResourceOptions): k8s.storage.v1.StorageClass {
     // Compute the storage class's metadata, including its name and default storage class annotation.
     const metadata = pulumi.all([storageClass.metadata || {}, storageClass.default])
         .apply(([m, isDefault]) => {
@@ -122,7 +131,7 @@ export function createStorageClass(name: string, storageClass: StorageClass, opt
         parameters["kmsKeyId"] = storageClass.kmsKeyId;
     }
 
-    const k8sStorageClass = new k8s.storage.v1.StorageClass(name, {
+    return new k8s.storage.v1.StorageClass(name, {
         metadata: metadata,
         provisioner: "kubernetes.io/aws-ebs",
         parameters: parameters,

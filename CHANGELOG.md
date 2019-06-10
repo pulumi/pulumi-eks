@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- feat(storage-classes): export all user created storage classes
+  [#172](https://github.com/pulumi/pulumi-eks/pull/172)
 - update(eks): add example of migrating node groups with zero downtime
   [#195](https://github.com/pulumi/pulumi-eks/pull/195)
 

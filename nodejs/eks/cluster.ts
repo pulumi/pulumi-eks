@@ -26,7 +26,7 @@ import { createNodeGroup, NodeGroup, NodeGroupBaseOptions, NodeGroupData } from 
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
-import { InputTags } from "./utils";
+import { InputTags, UserStorageClasses } from "./utils";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -80,6 +80,7 @@ export interface CoreData {
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
     instanceProfile?: aws.iam.InstanceProfile;
     eksNodeAccess?: k8s.core.v1.ConfigMap;
+    storageClasses?: UserStorageClasses;
     kubeconfig?: pulumi.Output<any>;
     vpcCni?: VpcCni;
     tags?: InputTags;
@@ -228,12 +229,14 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     // Add any requested StorageClasses.
     const storageClasses = args.storageClasses || {};
+    const userStorageClasses: UserStorageClasses = pulumi.output({});
     if (typeof storageClasses === "string") {
         const storageClass = { type: storageClasses, default: true };
-        createStorageClass(`${name.toLowerCase()}-${storageClasses}`, storageClass, { parent: parent, provider: provider });
+        userStorageClasses[storageClasses] = pulumi.output(
+            createStorageClass(`${name.toLowerCase()}-${storageClasses}`, storageClass, { parent: parent, provider: provider }));
     } else {
         for (const key of Object.keys(storageClasses)) {
-            createStorageClass(`${name.toLowerCase()}-${key}`, storageClasses[key], { parent: parent, provider: provider });
+            userStorageClasses[key] = pulumi.output(createStorageClass(`${name.toLowerCase()}-${key}`, storageClasses[key], { parent: parent, provider: provider }));
         }
     }
 
@@ -334,6 +337,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         eksNodeAccess: eksNodeAccess,
         tags: args.tags,
         nodeSecurityGroupTags: args.nodeSecurityGroupTags,
+        storageClasses: userStorageClasses,
     };
 }
 
@@ -489,9 +493,11 @@ export interface ClusterOptions {
 
     /**
      * An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map,
-     * a single StorageClass will be created for that volume type and made the cluster's default StorageClass.
+     * a single StorageClass will be created for that volume type.
      *
-     * Defaults to "gp2".
+     * Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will
+     * always be created automatically for the cluster by the EKS service. See
+     * https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
      */
     storageClasses?: { [name: string]: StorageClass } | EBSVolumeType;
 
