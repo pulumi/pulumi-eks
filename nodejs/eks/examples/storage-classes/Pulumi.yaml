@@ -1,0 +1,3 @@
+name: example-storage-classes
+description: Creates an EKS cluster with storage classes, and showcases how to use them.
+runtime: nodejs

@@ -1,0 +1,14 @@
+{
+    "name": "example-storage-classes",
+    "devDependencies": {
+        "typescript": "^3.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "latest",
+        "@pulumi/kubernetes": "latest"
+    },
+    "peerDependencies": {
+        "@pulumi/eks": "latest"
+    }
+}
