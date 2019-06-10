@@ -106,6 +106,23 @@ func Test_Examples(t *testing.T) {
 				)
 			},
 		},
+		{
+			Dir: path.Join(cwd, "storage-classes"),
+			Config: map[string]string{
+				"aws:region": region,
+			},
+			Dependencies: []string{
+				"@pulumi/eks",
+			},
+			ExpectRefreshChanges: true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		},
 	}
 
 	longTests := []integration.ProgramTestOptions{}
