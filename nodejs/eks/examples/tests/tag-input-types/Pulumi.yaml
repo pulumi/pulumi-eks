@@ -1,0 +1,3 @@
+name: tag-input-types
+description: EKS cluster example of various, specialized resource tags
+runtime: nodejs

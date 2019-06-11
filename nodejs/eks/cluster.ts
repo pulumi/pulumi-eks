@@ -24,6 +24,7 @@ import { createNodeGroup, NodeGroup, NodeGroupBaseOptions, NodeGroupData } from 
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
+import { InputTags } from "./utils";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -79,9 +80,9 @@ export interface CoreData {
     eksNodeAccess?: k8s.core.v1.ConfigMap;
     kubeconfig?: pulumi.Output<any>;
     vpcCni?: VpcCni;
-    tags?: { [key: string]: string };
+    tags?: InputTags;
     nodeSecurityGroup?: aws.ec2.SecurityGroup;
-    nodeSecurityGroupTags?: { [key: string]: string };
+    nodeSecurityGroupTags?: InputTags;
 }
 
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
@@ -121,11 +122,14 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     const eksClusterSecurityGroup = new aws.ec2.SecurityGroup(`${name}-eksClusterSecurityGroup`, {
         vpcId: vpcId,
         revokeRulesOnDelete: true,
-        tags: <aws.Tags>{
+        tags: pulumi.all([
+            args.tags,
+            args.clusterSecurityGroupTags,
+        ]).apply(([tags, clusterSecurityGroupTags]) => (<aws.Tags>{
             "Name": `${name}-eksClusterSecurityGroup`,
-            ...args.tags,
-            ...args.clusterSecurityGroupTags,
-        },
+            ...tags,
+            ...clusterSecurityGroupTags,
+        })),
     }, { parent: parent });
 
     const eksClusterInternetEgressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterInternetEgressRule`, {
@@ -406,7 +410,7 @@ export interface ClusterOptions {
     /**
      * The tags to apply to the cluster security group.
      */
-    clusterSecurityGroupTags?: { [key: string]: string };
+    clusterSecurityGroupTags?: InputTags;
 
     /**
      * The tags to apply to the default `nodeSecurityGroup` created by the cluster.
@@ -414,7 +418,7 @@ export interface ClusterOptions {
      * Note: The `nodeSecurityGroupTags` option and the node group option
      * `nodeSecurityGroup` are mutually exclusive.
      */
-    nodeSecurityGroupTags?: { [key: string]: string };
+    nodeSecurityGroupTags?: InputTags;
 
     /**
      * The size in GiB of a cluster node's root volume. Defaults to 20.
@@ -482,7 +486,7 @@ export interface ClusterOptions {
      * Key-value mapping of tags that are automatically applied to all AWS
      * resources directly under management with this cluster, which support tagging.
     */
-    tags?: { [key: string]: string };
+    tags?: InputTags;
 
     /**
      * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
@@ -584,7 +588,13 @@ export class Cluster extends pulumi.ComponentResource {
             vpcId: core.vpcId,
             clusterSecurityGroup: core.clusterSecurityGroup,
             eksCluster: core.cluster,
-            tags: <aws.Tags>{...args.tags, ...args.nodeSecurityGroupTags},
+            tags: pulumi.all([
+                args.tags,
+                args.nodeSecurityGroupTags,
+            ]).apply(([tags, nodeSecurityGroupTags]) => (<aws.Tags>{
+                ...tags,
+                ...nodeSecurityGroupTags,
+            })),
         }, this);
         core.nodeSecurityGroup = this.nodeSecurityGroup;
 
