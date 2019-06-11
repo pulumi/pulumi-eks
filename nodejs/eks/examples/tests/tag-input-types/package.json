@@ -1,0 +1,15 @@
+{
+    "name": "cluster",
+    "devDependencies": {
+        "typescript": "^3.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "latest",
+        "@pulumi/awsx": "latest",
+        "@pulumi/aws": "latest"
+    },
+    "peerDependencies": {
+        "@pulumi/eks": "latest"
+    }
+}

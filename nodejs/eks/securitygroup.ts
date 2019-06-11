@@ -15,6 +15,8 @@
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 
+import { InputTags } from "./utils";
+
 export interface NodeGroupSecurityGroupOptions {
     /**
      * The VPC in which to create the worker node group.
@@ -29,7 +31,7 @@ export interface NodeGroupSecurityGroupOptions {
     /*
      * Key-value mapping of tags to apply to this security group.
      */
-    tags?: { [key: string]: string };
+    tags?: InputTags;
 
     /**
      * The security group associated with the EKS cluster.
@@ -41,11 +43,14 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
     const nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
         vpcId: args.vpcId,
         revokeRulesOnDelete: true,
-        tags: args.eksCluster.name.apply(n => <aws.Tags>{
+        tags: pulumi.all([
+            args.tags,
+            args.eksCluster.name,
+        ]).apply(([tags, clusterName]) => (<aws.Tags>{
             "Name": `${name}-nodeSecurityGroup`,
-            [`kubernetes.io/cluster/${n}`]: "owned",
-            ...args.tags,
-        }),
+            [`kubernetes.io/cluster/${clusterName}`]: "owned",
+            ...tags,
+        })),
     }, { parent: parent });
 
     const nodeIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksNodeIngressRule`, {
