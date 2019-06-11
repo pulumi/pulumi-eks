@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(tags): change map types used in all tags to pulumi.Inputs of the map
+  [#157](https://github.com/pulumi/pulumi-eks/pull/157)
 - fix(cluster): expose instanceRoles
   [#155](https://github.com/pulumi/pulumi-eks/pull/155)
 - tests(cluster): enable test to replace cluster by adding more subnets

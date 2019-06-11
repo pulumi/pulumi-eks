@@ -20,6 +20,7 @@ import * as crypto from "crypto";
 import { Cluster, CoreData } from "./cluster";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import transform from "./transform";
+import { InputTags } from "./utils";
 
 /**
  * Taint represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup.  See
@@ -150,12 +151,12 @@ export interface NodeGroupBaseOptions {
     /**
      * The tags to apply to the NodeGroup's AutoScalingGroup.
      */
-    autoScalingGroupTags?: { [key: string]: string };
+    autoScalingGroupTags?: InputTags;
 
     /**
      * The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
      */
-    cloudFormationTags?: { [key: string]: string };
+    cloudFormationTags?: InputTags;
 }
 
 /**
@@ -267,7 +268,13 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
             vpcId: core.vpcId,
             clusterSecurityGroup: core.clusterSecurityGroup,
             eksCluster: eksCluster,
-            tags: <aws.Tags>{...core.tags, ...core.nodeSecurityGroupTags},
+            tags: pulumi.all([
+                core.tags,
+                core.nodeSecurityGroupTags,
+            ]).apply(([tags, nodeSecurityGroupTags]) => (<aws.Tags>{
+                ...tags,
+                ...nodeSecurityGroupTags,
+            })),
         }, parent);
         eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
             description: "Allow pods to communicate with the cluster API Server",
@@ -498,11 +505,14 @@ ${customUserData}
     const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
         name: cfnStackName,
         templateBody: cfnTemplateBody,
-        tags: <aws.Tags>{
+        tags: pulumi.all([
+            core.tags,
+            args.cloudFormationTags,
+        ]).apply(([tags, cloudFormationTags]) => (<aws.Tags>{
             "Name": `${name}-nodes`,
-            ...core.tags,
-            ...args.cloudFormationTags,
-        },
+            ...tags,
+            ...cloudFormationTags,
+        })),
     }, { parent: parent, dependsOn: cfnStackDeps });
 
     const autoScalingGroupName = cfnStack.outputs.apply(outputs => <string>outputs["NodeGroup"]);
@@ -565,16 +575,15 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
 /**
  * Iterates through the tags map creating AWS ASG-style tags
  */
-function tagsToAsgTags(tags: {[key: string]: string}): pulumi.Output<string> {
-    let output: pulumi.Input<string> = "";
-    for (const tag of Object.keys(tags)) {
-        output = pulumi.concat(output, pulumi.all([
-            tag,
-            tags[tag],
-        ]).apply(([k, v]) => `
-                          - Key: ${k}
-                            Value: ${v}
-                            PropagateAtLaunch: 'true'`));
-    }
-    return pulumi.output(output);
+function tagsToAsgTags(tagsInput: InputTags): pulumi.Output<string> {
+    return pulumi.output(tagsInput).apply(tags => {
+        let output = "";
+        for (const tag of Object.keys(tags)) {
+            output +=        `
+                          - Key: ${tag}
+                            Value: ${tags[tag]}
+                            PropagateAtLaunch: 'true'`;
+        }
+        return output;
+    });
 }

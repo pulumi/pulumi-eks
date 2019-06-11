@@ -51,7 +51,8 @@ cluster2.createNodeGroup("example-ng-tags-ondemand", {
     cloudFormationTags: { "myCloudFormationTag2": "true" },
 });
 
-// Create the second node group using a spot price instance and resource tags.
+// Create the second node group using a spot price instance, resource tags, and
+// specialized resource tags such as the autoScalingGroupTags.
 const spot = new eks.NodeGroup("example-ng-tags-spot", {
     cluster: cluster2,
     instanceType: "t2.medium",
@@ -67,7 +68,11 @@ const spot = new eks.NodeGroup("example-ng-tags-spot", {
             effect: "NoSchedule",
         },
     },
-    autoScalingGroupTags: { "myAutoScalingGroupTag3": "true" },
+    autoScalingGroupTags: cluster2.core.cluster.name.apply(clusterName => ({
+        "myAutoScalingGroupTag3": "true",
+        "k8s.io/cluster-autoscaler/enabled": "true",
+        [`k8s.io/cluster-autoscaler/${clusterName}`]: "true",
+    })),
     cloudFormationTags: { "myCloudFormationTag3": "true" },
 }, {
     providers: { kubernetes: cluster2.provider},

@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export { Cluster, ClusterOptions, ClusterNodeGroupOptions, CoreData, RoleMapping, UserMapping } from "./cluster";
-export { NodeGroup, NodeGroupOptions, NodeGroupData } from "./nodegroup";
-export { VpcCni, VpcCniOptions } from "./cni";
-export { StorageClass, EBSVolumeType, createStorageClass } from "./storageclass";
-export { InputTags } from "./utils";
+import * as pulumi from "@pulumi/pulumi";
+
+/**
+ * InputTags represents an Input map type that can leverage dynamic string k/v
+ * for use on types that expect a k/v type with possible computed runtime values,
+ * such as special CloudFormation Tags. See
+ * https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html.
+ */
+export type InputTags = pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
