@@ -108,14 +108,19 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     }
 
     // Create the EKS service role
-    const eksRole = new ServiceRole(`${name}-eksRole`, {
+    let eksRole: pulumi.Output<aws.iam.Role>;
+    if (args.serviceRole) {
+      eksRole = pulumi.output(args.serviceRole);
+    } else {
+      eksRole = (new ServiceRole(`${name}-eksRole`, {
         service: "eks.amazonaws.com",
         description: "Allows EKS to manage clusters on your behalf.",
         managedPolicyArns: [
             "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
             "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
         ],
-    }, { parent: parent });
+      }, { parent: parent })).role;
+    }
 
     // Create the EKS cluster security group
     const eksClusterSecurityGroup = new aws.ec2.SecurityGroup(`${name}-eksClusterSecurityGroup`, {
@@ -140,7 +145,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
-        roleArn: eksRole.role.apply(r => r.arn),
+        roleArn: eksRole.apply(r => r.arn),
         vpcConfig: { securityGroupIds: [ eksClusterSecurityGroup.id ], subnetIds: subnetIds },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
@@ -212,9 +217,13 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     } else if (args.instanceRole) {
         // Create an instance profile if using a default node group
         if (!args.skipDefaultNodeGroup) {
-            instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
-                role: args.instanceRole,
-            }, { parent: parent });
+            if (args.instanceProfileName) {
+              instanceProfile = aws.iam.InstanceProfile.get(args.instanceProfileName, args.instanceProfileName);
+            } else {
+              instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
+                  role: args.instanceRole,
+              }, { parent: parent });
+            }
         }
 
         instanceRoleMappings = pulumi.output(args.instanceRole).apply(instanceRole =>
@@ -366,6 +375,17 @@ export interface ClusterOptions {
      * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
      */
     instanceRole?: pulumi.Input<aws.iam.Role>;
+
+    /**
+     * Node instance profile - for worker nodes. If not supplied, it will be created.
+     */
+    instanceProfileName?: string;
+
+    /**
+     * Service role for eks cluster
+     *
+     */
+    serviceRole?: pulumi.Input<aws.iam.Role>;
 
     /**
      * This enables the advanced case of registering *many* IAM instance roles
