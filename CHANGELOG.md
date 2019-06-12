@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- feature(cluster): Allow service role and instance profile to be injected during cluster creation
+  [#159](https://github.com/pulumi/pulumi-eks/pull/159)
 - fix(cluster): expose instanceRoles
   [#155](https://github.com/pulumi/pulumi-eks/pull/155)
 - tests(cluster): enable test to replace cluster by adding more subnets
