@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.7 (Released June 12, 2019)
+
+### Improvements
+
 - fix(tags): change map types used in all tags to pulumi.Inputs of the map
   [#157](https://github.com/pulumi/pulumi-eks/pull/157)
 - fix(cluster): expose instanceRoles
