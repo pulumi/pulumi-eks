@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.8 (Released June 19, 2019)
+
+### Improvements
+
 - Default to a node AMI that matches the cluster version
   [#175](https://github.com/pulumi/pulumi-eks/pull/175)
 - fix(tags): rm ASG tag dupes, and consider tag inheritance for all tags
