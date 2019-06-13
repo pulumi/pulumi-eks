@@ -149,12 +149,26 @@ export interface NodeGroupBaseOptions {
     instanceProfile?: aws.iam.InstanceProfile;
 
     /**
-     * The tags to apply to the NodeGroup's AutoScalingGroup.
+     * The tags to apply to the NodeGroup's AutoScalingGroup in the
+     * CloudFormation Stack.
+     *
+     * Per AWS, all stack-level tags, including automatically created tags, and
+     * the `cloudFormationTags` option are propagated to resources that AWS
+     * CloudFormation supports, including the AutoScalingGroup. See
+     * https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
+     *
+     * Note: Given the inheritance of auto-generated CF tags and
+     * `cloudFormationTags`, you should at most, only supply the tag in
+     * either `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      */
     autoScalingGroupTags?: InputTags;
 
     /**
      * The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
+     *
+     * Note: Given the inheritance of auto-generated CF tags and
+     * `cloudFormationTags`, you should at most, only supply the tag in
+     * either `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      */
     cloudFormationTags?: InputTags;
 }
@@ -272,8 +286,8 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
                 core.tags,
                 core.nodeSecurityGroupTags,
             ]).apply(([tags, nodeSecurityGroupTags]) => (<aws.Tags>{
-                ...tags,
                 ...nodeSecurityGroupTags,
+                ...tags,
             })),
         }, parent);
         eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
@@ -454,31 +468,21 @@ ${customUserData}
         minInstancesInService = 0;
     }
 
-    // Set default Name and Kubernetes tags on the ASG's.
-    let autoScalingGroupTags = pulumi.all([
+    const autoScalingGroupTags: InputTags = pulumi.all([
         eksCluster.name,
-    ]).apply(([clusterName]) => `- Key: Name
-                            Value: ${clusterName}-worker
-                            PropagateAtLaunch: 'true'
-                          - Key: kubernetes.io/cluster/${clusterName}
-                            Value: 'owned'
-                            PropagateAtLaunch: 'true'`);
-
-    // Merge any cluster tags for the ASG's.
-    if (core.tags) {
-        autoScalingGroupTags = pulumi.concat(autoScalingGroupTags, tagsToAsgTags(core.tags));
-    }
-    // Merge any user supplied tags for the ASG's.
-    if (args.autoScalingGroupTags) {
-        autoScalingGroupTags = pulumi.concat(autoScalingGroupTags, tagsToAsgTags(args.autoScalingGroupTags));
-    }
+        args.autoScalingGroupTags,
+    ]).apply(([clusterName, asgTags]) => (<aws.Tags>{
+        "Name": `${clusterName}-worker`,
+        [`kubernetes.io/cluster/${clusterName}`]: "owned",
+        ...asgTags,
+    }));
 
     const cfnTemplateBody = pulumi.all([
         nodeLaunchConfiguration.id,
         args.desiredCapacity,
         args.minSize,
         args.maxSize,
-        autoScalingGroupTags,
+        tagsToAsgTags(autoScalingGroupTags),
         workerSubnetIds.apply(JSON.stringify),
     ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, asgTags, vpcSubnetIds]) => `
                 AWSTemplateFormatVersion: '2010-09-09'
@@ -510,8 +514,8 @@ ${customUserData}
             args.cloudFormationTags,
         ]).apply(([tags, cloudFormationTags]) => (<aws.Tags>{
             "Name": `${name}-nodes`,
-            ...tags,
             ...cloudFormationTags,
+            ...tags,
         })),
     }, { parent: parent, dependsOn: cfnStackDeps });
 

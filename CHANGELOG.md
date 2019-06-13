@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- fix(tags): rm ASG tag dupes, and consider tag inheritance for all tags
+  [#162](https://github.com/pulumi/pulumi-eks/pull/162)
+
 ## 0.18.7 (Released June 12, 2019)
 
 ### Improvements
