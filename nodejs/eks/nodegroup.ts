@@ -16,6 +16,7 @@ import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
+import * as netmask from "netmask";
 
 import { Cluster, CoreData } from "./cluster";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
@@ -551,7 +552,8 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
         })();
 
         // Once we have the route table, check its list of routes for a route to an internet gateway.
-        const hasInternetGatewayRoute = routeTable.routes.find(r => !!r.gatewayId) !== undefined;
+        const hasInternetGatewayRoute = routeTable.routes
+            .find(r => !!r.gatewayId && !isPrivateCIDRBlock(r.cidrBlock)) !== undefined;
         if (hasInternetGatewayRoute) {
             publicSubnets.push(subnetId);
         } else {
@@ -559,6 +561,18 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
         }
     }
     return privateSubnets.length === 0 ? publicSubnets : privateSubnets;
+}
+
+/**
+ * Returns true if the given CIDR block falls within a private range [1].
+ * [1] https://en.wikipedia.org/wiki/Private_network
+ */
+function isPrivateCIDRBlock(cidrBlock: string): boolean {
+    const privateA = new netmask.Netmask("10.0.0.0/8");
+    const privateB = new netmask.Netmask("172.16.0.0/12");
+    const privateC = new netmask.Netmask("192.168.0.0/16");
+
+    return privateA.contains(cidrBlock) || privateB.contains(cidrBlock) || privateC.contains(cidrBlock);
 }
 
 /**

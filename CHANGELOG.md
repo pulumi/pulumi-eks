@@ -12,6 +12,8 @@
   [#175](https://github.com/pulumi/pulumi-eks/pull/175)
 - fix(tags): rm ASG tag dupes, and consider tag inheritance for all tags
   [#162](https://github.com/pulumi/pulumi-eks/pull/162)
+- fix(nodegroup): make VPN-only subnets private
+  [#163](https://github.com/pulumi/pulumi-eks/pull/163)
 
 ## 0.18.7 (Released June 12, 2019)
 
