@@ -158,8 +158,8 @@ export interface NodeGroupBaseOptions {
      * https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
      *
      * Note: Given the inheritance of auto-generated CF tags and
-     * `cloudFormationTags`, you should at most, only supply the tag in
-     * either `autoScalingGroupTags` or `cloudFormationTags`, but not both.
+     * `cloudFormationTags`, you should either supply the tag in
+     * `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      */
     autoScalingGroupTags?: InputTags;
 
@@ -167,8 +167,8 @@ export interface NodeGroupBaseOptions {
      * The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
      *
      * Note: Given the inheritance of auto-generated CF tags and
-     * `cloudFormationTags`, you should at most, only supply the tag in
-     * either `autoScalingGroupTags` or `cloudFormationTags`, but not both.
+     * `cloudFormationTags`, you should either supply the tag in
+     * `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      */
     cloudFormationTags?: InputTags;
 }
