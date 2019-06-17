@@ -1,5 +1,5 @@
 {
-    "name": "cluster",
+    "name": "test-tag-input-types",
     "devDependencies": {
         "typescript": "^3.0.0",
         "@types/node": "latest"

@@ -131,8 +131,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 args.clusterSecurityGroupTags,
             ]).apply(([tags, clusterSecurityGroupTags]) => (<aws.Tags>{
                 "Name": `${name}-eksClusterSecurityGroup`,
-                ...tags,
                 ...clusterSecurityGroupTags,
+                ...tags,
             })),
         }, { parent: parent });
 
@@ -618,8 +618,8 @@ export class Cluster extends pulumi.ComponentResource {
                 args.tags,
                 args.nodeSecurityGroupTags,
             ]).apply(([tags, nodeSecurityGroupTags]) => (<aws.Tags>{
-                ...tags,
                 ...nodeSecurityGroupTags,
+                ...tags,
             })),
         }, this);
         core.nodeSecurityGroup = this.nodeSecurityGroup;

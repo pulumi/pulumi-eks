@@ -4,10 +4,15 @@
 - fix(cluster): support configuring private and public endpoint access
   [#154](https://github.com/pulumi/pulumi-eks/pull/154)
 
+- fix(tags): rm ASG tag dupes, and consider tag inheritance for all tags
+  [#162](https://github.com/pulumi/pulumi-eks/pull/162)
+
 ## 0.18.7 (Released June 12, 2019)
 
 ### Improvements
 
+- ci(aws-iam-authenticator): use official S3 bucket to install bin
+  [#166](https://github.com/pulumi/pulumi-eks/pull/166)
 - fix(tags): change map types used in all tags to pulumi.Inputs of the map
   [#157](https://github.com/pulumi/pulumi-eks/pull/157)
 - fix(cluster): expose instanceRoles
