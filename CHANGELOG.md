@@ -6,6 +6,8 @@
 
 ### Improvements
 
+- ci(aws-iam-authenticator): use official S3 bucket to install bin
+  [#166](https://github.com/pulumi/pulumi-eks/pull/166)
 - fix(tags): change map types used in all tags to pulumi.Inputs of the map
   [#157](https://github.com/pulumi/pulumi-eks/pull/157)
 - fix(cluster): expose instanceRoles
