@@ -627,7 +627,7 @@ export class Cluster extends pulumi.ComponentResource {
                 amiId: args.nodeAmiId,
                 version: args.version,
                 instanceProfile: core.instanceProfile,
-            }, this, core.provider);
+            }, this);
             this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
             configDeps.push(this.defaultNodeGroup.cfnStack.id);
         }

@@ -228,11 +228,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     constructor(name: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:NodeGroup", name, args, opts);
 
-        const k8sProvider = this.getProvider("kubernetes:core:v1/ConfigMap");
-        if (k8sProvider === undefined) {
-            throw new Error("a 'kubernetes' provider must be specified for a 'NodeGroup'");
-        }
-        const group = createNodeGroup(name, args, this, k8sProvider);
+        const group = createNodeGroup(name, args, this);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
         this.cfnStack = group.cfnStack;
         this.autoScalingGroupName = group.autoScalingGroupName;
@@ -246,7 +242,7 @@ function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
     return (arg as CoreData).cluster !== undefined;
 }
 
-export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource,  k8sProvider: k8s.Provider): NodeGroupData {
+export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
     if (!args.instanceProfile && !core.instanceProfile) {
