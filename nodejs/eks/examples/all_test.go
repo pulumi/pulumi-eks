@@ -41,6 +41,25 @@ func Test_AllTests(t *testing.T) {
 
 	shortTests := []integration.ProgramTestOptions{
 		{
+			Dir: path.Join(cwd, "tests", "tag-input-types"),
+			Config: map[string]string{
+				"aws:region": region,
+			},
+			Dependencies: []string{
+				"@pulumi/eks",
+			},
+			ExpectRefreshChanges: true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		},
+	}
+
+	longTests := []integration.ProgramTestOptions{
+		{
 			Dir: path.Join(cwd, "tests", "replace-secgroup"),
 			Config: map[string]string{
 				"aws:region": region,
@@ -84,25 +103,7 @@ func Test_AllTests(t *testing.T) {
 				},
 			},
 		},
-		{
-			Dir: path.Join(cwd, "tests", "tag-input-types"),
-			Config: map[string]string{
-				"aws:region": region,
-			},
-			Dependencies: []string{
-				"@pulumi/eks",
-			},
-			ExpectRefreshChanges: true,
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
-				)
-			},
-		},
 	}
-
-	longTests := []integration.ProgramTestOptions{}
 
 	tests := shortTests
 	if !testing.Short() {
