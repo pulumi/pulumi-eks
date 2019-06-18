@@ -38,12 +38,12 @@ export interface RoleMapping {
     /**
      * The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role.
      */
-    username: pulumi.Input<string>;
+    username?: pulumi.Input<string>;
 
     /**
      * A list of groups within Kubernetes to which the role is mapped.
      */
-    groups: pulumi.Input<pulumi.Input<string>[]>;
+    groups?: pulumi.Input<pulumi.Input<string>[]>;
 }
 
 /**
@@ -58,12 +58,12 @@ export interface UserMapping {
     /**
      * The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user.
      */
-    username: pulumi.Input<string>;
+    username?: pulumi.Input<string>;
 
     /**
      * A list of groups within Kubernetes to which the user is mapped to.
      */
-    groups: pulumi.Input<pulumi.Input<string>[]>;
+    groups?: pulumi.Input<pulumi.Input<string>[]>;
 }
 
 /**
@@ -262,7 +262,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 rolearn: m.roleArn,
                 username: m.username,
                 groups: m.groups,
-            })));
+            })), { skipInvalid: true });
         });
     const nodeAccessData: any = {
         mapRoles: roleMappings,
@@ -273,7 +273,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 userarn: m.userArn,
                 username: m.username,
                 groups: m.groups,
-            })));
+            })), { skipInvalid: true });
         });
     }
     const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
