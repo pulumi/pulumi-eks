@@ -61,7 +61,7 @@ export interface UserMapping {
     username?: pulumi.Input<string>;
 
     /**
-     * A list of groups within Kubernetes to which the user is mapped to.
+     * A list of groups within Kubernetes to which the user is mapped.
      */
     groups?: pulumi.Input<pulumi.Input<string>[]>;
 }
