@@ -381,13 +381,12 @@ export interface ClusterOptions {
     instanceRole?: pulumi.Input<aws.iam.Role>;
 
     /**
-     * Node instance profile - for worker nodes. If not supplied, it will be created.
-     */The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
-    instanceProfileName?: string;
+     * The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
+     */
+     instanceProfileName?: string;
 
     /**
-     * Service role for eks cluster
-     *IAM Service Role for EKS to use to manage the cluster.
+     * IAM Service Role for EKS to use to manage the cluster.
      */
     serviceRole?: pulumi.Input<aws.iam.Role>;
 
