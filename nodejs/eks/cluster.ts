@@ -387,7 +387,7 @@ export interface ClusterOptions {
 
     /**
      * Service role for eks cluster
-     *
+     *IAM Service Role for EKS to use to manage the cluster.
      */
     serviceRole?: pulumi.Input<aws.iam.Role>;
 
