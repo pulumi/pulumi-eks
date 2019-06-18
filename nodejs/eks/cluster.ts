@@ -67,7 +67,7 @@ export interface UserMapping {
 }
 
 /**
- * CoreData defines the core set of data associated with an EKS cluster, including the network in which is runs.
+ * CoreData defines the core set of data associated with an EKS cluster, including the network in which it runs.
  */
 export interface CoreData {
     cluster: aws.eks.Cluster;
@@ -306,13 +306,11 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
  * instance role mapping to the k8s username and groups of aws-auth.
  */
 function createInstanceRoleMapping(arn: pulumi.Input<string>): RoleMapping {
-    const instanceRoleMapping: RoleMapping = {
+    return {
         roleArn: arn,
         username: "system:node:{{EC2PrivateDNSName}}",
         groups: ["system:bootstrappers", "system:nodes"],
     };
-
-    return instanceRoleMapping;
 }
 
 /**
@@ -627,7 +625,7 @@ export class Cluster extends pulumi.ComponentResource {
                 amiId: args.nodeAmiId,
                 version: args.version,
                 instanceProfile: core.instanceProfile,
-            }, this, core.provider);
+            }, this);
             this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
             configDeps.push(this.defaultNodeGroup.cfnStack.id);
         }
