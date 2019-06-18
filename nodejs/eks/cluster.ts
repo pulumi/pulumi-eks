@@ -382,7 +382,7 @@ export interface ClusterOptions {
 
     /**
      * Node instance profile - for worker nodes. If not supplied, it will be created.
-     */
+     */The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
     instanceProfileName?: string;
 
     /**
