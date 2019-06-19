@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- Default to a node AMI that matches the cluster version
+  [#175](https://github.com/pulumi/pulumi-eks/pull/175)
 - fix(tags): rm ASG tag dupes, and consider tag inheritance for all tags
   [#162](https://github.com/pulumi/pulumi-eks/pull/162)
 
