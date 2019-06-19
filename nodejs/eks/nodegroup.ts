@@ -367,60 +367,49 @@ ${customUserData}
 
     let amiId: pulumi.Input<string> = args.amiId!;
     let ignoreChanges: string[] = [];
-    const version: pulumi.Input<string> = args.version!;
     if (args.amiId === undefined) {
-        const filters: { name: string; values: string[]}[] = [
-            // Filter to target Linux arch
-            {
-                name: "description",
-                values: [ "*linux*", "*Linux*" ],
-            },
-            // Filter to target EKS Nodes
-            {
-                name: "name",
-                values: [ "amazon-eks-node-*"],
-            },
-            // Filter to target General, non-GPU image class
-            {
-                name: "manifest-location",
-                values: [ "*amazon-eks-node*"],
-            },
-            // Filter to target architecture
-            {
-                name: "architecture",
-                values: [ "x86_64"],
-            },
-        ];
-
-        if (version !== undefined) {
-            filters.push(
+        const version = pulumi.output(args.version || core.cluster.version);
+        amiId = version.apply(v => {
+            const filters: { name: string; values: string[] }[] = [
+                // Filter to target Linux arch
+                {
+                    name: "description",
+                    values: ["*linux*", "*Linux*"],
+                },
+                // Filter to target EKS Nodes
+                {
+                    name: "name",
+                    values: ["amazon-eks-node-*"],
+                },
+                // Filter to target General, non-GPU image class
+                {
+                    name: "manifest-location",
+                    values: ["*amazon-eks-node*"],
+                },
+                // Filter to target architecture
+                {
+                    name: "architecture",
+                    values: ["x86_64"],
+                },
                 // Filter to target a specific k8s version
                 {
                     name: "description",
-                    values: [ "*k8s*" + version + "*" ],
+                    values: ["*k8s*" + v + "*"],
                 },
-            );
-        } else {
-            filters.push(
-                // Filter to target the latest / default k8s version
-                {
-                    name: "description",
-                    values: [ "*k8s*" ],
-                },
-            );
-        }
+            ];
 
-        const eksWorkerAmiIds = aws.getAmiIds({
-            filters,
-            owners: [ "602401143452" ], // Amazon
-            sortAscending: true,
-        }, { parent: parent });
+            const eksWorkerAmiIds = aws.getAmiIds({
+                filters,
+                owners: ["602401143452"], // Amazon
+                sortAscending: true,
+            }, { parent: parent });
 
-        const bestAmiId: pulumi.Input<string> = eksWorkerAmiIds.then(r => r.ids.pop()!);
-        if (!bestAmiId) {
-            throw new Error("No Linux AMI Id was found.");
-        }
-        amiId = bestAmiId;
+            const bestAmiId: pulumi.Input<string> = eksWorkerAmiIds.then(r => r.ids.pop()!);
+            if (!bestAmiId) {
+                throw new Error("No Linux AMI Id was found.");
+            }
+            return bestAmiId;
+        });
         // When we automatically pick an image to use, we want to ignore any changes to this later by default.
         ignoreChanges = ["imageId"];
     }
@@ -439,7 +428,7 @@ ${customUserData}
         instanceType: args.instanceType || "t2.medium",
         iamInstanceProfile: args.instanceProfile || core.instanceProfile,
         keyName: keyName,
-        securityGroups: [ nodeSecurityGroupId ],
+        securityGroups: [nodeSecurityGroupId],
         spotPrice: args.spotPrice,
         rootBlockDevice: {
             volumeSize: args.nodeRootVolumeSize || 20, // GiB
@@ -541,7 +530,7 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
     for (const subnetId of subnetIds) {
         // Fetch the route table for this subnet.
         const routeTable = await (async () => {
-            try  {
+            try {
                 // Attempt to get the explicit route table for this subnet. If there is no explicit rouute table for
                 // this subnet, this call will throw.
                 return await aws.ec2.getRouteTable({ subnetId: subnetId }, { parent: parent });
@@ -554,14 +543,14 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
                     vpcId: subnet.vpcId,
                     filters: [{
                         name: "association.main",
-                        values: [ "true" ],
+                        values: ["true"],
                     }],
                 }, { parent: parent });
                 return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, { parent: parent });
             }
         })();
 
-            // Once we have the route table, check its list of routes for a route to an internet gateway.
+        // Once we have the route table, check its list of routes for a route to an internet gateway.
         const hasInternetGatewayRoute = routeTable.routes.find(r => !!r.gatewayId) !== undefined;
         if (hasInternetGatewayRoute) {
             publicSubnets.push(subnetId);
@@ -579,7 +568,7 @@ function tagsToAsgTags(tagsInput: InputTags): pulumi.Output<string> {
     return pulumi.output(tagsInput).apply(tags => {
         let output = "";
         for (const tag of Object.keys(tags)) {
-            output +=        `
+            output += `
                           - Key: ${tag}
                             Value: ${tags[tag]}
                             PropagateAtLaunch: 'true'`;
