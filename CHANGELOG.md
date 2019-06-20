@@ -1,6 +1,8 @@
 ## Unreleased
 
 ### Improvements
+- fix(cluster): support configuring private and public endpoint access
+  [#154](https://github.com/pulumi/pulumi-eks/pull/154)
 
 ## 0.18.8 (Released June 19, 2019)
 

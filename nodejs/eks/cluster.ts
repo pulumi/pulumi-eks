@@ -119,33 +119,43 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     }, { parent: parent });
 
     // Create the EKS cluster security group
-    const eksClusterSecurityGroup = new aws.ec2.SecurityGroup(`${name}-eksClusterSecurityGroup`, {
-        vpcId: vpcId,
-        revokeRulesOnDelete: true,
-        tags: pulumi.all([
-            args.tags,
-            args.clusterSecurityGroupTags,
-        ]).apply(([tags, clusterSecurityGroupTags]) => (<aws.Tags>{
-            "Name": `${name}-eksClusterSecurityGroup`,
-            ...clusterSecurityGroupTags,
-            ...tags,
-        })),
-    }, { parent: parent });
+    let eksClusterSecurityGroup: aws.ec2.SecurityGroup;
+    if (args.clusterSecurityGroup) {
+        eksClusterSecurityGroup = args.clusterSecurityGroup;
+    } else {
+        eksClusterSecurityGroup = new aws.ec2.SecurityGroup(`${name}-eksClusterSecurityGroup`, {
+            vpcId: vpcId,
+            revokeRulesOnDelete: true,
+            tags: pulumi.all([
+                args.tags,
+                args.clusterSecurityGroupTags,
+            ]).apply(([tags, clusterSecurityGroupTags]) => (<aws.Tags>{
+                "Name": `${name}-eksClusterSecurityGroup`,
+                ...clusterSecurityGroupTags,
+                ...tags,
+            })),
+        }, { parent: parent });
 
-    const eksClusterInternetEgressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterInternetEgressRule`, {
-        description: "Allow internet access.",
-        type: "egress",
-        fromPort: 0,
-        toPort: 0,
-        protocol: "-1",  // all
-        cidrBlocks: [ "0.0.0.0/0" ],
-        securityGroupId: eksClusterSecurityGroup.id,
-    }, { parent: parent });
+        const eksClusterInternetEgressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterInternetEgressRule`, {
+            description: "Allow internet access.",
+            type: "egress",
+            fromPort: 0,
+            toPort: 0,
+            protocol: "-1",  // all
+            cidrBlocks: [ "0.0.0.0/0" ],
+            securityGroupId: eksClusterSecurityGroup.id,
+        }, { parent: parent });
+    }
 
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
         roleArn: eksRole.role.apply(r => r.arn),
-        vpcConfig: { securityGroupIds: [ eksClusterSecurityGroup.id ], subnetIds: subnetIds },
+        vpcConfig: {
+            securityGroupIds: [eksClusterSecurityGroup.id],
+            subnetIds: subnetIds,
+            endpointPrivateAccess: args.endpointPrivateAccess,
+            endpointPublicAccess: args.endpointPublicAccess,
+        },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
     }, { parent: parent });
@@ -406,6 +416,12 @@ export interface ClusterOptions {
     nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
+     * The security group to use for the cluster API endpoint.  If not provided, a new security group will be created
+     * with full internet egress and ingress from node groups.
+     */
+    clusterSecurityGroup?: aws.ec2.SecurityGroup;
+
+    /**
      * The tags to apply to the cluster security group.
      */
     clusterSecurityGroupTags?: InputTags;
@@ -497,6 +513,16 @@ export interface ClusterOptions {
      * By default it is off.
      */
     enabledClusterLogTypes?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`.
+     */
+    endpointPublicAccess?: boolean;
+
+    /**
+     * Indicates whether or not the Amazon EKS private API server endpoint is enabled.  The default is `false`.
+     */
+    endpointPrivateAccess?: boolean;
 }
 
 /**
