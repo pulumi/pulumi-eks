@@ -222,7 +222,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         // Create an instance profile if using a default node group
         if (!args.skipDefaultNodeGroup) {
             if (args.instanceProfileName) {
-              instanceProfile = aws.iam.InstanceProfile.get(args.instanceProfileName, args.instanceProfileName);
+              instanceProfile = aws.iam.InstanceProfile.get(`${name}-instanceProfile`, args.instanceProfileName, undefined, { parent: parent });
             } else {
               instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
                   role: args.instanceRole,
