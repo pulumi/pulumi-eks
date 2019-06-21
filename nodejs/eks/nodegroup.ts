@@ -149,12 +149,26 @@ export interface NodeGroupBaseOptions {
     instanceProfile?: aws.iam.InstanceProfile;
 
     /**
-     * The tags to apply to the NodeGroup's AutoScalingGroup.
+     * The tags to apply to the NodeGroup's AutoScalingGroup in the
+     * CloudFormation Stack.
+     *
+     * Per AWS, all stack-level tags, including automatically created tags, and
+     * the `cloudFormationTags` option are propagated to resources that AWS
+     * CloudFormation supports, including the AutoScalingGroup. See
+     * https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
+     *
+     * Note: Given the inheritance of auto-generated CF tags and
+     * `cloudFormationTags`, you should either supply the tag in
+     * `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      */
     autoScalingGroupTags?: InputTags;
 
     /**
      * The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
+     *
+     * Note: Given the inheritance of auto-generated CF tags and
+     * `cloudFormationTags`, you should either supply the tag in
+     * `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      */
     cloudFormationTags?: InputTags;
 }
@@ -214,11 +228,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     constructor(name: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:NodeGroup", name, args, opts);
 
-        const k8sProvider = this.getProvider("kubernetes:core:v1/ConfigMap");
-        if (k8sProvider === undefined) {
-            throw new Error("a 'kubernetes' provider must be specified for a 'NodeGroup'");
-        }
-        const group = createNodeGroup(name, args, this, k8sProvider);
+        const group = createNodeGroup(name, args, this);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
         this.cfnStack = group.cfnStack;
         this.autoScalingGroupName = group.autoScalingGroupName;
@@ -232,7 +242,7 @@ function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
     return (arg as CoreData).cluster !== undefined;
 }
 
-export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource,  k8sProvider: k8s.Provider): NodeGroupData {
+export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
     if (!args.instanceProfile && !core.instanceProfile) {
@@ -272,8 +282,8 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
                 core.tags,
                 core.nodeSecurityGroupTags,
             ]).apply(([tags, nodeSecurityGroupTags]) => (<aws.Tags>{
-                ...tags,
                 ...nodeSecurityGroupTags,
+                ...tags,
             })),
         }, parent);
         eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
@@ -357,60 +367,49 @@ ${customUserData}
 
     let amiId: pulumi.Input<string> = args.amiId!;
     let ignoreChanges: string[] = [];
-    const version: pulumi.Input<string> = args.version!;
     if (args.amiId === undefined) {
-        const filters: { name: string; values: string[]}[] = [
-            // Filter to target Linux arch
-            {
-                name: "description",
-                values: [ "*linux*", "*Linux*" ],
-            },
-            // Filter to target EKS Nodes
-            {
-                name: "name",
-                values: [ "amazon-eks-node-*"],
-            },
-            // Filter to target General, non-GPU image class
-            {
-                name: "manifest-location",
-                values: [ "*amazon-eks-node*"],
-            },
-            // Filter to target architecture
-            {
-                name: "architecture",
-                values: [ "x86_64"],
-            },
-        ];
-
-        if (version !== undefined) {
-            filters.push(
+        const version = pulumi.output(args.version || core.cluster.version);
+        amiId = version.apply(v => {
+            const filters: { name: string; values: string[] }[] = [
+                // Filter to target Linux arch
+                {
+                    name: "description",
+                    values: ["*linux*", "*Linux*"],
+                },
+                // Filter to target EKS Nodes
+                {
+                    name: "name",
+                    values: ["amazon-eks-node-*"],
+                },
+                // Filter to target General, non-GPU image class
+                {
+                    name: "manifest-location",
+                    values: ["*amazon-eks-node*"],
+                },
+                // Filter to target architecture
+                {
+                    name: "architecture",
+                    values: ["x86_64"],
+                },
                 // Filter to target a specific k8s version
                 {
                     name: "description",
-                    values: [ "*k8s*" + version + "*" ],
+                    values: ["*k8s*" + v + "*"],
                 },
-            );
-        } else {
-            filters.push(
-                // Filter to target the latest / default k8s version
-                {
-                    name: "description",
-                    values: [ "*k8s*" ],
-                },
-            );
-        }
+            ];
 
-        const eksWorkerAmiIds = aws.getAmiIds({
-            filters,
-            owners: [ "602401143452" ], // Amazon
-            sortAscending: true,
-        }, { parent: parent });
+            const eksWorkerAmiIds = aws.getAmiIds({
+                filters,
+                owners: ["602401143452"], // Amazon
+                sortAscending: true,
+            }, { parent: parent });
 
-        const bestAmiId: pulumi.Input<string> = eksWorkerAmiIds.then(r => r.ids.pop()!);
-        if (!bestAmiId) {
-            throw new Error("No Linux AMI Id was found.");
-        }
-        amiId = bestAmiId;
+            const bestAmiId: pulumi.Input<string> = eksWorkerAmiIds.then(r => r.ids.pop()!);
+            if (!bestAmiId) {
+                throw new Error("No Linux AMI Id was found.");
+            }
+            return bestAmiId;
+        });
         // When we automatically pick an image to use, we want to ignore any changes to this later by default.
         ignoreChanges = ["imageId"];
     }
@@ -429,7 +428,7 @@ ${customUserData}
         instanceType: args.instanceType || "t2.medium",
         iamInstanceProfile: args.instanceProfile || core.instanceProfile,
         keyName: keyName,
-        securityGroups: [ nodeSecurityGroupId ],
+        securityGroups: [nodeSecurityGroupId],
         spotPrice: args.spotPrice,
         rootBlockDevice: {
             volumeSize: args.nodeRootVolumeSize || 20, // GiB
@@ -454,31 +453,21 @@ ${customUserData}
         minInstancesInService = 0;
     }
 
-    // Set default Name and Kubernetes tags on the ASG's.
-    let autoScalingGroupTags = pulumi.all([
+    const autoScalingGroupTags: InputTags = pulumi.all([
         eksCluster.name,
-    ]).apply(([clusterName]) => `- Key: Name
-                            Value: ${clusterName}-worker
-                            PropagateAtLaunch: 'true'
-                          - Key: kubernetes.io/cluster/${clusterName}
-                            Value: 'owned'
-                            PropagateAtLaunch: 'true'`);
-
-    // Merge any cluster tags for the ASG's.
-    if (core.tags) {
-        autoScalingGroupTags = pulumi.concat(autoScalingGroupTags, tagsToAsgTags(core.tags));
-    }
-    // Merge any user supplied tags for the ASG's.
-    if (args.autoScalingGroupTags) {
-        autoScalingGroupTags = pulumi.concat(autoScalingGroupTags, tagsToAsgTags(args.autoScalingGroupTags));
-    }
+        args.autoScalingGroupTags,
+    ]).apply(([clusterName, asgTags]) => (<aws.Tags>{
+        "Name": `${clusterName}-worker`,
+        [`kubernetes.io/cluster/${clusterName}`]: "owned",
+        ...asgTags,
+    }));
 
     const cfnTemplateBody = pulumi.all([
         nodeLaunchConfiguration.id,
         args.desiredCapacity,
         args.minSize,
         args.maxSize,
-        autoScalingGroupTags,
+        tagsToAsgTags(autoScalingGroupTags),
         workerSubnetIds.apply(JSON.stringify),
     ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, asgTags, vpcSubnetIds]) => `
                 AWSTemplateFormatVersion: '2010-09-09'
@@ -510,8 +499,8 @@ ${customUserData}
             args.cloudFormationTags,
         ]).apply(([tags, cloudFormationTags]) => (<aws.Tags>{
             "Name": `${name}-nodes`,
-            ...tags,
             ...cloudFormationTags,
+            ...tags,
         })),
     }, { parent: parent, dependsOn: cfnStackDeps });
 
@@ -541,7 +530,7 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
     for (const subnetId of subnetIds) {
         // Fetch the route table for this subnet.
         const routeTable = await (async () => {
-            try  {
+            try {
                 // Attempt to get the explicit route table for this subnet. If there is no explicit rouute table for
                 // this subnet, this call will throw.
                 return await aws.ec2.getRouteTable({ subnetId: subnetId }, { parent: parent });
@@ -554,14 +543,14 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
                     vpcId: subnet.vpcId,
                     filters: [{
                         name: "association.main",
-                        values: [ "true" ],
+                        values: ["true"],
                     }],
                 }, { parent: parent });
                 return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, { parent: parent });
             }
         })();
 
-            // Once we have the route table, check its list of routes for a route to an internet gateway.
+        // Once we have the route table, check its list of routes for a route to an internet gateway.
         const hasInternetGatewayRoute = routeTable.routes.find(r => !!r.gatewayId) !== undefined;
         if (hasInternetGatewayRoute) {
             publicSubnets.push(subnetId);
@@ -579,7 +568,7 @@ function tagsToAsgTags(tagsInput: InputTags): pulumi.Output<string> {
     return pulumi.output(tagsInput).apply(tags => {
         let output = "";
         for (const tag of Object.keys(tags)) {
-            output +=        `
+            output += `
                           - Key: ${tag}
                             Value: ${tags[tag]}
                             PropagateAtLaunch: 'true'`;

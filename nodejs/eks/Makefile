@@ -6,7 +6,7 @@ VERSION := $(shell ../../scripts/get-version)
 
 export PATH := $(shell yarn bin 2>/dev/null):$(PATH)
 
-TESTPARALLELISM := 10
+TESTPARALLELISM := 20
 
 build::
 	yarn install
