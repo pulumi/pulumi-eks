@@ -383,7 +383,7 @@ export interface ClusterOptions {
     /**
      * The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
      */
-     instanceProfileName?: string;
+     instanceProfileName?: pulumi.Input<string>;
 
     /**
      * IAM Service Role for EKS to use to manage the cluster.
