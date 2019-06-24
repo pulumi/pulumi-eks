@@ -154,7 +154,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
-        roleArn: eksRole.role.apply(r => r.arn),
+        roleArn: eksRole.apply(r => r.arn),
         vpcConfig: {
             securityGroupIds: [eksClusterSecurityGroup.id],
             subnetIds: subnetIds,
