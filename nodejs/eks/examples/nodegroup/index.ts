@@ -54,7 +54,7 @@ const spot = new eks.NodeGroup("example-ng-simple-spot", {
             effect: "NoSchedule",
         },
     },
-    kubeletExtraArgs: ["--alsologtostderr"],
+    kubeletExtraArgs: "--alsologtostderr",
     bootstrapExtraArgs: "--aws-api-retry-attempts 10",
     instanceProfile: instanceProfile0,
 }, {
