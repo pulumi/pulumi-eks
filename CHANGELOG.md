@@ -3,7 +3,7 @@
 ### Improvements
 - fix(cluster): support configuring private and public endpoint access
   [#154](https://github.com/pulumi/pulumi-eks/pull/154)
-- fix(cluster): sllow passing additional arguments to /etc/eks/bootstrap.sh and --kubelet-extra-args
+- fix(cluster): support passing additional arguments to /etc/eks/bootstrap.sh and --kubelet-extra-args
   [#181](https://github.com/pulumi/pulumi-eks/pull/181)
 
 
