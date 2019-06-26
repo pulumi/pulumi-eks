@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.9 (Released July 11, 2019)
+
+### Improvements
+
 - refactor(secgroup): export createNodeGroupSecurityGroup & consolidate rules
   [#183](https://github.com/pulumi/pulumi-eks/pull/183)
 - wait for EKS cluster endpoint to be available
