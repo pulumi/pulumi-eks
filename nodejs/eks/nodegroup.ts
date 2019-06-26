@@ -121,14 +121,32 @@ export interface NodeGroupBaseOptions {
     amiId?: pulumi.Input<string>;
 
     /**
-     * Custom k8s node labels to be attached to each woker node
+     * Custom k8s node labels to be attached to each woker node.  Adds the given key/value pairs to the `--node-labels`
+     * kubelet argument.
      */
     labels?: { [key: string]: string };
 
     /**
-     * Custom k8s node taints to be attached to each worker node
+     * Custom k8s node taints to be attached to each worker node.  Adds the given taints to the `--register-with-taints`
+     * kubelet argument.
      */
     taints?: { [key: string]: Taint };
+
+    /**
+     * Extra args to pass to the Kubelet.  Corresponds to the options passed in the `--kubeletExtraArgs` flag to
+     * `/etc/eks/bootstrap.sh`.  For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints`
+     * properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after
+     * to the expicit `kubeletExtraArgs`.
+     */
+    kubeletExtraArgs?: string;
+
+    /**
+     * Additional args to pass directly to `/etc/eks/bootstrap.sh`.  Fror details on available options, see:
+     * https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh.  Note that the `--apiserver-endpoint`,
+     * `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration
+     * parameters.
+     */
+    bootstrapExtraArgs?: string;
 
     /**
      * Whether or not to auto-assign public IP addresses on the EKS worker nodes.
@@ -319,7 +337,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     const awsRegion = pulumi.output(aws.getRegion({}, { parent: parent }));
     const userDataArg = args.nodeUserData || pulumi.output("");
 
-    const kubeletExtraArgs: Array<string> = [];
+    const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
     if (args.labels) {
         const parts = [];
         for (const key of Object.keys(args.labels)) {
@@ -339,12 +357,12 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
             kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
         }
     }
-    let bootstrapExtraArgs = "";
+    let bootstrapExtraArgs = args.bootstrapExtraArgs ? (" " + args.bootstrapExtraArgs) : "";
     if (kubeletExtraArgs.length === 1) {
         // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
-        bootstrapExtraArgs = ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
+        bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
     } else if (kubeletExtraArgs.length > 1) {
-        bootstrapExtraArgs = ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
+        bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
     }
 
     const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName, userDataArg])
