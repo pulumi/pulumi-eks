@@ -1,11 +1,15 @@
 ## Unreleased
 
 ### Improvements
+
+- refactor(secgroup): export createNodeGroupSecurityGroup & consolidate rules
+  [#183](https://github.com/pulumi/pulumi-eks/pull/183)
+- wait for EKS cluster endpoint to be available
+  [#193](https://github.com/pulumi/pulumi-eks/pull/193)
 - fix(cluster): support configuring private and public endpoint access
   [#154](https://github.com/pulumi/pulumi-eks/pull/154)
 - fix(cluster): support passing additional arguments to /etc/eks/bootstrap.sh and --kubelet-extra-args
   [#181](https://github.com/pulumi/pulumi-eks/pull/181)
-
 
 ## 0.18.8 (Released June 19, 2019)
 

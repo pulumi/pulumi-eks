@@ -634,7 +634,7 @@ export class Cluster extends pulumi.ComponentResource {
         this.instanceRoles = core.instanceRoles;
 
         // create default security group for nodegroup
-        this.nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
+        [this.nodeSecurityGroup, this.eksClusterIngressRule] = createNodeGroupSecurityGroup(name, {
             vpcId: core.vpcId,
             clusterSecurityGroup: core.clusterSecurityGroup,
             eksCluster: core.cluster,
@@ -647,16 +647,6 @@ export class Cluster extends pulumi.ComponentResource {
             })),
         }, this);
         core.nodeSecurityGroup = this.nodeSecurityGroup;
-
-        this.eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
-            description: "Allow pods to communicate with the cluster API Server",
-            type: "ingress",
-            fromPort: 443,
-            toPort: 443,
-            protocol: "tcp",
-            securityGroupId: core.clusterSecurityGroup.id,
-            sourceSecurityGroupId: this.nodeSecurityGroup.id,
-        }, { parent: this });
 
         const configDeps = [core.kubeconfig];
         if (!args.skipDefaultNodeGroup) {
