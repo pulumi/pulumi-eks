@@ -356,7 +356,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
             kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
         }
     }
-    let bootstrapExtraArgs = (" " + args.bootstrapExtraArgs) || "";
+    let bootstrapExtraArgs = args.bootstrapExtraArgs ? (" " + args.bootstrapExtraArgs) : "";
     if (kubeletExtraArgs.length === 1) {
         // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
         bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
