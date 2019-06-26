@@ -293,7 +293,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
             throw new Error(`invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`);
         }
     } else {
-        nodeSecurityGroup = createNodeGroupSecurityGroup(name, {
+        [nodeSecurityGroup, eksClusterIngressRule] = createNodeGroupSecurityGroup(name, {
             vpcId: core.vpcId,
             clusterSecurityGroup: core.clusterSecurityGroup,
             eksCluster: eksCluster,
@@ -305,15 +305,6 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
                 ...tags,
             })),
         }, parent);
-        eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
-            description: "Allow pods to communicate with the cluster API Server",
-            type: "ingress",
-            fromPort: 443,
-            toPort: 443,
-            protocol: "tcp",
-            securityGroupId: core.clusterSecurityGroup.id,
-            sourceSecurityGroupId: nodeSecurityGroup.id,
-        }, { parent: parent });
     }
 
     // This apply is necessary in s.t. the launchConfiguration picks up a
