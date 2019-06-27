@@ -147,6 +147,63 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         }, { parent: parent });
     }
 
+    // Create an AWS IAM Entity that will be the IAM entity which is automatically granted system:masters permissions in the cluster's RBAC configuration
+    let eksCreatorEntity: aws.iam.Role | undefined;
+    let eksCreatorEntityARN: pulumi.Input<aws.ARN> | undefined;
+    let eksCreatorEntityPolicy: aws.iam.Policy;
+    let eksCreatorEntityRolePolicyAttachment: aws.iam.RolePolicyAttachment;
+    let eksCreatorEntityProvider: aws.Provider | undefined;
+
+    if (args.useRoleForClusterCreation) {
+        eksCreatorEntity = new aws.iam.Role(`${name}-eksClusterCreatorRole`, {
+            assumeRolePolicy: aws.getCallerIdentity().then(id => `{
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "AWS": "arn:aws:iam::${id.accountId}:root"
+                    },
+                    "Action": "sts:AssumeRole"
+                    }
+                ]
+                }`,
+            ),
+            description: `Admin access to eks-${name}`,
+          },
+        );
+        eksCreatorEntityARN = eksCreatorEntity.arn.apply(arn => arn);
+        eksCreatorEntityPolicy = new aws.iam.Policy(`${name}-eksClusterCreatorPolicy`, {
+          description: "EKS Cluster Creator Policy",
+          policy: eksRole.role.apply(role => {
+                return {
+                    Version: "2012-10-17",
+                    Statement: [
+                      {
+                        Effect: "Allow",
+                        Action: "eks:*",
+                        Resource: "*",
+                      },
+                      {
+                        Effect: "Allow",
+                        Action: "iam:PassRole",
+                        Resource: role.arn,
+                      },
+                    ],
+              };
+          }).apply(JSON.stringify),
+        });
+        eksCreatorEntityRolePolicyAttachment = new aws.iam.RolePolicyAttachment(`${name}`, {
+            policyArn: eksCreatorEntityPolicy.arn.apply(arn => arn),
+            role: eksCreatorEntity,
+        });
+        eksCreatorEntityProvider = new aws.Provider(`${name}-eksClusterCreatorEntity`, {
+            assumeRole: {
+                roleArn: eksCreatorEntity.arn,
+            },
+        }, { dependsOn: eksCreatorEntityRolePolicyAttachment });
+    }
+
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
         roleArn: eksRole.role.apply(r => r.arn),
@@ -158,13 +215,13 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
-    }, { parent: parent });
+    }, { parent: parent, provider: eksCreatorEntityProvider});
 
     // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
     // depend on the autoscaling group we'll create later so that nothing attempts to use the EKS cluster before
     // its worker nodes have come up.
-    const kubeconfig = pulumi.all([eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority])
-        .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority]) => {
+    const kubeconfig = pulumi.all([eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, eksCreatorEntityARN])
+        .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority, roleArn]) => {
             return {
                 apiVersion: "v1",
                 clusters: [{
@@ -189,7 +246,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                         exec: {
                             apiVersion: "client.authentication.k8s.io/v1alpha1",
                             command: "aws-iam-authenticator",
-                            args: ["token", "-i", clusterName],
+                            args: generateAuthenticatorArgs(clusterName, roleArn),
                         },
                     },
                 }],
@@ -323,6 +380,16 @@ function createInstanceRoleMapping(arn: pulumi.Input<string>): RoleMapping {
     };
 }
 
+function generateAuthenticatorArgs(clusterName: string, roleArn?: string): string[] {
+    let args = ["token", "-i", clusterName];
+
+    if (roleArn) {
+        args = [ ...args, "-r", roleArn];
+    }
+
+    return args;
+}
+
 /**
  * ClusterOptions describes the configuration options accepted by an EKSCluster component.
  */
@@ -353,6 +420,12 @@ export interface ClusterOptions {
      * Optional mappings from AWS IAM roles to Kubernetes users and groups.
      */
     roleMappings?: pulumi.Input<pulumi.Input<RoleMapping>[]>;
+
+    /**
+     * Wether or not to use an IAM role that will create the EKS Cluster instead of using the default AWS provider
+     * If this toggle is set to true, the role will be assumed within the kubeconfig `aws-iam-authenticator` args
+     */
+    useRoleForClusterCreation?: boolean;
 
     /**
      * Optional mappings from AWS IAM users to Kubernetes users and groups.

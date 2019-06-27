@@ -5,6 +5,8 @@
   [#154](https://github.com/pulumi/pulumi-eks/pull/154)
 - fix(cluster): support passing additional arguments to /etc/eks/bootstrap.sh and --kubelet-extra-args
   [#181](https://github.com/pulumi/pulumi-eks/pull/181)
+- feat(cluster): Allow creating EKS cluster with IAM Role Entity
+  [#184](https://github.com/pulumi/pulumi-eks/pull/184)
 
 
 ## 0.18.8 (Released June 19, 2019)
