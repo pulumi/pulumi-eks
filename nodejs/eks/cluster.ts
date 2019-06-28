@@ -170,38 +170,40 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 }`,
             ),
             description: `Admin access to eks-${name}`,
-          },
+          }, { parent: this },
         );
+
         eksCreatorEntityARN = eksCreatorEntity.arn.apply(arn => arn);
+
         eksCreatorEntityPolicy = new aws.iam.Policy(`${name}-eksClusterCreatorPolicy`, {
           description: "EKS Cluster Creator Policy",
-          policy: eksRole.role.apply(role => {
-                return {
-                    Version: "2012-10-17",
-                    Statement: [
-                      {
-                        Effect: "Allow",
-                        Action: "eks:*",
-                        Resource: "*",
-                      },
-                      {
-                        Effect: "Allow",
-                        Action: "iam:PassRole",
-                        Resource: role.arn,
-                      },
-                    ],
-              };
-          }).apply(JSON.stringify),
-        });
+          policy: {
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Effect: "Allow",
+                Action: "eks:*",
+                Resource: "*",
+              },
+              {
+                Effect: "Allow",
+                Action: "iam:PassRole",
+                Resource: "*",
+              },
+            ],
+          },
+        }, { parent: eksCreatorEntity });
+
         eksCreatorEntityRolePolicyAttachment = new aws.iam.RolePolicyAttachment(`${name}`, {
             policyArn: eksCreatorEntityPolicy.arn.apply(arn => arn),
             role: eksCreatorEntity,
-        });
+        }, { parent: this });
+
         eksCreatorEntityProvider = new aws.Provider(`${name}-eksClusterCreatorEntity`, {
             assumeRole: {
                 roleArn: eksCreatorEntity.arn,
             },
-        }, { dependsOn: eksCreatorEntityRolePolicyAttachment });
+        }, { parent: this, dependsOn: eksCreatorEntityRolePolicyAttachment });
     }
 
     // Create the EKS cluster
