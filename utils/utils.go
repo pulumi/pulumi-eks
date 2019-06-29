@@ -3,14 +3,18 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/pulumi/pulumi/pkg/apitype"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
-	v1 "k8s.io/api/core/v1"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	restclient "k8s.io/client-go/rest"
@@ -48,7 +52,7 @@ func RunEKSSmokeTest(t *testing.T, resources []apitype.ResourceV3, kubeconfigs .
 	// Run the smoke test against each cluster, expecting the total desired
 	// Node count.
 	for clusterName := range kubeAccess {
-		printAndLog(fmt.Sprintf("Testing Cluster: %s\n", clusterName), t)
+		PrintAndLog(fmt.Sprintf("Testing Cluster: %s\n", clusterName), t)
 		clientset := kubeAccess[clusterName].Clientset
 		eksSmokeTest(t, clientset, clusterNodeCount[clusterName])
 	}
@@ -71,8 +75,8 @@ func APIServerVersionInfo(t *testing.T, clientset *kubernetes.Clientset) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	printAndLog(fmt.Sprintf("API Server Version: %s.%s\n", version.Major, version.Minor), t)
-	printAndLog(fmt.Sprintf("API Server GitVersion: %s\n", version.GitVersion), t)
+	PrintAndLog(fmt.Sprintf("API Server Version: %s.%s\n", version.Major, version.Minor), t)
+	PrintAndLog(fmt.Sprintf("API Server GitVersion: %s\n", version.GitVersion), t)
 }
 
 // assertEKSConfigMapReady ensures that the EKS aws-auth ConfigMap
@@ -80,7 +84,7 @@ func APIServerVersionInfo(t *testing.T, clientset *kubernetes.Clientset) {
 func assertEKSConfigMapReady(t *testing.T, clientset *kubernetes.Clientset) {
 	awsAuthReady, retries := false, MaxRetries
 	configMapName, namespace := "aws-auth", "kube-system"
-	var awsAuth *v1.ConfigMap
+	var awsAuth *corev1.ConfigMap
 	var err error
 
 	// Attempt to validate that the aws-auth ConfigMap exists.
@@ -98,16 +102,16 @@ func assertEKSConfigMapReady(t *testing.T, clientset *kubernetes.Clientset) {
 	require.Equal(t, true, awsAuthReady, "EKS ConfigMap %q does not exist in namespace %q", configMapName, namespace)
 	require.NotNil(t, awsAuth.Data, "%s ConfigMap should not be nil", configMapName)
 	require.NotEmpty(t, awsAuth.Data, "%q ConfigMap should not be empty", configMapName)
-	printAndLog(fmt.Sprintf("EKS ConfigMap %q exists and has data\n", configMapName), t)
+	PrintAndLog(fmt.Sprintf("EKS ConfigMap %q exists and has data\n", configMapName), t)
 }
 
 // AssertAllNodesReady ensures that all Nodes are running & have a "Ready"
 // status condition.
 func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredNodeCount int) {
-	var nodes *v1.NodeList
+	var nodes *corev1.NodeList
 	var err error
 
-	printAndLog(fmt.Sprintf("Total Desired Worker Node Count: %d\n", desiredNodeCount), t)
+	PrintAndLog(fmt.Sprintf("Total Desired Worker Node Count: %d\n", desiredNodeCount), t)
 
 	// Attempt to validate that the total desired worker Node count of
 	// instances are up & running.
@@ -136,7 +140,7 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 		nodeReady := false
 		// Attempt to check if a Node is ready, and output the resulting status.
 		for i := 0; i < MaxRetries; i++ {
-			if ready, err := IsNodeReady(clientset, &node); ready && err == nil {
+			if ready := IsNodeReady(clientset, &node); ready {
 				nodeReady = true
 				readyCount++
 				break
@@ -144,7 +148,7 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 				waitFor(fmt.Sprintf("Node %q", node.Name), "ready")
 			}
 		}
-		printAndLog(fmt.Sprintf("Node: %s | Ready Status: %t\n", node.Name, nodeReady), t)
+		PrintAndLog(fmt.Sprintf("Node: %s | Ready Status: %t\n", node.Name, nodeReady), t)
 	}
 
 	// Require that the readyCount matches the desiredNodeCount / total Nodes.
@@ -152,13 +156,13 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 		"%d out of %d Nodes are ready", readyCount, len(nodes.Items))
 
 	// Output the overall ready status.
-	printAndLog(fmt.Sprintf("%d out of %d Nodes are ready\n", readyCount, len(nodes.Items)), t)
+	PrintAndLog(fmt.Sprintf("%d out of %d Nodes are ready\n", readyCount, len(nodes.Items)), t)
 }
 
 // AssertAllPodsReady ensures all Pods have a "Running" or "Succeeded" status
 // phase, and a "Ready" status condition.
 func AssertAllPodsReady(t *testing.T, clientset *kubernetes.Clientset) {
-	var pods *v1.PodList
+	var pods *corev1.PodList
 	var err error
 
 	// Assume first non-error return of a list of Pods is correct & complete,
@@ -182,7 +186,7 @@ func AssertAllPodsReady(t *testing.T, clientset *kubernetes.Clientset) {
 		podReady := false
 		// Attempt to check if a Pod is ready, and output the resulting status.
 		for i := 0; i < MaxRetries; i++ {
-			if ready, err := IsPodReady(clientset, &pod); ready && err == nil {
+			if ready := IsPodReady(clientset, &pod); ready {
 				podReady = true
 				readyCount++
 				break
@@ -190,7 +194,7 @@ func AssertAllPodsReady(t *testing.T, clientset *kubernetes.Clientset) {
 				waitFor(fmt.Sprintf("Pod %q", pod.Name), "ready")
 			}
 		}
-		printAndLog(fmt.Sprintf("Pod: %s | Ready Status: %t\n", pod.Name, podReady), t)
+		PrintAndLog(fmt.Sprintf("Pod: %s | Ready Status: %t\n", pod.Name, podReady), t)
 	}
 
 	// Validate that the readyCount is not 0, and matches the total Pods
@@ -199,7 +203,131 @@ func AssertAllPodsReady(t *testing.T, clientset *kubernetes.Clientset) {
 	require.Equal(t, readyCount, len(pods.Items),
 		"%d out of %d Pods are ready", readyCount, len(pods.Items))
 
-	printAndLog(fmt.Sprintf("%d out of %d Pods are ready\n", readyCount, len(pods.Items)), t)
+	PrintAndLog(fmt.Sprintf("%d out of %d Pods are ready\n", readyCount, len(pods.Items)), t)
+}
+
+// AssertAllDeploymentsReady ensures all Deployments have valid & ready status
+// conditions.
+func AssertKindInAllNamespacesReady(t *testing.T, clientset *kubernetes.Clientset, name string) {
+	var list interface{}
+	var err error
+
+	// Assume first non-error return of list is correct & complete,
+	// as we currently do not have a way of knowing ahead of time how many
+	// total to expect in each cluster before it is up and running.
+	for i := 0; i < MaxRetries; i++ {
+		switch n := strings.ToLower(name); {
+		case n == "deployments" || n == "deployment" || n == "deploy":
+			list, err = clientset.AppsV1().Deployments("").List(metav1.ListOptions{})
+			if err != nil {
+				waitFor("Deployments list", fmt.Sprintf("returned: %s", err))
+			} else {
+				break
+			}
+		case n == "replicasets" || n == "replicaset" || n == "rs":
+			list, err = clientset.AppsV1().ReplicaSets("").List(metav1.ListOptions{})
+			if err != nil {
+				waitFor("ReplicaSets list", fmt.Sprintf("returned: %s", err))
+			} else {
+				break
+			}
+		case n == "pods" || n == "pod" || n == "po":
+			list, err = clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+			if err != nil {
+				waitFor("Pods list", fmt.Sprintf("returned: %s", err))
+			} else {
+				break
+			}
+		}
+	}
+
+	// Require that the list returned is not empty.
+	require.NotEmpty(t, list, "The kind list returned should not be empty")
+	AssertKindListIsReady(t, clientset, list)
+}
+
+func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list interface{}) {
+	var readyCount int
+	var length int
+
+	// Attempt to validate each list item has a "Ready" status.
+	switch list.(type) {
+	case *appsv1.DeploymentList:
+		items := list.(*appsv1.DeploymentList).Items
+		length = len(items)
+		for _, item := range items {
+			ready := false
+			// Attempt to check if ready, and output the resulting status.
+			for i := 0; i < MaxRetries; i++ {
+				if IsDeploymentReady(clientset, &item) {
+					ready = true
+					readyCount++
+					break
+				} else {
+					waitFor(fmt.Sprintf("Deployment %q", item.Name), "ready")
+				}
+			}
+			PrintAndLog(fmt.Sprintf("Deployment: %s | Ready Status: %t\n", item.Name, ready), t)
+		}
+
+		// Validate that the readyCount is not 0, and matches the total Deployments
+		// returned.
+		require.NotEqual(t, readyCount, 0, "No Deployments are ready")
+		require.Equal(t, readyCount, length,
+			"%d out of %d Deployments are ready", readyCount, length)
+
+		PrintAndLog(fmt.Sprintf("%d out of %d Deployments are ready\n", readyCount, len(items)), t)
+	case *appsv1.ReplicaSetList:
+		items := list.(*appsv1.ReplicaSetList).Items
+		length = len(items)
+		for _, item := range items {
+			ready := false
+			// Attempt to check if ready, and output the resulting status.
+			for i := 0; i < MaxRetries; i++ {
+				if IsReplicaSetReady(clientset, &item) {
+					ready = true
+					readyCount++
+					break
+				} else {
+					waitFor(fmt.Sprintf("ReplicaSet %q", item.Name), "ready")
+				}
+			}
+			PrintAndLog(fmt.Sprintf("ReplicaSet: %s | Ready Status: %t\n", item.Name, ready), t)
+		}
+
+		// Validate that the readyCount is not 0, and matches the total ReplicaSets
+		// returned.
+		require.NotEqual(t, readyCount, 0, "No ReplicaSets are ready")
+		require.Equal(t, readyCount, length,
+			"%d out of %d ReplicaSets are ready", readyCount, length)
+
+		PrintAndLog(fmt.Sprintf("%d out of %d ReplicaSets are ready\n", readyCount, len(items)), t)
+	case *corev1.PodList:
+		items := list.(*corev1.PodList).Items
+		length = len(items)
+		for _, item := range items {
+			ready := false
+			// Attempt to check if ready, and output the resulting status.
+			for i := 0; i < MaxRetries; i++ {
+				if IsPodReady(clientset, &item) {
+					ready = true
+					readyCount++
+					break
+				} else {
+					waitFor(fmt.Sprintf("Pod %q", item.Name), "ready")
+				}
+			}
+			PrintAndLog(fmt.Sprintf("Pod: %s | Ready Status: %t\n", item.Name, ready), t)
+		}
+
+		// Validate that the readyCount is not 0, and matches the total Deployments
+		// returned.
+		require.NotEqual(t, readyCount, 0, "No Pods are ready")
+		require.Equal(t, readyCount, length,
+			"%d out of %d Pods are ready", readyCount, length)
+
+		PrintAndLog(fmt.Sprintf("%d out of %d Pods are ready\n", readyCount, len(items)), t)
+	}
 }
 
 // waitFor is a helper func that prints to stdout & sleeps to indicate a
@@ -209,51 +337,93 @@ func waitFor(resource, status string) {
 	time.Sleep(RetryInterval * time.Second)
 }
 
-// printAndLog is a helper fucn that prints a string to stdout,
+// PrintAndLog is a helper fucn that prints a string to stdout,
 // and logs it to the testing logs.
-func printAndLog(s string, t *testing.T) {
+func PrintAndLog(s string, t *testing.T) {
 	fmt.Printf("%s", s)
 	t.Logf("%s", s)
 }
 
 // IsNodeReady attempts to check if the Node status condition is ready.
-func IsNodeReady(clientset *kubernetes.Clientset, node *v1.Node) (bool, error) {
+func IsNodeReady(clientset *kubernetes.Clientset, node *corev1.Node) bool {
 	// Attempt to retrieve Node.
-	n, err := clientset.CoreV1().Nodes().Get(node.Name, metav1.GetOptions{})
+	o, err := clientset.CoreV1().Nodes().Get(node.Name, metav1.GetOptions{})
 	if err != nil {
-		return false, err
+		return false
 	}
 
 	// Check the returned Node's conditions for readiness.
-	for _, condition := range n.Status.Conditions {
-		if condition.Type == v1.NodeReady {
+	for _, condition := range o.Status.Conditions {
+		if condition.Type == corev1.NodeReady {
 			fmt.Printf("Checking if Node %q is Ready | Condition.Status: %q | Condition: %v\n", node.Name, condition.Status, condition)
-			return condition.Status == v1.ConditionTrue, nil
+			return condition.Status == corev1.ConditionTrue
 		}
 	}
 
-	return false, nil
+	return false
 }
 
 // IsPodReady attempts to check if the Pod's status & condition is ready.
-func IsPodReady(clientset *kubernetes.Clientset, pod *v1.Pod) (bool, error) {
+func IsPodReady(clientset *kubernetes.Clientset, pod *corev1.Pod) bool {
 	// Attempt to retrieve Pod.
-	p, err := clientset.CoreV1().Pods(pod.Namespace).Get(pod.Name, metav1.GetOptions{})
+	o, err := clientset.CoreV1().Pods(pod.Namespace).Get(pod.Name, metav1.GetOptions{})
 	if err != nil {
-		return false, err
+		return false
 	}
 
 	// Check the returned Pod's status & conditions for readiness.
-	if p.Status.Phase == v1.PodRunning || p.Status.Phase == v1.PodSucceeded {
-		for _, condition := range p.Status.Conditions {
-			if condition.Type == v1.PodReady {
+	if o.Status.Phase == corev1.PodRunning || o.Status.Phase == corev1.PodSucceeded {
+		for _, condition := range o.Status.Conditions {
+			if condition.Type == corev1.PodReady {
 				fmt.Printf("Checking if Pod %q is Ready | Condition.Status: %q | Condition: %v\n", pod.Name, condition.Status, condition)
-				return condition.Status == v1.ConditionTrue, nil
+				return condition.Status == corev1.ConditionTrue
 			}
 		}
 	}
 
-	return false, nil
+	return false
+}
+
+// IsDeploymentReady attempts to check if the Deployments's status conditions
+// are ready.
+func IsDeploymentReady(clientset *kubernetes.Clientset, deployment *appsv1.Deployment) bool {
+	// Attempt to retrieve Deployment.
+	o, err := clientset.AppsV1().Deployments(deployment.Namespace).Get(deployment.Name, metav1.GetOptions{})
+	if err != nil {
+		return false
+	}
+
+	// Check the returned Deployment's status & conditions for readiness.
+	for _, condition := range o.Status.Conditions {
+		if condition.Type == appsv1.DeploymentAvailable {
+			fmt.Printf("Checking if Deployment %q is Available | Condition.Status: %q | Condition: %v\n", deployment.Name, condition.Status, condition)
+			return condition.Status == corev1.ConditionTrue
+		}
+	}
+
+	return false
+}
+
+// IsReplicaSetReady attempts to check if the ReplicaSets's status conditions
+// are ready.
+func IsReplicaSetReady(clientset *kubernetes.Clientset, replicaSet *appsv1.ReplicaSet) bool {
+	// Attempt to retrieve ReplicaSet.
+	o, err := clientset.AppsV1().ReplicaSets(replicaSet.Namespace).Get(replicaSet.Name, metav1.GetOptions{})
+	if err != nil {
+		return false
+	}
+
+	// Check the returned ReplicaSet's status conditions for readiness.
+	for _, condition := range o.Status.Conditions {
+		if condition.Type == appsv1.ReplicaSetReplicaFailure {
+			return false
+		}
+	}
+	if o.Status.Replicas == o.Status.AvailableReplicas &&
+		o.Status.Replicas == o.Status.ReadyReplicas {
+		return true
+	}
+	return false
 }
 
 // IsKubeconfigValid checks that the kubeconfig provided is valid and error-free.
@@ -393,4 +563,68 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 	}
 
 	return clusterToNodeCount, nil
+}
+
+// Attempts to assert that an HTTP endpoint exists, and evaluate its response.
+func AssertHTTPResultWithRetry(t *testing.T, output interface{}, headers map[string]string, maxWait time.Duration, check func(string) bool) bool {
+	hostname, ok := output.(string)
+	if !assert.True(t, ok, fmt.Sprintf("expected `%s` output", output)) {
+		return false
+	}
+	if !(strings.HasPrefix(hostname, "http://") || strings.HasPrefix(hostname, "https://")) {
+		hostname = fmt.Sprintf("http://%s", hostname)
+	}
+	var err error
+	var resp *http.Response
+	startTime := time.Now()
+	count, sleep := 0, 0
+	for true {
+		now := time.Now()
+		req, err := http.NewRequest("GET", hostname, nil)
+		if !assert.NoError(t, err, "error reading request: %v", err) {
+			return false
+		}
+
+		for k, v := range headers {
+			// Host header cannot be set via req.Header.Set(), and must be set
+			// directly.
+			if strings.ToLower(k) == "host" {
+				req.Host = v
+				continue
+			}
+			req.Header.Set(k, v)
+		}
+
+		client := &http.Client{Timeout: time.Second * 10}
+		resp, err = client.Do(req)
+
+		if err == nil && resp.StatusCode == 200 {
+			break
+		}
+		if now.Sub(startTime) >= maxWait {
+			fmt.Printf("Timeout after %v. Unable to http.get %v successfully.", maxWait, hostname)
+			break
+		}
+		count++
+		// delay 10s, 20s, then 30s and stay at 30s
+		if sleep > 30 {
+			sleep = 30
+		} else {
+			sleep += 10
+		}
+		time.Sleep(time.Duration(sleep) * time.Second)
+		fmt.Printf("Http Error: %v\n", err)
+		fmt.Printf("  Retry: %v, elapsed wait: %v, max wait %v\n", count, now.Sub(startTime), maxWait)
+	}
+	if !assert.NoError(t, err) {
+		return false
+	}
+	// Read the body
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if !assert.NoError(t, err) {
+		return false
+	}
+	// Verify it matches expectations
+	return check(string(body))
 }
