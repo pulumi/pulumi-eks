@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- update(eks): add example of migrating node groups with zero downtime
+  [#195](https://github.com/pulumi/pulumi-eks/pull/195)
+
 ## 0.18.9 (Released July 11, 2019)
 
 ### Improvements
