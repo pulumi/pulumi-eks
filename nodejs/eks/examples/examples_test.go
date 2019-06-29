@@ -20,10 +20,9 @@ import (
 	"path"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/pulumi/pulumi-eks/utils"
 	"github.com/pulumi/pulumi/pkg/testing/integration"
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_Examples(t *testing.T) {
