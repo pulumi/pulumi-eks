@@ -85,6 +85,19 @@ export interface CoreData {
     nodeSecurityGroupTags?: InputTags;
 }
 
+function createOrGetInstanceProfile(parent: pulumi.ComponentResource, instanceRoleName?: pulumi.Input<aws.iam.Role>, instanceProfileName?: pulumi.Input<string>): aws.iam.InstanceProfile {
+  let instanceProfile: aws.iam.InstanceProfile;
+  if (instanceProfileName) {
+    instanceProfile = aws.iam.InstanceProfile.get(`${name}-instanceProfile`, instanceProfileName, undefined, { parent: parent });
+  } else {
+    instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
+        role: instanceRoleName,
+    }, { parent: parent });
+  }
+
+  return instanceProfile;
+}
+
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
     // Check to ensure that aws-iam-authenticator is installed, as we'll need it in order to deploy k8s resources
     // to the EKS cluster.
@@ -231,13 +244,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     } else if (args.instanceRole) {
         // Create an instance profile if using a default node group
         if (!args.skipDefaultNodeGroup) {
-            if (args.instanceProfileName) {
-              instanceProfile = aws.iam.InstanceProfile.get(`${name}-instanceProfile`, args.instanceProfileName, undefined, { parent: parent });
-            } else {
-              instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
-                  role: args.instanceRole,
-              }, { parent: parent });
-            }
+            instanceProfile = createOrGetInstanceProfile(parent, args.instanceRole, args.instanceProfileName);
         }
 
         instanceRoleMappings = pulumi.output(args.instanceRole).apply(instanceRole =>
@@ -253,6 +260,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
             ],
         }, { parent: parent })).role;
+
         instanceRoles = pulumi.output([instanceRole]);
 
         // Create a new policy for the role, if specified.
@@ -265,9 +273,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
         // Create an instance profile if using a default node group
         if (!args.skipDefaultNodeGroup) {
-            instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
-                role: instanceRole,
-            }, { parent: parent });
+            instanceProfile = createOrGetInstanceProfile(parent, args.instanceRole, args.instanceProfileName);
         }
 
         instanceRoleMappings = pulumi.output(instanceRole).apply(role =>
