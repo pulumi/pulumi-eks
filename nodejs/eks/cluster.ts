@@ -85,13 +85,7 @@ export interface CoreData {
     nodeSecurityGroupTags?: InputTags;
 }
 
-function createOrGetInstanceProfile(
-    name: string,
-    parent: pulumi.ComponentResource,
-    instanceRoleName?: pulumi.Input<aws.iam.Role>,
-    instanceProfileName?: pulumi.Input<string>,
-): aws.iam.InstanceProfile {
-
+function createOrGetInstanceProfile(parent: pulumi.ComponentResource, instanceRoleName?: pulumi.Input<aws.iam.Role>, instanceProfileName?: pulumi.Input<string>): aws.iam.InstanceProfile {
   let instanceProfile: aws.iam.InstanceProfile;
   if (instanceProfileName) {
     instanceProfile = aws.iam.InstanceProfile.get(`${name}-instanceProfile`, instanceProfileName, undefined, { parent: parent });
@@ -250,8 +244,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     } else if (args.instanceRole) {
         // Create an instance profile if using a default node group
         if (!args.skipDefaultNodeGroup) {
-            instanceProfile = createOrGetInstanceProfile(name, parent,
-                args.instanceRole, args.instanceProfileName);
+            instanceProfile = createOrGetInstanceProfile(parent, args.instanceRole, args.instanceProfileName);
         }
 
         instanceRoleMappings = pulumi.output(args.instanceRole).apply(instanceRole =>
@@ -280,8 +273,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
         // Create an instance profile if using a default node group
         if (!args.skipDefaultNodeGroup) {
-            instanceProfile = createOrGetInstanceProfile(name,
-                parent, args.instanceRole, args.instanceProfileName);
+            instanceProfile = createOrGetInstanceProfile(parent, args.instanceRole, args.instanceProfileName);
         }
 
         instanceRoleMappings = pulumi.output(instanceRole).apply(role =>
