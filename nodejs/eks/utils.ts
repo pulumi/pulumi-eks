@@ -21,3 +21,7 @@ import * as pulumi from "@pulumi/pulumi";
  * https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html.
  */
 export type InputTags = pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
+
+export const sleep = (milliseconds: number) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+};
