@@ -24,7 +24,7 @@ import { createNodeGroup, NodeGroup, NodeGroupBaseOptions, NodeGroupData } from 
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
-import { InputTags } from "./utils";
+import { InputTags, sleep } from "./utils";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -77,7 +77,7 @@ export interface CoreData {
     provider: k8s.Provider;
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
     instanceProfile?: aws.iam.InstanceProfile;
-    eksNodeAccess?: k8s.core.v1.ConfigMap;
+    eksNodeAccess?: pulumi.Output<k8s.core.v1.ConfigMap>;
     kubeconfig?: pulumi.Output<any>;
     vpcCni?: VpcCni;
     tags?: InputTags;
@@ -286,14 +286,9 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             })));
         });
     }
-    const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
-        apiVersion: "v1",
-        metadata: {
-            name: `aws-auth`,
-            namespace: "kube-system",
-        },
-        data: nodeAccessData,
-    }, { parent: parent, provider: provider });
+
+    const retries: number = 10;
+    const eksNodeAccess = pulumi.output(createAwsAuth(name, retries, nodeAccessData, parent, provider));
 
     return {
         vpcId: pulumi.output(vpcId),
@@ -309,6 +304,38 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         tags: args.tags,
         nodeSecurityGroupTags: args.nodeSecurityGroupTags,
     };
+}
+
+// Attempts to create the aws-auth ConfigMap.
+async function createAwsAuth(
+    name: string,
+    maxRetries: number,
+    nodeAccessData: any,
+    parent: pulumi.Resource,
+    provider: k8s.Provider,
+): Promise<k8s.core.v1.ConfigMap> {
+    const sleepInterval = 5000; // in ms
+    let awsAuth: k8s.core.v1.ConfigMap | undefined;
+    awsAuth = await(async() => {
+        try {
+            return await new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
+                apiVersion: "v1",
+                metadata: {
+                    name: `aws-auth`,
+                    namespace: "kube-system",
+                },
+                data: nodeAccessData,
+            }, { parent: parent, provider: provider });
+        } catch (err) {
+            if (maxRetries > 0) {
+                await sleep(sleepInterval);
+                return createAwsAuth(name, maxRetries--, nodeAccessData, parent, provider);
+            } else {
+                throw new Error("Could not create aws-auth ConfigMap for IAM + cluster auth: " + (<Error>err).message);
+            }
+        }
+    })();
+    return awsAuth;
 }
 
 /**

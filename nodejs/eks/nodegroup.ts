@@ -283,7 +283,9 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         cfnStackDeps.push(core.vpcCni);
     }
     if (core.eksNodeAccess !== undefined) {
-        cfnStackDeps.push(core.eksNodeAccess);
+        core.eksNodeAccess.apply(nodeAccess => {
+            cfnStackDeps.push(nodeAccess);
+        });
     }
 
     let eksClusterIngressRule: aws.ec2.SecurityGroupRule = args.clusterIngressRule!;

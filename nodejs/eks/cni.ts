@@ -21,6 +21,7 @@ import * as path from "path";
 import * as process from "process";
 import * as tmp from "tmp";
 import which = require("which");
+import { sleep } from "./utils";
 
 /**
  * VpcCniOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
@@ -103,7 +104,7 @@ function computeVpcCniYaml(yamlPath: string, args: VpcCniInputs): string {
     return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
 }
 
-function applyVpcCniYaml(yamlPath: string, args: VpcCniInputs) {
+function applyVpcCniYaml(maxRetries: number, yamlPath: string, args: VpcCniInputs) {
     // Dump the kubeconfig to a file.
     const tmpKubeconfig = tmp.fileSync();
     fs.writeFileSync(tmpKubeconfig.fd, args.kubeconfig);
@@ -112,10 +113,21 @@ function applyVpcCniYaml(yamlPath: string, args: VpcCniInputs) {
     const tmpYaml = tmp.fileSync();
     fs.writeFileSync(tmpYaml.fd, computeVpcCniYaml(yamlPath, args));
 
+    const sleepInterval = 5000; // in ms
+
     // Call kubectl to apply the YAML.
-    childProcess.execSync(`kubectl apply -f ${tmpYaml.name}`, {
-        env: { ...process.env, "KUBECONFIG": tmpKubeconfig.name },
-    });
+    try {
+      childProcess.execSync(`kubectl apply -f ${tmpYaml.name}`, {
+          env: { ...process.env, "KUBECONFIG": tmpKubeconfig.name },
+      });
+    } catch (err) {
+      if (maxRetries <= 0) {
+        throw new Error("Could not apply aws-k8s-cni DaemonSet to setup the VPC CNI: " + (<Error>err).message);
+      }
+      sleep(sleepInterval).then(() => {
+        applyVpcCniYaml(maxRetries - 1, yamlPath, args);
+      });
+    }
 }
 
 /**
@@ -132,16 +144,17 @@ export class VpcCni extends pulumi.dynamic.Resource {
         }
 
         const yamlPath = path.join(__dirname, "cni", "aws-k8s-cni.yaml");
+        const maxRetries = 10;
 
         const provider = {
             check: (state: any, inputs: any) => Promise.resolve({inputs: inputs, failedChecks: []}),
             diff: (id: pulumi.ID, state: any, inputs: any) => Promise.resolve({}),
             create: (inputs: any) => {
-                applyVpcCniYaml(yamlPath, <VpcCniInputs>inputs);
+                applyVpcCniYaml(maxRetries, yamlPath, <VpcCniInputs>inputs);
                 return Promise.resolve({id: crypto.randomBytes(8).toString("hex"), outs: {}});
             },
             update: (id: pulumi.ID, state: any, inputs: any) => {
-                applyVpcCniYaml(yamlPath, <VpcCniInputs>inputs);
+                applyVpcCniYaml(maxRetries, yamlPath, <VpcCniInputs>inputs);
                 return Promise.resolve({outs: {}});
             },
             read: (id: pulumi.ID, state: any) => Promise.resolve({id: id, props: state}),
