@@ -286,14 +286,27 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             })));
         });
     }
-    const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
-        apiVersion: "v1",
-        metadata: {
-            name: `aws-auth`,
-            namespace: "kube-system",
-        },
-        data: nodeAccessData,
-    }, { parent: parent, provider: provider });
+    const createNodeAccess = (maxRetries: number): k8s.core.v1.ConfigMap => {
+        try {
+            return k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
+                apiVersion: "v1",
+                metadata: {
+                    name: `aws-auth`,
+                    namespace: "kube-system",
+                },
+                data: nodeAccessData,
+            }, { parent: parent, provider: provider });
+        } catch (err) {
+            if (maxRetries <= 0) {
+                throw new Error("Could not apply aws-auth ConfigMap for IAM + cluster auth: " + (<Error>err).message);
+            }
+            sleep(5000).then(() => {
+                applyVpcCniYaml(maxRetries - 1, yamlPath, args);
+            });
+        }
+    };
+    const retries: number = 10;
+    const eksNodeAccess = createNodeAccess(retries);
 
     return {
         vpcId: pulumi.output(vpcId),
