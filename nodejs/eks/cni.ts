@@ -100,9 +100,9 @@ function computeVpcCniYaml(yamlPath: string, args: VpcCniInputs): k8stypes.apps.
     return daemonSet;
 }
 
-function applyVpcCniYaml(yamlPath: string, args: VpcCniInputs) {
-    const daemonSet = computeVpcCniYaml(yamlPath, args);
-    const replaced = pulumi.runtime.invoke("kubernetes:kubernetes:kubectlReplace", daemonSet);
+function applyVpcCniYaml(yamlPath: string, args: VpcCniInputs): Promise<any> {
+    const ds = computeVpcCniYaml(yamlPath, args);
+    return pulumi.runtime.invoke("kubernetes:kubernetes:kubectlReplace", ds);
 }
 
 /**
@@ -114,18 +114,18 @@ export class VpcCni extends pulumi.dynamic.Resource {
         const yamlPath = path.join(__dirname, "cni", "aws-k8s-cni.yaml");
 
         const provider = {
-            check: (state: any, inputs: any) => Promise.resolve({inputs: inputs, failedChecks: []}),
-            diff: (id: pulumi.ID, state: any, inputs: any) => Promise.resolve({}),
-            create: (inputs: any) => {
-                applyVpcCniYaml(yamlPath, <VpcCniInputs>inputs);
-                return Promise.resolve({id: crypto.randomBytes(8).toString("hex"), outs: {}});
+            check: async (state: any, inputs: any) => ({inputs: inputs, failedChecks: []}),
+            diff: async (id: pulumi.ID, state: any, inputs: any) => ({}),
+            create: async (inputs: any) => {
+                await applyVpcCniYaml(yamlPath, <VpcCniInputs>inputs);
+                return {id: crypto.randomBytes(8).toString("hex"), outs: {}};
             },
-            update: (id: pulumi.ID, state: any, inputs: any) => {
-                applyVpcCniYaml(yamlPath, <VpcCniInputs>inputs);
-                return Promise.resolve({outs: {}});
+            update: async (id: pulumi.ID, state: any, inputs: any) => {
+                await applyVpcCniYaml(yamlPath, <VpcCniInputs>inputs);
+                return {outs: {}};
             },
-            read: (id: pulumi.ID, state: any) => Promise.resolve({id: id, props: state}),
-            delete: (id: pulumi.ID, state: any) => Promise.resolve(),
+            read: async (id: pulumi.ID, state: any) => ({id: id, props: state}),
+            delete: async (id: pulumi.ID, state: any) => undefined,
         };
 
         args = args || {};
