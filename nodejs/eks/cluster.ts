@@ -199,7 +199,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     const kubeconfig = kubeconfigInitial.apply(async (kcfg) => {
         if (!pulumi.runtime.isDryRun()) {
             pulumi.log.info("Waiting for cluster endpoint...", eksCluster, undefined, true);
-            await new Promise((res) => setTimeout(res, 10000));
+            await new Promise(resolve => setTimeout(resolve, 5*60*1000));
         }
         return kcfg;
     });
