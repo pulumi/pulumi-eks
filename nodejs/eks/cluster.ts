@@ -163,7 +163,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
     // depend on the autoscaling group we'll create later so that nothing attempts to use the EKS cluster before
     // its worker nodes have come up.
-    const kubeconfig = pulumi.all([eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority])
+    const kubeconfigInitial = pulumi.all([eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority])
         .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority]) => {
             return {
                 apiVersion: "v1",
@@ -195,6 +195,14 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 }],
             };
         });
+
+    const kubeconfig = kubeconfigInitial.apply(async (kcfg) => {
+        if (!pulumi.runtime.isDryRun()) {
+            pulumi.log.info("Waiting for cluster endpoint...", eksCluster, undefined, true);
+            await new Promise((res) => setTimeout(res, 10000));
+        }
+        return kcfg;
+    });
 
     const provider = new k8s.Provider(`${name}-eks-k8s`, {
         kubeconfig: kubeconfig.apply(JSON.stringify),
