@@ -15,8 +15,10 @@
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
+import * as https from "https";
 import * as jsyaml from "js-yaml";
-import which = require("which");
+import fetch from "node-fetch";
+import * as which from "which";
 
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
@@ -142,7 +144,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             fromPort: 0,
             toPort: 0,
             protocol: "-1",  // all
-            cidrBlocks: [ "0.0.0.0/0" ],
+            cidrBlocks: ["0.0.0.0/0"],
             securityGroupId: eksClusterSecurityGroup.id,
         }, { parent: parent });
     }
@@ -160,10 +162,34 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         enabledClusterLogTypes: args.enabledClusterLogTypes,
     }, { parent: parent });
 
+    // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
+    // can reach the API server to the Output that provides access to the kubeconfig string so that
+    // there is time for the target cluster API server to become completely available.  Ideally we
+    // would rely on the EKS API only returning once this was available, but we have seen frequent
+    // cases where it is not yet available immediately after provisioning - possibly due to DNS
+    // propagation delay or other non-deterministic factors.
+    const endpoint = eksCluster.endpoint.apply(async (clusterEndpoint) => {
+        if (!pulumi.runtime.isDryRun()) {
+            // For up to 300 seconds, try to contact the API cluster endpoint and verify that it is reachable.
+            const agent = new https.Agent({ rejectUnauthorized: false });
+            for (let i = 0; i < 60; i++) {
+                try {
+                    const resp = await fetch(clusterEndpoint, { agent });
+                    await resp.json();
+                    break;
+                } catch (e) {
+                    pulumi.log.info(`Waiting for cluster endpoint (${i + 1})`, eksCluster, undefined, true);
+                }
+                await new Promise(resolve => setTimeout(resolve, 5 * 1000));
+            }
+        }
+        return clusterEndpoint;
+    });
+
     // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
     // depend on the autoscaling group we'll create later so that nothing attempts to use the EKS cluster before
     // its worker nodes have come up.
-    const kubeconfigInitial = pulumi.all([eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority])
+    const kubeconfig = pulumi.all([eksCluster.name, endpoint, eksCluster.certificateAuthority])
         .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority]) => {
             return {
                 apiVersion: "v1",
@@ -195,14 +221,6 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 }],
             };
         });
-
-    const kubeconfig = kubeconfigInitial.apply(async (kcfg) => {
-        if (!pulumi.runtime.isDryRun()) {
-            pulumi.log.info("Waiting for cluster endpoint...", eksCluster, undefined, true);
-            await new Promise(resolve => setTimeout(resolve, 5*60*1000));
-        }
-        return kcfg;
-    });
 
     const provider = new k8s.Provider(`${name}-eks-k8s`, {
         kubeconfig: kubeconfig.apply(JSON.stringify),
@@ -537,7 +555,7 @@ export interface ClusterOptions {
  * ClusterNodeGroupOptions describes the configuration options accepted by a cluster
  * to create its own node groups. It's a subset of NodeGroupOptions.
  */
-export interface ClusterNodeGroupOptions extends NodeGroupBaseOptions {}
+export interface ClusterNodeGroupOptions extends NodeGroupBaseOptions { }
 
 /**
  * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker
@@ -689,8 +707,8 @@ export class Cluster extends pulumi.ComponentResource {
             nodeSecurityGroup: this.nodeSecurityGroup,
             clusterIngressRule: this.eksClusterIngressRule,
         }, {
-            parent: this,
-            providers: { kubernetes: this.provider },
-        });
+                parent: this,
+                providers: { kubernetes: this.provider },
+            });
     }
 }
