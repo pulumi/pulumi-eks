@@ -163,8 +163,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     }, { parent: parent });
 
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
-    // can reach the API server to the Output that provides access to the kubeconfig string so that
-    // there is time for the target cluster API server to become completely available.  Ideally we
+    // can reach the API server for the Output that provides access to the kubeconfig string so that
+    // there is time for the cluster API server to become completely available.  Ideally we
     // would rely on the EKS API only returning once this was available, but we have seen frequent
     // cases where it is not yet available immediately after provisioning - possibly due to DNS
     // propagation delay or other non-deterministic factors.
