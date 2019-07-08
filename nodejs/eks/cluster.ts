@@ -85,7 +85,7 @@ export interface CoreData {
     nodeSecurityGroupTags?: InputTags;
 }
 
-export function createOrGetInstanceProfile(name: string, parent: pulumi.ComponentResource, instanceRoleName?: pulumi.Input<aws.iam.Role>, instanceProfileName?: pulumi.Input<string>): aws.iam.InstanceProfile {
+function createOrGetInstanceProfile(name: string, parent: pulumi.ComponentResource, instanceRoleName?: pulumi.Input<aws.iam.Role>, instanceProfileName?: pulumi.Input<string>): aws.iam.InstanceProfile {
   let instanceProfile: aws.iam.InstanceProfile;
   if (instanceProfileName) {
     instanceProfile = aws.iam.InstanceProfile.get(`${name}-instanceProfile`,
