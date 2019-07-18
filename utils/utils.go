@@ -66,7 +66,7 @@ func eksSmokeTest(t *testing.T, clientset *kubernetes.Clientset, desiredNodeCoun
 	// Run all tests.
 	assertEKSConfigMapReady(t, clientset)
 	AssertAllNodesReady(t, clientset, desiredNodeCount)
-	AssertAllPodsReady(t, clientset)
+	AssertKindInAllNamespacesReady(t, clientset, "pods")
 }
 
 // APIServerVersionInfo prints out the API Server versions.
@@ -159,54 +159,7 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 	PrintAndLog(fmt.Sprintf("%d out of %d Nodes are ready\n", readyCount, len(nodes.Items)), t)
 }
 
-// AssertAllPodsReady ensures all Pods have a "Running" or "Succeeded" status
-// phase, and a "Ready" status condition.
-func AssertAllPodsReady(t *testing.T, clientset *kubernetes.Clientset) {
-	var pods *corev1.PodList
-	var err error
-
-	// Assume first non-error return of a list of Pods is correct & complete,
-	// as we currently do not have a way of knowing ahead of time how many
-	// total Pods to expect in each cluster before it is up and running.
-	for i := 0; i < MaxRetries; i++ {
-		pods, err = clientset.CoreV1().Pods("").List(metav1.ListOptions{})
-		if err != nil {
-			waitFor("list of all Pods", fmt.Sprintf("returned: %s", err))
-		} else {
-			break
-		}
-	}
-
-	// Require that the Pods returned are not empty.
-	require.NotEmpty(t, pods, "The Pods list returned should not be empty")
-
-	// Attempt to validate each Pod has a "Ready" status.
-	var readyCount int
-	for _, pod := range pods.Items {
-		podReady := false
-		// Attempt to check if a Pod is ready, and output the resulting status.
-		for i := 0; i < MaxRetries; i++ {
-			if ready := IsPodReady(clientset, &pod); ready {
-				podReady = true
-				readyCount++
-				break
-			} else {
-				waitFor(fmt.Sprintf("Pod %q", pod.Name), "ready")
-			}
-		}
-		PrintAndLog(fmt.Sprintf("Pod: %s | Ready Status: %t\n", pod.Name, podReady), t)
-	}
-
-	// Validate that the readyCount is not 0, and matches the total Pods
-	// returned.
-	require.NotEqual(t, readyCount, 0, "No Pods are ready")
-	require.Equal(t, readyCount, len(pods.Items),
-		"%d out of %d Pods are ready", readyCount, len(pods.Items))
-
-	PrintAndLog(fmt.Sprintf("%d out of %d Pods are ready\n", readyCount, len(pods.Items)), t)
-}
-
-// AssertAllDeploymentsReady ensures all Deployments have valid & ready status
+// AssertKindInAllNamespacesReady ensures all Deployments have valid & ready status
 // conditions.
 func AssertKindInAllNamespacesReady(t *testing.T, clientset *kubernetes.Clientset, name string) {
 	var list interface{}
@@ -246,6 +199,8 @@ func AssertKindInAllNamespacesReady(t *testing.T, clientset *kubernetes.Clientse
 	AssertKindListIsReady(t, clientset, list)
 }
 
+// AssertKindListIsReady verifies that each item in a given resource list is
+// marked as ready.
 func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list interface{}) {
 	var readyCount int
 	var length int
@@ -565,7 +520,8 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 	return clusterToNodeCount, nil
 }
 
-// Attempts to assert that an HTTP endpoint exists, and evaluate its response.
+// AssertHTTPResultWithRetry attempts to assert that an HTTP endpoint exists
+// and evaluate its response.
 func AssertHTTPResultWithRetry(t *testing.T, output interface{}, headers map[string]string, maxWait time.Duration, check func(string) bool) bool {
 	hostname, ok := output.(string)
 	if !assert.True(t, ok, fmt.Sprintf("expected `%s` output", output)) {
