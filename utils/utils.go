@@ -203,13 +203,13 @@ func AssertKindInAllNamespacesReady(t *testing.T, clientset *kubernetes.Clientse
 // marked as ready.
 func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list interface{}) {
 	var readyCount int
-	var length int
+	var listLength int
 
 	// Attempt to validate each list item has a "Ready" status.
 	switch list.(type) {
 	case *appsv1.DeploymentList:
 		items := list.(*appsv1.DeploymentList).Items
-		length = len(items)
+		listLength = len(items)
 		for _, item := range items {
 			ready := false
 			// Attempt to check if ready, and output the resulting status.
@@ -228,13 +228,13 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 		// Validate that the readyCount is not 0, and matches the total Deployments
 		// returned.
 		require.NotEqual(t, readyCount, 0, "No Deployments are ready")
-		require.Equal(t, readyCount, length,
-			"%d out of %d Deployments are ready", readyCount, length)
+		require.Equal(t, readyCount, listLength,
+			"%d out of %d Deployments are ready", readyCount, listLength)
 
-		PrintAndLog(fmt.Sprintf("%d out of %d Deployments are ready\n", readyCount, len(items)), t)
+		PrintAndLog(fmt.Sprintf("%d out of %d Deployments are ready\n", readyCount, listLength), t)
 	case *appsv1.ReplicaSetList:
 		items := list.(*appsv1.ReplicaSetList).Items
-		length = len(items)
+		listLength = len(items)
 		for _, item := range items {
 			ready := false
 			// Attempt to check if ready, and output the resulting status.
@@ -253,13 +253,13 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 		// Validate that the readyCount is not 0, and matches the total ReplicaSets
 		// returned.
 		require.NotEqual(t, readyCount, 0, "No ReplicaSets are ready")
-		require.Equal(t, readyCount, length,
-			"%d out of %d ReplicaSets are ready", readyCount, length)
+		require.Equal(t, readyCount, listLength,
+			"%d out of %d ReplicaSets are ready", readyCount, listLength)
 
-		PrintAndLog(fmt.Sprintf("%d out of %d ReplicaSets are ready\n", readyCount, len(items)), t)
+		PrintAndLog(fmt.Sprintf("%d out of %d ReplicaSets are ready\n", readyCount, listLength), t)
 	case *corev1.PodList:
 		items := list.(*corev1.PodList).Items
-		length = len(items)
+		listLength = len(items)
 		for _, item := range items {
 			ready := false
 			// Attempt to check if ready, and output the resulting status.
@@ -278,10 +278,10 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 		// Validate that the readyCount is not 0, and matches the total Deployments
 		// returned.
 		require.NotEqual(t, readyCount, 0, "No Pods are ready")
-		require.Equal(t, readyCount, length,
-			"%d out of %d Pods are ready", readyCount, length)
+		require.Equal(t, readyCount, listLength,
+			"%d out of %d Pods are ready", readyCount, listLength)
 
-		PrintAndLog(fmt.Sprintf("%d out of %d Pods are ready\n", readyCount, len(items)), t)
+		PrintAndLog(fmt.Sprintf("%d out of %d Pods are ready\n", readyCount, listLength), t)
 	}
 }
 
