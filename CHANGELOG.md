@@ -31,6 +31,9 @@
 - fix(nodegroup): make VPN-only subnets private
   [#163](https://github.com/pulumi/pulumi-eks/pull/163)
 
+- feature(cluster): Allow service role and instance profile to be injected during cluster creation
+  [#159](https://github.com/pulumi/pulumi-eks/pull/159)
+
 ## 0.18.7 (Released June 12, 2019)
 
 ### Improvements
