@@ -8,6 +8,10 @@ export PATH := $(shell yarn bin 2>/dev/null):$(PATH)
 
 TESTPARALLELISM := 20
 
+# Enable debugging output and logs
+export PULUMI_TEST_DEBUG_LOG_LEVEL = 2
+export PULUMI_TEST_DEBUG_UPDATES = true
+
 build::
 	yarn install
 	tsc
