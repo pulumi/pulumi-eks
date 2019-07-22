@@ -13,7 +13,7 @@ install:
     - source ${PULUMI_SCRIPTS}/ci/install-common-toolchain.sh
     # Install aws-iam-authenticator
     # See: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
-    - curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/aws-iam-authenticator
+    - curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/aws-iam-authenticator
     - chmod +x ./aws-iam-authenticator
     - sudo mv aws-iam-authenticator /usr/local/bin
     # Install Pulumi
