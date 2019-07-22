@@ -66,8 +66,8 @@ export function create(
     // Assemble the resources.
     // Per: https://itnext.io/kubernetes-ingress-controllers-how-to-choose-the-right-one-part-1-41d3554978d2
     const resources: input.core.v1.ResourceRequirements = {
-        requests: {memory: "1024Mi"},
-        limits: {memory: "2048Mi"},
+        requests: {memory: "1Gi"},
+        limits: {memory: "2Gi"},
     };
 
     // Create the Deployment.
