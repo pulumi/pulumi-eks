@@ -8,7 +8,7 @@ const vpc = new awsx.Network(`${projectName}-net`, {
     numberOfAvailabilityZones: 3,
 });
 
-const publicSubnetIds = vpc.publicSubnetIds;
+const publicSubnetIds = vpc.publicSubnetIds.sort();
 
 const cluster = new eks.Cluster(projectName, {
     vpcId: vpc.vpcId,
