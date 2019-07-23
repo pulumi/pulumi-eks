@@ -78,6 +78,9 @@ interface VpcCniInputs {
 function computeVpcCniYaml(yamlPath: string, args: VpcCniInputs): string {
     // Read the CNI YAML. The original source for this YAML is
     // https://github.com/aws/amazon-vpc-cni-k8s/tree/master/config.
+
+    // Form the absolute CNI YAML file path.
+    yamlPath = path.resolve("./", yamlPath);
     const cniYamlText = fs.readFileSync(yamlPath).toString();
     const cniYaml = jsyaml.safeLoadAll(cniYamlText);
 
@@ -131,7 +134,10 @@ export class VpcCni extends pulumi.dynamic.Resource {
             throw new Error("Could not set VPC CNI options: kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.");
         }
 
-        const yamlPath = path.join(__dirname, "cni", "aws-k8s-cni.yaml");
+        // Form the relative CNI YAML file path.
+        const projectPath = __dirname.substring(0, __dirname.indexOf("node_modules"));
+        const relativeClassDir = __dirname.replace(projectPath, "");
+        const yamlPath = path.join(relativeClassDir, "cni/aws-k8s-cni.yaml");
 
         const provider = {
             check: (state: any, inputs: any) => Promise.resolve({inputs: inputs, failedChecks: []}),
