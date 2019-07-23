@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(cni): modify CNI filepath to store the relative path only in state
+  [#201](https://github.com/pulumi/pulumi-eks/pull/201)
 - feat(storage-classes): export all user created storage classes
   [#172](https://github.com/pulumi/pulumi-eks/pull/172)
 - update(eks): add example of migrating node groups with zero downtime
