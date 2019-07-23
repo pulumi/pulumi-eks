@@ -8,9 +8,9 @@ const vpc = new awsx.Network(`${projectName}-net`, {
     numberOfAvailabilityZones: 3,
 });
 
-const publicSubnetIds = vpc.publicSubnetIds;
+const publicSubnetIds = vpc.publicSubnetIds.sort();
 
-// Comment out / remove after init update to repro: https://git.io/fj8cn
+// Remove this line after the init update to repro: https://git.io/fj8cn
 publicSubnetIds.pop();
 
 const cluster = new eks.Cluster(projectName, {
