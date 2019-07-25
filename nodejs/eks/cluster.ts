@@ -69,6 +69,15 @@ export interface UserMapping {
 }
 
 /**
+ * CreationRoleProvider is a component containing the AWS Role and Provider necessary to override the `[system:master]`
+ * entity ARN. This is an optional argument used in `ClusterOptions`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+ */
+export interface CreationRoleProvider {
+    role: aws.iam.Role;
+    provider: pulumi.ProviderResource;
+}
+
+/**
  * CoreData defines the core set of data associated with an EKS cluster, including the network in which it runs.
  */
 export interface CoreData {
@@ -100,6 +109,105 @@ function createOrGetInstanceProfile(name: string, parent: pulumi.ComponentResour
   }
 
   return instanceProfile;
+}
+
+function generateKubeconfig(clusterName: string, clusterEndpoint: string, certData: string, roleArn?: string) {
+    let args = ["token", "-i", clusterName];
+
+    if (roleArn) {
+        args = [...args, "-r", roleArn];
+    }
+
+    return {
+        apiVersion: "v1",
+        clusters: [{
+            cluster: {
+                server: clusterEndpoint,
+                "certificate-authority-data": certData,
+            },
+            name: "kubernetes",
+        }],
+        contexts: [{
+            context: {
+                cluster: "kubernetes",
+                user: "aws",
+            },
+            name: "aws",
+        }],
+        "current-context": "aws",
+        kind: "Config",
+        users: [{
+            name: "aws",
+            user: {
+                exec: {
+                    apiVersion: "client.authentication.k8s.io/v1alpha1",
+                    command: "aws-iam-authenticator",
+                    args: args,
+                },
+            },
+        }],
+    };
+}
+
+export function getRoleProvider(name: string, region?: aws.Region, profile?: string): CreationRoleProvider {
+    const iamRole = new aws.iam.Role(`${name}-eksClusterCreatorRole`, {
+        assumeRolePolicy: aws.getCallerIdentity().then(id => `{
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                "Effect": "Allow",
+                "Principal": {
+                    "AWS": "arn:aws:iam::${id.accountId}:root"
+                },
+                "Action": "sts:AssumeRole"
+                }
+            ]
+            }`,
+        ),
+        description: `Admin access to eks-${name}`,
+    });
+
+    // `eks:*` is needed to create/read/update/delete the EKS cluster, `iam:PassRole` is needed to pass the EKS service role to the cluster
+    // https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html
+    const rolePolicy = new aws.iam.RolePolicy(`${name}-eksClusterCreatorPolicy`, {
+        role: iamRole,
+        policy: {
+          Version: "2012-10-17",
+          Statement: [
+            {
+              Effect: "Allow",
+              Action: "eks:*",
+              Resource: "*",
+            },
+            {
+              Effect: "Allow",
+              Action: "iam:PassRole",
+              Resource: "*",
+            },
+          ],
+        },
+      },
+      { parent: iamRole },
+    );
+
+    const provider = new aws.Provider(`${name}-eksClusterCreatorEntity`, {
+        region: region,
+        profile: profile,
+        assumeRole: {
+            roleArn: iamRole.arn.apply(async(arn) => {
+                // wait 30 seconds to assume the IAM Role https://github.com/pulumi/pulumi-aws/issues/673
+                if (!pulumi.runtime.isDryRun()) {
+                    await new Promise(resolve => setTimeout(resolve, 30 * 1000));
+                }
+                return arn;
+            }),
+        },
+    }, { parent: iamRole });
+
+    return {
+        role: iamRole,
+        provider: provider,
+    };
 }
 
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
@@ -180,7 +288,10 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
-    }, { parent: parent });
+    }, {
+        parent: parent,
+        provider: args.creationRoleProvider ? args.creationRoleProvider.provider : undefined,
+    });
 
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
@@ -211,35 +322,15 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // its worker nodes have come up.
     const kubeconfig = pulumi.all([eksCluster.name, endpoint, eksCluster.certificateAuthority])
         .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority]) => {
-            return {
-                apiVersion: "v1",
-                clusters: [{
-                    cluster: {
-                        server: clusterEndpoint,
-                        "certificate-authority-data": clusterCertificateAuthority.data,
-                    },
-                    name: "kubernetes",
-                }],
-                contexts: [{
-                    context: {
-                        cluster: "kubernetes",
-                        user: "aws",
-                    },
-                    name: "aws",
-                }],
-                "current-context": "aws",
-                kind: "Config",
-                users: [{
-                    name: "aws",
-                    user: {
-                        exec: {
-                            apiVersion: "client.authentication.k8s.io/v1alpha1",
-                            command: "aws-iam-authenticator",
-                            args: ["token", "-i", clusterName],
-                        },
-                    },
-                }],
-            };
+            let config = {};
+
+            if (args.creationRoleProvider) {
+              config = args.creationRoleProvider.role.arn.apply(arn => generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data, arn));
+            } else {
+              config = generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data);
+            }
+
+            return config;
         });
 
     const provider = new k8s.Provider(`${name}-eks-k8s`, {
@@ -435,6 +526,12 @@ export interface ClusterOptions {
      * IAM Service Role for EKS to use to manage the cluster.
      */
     serviceRole?: pulumi.Input<aws.iam.Role>;
+
+    /**
+     * The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]`
+     * permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+     */
+    creationRoleProvider?: CreationRoleProvider;
 
     /**
      * This enables the advanced case of registering *many* IAM instance roles

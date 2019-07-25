@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export { Cluster, ClusterOptions, ClusterNodeGroupOptions, CoreData, RoleMapping, UserMapping } from "./cluster";
+export { Cluster, ClusterOptions, ClusterNodeGroupOptions, CoreData, RoleMapping, UserMapping, CreationRoleProvider, getRoleProvider } from "./cluster";
 export { NodeGroup, NodeGroupOptions, NodeGroupData } from "./nodegroup";
 export { VpcCni, VpcCniOptions } from "./cni";
 export { createNodeGroupSecurityGroup } from "./securitygroup";
