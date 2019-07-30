@@ -534,6 +534,11 @@ export interface ClusterOptions {
     skipDefaultNodeGroup?: boolean;
 
     /**
+     * @deprecated This option has been deprecated due to a lack of
+     * support for it on EKS, and the general community recommendation to avoid
+     * using it for security concerns. If you'd like alternatives to deploy the
+     * dashboard, consider writing it in Pulumi, or using the Helm chart.
+     *
      * Whether or not to deploy the Kubernetes dashboard to the cluster. If the dashboard is deployed, it can be
      * accessed as follows:
      *
@@ -717,6 +722,7 @@ export class Cluster extends pulumi.ComponentResource {
 
         // If we need to deploy the Kubernetes dashboard, do so now.
         if (args.deployDashboard === undefined || args.deployDashboard) {
+            pulumi.log.warn("Option `deployDashboard` has been deprecated. Please consider using the Helm chart, or writing the dashboard directly in Pulumi.", this.eksCluster);
             createDashboard(name, {}, this, this.provider);
         }
 
