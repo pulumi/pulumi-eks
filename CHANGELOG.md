@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- chore(cluster): add deprecation for kube-dashboard, customInstanceRolePolicy
+  [#202](https://github.com/pulumi/pulumi-eks/pull/202)
 - fix(cni): modify CNI filepath to store the relative path only in state
   [#201](https://github.com/pulumi/pulumi-eks/pull/201)
 - feat(storage-classes): export all user created storage classes
