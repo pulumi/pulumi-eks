@@ -295,6 +295,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
         // Create a new policy for the role, if specified.
         if (args.customInstanceRolePolicy) {
+            pulumi.log.warn("Option `customInstanceRolePolicy` has been deprecated. Please use `instanceRole` or `instanceRoles`. The role provided to either option should already include all required policies.", eksCluster);
             const customRolePolicy = new aws.iam.RolePolicy(`${name}-EKSWorkerCustomPolicy`, {
                 role: instanceRole,
                 policy: args.customInstanceRolePolicy,
