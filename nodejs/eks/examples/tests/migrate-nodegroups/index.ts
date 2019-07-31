@@ -1,4 +1,6 @@
-import * as awsx from "@pulumi/awsx"; import * as eks from "@pulumi/eks";
+import * as aws from "@pulumi/aws";
+import * as awsx from "@pulumi/awsx";
+import * as eks from "@pulumi/eks";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import { config } from "./config";
@@ -19,9 +21,9 @@ const vpc = new awsx.ec2.Vpc(`${projectName}`, {
 export const vpcId = vpc.id;
 export const allVpcSubnets = vpc.privateSubnetIds.concat(vpc.publicSubnetIds);
 
-// Create 3 IAM Roles and matching InstanceProfiles to use with the nodegroups.
-const roles = iam.createRoles(projectName, 3);
-const instanceProfiles = iam.createInstanceProfiles(projectName, roles);
+// Create IAM Role and matching InstanceProfile to use with the nodegroups.
+const roles = iam.createRoles(projectName, 1);
+const instanceProfile = iam.createInstanceProfiles(projectName, roles);
 
 // Create an EKS cluster.
 const myCluster = new eks.Cluster(`${projectName}`, {
@@ -31,6 +33,9 @@ const myCluster = new eks.Cluster(`${projectName}`, {
     nodeAssociatePublicIpAddress: false,
     skipDefaultNodeGroup: true,
     deployDashboard: false,
+    vpcCniOptions: {
+        image: "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.5.1-rc1",
+    },
     instanceRoles: roles,
     enabledClusterLogTypes: ["api", "audit", "authenticator",
         "controllerManager", "scheduler"],
@@ -44,7 +49,7 @@ const ngStandard = utils.createNodeGroup(`${projectName}-ng-standard`, {
     instanceType: "t2.medium",
     desiredCapacity: 3,
     cluster: myCluster,
-    instanceProfile: instanceProfiles[0],
+    instanceProfile: instanceProfile[0],
 });
 
 // Create a 2xlarge node group of t3.2xlarge workers with taints on the nodes
@@ -55,7 +60,7 @@ if (config.createNodeGroup2xlarge) {
         instanceType: "t3.2xlarge",
         desiredCapacity: config.desiredCapacity2xlarge,
         cluster: myCluster,
-        instanceProfile: instanceProfiles[1],
+        instanceProfile: instanceProfile[0],
         taints: {"nginx": { value: "true", effect: "NoSchedule"}},
     });
 }
@@ -68,7 +73,7 @@ if (config.createNodeGroup4xlarge) {
         instanceType: "c5.4xlarge",
         desiredCapacity: config.desiredCapacity4xlarge,
         cluster: myCluster,
-        instanceProfile: instanceProfiles[2],
+        instanceProfile: instanceProfile[0],
         taints: {"nginx": { value: "true", effect: "NoSchedule"}},
     });
 }
@@ -80,20 +85,23 @@ export const namespaceName = namespace.metadata.name;
 // Deploy the NGINX Ingress Controller on the specified node group.
 const image: string = "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.25.0";
 const ingressClass: string = "my-nginx-class";
-const nginxService = nginx.create("nginx-ing-cntlr", {
-    image: image,
-    replicas: 3,
-    namespace: namespaceName,
-    ingressClass: ingressClass,
-    provider: myCluster.provider,
-    nodeSelectorTermValues: config.nginxNodeSelectorTermValues,
-});
-export const nginxServiceUrl = nginxService.status.loadBalancer.ingress[0].hostname;
+export let nginxServiceUrl = pulumi.output("");
+if (config.deployWorkload) {
+    const nginxService = nginx.create("nginx-ing-cntlr", {
+        image: image,
+        replicas: 3,
+        namespace: namespaceName,
+        ingressClass: ingressClass,
+        provider: myCluster.provider,
+        nodeSelectorTermValues: config.nginxNodeSelectorTermValues,
+    });
+    nginxServiceUrl = nginxService.status.loadBalancer.ingress[0].hostname;
 
-// Deploy the echoserver Workload on the Standard node group.
-const echoserverDeployment = echoserver.create("echoserver", {
-    replicas: 3,
-    namespace: namespaceName,
-    ingressClass: ingressClass,
-    provider: myCluster.provider,
-});
+    // Deploy the echoserver Workload on the Standard node group.
+    const echoserverDeployment = echoserver.create("echoserver", {
+        replicas: 3,
+        namespace: namespaceName,
+        ingressClass: ingressClass,
+        provider: myCluster.provider,
+    });
+}

@@ -4,4 +4,5 @@ export const config = {
     createNodeGroup4xlarge: false,
     desiredCapacity4xlarge: 0,
     nginxNodeSelectorTermValues: ["t3.2xlarge"],
+    deployWorkload: true,
 };
