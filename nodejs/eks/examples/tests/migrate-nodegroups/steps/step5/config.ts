@@ -1,6 +1,6 @@
-// Scale down the 2xlarge node group to a desired capacity of 0 workers.
+// Remove the 2xlarge node group.
 export const config = {
-    createNodeGroup2xlarge: true,
+    createNodeGroup2xlarge: false,
     desiredCapacity2xlarge: 0,
     createNodeGroup4xlarge: true,
     desiredCapacity4xlarge: 5,
