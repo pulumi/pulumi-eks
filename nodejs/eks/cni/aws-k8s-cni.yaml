@@ -81,7 +81,7 @@ spec:
       tolerations:
         - operator: Exists
       containers:
-        - image: 602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.5.0
+        - image: 602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.5.2
           imagePullPolicy: Always
           ports:
             - containerPort: 61678
@@ -90,6 +90,8 @@ spec:
           env:
             - name: AWS_VPC_K8S_CNI_LOGLEVEL
               value: DEBUG
+            - name: AWS_VPC_K8S_CNI_LOG_FILE
+              value: stdout
             - name: MY_NODE_NAME
               valueFrom:
                 fieldRef:
