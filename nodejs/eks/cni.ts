@@ -64,6 +64,28 @@ export interface VpcCniOptions {
      * assignment on the node.
      */
     warmIpTarget?: pulumi.Input<number>;
+
+    /**
+     * Specifies the log level used for logs.
+     *
+     * Defaults to "DEBUG".
+     * See more options: https://git.io/fj92K
+     */
+    logLevel?: pulumi.Input<string>;
+
+    /**
+     * Specifies the file path used for logs.
+     *
+     * Defaults to "stdout" to emit Pod logs for `kubectl logs`.
+     */
+    logFile?: pulumi.Input<string>;
+
+    /**
+     * Specifies the container image to use in the AWS CNI cluster DaemonSet.
+     *
+     * Defaults to the official AWS CNI image in ECR.
+     */
+    image?: pulumi.Input<string>;
 }
 
 interface VpcCniInputs {
@@ -73,6 +95,9 @@ interface VpcCniInputs {
     externalSnat?: boolean;
     warmEniTarget?: number;
     warmIpTarget?: number;
+    logLevel?: string;
+    logFile?: string;
+    image?: string;
 }
 
 function computeVpcCniYaml(yamlPath: string, args: VpcCniInputs): string {
@@ -87,20 +112,29 @@ function computeVpcCniYaml(yamlPath: string, args: VpcCniInputs): string {
     // Rewrite the envvars for the CNI daemon set as per the inputs.
     const daemonSet = cniYaml.filter(o => o.kind === "DaemonSet")[0];
     const env = daemonSet.spec.template.spec.containers[0].env;
-    if (args.nodePortSupport !== undefined) {
+    if (args.nodePortSupport) {
         env.push({name: "AWS_VPC_CNI_NODE_PORT_SUPPORT", value: args.nodePortSupport ? "true" : "false"});
     }
-    if (args.customNetworkConfig !== undefined) {
+    if (args.customNetworkConfig) {
         env.push({name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: args.customNetworkConfig ? "true" : "false"});
     }
-    if (args.externalSnat !== undefined) {
+    if (args.externalSnat) {
         env.push({name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.externalSnat ? "true" : "false"});
     }
-    if (args.warmEniTarget !== undefined) {
+    if (args.warmEniTarget) {
         env.push({name: "WARM_ENI_TARGET", value: args.warmEniTarget.toString()});
     }
-    if (args.warmIpTarget !== undefined) {
+    if (args.warmIpTarget) {
         env.push({name: "WARM_IP_TARGET", value: args.warmIpTarget.toString()});
+    }
+    if (args.logLevel) {
+        env.push({name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: args.logLevel.toString()});
+    }
+    if (args.logFile) {
+        env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: args.logFile.toString()});
+    }
+    if (args.image) {
+        daemonSet.spec.template.spec.containers[0].image = args.image.toString();
     }
     // Return the computed YAML.
     return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
@@ -162,6 +196,9 @@ export class VpcCni extends pulumi.dynamic.Resource {
             externalSnat: args.externalSnat,
             warmEniTarget: args.warmEniTarget,
             warmIpTarget: args.warmIpTarget,
+            logLevel: args.logLevel,
+            logFile: args.logFile,
+            image: args.image,
         }, opts);
     }
 }
