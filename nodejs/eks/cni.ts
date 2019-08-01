@@ -117,24 +117,24 @@ function computeVpcCniYaml(yamlPath: string, args: VpcCniInputs): string {
     // Rewrite the envvars for the CNI daemon set as per the inputs.
     const daemonSet = cniYaml.filter(o => o.kind === "DaemonSet")[0];
     const env = daemonSet.spec.template.spec.containers[0].env;
-    if (args.nodePortSupport !== undefined) {
+    if (args.nodePortSupport) {
         env.push({name: "AWS_VPC_CNI_NODE_PORT_SUPPORT", value: args.nodePortSupport ? "true" : "false"});
     }
-    if (args.customNetworkConfig !== undefined) {
+    if (args.customNetworkConfig) {
         env.push({name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: args.customNetworkConfig ? "true" : "false"});
     }
-    if (args.externalSnat !== undefined) {
+    if (args.externalSnat) {
         env.push({name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.externalSnat ? "true" : "false"});
     }
-    if (args.warmEniTarget !== undefined) {
+    if (args.warmEniTarget) {
         env.push({name: "WARM_ENI_TARGET", value: args.warmEniTarget.toString()});
     }
-    if (args.warmIpTarget !== undefined) {
+    if (args.warmIpTarget) {
         env.push({name: "WARM_IP_TARGET", value: args.warmIpTarget.toString()});
     }
-    if (args.image) {
-       daemonSet.spec.template.spec.containers[0].image = args.image ? args.image.toString() : CNI_IMAGE;
-    }
+    env.push({name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: args.logLevel ? args.logLevel.toString() : "DEBUG"});
+    env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: args.logFile ? args.logFile.toString() : "stdout"});
+    daemonSet.spec.template.spec.containers[0].image = args.image ? args.image.toString() : CNI_IMAGE;
     // Return the computed YAML.
     return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
 }
