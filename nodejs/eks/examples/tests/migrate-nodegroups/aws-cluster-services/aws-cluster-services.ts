@@ -12,7 +12,7 @@ export function newRoleWithPolicies(
     name: string,
     args: aws.iam.RoleArgs,
     policies: Policies,
-): aws.iam.Role {
+): pulumi.Output<aws.iam.Role> {
     const role = new aws.iam.Role(name, args);
     for (const policy of Object.keys(policies)) {
         // Create RolePolicyAttachment without returning it.
@@ -24,7 +24,7 @@ export function newRoleWithPolicies(
             },
         );
     }
-    return role;
+    return pulumi.output(role);
 }
 
 // Helper function to create a new IAM Policy.
@@ -39,7 +39,7 @@ export function createPolicy(
 // Add the specified policies to the existing IAM Principal
 export function addPoliciesToExistingRole(
     name: string,
-    role: aws.iam.Role,
+    role: pulumi.Output<aws.iam.Role>,
     policies: Policies,
 ) {
     for (const policy of Object.keys(policies)) {
@@ -121,10 +121,10 @@ export function create(
 
     // Attach the kube2iam policy to the node/instance AWS Role for the
     // Kubernetes Nodes / Workers.
-    const role = aws.iam.Role.get("existingInstanceRole", instanceRoleName);
+    const instanceRole = pulumi.output(aws.iam.Role.get("existingInstanceRole", instanceRoleName));
     addPoliciesToExistingRole(
         "kube2IamPolicy",
-        role,
+        instanceRole,
         {
             "kube2IamPolicy": kube2iamPolicy.arn,
         },
@@ -204,7 +204,7 @@ export function create(
         },
     );
 
-    const fluentdCloudWatchRoleArn = fluentdCloudWatchRole.arn;
+    const fluentdCloudWatchRoleArn = fluentdCloudWatchRole.apply(r => r.arn);
 
     // -- Deploy fluentd-cloudwatch --
 

@@ -3,6 +3,7 @@ import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
+import * as clusterSvcs from "./aws-cluster-services";
 import { config } from "./config";
 import * as echoserver from "./echoserver";
 import * as iam from "./iam";
@@ -81,6 +82,17 @@ if (config.createNodeGroup4xlarge) {
 // Create a Namespace for NGINX Ingress Controller and the echoserver workload.
 const namespace = new k8s.core.v1.Namespace("apps", undefined, { provider: myCluster.provider });
 export const namespaceName = namespace.metadata.name;
+
+// Launch kube2iam and fluentd-cloudwatch.
+const cfg = new pulumi.Config("aws");
+const region = <aws.Region>cfg.require("region");
+const fluentdCloudWatch = clusterSvcs.create({
+    clusterName: clusterName,
+    region: region,
+    instanceRoleArn: myCluster.core.instanceRoles.apply(r => r[0].arn),
+    namespace: namespaceName,
+    provider: myCluster.provider,
+});
 
 // Deploy the NGINX Ingress Controller on the specified node group.
 const image: string = "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.25.0";
