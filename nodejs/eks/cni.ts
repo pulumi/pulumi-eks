@@ -25,7 +25,7 @@ import which = require("which");
 /**
  * Specifies the container image to use in the AWS CNI cluster DaemonSet.
  */
-const CNI_IMAGE = "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.5.0";
+const CNI_IMAGE = "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.5.2";
 
 /**
  * VpcCniOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.

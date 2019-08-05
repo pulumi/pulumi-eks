@@ -86,6 +86,14 @@ spec:
             - containerPort: 61678
               name: metrics
           name: aws-node
+          readinessProbe:
+            exec:
+              command: ["/app/grpc_health_probe", "-addr=:50051"]
+            initialDelaySeconds: 5
+          livenessProbe:
+            exec:
+              command: ["/app/grpc_health_probe", "-addr=:50051"]
+            initialDelaySeconds: 5
           env:
             - name: MY_NODE_NAME
               valueFrom:
