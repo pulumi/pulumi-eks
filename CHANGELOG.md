@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- Fix and improve migrate-nodegroup test (bump CNI from `v1.5.0` -> `v1.5.2`)
+  [#214](https://github.com/pulumi/pulumi-eks/pull/214)
 - fix(asgName): check 'NodeGroup' CFStack output key exists
   [#213](https://github.com/pulumi/pulumi-eks/pull/213)
 - chore(cluster): add deprecation for kube-dashboard, customInstanceRolePolicy
