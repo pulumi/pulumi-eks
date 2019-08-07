@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(asgName): check 'NodeGroup' CFStack output key exists
+  [#213](https://github.com/pulumi/pulumi-eks/pull/213)
 - chore(cluster): add deprecation for kube-dashboard, customInstanceRolePolicy
   [#202](https://github.com/pulumi/pulumi-eks/pull/202)
 - fix(cni): modify CNI filepath to store the relative path only in state
