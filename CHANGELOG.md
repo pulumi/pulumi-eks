@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.10 (Released August 8, 2019)
+
+### Improvements
+
 - Fix and improve migrate-nodegroup test (bump CNI from `v1.5.0` -> `v1.5.2`)
   [#214](https://github.com/pulumi/pulumi-eks/pull/214)
 - fix(asgName): check 'NodeGroup' CFStack output key exists
