@@ -1,6 +1,11 @@
 ## Unreleased
 
+## 0.18.11 (Released August 12, 2019)
+
 ### Improvements
+
+- Revert "fix(cni): modify CNI filepath to store the relative path"
+  [#220](https://github.com/pulumi/pulumi-eks/pull/220)
 
 ## 0.18.10 (Released August 8, 2019)
 
