@@ -7,6 +7,10 @@ publish_packages:
 	$(call STEP_MESSAGE)
 	./scripts/publish_packages.sh
 
+.PHONY: clean
+clean:
+	rm -rf node_modules package-lock.json yarn.lock
+
 .PHONY: check_clean_worktree
 check_clean_worktree:
 	$$(go env GOPATH)/src/github.com/pulumi/scripts/ci/check-worktree-is-clean.sh
