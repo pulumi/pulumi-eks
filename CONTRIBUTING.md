@@ -20,7 +20,7 @@ $ make only_build
 
 There is also a helper [build script](./dev/build.sh) that restores the dependencies, builds, and installs the source.
 
-After `make` has completed, from your Pulumi program directory you must link the recent `@pulumi/eks` build from `/opt/` by running the following command:
+`cd` into your Pulumi program directory.  After `make` has completed, link the recent `@pulumi/eks` build from `/opt/` by running the following command:
 
 ```bash
 $ yarn link @pulumi/eks
@@ -30,7 +30,7 @@ $ yarn link @pulumi/eks
 
 The examples and integration tests in this repository will create and destroy EKS clusters and Kubernetes objects while running.
 
-If possible, run your development PRs against the tests to confirm no errors
+If possible, run your development PRs against the tests to confirm there are no errors
 before submitting them:
 
 ```bash

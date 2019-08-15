@@ -4,7 +4,7 @@
 
 Pulumi's library for easily creating and managing EKS Kubernetes clusters.
 
-This package is meant for use with the Pulumi CLI. Please visit [pulumi.io](https://pulumi.io) for
+This package is meant for use with the Pulumi CLI. Please visit [pulumi.com](https://www.pulumi.com) for
 installation instructions.
 
 ## Links
@@ -46,7 +46,7 @@ cluster in AWS. This includes:
 - The cluster's worker nodes, and node groups which are managed by an autoscaling group
 - The Kubernetes resources needed to allow the worker nodes to access the cluster
 
-The default configuration targets the AWS account's default VPC, and creates an autoscaling group of 2 `t2.medium` EC2 instances:
+The default configuration targets the AWS account's default VPC, and creates an autoscaling group of two `t2.medium` EC2 instances:
 
 ```typescript
 import * as eks from "@pulumi/eks";
@@ -58,7 +58,7 @@ const cluster = new eks.Cluster("my-cluster");
 export const kubeconfig = cluster.kubeconfig;
 ```
 
-Once the cluster is created, you can deploy into the cluster using the [`@pulumi/kubernetes`][pulumi-kubernetes] SDK, kubectl, Helm, etc.
+Once the cluster is created, you can deploy to the cluster using the [`@pulumi/kubernetes`][pulumi-kubernetes] SDK, kubectl, Helm, etc.
 
 ## Examples
 
