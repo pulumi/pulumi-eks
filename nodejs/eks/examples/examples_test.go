@@ -74,7 +74,7 @@ func Test_Examples(t *testing.T) {
 			},
 		},
 		{
-			Dir: path.Join(cwd, "./private-cluster"),
+			Dir: path.Join(cwd, "./private-workers"),
 			Config: map[string]string{
 				"aws:region": region,
 			},
