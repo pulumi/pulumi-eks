@@ -47,7 +47,6 @@ cluster2.createNodeGroup("example-ng-tags-ondemand", {
     maxSize: 2,
     labels: {"ondemand": "true"},
     instanceProfile: instanceProfile0,
-    autoScalingGroupTags: { "myAutoScalingGroupTag2": "true" },
     cloudFormationTags: { "myCloudFormationTag2": "true" },
 });
 
@@ -73,7 +72,6 @@ const spot = new eks.NodeGroup("example-ng-tags-spot", {
         "k8s.io/cluster-autoscaler/enabled": "true",
         [`k8s.io/cluster-autoscaler/${clusterName}`]: "true",
     })),
-    cloudFormationTags: { "myCloudFormationTag3": "true" },
 }, {
     providers: { kubernetes: cluster2.provider},
 });

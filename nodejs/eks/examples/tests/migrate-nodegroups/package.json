@@ -1,5 +1,5 @@
 {
-    "name": "migrate-nodegroups",
+    "name": "test-migrate-nodegroups",
     "devDependencies": {
         "typescript": "^3.0.0",
         "@types/node": "latest"
