@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.12 (Released August 16, 2019)
+
+### Improvements
+
 - fix(cni): read CNI YAML outside of the dynamic provider and update to v1.5.3
   [#223](https://github.com/pulumi/pulumi-eks/pull/223)
 
