@@ -92,7 +92,7 @@ func assertEKSConfigMapReady(t *testing.T, clientset *kubernetes.Clientset) {
 		awsAuth, err = clientset.CoreV1().ConfigMaps(namespace).Get(configMapName, metav1.GetOptions{})
 		retries--
 		if err != nil {
-			waitFor(fmt.Sprintf("ConfigMap %q", configMapName), "returned")
+			waitFor(t, fmt.Sprintf("ConfigMap %q", configMapName), "returned")
 			continue
 		}
 		awsAuthReady = true
@@ -118,13 +118,13 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 	for i := 0; i < MaxRetries; i++ {
 		nodes, err = clientset.CoreV1().Nodes().List(metav1.ListOptions{})
 		if err != nil {
-			waitFor("list of all Nodes", fmt.Sprintf("returned: %s", err))
+			waitFor(t, "list of all Nodes", fmt.Sprintf("returned: %s", err))
 			continue
 		}
 		if desiredNodeCount == len(nodes.Items) {
 			break
 		} else {
-			waitFor(fmt.Sprintf("desired worker Node count of (%d) instances", desiredNodeCount), "running")
+			waitFor(t, fmt.Sprintf("desired worker Node count of (%d) instances", desiredNodeCount), "running")
 		}
 	}
 
@@ -140,12 +140,12 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 		nodeReady := false
 		// Attempt to check if a Node is ready, and output the resulting status.
 		for i := 0; i < MaxRetries; i++ {
-			if ready := IsNodeReady(clientset, &node); ready {
+			if ready := IsNodeReady(t, clientset, &node); ready {
 				nodeReady = true
 				readyCount++
 				break
 			} else {
-				waitFor(fmt.Sprintf("Node %q", node.Name), "ready")
+				waitFor(t, fmt.Sprintf("Node %q", node.Name), "ready")
 			}
 		}
 		PrintAndLog(fmt.Sprintf("Node: %s | Ready Status: %t\n", node.Name, nodeReady), t)
@@ -173,21 +173,21 @@ func AssertKindInAllNamespacesReady(t *testing.T, clientset *kubernetes.Clientse
 		case n == "deployments" || n == "deployment" || n == "deploy":
 			list, err = clientset.AppsV1().Deployments("").List(metav1.ListOptions{})
 			if err != nil {
-				waitFor("Deployments list", fmt.Sprintf("returned: %s", err))
+				waitFor(t, "Deployments list", fmt.Sprintf("returned: %s", err))
 			} else {
 				break
 			}
 		case n == "replicasets" || n == "replicaset" || n == "rs":
 			list, err = clientset.AppsV1().ReplicaSets("").List(metav1.ListOptions{})
 			if err != nil {
-				waitFor("ReplicaSets list", fmt.Sprintf("returned: %s", err))
+				waitFor(t, "ReplicaSets list", fmt.Sprintf("returned: %s", err))
 			} else {
 				break
 			}
 		case n == "pods" || n == "pod" || n == "po":
 			list, err = clientset.CoreV1().Pods("").List(metav1.ListOptions{})
 			if err != nil {
-				waitFor("Pods list", fmt.Sprintf("returned: %s", err))
+				waitFor(t, "Pods list", fmt.Sprintf("returned: %s", err))
 			} else {
 				break
 			}
@@ -214,12 +214,12 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 			ready := false
 			// Attempt to check if ready, and output the resulting status.
 			for i := 0; i < MaxRetries; i++ {
-				if IsDeploymentReady(clientset, &item) {
+				if IsDeploymentReady(t, clientset, &item) {
 					ready = true
 					readyCount++
 					break
 				} else {
-					waitFor(fmt.Sprintf("Deployment %q", item.Name), "ready")
+					waitFor(t, fmt.Sprintf("Deployment %q", item.Name), "ready")
 				}
 			}
 			PrintAndLog(fmt.Sprintf("Deployment: %s | Ready Status: %t\n", item.Name, ready), t)
@@ -239,12 +239,12 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 			ready := false
 			// Attempt to check if ready, and output the resulting status.
 			for i := 0; i < MaxRetries; i++ {
-				if IsReplicaSetReady(clientset, &item) {
+				if IsReplicaSetReady(t, clientset, &item) {
 					ready = true
 					readyCount++
 					break
 				} else {
-					waitFor(fmt.Sprintf("ReplicaSet %q", item.Name), "ready")
+					waitFor(t, fmt.Sprintf("ReplicaSet %q", item.Name), "ready")
 				}
 			}
 			PrintAndLog(fmt.Sprintf("ReplicaSet: %s | Ready Status: %t\n", item.Name, ready), t)
@@ -264,12 +264,12 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 			ready := false
 			// Attempt to check if ready, and output the resulting status.
 			for i := 0; i < MaxRetries; i++ {
-				if IsPodReady(clientset, &item) {
+				if IsPodReady(t, clientset, &item) {
 					ready = true
 					readyCount++
 					break
 				} else {
-					waitFor(fmt.Sprintf("Pod %q", item.Name), "ready")
+					waitFor(t, fmt.Sprintf("Pod %q", item.Name), "ready")
 				}
 			}
 			PrintAndLog(fmt.Sprintf("Pod: %s | Ready Status: %t\n", item.Name, ready), t)
@@ -287,20 +287,19 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 
 // waitFor is a helper func that prints to stdout & sleeps to indicate a
 // wait & retry on a given resource, with an expected status.
-func waitFor(resource, status string) {
-	fmt.Printf("Waiting for %s to be %s. Retrying...\n", resource, status)
+func waitFor(t *testing.T, resource, status string) {
+	t.Logf("Waiting for %s to be %s. Retrying...\n", resource, status)
 	time.Sleep(RetryInterval * time.Second)
 }
 
 // PrintAndLog is a helper fucn that prints a string to stdout,
 // and logs it to the testing logs.
 func PrintAndLog(s string, t *testing.T) {
-	fmt.Printf("%s", s)
 	t.Logf("%s", s)
 }
 
 // IsNodeReady attempts to check if the Node status condition is ready.
-func IsNodeReady(clientset *kubernetes.Clientset, node *corev1.Node) bool {
+func IsNodeReady(t *testing.T, clientset *kubernetes.Clientset, node *corev1.Node) bool {
 	// Attempt to retrieve Node.
 	o, err := clientset.CoreV1().Nodes().Get(node.Name, metav1.GetOptions{})
 	if err != nil {
@@ -310,7 +309,7 @@ func IsNodeReady(clientset *kubernetes.Clientset, node *corev1.Node) bool {
 	// Check the returned Node's conditions for readiness.
 	for _, condition := range o.Status.Conditions {
 		if condition.Type == corev1.NodeReady {
-			fmt.Printf("Checking if Node %q is Ready | Condition.Status: %q | Condition: %v\n", node.Name, condition.Status, condition)
+			t.Logf("Checking if Node %q is Ready | Condition.Status: %q | Condition: %v\n", node.Name, condition.Status, condition)
 			return condition.Status == corev1.ConditionTrue
 		}
 	}
@@ -319,7 +318,7 @@ func IsNodeReady(clientset *kubernetes.Clientset, node *corev1.Node) bool {
 }
 
 // IsPodReady attempts to check if the Pod's status & condition is ready.
-func IsPodReady(clientset *kubernetes.Clientset, pod *corev1.Pod) bool {
+func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod *corev1.Pod) bool {
 	// Attempt to retrieve Pod.
 	o, err := clientset.CoreV1().Pods(pod.Namespace).Get(pod.Name, metav1.GetOptions{})
 	if err != nil {
@@ -330,7 +329,7 @@ func IsPodReady(clientset *kubernetes.Clientset, pod *corev1.Pod) bool {
 	if o.Status.Phase == corev1.PodRunning || o.Status.Phase == corev1.PodSucceeded {
 		for _, condition := range o.Status.Conditions {
 			if condition.Type == corev1.PodReady {
-				fmt.Printf("Checking if Pod %q is Ready | Condition.Status: %q | Condition: %v\n", pod.Name, condition.Status, condition)
+				t.Logf("Checking if Pod %q is Ready | Condition.Status: %q | Condition: %v\n", pod.Name, condition.Status, condition)
 				return condition.Status == corev1.ConditionTrue
 			}
 		}
@@ -341,7 +340,7 @@ func IsPodReady(clientset *kubernetes.Clientset, pod *corev1.Pod) bool {
 
 // IsDeploymentReady attempts to check if the Deployments's status conditions
 // are ready.
-func IsDeploymentReady(clientset *kubernetes.Clientset, deployment *appsv1.Deployment) bool {
+func IsDeploymentReady(t *testing.T, clientset *kubernetes.Clientset, deployment *appsv1.Deployment) bool {
 	// Attempt to retrieve Deployment.
 	o, err := clientset.AppsV1().Deployments(deployment.Namespace).Get(deployment.Name, metav1.GetOptions{})
 	if err != nil {
@@ -351,7 +350,7 @@ func IsDeploymentReady(clientset *kubernetes.Clientset, deployment *appsv1.Deplo
 	// Check the returned Deployment's status & conditions for readiness.
 	for _, condition := range o.Status.Conditions {
 		if condition.Type == appsv1.DeploymentAvailable {
-			fmt.Printf("Checking if Deployment %q is Available | Condition.Status: %q | Condition: %v\n", deployment.Name, condition.Status, condition)
+			t.Logf("Checking if Deployment %q is Available | Condition.Status: %q | Condition: %v\n", deployment.Name, condition.Status, condition)
 			return condition.Status == corev1.ConditionTrue
 		}
 	}
@@ -361,7 +360,7 @@ func IsDeploymentReady(clientset *kubernetes.Clientset, deployment *appsv1.Deplo
 
 // IsReplicaSetReady attempts to check if the ReplicaSets's status conditions
 // are ready.
-func IsReplicaSetReady(clientset *kubernetes.Clientset, replicaSet *appsv1.ReplicaSet) bool {
+func IsReplicaSetReady(t *testing.T, clientset *kubernetes.Clientset, replicaSet *appsv1.ReplicaSet) bool {
 	// Attempt to retrieve ReplicaSet.
 	o, err := clientset.AppsV1().ReplicaSets(replicaSet.Namespace).Get(replicaSet.Name, metav1.GetOptions{})
 	if err != nil {
@@ -558,7 +557,7 @@ func AssertHTTPResultWithRetry(t *testing.T, output interface{}, headers map[str
 			break
 		}
 		if now.Sub(startTime) >= maxWait {
-			fmt.Printf("Timeout after %v. Unable to http.get %v successfully.", maxWait, hostname)
+			t.Logf("Timeout after %v. Unable to http.get %v successfully.", maxWait, hostname)
 			break
 		}
 		count++
@@ -569,8 +568,8 @@ func AssertHTTPResultWithRetry(t *testing.T, output interface{}, headers map[str
 			sleep += 10
 		}
 		time.Sleep(time.Duration(sleep) * time.Second)
-		fmt.Printf("Http Error: %v\n", err)
-		fmt.Printf("  Retry: %v, elapsed wait: %v, max wait %v\n", count, now.Sub(startTime), maxWait)
+		t.Logf("Http Error: %v\n", err)
+		t.Logf("  Retry: %v, elapsed wait: %v, max wait %v\n", count, now.Sub(startTime), maxWait)
 	}
 	if !assert.NoError(t, err) {
 		return false
