@@ -405,22 +405,34 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     const roleMappings = pulumi.all([pulumi.output(args.roleMappings || []), instanceRoleMappings])
         .apply(([mappings, instanceMappings]) => {
-            return jsyaml.safeDump([...mappings, ...instanceMappings].map(m => ({
-                rolearn: m.roleArn,
-                username: m.username,
-                groups: m.groups,
+            let mappingYaml = "";
+            try {
+                mappingYaml = jsyaml.safeDump([...mappings, ...instanceMappings].map(m => ({
+                    rolearn: m.roleArn,
+                    username: m.username,
+                    groups: m.groups,
             })));
+            } catch (e) {
+                throw new Error(`The IAM role mappings provided could not be properly serialized to YAML for the aws-auth ConfigMap`);
+            }
+            return mappingYaml;
         });
     const nodeAccessData: any = {
         mapRoles: roleMappings,
     };
-    if (args.userMappings !== undefined) {
+    if (args.userMappings) {
         nodeAccessData.mapUsers = pulumi.output(args.userMappings).apply(mappings => {
-            return jsyaml.safeDump(mappings.map(m => ({
-                userarn: m.userArn,
-                username: m.username,
-                groups: m.groups,
+            let mappingYaml = "";
+            try {
+                mappingYaml = jsyaml.safeDump(mappings.map(m => ({
+                    userarn: m.userArn,
+                    username: m.username,
+                    groups: m.groups,
             })));
+            } catch (e) {
+                throw new Error(`The IAM user mappings provided could not be properly serialized to YAML for the aws-auth ConfigMap`);
+            }
+            return mappingYaml;
         });
     }
     const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
