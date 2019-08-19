@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- fix(iam): improve YAML error handling & reporting in IAM ops
+  [#231](https://github.com/pulumi/pulumi-eks/pull/231)
+
 ## 0.18.13 (Released August 20, 2019)
 
 ### Improvements
