@@ -5,9 +5,9 @@
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "latest",
-        "@pulumi/awsx": "latest",
-        "@pulumi/aws": "latest"
+        "@pulumi/pulumi": "^1.0.0-beta",
+        "@pulumi/aws": "^1.0.0-beta",
+        "@pulumi/awsx": "latest"
     },
     "peerDependencies": {
         "@pulumi/eks": "latest"
