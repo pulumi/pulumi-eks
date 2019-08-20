@@ -2,6 +2,13 @@
 
 ### Improvements
 
+## 0.18.13 (Released August 20, 2019)
+
+### Improvements
+
+- feat(iam): create eks cluster & resources with iam role provider
+  [#205](https://github.com/pulumi/pulumi-eks/pull/205)
+
 ## 0.18.12 (Released August 16, 2019)
 
 ### Improvements
@@ -30,8 +37,6 @@
   [#172](https://github.com/pulumi/pulumi-eks/pull/172)
 - update(eks): add example of migrating node groups with zero downtime
   [#195](https://github.com/pulumi/pulumi-eks/pull/195)
-- create eks cluster & resources with iam role provider
-  [#205](https://github.com/pulumi/pulumi-eks/pull/205)
 
 ## 0.18.9 (Released July 11, 2019)
 
