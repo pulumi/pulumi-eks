@@ -30,8 +30,8 @@ $ yarn link @pulumi/eks
 
 The examples and integration tests in this repository will create and destroy EKS clusters and Kubernetes objects while running.
 
-If possible, run your development PRs against the tests to confirm there are no errors
-before submitting them:
+Before submitting PRs, run the integration tests to confirm there are no
+errors.
 
 ```bash
 $ make test_all
