@@ -9,9 +9,9 @@ Pulumi's library for easily creating and managing EKS Kubernetes clusters.
 * [Pre-Requisites](#pre-requisites)
 * [Installing](#installing)
 * [Quick Examples](#quick-examples)
-  * [Create a default EKS Cluster](#create-a-default-eks-cluster)
-  * [Deploying a Workload using the Resource API](#deploying-a-workload-using-the-resource-api)
-  * [Deploying a Helm Chart with Pulumi](#deploying-a-helm-chart-with-pulumi)
+  * [Create a Default EKS Cluster](#create-a-default-eks-cluster)
+  * [Deploying a Helm Chart](#deploying-a-helm-chart)
+  * [Deploying a Workload](#deploying-a-workload)
 * [Contributing](#contributing)
 * [Code of Conduct](#code-of-conduct)
 
@@ -58,7 +58,7 @@ $ yarn add @pulumi/eks
 
 ## Quick Examples
 
-### Create a default EKS Cluster
+### Create a Default EKS Cluster
 
 The default configuration targets the AWS account's default VPC, and creates an autoscaling group of two `t2.medium` EC2 instances:
 
@@ -74,7 +74,38 @@ export const kubeconfig = cluster.kubeconfig;
 
 Once the cluster is created, you can deploy into the cluster using the [`@pulumi/kubernetes`][pulumi-kubernetes] SDK, kubectl, Helm, etc. as demonstrated below.
 
-### Deploying a Workload using the Resource API
+### Deploying a Helm Chart
+
+This example creates a EKS cluster with [`pulumi/eks`](https://github.com/pulumi/pulumi-eks),
+and then deploys a Helm chart from the stable repo using the
+`kubeconfig` credentials from the cluster's [Pulumi provider](https://www.pulumi.com/docs/reference/programming-model/#providers).
+
+> Note: This capabality is primarily targeted for experimentation and transitioning
+to Pulumi. Pulumi's [desired state model][how-pulumi-works] greatly benefits
+from having resources be directly defined in your Pulumi program as demonstrated
+in the [workload example][workload-example].
+
+```typescript
+import * as eks from "@pulumi/eks";
+import * as k8s from "@pulumi/kubernetes";
+
+// Create an EKS cluster.
+const cluster = new eks.Cluster("my-cluster");
+
+// Deploy Wordpress into our cluster.
+const wordpress = new k8s.helm.v2.Chart("wordpress", {
+    repo: "stable",
+    chart: "wordpress",
+    values: {
+        wordpressBlogName: "My Cool Kubernetes Blog!",
+    },
+}, { providers: { "kubernetes": cluster.provider } });
+
+// Export the cluster's kubeconfig.
+export const kubeconfig = cluster.kubeconfig;
+```
+
+### Deploying a Workload
 
 This example creates a EKS cluster with [`pulumi/eks`](https://github.com/pulumi/pulumi-eks),
 and then deploys an NGINX Deployment and Service using the [`pulumi/kubernetes`][pulumi-kubernetes] SDK, and the
@@ -119,37 +150,6 @@ const service = new k8s.core.v1.Service(`${appName}-svc`, {
 
 // Export the URL for the load balanced service.
 export const url = service.status.loadBalancer.ingress[0].hostname;
-
-// Export the cluster's kubeconfig.
-export const kubeconfig = cluster.kubeconfig;
-```
-
-### Deploying a Helm Chart
-
-This example creates a EKS cluster with [`pulumi/eks`](https://github.com/pulumi/pulumi-eks),
-and then deploys a Helm chart from the stable repo using the
-`kubeconfig` credentials from the cluster's [Pulumi provider](https://www.pulumi.com/docs/reference/programming-model/#providers).
-
-> Note: This capabality is primarily targeted for experimentation and transitioning
-to Pulumi. Pulumi's [desired state model][how-pulumi-works] greatly benefits
-from having resources be directly defined in your Pulumi program as demonstrated
-in the [workload example][workload-example].
-
-```typescript
-import * as eks from "@pulumi/eks";
-import * as k8s from "@pulumi/kubernetes";
-
-// Create an EKS cluster.
-const cluster = new eks.Cluster("my-cluster");
-
-// Deploy Wordpress into our cluster.
-const wordpress = new k8s.helm.v2.Chart("wordpress", {
-    repo: "stable",
-    chart: "wordpress",
-    values: {
-        wordpressBlogName: "My Cool Kubernetes Blog!",
-    },
-}, { providers: { "kubernetes": cluster.provider } });
 
 // Export the cluster's kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
