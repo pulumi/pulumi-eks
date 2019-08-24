@@ -43,7 +43,7 @@ This includes:
 
 ## Installing
 
-This package is available in JavaScript/TypeScript for use with Node.js. Install it using either `npm` or `yarn`
+This package is available in JavaScript/TypeScript for use with Node.js. Install it using either `npm` or `yarn`.
 
 `npm`:
 
@@ -61,7 +61,9 @@ $ yarn add @pulumi/eks
 
 ### Create a Default EKS Cluster
 
-The default configuration targets the AWS account's default VPC, and creates an autoscaling group of two `t2.medium` EC2 instances:
+The default cluster configuration will use the default VPC of the AWS user
+or role transiently signed in. It will create the EKS control plane and a default
+worker node group using an autoscaling group of two `t2.medium` EC2 instances.
 
 ```typescript
 import * as eks from "@pulumi/eks";
@@ -73,18 +75,31 @@ const cluster = new eks.Cluster("my-cluster");
 export const kubeconfig = cluster.kubeconfig;
 ```
 
-Once the cluster is created, you can deploy into the cluster using the [`@pulumi/kubernetes`][pulumi-kubernetes] SDK, kubectl, Helm, etc. as demonstrated below.
+Once the cluster is created, you can deploy into the cluster using usual methods
+such as `kubectl` and Helm, or using the
+[`@pulumi/kubernetes`][pulumi-kubernetes] SDK to deploy in various ways
+as shown below.
+
+You can retrieve the new EKS cluster's `kubeconfig` from Pulumi by querying the
+[stack](https://www.pulumi.com/docs/intro/concepts/stack/) for its
+[output](https://www.pulumi.com/docs/intro/concepts/stack/#outputs) of exported
+variables if working with the `kubectl` or Helm tools directly.
+
+```bash
+pulumi stack output kubeconfig > kubeconfig.json
+export KUBECONFIG=$PWD/kubeconfig.json
+```
 
 ### Deploying a Helm Chart
 
-This example creates a EKS cluster with [`pulumi/eks`](https://github.com/pulumi/pulumi-eks),
-and then deploys a Helm chart from the stable repo using the
-`kubeconfig` credentials from the cluster's [Pulumi provider](https://www.pulumi.com/docs/reference/programming-model/#providers).
+This example creates a EKS cluster and then deploys a Helm chart from the
+stable repo. We extract the cluster's `kubeconfig` from its [Pulumi provider](https://www.pulumi.com/docs/reference/programming-model/#providers) to specifically target this cluster for deployments with
+[`pulumi-kubernetes`][pulumi-kubernetes].
 
-> Note: This capabality is primarily targeted for experimentation and transitioning
-to Pulumi. Pulumi's [desired state model][how-pulumi-works] greatly benefits
+> Note: This Helm capabality is primarily targeted for transitioning to Pulumi.
+Pulumi's [desired state model][how-pulumi-works] greatly benefits
 from having resources be directly defined in your Pulumi program as demonstrated
-in the [workload example][workload-example].
+in the [workload example][workload-example]. See the [FAQ][faq] for more details.
 
 ```typescript
 import * as eks from "@pulumi/eks";
@@ -108,9 +123,10 @@ export const kubeconfig = cluster.kubeconfig;
 
 ### Deploying a Workload
 
-This example creates a EKS cluster with [`pulumi/eks`](https://github.com/pulumi/pulumi-eks),
-and then deploys an NGINX Deployment and Service using the [`pulumi/kubernetes`][pulumi-kubernetes] SDK, and the
-`kubeconfig` credentials from the cluster's [Pulumi provider](https://www.pulumi.com/docs/reference/programming-model/#providers).
+This example creates a EKS cluster and then deploys an NGINX Deployment and
+Service using the [`pulumi/kubernetes`][pulumi-kubernetes] SDK, and the
+`kubeconfig` credentials from the cluster's
+[Pulumi provider](https://www.pulumi.com/docs/reference/programming-model/#providers).
 
 ```typescript
 import * as eks from "@pulumi/eks";
@@ -169,3 +185,5 @@ You can read the code of conduct [here][code-of-conduct].
 [code-of-conduct]: CODE-OF-CONDUCT.md
 [workload-example]: #deploying-a-workload-on-aws-eks
 [how-pulumi-works]: https://www.pulumi.com/docs/intro/concepts/how-pulumi-works
+[workload-example]: #deploying-a-workload
+[faq]: https://www.pulumi.com/docs/intro/cloud-providers/kubernetes/faq/
