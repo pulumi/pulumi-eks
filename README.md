@@ -77,7 +77,7 @@ Once the cluster is created, you can deploy into the cluster using the [`@pulumi
 ### Deploying a Workload using the Resource API
 
 This example creates a EKS cluster with [`pulumi/eks`](https://github.com/pulumi/pulumi-eks),
-and then deploys an NGINX Deployment and Service using the [`pulumi/kubernetes`][pului-kubernetes] SDK, and the
+and then deploys an NGINX Deployment and Service using the [`pulumi/kubernetes`][pulumi-kubernetes] SDK, and the
 `kubeconfig` credentials from the cluster's [Pulumi provider](https://www.pulumi.com/docs/reference/programming-model/#providers).
 
 ```typescript
@@ -166,3 +166,5 @@ You can read the code of conduct [here][code-of-conduct].
 [pulumi-kubernetes]: https://github.com/pulumi/pulumi-kubernetes
 [contributing]: CONTRIBUTING.md
 [code-of-conduct]: CODE-OF-CONDUCT.md
+[workload-example]: #deploying-a-workload-on-aws-eks
+[how-pulumi-works]: https://www.pulumi.com/docs/intro/concepts/how-pulumi-works
