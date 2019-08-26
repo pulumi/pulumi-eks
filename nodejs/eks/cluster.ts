@@ -84,6 +84,8 @@ export interface CoreData {
     cluster: aws.eks.Cluster;
     vpcId: pulumi.Output<string>;
     subnetIds: pulumi.Output<string[]>;
+    publicSubnetIds: pulumi.Output<string[]>;
+    privateSubnetIds: pulumi.Output<string[]>;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
     provider: k8s.Provider;
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
@@ -223,15 +225,35 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         throw new Error("instanceRole and instanceRoles are mutually exclusive, and cannot both be set.");
     }
 
-    // If no VPC was specified, use the default VPC.
+    if (args.subnetIds && (args.publicSubnetIds || args.privateSubnetIds)) {
+        throw new Error("subnetIds, and the use of publicSubnetIds and/or privateSubnetIds are mutually exclusive. Choose a single approach.");
+    }
+
+    // Configure default networking architecture.
     let vpcId: pulumi.Input<string> = args.vpcId!;
     let subnetIds: pulumi.Input<pulumi.Input<string>[]> = args.subnetIds!;
-    if (args.vpcId === undefined) {
+    let publicSubnetIds: pulumi.Input<pulumi.Input<string>[]> = args.publicSubnetIds!;
+    let privateSubnetIds: pulumi.Input<pulumi.Input<string>[]> = args.privateSubnetIds!;
+
+    // If no VPC is set, use the default VPC's subnets.
+    if (!args.vpcId) {
         const invokeOpts = { parent: parent };
         const vpc = aws.ec2.getVpc({ default: true }, invokeOpts);
         vpcId = vpc.then(v => v.id);
         subnetIds = vpc.then(v => aws.ec2.getSubnetIds({ vpcId: v.id }, invokeOpts)).then(subnets => subnets.ids);
     }
+
+    // Form the subnetIds to pass to the EKS cluster.
+    subnetIds = pulumi.all([subnetIds || [], args.publicSubnetIds || []])
+        .apply(([ids, publicIds]) => {
+            publicSubnetIds = publicIds;
+            return ids.concat(publicIds);
+        });
+    subnetIds = pulumi.all([subnetIds, args.privateSubnetIds || []])
+        .apply(([ids, privateIds]) => {
+            privateSubnetIds = privateSubnetIds;
+            return ids.concat(privateIds);
+        });
 
     // Create the EKS service role
     let eksRole: pulumi.Output<aws.iam.Role>;
@@ -447,6 +469,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     return {
         vpcId: pulumi.output(vpcId),
         subnetIds: pulumi.output(subnetIds),
+        publicSubnetIds: pulumi.output(publicSubnetIds),
+        privateSubnetIds: pulumi.output(privateSubnetIds),
         clusterSecurityGroup: eksClusterSecurityGroup,
         cluster: eksCluster,
         kubeconfig: kubeconfig,
@@ -484,12 +508,81 @@ export interface ClusterOptions {
     vpcId?: pulumi.Input<string>;
 
     /**
-     * The subnets to attach to the EKS cluster. If either vpcId or subnetIds is unset, the cluster will use the
-     * default VPC's subnets. If the list of subnets includes both public and private subnets, the Kubernetes API
-     * server and the worker nodes will only be attached to the private subnets. See
-     * https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html for more details.
+     * The set of subnets to use on the EKS cluster.
+     * These subnets are automatically tagged by EKS for Kubernetes purposes.
+     *
+     * Note, `vpcId` must be set. If not, then the cluster will use the AWS
+     * account's default VPC subnets.
+     *
+     * If the list of subnets includes both public and private subnets, the worker
+     * nodes will only be attached to the private subnets, and the public
+     * subnets will be used for internet-facing load balancers.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.
+     *
+     * Note, the use of `subnetIds`, and the combination of `publicSubnetIds`
+     * and/or `privateSubnetIds` is mutually exclusive. The former is the
+     * current implementation, and the latter combination
+     * is newer functionality.
      */
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * The set of public subnets to use on the cluster. These subnets
+     * are used as the default public subnets for the worker node groups, and
+     * are automatically tagged by EKS for Kubernetes purposes.
+     *
+     * Note, `vpcId` must be set. If not, then the cluster will use the AWS
+     * account's default VPC subnets.
+     *
+     * Network architecture options:
+     *  - Private-only: Only set `privateSubnetIds`.
+     *    - Default workers to run in a private subnet and Kubernetes cannot create internet-facing load
+     *  balancers for your pods.
+     *  - Public-only: Only set `publicSubnetIds`.
+     *    - Default workers to run in a public subnet, including your worker nodes.
+     *  - Mixed (recommended): Set both `privateSubnetIds` and `publicSubnetIds`.
+     *    - Default all worker nodes to run in private subnets, and use the public subnets
+     *  for internet-facing load balancers.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.
+     *
+     * Note, the use of `subnetIds`, and the combination of `publicSubnetIds`
+     * and/or `privateSubnetIds` is mutually exclusive. The former is the
+     * current implementation, and the latter combination
+     * is newer functionality.
+     */
+    publicSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /*
+     * The set of private subnets to use on the cluster. These subnets
+     * are used as the default private subnets for the worker node groups, and
+     * are automatically tagged by EKS for Kubernetes purposes.
+     *
+     * Note, `vpcId` must be set. If not, then the cluster will use the AWS
+     * account's default VPC subnets.
+     *
+     * Network architecture options:
+     *  - Private-only: Only set `privateSubnetIds`.
+     *    - Default workers to run in a private subnet and Kubernetes cannot create internet-facing load
+     *  balancers for your pods.
+     *  - Public-only: Only set `publicSubnetIds`.
+     *    - Default workers to run in a public subnet, including your worker nodes.
+     *  - Mixed (recommended): Set both `privateSubnetIds` and `publicSubnetIds`.
+     *    - Default all worker nodes to run in private subnets, and use the public subnets
+     *  for internet-facing load balancers.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.
+     *
+     * Note, the use of `subnetIds`, and the combination of `publicSubnetIds`
+     * and/or `privateSubnetIds` is mutually exclusive. The former is the
+     * current implementation, and the latter combination
+     * is newer functionality.
+     *
+     * Also consider setting `nodeAssociatePublicIpAddress: true` for
+     * fully private workers.
+    */
+    privateSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
      * Whether or not to auto-assign the EKS worker nodes public IP addresses.

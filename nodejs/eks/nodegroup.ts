@@ -44,9 +44,16 @@ export interface Taint {
 export interface NodeGroupBaseOptions {
 
     /**
-     * The IDs of the explicit node subnets to attach to the worker node group.
+     * The explicit subnet IDs to use for the worker node group.
      *
-     * This option overrides clusterSubnetIds option.
+     * The IDs used must be a subset, or the whole set of IDs passed to the
+     * `Cluster` specified by either:
+     *  - `subnetIds`, or
+     *  - A combination of `publicSubnetIds` and/or `privateSubnetIds`.
+     *
+     * Setting this option overrides which subnets to use for the worker node
+     * group, regardless if the cluster's `subnetIds` exist for auto-discovery,
+     * or if a combination of `publicSubnetIds` and/or `privateSubnetIds` were set.
      */
     nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
@@ -448,7 +455,26 @@ ${customUserData}
         userData: userdata,
     }, { parent: parent, ignoreChanges: ignoreChanges });
 
-    const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+    // Compute the worker node group subnets to use from the various approaches.
+    let workerSubnetIds: pulumi.Output<string[]> = pulumi.output([]);
+    workerSubnetIds = pulumi.all([
+        args.nodeSubnetIds,
+        core.privateSubnetIds,
+        core.publicSubnetIds,
+        core.subnetIds,
+    ]).apply(([overrideIds, privateIds, publicIds, subnetIds]) => {
+        if (overrideIds) { // Use the specified override subnetIds.
+            return pulumi.output(overrideIds);
+        } else if (privateIds) { // Use the specified private subnetIds.
+            return pulumi.output(privateIds);
+        } else if (publicIds) { // Use the specified public subnetIds.
+            return pulumi.output(publicIds);
+        }
+        // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
+        return pulumi.output(subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+    });
+
+    // Configure the settings for the autoscaling group.
     if (args.desiredCapacity === undefined) {
         args.desiredCapacity = 2;
     }
@@ -462,7 +488,6 @@ ${customUserData}
     if (args.spotPrice) {
         minInstancesInService = 0;
     }
-
     const autoScalingGroupTags: InputTags = pulumi.all([
         eksCluster.name,
         args.autoScalingGroupTags,
@@ -478,7 +503,7 @@ ${customUserData}
         args.minSize,
         args.maxSize,
         tagsToAsgTags(autoScalingGroupTags),
-        workerSubnetIds.apply(JSON.stringify),
+        pulumi.output(workerSubnetIds).apply(JSON.stringify),
     ]).apply(([launchConfig, desiredCapacity, minSize, maxSize, asgTags, vpcSubnetIds]) => `
                 AWSTemplateFormatVersion: '2010-09-09'
                 Outputs:
