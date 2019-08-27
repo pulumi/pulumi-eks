@@ -10,10 +10,14 @@ const projectName = pulumi.getProject();
 // Create an EKS cluster with non-default configuration
 const role = iam.createRole(`${projectName}-role`);
 const instanceProfile = new aws.iam.InstanceProfile(`${projectName}-instanceProfile`, {role: role});
-const vpc = new awsx.Network(`${projectName}-vpc`, { usePrivateSubnets: true });
+const vpc = new awsx.ec2.Vpc(`${projectName}`, {
+    cidrBlock: "172.16.0.0/16",
+    tags: { "Name": `${projectName}` },
+});
+
 const testCluster = new eks.Cluster(`${projectName}`, {
-    vpcId: vpc.vpcId,
-    subnetIds: vpc.subnetIds,
+    vpcId: vpc.id,
+    publicSubnetIds: vpc.publicSubnetIds,
     skipDefaultNodeGroup: true,
     instanceRole: role,
 });

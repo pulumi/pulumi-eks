@@ -4,8 +4,11 @@ import * as pulumi from "@pulumi/pulumi";
 
 const projectName = pulumi.getProject();
 
-const vpc = new awsx.Network(`${projectName}-net`, {
+// Allocate a new VPC with custom settings, and a public & private subnet per AZ.
+const vpc = new awsx.ec2.Vpc(`${projectName}`, {
+    cidrBlock: "172.16.0.0/16",
     numberOfAvailabilityZones: 3,
+    tags: { "Name": `${projectName}` },
 });
 
 const publicSubnetIds = vpc.publicSubnetIds;
@@ -13,9 +16,9 @@ const publicSubnetIds = vpc.publicSubnetIds;
 // Remove this line after the init update to repro: https://git.io/fj8cn
 publicSubnetIds.pop();
 
-const cluster = new eks.Cluster(projectName, {
-    vpcId: vpc.vpcId,
-    subnetIds: publicSubnetIds,
+const cluster = new eks.Cluster(`${projectName}`, {
+    vpcId: vpc.id,
+    publicSubnetIds: publicSubnetIds,
     deployDashboard: false,
 });
 
