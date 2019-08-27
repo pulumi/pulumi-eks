@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- Add new publicSubnetIds and privateSubnetIds cluster options. Also, update
+  tests to use new awsx.ec2.Vpc API and new subnet options
+  [#238](https://github.com/pulumi/pulumi-eks/pull/238)
 - fix(iam): improve YAML error handling & reporting in IAM ops
   [#231](https://github.com/pulumi/pulumi-eks/pull/231)
 
