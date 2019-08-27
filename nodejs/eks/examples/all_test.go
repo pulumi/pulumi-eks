@@ -105,6 +105,23 @@ func Test_AllTests(t *testing.T) {
 			},
 		},
 		{
+			Dir: path.Join(cwd, "tests", "awsx-network-and-subnetIds"),
+			Config: map[string]string{
+				"aws:region": region,
+			},
+			Dependencies: []string{
+				"@pulumi/eks",
+			},
+			ExpectRefreshChanges: true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		},
+		{
 			Dir: path.Join(cwd, "tests", "migrate-nodegroups"),
 			Config: map[string]string{
 				"aws:region": region,
