@@ -1,0 +1,15 @@
+{
+    "name": "test-awsx-network-and-subnetIds",
+    "devDependencies": {
+        "typescript": "^3.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "^1.0.0-beta",
+        "@pulumi/aws": "^1.0.0-beta",
+        "@pulumi/awsx": "latest"
+    },
+    "peerDependencies": {
+        "@pulumi/eks": "latest"
+    }
+}
