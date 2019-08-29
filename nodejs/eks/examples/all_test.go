@@ -43,16 +43,20 @@ func Test_AllTests(t *testing.T) {
 		return
 	}
 
+	// Base options shared amongst all tests.
+	base := integration.ProgramTestOptions{
+		Config: map[string]string{
+			"aws:region": region,
+		},
+		Dependencies: []string{
+			"@pulumi/eks",
+		},
+		ExpectRefreshChanges: true,
+	}
+
 	shortTests := []integration.ProgramTestOptions{
-		{
+		base.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "tests", "replace-secgroup"),
-			Config: map[string]string{
-				"aws:region": region,
-			},
-			Dependencies: []string{
-				"@pulumi/eks",
-			},
-			ExpectRefreshChanges: true,
 			EditDirs: []integration.EditDir{
 				{
 					Dir:      path.Join(cwd, "tests", "replace-secgroup", "step1"),
@@ -65,16 +69,9 @@ func Test_AllTests(t *testing.T) {
 					},
 				},
 			},
-		},
-		{
+		}),
+		base.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "tests", "replace-cluster-add-subnets"),
-			Config: map[string]string{
-				"aws:region": region,
-			},
-			Dependencies: []string{
-				"@pulumi/eks",
-			},
-			ExpectRefreshChanges: true,
 			EditDirs: []integration.EditDir{
 				{
 					Dir:      path.Join(cwd, "tests", "replace-cluster-add-subnets", "step1"),
@@ -87,23 +84,16 @@ func Test_AllTests(t *testing.T) {
 					},
 				},
 			},
-		},
-		{
+		}),
+		base.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "tests", "tag-input-types"),
-			Config: map[string]string{
-				"aws:region": region,
-			},
-			Dependencies: []string{
-				"@pulumi/eks",
-			},
-			ExpectRefreshChanges: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig"],
 				)
 			},
-		},
+		}),
 		{
 			Dir: path.Join(cwd, "tests", "migrate-nodegroups"),
 			Config: map[string]string{
