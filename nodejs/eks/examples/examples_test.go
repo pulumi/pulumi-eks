@@ -38,16 +38,20 @@ func Test_Examples(t *testing.T) {
 		return
 	}
 
+	// Base options shared amongst all tests.
+	base := integration.ProgramTestOptions{
+		Config: map[string]string{
+			"aws:region": region,
+		},
+		Dependencies: []string{
+			"@pulumi/eks",
+		},
+		ExpectRefreshChanges: true,
+	}
+
 	shortTests := []integration.ProgramTestOptions{
-		{
+		base.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "./cluster"),
-			Config: map[string]string{
-				"aws:region": region,
-			},
-			Dependencies: []string{
-				"@pulumi/eks",
-			},
-			ExpectRefreshChanges: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -55,16 +59,9 @@ func Test_Examples(t *testing.T) {
 					info.Outputs["kubeconfig2"],
 				)
 			},
-		},
-		{
+		}),
+		base.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "./nodegroup"),
-			Config: map[string]string{
-				"aws:region": region,
-			},
-			Dependencies: []string{
-				"@pulumi/eks",
-			},
-			ExpectRefreshChanges: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -72,16 +69,9 @@ func Test_Examples(t *testing.T) {
 					info.Outputs["kubeconfig2"],
 				)
 			},
-		},
-		{
+		}),
+		base.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "./tags"),
-			Config: map[string]string{
-				"aws:region": region,
-			},
-			Dependencies: []string{
-				"@pulumi/eks",
-			},
-			ExpectRefreshChanges: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -89,16 +79,9 @@ func Test_Examples(t *testing.T) {
 					info.Outputs["kubeconfig2"],
 				)
 			},
-		},
-		{
+		}),
+		base.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "storage-classes"),
-			Config: map[string]string{
-				"aws:region": region,
-			},
-			Dependencies: []string{
-				"@pulumi/eks",
-			},
-			ExpectRefreshChanges: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -106,7 +89,7 @@ func Test_Examples(t *testing.T) {
 					info.Outputs["kubeconfig2"],
 				)
 			},
-		},
+		}),
 	}
 
 	longTests := []integration.ProgramTestOptions{}
