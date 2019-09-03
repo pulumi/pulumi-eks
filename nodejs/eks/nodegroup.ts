@@ -44,16 +44,11 @@ export interface Taint {
 export interface NodeGroupBaseOptions {
 
     /**
-     * The explicit subnet IDs to use for the worker node group.
-     *
-     * The IDs used must be a subset, or the whole set of IDs passed to the
-     * `Cluster` specified by either:
-     *  - `subnetIds`, or
-     *  - A combination of `publicSubnetIds` and/or `privateSubnetIds`.
+     * The set of subnets to override and use for the worker node group.
      *
      * Setting this option overrides which subnets to use for the worker node
-     * group, regardless if the cluster's `subnetIds` exist for auto-discovery,
-     * or if a combination of `publicSubnetIds` and/or `privateSubnetIds` were set.
+     * group, regardless if the cluster's `subnetIds` is set, or if
+     * `publicSubnetIds` and/or `privateSubnetIds` were set.
      */
     nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
@@ -456,23 +451,17 @@ ${customUserData}
     }, { parent: parent, ignoreChanges: ignoreChanges });
 
     // Compute the worker node group subnets to use from the various approaches.
-    let workerSubnetIds: pulumi.Output<string[]> = pulumi.output([]);
-    workerSubnetIds = pulumi.all([
-        args.nodeSubnetIds,
-        core.privateSubnetIds,
-        core.publicSubnetIds,
-        core.subnetIds,
-    ]).apply(([overrideIds, privateIds, publicIds, subnetIds]) => {
-        if (overrideIds) { // Use the specified override subnetIds.
-            return pulumi.output(overrideIds);
-        } else if (privateIds) { // Use the specified private subnetIds.
-            return pulumi.output(privateIds);
-        } else if (publicIds) { // Use the specified public subnetIds.
-            return pulumi.output(publicIds);
-        }
+    let workerSubnetIds: pulumi.Output<string[]>;
+    if (args.nodeSubnetIds !== undefined) { // Use the specified override subnetIds.
+        workerSubnetIds = pulumi.output(args.nodeSubnetIds);
+    } else if (core.privateSubnetIds !== undefined) { // Use the specified private subnetIds.
+        workerSubnetIds = core.privateSubnetIds;
+    } else if (core.publicSubnetIds !== undefined) { // Use the specified public subnetIds.
+        workerSubnetIds = core.publicSubnetIds;
+    } else {
         // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
-        return pulumi.output(subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
-    });
+        workerSubnetIds = pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+    }
 
     // Configure the settings for the autoscaling group.
     if (args.desiredCapacity === undefined) {
