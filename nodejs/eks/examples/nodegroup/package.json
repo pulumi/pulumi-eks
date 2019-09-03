@@ -5,10 +5,8 @@
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "^1.0.0-beta",
-        "@pulumi/aws": "^1.0.0-beta"
-    },
-    "peerDependencies": {
+        "@pulumi/pulumi": "^1.0.0",
+        "@pulumi/aws": "^1.0.0",
         "@pulumi/eks": "latest"
     }
 }
