@@ -235,18 +235,7 @@ func Test_AllTests(t *testing.T) {
 		},
 	}
 
-	longTests := []integration.ProgramTestOptions{}
-	// longTests := shortTests
-	// for _, longTest := range longTests {
-	// 	longTest.RunUpdateTest = true
-	// }
-
-	tests := shortTests
-	if !testing.Short() {
-		tests = append(tests, longTests...)
-	}
-
-	for _, ex := range tests {
+	for _, ex := range shortTests {
 		example := ex.With(integration.ProgramTestOptions{
 			ReportStats: integration.NewS3Reporter("us-west-2", "eng.pulumi.com", "testreports"),
 			Tracing:     "https://tracing.pulumi-engineering.com/collector/api/v1/spans",
