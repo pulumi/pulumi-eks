@@ -38,8 +38,8 @@ func Test_Examples(t *testing.T) {
 		return
 	}
 
-	// Base options shared amongst all tests.
-	base := integration.ProgramTestOptions{
+	// Base options shared amongst all shortTests.
+	shortTestsBase := integration.ProgramTestOptions{
 		Config: map[string]string{
 			"aws:region": region,
 		},
@@ -50,7 +50,7 @@ func Test_Examples(t *testing.T) {
 	}
 
 	shortTests := []integration.ProgramTestOptions{
-		base.With(integration.ProgramTestOptions{
+		shortTestsBase.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "./cluster"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
@@ -60,7 +60,7 @@ func Test_Examples(t *testing.T) {
 				)
 			},
 		}),
-		base.With(integration.ProgramTestOptions{
+		shortTestsBase.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "./nodegroup"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
@@ -70,7 +70,7 @@ func Test_Examples(t *testing.T) {
 				)
 			},
 		}),
-		base.With(integration.ProgramTestOptions{
+		shortTestsBase.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "./tags"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
@@ -80,7 +80,7 @@ func Test_Examples(t *testing.T) {
 				)
 			},
 		}),
-		base.With(integration.ProgramTestOptions{
+		shortTestsBase.With(integration.ProgramTestOptions{
 			Dir: path.Join(cwd, "storage-classes"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
@@ -92,15 +92,64 @@ func Test_Examples(t *testing.T) {
 		}),
 	}
 
-	longTests := []integration.ProgramTestOptions{}
-	// longTests := shortTests
-	// for _, longTest := range longTests {
-	// 	longTest.RunUpdateTest = true
-	// }
+	// Base options shared amongst all updateTests.
+	updateTestsBase := integration.ProgramTestOptions{
+		Config: map[string]string{
+			"aws:region": region,
+		},
+		Dependencies: []string{
+			"@pulumi/eks",
+		},
+		ExpectRefreshChanges: true,
+		RunUpdateTest:        true,
+	}
+
+	updateTests := []integration.ProgramTestOptions{
+		updateTestsBase.With(integration.ProgramTestOptions{
+			Dir: path.Join(cwd, "./cluster"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		}),
+		updateTestsBase.With(integration.ProgramTestOptions{
+			Dir: path.Join(cwd, "./nodegroup"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		}),
+		updateTestsBase.With(integration.ProgramTestOptions{
+			Dir: path.Join(cwd, "./tags"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		}),
+		updateTestsBase.With(integration.ProgramTestOptions{
+			Dir: path.Join(cwd, "storage-classes"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		}),
+	}
 
 	tests := shortTests
 	if !testing.Short() {
-		tests = append(tests, longTests...)
+		tests = append(tests, updateTests...)
 	}
 
 	for _, ex := range tests {
