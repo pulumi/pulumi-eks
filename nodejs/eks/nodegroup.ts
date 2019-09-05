@@ -44,9 +44,11 @@ export interface Taint {
 export interface NodeGroupBaseOptions {
 
     /**
-     * The IDs of the explicit node subnets to attach to the worker node group.
+     * The set of subnets to override and use for the worker node group.
      *
-     * This option overrides clusterSubnetIds option.
+     * Setting this option overrides which subnets to use for the worker node
+     * group, regardless if the cluster's `subnetIds` is set, or if
+     * `publicSubnetIds` and/or `privateSubnetIds` were set.
      */
     nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
@@ -448,7 +450,20 @@ ${customUserData}
         userData: userdata,
     }, { parent: parent, ignoreChanges: ignoreChanges });
 
-    const workerSubnetIds = args.nodeSubnetIds ? pulumi.output(args.nodeSubnetIds) : pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+    // Compute the worker node group subnets to use from the various approaches.
+    let workerSubnetIds: pulumi.Output<string[]>;
+    if (args.nodeSubnetIds !== undefined) { // Use the specified override subnetIds.
+        workerSubnetIds = pulumi.output(args.nodeSubnetIds);
+    } else if (core.privateSubnetIds !== undefined) { // Use the specified private subnetIds.
+        workerSubnetIds = core.privateSubnetIds;
+    } else if (core.publicSubnetIds !== undefined) { // Use the specified public subnetIds.
+        workerSubnetIds = core.publicSubnetIds;
+    } else {
+        // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
+        workerSubnetIds = pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+    }
+
+    // Configure the settings for the autoscaling group.
     if (args.desiredCapacity === undefined) {
         args.desiredCapacity = 2;
     }
@@ -462,7 +477,6 @@ ${customUserData}
     if (args.spotPrice) {
         minInstancesInService = 0;
     }
-
     const autoScalingGroupTags: InputTags = pulumi.all([
         eksCluster.name,
         args.autoScalingGroupTags,
