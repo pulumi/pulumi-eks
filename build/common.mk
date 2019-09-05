@@ -106,8 +106,8 @@ endif
 PULUMI_BIN          := $(PULUMI_ROOT)/bin
 PULUMI_NODE_MODULES := $(PULUMI_ROOT)/node_modules
 
-GO_TEST_FAST = PATH=$(PULUMI_BIN):$(PATH) go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM}
-GO_TEST = PATH=$(PULUMI_BIN):$(PATH) go test -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM}
+GO_TEST_FAST = PATH=$(PULUMI_BIN):$(PATH) GOGC=25 go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM}
+GO_TEST = PATH=$(PULUMI_BIN):$(PATH) GOGC=25 go test -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM}
 GOPROXY = 'https://proxy.golang.org'
 
 .PHONY: default all ensure only_build only_test only_test_fast build lint install test_all core
