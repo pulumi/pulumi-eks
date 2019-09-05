@@ -14,12 +14,11 @@ const projectName = pulumi.getProject();
 // Allocate a new VPC with custom settings, and a public & private subnet per AZ.
 const vpc = new awsx.ec2.Vpc(`${projectName}`, {
     cidrBlock: "172.16.0.0/16",
-    subnets: [{ type: "public" }, { type: "private" }],
+    tags: { "Name": `${projectName}` },
 });
 
 // Export VPC ID and Subnets.
 export const vpcId = vpc.id;
-export const allVpcSubnets = vpc.privateSubnetIds.concat(vpc.publicSubnetIds);
 
 // Create IAM Role and matching InstanceProfile to use with the nodegroups.
 const roles = iam.createRoles(projectName, 1);
@@ -29,7 +28,8 @@ const instanceProfiles = iam.createInstanceProfiles(projectName, roles);
 const myCluster = new eks.Cluster(`${projectName}`, {
     version: "1.13",
     vpcId: vpcId,
-    subnetIds: allVpcSubnets,
+    publicSubnetIds: vpc.publicSubnetIds,
+    privateSubnetIds: vpc.privateSubnetIds,
     nodeAssociatePublicIpAddress: false,
     skipDefaultNodeGroup: true,
     deployDashboard: false,
