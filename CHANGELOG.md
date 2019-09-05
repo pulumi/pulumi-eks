@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.14 (Released September 5, 2019)
+
+### Improvements
+
 - Add new publicSubnetIds and privateSubnetIds cluster options. Also, update
   tests to use new awsx.ec2.Vpc API and new subnet options
   [#238](https://github.com/pulumi/pulumi-eks/pull/238)
