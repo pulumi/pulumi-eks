@@ -235,11 +235,11 @@ func Test_AllTests(t *testing.T) {
 		},
 	}
 
-	longTests := []integration.ProgramTestOptions{}
-	// longTests := shortTests
-	// for _, longTest := range longTests {
-	// 	longTest.RunUpdateTest = true
-	// }
+	// longTests := []integration.ProgramTestOptions{}
+	longTests := shortTests
+	for _, longTest := range longTests {
+		longTest.RunUpdateTest = true
+	}
 
 	tests := shortTests
 	if !testing.Short() {
