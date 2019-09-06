@@ -13,10 +13,10 @@
 // limitations under the License.
 
 import * as aws from "@pulumi/aws";
-import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 import * as netmask from "netmask";
+import * as path from "path";
 
 import { Cluster, CoreData } from "./cluster";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
@@ -192,6 +192,11 @@ export interface NodeGroupBaseOptions {
      * `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      */
     cloudFormationTags?: InputTags;
+
+    /**
+     * IAM Role for the Node Drainer Lambda Function
+     */
+    nodeDrainerLambdaRole: aws.iam.Role;
 }
 
 /**
@@ -509,11 +514,57 @@ ${customUserData}
                           VPCZoneIdentifier: ${vpcSubnetIds}
                           Tags:
                           ${asgTags}
+                          TerminationPolicies:
+                            - OldestLaunchConfiguration
+                            - OldestInstance
+                          LifecycleHookSpecificationList:
+                            - DefaultResult: ABANDON
+                              HeartbeatTimeout: 3600
+                              LifecycleHookName: EKS-${name}-Drain
+                              LifecycleTransition: autoscaling:EC2_INSTANCE_TERMINATING
                         UpdatePolicy:
                           AutoScalingRollingUpdate:
-                            MinInstancesInService: '${minInstancesInService}'
+                            MinInstancesInService: '${minSize}'
                             MaxBatchSize: '1'
+                            PauseTime: PT1M
                 `);
+
+    const lambdaFunctionPath = path.join(__dirname, "nodeDrainer", "handler.zip");
+    const nodeDrainerLambdaFunction = new aws.lambda.Function(`${name}-nodeDrainer`, {
+        handler: "handler.drain",
+        runtime: "nodejs10.x",
+        code: new pulumi.asset.FileArchive(lambdaFunctionPath),
+        role: args.nodeDrainerLambdaRole.arn,
+        timeout: 900,
+        environment: cfnStackName.apply(asgName => {
+            return { variables: { "ASG_NAME": asgName } };
+        }),
+    }, { parent: parent });
+
+    const nodeDrainerCloudwatchEventRule = new aws.cloudwatch.EventRule(`${name}-nodeDrainerLambdaTrigger`, {
+        eventPattern: JSON.stringify({
+            "detail-type": [
+              "EC2 Instance-terminate Lifecycle Action",
+            ],
+            source: [
+              "aws.autoscaling",
+            ],
+        }),
+    }, { parent: nodeDrainerLambdaFunction});
+
+    const nodeDrainerCloudwatchEventTarget = new aws.cloudwatch.EventTarget(`${name}-nodeDrainerLambdaTrigger`, {
+        rule: nodeDrainerCloudwatchEventRule.name,
+        targetId: "nodeDrainer",
+        arn: nodeDrainerLambdaFunction.arn,
+    }, { parent: nodeDrainerLambdaFunction});
+
+    const nodeDrainerLamdaPermission = new aws.lambda.Permission(`${name}-nodeDrainerLambdaCloudwatchPermission`, {
+        statementId: "AllowExecutionFromCloudWatch",
+        action: "lambda:InvokeFunction",
+        sourceArn: nodeDrainerCloudwatchEventRule.arn,
+        principal: "events.amazonaws.com",
+        function: nodeDrainerLambdaFunction,
+    }, { parent: nodeDrainerLambdaFunction});
 
     const cfnStack = new aws.cloudformation.Stack(`${name}-nodes`, {
         name: cfnStackName,
@@ -526,7 +577,7 @@ ${customUserData}
             ...cloudFormationTags,
             ...tags,
         })),
-    }, { parent: parent, dependsOn: cfnStackDeps });
+    }, { parent: parent, dependsOn: [ ...cfnStackDeps, nodeDrainerCloudwatchEventTarget]});
 
     let autoScalingGroupName = pulumi.output("");
     cfnStack.outputs.apply(outputs => {

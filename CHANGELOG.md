@@ -12,6 +12,9 @@
 - fix(iam): improve YAML error handling & reporting in IAM ops
   [#231](https://github.com/pulumi/pulumi-eks/pull/231)
 
+- feat: use a lambda function to do auto rolling updates for worker nodes
+  [#249](https://github.com/pulumi/pulumi-eks/pull/249)
+
 ## 0.18.13 (Released August 20, 2019)
 
 ### Improvements

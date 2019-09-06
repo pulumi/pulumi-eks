@@ -19,6 +19,7 @@ build::
 	cp ../../README.md ../../LICENSE bin/
 	cp -R dashboard bin/
 	cp -R cni bin/
+	cp -R nodeDrainer bin/
 
 lint::
 	tslint -c ../tslint.json -p tsconfig.json

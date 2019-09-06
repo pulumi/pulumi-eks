@@ -87,6 +87,7 @@ export interface CoreData {
     clusterSecurityGroup: aws.ec2.SecurityGroup;
     provider: k8s.Provider;
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
+    nodeDrainerLambdaRole: aws.iam.Role;
     publicSubnetIds?: pulumi.Output<string[]>;
     privateSubnetIds?: pulumi.Output<string[]>;
     instanceProfile?: aws.iam.InstanceProfile;
@@ -117,7 +118,7 @@ function generateKubeconfig(clusterName: string, clusterEndpoint: string, certDa
     let args = ["token", "-i", clusterName];
 
     if (roleArn) {
-        args = [...args, "-r", roleArn];
+      args = [...args, "-r", roleArn];
     }
 
     return {
@@ -269,6 +270,51 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         ],
       }, { parent: parent })).role;
     }
+
+    // create the node drainer lambda role
+    const nodeDrainerLambdaRole = new aws.iam.Role(`${name}-nodeDrainerLambdaRole`, {
+        assumeRolePolicy: `{
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  },
+                  "Effect": "Allow",
+                  "Sid": ""
+                }
+              ]
+            }`,
+    }, { parent: parent });
+
+    const nodeDrainerLambdaRolePolicy = new aws.iam.RolePolicy(`${name}-nodeDrainerLambdaPolicy`, {
+      role: nodeDrainerLambdaRole.name,
+      policy: {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Effect: "Allow",
+            Action: [
+              "autoscaling:CompleteLifecycleAction",
+              "ec2:DescribeInstanceAttribute",
+              "ec2:DescribeTags",
+              "ec2:DescribeInstances",
+              "eks:DescribeCluster",
+            ],
+            Resource: ["*"],
+          },
+        ],
+      },
+    }, { parent: nodeDrainerLambdaRole });
+
+    const nodeDrainerLambdaBasicPolicyAttachment = new aws.iam.RolePolicyAttachment(
+      `${name}-nodeDrainerLambdaBasicPolicyAttachment`,
+      {
+        role: nodeDrainerLambdaRole,
+        policyArn: aws.iam.AWSLambdaBasicExecutionRole,
+      },
+    { parent: nodeDrainerLambdaRole });
 
     // Create the EKS cluster security group
     let eksClusterSecurityGroup: aws.ec2.SecurityGroup;
@@ -425,11 +471,17 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         );
     }
 
-    const roleMappings = pulumi.all([pulumi.output(args.roleMappings || []), instanceRoleMappings])
-        .apply(([mappings, instanceMappings]) => {
+    const roleMappings = pulumi.all([pulumi.output(args.roleMappings || []), instanceRoleMappings, nodeDrainerLambdaRole.arn])
+        .apply(([mappings, instanceMappings, nodeDrainerLambdaRoleARN]) => {
+            const nodeDrainerLambdaRoleMapping: RoleMapping = {
+                roleArn: nodeDrainerLambdaRoleARN,
+                username: "admin",
+                groups: ["system:masters"],
+            };
+
             let mappingYaml = "";
             try {
-                mappingYaml = jsyaml.safeDump([...mappings, ...instanceMappings].map(m => ({
+                mappingYaml = jsyaml.safeDump([...mappings, ...instanceMappings, nodeDrainerLambdaRoleMapping].map(m => ({
                     rolearn: m.roleArn,
                     username: m.username,
                     groups: m.groups,
@@ -477,6 +529,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         provider: provider,
         vpcCni: vpcCni,
         instanceRoles: instanceRoles,
+        nodeDrainerLambdaRole: nodeDrainerLambdaRole,
         instanceProfile: instanceProfile,
         eksNodeAccess: eksNodeAccess,
         tags: args.tags,
@@ -900,6 +953,7 @@ export class Cluster extends pulumi.ComponentResource {
                 amiId: args.nodeAmiId,
                 version: args.version,
                 instanceProfile: core.instanceProfile,
+                nodeDrainerLambdaRole: core.nodeDrainerLambdaRole,
             }, this);
             this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
             configDeps.push(this.defaultNodeGroup.cfnStack.id);
