@@ -1,5 +1,5 @@
 PROJECT_NAME := Pulumi Amazon Web Services (AWS) EKS Components
-SUB_PROJECTS := nodejs/eks/nodeDrainer nodejs/eks
+SUB_PROJECTS := nodejs/eks
 include build/common.mk
 
 .PHONY: publish_packages

@@ -5,3 +5,5 @@ vendor/
 **/Pulumi.*.yaml
 **/yarn-error.log
 yarn.lock
+nodejs/eks/handler.js
+nodejs/eks/handler.zip
