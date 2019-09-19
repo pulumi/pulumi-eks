@@ -640,7 +640,7 @@ export interface ClusterOptions {
     instanceRoles?: pulumi.Input<pulumi.Input<aws.iam.Role>[]>;
 
     /**
-     * @deprecated: This option has been replaced with the use of
+     * @deprecated This option has been replaced with the use of
      * `instanceRole` or `instanceRoles`. The role provided to either option
      * should already include all required policies.
      *
