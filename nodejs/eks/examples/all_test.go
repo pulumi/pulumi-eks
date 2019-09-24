@@ -111,6 +111,15 @@ func Test_AllTests(t *testing.T) {
 				)
 			},
 		},
+		base.With(integration.ProgramTestOptions{
+			Dir: path.Join(cwd, "tests", "nodegroup-options"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		}),
 		{
 			Dir: path.Join(cwd, "tests", "migrate-nodegroups"),
 			Config: map[string]string{
