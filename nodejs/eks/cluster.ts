@@ -87,15 +87,14 @@ export interface CoreData {
     clusterSecurityGroup: aws.ec2.SecurityGroup;
     provider: k8s.Provider;
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
+    nodeGroupOptions: ClusterNodeGroupOptions;
     publicSubnetIds?: pulumi.Output<string[]>;
     privateSubnetIds?: pulumi.Output<string[]>;
-    instanceProfile?: aws.iam.InstanceProfile;
     eksNodeAccess?: k8s.core.v1.ConfigMap;
     storageClasses?: UserStorageClasses;
     kubeconfig?: pulumi.Output<any>;
     vpcCni?: VpcCni;
     tags?: InputTags;
-    nodeSecurityGroup?: aws.ec2.SecurityGroup;
     nodeSecurityGroupTags?: InputTags;
 }
 
@@ -228,6 +227,36 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     if (args.subnetIds && (args.publicSubnetIds || args.privateSubnetIds)) {
         throw new Error("subnetIds, and the use of publicSubnetIds and/or privateSubnetIds are mutually exclusive. Choose a single approach.");
     }
+
+    if (args.nodeGroupOptions && (
+        args.nodeSubnetIds ||
+        args.nodeAssociatePublicIpAddress ||
+        args.instanceType ||
+        args.instanceProfileName ||
+        args.nodePublicKey ||
+        args.nodeRootVolumeSize ||
+        args.nodeUserData ||
+        args.minSize ||
+        args.maxSize ||
+        args.desiredCapacity ||
+        args.nodeAmiId)) {
+        throw new Error("Setting nodeGroupOptions, and any set of singular node group option(s) on the cluster, is mutually exclusive. Choose a single approach.");
+    }
+
+    // Configure the node group options.
+    const nodeGroupOptions: ClusterNodeGroupOptions = args.nodeGroupOptions || {
+        nodeSubnetIds: args.nodeSubnetIds,
+        nodeAssociatePublicIpAddress: args.nodeAssociatePublicIpAddress,
+        instanceType: args.instanceType,
+        nodePublicKey: args.nodePublicKey,
+        nodeRootVolumeSize: args.nodeRootVolumeSize,
+        nodeUserData: args.nodeUserData,
+        minSize: args.minSize,
+        maxSize: args.maxSize,
+        desiredCapacity: args.desiredCapacity,
+        amiId: args.nodeAmiId,
+        version: args.version,
+    };
 
     // Configure default networking architecture.
     let vpcId: pulumi.Input<string> = args.vpcId!;
@@ -377,7 +406,6 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     let instanceRoleMappings: pulumi.Output<RoleMapping[]>;
     let instanceRoles: pulumi.Output<aws.iam.Role[]>;
-    let instanceProfile: aws.iam.InstanceProfile | undefined;
     // Create role mappings of the instance roles specified for aws-auth.
     if (args.instanceRoles) {
         instanceRoleMappings = pulumi.output(args.instanceRoles).apply(roles =>
@@ -387,9 +415,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     } else if (args.instanceRole) {
         // Create an instance profile if using a default node group
         if (!args.skipDefaultNodeGroup) {
-            instanceProfile = createOrGetInstanceProfile(name, parent, args.instanceRole, args.instanceProfileName);
+            nodeGroupOptions.instanceProfile = createOrGetInstanceProfile(name, parent, args.instanceRole, args.instanceProfileName);
         }
-
         instanceRoleMappings = pulumi.output(args.instanceRole).apply(instanceRole =>
             [createInstanceRoleMapping(instanceRole.arn)],
         );
@@ -417,9 +444,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
         // Create an instance profile if using a default node group
         if (!args.skipDefaultNodeGroup) {
-            instanceProfile = createOrGetInstanceProfile(name, parent, instanceRole, args.instanceProfileName);
+            nodeGroupOptions.instanceProfile = createOrGetInstanceProfile(name, parent, instanceRole, args.instanceProfileName);
         }
-
         instanceRoleMappings = pulumi.output(instanceRole).apply(role =>
             [createInstanceRoleMapping(role.arn)],
         );
@@ -473,11 +499,11 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         privateSubnetIds: args.privateSubnetIds ? pulumi.output(args.privateSubnetIds): undefined,
         clusterSecurityGroup: eksClusterSecurityGroup,
         cluster: eksCluster,
+        nodeGroupOptions: nodeGroupOptions,
         kubeconfig: kubeconfig,
         provider: provider,
         vpcCni: vpcCni,
         instanceRoles: instanceRoles,
-        instanceProfile: instanceProfile,
         eksNodeAccess: eksNodeAccess,
         tags: args.tags,
         nodeSecurityGroupTags: args.nodeSecurityGroupTags,
@@ -576,6 +602,11 @@ export interface ClusterOptions {
      * fully private workers.
     */
     privateSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * The common configuration settings for NodeGroups.
+     */
+    nodeGroupOptions?: ClusterNodeGroupOptions;
 
     /**
      * Whether or not to auto-assign the EKS worker nodes public IP addresses.
@@ -866,7 +897,7 @@ export class Cluster extends pulumi.ComponentResource {
         this.eksCluster = core.cluster;
         this.instanceRoles = core.instanceRoles;
 
-        // create default security group for nodegroup
+        // Create default node group security group and cluster ingress rule.
         [this.nodeSecurityGroup, this.eksClusterIngressRule] = createNodeGroupSecurityGroup(name, {
             vpcId: core.vpcId,
             clusterSecurityGroup: core.clusterSecurityGroup,
@@ -879,29 +910,16 @@ export class Cluster extends pulumi.ComponentResource {
                 ...tags,
             })),
         }, this);
-        core.nodeSecurityGroup = this.nodeSecurityGroup;
+        core.nodeGroupOptions.nodeSecurityGroup = this.nodeSecurityGroup;
+        core.nodeGroupOptions.clusterIngressRule = this.eksClusterIngressRule;
 
+        // Create the default worker node group and grant the workers access to the API server.
         const configDeps = [core.kubeconfig];
         if (!args.skipDefaultNodeGroup) {
-            // Create the worker node group and grant the workers access to the API server.
             this.defaultNodeGroup = createNodeGroup(name, {
                 cluster: core,
-                nodeSubnetIds: args.nodeSubnetIds,
-                nodeAssociatePublicIpAddress: args.nodeAssociatePublicIpAddress,
-                nodeSecurityGroup: this.nodeSecurityGroup,
-                clusterIngressRule: this.eksClusterIngressRule,
-                instanceType: args.instanceType,
-                nodePublicKey: args.nodePublicKey,
-                nodeRootVolumeSize: args.nodeRootVolumeSize,
-                nodeUserData: args.nodeUserData,
-                minSize: args.minSize,
-                maxSize: args.maxSize,
-                desiredCapacity: args.desiredCapacity,
-                amiId: args.nodeAmiId,
-                version: args.version,
-                instanceProfile: core.instanceProfile,
+                ...core.nodeGroupOptions,
             }, this);
-            this.nodeSecurityGroup = this.defaultNodeGroup.nodeSecurityGroup;
             configDeps.push(this.defaultNodeGroup.cfnStack.id);
         }
 
@@ -928,11 +946,11 @@ export class Cluster extends pulumi.ComponentResource {
         return new NodeGroup(name, {
             ...args,
             cluster: this.core,
-            nodeSecurityGroup: this.nodeSecurityGroup,
-            clusterIngressRule: this.eksClusterIngressRule,
+            nodeSecurityGroup: this.core.nodeGroupOptions.nodeSecurityGroup,
+            clusterIngressRule: this.core.nodeGroupOptions.clusterIngressRule,
         }, {
-                parent: this,
-                providers: { kubernetes: this.provider },
-            });
+            parent: this,
+            providers: { kubernetes: this.provider },
+        });
     }
 }

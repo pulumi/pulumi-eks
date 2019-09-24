@@ -266,15 +266,19 @@ function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
 export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
-    if (!args.instanceProfile && !core.instanceProfile) {
+    if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
         throw new Error(`an instanceProfile is required`);
     }
 
-    if (core.nodeSecurityGroup && args.nodeSecurityGroup) {
+    if (core.nodeGroupOptions.nodeSecurityGroup && args.nodeSecurityGroup) {
         if (core.nodeSecurityGroupTags &&
-            core.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
-            throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. At most, only one option can be set`);
+            core.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
+            throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`);
         }
+    }
+
+    if (args.nodePublicKey && args.keyName) {
+        throw new Error("nodePublicKey and keyName are mutually exclusive. Choose a single approach");
     }
 
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
@@ -438,7 +442,7 @@ ${customUserData}
         associatePublicIpAddress: nodeAssociatePublicIpAddress,
         imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
-        iamInstanceProfile: args.instanceProfile || core.instanceProfile,
+        iamInstanceProfile: args.instanceProfile || core.nodeGroupOptions.instanceProfile,
         keyName: keyName,
         securityGroups: [nodeSecurityGroupId],
         spotPrice: args.spotPrice,
