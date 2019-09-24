@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- refactor(cluster): allow ClusterOptions to accept NodeGroupOptions
+  [#259](https://github.com/pulumi/pulumi-eks/pull/259)
+
 ## 0.18.14 (Released September 5, 2019)
 
 ### Improvements

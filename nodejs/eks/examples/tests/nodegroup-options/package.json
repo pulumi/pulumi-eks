@@ -1,0 +1,12 @@
+{
+    "name": "nodegroup-options",
+    "devDependencies": {
+        "typescript": "^3.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "^1.0.0",
+        "@pulumi/tls": "latest",
+        "@pulumi/eks": "latest"
+    }
+}
