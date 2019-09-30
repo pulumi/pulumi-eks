@@ -9,7 +9,7 @@ echo `date`
 
 pushd $PROJECT_DIR
 echo "=> Building commit: `git rev-parse --short HEAD`"
-make clean && make ensure && make only_build
+make ensure && make only_build
 result=$(echo $?)
 popd
 
