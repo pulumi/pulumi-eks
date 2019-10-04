@@ -345,6 +345,14 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
+        tags: pulumi.all([
+            args.tags,
+            args.clusterTags,
+        ]).apply(([tags, clusterTags]) => (<aws.Tags>{
+            "Name": `${name}-eksCluster`,
+            ...clusterTags,
+            ...tags,
+        })),
     }, {
         parent: parent,
         provider: args.creationRoleProvider ? args.creationRoleProvider.provider : undefined,
@@ -878,6 +886,11 @@ export interface ClusterOptions {
      * true` had been passed.
      */
     fargate?: boolean | FargateProfile;
+
+    /**
+     * The tags to apply to the EKS cluster.
+     */
+    clusterTags?: InputTags;
 }
 
 /**

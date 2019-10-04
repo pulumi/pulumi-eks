@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- feat(cluster): Add cluster tagging
+  [#262](https://github.com/pulumi/pulumi-eks/pull/262)
 - refactor(vpcCni): set node anti-affinity to not deploy to fargate
   [#291](https://github.com/pulumi/pulumi-eks/pull/291)
 - build: Upgrade to go1.13.4
