@@ -14,6 +14,9 @@ const clusterSecurityGroupTags: pulumi.Input<{ [key: string]: string }> = pulumi
 const nodeSecurityGroupTags: { [key: string]: pulumi.Input<string> } = {
     "myNodeSecurityGroupTag1": pulumi.output("barfoo").apply(output => output),
 };
+const clusterTags: { [key: string]: pulumi.Input<string> } = {
+    "myClusterTag1": pulumi.output("foo").apply(output => output),
+};
 const cluster1 = new eks.Cluster("test-tag-input-types", {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
@@ -24,6 +27,7 @@ const cluster1 = new eks.Cluster("test-tag-input-types", {
     },
     clusterSecurityGroupTags: clusterSecurityGroupTags,
     nodeSecurityGroupTags: nodeSecurityGroupTags,
+    clusterTags: clusterTags,
 });
 const cluster1Name = cluster1.core.cluster.name;
 

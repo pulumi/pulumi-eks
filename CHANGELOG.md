@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- feat(cluster): Add cluster tagging
+  [#262](https://github.com/pulumi/pulumi-eks/pull/262)
+
 - refactor(cluster): allow ClusterOptions to accept NodeGroupOptions
   [#259](https://github.com/pulumi/pulumi-eks/pull/259)
 

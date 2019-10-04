@@ -339,6 +339,14 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
+        tags: pulumi.all([
+            args.tags,
+            args.clusterTags,
+        ]).apply(([tags, clusterTags]) => (<aws.Tags>{
+            "Name": `${name}-eksCluster`,
+            ...clusterTags,
+            ...tags,
+        })),
     }, {
         parent: parent,
         provider: args.creationRoleProvider ? args.creationRoleProvider.provider : undefined,
@@ -813,6 +821,11 @@ export interface ClusterOptions {
      * Indicates whether or not the Amazon EKS private API server endpoint is enabled.  The default is `false`.
      */
     endpointPrivateAccess?: boolean;
+
+    /**
+     * The tags to apply to the EKS cluster.
+     */
+    clusterTags?: InputTags;
 }
 
 /**
