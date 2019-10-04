@@ -14,6 +14,7 @@ const cluster1 = new eks.Cluster("example-tags-cluster1", {
     },
     clusterSecurityGroupTags: { "myClusterSecurityGroupTag1": "true" },
     nodeSecurityGroupTags: { "myNodeSecurityGroupTag1": "true" },
+    clusterTags: { "myClusterTag1": "true" },
     deployDashboard: false,
 });
 
@@ -33,6 +34,7 @@ const cluster2 = new eks.Cluster("example-tags-cluster2", {
     },
     clusterSecurityGroupTags: { "myClusterSecurityGroupTag2": "true" },
     nodeSecurityGroupTags: { "myNodeSecurityGroupTag2": "true" },
+    clusterTags: { "myClusterTag1": "true" },
 });
 
 // There are two approaches that can be used to add additional NodeGroups.

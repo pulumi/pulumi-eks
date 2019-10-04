@@ -8,12 +8,6 @@ const role0 = iam.createRole("myrole0");
 const instanceProfile0 = new aws.iam.InstanceProfile("instanceProfile0", {role: role0});
 
 // Create an EKS cluster with varying, specialized resource tags.
-const clusterSecurityGroupTags: pulumi.Input<{ [key: string]: string }> = pulumi.output("foobar").apply(out => ({
-    [out]: "myClusterSecurityGroupTag1",
-}));
-const nodeSecurityGroupTags: { [key: string]: pulumi.Input<string> } = {
-    "myNodeSecurityGroupTag1": pulumi.output("barfoo").apply(output => output),
-};
 const cluster1 = new eks.Cluster("test-tag-input-types", {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
@@ -22,8 +16,9 @@ const cluster1 = new eks.Cluster("test-tag-input-types", {
         "project": "foo",
         "org": "bar",
     },
-    clusterSecurityGroupTags: clusterSecurityGroupTags,
-    nodeSecurityGroupTags: nodeSecurityGroupTags,
+    clusterSecurityGroupTags: {"myClusterSecurityGroupTag": "true" },
+    nodeSecurityGroupTags: { "myNodeSecurityGroupTag": "true" },
+    clusterTags: { "myClusterTag": "true" },
 });
 const cluster1Name = cluster1.core.cluster.name;
 
