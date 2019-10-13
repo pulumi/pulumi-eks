@@ -15,150 +15,403 @@
 package examples
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"os/exec"
 	"path"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/pulumi/pulumi-eks/utils"
 	"github.com/pulumi/pulumi/pkg/testing/integration"
-	"github.com/stretchr/testify/assert"
 )
 
-func Test_Examples(t *testing.T) {
-	t.Parallel()
-	region := os.Getenv("AWS_REGION")
-	if region == "" {
+func TestAccCluster(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "./cluster"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccNodeGroup(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "nodegroup"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccTags(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tags"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccStorageClasses(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "storage-classes"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccCluster_withUpdate(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:                  path.Join(getCwd(t), "./cluster"),
+			ExpectRefreshChanges: true,
+			RunUpdateTest:        true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccNodeGroup_withUpdate(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:                  path.Join(getCwd(t), "nodegroup"),
+			ExpectRefreshChanges: true,
+			RunUpdateTest:        true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccTags_withUpdate(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:                  path.Join(getCwd(t), "tags"),
+			ExpectRefreshChanges: true,
+			RunUpdateTest:        true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccStorageClasses_withUpdate(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:                  path.Join(getCwd(t), "storage-classes"),
+			ExpectRefreshChanges: true,
+			RunUpdateTest:        true,
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccReplaceSecGroup(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "replace-secgroup"),
+			EditDirs: []integration.EditDir{
+				{
+					Dir:      path.Join(getCwd(t), "tests", "replace-secgroup", "step1"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccReplaceClusterAddSubnets(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "replace-cluster-add-subnets"),
+			EditDirs: []integration.EditDir{
+				{
+					Dir:      path.Join(getCwd(t), "tests", "replace-cluster-add-subnets", "step1"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccTagInputTypes(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "tag-input-types"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccAwsxNetworkAndSubnets(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "awsx-network-and-subnetIds"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccNodeGroupOptions(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "nodegroup-options"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccMigrateNodeGroups(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "migrate-nodegroups"),
+			// Test NGINX on the 2xlarge node group.
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
+				headers := map[string]string{"Host": "apps.example.com"}
+				utils.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
+					return assert.NotEmpty(t, body, "Body should not be empty")
+				})
+			},
+			EditDirs: []integration.EditDir{
+				// Add the new, 4xlarge node group.
+				{
+					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step1"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+						endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
+						headers := map[string]string{"Host": "apps.example.com"}
+						utils.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
+							return assert.NotEmpty(t, body, "Body should not be empty")
+						})
+					},
+				},
+				// Migrate NGINX from the 2xlarge to the 4xlarge node group by
+				// changing its nodeSelector values, which forces migration via rolling update.
+				// Then, wait & verify all resources are up and running.
+				{
+					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step2"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+						endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
+						headers := map[string]string{"Host": "apps.example.com"}
+						utils.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
+							return assert.NotEmpty(t, body, "Body should not be empty")
+						})
+
+						// Create kubeconfig clients from kubeconfig.
+						kubeconfig, err := json.Marshal(stack.Outputs["kubeconfig"])
+						assert.NoError(t, err, "expected kubeconfig JSON marshalling to not error: %v", err)
+						kubeAccess, err := utils.KubeconfigToKubeAccess(kubeconfig)
+						assert.NoError(t, err, "expected kubeconfig clients to be created: %v", err)
+
+						// Give it time for the new NGINX Deployment to
+						// migrate, and for its previous Pods to terminate.
+						time.Sleep(5 * time.Minute)
+
+						// Assert all resources, across all namespaces are still ready after migration.
+						utils.AssertKindInAllNamespacesReady(t, kubeAccess.Clientset, "replicasets")
+						utils.AssertKindInAllNamespacesReady(t, kubeAccess.Clientset, "deployments")
+					},
+				},
+				// Remove the workload namespace, and the aws-cni DaemonSet.
+				// In validation step, kubectl drain & delete the unused 2xlarge node group.
+				{
+					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step3"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+						// Give it time for the workload namespace to delete.
+						time.Sleep(1 * time.Minute)
+
+						var err error
+						var out []byte
+						scriptsDir := path.Join(getCwd(t), "tests", "migrate-nodegroups", "scripts")
+
+						// Create kubeconfig clients from kubeconfig.
+						kubeconfig, err := json.Marshal(stack.Outputs["kubeconfig"])
+						assert.NoError(t, err, "expected kubeconfig JSON marshalling to not error: %v", err)
+
+						// Drain & delete t3.2xlarge node group.
+
+						// TODO(metral): look into draining & deleting using
+						// client-go instead of shell'ing out to kubectl
+
+						// Write kubeconfig to temp file & export it for use
+						// with kubectl.
+						kubeconfigFile, err := ioutil.TempFile(os.TempDir(), "kubeconfig-*.json")
+						assert.NoError(t, err, "expected tempfile to be created: %v", err)
+						defer os.Remove(kubeconfigFile.Name())
+						_, err = kubeconfigFile.Write(kubeconfig)
+						assert.NoError(t, err, "expected kubeconfig to be written to tempfile with no error: %v", err)
+						err = kubeconfigFile.Close()
+						assert.NoError(t, err, "expected kubeconfig file to close with no error: %v", err)
+						os.Setenv("KUBECONFIG", kubeconfigFile.Name())
+
+						// Exec kubectl delete aws-cni DaemonSet.
+						out, err = exec.Command("/bin/bash", path.Join(scriptsDir, "delete-aws-node-ds.sh")).Output()
+						assert.NoError(t, err, "expected no errors during kubectl delete ds/aws-node: %v", err)
+						utils.PrintAndLog(fmt.Sprintf("kubectl delete ds/aws-node output: %s\n", out), t)
+
+						// Give it time for the aws-cni removal to clear in AWS.
+						time.Sleep(1 * time.Minute)
+
+						// Exec kubectl drain 2xlarge nodes.
+						out, err = exec.Command("/bin/bash", path.Join(scriptsDir, "drain-t3.2xlarge-nodes.sh")).Output()
+						assert.NoError(t, err, "expected no errors during kubectl drain: %v", err)
+						utils.PrintAndLog(fmt.Sprintf("kubectl drain output: %s\n", out), t)
+
+						// Exec kubectl delete 2xlarge nodes.
+						out, err = exec.Command("/bin/bash", path.Join(scriptsDir, "delete-t3.2xlarge-nodes.sh")).Output()
+						assert.NoError(t, err, "expected no errors during kubectl delete: %v", err)
+						utils.PrintAndLog(fmt.Sprintf("kubectl delete output: %s\n", out), t)
+					},
+				},
+				// Scale down the 2xlarge node group to a desired capacity of 0 workers.
+				{
+					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step4"),
+					Additive: true,
+				},
+				// Remove the unused 2xlarge node group.
+				{
+					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step5"),
+					Additive: true,
+				},
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func getEnvRegion(t *testing.T) string {
+	envRegion := os.Getenv("AWS_REGION")
+	if envRegion == "" {
 		t.Skipf("Skipping test due to missing AWS_REGION environment variable")
 	}
-	fmt.Printf("AWS Region: %v\n", region)
 
+	return envRegion
+}
+
+func getCwd(t *testing.T) string {
 	cwd, err := os.Getwd()
-	if !assert.NoError(t, err, "expected a valid working directory: %v", err) {
-		return
+	if err != nil {
+		t.Error("expected a valid working directory", err)
 	}
 
-	// Base options shared amongst all shortTests.
-	shortTestsBase := integration.ProgramTestOptions{
+	return cwd
+}
+
+func getBaseOptions() integration.ProgramTestOptions {
+	return integration.ProgramTestOptions{
+		ExpectRefreshChanges: true,
+		ReportStats:          integration.NewS3Reporter("us-west-2", "eng.pulumi.com", "testreports"),
+		Tracing:              "https://tracing.pulumi-engineering.com/collector/api/v1/spans",
+	}
+}
+
+func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
+	region := getEnvRegion(t)
+	base := getBaseOptions()
+	baseJS := base.With(integration.ProgramTestOptions{
 		Config: map[string]string{
 			"aws:region": region,
 		},
 		Dependencies: []string{
 			"@pulumi/eks",
 		},
-		ExpectRefreshChanges: true,
-	}
+	})
 
-	shortTests := []integration.ProgramTestOptions{
-		shortTestsBase.With(integration.ProgramTestOptions{
-			Dir: path.Join(cwd, "./cluster"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		}),
-		shortTestsBase.With(integration.ProgramTestOptions{
-			Dir: path.Join(cwd, "./nodegroup"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		}),
-		shortTestsBase.With(integration.ProgramTestOptions{
-			Dir: path.Join(cwd, "./tags"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		}),
-		shortTestsBase.With(integration.ProgramTestOptions{
-			Dir: path.Join(cwd, "storage-classes"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		}),
-	}
-
-	// Base options shared amongst all updateTests.
-	updateTestsBase := integration.ProgramTestOptions{
-		Config: map[string]string{
-			"aws:region": region,
-		},
-		Dependencies: []string{
-			"@pulumi/eks",
-		},
-		ExpectRefreshChanges: true,
-		RunUpdateTest:        true,
-	}
-
-	updateTests := []integration.ProgramTestOptions{
-		updateTestsBase.With(integration.ProgramTestOptions{
-			Dir: path.Join(cwd, "./cluster"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		}),
-		updateTestsBase.With(integration.ProgramTestOptions{
-			Dir: path.Join(cwd, "./nodegroup"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		}),
-		updateTestsBase.With(integration.ProgramTestOptions{
-			Dir: path.Join(cwd, "./tags"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		}),
-		updateTestsBase.With(integration.ProgramTestOptions{
-			Dir: path.Join(cwd, "storage-classes"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		}),
-	}
-
-	tests := shortTests
-	if !testing.Short() {
-		tests = append(tests, updateTests...)
-	}
-
-	for _, ex := range tests {
-		example := ex.With(integration.ProgramTestOptions{
-			ReportStats: integration.NewS3Reporter("us-west-2", "eng.pulumi.com", "testreports"),
-			Tracing:     "https://tracing.pulumi-engineering.com/collector/api/v1/spans",
-		})
-		t.Run(example.Dir, func(t *testing.T) {
-			integration.ProgramTest(t, &example)
-		})
-	}
+	return baseJS
 }
