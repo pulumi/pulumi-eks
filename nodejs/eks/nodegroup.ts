@@ -331,7 +331,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
 
     const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent: parent });
 
-    const awsRegion = pulumi.output(aws.getRegion({}, { parent: parent }));
+    const awsRegion = pulumi.output(aws.getRegion({}, { parent, async: true }));
     const userDataArg = args.nodeUserData || pulumi.output("");
 
     const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
@@ -418,9 +418,9 @@ ${customUserData}
                 filters,
                 owners: ["602401143452"], // Amazon
                 sortAscending: true,
-            }, { parent: parent });
+            }, { parent, async: true });
 
-            const bestAmiId: pulumi.Input<string> = eksWorkerAmiIds.then(r => r.ids.pop()!);
+            const bestAmiId = eksWorkerAmiIds.then(r => r.ids.pop()!);
             if (!bestAmiId) {
                 throw new Error("No Linux AMI Id was found.");
             }
@@ -563,26 +563,7 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
     const privateSubnets: string[] = [];
     for (const subnetId of subnetIds) {
         // Fetch the route table for this subnet.
-        const routeTable = await (async () => {
-            try {
-                // Attempt to get the explicit route table for this subnet. If there is no explicit rouute table for
-                // this subnet, this call will throw.
-                return await aws.ec2.getRouteTable({ subnetId: subnetId }, { parent: parent });
-            } catch {
-                // If we reach this point, the subnet may not have an explicitly associated route table. In this case
-                // the subnet is associated with its VPC's main route table (see
-                // https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html#RouteTables for details).
-                const subnet = await aws.ec2.getSubnet({ id: subnetId }, { parent: parent });
-                const mainRouteTableInfo = await aws.ec2.getRouteTables({
-                    vpcId: subnet.vpcId,
-                    filters: [{
-                        name: "association.main",
-                        values: ["true"],
-                    }],
-                }, { parent: parent });
-                return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, { parent: parent });
-            }
-        })();
+        const routeTable = await getRouteTableAsync(parent, subnetId);
 
         // Once we have the route table, check its list of routes for a route to an internet gateway.
         const hasInternetGatewayRoute = routeTable.routes
@@ -594,6 +575,28 @@ async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]
         }
     }
     return privateSubnets.length === 0 ? publicSubnets : privateSubnets;
+}
+
+async function getRouteTableAsync(parent: pulumi.Resource, subnetId: string) {
+    const invokeOpts = { parent, async: true };
+    try {
+        // Attempt to get the explicit route table for this subnet. If there is no explicit rouute table for
+        // this subnet, this call will throw.
+        return await aws.ec2.getRouteTable({ subnetId }, invokeOpts);
+    } catch {
+        // If we reach this point, the subnet may not have an explicitly associated route table. In this case
+        // the subnet is associated with its VPC's main route table (see
+        // https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html#RouteTables for details).
+        const subnet = await aws.ec2.getSubnet({ id: subnetId }, invokeOpts);
+        const mainRouteTableInfo = await aws.ec2.getRouteTables({
+            vpcId: subnet.vpcId,
+            filters: [{
+                name: "association.main",
+                values: ["true"],
+            }],
+        }, invokeOpts);
+        return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, invokeOpts);
+    }
 }
 
 /**

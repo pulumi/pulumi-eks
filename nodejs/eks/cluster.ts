@@ -264,7 +264,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     // If no VPC is set, use the default VPC's subnets.
     if (!args.vpcId) {
-        const invokeOpts = { parent: parent };
+        const invokeOpts = { parent, async: true };
         const vpc = aws.ec2.getVpc({ default: true }, invokeOpts);
         vpcId = vpc.then(v => v.id);
         clusterSubnetIds = vpc.then(v => aws.ec2.getSubnetIds({ vpcId: v.id }, invokeOpts)).then(subnets => subnets.ids);
