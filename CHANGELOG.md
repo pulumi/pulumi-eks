@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.18.15 (Released October 15, 2019)
+
 ### Improvements
 
 - refactor(cluster): allow ClusterOptions to accept NodeGroupOptions
