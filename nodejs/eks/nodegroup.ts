@@ -464,7 +464,15 @@ ${customUserData}
         workerSubnetIds = core.publicSubnetIds;
     } else {
         // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
-        workerSubnetIds = pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+
+        const resourceUrns: pulumi.Output<pulumi.URN>[] = [];
+        for (const res of (<any>core.subnetIds).resources()) {
+            resourceUrns.push((<pulumi.Resource>res).urn);
+        }
+        const resourcesDone = pulumi.all(resourceUrns);
+        const all = pulumi.all([resourcesDone, core.subnetIds]);
+
+        workerSubnetIds = all.apply(([_, ids]) => computeWorkerSubnets(parent, ids));
     }
 
     // Configure the settings for the autoscaling group.
