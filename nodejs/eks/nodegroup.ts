@@ -590,20 +590,37 @@ async function getRouteTableAsync(parent: pulumi.Resource, subnetId: string) {
     try {
         // Attempt to get the explicit route table for this subnet. If there is no explicit rouute table for
         // this subnet, this call will throw.
-        return await aws.ec2.getRouteTable({ subnetId }, invokeOpts);
-    } catch {
+        pulumi.log.debug("Trying to get the route table for: " + subnetId);
+        const result = await aws.ec2.getRouteTable({ subnetId }, invokeOpts);
+        pulumi.log.debug("Succeeded in getting the route table for: " + subnetId);
+        return result;
+    }
+    catch (err) {
+        pulumi.log.debug("Ran into error getting the route table for: " + subnetId);
+
+        pulumi.log.debug("Trying to get subnet object for: " + subnetId);
         // If we reach this point, the subnet may not have an explicitly associated route table. In this case
         // the subnet is associated with its VPC's main route table (see
         // https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html#RouteTables for details).
         const subnet = await aws.ec2.getSubnet({ id: subnetId }, invokeOpts);
+        pulumi.log.debug("Succeeded in getting subnet object for: " + subnetId);
+
+        const vpcId = subnet.vpcId;
+        pulumi.log.debug("Trying to get route tables for: " + vpcId);
         const mainRouteTableInfo = await aws.ec2.getRouteTables({
-            vpcId: subnet.vpcId,
+            vpcId,
             filters: [{
                 name: "association.main",
                 values: ["true"],
             }],
         }, invokeOpts);
-        return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, invokeOpts);
+        pulumi.log.debug("Succeeded in getting route tables for: " + vpcId);
+
+        const routeTableId = mainRouteTableInfo.ids[0];
+        pulumi.log.debug("Trying to get route table for: " + routeTableId);
+        const result = await aws.ec2.getRouteTable({ routeTableId }, invokeOpts);
+        pulumi.log.debug("Succeeded in getting route table for: " + routeTableId);
+        return result;
     }
 }
 
