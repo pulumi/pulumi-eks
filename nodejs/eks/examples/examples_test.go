@@ -15,16 +15,16 @@
 package examples
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
+	// "encoding/json"
+	// "fmt"
+	// "io/ioutil"
 	"os"
-	"os/exec"
+	// "os/exec"
 	"path"
 	"testing"
-	"time"
+	// "time"
 
-	"github.com/stretchr/testify/assert"
+	// "github.com/stretchr/testify/assert"
 
 	"github.com/pulumi/pulumi-eks/utils"
 	"github.com/pulumi/pulumi/pkg/testing/integration"
