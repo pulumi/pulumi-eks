@@ -1,5 +1,10 @@
 ## Unreleased
 
+### Improvements
+
+- Update pulumi to 1.4.0
+  [#270](https://github.com/pulumi/pulumi-eks/pull/270)
+
 ## 0.18.15 (Released October 15, 2019)
 
 ### Improvements
