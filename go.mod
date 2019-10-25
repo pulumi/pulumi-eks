@@ -20,7 +20,7 @@ require (
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
 	github.com/openzipkin/zipkin-go v0.1.6 // indirect
 	github.com/prometheus/client_golang v0.9.3-0.20190127221311-3c4408c8b829 // indirect
-	github.com/pulumi/pulumi v1.0.0
+	github.com/pulumi/pulumi v1.4.0
 	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a // indirect
 	github.com/stretchr/testify v1.3.0
 	golang.org/x/build v0.0.0-20190314133821-5284462c4bec // indirect
