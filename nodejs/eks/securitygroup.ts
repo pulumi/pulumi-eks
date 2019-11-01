@@ -34,7 +34,7 @@ export interface NodeGroupSecurityGroupOptions {
     tags?: InputTags;
 
     /**
-     * The security group associated with the EKS cluster.
+     * The EKS cluster associated with the worker node group.
      */
     eksCluster: aws.eks.Cluster;
 }
