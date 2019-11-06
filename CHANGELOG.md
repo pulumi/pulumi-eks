@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(vpc-cni): allow logLevel & logFile to be set, or defaulted if not
+  [#274](https://github.com/pulumi/pulumi-eks/pull/274)
 - Update pulumi to 1.4.0
   [#270](https://github.com/pulumi/pulumi-eks/pull/270)
 
