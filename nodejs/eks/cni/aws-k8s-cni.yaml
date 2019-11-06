@@ -96,10 +96,6 @@ spec:
               command: ["/app/grpc_health_probe", "-addr=:50051"]
             initialDelaySeconds: 5
           env:
-            - name: AWS_VPC_K8S_CNI_LOGLEVEL
-              value: DEBUG
-            - name: AWS_VPC_K8S_CNI_LOG_FILE
-              value: stdout
             - name: MY_NODE_NAME
               valueFrom:
                 fieldRef:

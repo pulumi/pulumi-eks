@@ -123,9 +123,13 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     }
     if (args.logLevel) {
         env.push({name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: args.logLevel.toString()});
+    } else {
+        env.push({name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: "DEBUG"});
     }
     if (args.logFile) {
         env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: args.logFile.toString()});
+    } else {
+        env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: "stdout"});
     }
     if (args.image) {
         daemonSet.spec.template.spec.containers[0].image = args.image.toString();
