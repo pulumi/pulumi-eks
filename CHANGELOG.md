@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- feat(nodes): add createManagedNodeGroup(), and ManagedNodeGroup resource
+  [#280](https://github.com/pulumi/pulumi-eks/pull/280)
+
 ## 0.18.16 (Released November 7, 2019)
 
 ### Improvements

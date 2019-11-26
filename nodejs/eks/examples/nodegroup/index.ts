@@ -111,6 +111,5 @@ const spot2 = new eks.NodeGroup("example-ng-advanced-spot", {
     providers: { kubernetes: cluster2.provider},
 });
 
-
 // Export the cluster's kubeconfig.
 export const kubeconfig2 = cluster2.kubeconfig;

@@ -488,9 +488,10 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 	clusterToNodeCount := make(clusterNodeCountMap)
 
 	// Map cluster to its NodeGroups.
-	cfnPrefix := "arn:aws:cloudformation"
+	cfnPrefix := "arn:aws:cloudformation"     // self-managed CF-based node gruops
+	ngPrefix := "aws:eks/nodeGroup:NodeGroup" // AWS managed node groups
+
 	for _, res := range resources {
-		// Find CloudFormation resources
 		if strings.HasPrefix(res.ID.String(), cfnPrefix) {
 			var templateBody cloudFormationTemplateBody
 			body := res.Outputs["templateBody"].(string)
@@ -513,6 +514,18 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 			clusterToNodeCount[clusterName] =
 				clusterToNodeCount[clusterName] +
 					templateBody.Resources.NodeGroup.Properties.DesiredCapacity
+		} else if res.Type.String() == ngPrefix {
+			// Extract the cluster name.
+			nodegroup := res.Inputs
+			clusterName := nodegroup["clusterName"].(string)
+
+			// Extract the desired size.
+			scalingConfig := nodegroup["scalingConfig"].(map[string]interface{})
+			desiredSize := int(scalingConfig["desiredSize"].(float64))
+
+			// Update map of cluster name to total desired Node count.
+			clusterToNodeCount[clusterName] =
+				clusterToNodeCount[clusterName] + desiredSize
 		}
 	}
 

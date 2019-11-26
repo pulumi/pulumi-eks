@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as aws from "@pulumi/aws";
+import * as awsInputs from "@pulumi/aws/types/input";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
@@ -287,9 +288,6 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     const eksCluster = core.cluster;
     if (core.vpcCni !== undefined) {
         cfnStackDeps.push(core.vpcCni);
-    }
-    if (core.eksNodeAccess !== undefined) {
-        cfnStackDeps.push(core.eksNodeAccess);
     }
 
     let eksClusterIngressRule: aws.ec2.SecurityGroupRule = args.clusterIngressRule!;
@@ -625,4 +623,84 @@ function tagsToAsgTags(tagsInput: InputTags): pulumi.Output<string> {
         }
         return output;
     });
+}
+
+/**
+ * ManagedNodeGroupOptions describes the configuration options accepted by an
+ * EKS Managed NodeGroup.
+ *
+ * See for more details:
+ * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
+ */
+type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" | "subnetIds" | "scalingConfig"> & {
+    /**
+     * The target EKS cluster.
+     */
+    cluster: Cluster | CoreData;
+
+    /**
+     * Make clusterName optional, since the cluster is required and it contains it.
+     */
+    clusterName?: pulumi.Output<string>;
+
+    /**
+     * Make subnetIds optional, since the cluster is required and it contains it.
+     *
+     * Default subnetIds is chosen from the following list, in order, if
+     * subnetIds arg is not set:
+     *   - core.subnetIds
+     *   - core.privateIds
+     *   - core.publicSublicSubnetIds
+     */
+    subnetIds?: pulumi.Output<pulumi.Output<string>[]>;
+
+    /**
+     * Make scalingConfig optional, since defaults can be computed.
+     *
+     * Default scaling amounts of the node group autoscaling group are:
+     *   - desiredSize: 2
+     *   - minSize: 1
+     *   - maxSize: 2
+     */
+    scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>
+};
+
+export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions): aws.eks.NodeGroup {
+    const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
+
+    // Compute the node group subnets to use.
+    let subnetIds: pulumi.Output<string[]> = pulumi.output([]);
+    if (args.subnetIds !== undefined) {
+        subnetIds = pulumi.output(args.subnetIds);
+    } else if (core.subnetIds !== undefined) {
+        subnetIds = core.subnetIds;
+    } else if (core.privateSubnetIds !== undefined) {
+        subnetIds = core.privateSubnetIds;
+    } else if (core.publicSubnetIds !== undefined) {
+        subnetIds = core.publicSubnetIds;
+    }
+
+    // Omit the cluster from the args using rest spread, and store in nodeGroupArgs.
+    const { cluster, ...nodeGroupArgs } = args;
+
+    // Create the managed node group.
+    const nodeGroup = new aws.eks.NodeGroup(name, {
+        ...nodeGroupArgs,
+        clusterName: args.clusterName || core.cluster.name,
+        scalingConfig: pulumi.all([
+            args.scalingConfig,
+        ]).apply(([config]) => {
+            const desiredSize = config && config.desiredSize || 2;
+            const minSize = config && config.minSize || 1;
+            const maxSize = config && config.maxSize || 2;
+            return {
+                desiredSize: desiredSize,
+                minSize: minSize,
+                maxSize: maxSize,
+            };
+        }),
+        subnetIds: subnetIds,
+    });
+
+    return nodeGroup;
 }
