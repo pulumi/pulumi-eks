@@ -289,6 +289,9 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     if (core.vpcCni !== undefined) {
         cfnStackDeps.push(core.vpcCni);
     }
+    if (core.eksNodeAccess !== undefined) {
+        cfnStackDeps.push(core.eksNodeAccess);
+    }
 
     let eksClusterIngressRule: aws.ec2.SecurityGroupRule = args.clusterIngressRule!;
     if (args.nodeSecurityGroup) {
@@ -651,8 +654,11 @@ type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" | "subn
      *   - core.subnetIds
      *   - core.privateIds
      *   - core.publicSublicSubnetIds
+     *
+     * This default logic is based on the existing subnet IDs logic of this
+     * package: https://git.io/JeM11
      */
-    subnetIds?: pulumi.Output<pulumi.Output<string>[]>;
+    subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
      * Make scalingConfig optional, since defaults can be computed.
@@ -665,7 +671,7 @@ type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" | "subn
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>
 };
 
-export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions): aws.eks.NodeGroup {
+export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent: pulumi.ComponentResource): aws.eks.NodeGroup {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
     // Compute the node group subnets to use.
@@ -683,6 +689,11 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
     // Omit the cluster from the args using rest spread, and store in nodeGroupArgs.
     const { cluster, ...nodeGroupArgs } = args;
 
+    // Make the aws-auth configmap a dependency of the node group.
+    const ngDeps: Array<pulumi.Resource> = [];
+    if (core.eksNodeAccess !== undefined) {
+        ngDeps.push(core.eksNodeAccess);
+    }
     // Create the managed node group.
     const nodeGroup = new aws.eks.NodeGroup(name, {
         ...nodeGroupArgs,
@@ -700,7 +711,7 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
             };
         }),
         subnetIds: subnetIds,
-    });
+    }, { parent: parent, dependsOn: ngDeps });
 
     return nodeGroup;
 }
