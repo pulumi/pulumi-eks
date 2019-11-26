@@ -15,11 +15,14 @@
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
+import * as fs from "fs";
 import * as https from "https";
 import * as jsyaml from "js-yaml";
 import fetch from "node-fetch";
+import * as tmp from "tmp";
 import * as which from "which";
 
+import * as childProcess from "child_process";
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
 import { createNodeGroup, NodeGroup, NodeGroupBaseOptions, NodeGroupData } from "./nodegroup";
@@ -90,7 +93,6 @@ export interface CoreData {
     nodeGroupOptions: ClusterNodeGroupOptions;
     publicSubnetIds?: pulumi.Output<string[]>;
     privateSubnetIds?: pulumi.Output<string[]>;
-    eksNodeAccess?: k8s.core.v1.ConfigMap;
     storageClasses?: UserStorageClasses;
     kubeconfig?: pulumi.Output<any>;
     vpcCni?: VpcCni;
@@ -483,14 +485,55 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             return mappingYaml;
         });
     }
-    const eksNodeAccess = new k8s.core.v1.ConfigMap(`${name}-nodeAccess`, {
-        apiVersion: "v1",
-        metadata: {
-            name: `aws-auth`,
-            namespace: "kube-system",
-        },
-        data: nodeAccessData,
-    }, { parent: parent, provider: provider });
+    /*
+    * We must kubectl apply the aws-auth configmap since the creation of an
+    * AWS managed node group automatically triggers AWS to create the aws-auth
+    * configmap for us.
+    *
+    * For managed nodegroups:
+    *   To properly create aws-auth, we need to kubectl apply the configmap
+    *   instead of kubectl create it, if not it will fail with an existing
+    *   resource error message.
+    *
+    * For self-managed nodegroups:
+    *   We continue to always create the aws-auth configmap.
+    *
+    * As a work around, we'll kubectl apply to satisfy both node group cases.
+    *
+    * TODO(metral)
+    * When https://git.io/JeXom is resolved, we can move away from kubectl
+    * shell out.
+    */
+    pulumi.all([
+        kubeconfig,
+        nodeAccessData,
+    ]).apply(([kc, accessData]) => {
+        const tmpKubeconfig = tmp.fileSync();
+        const tmpJson = tmp.fileSync();
+
+        // Dump the kubeconfig to a file.
+        fs.writeFileSync(tmpKubeconfig.fd, JSON.stringify(kc));
+
+        // Compute the required aws-auth JSON manifest and dump it to a file.
+        fs.writeFileSync(tmpJson.fd, `{
+"apiVersion": "v1",
+"kind": "ConfigMap",
+"metadata": {
+  "name": "aws-auth",
+  "namespace": "kube-system",
+  "labels": {
+    "app.kubernetes.io/managed-by": "pulumi"
+  }
+},
+"data": ${JSON.stringify(accessData)}
+}`);
+
+        // Call kubectl to apply the aws-auth manifest.
+        childProcess.execSync(`kubectl apply -f ${tmpJson.name}`, {
+            stdio: "ignore",
+            env: { ...process.env, "KUBECONFIG": tmpKubeconfig.name },
+        });
+    });
 
     return {
         vpcId: pulumi.output(vpcId),
@@ -504,7 +547,6 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         provider: provider,
         vpcCni: vpcCni,
         instanceRoles: instanceRoles,
-        eksNodeAccess: eksNodeAccess,
         tags: args.tags,
         nodeSecurityGroupTags: args.nodeSecurityGroupTags,
         storageClasses: userStorageClasses,
@@ -942,6 +984,7 @@ export class Cluster extends pulumi.ComponentResource {
         this.registerOutputs({ kubeconfig: this.kubeconfig });
     }
 
+    // Create a self-managed node group.
     createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup {
         return new NodeGroup(name, {
             ...args,

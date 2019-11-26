@@ -1,5 +1,5 @@
 {
-    "name": "example-nodegroup",
+    "name": "example-managed-nodegroups",
     "devDependencies": {
         "typescript": "^3.0.0",
         "@types/node": "latest"
