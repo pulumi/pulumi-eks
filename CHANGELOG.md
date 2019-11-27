@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- feat(iam): Automatically setup OIDC provider
+
 ## 0.18.16 (Released November 7, 2019)
 
 ### Improvements

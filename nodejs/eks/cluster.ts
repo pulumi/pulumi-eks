@@ -492,6 +492,12 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         data: nodeAccessData,
     }, { parent: parent, provider: provider });
 
+    const oidcProvider = new aws.iam.OpenIdConnectProvider(`${name}-oidcProvider`, {
+      clientIdLists: ["sts.amazonaws.com"],
+      url: eksCluster.identities[0].oidcs[0].issuer,
+      thumbprintLists: ["9E99A48A9960B14926BB7F3B02E22DA2B0AB7280"], // Amazon root CA thumbprint
+    }, { parent: parent });
+
     return {
         vpcId: pulumi.output(vpcId),
         subnetIds: args.subnetIds ? pulumi.output(args.subnetIds): pulumi.output(clusterSubnetIds),
