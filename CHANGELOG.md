@@ -1,6 +1,7 @@
 ## Unreleased
 
 ### Improvements
+- build: Upgrade to go1.13.4
 
 ## 0.18.16 (Released November 7, 2019)
 
