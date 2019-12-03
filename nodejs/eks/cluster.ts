@@ -96,6 +96,7 @@ export interface CoreData {
     vpcCni?: VpcCni;
     tags?: InputTags;
     nodeSecurityGroupTags?: InputTags;
+    fargateProfile: aws.eks.FargateProfile;
 }
 
 function createOrGetInstanceProfile(name: string, parent: pulumi.ComponentResource, instanceRoleName?: pulumi.Input<aws.iam.Role>, instanceProfileName?: pulumi.Input<string>): aws.iam.InstanceProfile {
@@ -344,6 +345,28 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         provider: args.creationRoleProvider ? args.creationRoleProvider.provider : undefined,
     });
 
+    let fargateProfile: aws.eks.FargateProfile | undefined;
+    if (args.fargate) {
+        const fargate = args.fargate !== true ? args.fargate : {};
+        const podExecutionRoleArn = fargate.podExecutionRoleArn || (new ServiceRole(`${name}-podExecutionRole`, {
+            service: "eks-fargate-pods.amazonaws.com",
+            managedPolicyArns: [
+                "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
+            ],
+        }, { parent: parent })).role.apply(r => r.arn);
+        const selectors = pulumi.output(fargate.selectors || []).apply(ss => ss.map(s => {
+            return {
+                namespace: s.namespace || "default",
+                labels: s.labels,
+            };
+        }));
+        fargateProfile = new aws.eks.FargateProfile(`${name}-fargateCluster`, {
+            clusterName: eksCluster.name,
+            podExecutionRoleArn: podExecutionRoleArn,
+            selectors: selectors,
+        }, { parent: parent });
+    }
+
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
     // there is time for the cluster API server to become completely available.  Ideally we
@@ -508,6 +531,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         tags: args.tags,
         nodeSecurityGroupTags: args.nodeSecurityGroupTags,
         storageClasses: userStorageClasses,
+        fargateProfile: fargateProfile,
     };
 }
 
@@ -813,6 +837,47 @@ export interface ClusterOptions {
      * Indicates whether or not the Amazon EKS private API server endpoint is enabled.  The default is `false`.
      */
     endpointPrivateAccess?: boolean;
+
+    /**
+     * Add support for launching pods in Fargate.  Defaults to launching pods in the `default` namespace.
+     */
+    fargate?: boolean | FargateProfile;
+}
+
+/**
+ * FargateProfile defines how Kubernetes pods are executed in Fargate.
+ */
+export interface FargateProfile {
+    /**
+     * Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role
+     * with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
+     */
+    podExecutionRoleArn?: pulumi.Input<string>;
+    /**
+     * Specify the subnets in which to execute Fargate tasks for pods.  Defaults to the private
+     * subnets associated with the cluster.
+     */
+    subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * Specify the namespace and label selectors to use for launching pods into Fargate.
+     */
+    selectors?: pulumi.Input<pulumi.Input<FargateProfileSelector>[]>;
+}
+
+/**
+ * FargateProfileSelector specifies a namespace and labels for which any pods launched into the
+ * given namespace (and with the given labels if included) will be launched using the
+ * FargateProfile.
+ */
+export interface FargateProfileSelector {
+    /**
+     * The Kubernetes namespace for pods that will be launched into Fargate.  Defaults to `default`.
+     */
+    namespace?: pulumi.Input<string>;
+    /**
+     * Optional list of labels to also require within the given namespace in order to launch into Fargate.  Defaults to `[]`.
+     */
+    labels?: pulumi.Input<pulumi.Input<string>[]>;
 }
 
 /**
