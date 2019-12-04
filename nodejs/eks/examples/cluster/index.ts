@@ -26,6 +26,10 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
     ],
 });
 
+// Create an EKS cluster with the fargate configuration.
+const cluster3 = new eks.Cluster(`${projectName}-3`, { fargate: true, deployDashboard: false });
+
 // Export the clusters' kubeconfig.
 export const kubeconfig1 = cluster1.kubeconfig;
 export const kubeconfig2 = cluster2.kubeconfig;
+export const kubeconfig3 = cluster3.kubeconfig;

@@ -96,21 +96,21 @@ export interface CoreData {
     vpcCni?: VpcCni;
     tags?: InputTags;
     nodeSecurityGroupTags?: InputTags;
-    fargateProfile: aws.eks.FargateProfile;
+    fargateProfile?: aws.eks.FargateProfile;
 }
 
 function createOrGetInstanceProfile(name: string, parent: pulumi.ComponentResource, instanceRoleName?: pulumi.Input<aws.iam.Role>, instanceProfileName?: pulumi.Input<string>): aws.iam.InstanceProfile {
-  let instanceProfile: aws.iam.InstanceProfile;
-  if (instanceProfileName) {
-    instanceProfile = aws.iam.InstanceProfile.get(`${name}-instanceProfile`,
-      instanceProfileName, undefined, {parent: parent});
-  } else {
-    instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
-        role: instanceRoleName,
-    }, { parent: parent });
-  }
+    let instanceProfile: aws.iam.InstanceProfile;
+    if (instanceProfileName) {
+        instanceProfile = aws.iam.InstanceProfile.get(`${name}-instanceProfile`,
+            instanceProfileName, undefined, { parent: parent });
+    } else {
+        instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
+            role: instanceRoleName,
+        }, { parent: parent });
+    }
 
-  return instanceProfile;
+    return instanceProfile;
 }
 
 function generateKubeconfig(clusterName: string, clusterEndpoint: string, certData: string, roleArn?: string) {
@@ -174,29 +174,29 @@ export function getRoleProvider(name: string, region?: aws.Region, profile?: str
     const rolePolicy = new aws.iam.RolePolicy(`${name}-eksClusterCreatorPolicy`, {
         role: iamRole,
         policy: {
-          Version: "2012-10-17",
-          Statement: [
-            {
-              Effect: "Allow",
-              Action: "eks:*",
-              Resource: "*",
-            },
-            {
-              Effect: "Allow",
-              Action: "iam:PassRole",
-              Resource: "*",
-            },
-          ],
+            Version: "2012-10-17",
+            Statement: [
+                {
+                    Effect: "Allow",
+                    Action: "eks:*",
+                    Resource: "*",
+                },
+                {
+                    Effect: "Allow",
+                    Action: "iam:PassRole",
+                    Resource: "*",
+                },
+            ],
         },
-      },
-      { parent: iamRole },
+    },
+        { parent: iamRole },
     );
 
     const provider = new aws.Provider(`${name}-eksClusterCreatorEntity`, {
         region: region,
         profile: profile,
         assumeRole: {
-            roleArn: iamRole.arn.apply(async(arn) => {
+            roleArn: iamRole.arn.apply(async (arn) => {
                 // wait 30 seconds to assume the IAM Role https://github.com/pulumi/pulumi-aws/issues/673
                 if (!pulumi.runtime.isDryRun()) {
                     await new Promise(resolve => setTimeout(resolve, 30 * 1000));
@@ -288,16 +288,16 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // Create the EKS service role
     let eksRole: pulumi.Output<aws.iam.Role>;
     if (args.serviceRole) {
-      eksRole = pulumi.output(args.serviceRole);
+        eksRole = pulumi.output(args.serviceRole);
     } else {
-      eksRole = (new ServiceRole(`${name}-eksRole`, {
-        service: "eks.amazonaws.com",
-        description: "Allows EKS to manage clusters on your behalf.",
-        managedPolicyArns: [
-            "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
-            "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
-        ],
-      }, { parent: parent })).role;
+        eksRole = (new ServiceRole(`${name}-eksRole`, {
+            service: "eks.amazonaws.com",
+            description: "Allows EKS to manage clusters on your behalf.",
+            managedPolicyArns: [
+                "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+                "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
+            ],
+        }, { parent: parent })).role;
     }
 
     // Create the EKS cluster security group
@@ -347,7 +347,14 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     let fargateProfile: aws.eks.FargateProfile | undefined;
     if (args.fargate) {
-        const fargate = args.fargate !== true ? args.fargate : {};
+        const fargate = args.fargate !== true ? args.fargate : {
+            // For `fargate: true`, default to including the `default` namespaces and
+            // `kube-system` namespaces so that all pods by default run in Fargate.
+            selectors: [
+                { namespace: "default" },
+                { namespace: "kube-system" },
+            ],
+        };
         const podExecutionRoleArn = fargate.podExecutionRoleArn || (new ServiceRole(`${name}-podExecutionRole`, {
             service: "eks-fargate-pods.amazonaws.com",
             managedPolicyArns: [
@@ -399,9 +406,9 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             let config = {};
 
             if (args.creationRoleProvider) {
-              config = args.creationRoleProvider.role.arn.apply(arn => generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data, arn));
+                config = args.creationRoleProvider.role.arn.apply(arn => generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data, arn));
             } else {
-              config = generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data);
+                config = generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data);
             }
 
             return config;
@@ -482,7 +489,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                     rolearn: m.roleArn,
                     username: m.username,
                     groups: m.groups,
-            })));
+                })));
             } catch (e) {
                 throw new Error(`The IAM role mappings provided could not be properly serialized to YAML for the aws-auth ConfigMap`);
             }
@@ -499,7 +506,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                     userarn: m.userArn,
                     username: m.username,
                     groups: m.groups,
-            })));
+                })));
             } catch (e) {
                 throw new Error(`The IAM user mappings provided could not be properly serialized to YAML for the aws-auth ConfigMap`);
             }
@@ -517,9 +524,9 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     return {
         vpcId: pulumi.output(vpcId),
-        subnetIds: args.subnetIds ? pulumi.output(args.subnetIds): pulumi.output(clusterSubnetIds),
-        publicSubnetIds: args.publicSubnetIds ? pulumi.output(args.publicSubnetIds): undefined,
-        privateSubnetIds: args.privateSubnetIds ? pulumi.output(args.privateSubnetIds): undefined,
+        subnetIds: args.subnetIds ? pulumi.output(args.subnetIds) : pulumi.output(clusterSubnetIds),
+        publicSubnetIds: args.publicSubnetIds ? pulumi.output(args.publicSubnetIds) : undefined,
+        privateSubnetIds: args.privateSubnetIds ? pulumi.output(args.privateSubnetIds) : undefined,
         clusterSecurityGroup: eksClusterSecurityGroup,
         cluster: eksCluster,
         nodeGroupOptions: nodeGroupOptions,
@@ -673,7 +680,7 @@ export interface ClusterOptions {
     /**
      * The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
      */
-     instanceProfileName?: pulumi.Input<string>;
+    instanceProfileName?: pulumi.Input<string>;
 
     /**
      * IAM Service Role for EKS to use to manage the cluster.
@@ -861,23 +868,7 @@ export interface FargateProfile {
     /**
      * Specify the namespace and label selectors to use for launching pods into Fargate.
      */
-    selectors?: pulumi.Input<pulumi.Input<FargateProfileSelector>[]>;
-}
-
-/**
- * FargateProfileSelector specifies a namespace and labels for which any pods launched into the
- * given namespace (and with the given labels if included) will be launched using the
- * FargateProfile.
- */
-export interface FargateProfileSelector {
-    /**
-     * The Kubernetes namespace for pods that will be launched into Fargate.  Defaults to `default`.
-     */
-    namespace?: pulumi.Input<string>;
-    /**
-     * Optional list of labels to also require within the given namespace in order to launch into Fargate.  Defaults to `[]`.
-     */
-    labels?: pulumi.Input<pulumi.Input<string>[]>;
+    selectors?: pulumi.Input<pulumi.Input<aws.types.input.eks.FargateProfileSelector>[]>;
 }
 
 /**
