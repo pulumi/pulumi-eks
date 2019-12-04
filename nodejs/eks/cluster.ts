@@ -22,7 +22,7 @@ import * as which from "which";
 
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
-import { createNodeGroup, NodeGroup, NodeGroupBaseOptions, NodeGroupData } from "./nodegroup";
+import { computeWorkerSubnets, createNodeGroup, NodeGroup, NodeGroupBaseOptions, NodeGroupData } from "./nodegroup";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
@@ -347,30 +347,24 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     let fargateProfile: aws.eks.FargateProfile | undefined;
     if (args.fargate) {
-        const fargate = args.fargate !== true ? args.fargate : {
-            // For `fargate: true`, default to including the `default` namespaces and
-            // `kube-system` namespaces so that all pods by default run in Fargate.
-            selectors: [
-                { namespace: "default" },
-                { namespace: "kube-system" },
-            ],
-        };
+        const fargate = args.fargate !== true ? args.fargate : {};
         const podExecutionRoleArn = fargate.podExecutionRoleArn || (new ServiceRole(`${name}-podExecutionRole`, {
             service: "eks-fargate-pods.amazonaws.com",
             managedPolicyArns: [
                 "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
             ],
         }, { parent: parent })).role.apply(r => r.arn);
-        const selectors = pulumi.output(fargate.selectors || []).apply(ss => ss.map(s => {
-            return {
-                namespace: s.namespace || "default",
-                labels: s.labels,
-            };
-        }));
-        fargateProfile = new aws.eks.FargateProfile(`${name}-fargateCluster`, {
+        const selectors = fargate.selectors || [
+            // For `fargate: true`, default to including the `default` namespaces and
+            // `kube-system` namespaces so that all pods by default run in Fargate.
+            { namespace: "default" },
+            { namespace: "kube-system" },
+        ];
+        fargateProfile = new aws.eks.FargateProfile(`${name}-fargateProfile`, {
             clusterName: eksCluster.name,
             podExecutionRoleArn: podExecutionRoleArn,
             selectors: selectors,
+            subnetIds: pulumi.output(clusterSubnetIds).apply(subnets => computeWorkerSubnets(parent, subnets)),
         }, { parent: parent });
     }
 
@@ -431,6 +425,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         }
     }
 
+    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
+
     // Create the VPC CNI management resource.
     const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent: parent });
 
@@ -444,7 +440,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         instanceRoles = pulumi.output(args.instanceRoles);
     } else if (args.instanceRole) {
         // Create an instance profile if using a default node group
-        if (!args.skipDefaultNodeGroup) {
+        if (!skipDefaultNodeGroup) {
             nodeGroupOptions.instanceProfile = createOrGetInstanceProfile(name, parent, args.instanceRole, args.instanceProfileName);
         }
         instanceRoleMappings = pulumi.output(args.instanceRole).apply(instanceRole =>
@@ -473,7 +469,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         }
 
         // Create an instance profile if using a default node group
-        if (!args.skipDefaultNodeGroup) {
+        if (!skipDefaultNodeGroup) {
             nodeGroupOptions.instanceProfile = createOrGetInstanceProfile(name, parent, instanceRole, args.instanceProfileName);
         }
         instanceRoleMappings = pulumi.output(instanceRole).apply(role =>
@@ -787,6 +783,7 @@ export interface ClusterOptions {
 
     /**
      * If this toggle is set to true, the EKS cluster will be created without node group attached.
+     * Defaults to false, unless `fargate` input is provided.
      */
     skipDefaultNodeGroup?: boolean;
 
@@ -846,13 +843,16 @@ export interface ClusterOptions {
     endpointPrivateAccess?: boolean;
 
     /**
-     * Add support for launching pods in Fargate.  Defaults to launching pods in the `default` namespace.
+     * Add support for launching pods in Fargate.  Defaults to launching pods in the `default`
+     * namespace.  If specified, the default node group is skipped as though `skipDefaultNodeGroup:
+     * true` had been passed.
      */
     fargate?: boolean | FargateProfile;
 }
 
 /**
- * FargateProfile defines how Kubernetes pods are executed in Fargate.
+ * FargateProfile defines how Kubernetes pods are executed in Fargate. See
+ * aws.eks.FargateProfileArgs for reference.
  */
 export interface FargateProfile {
     /**
@@ -969,9 +969,11 @@ export class Cluster extends pulumi.ComponentResource {
         core.nodeGroupOptions.nodeSecurityGroup = this.nodeSecurityGroup;
         core.nodeGroupOptions.clusterIngressRule = this.eksClusterIngressRule;
 
+        const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
+
         // Create the default worker node group and grant the workers access to the API server.
         const configDeps = [core.kubeconfig];
-        if (!args.skipDefaultNodeGroup) {
+        if (!skipDefaultNodeGroup) {
             this.defaultNodeGroup = createNodeGroup(name, {
                 cluster: core,
                 ...core.nodeGroupOptions,

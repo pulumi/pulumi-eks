@@ -558,7 +558,7 @@ ${customUserData}
 // only the IDs of the private subnets are returned. A subnet is deemed private iff it has no route in its route table
 // that routes directly to an internet gateway. If any such route exists in a subnet's route table, it is treated as
 // public.
-async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]): Promise<string[]> {
+export async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]): Promise<string[]> {
     const publicSubnets: string[] = [];
 
     const privateSubnets: string[] = [];
