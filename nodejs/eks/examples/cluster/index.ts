@@ -27,7 +27,13 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
 });
 
 // Create an EKS cluster with the fargate configuration.
-const cluster3 = new eks.Cluster(`${projectName}-3`, { fargate: true, deployDashboard: false });
+const vpc3 = new awsx.ec2.Vpc(`${projectName}-3`);
+const cluster3 = new eks.Cluster(`${projectName}-3`, {
+    vpcId: vpc3.id,
+    privateSubnetIds: vpc3.privateSubnetIds,
+    fargate: true,
+    deployDashboard: false,
+});
 
 // Export the clusters' kubeconfig.
 export const kubeconfig1 = cluster1.kubeconfig;
