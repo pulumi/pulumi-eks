@@ -448,6 +448,7 @@ func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Dependencies: []string{
 			"@pulumi/eks",
 		},
+		RetryFailedSteps: true,
 	})
 
 	return baseJS
