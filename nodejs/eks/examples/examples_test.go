@@ -34,6 +34,11 @@ func TestAccCluster(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "./cluster"),
+			Config: map[string]string{
+				// Hard code to us-east-2 since Fargate support is not yet available in all regions
+				// (specifically us-west-2).
+				"aws:region": "us-east-2",
+			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
