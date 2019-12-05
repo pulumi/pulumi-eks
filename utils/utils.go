@@ -113,6 +113,11 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 
 	PrintAndLog(fmt.Sprintf("Total Desired Worker Node Count: %d\n", desiredNodeCount), t)
 
+	// Skip this validation if no NodeGroups are attached
+	if desiredNodeCount == 0 {
+		return
+	}
+
 	// Attempt to validate that the total desired worker Node count of
 	// instances are up & running.
 	for i := 0; i < MaxRetries; i++ {
