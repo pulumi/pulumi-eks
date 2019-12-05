@@ -635,7 +635,7 @@ function tagsToAsgTags(tagsInput: InputTags): pulumi.Output<string> {
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
  */
-type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" | "subnetIds" | "scalingConfig"> & {
+export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" | "subnetIds" | "scalingConfig"> & {
     /**
      * The target EKS cluster.
      */
