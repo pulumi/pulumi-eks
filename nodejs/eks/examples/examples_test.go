@@ -46,6 +46,28 @@ func TestAccCluster(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccFargate(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "./fargate"),
+			Config: map[string]string{
+				// Hard code to us-east-2 since Fargate support is not yet available in all regions
+				// (specifically us-west-2).
+				"aws:region": "us-east-2",
+			},
+			// TODO[pulumi/pulumi-eks#286] Disabled until we address CNI daemonset issues which
+			// cause those daemonset pods not to get scheduled.
+			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+			// 	utils.RunEKSSmokeTest(t,
+			// 		info.Deployment.Resources,
+			// 		info.Outputs["kubeconfig"],
+			// 	)
+			// },
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccNodeGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
