@@ -34,6 +34,22 @@ func TestAccCluster(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "./cluster"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccFargate(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "./fargate"),
 			Config: map[string]string{
 				// Hard code to us-east-2 since Fargate support is not yet available in all regions
 				// (specifically us-west-2).
@@ -42,9 +58,7 @@ func TestAccCluster(t *testing.T) {
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-					info.Outputs["kubeconfig3"],
+					info.Outputs["kubeconfig"],
 				)
 			},
 		})
