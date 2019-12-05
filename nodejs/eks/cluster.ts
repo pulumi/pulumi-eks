@@ -15,9 +15,14 @@
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
+
+import * as childProcess from "child_process";
+import * as fs from "fs";
 import * as https from "https";
 import * as jsyaml from "js-yaml";
 import fetch from "node-fetch";
+import * as process from "process";
+import * as tmp from "tmp";
 import * as which from "which";
 
 import { VpcCni, VpcCniOptions } from "./cni";
@@ -345,29 +350,6 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         provider: args.creationRoleProvider ? args.creationRoleProvider.provider : undefined,
     });
 
-    let fargateProfile: aws.eks.FargateProfile | undefined;
-    if (args.fargate) {
-        const fargate = args.fargate !== true ? args.fargate : {};
-        const podExecutionRoleArn = fargate.podExecutionRoleArn || (new ServiceRole(`${name}-podExecutionRole`, {
-            service: "eks-fargate-pods.amazonaws.com",
-            managedPolicyArns: [
-                "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
-            ],
-        }, { parent: parent })).role.apply(r => r.arn);
-        const selectors = fargate.selectors || [
-            // For `fargate: true`, default to including the `default` namespaces and
-            // `kube-system` namespaces so that all pods by default run in Fargate.
-            { namespace: "default" },
-            { namespace: "kube-system" },
-        ];
-        fargateProfile = new aws.eks.FargateProfile(`${name}-fargateProfile`, {
-            clusterName: eksCluster.name,
-            podExecutionRoleArn: podExecutionRoleArn,
-            selectors: selectors,
-            subnetIds: pulumi.output(clusterSubnetIds).apply(subnets => computeWorkerSubnets(parent, subnets)),
-        }, { parent: parent });
-    }
-
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
     // there is time for the cluster API server to become completely available.  Ideally we
@@ -407,6 +389,50 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
             return config;
         });
+
+    let fargateProfile: aws.eks.FargateProfile | undefined;
+    if (args.fargate) {
+        const fargate = args.fargate !== true ? args.fargate : {};
+        const podExecutionRoleArn = fargate.podExecutionRoleArn || (new ServiceRole(`${name}-podExecutionRole`, {
+            service: "eks-fargate-pods.amazonaws.com",
+            managedPolicyArns: [
+                "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
+            ],
+        }, { parent: parent })).role.apply(r => r.arn);
+        const selectors = fargate.selectors || [
+            // For `fargate: true`, default to including the `default` namespaces and
+            // `kube-system` namespaces so that all pods by default run in Fargate.
+            { namespace: "default" },
+            { namespace: "kube-system" },
+        ];
+        fargateProfile = new aws.eks.FargateProfile(`${name}-fargateProfile`, {
+            clusterName: eksCluster.name,
+            podExecutionRoleArn: podExecutionRoleArn,
+            selectors: selectors,
+            subnetIds: pulumi.output(clusterSubnetIds).apply(subnets => computeWorkerSubnets(parent, subnets)),
+        }, { parent: parent });
+
+        // Once the FargateProfile has been created, try to patch CoreDNS if needed.  See
+        // https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-coredns.
+        pulumi.all([fargateProfile.id, selectors, kubeconfig]).apply(([_, sels, kconfig]) => {
+            // Only patch CoreDNS if there is a selector in the FargateProfile which causes
+            // `kube-system` pods to launch in Fargate.
+            if (sels.findIndex(s => s.namespace === "kube-system") !== -1) {
+                // Only do the imperative patching during deployments, not previews.
+                if (!pulumi.runtime.isDryRun()) {
+                    // Write the kubeconfig to a tmp file and use it to patch the `coredns`
+                    // deployment that AWS deployed already as part of cluster creation.
+                    const tmpKubeconfig = tmp.fileSync();
+                    fs.writeFileSync(tmpKubeconfig.fd, JSON.stringify(kconfig));
+                    const cmd = `kubectl patch deployment coredns -n kube-system --type json `
+                        + `-p='[{"op": "remove", "path": "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type"}]'`;
+                    childProcess.execSync(cmd, {
+                        env: { ...process.env, "KUBECONFIG": tmpKubeconfig.name },
+                    });
+                }
+            }
+        });
+    }
 
     const provider = new k8s.Provider(`${name}-eks-k8s`, {
         kubeconfig: kubeconfig.apply(JSON.stringify),
