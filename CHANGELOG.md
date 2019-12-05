@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.18 (Released December 5, 2019)
+
+### Improvements
+
 - feat(nodes): add support for Fargate
   [#283](https://github.com/pulumi/pulumi-eks/pull/283)
 
