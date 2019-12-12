@@ -1,7 +1,11 @@
 ## Unreleased
 
 ### Improvements
+
+- refactor(vpcCni): set node anti-affinity to not deploy to fargate
+  [#291](https://github.com/pulumi/pulumi-eks/pull/291)
 - build: Upgrade to go1.13.4
+  [#290](https://github.com/pulumi/pulumi-eks/pull/290)
 
 ## 0.18.18 (Released December 5, 2019)
 
