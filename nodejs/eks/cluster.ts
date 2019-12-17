@@ -156,9 +156,14 @@ function generateKubeconfig(clusterName: string, clusterEndpoint: string, certDa
     };
 }
 
-export function getRoleProvider(name: string, region?: aws.Region, profile?: string): CreationRoleProvider {
+/**
+ * getRoleProvider creates a role provider that can be passed to `new eks.Cluster("test", {
+ * creationRoleProvider: ... })`.  This can be used to provide a specific role to use for the
+ * creation of the EKS cluster different from the role being used to run the Pulumi deployment.
+ */
+export function getRoleProvider(name: string, region?: aws.Region, profile?: string, parent?: pulumi.ComponentResource): CreationRoleProvider {
     const iamRole = new aws.iam.Role(`${name}-eksClusterCreatorRole`, {
-        assumeRolePolicy: aws.getCallerIdentity().then(id => `{
+        assumeRolePolicy: aws.getCallerIdentity({ parent, async: true }).then(id => `{
             "Version": "2012-10-17",
             "Statement": [
                 {
