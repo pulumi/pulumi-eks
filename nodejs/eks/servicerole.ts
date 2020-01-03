@@ -80,7 +80,7 @@ export class ServiceRole extends pulumi.ComponentResource {
         for (const policy of (args.managedPolicyArns || [])) {
             rolePolicyAttachments.push(new aws.iam.RolePolicyAttachment(`${name}-${sha1hash(policy)}`, {
                 policyArn: policy,
-                role: role,
+                role: role.id,
             }, { parent: this }));
         }
         this.role = pulumi.all([role.arn, ...rolePolicyAttachments.map(r => r.id)]).apply(() => role);

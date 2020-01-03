@@ -113,7 +113,7 @@ function createOrGetInstanceProfile(name: string, parent: pulumi.ComponentResour
             instanceProfileName, undefined, { parent: parent });
     } else {
         instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
-            role: instanceRoleName,
+            role: instanceRoleName && pulumi.output(instanceRoleName).apply(r => r.id),
         }, { parent: parent });
     }
 
@@ -184,7 +184,7 @@ export function getRoleProvider(name: string, region?: aws.Region, profile?: str
     // `eks:*` is needed to create/read/update/delete the EKS cluster, `iam:PassRole` is needed to pass the EKS service role to the cluster
     // https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html
     const rolePolicy = new aws.iam.RolePolicy(`${name}-eksClusterCreatorPolicy`, {
-        role: iamRole,
+        role: iamRole.id,
         policy: {
             Version: "2012-10-17",
             Statement: [
@@ -462,7 +462,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         if (args.customInstanceRolePolicy) {
             pulumi.log.warn("Option `customInstanceRolePolicy` has been deprecated. Please use `instanceRole` or `instanceRoles`. The role provided to either option should already include all required policies.", eksCluster);
             const customRolePolicy = new aws.iam.RolePolicy(`${name}-EKSWorkerCustomPolicy`, {
-                role: instanceRole,
+                role: instanceRole.apply(r => r.id),
                 policy: args.customInstanceRolePolicy,
             });
         }
@@ -1092,7 +1092,10 @@ export class Cluster extends pulumi.ComponentResource {
             createDashboard(name, {}, this, this.provider);
         }
 
-        this.registerOutputs({ kubeconfig: this.kubeconfig });
+        this.registerOutputs({
+            kubeconfig: this.kubeconfig,
+            eksCluster: this.eksCluster,
+        });
     }
 
     // Create a self-managed node group.

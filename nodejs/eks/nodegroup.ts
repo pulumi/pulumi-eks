@@ -445,11 +445,13 @@ ${customUserData}
         nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
     }
 
+    const instanceProfile = args.instanceProfile || core.nodeGroupOptions.instanceProfile;
+
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
         associatePublicIpAddress: nodeAssociatePublicIpAddress,
         imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
-        iamInstanceProfile: args.instanceProfile || core.nodeGroupOptions.instanceProfile,
+        iamInstanceProfile: instanceProfile && instanceProfile.id,
         keyName: keyName,
         securityGroups: [nodeSecurityGroupId],
         spotPrice: args.spotPrice,
