@@ -21,7 +21,7 @@ const managedNodeGroup1 = eks.createManagedNodeGroup("example-managed-ng1", {
     cluster: cluster,
     nodeGroupName: "aws-managed-ng1",
     nodeRoleArn: role1.arn,
-}, cluster);
+});
 
 // Create an explicit AWS managed node group using a cluster as input.
 const managedNodeGroup2 = eks.createManagedNodeGroup("example-managed-ng2", {
@@ -39,4 +39,4 @@ const managedNodeGroup2 = eks.createManagedNodeGroup("example-managed-ng2", {
     releaseVersion: "1.14.7-20190927",
     tags: {"org": "pulumi"},
     version: "1.14",
-}, cluster);
+});
