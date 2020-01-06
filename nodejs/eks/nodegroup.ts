@@ -677,8 +677,9 @@ export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" 
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>
 };
 
-export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent: pulumi.ComponentResource): aws.eks.NodeGroup {
+export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent?: pulumi.ComponentResource): aws.eks.NodeGroup {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
+    const eksCluster = isCoreData(args.cluster) ? args.cluster.cluster : args.cluster;
 
     // Compute the node group subnets to use.
     let subnetIds: pulumi.Output<string[]> = pulumi.output([]);
@@ -717,7 +718,7 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
             };
         }),
         subnetIds: subnetIds,
-    }, { parent: parent, dependsOn: ngDeps });
+    }, { parent: parent ? parent : eksCluster, dependsOn: ngDeps });
 
     return nodeGroup;
 }
