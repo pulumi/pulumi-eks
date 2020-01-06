@@ -99,6 +99,19 @@ func TestAccManagedNodeGroup(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccManagedNodeGroupMissingRole(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:              path.Join(getCwd(t), "tests", "managed-ng-missing-role"),
+			ExpectFailure:    true,
+			RetryFailedSteps: false,
+			SkipRefresh:      true,
+			Quick:            true,
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccTags(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
