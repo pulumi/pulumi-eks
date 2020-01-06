@@ -715,6 +715,31 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
         roleArn = args.nodeRoleArn;
     }
 
+    // Check that the nodegroup role has been set on the cluster to
+    // ensure that the aws-auth configmap was properly formed.
+    const roleExistsInNodeAccess = pulumi.all([
+        core.instanceRoles,
+        roleArn,
+    ]).apply(([roles, rArn]) => {
+        // Map out the ARNs of all of the instanceRoles.
+        const roleArns = roles.map(role => {
+            return role.arn.apply(a => a);
+        });
+        // Try finding the nodeRole in the ARNs array.
+        return pulumi.all([
+            roleArns,
+            rArn,
+        ]).apply(([arns, arn]) => {
+            return arns.find(a => a === arn);
+        });
+    });
+
+    roleExistsInNodeAccess.apply(exist => {
+        if (!exist) {
+            throw new Error(`A managed node group cannot be created without first setting it's role in the cluster's instanceRoles`);
+        }
+    });
+
     // Compute the node group subnets to use.
     let subnetIds: pulumi.Output<string[]> = pulumi.output([]);
     if (args.subnetIds !== undefined) {
