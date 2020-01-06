@@ -641,7 +641,7 @@ function tagsToAsgTags(tagsInput: InputTags): pulumi.Output<string> {
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
  */
-export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" | "subnetIds" | "scalingConfig"> & {
+export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" | "nodeRoleArn" | "subnetIds" | "scalingConfig"> & {
     /**
      * The target EKS cluster.
      */
@@ -657,6 +657,24 @@ export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" 
      * used as a default.
      */
     nodeGroupName?: pulumi.Input<string>;
+
+    /**
+     * Make nodeRoleArn optional, since users may prefer to provide the
+     * nodegroup role directly using nodeRole.
+     *
+     * Note, nodeRoleArn and nodeRole are mutually exclusive, and a single option
+     * must be used.
+     */
+    nodeRoleArn?: pulumi.Input<string>;
+
+    /**
+     * Make nodeRole optional, since users may prefer to provide the
+     * nodeRoleArn.
+     *
+     * Note, nodeRole and nodeRoleArn are mutually exclusive, and a single
+     * option must be used.
+     */
+    nodeRole?: pulumi.Input<aws.iam.Role>;
 
     /**
      * Make subnetIds optional, since the cluster is required and it contains it.
@@ -687,6 +705,24 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
     const eksCluster = isCoreData(args.cluster) ? args.cluster.cluster : args.cluster;
 
+    // Compute the nodegroup role.
+    if (!args.nodeRole && !args.nodeRoleArn) {
+        throw new Error(`An IAM role, or role ARN must be provided to create a managed node group`);
+    }
+
+    if (args.nodeRole && args.nodeRoleArn) {
+        throw new Error("nodeRole and nodeRoleArn are mutually exclusive to create a managed node group");
+    }
+
+    let roleArn: pulumi.Input<string>;
+    if (args.nodeRoleArn) {
+        roleArn = args.nodeRoleArn;
+    } else if (args.nodeRole) {
+        roleArn = pulumi.output(args.nodeRole).apply(r => r.arn);
+    } else {
+        throw new Error("The managed node group role provided is undefined");
+    }
+
     // Compute the node group subnets to use.
     let subnetIds: pulumi.Output<string[]> = pulumi.output([]);
     if (args.subnetIds !== undefined) {
@@ -712,6 +748,7 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
         ...nodeGroupArgs,
         clusterName: args.clusterName || core.cluster.name,
         nodeGroupName: args.nodeGroupName || name,
+        nodeRoleArn: roleArn,
         scalingConfig: pulumi.all([
             args.scalingConfig,
         ]).apply(([config]) => {
