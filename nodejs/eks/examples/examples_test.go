@@ -112,6 +112,33 @@ func TestAccManagedNodeGroupMissingRole(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccManagedNodeGroupAwsAuth(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "managed-ng-aws-auth"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+			EditDirs: []integration.EditDir{
+				{
+					Dir:      path.Join(getCwd(t), "tests", "managed-ng-aws-auth", "step1"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccTags(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
