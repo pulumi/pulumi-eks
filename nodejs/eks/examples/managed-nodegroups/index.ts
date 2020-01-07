@@ -19,14 +19,13 @@ export const kubeconfig = cluster.kubeconfig;
 // Create a simple AWS managed node group using a cluster as input.
 const managedNodeGroup1 = eks.createManagedNodeGroup("example-managed-ng1", {
     cluster: cluster,
-    nodeGroupName: "aws-managed-ng1",
     nodeRoleArn: role1.arn,
 });
 
 // Create an explicit AWS managed node group using a cluster as input.
 const managedNodeGroup2 = eks.createManagedNodeGroup("example-managed-ng2", {
     cluster: cluster,
-    nodeGroupName: "aws-managed-ng2",
+    nodeGroupName: "aws-managed-ng",
     nodeRoleArn: role2.arn,
     scalingConfig: {
         desiredSize: 1,
