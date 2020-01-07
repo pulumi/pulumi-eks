@@ -653,6 +653,12 @@ export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" 
     clusterName?: pulumi.Output<string>;
 
     /**
+     * Make nodeGroupName optional, since the NodeGroup resource name can be
+     * used as a default.
+     */
+    nodeGroupName?: pulumi.Input<string>;
+
+    /**
      * Make subnetIds optional, since the cluster is required and it contains it.
      *
      * Default subnetIds is chosen from the following list, in order, if
@@ -705,6 +711,7 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
     const nodeGroup = new aws.eks.NodeGroup(name, {
         ...nodeGroupArgs,
         clusterName: args.clusterName || core.cluster.name,
+        nodeGroupName: args.nodeGroupName || name,
         scalingConfig: pulumi.all([
             args.scalingConfig,
         ]).apply(([config]) => {
