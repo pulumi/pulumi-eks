@@ -2,6 +2,11 @@
 
 ### Improvements
 
+- Refactor managed nodegroup API and require its role be provided to the cluster
+  [#302](https://github.com/pulumi/pulumi-eks/pull/302)
+
+## 0.18.19 (Released December 27, 2019)
+
 - Unblock CI by disabling debug logging, rm unnecessary tests, and fixing broken tests
   [#309](https://github.com/pulumi/pulumi-eks/pull/309)
 - feat(cluster): Support public access controls
