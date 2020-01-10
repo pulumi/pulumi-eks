@@ -580,10 +580,22 @@ export async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: s
 
 async function getRouteTableAsync(parent: pulumi.Resource, subnetId: string) {
     const invokeOpts = { parent, async: true };
+    console.log("getRouteTableAsync/catch - subnetId: " + subnetId);
     try {
         // Attempt to get the explicit route table for this subnet. If there is no explicit rouute table for
         // this subnet, this call will throw.
-        return await aws.ec2.getRouteTable({ subnetId }, invokeOpts);
+        console.log("getRouteTableAsync/try");
+        const rt = await aws.ec2.getRouteTable({ subnetId }, invokeOpts);
+
+        if (rt) {
+            console.log("getRouteTableAsync/try - routeTable: " + rt);
+            console.log("getRouteTableAsync/try - routeTable.routeTableId: " + rt.routeTableId);
+            console.log("getRouteTableAsync/try - routeTable.subnetId: " + rt.subnetId);
+            console.log("getRouteTableAsync/try - routeTable.vpcId: " + rt.vpcId);
+        } else {
+            console.log("getRouteTableAsync/try - routeTable is undef: " + rt);
+        }
+        return rt;
     } catch {
         // If we reach this point, the subnet may not have an explicitly associated route table. In this case
         // the subnet is associated with its VPC's main route table (see
@@ -596,7 +608,33 @@ async function getRouteTableAsync(parent: pulumi.Resource, subnetId: string) {
                 values: ["true"],
             }],
         }, invokeOpts);
-        return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, invokeOpts);
+
+        if (subnet) {
+            console.log("getRouteTableAsync/catch - subnet.id: " + subnet.id);
+            console.log("getRouteTableAsync/catch - subnet.vpcId: " + subnet.vpcId);
+        } else {
+            console.log("getRouteTableAsync/catch - subnet is undef: " + subnet);
+        }
+
+        if (mainRouteTableInfo) {
+            console.log("getRouteTableAsync/catch - mainRouteTableInfo.id: " + mainRouteTableInfo.id);
+            console.log("getRouteTableAsync/catch - mainRouteTableInfo.vpcId: " + mainRouteTableInfo.vpcId);
+            console.log("getRouteTableAsync/catch - mainRouteTableInfo.ids: " + mainRouteTableInfo.ids);
+            console.log("getRouteTableAsync/catch - mainRouteTableInfo.ids[0]: " + mainRouteTableInfo.ids[0]);
+        } else {
+            console.log("getRouteTableAsync/catch - mainRouteTableInfo is undef: " + mainRouteTableInfo);
+        }
+
+        const rt = await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, invokeOpts);
+        if (rt) {
+            console.log("getRouteTableAsync/try - routeTable: " + rt);
+            console.log("getRouteTableAsync/try - routeTable.routeTableId: " + rt.routeTableId);
+            console.log("getRouteTableAsync/try - routeTable.subnetId: " + rt.subnetId);
+            console.log("getRouteTableAsync/try - routeTable.vpcId: " + rt.vpcId);
+        } else {
+            console.log("getRouteTableAsync/try - routeTable is undef: " + rt);
+        }
+        return rt;
     }
 }
 
