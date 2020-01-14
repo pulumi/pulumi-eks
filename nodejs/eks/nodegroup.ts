@@ -662,7 +662,7 @@ export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" 
      * Make nodeRoleArn optional, since users may prefer to provide the
 	 * nodegroup role directly using nodeRole.
      */
-    nodeRoleArn?: pulumi.Output<string>;
+    nodeRoleArn?: pulumi.Input<string>;
 
     /**
      * Make nodeRole an option in lieu of nodeGroupArn to create consistency
@@ -704,26 +704,26 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
     }
 
     if (args.nodeRole && args.nodeRoleArn) {
-        throw new Error("nodeRole and nodeRoleArn are mutually exclusive to create a managed node group. Choose a single approach");
+        throw new Error("nodeRole and nodeRoleArn are mutually exclusive to create a managed node group.");
     }
 
     // Compute the nodegroup role.
-    let roleArn: pulumi.Output<string> = pulumi.output("");
+    let roleArn: pulumi.Input<string> = pulumi.output("");
     if (args.nodeRole !== undefined) {
         roleArn = pulumi.output(args.nodeRole).apply(r => r.arn);
     } else if (args.nodeRoleArn !== undefined) {
-        roleArn = args.nodeRoleArn;
+        roleArn = pulumi.output(args.nodeRoleArn);
     }
 
     // Check that the nodegroup role has been set on the cluster to
     // ensure that the aws-auth configmap was properly formed.
-    const roleExistsInNodeAccess = pulumi.all([
+    const nodegroupRole = pulumi.all([
         core.instanceRoles,
         roleArn,
     ]).apply(([roles, rArn]) => {
         // Map out the ARNs of all of the instanceRoles.
         const roleArns = roles.map(role => {
-            return role.arn.apply(a => a);
+            return role.arn;
         });
         // Try finding the nodeRole in the ARNs array.
         return pulumi.all([
@@ -734,9 +734,9 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
         });
     });
 
-    roleExistsInNodeAccess.apply(exist => {
-        if (!exist) {
-            throw new Error(`A managed node group cannot be created without first setting it's role in the cluster's instanceRoles`);
+    nodegroupRole.apply(role => {
+        if (!role) {
+            throw new Error(`A managed node group cannot be created without first setting its role in the cluster's instanceRoles`);
         }
     });
 

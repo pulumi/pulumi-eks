@@ -27,7 +27,7 @@ const cluster = new eks.Cluster(`${projectName}`, {
     deployDashboard: false,
     // Modify the roleMappings to update the aws-auth configMap.
     // This will not remove the managed node group's role from aws-auth since
-    // it's role is set in instanceRoles. Not setting instanceRoles in the
+    // its role is set in instanceRoles. Not setting instanceRoles in the
     // cluster first for the nodegroup will error eks.createManagedNodeGroup().
     roleMappings: [roleMapping0, roleMapping1],
     instanceRoles: [roles[2]],
