@@ -5,7 +5,7 @@
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "latest",
+        "@pulumi/pulumi": "feature-2.0",
         "@pulumi/tls": "latest",
         "@pulumi/eks": "latest"
     }

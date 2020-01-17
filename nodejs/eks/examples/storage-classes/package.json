@@ -5,8 +5,8 @@
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "latest",
-        "@pulumi/kubernetes": "latest",
+        "@pulumi/pulumi": "feature-2.0",
+        "@pulumi/kubernetes": "feature-2.0",
         "@pulumi/eks": "latest"
     }
 }
