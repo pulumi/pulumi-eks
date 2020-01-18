@@ -6,7 +6,7 @@
     },
     "dependencies": {
         "@pulumi/pulumi": "feature-2.0",
-        "@pulumi/tls": "latest",
+        "@pulumi/tls": "feature-2.0",
         "@pulumi/eks": "latest"
     }
 }
