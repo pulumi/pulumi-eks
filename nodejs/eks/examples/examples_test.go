@@ -136,7 +136,7 @@ func TestAccCluster_withUpdate(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir:                  path.Join(getCwd(t), "./cluster"),
 			ExpectRefreshChanges: true,
-			RunUpdateTest:        true,
+			// RunUpdateTest:        true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -154,7 +154,7 @@ func TestAccNodeGroup_withUpdate(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir:                  path.Join(getCwd(t), "nodegroup"),
 			ExpectRefreshChanges: true,
-			RunUpdateTest:        true,
+			// RunUpdateTest:        true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -173,7 +173,7 @@ func TestAccTags_withUpdate(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir:                  path.Join(getCwd(t), "tags"),
 			ExpectRefreshChanges: true,
-			RunUpdateTest:        true,
+			// RunUpdateTest:        true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -192,7 +192,7 @@ func TestAccStorageClasses_withUpdate(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir:                  path.Join(getCwd(t), "storage-classes"),
 			ExpectRefreshChanges: true,
-			RunUpdateTest:        true,
+			// RunUpdateTest:        true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
