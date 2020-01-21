@@ -1,3 +1,0 @@
-name: test-awsx-network-and-subnetIds
-description: EKS cluster examples using the previous awsx.Network API and cluster network setups.
-runtime: nodejs
