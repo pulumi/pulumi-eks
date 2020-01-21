@@ -15,6 +15,8 @@
 package examples
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -28,12 +30,14 @@ import (
 
 	"github.com/pulumi/pulumi-eks/utils"
 	"github.com/pulumi/pulumi/pkg/testing/integration"
+	"github.com/pulumi/pulumi/pkg/util/contract"
 )
 
 func TestAccCluster(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "./cluster"),
+			StackName:            addRandomSuffix("tac"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -135,6 +139,7 @@ func TestAccCluster_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:                  path.Join(getCwd(t), "./cluster"),
+			StackName:            addRandomSuffix("tac_wu"),
 			ExpectRefreshChanges: true,
 			RunUpdateTest:        true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
@@ -454,4 +459,11 @@ func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	})
 
 	return baseJS
+}
+
+func addRandomSuffix(s string) string {
+	b := make([]byte, 4)
+	_, err := rand.Read(b)
+	contract.AssertNoError(err)
+	return s + "-" + hex.EncodeToString(b)
 }
