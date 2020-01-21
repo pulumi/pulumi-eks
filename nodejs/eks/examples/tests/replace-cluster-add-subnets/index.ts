@@ -11,14 +11,9 @@ const vpc = new awsx.ec2.Vpc(`${projectName}`, {
     tags: { "Name": `${projectName}` },
 });
 
-const publicSubnetIds = vpc.publicSubnetIds;
-
-// Remove this line after the init update to repro: https://git.io/fj8cn
-publicSubnetIds.pop();
-
 const cluster = new eks.Cluster(`${projectName}`, {
     vpcId: vpc.id,
-    publicSubnetIds: publicSubnetIds,
+    publicSubnetIds: vpc.publicSubnetIds.then(ids => ids.pop()),
     deployDashboard: false,
 });
 
