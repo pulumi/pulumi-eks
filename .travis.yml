@@ -17,7 +17,7 @@ install:
     - chmod +x ./aws-iam-authenticator
     - sudo mv aws-iam-authenticator /usr/local/bin
     # Install Pulumi
-    - curl -L https://get.pulumi.com/ | bash -s -- --version v1.9.0-alpha.1579637005
+    - curl -L https://get.pulumi.com/ | bash -s -- --version 1.9.0-alpha.1579637005
     - export PATH=$HOME/.pulumi/bin:$PATH
     # Install kubectl
     - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
