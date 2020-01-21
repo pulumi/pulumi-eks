@@ -7,10 +7,10 @@ import * as iam from "./iam";
 const projectName = pulumi.getProject();
 
 // Create an EKS cluster with awsx.Network VPC and cluster subnetIds.
-const vpc1 = new awsx.Network(`${projectName}-1`);
+const vpc1 = new awsx.ec2.Vpc(`${projectName}-1`,  {});
 const cluster1 = new eks.Cluster(`${projectName}-1`, {
-    vpcId: vpc1.vpcId,
-    subnetIds: vpc1.subnetIds,
+    vpcId: vpc1.id,
+    subnetIds: vpc1.publicSubnetIds,
     deployDashboard: false,
 });
 
@@ -19,10 +19,10 @@ const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {role: ro
 
 // Create an EKS cluster with awsx.Network VPC and a nodegroup with
 // nodeSubnetIds overrides.
-const vpc2 = new awsx.Network(`${projectName}-2`);
+const vpc2 = new awsx.ec2.Vpc(`${projectName}-2`, {});
 const cluster2 = new eks.Cluster(`${projectName}-2`, {
-    vpcId: vpc2.vpcId,
-    subnetIds: vpc2.subnetIds,
+    vpcId: vpc2.id,
+    subnetIds: vpc2.publicSubnetIds,
     deployDashboard: false,
     instanceRole: role,
 });
