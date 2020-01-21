@@ -5,7 +5,7 @@ import * as eks from "@pulumi/eks";
 const projectName = pulumi.getProject();
 
 // Create an EKS cluster with the fargate configuration.
-const vpc = new awsx.ec2.Vpc(`${projectName}`);
+const vpc = new awsx.ec2.Vpc(`${projectName}`, {});
 const cluster = new eks.Cluster(`${projectName}`, {
     vpcId: vpc.id,
     privateSubnetIds: vpc.privateSubnetIds,
