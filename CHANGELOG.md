@@ -271,3 +271,4 @@ publishing the NPM package before master was able to.
 
 - Allow configuring the subnets that worker nodes use.
 - Improve detection of public vs. private subnets.
+
