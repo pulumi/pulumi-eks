@@ -415,9 +415,15 @@ ${customUserData}
                 },
             ];
 
+            // `602401143452` is the ID assigned to `Amazon` and is required for AMIs that are hosted in AWS default regions
+            // `800184023465` is the owner ID of the creator of the EKS Optimized AMI in ap-east-1
+            // `558608220178` is the owner ID of the creator of the EKS Optimized AMI in me-south-1
+            // It is important to note that neither `800184023465` nor `558608220178` are assigned any IDs in default regions
+            // and `602401143452` is not assigned any AMIs in `ap-east-1` or `me-south-1` regions so this lookup is safe to make
+            // AWS Guide for EKS Optimized AMIs https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
             const eksWorkerAmiIds = aws.getAmiIds({
                 filters,
-                owners: ["602401143452"], // Amazon
+                owners: ["602401143452", "800184023465", "558608220178"],
                 sortAscending: true,
             }, { parent, async: true });
 
