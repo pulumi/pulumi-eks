@@ -14,11 +14,14 @@ const vpc = new awsx.ec2.Vpc(`${projectName}`, {
 const publicSubnetIds = vpc.publicSubnetIds;
 
 // Remove this line after the init update to repro: https://git.io/fj8cn
-publicSubnetIds.pop();
+const popped = pulumi.output(publicSubnetIds).apply(subnets => {
+    subnets.pop();
+    return subnets;
+});
 
 const cluster = new eks.Cluster(`${projectName}`, {
     vpcId: vpc.id,
-    publicSubnetIds: publicSubnetIds,
+    publicSubnetIds: popped,
     deployDashboard: false,
 });
 
