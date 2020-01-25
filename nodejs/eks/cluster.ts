@@ -347,6 +347,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             subnetIds: clusterSubnetIds,
             endpointPrivateAccess: args.endpointPrivateAccess,
             endpointPublicAccess: args.endpointPublicAccess,
+            publicAccessCidrs: args.publicAccessCidrs,
         },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
@@ -878,12 +879,17 @@ export interface ClusterOptions {
     /**
      * Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`.
      */
-    endpointPublicAccess?: boolean;
+    endpointPublicAccess?: pulumi.Input<boolean>;
 
     /**
      * Indicates whether or not the Amazon EKS private API server endpoint is enabled.  The default is `false`.
      */
-    endpointPrivateAccess?: boolean;
+    endpointPrivateAccess?: pulumi.Input<boolean>;
+
+    /**
+     * Indicates which CIDR blocks can access the Amazon EKS public API server endpoint.
+     */
+    publicAccessCidrs?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
      * Add support for launching pods in Fargate.  Defaults to launching pods in the `default`
