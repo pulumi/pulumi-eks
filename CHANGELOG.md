@@ -2,6 +2,8 @@
 
 ### Improvements
 
+## 0.18.19 (Released January 27, 2020)
+
 - Unblock CI by disabling debug logging, rm unnecessary tests, and fixing broken tests
   [#309](https://github.com/pulumi/pulumi-eks/pull/309)
 - feat(cluster): Support public access controls
