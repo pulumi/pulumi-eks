@@ -131,6 +131,7 @@ func TestAccStorageClasses(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+/*
 func TestAccCluster_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -167,7 +168,6 @@ func TestAccNodeGroup_withUpdate(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-/*
 func TestAccTags_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -185,7 +185,6 @@ func TestAccTags_withUpdate(t *testing.T) {
 
 	integration.ProgramTest(t, &test)
 }
-*/
 
 func TestAccStorageClasses_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
@@ -204,6 +203,7 @@ func TestAccStorageClasses_withUpdate(t *testing.T) {
 
 	integration.ProgramTest(t, &test)
 }
+*/
 
 func TestAccReplaceSecGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
