@@ -404,6 +404,7 @@ func getCwd(t *testing.T) string {
 func getBaseOptions() integration.ProgramTestOptions {
 	return integration.ProgramTestOptions{
 		ExpectRefreshChanges: true,
+		RetryFailedSteps:     true,
 		ReportStats:          integration.NewS3Reporter("us-west-2", "eng.pulumi.com", "testreports"),
 		Tracing:              "https://tracing.pulumi-engineering.com/collector/api/v1/spans",
 	}
@@ -419,7 +420,6 @@ func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Dependencies: []string{
 			"@pulumi/eks",
 		},
-		RetryFailedSteps: true,
 	})
 
 	return baseJS
