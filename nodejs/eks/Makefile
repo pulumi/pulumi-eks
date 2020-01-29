@@ -7,6 +7,7 @@ VERSION := $(shell ../../scripts/get-version)
 export PATH := $(shell yarn bin 2>/dev/null):$(PATH)
 
 TESTPARALLELISM ?= 7
+NODE_OPTIONS ?= --max_old_space_size=6144
 
 build::
 	yarn install
