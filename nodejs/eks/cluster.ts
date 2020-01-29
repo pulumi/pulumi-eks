@@ -347,6 +347,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             subnetIds: clusterSubnetIds,
             endpointPrivateAccess: args.endpointPrivateAccess,
             endpointPublicAccess: args.endpointPublicAccess,
+            publicAccessCidrs: args.publicAccessCidrs,
         },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
@@ -741,11 +742,11 @@ export interface ClusterOptions {
     instanceRoles?: pulumi.Input<pulumi.Input<aws.iam.Role>[]>;
 
     /**
+     * Attach a custom role policy to worker node instance role
+     *
      * @deprecated This option has been replaced with the use of
      * `instanceRole` or `instanceRoles`. The role provided to either option
      * should already include all required policies.
-     *
-     * Attach a custom role policy to worker node instance role
      */
     customInstanceRolePolicy?: pulumi.Input<string>;
 
@@ -831,11 +832,6 @@ export interface ClusterOptions {
     skipDefaultNodeGroup?: boolean;
 
     /**
-     * @deprecated This option has been deprecated due to a lack of
-     * support for it on EKS, and the general community recommendation to avoid
-     * using it for security concerns. If you'd like alternatives to deploy the
-     * dashboard, consider writing it in Pulumi, or using the Helm chart.
-     *
      * Whether or not to deploy the Kubernetes dashboard to the cluster. If the dashboard is deployed, it can be
      * accessed as follows:
      *
@@ -854,6 +850,11 @@ export interface ClusterOptions {
      * 4. Choose `Token` authentication, paste the token retrieved earlier into the `Token` field, and sign in.
      *
      * Defaults to `true`.
+     *
+     * @deprecated This option has been deprecated due to a lack of
+     * support for it on EKS, and the general community recommendation to avoid
+     * using it for security concerns. If you'd like alternatives to deploy the
+     * dashboard, consider writing it in Pulumi, or using the Helm chart.
      */
     deployDashboard?: boolean;
 
@@ -878,12 +879,17 @@ export interface ClusterOptions {
     /**
      * Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`.
      */
-    endpointPublicAccess?: boolean;
+    endpointPublicAccess?: pulumi.Input<boolean>;
 
     /**
      * Indicates whether or not the Amazon EKS private API server endpoint is enabled.  The default is `false`.
      */
-    endpointPrivateAccess?: boolean;
+    endpointPrivateAccess?: pulumi.Input<boolean>;
+
+    /**
+     * Indicates which CIDR blocks can access the Amazon EKS public API server endpoint.
+     */
+    publicAccessCidrs?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
      * Add support for launching pods in Fargate.  Defaults to launching pods in the `default`

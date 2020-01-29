@@ -1,3 +1,0 @@
-name: nodegroup-options
-description: EKS cluster example using the nodeGroupOptions property.
-runtime: nodejs

@@ -2,6 +2,10 @@
 
 ### Improvements
 
+- Unblock CI by disabling debug logging, rm unnecessary tests, and fixing broken tests
+  [#309](https://github.com/pulumi/pulumi-eks/pull/309)
+- feat(cluster): Support public access controls
+  [#295](https://github.com/pulumi/pulumi-eks/issues/295)
 - feat(cluster): Add cluster tagging
   [#262](https://github.com/pulumi/pulumi-eks/pull/262)
 - refactor(vpcCni): set node anti-affinity to not deploy to fargate

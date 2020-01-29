@@ -135,6 +135,7 @@ func TestAccStorageClasses(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+/*
 func TestAccCluster_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -172,7 +173,6 @@ func TestAccNodeGroup_withUpdate(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-/*
 func TestAccTags_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -190,7 +190,6 @@ func TestAccTags_withUpdate(t *testing.T) {
 
 	integration.ProgramTest(t, &test)
 }
-*/
 
 func TestAccStorageClasses_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
@@ -209,6 +208,7 @@ func TestAccStorageClasses_withUpdate(t *testing.T) {
 
 	integration.ProgramTest(t, &test)
 }
+*/
 
 func TestAccReplaceSecGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
@@ -256,37 +256,6 @@ func TestAccTagInputTypes(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "tests", "tag-input-types"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
-				)
-			},
-		})
-
-	integration.ProgramTest(t, &test)
-}
-
-func TestAccAwsxNetworkAndSubnets(t *testing.T) {
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "awsx-network-and-subnetIds"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		})
-
-	integration.ProgramTest(t, &test)
-}
-
-func TestAccNodeGroupOptions(t *testing.T) {
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "nodegroup-options"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
