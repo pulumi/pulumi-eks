@@ -131,13 +131,11 @@ func TestAccStorageClasses(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-/*
 func TestAccCluster_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:                  path.Join(getCwd(t), "./cluster"),
-			ExpectRefreshChanges: true,
-			RunUpdateTest:        true,
+			Dir:           path.Join(getCwd(t), "./cluster"),
+			RunUpdateTest: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -153,9 +151,8 @@ func TestAccCluster_withUpdate(t *testing.T) {
 func TestAccNodeGroup_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:                  path.Join(getCwd(t), "nodegroup"),
-			ExpectRefreshChanges: true,
-			RunUpdateTest:        true,
+			Dir:           path.Join(getCwd(t), "nodegroup"),
+			RunUpdateTest: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -171,9 +168,8 @@ func TestAccNodeGroup_withUpdate(t *testing.T) {
 func TestAccTags_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:                  path.Join(getCwd(t), "tags"),
-			ExpectRefreshChanges: true,
-			RunUpdateTest:        true,
+			Dir:           path.Join(getCwd(t), "tags"),
+			RunUpdateTest: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -189,9 +185,8 @@ func TestAccTags_withUpdate(t *testing.T) {
 func TestAccStorageClasses_withUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:                  path.Join(getCwd(t), "storage-classes"),
-			ExpectRefreshChanges: true,
-			RunUpdateTest:        true,
+			Dir:           path.Join(getCwd(t), "storage-classes"),
+			RunUpdateTest: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -203,7 +198,6 @@ func TestAccStorageClasses_withUpdate(t *testing.T) {
 
 	integration.ProgramTest(t, &test)
 }
-*/
 
 func TestAccReplaceSecGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
