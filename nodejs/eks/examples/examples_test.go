@@ -132,6 +132,9 @@ func TestAccStorageClasses(t *testing.T) {
 }
 
 func TestAccCluster_withUpdate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:           path.Join(getCwd(t), "./cluster"),
@@ -149,6 +152,9 @@ func TestAccCluster_withUpdate(t *testing.T) {
 }
 
 func TestAccNodeGroup_withUpdate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:           path.Join(getCwd(t), "nodegroup"),
@@ -166,6 +172,9 @@ func TestAccNodeGroup_withUpdate(t *testing.T) {
 }
 
 func TestAccTags_withUpdate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:           path.Join(getCwd(t), "tags"),
@@ -183,6 +192,9 @@ func TestAccTags_withUpdate(t *testing.T) {
 }
 
 func TestAccStorageClasses_withUpdate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:           path.Join(getCwd(t), "storage-classes"),
@@ -200,6 +212,9 @@ func TestAccStorageClasses_withUpdate(t *testing.T) {
 }
 
 func TestAccReplaceSecGroup(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "tests", "replace-secgroup"),
@@ -221,6 +236,9 @@ func TestAccReplaceSecGroup(t *testing.T) {
 }
 
 func TestAccReplaceClusterAddSubnets(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "tests", "replace-cluster-add-subnets"),
@@ -242,6 +260,9 @@ func TestAccReplaceClusterAddSubnets(t *testing.T) {
 }
 
 func TestAccTagInputTypes(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "tests", "tag-input-types"),
@@ -257,6 +278,9 @@ func TestAccTagInputTypes(t *testing.T) {
 }
 
 func TestAccMigrateNodeGroups(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "tests", "migrate-nodegroups"),
