@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- feat(identity): add support to setup OIDC provider
+  [#320](https://github.com/pulumi/pulumi-eks/pull/320)
+
 ## 0.18.21 (Released February 12, 2020)
 
 ### Improvements
