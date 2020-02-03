@@ -25,6 +25,7 @@ import * as process from "process";
 import * as tmp from "tmp";
 import * as which from "which";
 
+import { getIssuerCAThumbprint } from "./cert-thumprint";
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
 import { computeWorkerSubnets, createNodeGroup, NodeGroup, NodeGroupBaseOptions, NodeGroupData } from "./nodegroup";
@@ -102,6 +103,7 @@ export interface CoreData {
     tags?: InputTags;
     nodeSecurityGroupTags?: InputTags;
     fargateProfile?: aws.eks.FargateProfile;
+    oidcProvider?: aws.iam.OpenIdConnectProvider;
 }
 
 function createOrGetInstanceProfile(name: string, parent: pulumi.ComponentResource, instanceRoleName?: pulumi.Input<aws.iam.Role>, instanceProfileName?: pulumi.Input<string>): aws.iam.InstanceProfile {
@@ -562,6 +564,18 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         });
     }
 
+    // Setup OIDC provider to leverage IAM roles for k8s service accounts.
+    let oidcProvider: aws.iam.OpenIdConnectProvider | undefined;
+    if (args.createOidcProvider) {
+        const eksOidcProviderUrl = pulumi.interpolate `oidc.eks.${aws.getRegion().name}.amazonaws.com`;
+        const fingerprint = getIssuerCAThumbprint(eksOidcProviderUrl); // Amazon root CA thumbprint
+        oidcProvider = new aws.iam.OpenIdConnectProvider(`${name}-oidcProvider`, {
+            clientIdLists: ["sts.amazonaws.com"],
+            url: eksCluster.identities[0].oidcs[0].issuer,
+            thumbprintLists: [fingerprint],
+        }, { parent: parent });
+    }
+
     return {
         vpcId: pulumi.output(vpcId),
         subnetIds: args.subnetIds ? pulumi.output(args.subnetIds) : pulumi.output(clusterSubnetIds),
@@ -579,6 +593,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         nodeSecurityGroupTags: args.nodeSecurityGroupTags,
         storageClasses: userStorageClasses,
         fargateProfile: fargateProfile,
+        oidcProvider: oidcProvider,
     };
 }
 
@@ -902,6 +917,20 @@ export interface ClusterOptions {
      * The tags to apply to the EKS cluster.
      */
     clusterTags?: InputTags;
+
+    /**
+     * Indicates whether an IAM OIDC Provider is created for the EKS cluster.
+     *
+     * The OIDC provider is used in the cluster in combination with k8s
+     * Service Account annotations to provide IAM roles at the k8s Pod level.
+     *
+     * See for more details:
+     * - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
+     * - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
+     * - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
+     * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+     */
+    createOidcProvider?: pulumi.Input<boolean>;
 }
 
 /**
