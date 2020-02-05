@@ -1,0 +1,13 @@
+{
+    "name": "example-oidc-iam-sa",
+    "devDependencies": {
+        "typescript": "^3.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "latest",
+        "@pulumi/aws": "latest",
+        "@pulumi/eks": "latest",
+        "@pulumi/kubernetes": "latest"
+    }
+}
