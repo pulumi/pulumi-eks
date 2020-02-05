@@ -171,6 +171,21 @@ func TestAccStorageClasses(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccOidcIam(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "oidc-iam-sa"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccCluster_withUpdate(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
