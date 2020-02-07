@@ -343,6 +343,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
+        name: args.name,
         roleArn: eksRole.apply(r => r.arn),
         vpcConfig: {
             securityGroupIds: [eksClusterSecurityGroup.id],
@@ -931,6 +932,17 @@ export interface ClusterOptions {
      * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
      */
     createOidcProvider?: pulumi.Input<boolean>;
+
+    /**
+     * The cluster's physical resource name.
+     *
+     * If not specified, the default is to use auto-naming for the cluster's
+     * name, resulting in a physical name with the format `${name}-eksCluster-0123abcd`.
+     *
+     * See for more details:
+     * https://www.pulumi.com/docs/intro/concepts/programming-model/#autonaming
+     */
+    name?: pulumi.Input<string>;
 }
 
 /**
