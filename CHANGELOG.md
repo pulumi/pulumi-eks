@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- feat(cluster): allow optional configuration of cluster name
+  [#322](https://github.com/pulumi/pulumi-eks/pull/322)
 - feat(identity): add support to setup OIDC provider
   [#320](https://github.com/pulumi/pulumi-eks/pull/320)
 
