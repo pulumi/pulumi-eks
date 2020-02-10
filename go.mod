@@ -10,7 +10,7 @@ require (
 	github.com/json-iterator/go v1.1.6 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
-	github.com/pulumi/pulumi v1.6.2-0.20191209231622-bb8b1a5fd494
+	github.com/pulumi/pulumi v1.10.1
 	github.com/stretchr/testify v1.4.1-0.20191106224347-f1bd0923b832
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.2.2
