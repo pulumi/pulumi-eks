@@ -2,6 +2,13 @@
 
 ### Improvements
 
+- Fix js-yaml dependency changes in pulumi/k8s
+  [#324](https://github.com/pulumi/pulumi-eks/pull/324)
+
+## 0.18.19 (Released January 27, 2020)
+
+### Improvements
+
 - Unblock CI by disabling debug logging, rm unnecessary tests, and fixing broken tests
   [#309](https://github.com/pulumi/pulumi-eks/pull/309)
 - feat(cluster): Support public access controls
