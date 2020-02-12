@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- Update pulumi/pulumi and re-enable withUpdate tests
+  [#327](https://github.com/pulumi/pulumi-eks/pull/327)
+
 ## 0.18.20 (Released February 11, 2020)
 
 ### Improvements
