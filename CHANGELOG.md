@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.20 (Released February 11, 2020)
+
+### Improvements
+
 - Fix js-yaml dependency changes in pulumi/k8s
   [#324](https://github.com/pulumi/pulumi-eks/pull/324)
 
