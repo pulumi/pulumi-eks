@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.21 (Released February 12, 2020)
+
+### Improvements
+
 - Refactor managed nodegroup API and require its role be provided to the cluster
   [#302](https://github.com/pulumi/pulumi-eks/pull/302)
 - Update pulumi/pulumi and re-enable withUpdate tests
