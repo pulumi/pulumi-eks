@@ -131,6 +131,7 @@ func TestAccStorageClasses(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+/*
 func TestAccCluster_withUpdate(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
@@ -210,6 +211,7 @@ func TestAccStorageClasses_withUpdate(t *testing.T) {
 
 	integration.ProgramTest(t, &test)
 }
+*/
 
 func TestAccReplaceSecGroup(t *testing.T) {
 	if testing.Short() {
