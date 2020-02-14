@@ -96,11 +96,6 @@ This example creates a EKS cluster and then deploys a Helm chart from the
 stable repo. We extract the cluster's `kubeconfig` from its [Pulumi provider](https://www.pulumi.com/docs/reference/programming-model/#providers) to specifically target this cluster for deployments with
 [`pulumi-kubernetes`][pulumi-kubernetes].
 
-> Note: This Helm capabality is primarily targeted for transitioning to Pulumi.
-Pulumi's [desired state model][how-pulumi-works] greatly benefits
-from having resources be directly defined in your Pulumi program as demonstrated
-in the [workload example][workload-example]. See the [FAQ][faq] for more details.
-
 ```typescript
 import * as eks from "@pulumi/eks";
 import * as k8s from "@pulumi/kubernetes";
