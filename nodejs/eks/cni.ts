@@ -86,6 +86,24 @@ export interface VpcCniOptions {
      * Defaults to the official AWS CNI image in ECR.
      */
     image?: pulumi.Input<string>;
+
+    /**
+     * Specifies the veth prefix used to generate the host-side veth device
+     * name for the CNI.
+     *
+     * The prefix can be at most 4 characters long.
+     *
+     * Defaults to "eni".
+     */
+    vethPrefix?: pulumi.Input<string>;
+
+    /**
+     * Used to configure the MTU size for attached ENIs. The valid range is
+     * from 576 to 9001.
+     *
+     * Defaults to 9001.
+     */
+    eniMtu?: pulumi.Input<number>;
 }
 
 interface VpcCniInputs {
@@ -98,6 +116,8 @@ interface VpcCniInputs {
     logLevel?: string;
     logFile?: string;
     image?: string;
+    vethPrefix?: string;
+    eniMtu?: number;
 }
 
 function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
@@ -130,6 +150,16 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: args.logFile.toString()});
     } else {
         env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: "stdout"});
+    }
+    if (args.vethPrefix) {
+        env.push({name: "AWS_VPC_K8S_CNI_VETHPREFIX", value: args.vethPrefix.toString()});
+    } else {
+        env.push({name: "AWS_VPC_K8S_CNI_VETHPREFIX", value: "eni"});
+    }
+    if (args.eniMtu) {
+        env.push({name: "AWS_VPC_ENI_MTU", value: args.eniMtu.toString()});
+    } else {
+        env.push({name: "AWS_VPC_ENI_MTU", value: "9001"});
     }
     if (args.image) {
         daemonSet.spec.template.spec.containers[0].image = args.image.toString();

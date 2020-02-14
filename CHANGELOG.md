@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- update(cni): update from v1.5.3 -> v1.6.0
+  [#325](https://github.com/pulumi/pulumi-eks/pull/325)
 - fix(storageClasses): fix userStorageClass initialization
   [#336](https://github.com/pulumi/pulumi-eks/pull/336)
 - feat(cluster): allow optional configuration of cluster name
