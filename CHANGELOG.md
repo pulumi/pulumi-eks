@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(storageClasses): fix userStorageClass initialization
+  [#336](https://github.com/pulumi/pulumi-eks/pull/336)
 - feat(cluster): allow optional configuration of cluster name
   [#322](https://github.com/pulumi/pulumi-eks/pull/322)
 - feat(identity): add support to setup OIDC provider
