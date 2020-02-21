@@ -413,7 +413,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     // Add any requested StorageClasses.
     const storageClasses = args.storageClasses || {};
-    const userStorageClasses: UserStorageClasses = pulumi.output({});
+    const userStorageClasses = {} as UserStorageClasses;
     if (typeof storageClasses === "string") {
         const storageClass = { type: storageClasses, default: true };
         userStorageClasses[storageClasses] = pulumi.output(
