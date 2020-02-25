@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.22 (Released February 24, 2020)
+
+### Improvements
+
 - update(cni): update from v1.5.3 -> v1.6.0
   [#325](https://github.com/pulumi/pulumi-eks/pull/325)
 - fix(storageClasses): fix userStorageClass initialization
