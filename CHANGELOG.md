@@ -1,4 +1,6 @@
 ## Unreleased
+- update cluster creation and deletion default timeouts to be `1hr`
+  [#341](https://github.com/pulumi/pulumi-eks/pull/341)
 
 ### Improvements
 

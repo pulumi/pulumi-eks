@@ -365,6 +365,10 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     }, {
         parent: parent,
         provider: args.creationRoleProvider ? args.creationRoleProvider.provider : undefined,
+        customTimeouts: {
+            create: "1h",
+            delete: "1h",
+        },
     });
 
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
