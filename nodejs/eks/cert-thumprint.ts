@@ -37,15 +37,28 @@ export function getIssuerCAThumbprint(issuerUrl: pulumi.Output<string>): pulumi.
 
 // Thumbprint retrieval below adapted from https://git.io/JvGHB.
 
-// Find the root CA cert in a chain of certs.
-function findCACertificate(certificate: tls.DetailedPeerCertificate): tls.DetailedPeerCertificate {
+// Find the intermediate root CA cert in a chain of certs by traversing the
+// chain starting from the end user cert, and moving up to it's issuer.
+//
+// See for more details: https://knowledge.digicert.com/solution/SO4261.html
+function findIntRootCACertificate(certificate: tls.DetailedPeerCertificate): tls.DetailedPeerCertificate {
     let cert = certificate;
-    for (; cert?.issuerCertificate?.fingerprint !== cert?.fingerprint;) {
+    let prevCert = cert?.issuerCertificate;
+
+    // The trusted root cert is the last cert in the chain, and it repeats itself as the issuer.
+    // The intermediate root CA cert is the second to last cert in the chain.
+    while (cert?.fingerprint !== cert?.issuerCertificate?.fingerprint ) {
+        prevCert = cert;
         cert = cert.issuerCertificate;
     }
-    return cert;
+    return prevCert;
 }
 
+//  See: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
+//  > IAM requires the thumbprint for the root certificate authority (CA) that
+//  > signed the certificate used by the external identity provider (IdP). The
+//  > thumbprint is a signature for the CA's certificate that was used to issue
+//  > the certificate for the OIDC-compatible IdP.
 async function getThumbprint(issuerUrl: string, retriesLeft: number, interval: number): Promise<string> {
     // For up to 60 seconds (12 retries @ 5000 ms), try to contact the issuer URL.
     try {
@@ -61,7 +74,7 @@ async function getThumbprint(issuerUrl: string, retriesLeft: number, interval: n
                 .on("socket", socket => {
                     socket.on("secureConnect", () => {
                         const certificate: tls.DetailedPeerCertificate = socket.getPeerCertificate(true);
-                        const fingerprint = findCACertificate(certificate).fingerprint;
+                        const fingerprint = findIntRootCACertificate(certificate).fingerprint;
                         // Check if certificate is valid
                         if (socket.authorized === false) {
                             req.emit("error", new Error(socket.authorizationError));
