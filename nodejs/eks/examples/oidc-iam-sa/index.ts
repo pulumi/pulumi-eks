@@ -6,39 +6,10 @@ import assert = require("assert");
 
 const projectName = pulumi.getProject();
 
-const managedPolicyArns: string[] = [
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-];
-
-// Creates a role and attaches the EKS worker node IAM managed policies.
-export function createRole(name: string): aws.iam.Role {
-    const role = new aws.iam.Role(name, {
-        assumeRolePolicy: aws.iam.assumeRolePolicyForPrincipal({
-            Service: "ec2.amazonaws.com",
-        }),
-    });
-
-    let counter = 0;
-    for (const policy of managedPolicyArns) {
-        // Create RolePolicyAttachment without returning it.
-        const rpa = new aws.iam.RolePolicyAttachment(`${name}-policy-${counter++}`,
-            { policyArn: policy, role: role },
-        );
-    }
-
-    return role;
-}
-
-// IAM role for the node group.
-const role1 = createRole("example-role1");
-
 // Create an EKS cluster.
 const cluster = new eks.Cluster(`${projectName}`, {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
-    instanceRoles: [role1],
     createOidcProvider: true,
 });
 
@@ -69,13 +40,13 @@ const appsNamespace = new k8s.core.v1.Namespace("apps", undefined, {provider: pr
 export const appsNamespaceName = appsNamespace.metadata.name;
 
 // Create the IAM target policy and role for the Service Account.
-const saName = "s3-readonly";
-const saAssumeRolePolicy = pulumi.all([clusterOidcProviderUrl, clusterOidcProvider.arn]).apply(([url, arn]) => aws.iam.getPolicyDocument({
+const saName = "s3";
+const saAssumeRolePolicy = pulumi.all([clusterOidcProviderUrl, clusterOidcProvider.arn, appsNamespaceName]).apply(([url, arn, namespace]) => aws.iam.getPolicyDocument({
     statements: [{
         actions: ["sts:AssumeRoleWithWebIdentity"],
         conditions: [{
             test: "StringEquals",
-            values: [`system:serviceaccount:${appsNamespaceName}:${saName}`],
+            values: [`system:serviceaccount:${namespace}:${saName}`],
             variable: `${url.replace("https://", "")}:sub`,
         }],
         effect: "Allow",
@@ -92,7 +63,7 @@ const saRole = new aws.iam.Role(saName, {
 
 // Attach the S3 read only access policy.
 const saS3Rpa = new aws.iam.RolePolicyAttachment(saName, {
-    policyArn: "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+    policyArn: "arn:aws:iam::aws:policy/AmazonS3FullAccess",
     role: saRole,
 });
 
@@ -122,10 +93,7 @@ const pod = new k8s.core.v1.Pod(saName,
                 },
             ],
         },
-    },
-    {
-        provider: provider,
-    },
+    }, {provider: provider},
 );
 
 // (For testing only): Assert that the Service Account's IAM role and token are projected into the Pod.
@@ -140,3 +108,39 @@ if (!pulumi.runtime.isDryRun()) {
         }
     });
 }
+
+// (For testing only): Assert that an S3 Job succeeds.
+// Per: https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts
+const bucket = new aws.s3.Bucket("pod-irsa-job-bucket", {
+    forceDestroy: true,
+});
+const bucketName = bucket.id;
+const regionName = aws.getRegion().name;
+const jobName = `${saName}-job`;
+const s3Job = pulumi.all([bucketName, regionName]).apply(([bName, region]) => {
+    return new k8s.batch.v1.Job(jobName,
+        {
+            metadata: {labels: labels, namespace: appsNamespaceName},
+            spec: {
+                template: {
+                    spec: {
+                        serviceAccountName: sa.metadata.name,
+                        restartPolicy: "Never",
+                        containers: [
+                            {
+                                name: jobName,
+                                image: "amazonlinux:2018.03",
+                                command: ["sh", "-c",
+                                    `curl -sL -o /s3-echoer https://github.com/mhausenblas/s3-echoer/releases/latest/download/s3-echoer-linux && chmod +x /s3-echoer && echo This is an in-cluster test | /s3-echoer ${bName}`],
+                                env: [
+                                    {name: "AWS_DEFAULT_REGION", value: `${region}`},
+                                    {name: "ENABLE_IRP", value: "true"},
+                                ],
+                            },
+                        ],
+                    },
+                },
+            },
+        }, { provider: provider },
+    );
+});
