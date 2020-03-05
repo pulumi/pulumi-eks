@@ -8,20 +8,12 @@ const projectName = pulumi.getProject();
 
 // Create an EKS cluster.
 const cluster = new eks.Cluster(`${projectName}`, {
-    skipDefaultNodeGroup: true,
     deployDashboard: false,
     createOidcProvider: true,
 });
 
 // Export the cluster's kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
-
-// Create a simple AWS managed node group using a cluster as input.
-const managedNodeGroup1 = eks.createManagedNodeGroup("example-managed-ng1", {
-    cluster: cluster,
-    nodeRole: role1,
-    version: "1.14",
-});
 
 // Export the cluster OIDC provider URL.
 if (!cluster?.core?.oidcProvider) {
