@@ -28,7 +28,7 @@ import (
 
 // MaxRetries is the maximum number of retries that a resource will be
 // attempted to be fetched from the Kubernetes API Server.
-const MaxRetries = 20
+const MaxRetries = 40
 
 // RetryInterval is the number of seconds to sleep in between requests
 // to the Kubernetes API Server.
