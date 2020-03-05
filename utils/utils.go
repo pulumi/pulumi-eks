@@ -334,7 +334,10 @@ func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod *corev1.Pod) 
 	if o.Status.Phase == corev1.PodRunning || o.Status.Phase == corev1.PodSucceeded {
 		for _, condition := range o.Status.Conditions {
 			if condition.Type == corev1.PodReady {
-				t.Logf("Checking if Pod %q is Ready | Condition.Status: %q | Condition: %v\n", pod.Name, condition.Status, condition)
+				t.Logf("Checking if Pod %q is Ready | Condition.Status: %q | Condition.Reason: %q | Condition: %v\n", pod.Name, condition.Status, condition.Reason, condition)
+				if o.Status.Phase == corev1.PodSucceeded {
+					return true
+				}
 				return condition.Status == corev1.ConditionTrue
 			}
 		}
