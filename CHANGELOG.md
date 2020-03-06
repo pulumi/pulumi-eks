@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.23 (Released March 5, 2020)
+
+### Improvements
+
 - fix(oidc): use thumbprint of the intermediate root CA
   [#342](https://github.com/pulumi/pulumi-eks/pull/342)
 
