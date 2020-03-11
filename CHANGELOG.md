@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.18.24 (Released March 11, 2020)
+
+### Improvements
+
 - fix(oidc): Fix issue in OIDC getThumbprint helper function
   [#346](https://github.com/pulumi/pulumi-eks/pull/346)
 
