@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- fix(oidc): Fix issue in OIDC getThumbprint helper function
+  [#346](https://github.com/pulumi/pulumi-eks/pull/346)
+
 ## 0.18.23 (Released March 5, 2020)
 
 ### Improvements

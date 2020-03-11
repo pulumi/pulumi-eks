@@ -67,6 +67,9 @@ async function getThumbprint(issuerUrl: string, retriesLeft: number, interval: n
                 hostname: issuerUrl,
                 port: 443,
                 rejectUnauthorized: false,
+                // Cached sessions can result in the certificate not being available since its already been "accepted",
+                // don't allow any for this purpose.
+                agent: new https.Agent({ maxCachedSessions: 0 }),
             };
             const req = https
                 .get(options)
