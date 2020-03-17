@@ -108,30 +108,25 @@ const bucket = new aws.s3.Bucket("pod-irsa-job-bucket", {
 });
 const bucketName = bucket.id;
 const regionName = aws.getRegion().name;
-const jobName = `${saName}-job`;
-const s3Job = pulumi.all([bucketName, regionName]).apply(([bName, region]) => {
-    return new k8s.batch.v1.Job(jobName,
+const podName = `${saName}-pod-test`;
+const s3Pod = pulumi.all([bucketName, regionName]).apply(([bName, region]) => {
+    return new k8s.core.v1.Pod(podName,
         {
             metadata: {labels: labels, namespace: appsNamespaceName},
             spec: {
-                template: {
-                    spec: {
-                        serviceAccountName: sa.metadata.name,
-                        restartPolicy: "Never",
-                        containers: [
-                            {
-                                name: jobName,
-                                image: "amazonlinux:2018.03",
-                                command: ["sh", "-c",
-                                    `curl -sL -o /s3-echoer https://github.com/mhausenblas/s3-echoer/releases/latest/download/s3-echoer-linux && chmod +x /s3-echoer && echo This is an in-cluster test | /s3-echoer ${bName}`],
-                                env: [
-                                    {name: "AWS_DEFAULT_REGION", value: `${region}`},
-                                    {name: "ENABLE_IRP", value: "true"},
-                                ],
-                            },
+                serviceAccountName: sa.metadata.name,
+                containers: [
+                    {
+                        name: podName,
+                        image: "amazonlinux:2018.03",
+                        command: ["sh", "-c",
+                            `curl -sL -o /s3-echoer https://github.com/mhausenblas/s3-echoer/releases/latest/download/s3-echoer-linux && chmod +x /s3-echoer && echo This is an in-cluster test | /s3-echoer ${bName}`],
+                        env: [
+                            {name: "AWS_DEFAULT_REGION", value: `${region}`},
+                            {name: "ENABLE_IRP", value: "true"},
                         ],
                     },
-                },
+                ],
             },
         }, { provider: provider },
     );
