@@ -120,7 +120,7 @@ const s3Pod = pulumi.all([bucketName, regionName]).apply(([bName, region]) => {
                         name: podName,
                         image: "amazonlinux:2018.03",
                         command: ["sh", "-c",
-                            `curl -sL -o /s3-echoer https://github.com/mhausenblas/s3-echoer/releases/latest/download/s3-echoer-linux && chmod +x /s3-echoer && echo This is an in-cluster test | /s3-echoer ${bName}`],
+                            `curl -sL -o /s3-echoer https://github.com/mhausenblas/s3-echoer/releases/latest/download/s3-echoer-linux && chmod +x /s3-echoer && echo This is an in-cluster test | /s3-echoer ${bName} && sleep 3600`],
                         env: [
                             {name: "AWS_DEFAULT_REGION", value: `${region}`},
                             {name: "ENABLE_IRP", value: "true"},
