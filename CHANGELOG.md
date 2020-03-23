@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- feat(cluster): add getKubeconfig method to generate scoped kubeconfigs
+  [#356](https://github.com/pulumi/pulumi-eks/pull/356)
+
 ## 0.18.24 (Released March 11, 2020)
 
 ### Improvements
