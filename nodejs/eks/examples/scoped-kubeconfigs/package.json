@@ -1,0 +1,12 @@
+{
+    "name": "scoped-kubeconfigs",
+    "devDependencies": {
+        "typescript": "^3.0.0"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "latest",
+        "@pulumi/aws": "latest",
+        "@pulumi/kubernetes": "latest",
+        "@pulumi/eks": "latest"
+    }
+}

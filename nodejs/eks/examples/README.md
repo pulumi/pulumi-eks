@@ -6,6 +6,7 @@ clusters.
 1. [Default Cluster and a Custom Cluster](./cluster)
 1. [Cluster with AWS Managed NodeGroups](./managed-nodegroups)
 1. [Cluster with NodeGroups (using CloudFormation)](./nodegroup)
+1. [Cluster RBAC: Using AWS Roles and Named Profiles](./scoped-kubeconfigs)
 1. [Cluster with Custom Kubernetes Storage Classes](./storage-classes)
 1. [Cluster with AWS Resource Tags](./tags)
 1. [Cluster with Fargate Managed Nodes](./fargate)
