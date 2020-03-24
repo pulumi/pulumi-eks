@@ -103,7 +103,9 @@ export interface StorageClass {
     volumeBindingMode?: pulumi.Input<string>;
 }
 
-// createStorageClass creates a single StorageClass from the given inputs.
+/**
+ * Creates a single Kubernetes StorageClass from the given inputs.
+ */
 export function createStorageClass(name: string, storageClass: StorageClass, opts: pulumi.CustomResourceOptions): k8s.storage.v1.StorageClass {
     // Compute the storage class's metadata, including its name and default storage class annotation.
     const metadata = pulumi.all([storageClass.metadata || {}, storageClass.default])

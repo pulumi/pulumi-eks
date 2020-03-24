@@ -205,6 +205,9 @@ export interface NodeGroupOptions extends NodeGroupBaseOptions {
     cluster: Cluster | CoreData;
 }
 
+/**
+ * NodeGroupData describes the resources created for the given NodeGroup.
+ */
 export interface NodeGroupData {
     /**
      * The security group for the node group.
@@ -264,6 +267,12 @@ function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
     return (arg as CoreData).cluster !== undefined;
 }
 
+/**
+ * Create a self-managed node group using CloudFormation and an ASG.
+ *
+ * See for more details:
+ * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+ */
 export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
@@ -554,16 +563,17 @@ ${customUserData}
     };
 }
 
-// computeWorkerSubnets attempts to determine the subset of the given subnets to use for worker nodes.
-//
-// As per https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html, an EKS cluster that is attached to public
-// and private subnets will only expose its API service to workers on the private subnets. Any workers attached to the
-// public subnets will be unable to communicate with the API server.
-//
-// If all of the given subnet IDs are public, the list of subnet IDs is returned as-is. If any private subnet is given,
-// only the IDs of the private subnets are returned. A subnet is deemed private iff it has no route in its route table
-// that routes directly to an internet gateway. If any such route exists in a subnet's route table, it is treated as
-// public.
+/** computeWorkerSubnets attempts to determine the subset of the given subnets to use for worker nodes.
+ *
+ * As per https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html, an EKS cluster that is attached to public
+ * and private subnets will only expose its API service to workers on the private subnets. Any workers attached to the
+ * public subnets will be unable to communicate with the API server.
+ *
+ * If all of the given subnet IDs are public, the list of subnet IDs is returned as-is. If any private subnet is given,
+ * only the IDs of the private subnets are returned. A subnet is deemed private iff it has no route in its route table
+ * that routes directly to an internet gateway. If any such route exists in a subnet's route table, it is treated as
+ * public.
+ */
 export async function computeWorkerSubnets(parent: pulumi.Resource, subnetIds: string[]): Promise<string[]> {
     const publicSubnets: string[] = [];
 
@@ -636,7 +646,7 @@ function tagsToAsgTags(tagsInput: InputTags): pulumi.Output<string> {
 
 /**
  * ManagedNodeGroupOptions describes the configuration options accepted by an
- * EKS Managed NodeGroup.
+ * AWS Managed NodeGroup.
  *
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
@@ -701,6 +711,12 @@ export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" 
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>
 };
 
+/**
+ * Create an AWS managed node group.
+ *
+ * See for more details:
+ * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
+ */
 export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent?: pulumi.ComponentResource): aws.eks.NodeGroup {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
     const eksCluster = isCoreData(args.cluster) ? args.cluster.cluster : args.cluster;
