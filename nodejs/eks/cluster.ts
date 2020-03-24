@@ -224,6 +224,9 @@ export function getRoleProvider(name: string, region?: aws.Region, profile?: str
     };
 }
 
+/**
+ * Create the core components and settings required for the EKS cluster.
+ */
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
     // Check to ensure that aws-iam-authenticator is installed, as we'll need it in order to deploy k8s resources
     // to the EKS cluster.
@@ -663,7 +666,7 @@ export interface ClusterOptions {
      */
     publicSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
-    /*
+    /**
      * The set of private subnets to use for the worker node groups on the EKS cluster.
      * These subnets are automatically tagged by EKS for Kubernetes purposes.
      *
@@ -687,7 +690,7 @@ export interface ClusterOptions {
      *
      * Also consider setting `nodeAssociatePublicIpAddress: true` for
      * fully private workers.
-    */
+     */
     privateSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
@@ -1095,7 +1098,12 @@ export class Cluster extends pulumi.ComponentResource {
         this.registerOutputs({ kubeconfig: this.kubeconfig });
     }
 
-    // Create a self-managed node group.
+    /**
+     * Create a self-managed node group using CloudFormation and an ASG.
+     *
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+     */
     createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup {
         return new NodeGroup(name, {
             ...args,

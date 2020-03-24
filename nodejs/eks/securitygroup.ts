@@ -17,6 +17,10 @@ import * as pulumi from "@pulumi/pulumi";
 
 import { InputTags } from "./utils";
 
+/**
+ * NodeGroupSecurityGroupOptions describes the configuration options accepted
+ * by a security group for use with a NodeGroup.
+ */
 export interface NodeGroupSecurityGroupOptions {
     /**
      * The VPC in which to create the worker node group.
