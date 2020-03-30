@@ -163,11 +163,11 @@ function generateKubeconfig(
     clusterEndpoint: pulumi.Input<string>,
     certData: pulumi.Input<string>,
     opts?: KubeconfigOptions) {
-    let args = ["token", "-i", clusterName];
+    let args = ["eks", "get-token", "--cluster-name", clusterName];
     let env: { [key: string]: pulumi.Input<string>} | undefined;
 
     if (opts?.roleArn) {
-        args = [...args, "-r", opts.roleArn];
+        args = [...args, "--role", opts.roleArn];
     }
     if (opts?.profileName) {
         env = {
@@ -199,7 +199,7 @@ function generateKubeconfig(
             user: {
                 exec: {
                     apiVersion: "client.authentication.k8s.io/v1alpha1",
-                    command: "aws-iam-authenticator",
+                    command: "aws",
                     args: args,
                     env: env,
                 },
@@ -278,12 +278,12 @@ export function getRoleProvider(name: string, region?: aws.Region, profile?: str
  * Create the core components and settings required for the EKS cluster.
  */
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
-    // Check to ensure that aws-iam-authenticator is installed, as we'll need it in order to deploy k8s resources
+    // Check to ensure that aws CLI is installed, as we'll need it in order to deploy k8s resources
     // to the EKS cluster.
     try {
-        which.sync("aws-iam-authenticator");
+        which.sync("aws");
     } catch (err) {
-        throw new Error("Could not find aws-iam-authenticator for EKS. See https://github.com/pulumi/eks#installing for installation instructions.");
+        throw new Error("Could not find aws CLI for EKS. See https://github.com/pulumi/pulumi-eks for installation instructions.");
     }
 
     if (args.instanceRole && args.instanceRoles) {
