@@ -37,8 +37,9 @@ This includes:
 1. [Install Pulumi](https://www.pulumi.com/docs/reference/install).
 1. Install [Node.js](https://nodejs.org/en/download).
 1. Install a package manager for Node.js, such as [NPM](https://www.npmjs.com/get-npm) or [Yarn](https://yarnpkg.com/lang/en/docs/install).
-1. [Configure AWS Credentials](https://www.pulumi.com/docs/reference/clouds/aws/setup/).
-1. [Install AWS IAM Authenticator for Kubernetes](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html).
+1. [Install and Configure the AWS CLI](https://www.pulumi.com/docs/reference/clouds/aws/setup/).
+    * Use AWS CLI version >= `1.18.17`.
+    * See the [AWS docs](https://docs.aws.amazon.com/eks/latest/userguide/managing-auth.html) for more details.
 1. [Install `kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl).
 
 ## Installing
