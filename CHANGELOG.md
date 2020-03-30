@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- deps(pulumi): bump node and go pulumi/pulumi to v1.13.1
+  [#361](https://github.com/pulumi/pulumi-eks/pull/361)
 - feat(cluster): add getKubeconfig method to generate scoped kubeconfigs
   [#356](https://github.com/pulumi/pulumi-eks/pull/356)
 
