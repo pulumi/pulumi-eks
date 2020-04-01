@@ -18,11 +18,13 @@ import * as pulumi from "@pulumi/pulumi";
 
 import * as childProcess from "child_process";
 import * as fs from "fs";
+import * as http from "http";
 import * as https from "https";
+import * as HttpsProxyAgent from "https-proxy-agent";
 import * as jsyaml from "js-yaml";
-import fetch from "node-fetch";
 import * as process from "process";
 import * as tmp from "tmp";
+import * as url from "url";
 import * as which from "which";
 
 import { getIssuerCAThumbprint } from "./cert-thumprint";
@@ -426,12 +428,25 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // propagation delay or other non-deterministic factors.
     const endpoint = eksCluster.endpoint.apply(async (clusterEndpoint) => {
         if (!pulumi.runtime.isDryRun()) {
-            // For up to 300 seconds, try to contact the API cluster endpoint and verify that it is reachable.
-            const agent = new https.Agent({ rejectUnauthorized: false });
+            // For up to 300 seconds, try to contact the API cluster healthz
+            // endpoint, and verify that it is reachable.
+            const healthz = `${clusterEndpoint}/healthz`;
+            const agent = createHttpAgent(args.proxy);
             for (let i = 0; i < 60; i++) {
                 try {
-                    const resp = await fetch(clusterEndpoint, { agent });
-                    await resp.json();
+                    await new Promise((resolve, reject) => {
+                        const options = {
+                            ...url.parse(healthz),
+                            rejectUnauthorized: false, // EKS API server uses self-signed cert
+                            agent: agent,
+                        };
+                        const req = https
+                            .request(options, res => {
+                                res.statusCode === 200 ? resolve() : reject(); // Verify healthz returns 200
+                            });
+                        req.on("error", reject);
+                        req.end();
+                    });
                     break;
                 } catch (e) {
                     pulumi.log.info(`Waiting for cluster endpoint (${i + 1})`, eksCluster, undefined, true);
@@ -622,8 +637,12 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // Setup OIDC provider to leverage IAM roles for k8s service accounts.
     let oidcProvider: aws.iam.OpenIdConnectProvider | undefined;
     if (args.createOidcProvider) {
-        const eksOidcProviderUrl = pulumi.interpolate `oidc.eks.${aws.getRegion().name}.amazonaws.com`;
-        const fingerprint = getIssuerCAThumbprint(eksOidcProviderUrl); // Amazon root CA thumbprint
+        // Retrieve the OIDC provider URL's intermediate root CA fingerprint.
+        const eksOidcProviderUrl = pulumi.interpolate `https://oidc.eks.${aws.getRegion().name}.amazonaws.com`;
+        const agent = createHttpAgent(args.proxy);
+        const fingerprint = getIssuerCAThumbprint(eksOidcProviderUrl, agent);
+
+        // Create the OIDC provider for the cluster.
         oidcProvider = new aws.iam.OpenIdConnectProvider(`${name}-oidcProvider`, {
             clientIdLists: ["sts.amazonaws.com"],
             url: eksCluster.identities[0].oidcs[0].issuer,
@@ -663,6 +682,45 @@ function createInstanceRoleMapping(arn: pulumi.Input<string>): RoleMapping {
         username: "system:node:{{EC2PrivateDNSName}}",
         groups: ["system:bootstrappers", "system:nodes"],
     };
+}
+
+/**
+ * Create an HTTP Agent for use with HTTP(S) requests.
+ * Using a proxy is supported.
+ */
+function createHttpAgent(proxy?: string): http.Agent {
+    if (!proxy) {
+        // Attempt to default to the proxy env vars.
+        //
+        // Note: Envars used are a convention that were based on:
+        // - curl: https://curl.haxx.se/docs/manual.html
+        // - wget: https://www.gnu.org/software/wget/manual/html_node/Proxies.html
+        proxy = process.env.HTTPS_PROXY || process.env.https_proxy ||
+            process.env.HTTP_PROXY || process.env.http_proxy;
+    }
+    if (proxy) {
+        /**
+         * Create an HTTP(s) proxy agent with the given options.
+         *
+         * The agent connects to the proxy and issues a HTTP CONNECT
+         * method to the proxy, which connects to the dest.
+         *
+         * Note: CONNECT is not cacheable.
+         *
+         * See for more details:
+         *  - https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT
+         *  - https://www.npmjs.com/package/https-proxy-agent
+         */
+        return HttpsProxyAgent({
+            ...url.parse(proxy),
+            rejectUnauthorized: false, // allow proxy configured with self-signed cert
+        });
+    }
+    return new https.Agent({
+        // Cached sessions can result in the certificate not being
+        // available since its already been "accepted." Disable caching.
+        maxCachedSessions: 0,
+    });
 }
 
 /**
@@ -998,6 +1056,26 @@ export interface ClusterOptions {
      * https://www.pulumi.com/docs/intro/concepts/programming-model/#autonaming
      */
     name?: pulumi.Input<string>;
+
+    /**
+     * The HTTP(S) proxy to use within a proxied environment.
+     *
+     * The proxy is used during cluster creation, and OIDC configuration.
+     *
+     * This is an alternative option to setting the proxy environment variables:
+     * HTTP(S)_PROXY and/or http(s)_proxy.
+     *
+     * This option is required iff the proxy environment variables are not set.
+     *
+     * Format:      <protocol>://<host>:<port>
+     * Auth Format: <protocol>://<username>:<password>@<host>:<port>
+     *
+     * Ex:
+     *   - "http://proxy.example.com:3128"
+     *   - "https://proxy.example.com"
+     *   - "http://username:password@proxy.example.com:3128"
+     */
+    proxy?: string;
 }
 
 /**
