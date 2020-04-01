@@ -12,7 +12,8 @@
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "forceConsistentCasingInFileNames": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "allowSyntheticDefaultImports": true
     },
     "files": [
         "cluster.ts",
