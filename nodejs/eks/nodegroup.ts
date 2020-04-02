@@ -116,12 +116,31 @@ export interface NodeGroupBaseOptions {
     maxSize?: pulumi.Input<number>;
 
     /**
-     * The AMI to use for worker nodes. Defaults to the current value of Amazon EKS - Optimized AMI at time of resource
-     * creation if no value is provided. More information about the AWS eks optimized ami is available at
-     * https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html. Use the information provided by AWS if
-     * you want to build your own AMI.
+     * The AMI ID to use for the worker nodes.
+     *
+     * Defaults to the latest recommended EKS Optimized Linux AMI from the
+     * AWS Systems Manager Parameter Store.
+     *
+     * Note: `amiId` and `gpu` are mutually exclusive.
+     *
+     * See for more details:
+     * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
      */
     amiId?: pulumi.Input<string>;
+
+    /**
+     * Use the latest recommended EKS Optimized Linux AMI with GPU support for
+     * the worker nodes from the AWS Systems Manager Parameter Store.
+     *
+     * Defaults to false.
+     *
+     * Note: `gpu` and `amiId` are mutually exclusive.
+     *
+     * See for more details:
+     * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+     * - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+     */
+    gpu?: pulumi.Input<boolean>;
 
     /**
      * Custom k8s node labels to be attached to each woker node.  Adds the given key/value pairs to the `--node-labels`
@@ -291,6 +310,10 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         throw new Error("nodePublicKey and keyName are mutually exclusive. Choose a single approach");
     }
 
+    if (args.amiId && args.gpu) {
+        throw new Error("amiId and gpu are mutually exclusive.");
+    }
+
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
     const cfnStackDeps: Array<pulumi.Resource> = [];
 
@@ -391,59 +414,16 @@ ${customUserData}
 `;
         });
 
-    let amiId: pulumi.Input<string> = args.amiId!;
-    let ignoreChanges: string[] = [];
-    if (args.amiId === undefined) {
-        const version = pulumi.output(args.version || core.cluster.version);
+    const version = pulumi.output(args.version || core.cluster.version);
+
+    // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+    let amiId: pulumi.Input<string> | undefined = args.amiId;
+    if (!amiId) {
+        const amiType = args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
         amiId = version.apply(v => {
-            const filters: { name: string; values: string[] }[] = [
-                // Filter to target Linux arch
-                {
-                    name: "description",
-                    values: ["*linux*", "*Linux*"],
-                },
-                // Filter to target EKS Nodes
-                {
-                    name: "name",
-                    values: ["amazon-eks-node-*"],
-                },
-                // Filter to target General, non-GPU image class
-                {
-                    name: "manifest-location",
-                    values: ["*amazon-eks-node*"],
-                },
-                // Filter to target architecture
-                {
-                    name: "architecture",
-                    values: ["x86_64"],
-                },
-                // Filter to target a specific k8s version
-                {
-                    name: "description",
-                    values: ["*k8s*" + v + "*"],
-                },
-            ];
-
-            // `602401143452` is the ID assigned to `Amazon` and is required for AMIs that are hosted in AWS default regions
-            // `800184023465` is the owner ID of the creator of the EKS Optimized AMI in ap-east-1
-            // `558608220178` is the owner ID of the creator of the EKS Optimized AMI in me-south-1
-            // It is important to note that neither `800184023465` nor `558608220178` are assigned any IDs in default regions
-            // and `602401143452` is not assigned any AMIs in `ap-east-1` or `me-south-1` regions so this lookup is safe to make
-            // AWS Guide for EKS Optimized AMIs https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
-            const eksWorkerAmiIds = aws.getAmiIds({
-                filters,
-                owners: ["602401143452", "800184023465", "558608220178"],
-                sortAscending: true,
-            }, { parent, async: true });
-
-            const bestAmiId = eksWorkerAmiIds.then(r => r.ids.pop()!);
-            if (!bestAmiId) {
-                throw new Error("No Linux AMI Id was found.");
-            }
-            return bestAmiId;
+            const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
+            return aws.ssm.getParameter({name: parameterName}).value;
         });
-        // When we automatically pick an image to use, we want to ignore any changes to this later by default.
-        ignoreChanges = ["imageId"];
     }
 
     // Enable auto-assignment of public IP addresses on worker nodes for
@@ -468,7 +448,7 @@ ${customUserData}
             deleteOnTermination: true,
         },
         userData: userdata,
-    }, { parent: parent, ignoreChanges: ignoreChanges });
+    }, { parent });
 
     // Compute the worker node group subnets to use from the various approaches.
     let workerSubnetIds: pulumi.Output<string[]>;
