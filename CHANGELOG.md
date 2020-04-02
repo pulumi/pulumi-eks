@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- feat(nodegroup): use the latest recommended AMIs from the SSM store
+  [#366](https://github.com/pulumi/pulumi-eks/pull/366)
 - feat(cluster): support HTTP(S) proxy for cluster readiness & OIDC config
   [#364](https://github.com/pulumi/pulumi-eks/pull/364)
 - deps(pulumi): bump node and go pulumi/pulumi to v1.13.1
