@@ -165,22 +165,35 @@ function createOrGetInstanceProfile(
     return instanceProfile;
 }
 
+
+// ExecEnvVar sets the environment variables using an exec-based auth plugin.
+interface ExecEnvVar {
+    /**
+     * Name of the auth exec environment variable.
+     */
+    name: pulumi.Input<string>;
+
+    /**
+     * Value of the auth exec environment variable.
+     */
+    value: pulumi.Input<string>;
+}
 function generateKubeconfig(
     clusterName: pulumi.Input<string>,
     clusterEndpoint: pulumi.Input<string>,
     certData: pulumi.Input<string>,
     opts?: KubeconfigOptions) {
     let args = ["eks", "get-token", "--cluster-name", clusterName];
-    let env: { [key: string]: pulumi.Input<string>} | undefined;
+    let env: ExecEnvVar[] | undefined;
 
     if (opts?.roleArn) {
         args = [...args, "--role", opts.roleArn];
     }
     if (opts?.profileName) {
-        env = {
+        env = [{
             "name": "AWS_PROFILE",
             "value": opts.profileName,
-        };
+        }];
     }
 
     return {
