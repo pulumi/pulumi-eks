@@ -272,7 +272,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     constructor(name: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:NodeGroup", name, args, opts);
 
-        const group = createNodeGroup(name, args, this);
+        const group = createNodeGroup(name, args, this, opts?.provider);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
         this.cfnStack = group.cfnStack;
         this.autoScalingGroupName = group.autoScalingGroupName;
@@ -292,7 +292,7 @@ function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
  */
-export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource): NodeGroupData {
+export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
     if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
@@ -358,7 +358,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     if (args.nodePublicKey) {
         const key = new aws.ec2.KeyPair(`${name}-keyPair`, {
             publicKey: args.nodePublicKey,
-        }, { parent: parent });
+        }, { parent: parent, provider });
         keyName = key.keyName;
     }
 
@@ -448,7 +448,7 @@ ${customUserData}
             deleteOnTermination: true,
         },
         userData: userdata,
-    }, { parent });
+    }, { parent, provider });
 
     // Compute the worker node group subnets to use from the various approaches.
     let workerSubnetIds: pulumi.Output<string[]>;
@@ -526,7 +526,7 @@ ${customUserData}
             ...cloudFormationTags,
             ...tags,
         })),
-    }, { parent: parent, dependsOn: cfnStackDeps });
+    }, { parent: parent, dependsOn: cfnStackDeps, provider });
 
     let autoScalingGroupName = pulumi.output("");
     cfnStack.outputs.apply(outputs => {
@@ -697,7 +697,7 @@ export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" 
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
  */
-export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent?: pulumi.ComponentResource): aws.eks.NodeGroup {
+export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent?: pulumi.ComponentResource, provider?: pulumi.ProviderResource): aws.eks.NodeGroup {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
     const eksCluster = isCoreData(args.cluster) ? args.cluster.cluster : args.cluster;
 
@@ -783,7 +783,7 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
             };
         }),
         subnetIds: subnetIds,
-    }, { parent: parent ? parent : eksCluster, dependsOn: ngDeps });
+    }, { parent: parent ? parent : eksCluster, dependsOn: ngDeps, provider });
 
     return nodeGroup;
 }

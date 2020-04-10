@@ -48,7 +48,7 @@ export interface NodeGroupSecurityGroupOptions {
  * default ingress & egress rules required to connect and work with the EKS
  * cluster security group.
  */
-export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecurityGroupOptions, parent: pulumi.ComponentResource): [aws.ec2.SecurityGroup, aws.ec2.SecurityGroupRule] {
+export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecurityGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): [aws.ec2.SecurityGroup, aws.ec2.SecurityGroupRule] {
     const nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
         vpcId: args.vpcId,
         revokeRulesOnDelete: true,
@@ -60,7 +60,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
             [`kubernetes.io/cluster/${clusterName}`]: "owned",
             ...tags,
         })),
-    }, { parent: parent });
+    }, { parent: parent, provider });
 
     const nodeIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksNodeIngressRule`, {
         description: "Allow nodes to communicate with each other",
@@ -70,7 +70,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         protocol: "-1", // all
         securityGroupId: nodeSecurityGroup.id,
         self: true,
-    }, { parent: parent });
+    }, { parent: parent, provider });
 
     const nodeClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksNodeClusterIngressRule`, {
         description: "Allow worker Kubelets and pods to receive communication from the cluster control plane",
@@ -80,7 +80,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         protocol: "tcp",
         securityGroupId: nodeSecurityGroup.id,
         sourceSecurityGroupId: args.clusterSecurityGroup.id,
-    }, { parent: parent });
+    }, { parent: parent, provider });
 
     const extApiServerClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksExtApiServerClusterIngressRule`, {
         description: "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
@@ -90,7 +90,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         protocol: "tcp",
         securityGroupId: nodeSecurityGroup.id,
         sourceSecurityGroupId: args.clusterSecurityGroup.id,
-    }, { parent: parent });
+    }, { parent: parent, provider });
 
     const nodeInternetEgressRule = new aws.ec2.SecurityGroupRule(`${name}-eksNodeInternetEgressRule`, {
         description: "Allow internet access.",
@@ -100,7 +100,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         protocol: "-1",  // all
         cidrBlocks: [ "0.0.0.0/0" ],
         securityGroupId: nodeSecurityGroup.id,
-    }, { parent: parent });
+    }, { parent: parent, provider });
 
     const eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterIngressRule`, {
         description: "Allow pods to communicate with the cluster API Server",
@@ -110,7 +110,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         protocol: "tcp",
         securityGroupId: args.clusterSecurityGroup.id,
         sourceSecurityGroupId: nodeSecurityGroup.id,
-    }, { parent: parent });
+    }, { parent: parent, provider });
 
     return [nodeSecurityGroup, eksClusterIngressRule];
 }
