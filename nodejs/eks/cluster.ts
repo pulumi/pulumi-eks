@@ -132,6 +132,7 @@ export interface CoreData {
     provider: k8s.Provider;
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
     nodeGroupOptions: ClusterNodeGroupOptions;
+    awsProvider?: pulumi.ProviderResource;
     publicSubnetIds?: pulumi.Output<string[]>;
     privateSubnetIds?: pulumi.Output<string[]>;
     eksNodeAccess?: k8s.core.v1.ConfigMap;
@@ -144,15 +145,21 @@ export interface CoreData {
     oidcProvider?: aws.iam.OpenIdConnectProvider;
 }
 
-function createOrGetInstanceProfile(name: string, parent: pulumi.ComponentResource, instanceRoleName?: pulumi.Input<aws.iam.Role>, instanceProfileName?: pulumi.Input<string>): aws.iam.InstanceProfile {
+function createOrGetInstanceProfile(
+    name: string,
+    parent: pulumi.ComponentResource,
+    instanceRoleName?: pulumi.Input<aws.iam.Role>,
+    instanceProfileName?: pulumi.Input<string>,
+    provider?: pulumi.ProviderResource,
+): aws.iam.InstanceProfile {
     let instanceProfile: aws.iam.InstanceProfile;
     if (instanceProfileName) {
         instanceProfile = aws.iam.InstanceProfile.get(`${name}-instanceProfile`,
-            instanceProfileName, undefined, { parent: parent });
+            instanceProfileName, undefined, { parent: parent, provider });
     } else {
         instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
             role: instanceRoleName,
-        }, { parent: parent });
+        }, { parent: parent, provider });
     }
 
     return instanceProfile;
@@ -213,7 +220,13 @@ function generateKubeconfig(
  * creationRoleProvider: ... })`.  This can be used to provide a specific role to use for the
  * creation of the EKS cluster different from the role being used to run the Pulumi deployment.
  */
-export function getRoleProvider(name: string, region?: aws.Region, profile?: string, parent?: pulumi.ComponentResource): CreationRoleProvider {
+export function getRoleProvider(
+    name: string,
+    region?: aws.Region,
+    profile?: string,
+    parent?: pulumi.ComponentResource,
+    provider?: pulumi.ProviderResource,
+): CreationRoleProvider {
     const iamRole = new aws.iam.Role(`${name}-eksClusterCreatorRole`, {
         assumeRolePolicy: aws.getCallerIdentity({ parent, async: true }).then(id => `{
             "Version": "2012-10-17",
@@ -229,7 +242,7 @@ export function getRoleProvider(name: string, region?: aws.Region, profile?: str
             }`,
         ),
         description: `Admin access to eks-${name}`,
-    });
+    }, {provider});
 
     // `eks:*` is needed to create/read/update/delete the EKS cluster, `iam:PassRole` is needed to pass the EKS service role to the cluster
     // https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html
@@ -251,10 +264,10 @@ export function getRoleProvider(name: string, region?: aws.Region, profile?: str
             ],
         },
     },
-        { parent: iamRole },
+        { parent: iamRole, provider },
     );
 
-    const provider = new aws.Provider(`${name}-eksClusterCreatorEntity`, {
+    const creatorProvider = new aws.Provider(`${name}-eksClusterCreatorEntity`, {
         region: region,
         profile: profile,
         assumeRole: {
@@ -266,18 +279,18 @@ export function getRoleProvider(name: string, region?: aws.Region, profile?: str
                 return arn;
             }),
         },
-    }, { parent: iamRole });
+    }, { parent: iamRole, provider });
 
     return {
         role: iamRole,
-        provider: provider,
+        provider: creatorProvider,
     };
 }
 
 /**
  * Create the core components and settings required for the EKS cluster.
  */
-export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource): CoreData {
+export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): CoreData {
     // Check to ensure that aws CLI is installed, as we'll need it in order to deploy k8s resources
     // to the EKS cluster.
     try {
@@ -364,7 +377,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
                 "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
             ],
-        }, { parent: parent })).role;
+        }, { parent: parent, provider })).role;
     }
 
     // Create the EKS cluster security group
@@ -383,7 +396,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 ...clusterSecurityGroupTags,
                 ...tags,
             })),
-        }, { parent: parent });
+        }, { parent: parent, provider });
 
         const eksClusterInternetEgressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterInternetEgressRule`, {
             description: "Allow internet access.",
@@ -393,7 +406,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             protocol: "-1",  // all
             cidrBlocks: ["0.0.0.0/0"],
             securityGroupId: eksClusterSecurityGroup.id,
-        }, { parent: parent });
+        }, { parent: parent, provider });
     }
 
     // Create the EKS cluster
@@ -419,7 +432,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         })),
     }, {
         parent: parent,
-        provider: args.creationRoleProvider ? args.creationRoleProvider.provider : undefined,
+        provider: args.creationRoleProvider ? args.creationRoleProvider.provider : provider,
     });
 
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
@@ -478,7 +491,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             return config;
         });
 
-    const provider = new k8s.Provider(`${name}-eks-k8s`, {
+    const k8sProvider = new k8s.Provider(`${name}-eks-k8s`, {
         kubeconfig: kubeconfig.apply(JSON.stringify),
     }, { parent: parent });
 
@@ -488,10 +501,10 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     if (typeof storageClasses === "string") {
         const storageClass = { type: storageClasses, default: true };
         userStorageClasses[storageClasses] = pulumi.output(
-            createStorageClass(`${name.toLowerCase()}-${storageClasses}`, storageClass, { parent: parent, provider: provider }));
+            createStorageClass(`${name.toLowerCase()}-${storageClasses}`, storageClass, { parent: parent, provider: k8sProvider }));
     } else {
         for (const key of Object.keys(storageClasses)) {
-            userStorageClasses[key] = pulumi.output(createStorageClass(`${name.toLowerCase()}-${key}`, storageClasses[key], { parent: parent, provider: provider }));
+            userStorageClasses[key] = pulumi.output(createStorageClass(`${name.toLowerCase()}-${key}`, storageClasses[key], { parent: parent, provider: k8sProvider }));
         }
     }
 
@@ -525,7 +538,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
                 "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
             ],
-        }, { parent: parent })).role;
+        }, { parent: parent, provider })).role;
 
         instanceRoles = pulumi.output([instanceRole]);
 
@@ -535,7 +548,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             const customRolePolicy = new aws.iam.RolePolicy(`${name}-EKSWorkerCustomPolicy`, {
                 role: instanceRole,
                 policy: args.customInstanceRolePolicy,
-            });
+            }, {provider});
         }
 
         // Create an instance profile if using a default node group
@@ -586,7 +599,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             namespace: "kube-system",
         },
         data: nodeAccessData,
-    }, { parent: parent, provider: provider });
+    }, { parent: parent, provider: k8sProvider });
 
     let fargateProfile: aws.eks.FargateProfile | undefined;
     if (args.fargate) {
@@ -596,7 +609,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             managedPolicyArns: [
                 "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
             ],
-        }, { parent: parent })).role.apply(r => r.arn);
+        }, { parent: parent, provider })).role.apply(r => r.arn);
         const selectors = fargate.selectors || [
             // For `fargate: true`, default to including the `default` namespaces and
             // `kube-system` namespaces so that all pods by default run in Fargate.
@@ -608,7 +621,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             podExecutionRoleArn: podExecutionRoleArn,
             selectors: selectors,
             subnetIds: pulumi.output(clusterSubnetIds).apply(subnets => computeWorkerSubnets(parent, subnets)),
-        }, { parent: parent, dependsOn: [eksNodeAccess] });
+        }, { parent: parent, dependsOn: [eksNodeAccess], provider});
 
         // Once the FargateProfile has been created, try to patch CoreDNS if needed.  See
         // https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-coredns.
@@ -650,7 +663,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             clientIdLists: ["sts.amazonaws.com"],
             url: eksCluster.identities[0].oidcs[0].issuer,
             thumbprintLists: [fingerprint],
-        }, { parent: parent });
+        }, { parent: parent, provider });
     }
 
     return {
@@ -663,7 +676,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         endpoint: endpoint,
         nodeGroupOptions: nodeGroupOptions,
         kubeconfig: kubeconfig,
-        provider: provider,
+        provider: k8sProvider,
+        awsProvider: provider,
         vpcCni: vpcCni,
         instanceRoles: instanceRoles,
         eksNodeAccess: eksNodeAccess,
@@ -1140,6 +1154,11 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly kubeconfig: pulumi.Output<any>;
 
     /**
+     * The AWS resource provider.
+     */
+    public readonly awsProvider: pulumi.ProviderResource;
+
+    /**
      * A Kubernetes resource provider that can be used to deploy into this cluster. For example, the code below will
      * create a new Pod in the EKS cluster.
      *
@@ -1198,7 +1217,7 @@ export class Cluster extends pulumi.ComponentResource {
         args = args || {};
 
         // Create the core resources required by the cluster.
-        const core = createCore(name, args, this);
+        const core = createCore(name, args, this, opts?.provider);
         this.core = core;
         this.clusterSecurityGroup = core.clusterSecurityGroup;
         this.eksCluster = core.cluster;
@@ -1258,6 +1277,7 @@ export class Cluster extends pulumi.ComponentResource {
      * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
      */
     createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup {
+        const awsProvider = this.core.awsProvider ? {aws: this.core.awsProvider} : undefined;
         return new NodeGroup(name, {
             ...args,
             cluster: this.core,
@@ -1265,7 +1285,10 @@ export class Cluster extends pulumi.ComponentResource {
             clusterIngressRule: this.core.nodeGroupOptions.clusterIngressRule,
         }, {
             parent: this,
-            providers: { kubernetes: this.provider },
+            providers: {
+                ...awsProvider,
+                kubernetes: this.provider,
+            },
         });
     }
 
