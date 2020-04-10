@@ -23,6 +23,12 @@ install:
     - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
     - sudo mv kubectl /usr/local/bin
+    # Setup default AWS credentials.
+    - aws configure set default.aws_access_key_id $DEFAULT_AWS_ACCESS_KEY_ID
+    - aws configure set default.aws_secret_access_key $DEFAULT_AWS_SECRET_ACCESS_KEY
+    # Setup alternative AWS credentials using an AWS Named Profile for testing.
+    - aws configure set aws_access_key_id $ALT_AWS_ACCESS_KEY_ID --profile $ALT_AWS_PROFILE
+    - aws configure set aws_secret_access_key $ALT_AWS_SECRET_ACCESS_KEY --profile $ALT_AWS_PROFILE
 before_script:
     - ${PULUMI_SCRIPTS}/ci/ensure-dependencies
 script:
