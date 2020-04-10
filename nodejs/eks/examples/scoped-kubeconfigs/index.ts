@@ -86,21 +86,3 @@ const pod = new k8s.core.v1.Pod("nginx", {
         }],
     },
 }, { provider: roleProvider, dependsOn: devsGroupRoleBinding  });
-
-// Create a profile-based kubeconfig.
-const profileName = "my-profile";
-const profileKubeconfigOpts: eks.KubeconfigOptions = { profileName};
-export const profileKubeconfig = cluster.getKubeconfig(profileKubeconfigOpts);
-
-// For testing purposes only: assert that the AWS_PROFILE is set in the
-// kubeconfig's exec args.
-profileKubeconfig.apply(kc => {
-    // Manually parse since the kubeconfig Config api resource [1] is not
-    // a known type.
-    // 1. https://kubernetes.io/docs/reference/access-authn-authz/authentication/#configuration
-    for (const user of JSON.parse(kc).users) {
-        const u = user["user"];
-        assert(u?.exec?.env?.name === "AWS_PROFILE");
-        assert(u?.exec?.env?.value === profileName);
-    }
-});
