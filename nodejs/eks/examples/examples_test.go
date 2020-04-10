@@ -24,10 +24,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/pulumi/pulumi-eks/utils"
 	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAccCluster(t *testing.T) {
@@ -186,10 +185,25 @@ func TestAccOidcIam(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestAccRoleKubeconfig(t *testing.T) {
+func TestAccScopedKubeconfig(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "scoped-kubeconfigs"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccAwsProfile(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "aws-profile"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
