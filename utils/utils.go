@@ -463,7 +463,8 @@ func mapClusterToKubeAccess(kubeconfigs ...interface{}) (clusterKubeAccessMap, e
 		}
 
 		// Parse the kubeconfig user auth exec args for the cluster name.
-		clusterName := kubeAccess.RESTConfig.ExecProvider.Args[2]
+		clusterNameIndex := len(kubeAccess.RESTConfig.ExecProvider.Args) - 1
+		clusterName := kubeAccess.RESTConfig.ExecProvider.Args[clusterNameIndex]
 		clusterToKubeAccess[clusterName] = kubeAccess
 	}
 
