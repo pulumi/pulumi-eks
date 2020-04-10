@@ -86,8 +86,8 @@ export interface CreationRoleProvider {
 }
 
 /**
- * KubeconfigOptions represents the identity and credential options to use
- * when generating a scoped kubeconfig to use with the cluster.
+ * KubeconfigOptions represents the AWS credentials to scope a given kubeconfig
+ * when using a non-default credential chain.
  *
  * The options can be used independently, or additively.
  *
@@ -497,6 +497,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                     const opts: KubeconfigOptions = {roleArn: arn};
                     return generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data, opts);
                 });
+            } else if (args.providerCredentialOpts) {
+                config = generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data, args.providerCredentialOpts);
             } else {
                 config = generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data);
             }
@@ -1126,6 +1128,24 @@ export interface ClusterOptions {
      *   - "http://username:password@proxy.example.com:3128"
      */
     proxy?: string;
+
+    /**
+     * The AWS provider credential options to scope the cluster's kubeconfig
+     * authentication when using a non-default credential chain.
+     *
+     * This is required for certain auth scenarios. For example:
+     * - Creating and using a new AWS provider instance, or
+     * - Setting the AWS_PROFILE environment variable, or
+     * - Using a named profile configured on the AWS provider via:
+     * `pulumi config set aws:profile <profileName>`
+     *
+     * See for more details:
+     * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+     * - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
+     * - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
+     * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
+     */
+    providerCredentialOpts?: KubeconfigOptions;
 }
 
 /**
@@ -1228,6 +1248,20 @@ export class Cluster extends pulumi.ComponentResource {
         super("eks:index:Cluster", name, args, opts);
 
         args = args || {};
+
+        // Check that AWS provider credential options are set for the kubeconfig
+        // to use with the given auth method.
+        if (opts?.provider && !args.providerCredentialOpts) {
+            throw new Error("providerCredentialOpts and an AWS provider instance must be set together");
+        }
+        if (process.env.AWS_PROFILE && !args.providerCredentialOpts) {
+            throw new Error("providerCredentialOpts and AWS_PROFILE must be set together");
+        }
+        const awsConfig = new pulumi.Config("aws");
+        const awsProfile = awsConfig.get("profile");
+        if (awsProfile && !args.providerCredentialOpts) {
+            throw new Error("providerCredentialOpts and AWS config setting aws:profile must be set together");
+        }
 
         // Create the core resources required by the cluster.
         const core = createCore(name, args, this, opts?.provider);
