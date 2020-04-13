@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(aws): rm sync invokes for AWS data source calls
+  [#373](https://github.com/pulumi/pulumi-eks/pull/373)
 - refactor(aws-auth): replace aws-iam-authenticator with aws eks get-token
   [#362](https://github.com/pulumi/pulumi-eks/pull/362)
   **Note:** for existing clusters, this change will recompute the kubeconfig used,
