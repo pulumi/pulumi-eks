@@ -640,7 +640,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     let oidcProvider: aws.iam.OpenIdConnectProvider | undefined;
     if (args.createOidcProvider) {
         // Retrieve the OIDC provider URL's intermediate root CA fingerprint.
-        const eksOidcProviderUrl = pulumi.interpolate `https://oidc.eks.${aws.getRegion().name}.amazonaws.com`;
+        const awsRegionName = pulumi.output(aws.getRegion({}, {parent, async: true })).apply(r => r.name);
+        const eksOidcProviderUrl = pulumi.interpolate `https://oidc.eks.${awsRegionName}.amazonaws.com`;
         const agent = createHttpAgent(args.proxy);
         const fingerprint = getIssuerCAThumbprint(eksOidcProviderUrl, agent);
 

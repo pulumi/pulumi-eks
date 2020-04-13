@@ -422,7 +422,7 @@ ${customUserData}
         const amiType = args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
         amiId = version.apply(v => {
             const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
-            return aws.ssm.getParameter({name: parameterName}).value;
+            return pulumi.output(aws.ssm.getParameter({name: parameterName}, {parent, async: true})).apply(pv => pv.value);
         });
     }
 
