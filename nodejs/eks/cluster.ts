@@ -242,7 +242,7 @@ export function getRoleProvider(
             }`,
         ),
         description: `Admin access to eks-${name}`,
-    }, {provider});
+    }, {parent, provider});
 
     // `eks:*` is needed to create/read/update/delete the EKS cluster, `iam:PassRole` is needed to pass the EKS service role to the cluster
     // https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html
@@ -548,7 +548,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             const customRolePolicy = new aws.iam.RolePolicy(`${name}-EKSWorkerCustomPolicy`, {
                 role: instanceRole,
                 policy: args.customInstanceRolePolicy,
-            }, {provider});
+            }, {parent, provider});
         }
 
         // Create an instance profile if using a default node group
