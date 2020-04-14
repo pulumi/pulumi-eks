@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- Update node & go pulumi deps to 2.0
+  [#375](https://github.com/pulumi/pulumi-eks/pull/375)
 - fix(aws): rm sync invokes for AWS data source calls
   [#373](https://github.com/pulumi/pulumi-eks/pull/373)
 - refactor(aws-auth): replace aws-iam-authenticator with aws eks get-token
