@@ -358,11 +358,11 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     if (args.nodePublicKey) {
         const key = new aws.ec2.KeyPair(`${name}-keyPair`, {
             publicKey: args.nodePublicKey,
-        }, { parent: parent, provider });
+        }, { parent, provider });
         keyName = key.keyName;
     }
 
-    const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent: parent });
+    const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent });
 
     const awsRegion = pulumi.output(aws.getRegion({}, { parent, async: true }));
     const userDataArg = args.nodeUserData || pulumi.output("");
@@ -526,7 +526,7 @@ ${customUserData}
             ...cloudFormationTags,
             ...tags,
         })),
-    }, { parent: parent, dependsOn: cfnStackDeps, provider });
+    }, { parent, dependsOn: cfnStackDeps, provider });
 
     let autoScalingGroupName = pulumi.output("");
     cfnStack.outputs.apply(outputs => {
@@ -783,7 +783,7 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
             };
         }),
         subnetIds: subnetIds,
-    }, { parent: parent ? parent : eksCluster, dependsOn: ngDeps, provider });
+    }, { parent: parent ?? eksCluster, dependsOn: ngDeps, provider });
 
     return nodeGroup;
 }

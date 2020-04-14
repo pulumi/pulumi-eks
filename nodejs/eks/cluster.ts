@@ -155,11 +155,11 @@ function createOrGetInstanceProfile(
     let instanceProfile: aws.iam.InstanceProfile;
     if (instanceProfileName) {
         instanceProfile = aws.iam.InstanceProfile.get(`${name}-instanceProfile`,
-            instanceProfileName, undefined, { parent: parent, provider });
+            instanceProfileName, undefined, { parent, provider });
     } else {
         instanceProfile = new aws.iam.InstanceProfile(`${name}-instanceProfile`, {
             role: instanceRoleName,
-        }, { parent: parent, provider });
+        }, { parent, provider });
     }
 
     return instanceProfile;
@@ -377,7 +377,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
                 "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
             ],
-        }, { parent: parent, provider })).role;
+        }, { parent, provider })).role;
     }
 
     // Create the EKS cluster security group
@@ -396,7 +396,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 ...clusterSecurityGroupTags,
                 ...tags,
             })),
-        }, { parent: parent, provider });
+        }, { parent, provider });
 
         const eksClusterInternetEgressRule = new aws.ec2.SecurityGroupRule(`${name}-eksClusterInternetEgressRule`, {
             description: "Allow internet access.",
@@ -406,7 +406,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             protocol: "-1",  // all
             cidrBlocks: ["0.0.0.0/0"],
             securityGroupId: eksClusterSecurityGroup.id,
-        }, { parent: parent, provider });
+        }, { parent, provider });
     }
 
     // Create the EKS cluster
@@ -431,7 +431,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             ...tags,
         })),
     }, {
-        parent: parent,
+        parent,
         provider: args.creationRoleProvider ? args.creationRoleProvider.provider : provider,
     });
 
@@ -493,7 +493,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     const k8sProvider = new k8s.Provider(`${name}-eks-k8s`, {
         kubeconfig: kubeconfig.apply(JSON.stringify),
-    }, { parent: parent });
+    }, { parent });
 
     // Add any requested StorageClasses.
     const storageClasses = args.storageClasses || {};
@@ -501,17 +501,17 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     if (typeof storageClasses === "string") {
         const storageClass = { type: storageClasses, default: true };
         userStorageClasses[storageClasses] = pulumi.output(
-            createStorageClass(`${name.toLowerCase()}-${storageClasses}`, storageClass, { parent: parent, provider: k8sProvider }));
+            createStorageClass(`${name.toLowerCase()}-${storageClasses}`, storageClass, { parent, provider: k8sProvider }));
     } else {
         for (const key of Object.keys(storageClasses)) {
-            userStorageClasses[key] = pulumi.output(createStorageClass(`${name.toLowerCase()}-${key}`, storageClasses[key], { parent: parent, provider: k8sProvider }));
+            userStorageClasses[key] = pulumi.output(createStorageClass(`${name.toLowerCase()}-${key}`, storageClasses[key], { parent, provider: k8sProvider }));
         }
     }
 
     const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
 
     // Create the VPC CNI management resource.
-    const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent: parent });
+    const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent });
 
     let instanceRoleMappings: pulumi.Output<RoleMapping[]>;
     let instanceRoles: pulumi.Output<aws.iam.Role[]>;
@@ -538,7 +538,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                 "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
                 "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
             ],
-        }, { parent: parent, provider })).role;
+        }, { parent, provider })).role;
 
         instanceRoles = pulumi.output([instanceRole]);
 
@@ -599,7 +599,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             namespace: "kube-system",
         },
         data: nodeAccessData,
-    }, { parent: parent, provider: k8sProvider });
+    }, { parent, provider: k8sProvider });
 
     let fargateProfile: aws.eks.FargateProfile | undefined;
     if (args.fargate) {
@@ -609,7 +609,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             managedPolicyArns: [
                 "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
             ],
-        }, { parent: parent, provider })).role.apply(r => r.arn);
+        }, { parent, provider })).role.apply(r => r.arn);
         const selectors = fargate.selectors || [
             // For `fargate: true`, default to including the `default` namespaces and
             // `kube-system` namespaces so that all pods by default run in Fargate.
@@ -621,7 +621,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             podExecutionRoleArn: podExecutionRoleArn,
             selectors: selectors,
             subnetIds: pulumi.output(clusterSubnetIds).apply(subnets => computeWorkerSubnets(parent, subnets)),
-        }, { parent: parent, dependsOn: [eksNodeAccess], provider});
+        }, { parent, dependsOn: [eksNodeAccess], provider});
 
         // Once the FargateProfile has been created, try to patch CoreDNS if needed.  See
         // https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-coredns.
@@ -663,7 +663,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             clientIdLists: ["sts.amazonaws.com"],
             url: eksCluster.identities[0].oidcs[0].issuer,
             thumbprintLists: [fingerprint],
-        }, { parent: parent, provider });
+        }, { parent, provider });
     }
 
     return {
