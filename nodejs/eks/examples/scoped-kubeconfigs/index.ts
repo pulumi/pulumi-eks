@@ -5,24 +5,24 @@ import * as pulumi from "@pulumi/pulumi";
 import assert = require("assert");
 
 const projectName = pulumi.getProject();
-const current = aws.getCallerIdentity();
-const accountId = current.accountId;
+const accountId = pulumi.output(aws.getCallerIdentity({async: true})).accountId;
+const rolePolicy = accountId.apply(id => <aws.iam.PolicyDocument>{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {"AWS": id},
+            "Action": "sts:AssumeRole",
+        },
+    ],
+});
 
 // Create a new IAM role for devs on the account caller.
 const devsGroupName = "pulumi:devs"; // Can be any value.
 const devsAlice = "pulumi:alice"; // Can be any value.
 const devsRole = new aws.iam.Role(`${projectName}`, {
-    assumeRolePolicy: {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "",
-                "Effect": "Allow",
-                "Principal": {"AWS": `${accountId}`},
-                "Action": "sts:AssumeRole",
-            },
-        ],
-    },
+    assumeRolePolicy: rolePolicy,
 });
 
 // Create an EKS cluster with a role mapping from the devs IAM role to the
