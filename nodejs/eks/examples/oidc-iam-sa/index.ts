@@ -107,7 +107,7 @@ const bucket = new aws.s3.Bucket("pod-irsa-job-bucket", {
     forceDestroy: true,
 });
 const bucketName = bucket.id;
-const regionName = aws.getRegion().name;
+const regionName = pulumi.output(aws.getRegion({}, {async: true})).name;
 const podName = `${saName}-pod-test`;
 const s3Pod = pulumi.all([bucketName, regionName]).apply(([bName, region]) => {
     return new k8s.core.v1.Pod(podName,
