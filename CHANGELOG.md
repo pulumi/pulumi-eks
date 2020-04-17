@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(dashboard): disable dashboard from deploying if not set
+  [#378](https://github.com/pulumi/pulumi-eks/pull/378)
 - fix(cluster): use scoped kubeconfig with non-default AWS credentials
   [#367](https://github.com/pulumi/pulumi-eks/pull/367)
 - Update node & go pulumi deps to 2.0
