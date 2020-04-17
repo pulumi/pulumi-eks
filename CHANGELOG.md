@@ -2,16 +2,18 @@
 
 ### Improvements
 
+- fix(cluster): use scoped kubeconfig with non-default AWS credentials
+  [#367](https://github.com/pulumi/pulumi-eks/pull/367)
 - Update node & go pulumi deps to 2.0
   [#375](https://github.com/pulumi/pulumi-eks/pull/375)
 - fix(aws): rm sync invokes for AWS data source calls
   [#373](https://github.com/pulumi/pulumi-eks/pull/373)
 - refactor(aws-auth): replace aws-iam-authenticator with aws eks get-token
   [#362](https://github.com/pulumi/pulumi-eks/pull/362)
-  **Note:** for existing clusters, this change will recompute the kubeconfig used,
-  as its auth arguments and settings get updated to work with `aws eks get-token`.
-  It should not affect cluster access or cause replacements of existing k8s
-  resources.
+    - **Note:** for existing clusters, this change will recompute the kubeconfig
+    used, as its auth arguments and settings get updated to work with
+    `aws eks get-token`. It should not affect cluster access or cause
+    replacements of existing k8s resources.
 - feat(nodegroup): use the latest recommended AMIs from the SSM store
   [#366](https://github.com/pulumi/pulumi-eks/pull/366)
 - feat(cluster): support HTTP(S) proxy for cluster readiness & OIDC config
