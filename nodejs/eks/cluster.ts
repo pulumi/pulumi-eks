@@ -1309,7 +1309,7 @@ export class Cluster extends pulumi.ComponentResource {
         }, { parent: this });
 
         // If we need to deploy the Kubernetes dashboard, do so now.
-        if (args.deployDashboard === undefined || args.deployDashboard) {
+        if (args.deployDashboard) {
             pulumi.log.warn("Option `deployDashboard` has been deprecated. Please consider using the Helm chart, or writing the dashboard directly in Pulumi.", this.eksCluster);
             createDashboard(name, {}, this, this.provider);
         }
