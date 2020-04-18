@@ -2,6 +2,11 @@
 
 ### Improvements
 
+## 0.19.0 (Released April 20, 2020)
+
+**For a more detailed list of the changes introduced in this release, please
+visit [#381](https://github.com/pulumi/pulumi-eks/pull/381).**
+
 - fix(dashboard): disable dashboard from deploying if not set
   [#378](https://github.com/pulumi/pulumi-eks/pull/378)
 - fix(cluster): use scoped kubeconfig with non-default AWS credentials
