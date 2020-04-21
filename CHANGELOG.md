@@ -24,7 +24,7 @@ visit [#381](https://github.com/pulumi/pulumi-eks/pull/381).**
 - feat(nodegroup): use the latest recommended AMIs from the SSM store
   [#366](https://github.com/pulumi/pulumi-eks/pull/366)
 - feat(cluster): support HTTP(S) proxy for cluster readiness & OIDC config
-  [#364](https://github.com/pulumi/pulumi-eks/pull/364)
+  [#365](https://github.com/pulumi/pulumi-eks/pull/365)
 - deps(pulumi): bump node and go pulumi/pulumi to v1.13.1
   [#361](https://github.com/pulumi/pulumi-eks/pull/361)
 - feat(cluster): add getKubeconfig method to generate scoped kubeconfigs
