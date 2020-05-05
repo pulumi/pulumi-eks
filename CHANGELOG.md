@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- feat(cluster): add encryptionConfigKeyArn opt to encrypt k8s Secrets
+  [#389](https://github.com/pulumi/pulumi-eks/pull/389)
+
 ## 0.19.0 (Released April 20, 2020)
 
 **For a more detailed list of the changes introduced in this release, please
