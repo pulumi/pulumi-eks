@@ -215,6 +215,24 @@ func TestAccAwsProfile(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccEncryptionProvider(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "encryption-provider"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccCluster_withUpdate(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")

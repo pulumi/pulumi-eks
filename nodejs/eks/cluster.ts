@@ -143,6 +143,7 @@ export interface CoreData {
     nodeSecurityGroupTags?: InputTags;
     fargateProfile?: aws.eks.FargateProfile;
     oidcProvider?: aws.iam.OpenIdConnectProvider;
+    encryptionConfig?: pulumi.Output<aws.types.output.eks.ClusterEncryptionConfig>;
 }
 
 function createOrGetInstanceProfile(
@@ -422,6 +423,20 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         }, { parent, provider });
     }
 
+    // Create the cluster encryption provider for using envelope encryption on
+    // Kubernetes secrets.
+    let encryptionProvider: pulumi.Output<aws.types.output.eks.ClusterEncryptionConfigProvider> | undefined;
+    let encryptionConfig: pulumi.Output<aws.types.output.eks.ClusterEncryptionConfig> | undefined;
+    if (args.encryptionConfigKeyArn) {
+        encryptionProvider = pulumi.output(args.encryptionConfigKeyArn).apply(
+            keyArn => <aws.types.output.eks.ClusterEncryptionConfigProvider>({keyArn}),
+        );
+        encryptionConfig = encryptionProvider.apply(ep => (<aws.types.output.eks.ClusterEncryptionConfig>{
+            provider: ep,
+            resources: ["secrets"],     // Only valid values are: "secrets"
+        }));
+    }
+
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
         name: args.name,
@@ -443,6 +458,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             ...clusterTags,
             ...tags,
         })),
+        encryptionConfig,
     }, {
         parent,
         provider: args.creationRoleProvider ? args.creationRoleProvider.provider : provider,
@@ -701,6 +717,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         storageClasses: userStorageClasses,
         fargateProfile: fargateProfile,
         oidcProvider: oidcProvider,
+        encryptionConfig: encryptionConfig,
     };
 }
 
@@ -1146,6 +1163,15 @@ export interface ClusterOptions {
      * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
      */
     providerCredentialOpts?: KubeconfigOptions;
+
+    /**
+     * KMS Key ARN to use with the encryption configuration for the cluster.
+     *
+     * Only available on Kubernetes 1.13+ clusters created after March 6, 2020.
+     * See for more details:
+     * - https://aws.amazon.com/about-aws/whats-new/2020/03/amazon-eks-adds-envelope-encryption-for-secrets-with-aws-kms/
+     */
+    encryptionConfigKeyArn?: pulumi.Input<string>;
 }
 
 /**
