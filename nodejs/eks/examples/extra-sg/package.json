@@ -1,0 +1,11 @@
+{
+    "name": "extra-sg",
+    "devDependencies": {
+        "typescript": "^3.0.0"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "^2.0.0",
+        "@pulumi/aws": "^2.0.0",
+        "@pulumi/eks": "latest"
+    }
+}
