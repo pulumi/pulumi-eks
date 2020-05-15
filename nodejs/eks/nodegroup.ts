@@ -64,7 +64,12 @@ export interface NodeGroupBaseOptions {
     spotPrice?: pulumi.Input<string>;
 
     /**
-     * The security group to use for all nodes in this worker node group.
+     * The security group for the worker node group to communicate with the cluster.
+     *
+     * This security group requires specific inbound and outbound rules.
+     *
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
      *
      * Note: The `nodeSecurityGroup` option and the cluster option
      * `nodeSecurityGroupTags` are mutually exclusive.
@@ -75,6 +80,14 @@ export interface NodeGroupBaseOptions {
      * The ingress rule that gives node group access.
      */
     clusterIngressRule?: aws.ec2.SecurityGroupRule;
+
+    /**
+     * Extra security groups to attach on all nodes in this worker node group.
+     *
+     * This additional set of security groups captures any user application rules
+     * that will be needed for the nodes.
+     */
+    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
 
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
@@ -229,7 +242,7 @@ export interface NodeGroupOptions extends NodeGroupBaseOptions {
  */
 export interface NodeGroupData {
     /**
-     * The security group for the node group.
+     * The security group for the node group to communicate with the cluster.
      */
     nodeSecurityGroup: aws.ec2.SecurityGroup;
     /**
@@ -240,6 +253,10 @@ export interface NodeGroupData {
      * The AutoScalingGroup name for the node group.
      */
     autoScalingGroupName: pulumi.Output<string>;
+    /**
+     * The additional security groups for the node group that captures user-specific rules.
+     */
+    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
 }
 
 /**
@@ -247,9 +264,13 @@ export interface NodeGroupData {
  */
 export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData {
     /**
-     * The security group for the cluster's nodes.
+     * The security group for the node group to communicate with the cluster.
      */
     public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
+    /**
+     * The additional security groups for the node group that captures user-specific rules.
+     */
+    public readonly extraNodeSecurityGroups: aws.ec2.SecurityGroup[];
 
     /**
      * The CloudFormation Stack which defines the Node AutoScalingGroup.
@@ -353,6 +374,9 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     const nodeSecurityGroupId = pulumi.all([nodeSecurityGroup.id, eksClusterIngressRule.id])
         .apply(([id]) => id);
 
+    // Collect the IDs of any extra, user-specific security groups.
+    const extraNodeSecurityGroupIds = args.extraNodeSecurityGroups ? args.extraNodeSecurityGroups.map(sg => sg.id): [];
+
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
     let keyName = args.keyName;
     if (args.nodePublicKey) {
@@ -440,7 +464,7 @@ ${customUserData}
         instanceType: args.instanceType || "t2.medium",
         iamInstanceProfile: args.instanceProfile || core.nodeGroupOptions.instanceProfile,
         keyName: keyName,
-        securityGroups: [nodeSecurityGroupId],
+        securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         spotPrice: args.spotPrice,
         rootBlockDevice: {
             volumeSize: args.nodeRootVolumeSize || 20, // GiB
@@ -540,6 +564,7 @@ ${customUserData}
         nodeSecurityGroup: nodeSecurityGroup,
         cfnStack: cfnStack,
         autoScalingGroupName: autoScalingGroupName,
+        extraNodeSecurityGroups: args.extraNodeSecurityGroups,
     };
 }
 

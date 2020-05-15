@@ -6,6 +6,7 @@ clusters.
 1. [Default Cluster and a Custom Cluster](./cluster)
 1. [Cluster with AWS Managed NodeGroups](./managed-nodegroups)
 1. [Cluster with NodeGroups (using CloudFormation)](./nodegroup)
+1. [Cluster with NodeGroups and Security Groups](./extra-sg)
 1. [Cluster RBAC: Using an AWS Role](./scoped-kubeconfigs)
 1. [Cluster RBAC: Using an AWS Named Profile and Provider](./aws-profile)
 1. [Cluster with Custom Kubernetes Storage Classes](./storage-classes)
