@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.19.1 (Released May 19, 2020)
+
+### Improvements
+
 - feat(nodegroup): add opt to attach extra security groups
   [#390](https://github.com/pulumi/pulumi-eks/pull/290)
 - feat(cluster): add encryptionConfigKeyArn opt to encrypt k8s Secrets
