@@ -2,6 +2,12 @@
 
 ### Improvements
 
+## 0.19.2 (Released May 20, 2020)
+
+### Improvements
+
+- Cutting new release to include missing generated API docs from v0.19.1
+
 ## 0.19.1 (Released May 19, 2020)
 
 ### Improvements
