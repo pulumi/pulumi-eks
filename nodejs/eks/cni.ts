@@ -104,6 +104,14 @@ export interface VpcCniOptions {
      * Defaults to 9001.
      */
     eniMtu?: pulumi.Input<number>;
+    /*
+     * Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes
+     * This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
+     * Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
+     *
+     * Defaults to the official AWS CNI image in ECR.
+     */
+    eniConfigLabelDef?: pulumi.Input<string>;
 }
 
 interface VpcCniInputs {
@@ -118,6 +126,7 @@ interface VpcCniInputs {
     image?: string;
     vethPrefix?: string;
     eniMtu?: number;
+    eniConfigLabelDef?: string;
 }
 
 function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
@@ -163,6 +172,9 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     }
     if (args.image) {
         daemonSet.spec.template.spec.containers[0].image = args.image.toString();
+    }
+    if (args.eniConfigLabelDef) {
+        env.push({name: "ENI_CONFIG_LABEL_DEF", value: args.eniConfigLabelDef.toString()});
     }
     // Return the computed YAML.
     return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
@@ -225,6 +237,7 @@ export class VpcCni extends pulumi.dynamic.Resource {
             logLevel: args.logLevel,
             logFile: args.logFile,
             image: args.image,
+            eniConfigLabelDef: args.eniConfigLabelDef,
         }, opts);
     }
 }

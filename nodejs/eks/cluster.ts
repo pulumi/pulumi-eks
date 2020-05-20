@@ -322,10 +322,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     }
 
     if (args.nodeGroupOptions && (
-        args.nodeSubnetIds ||
         args.nodeAssociatePublicIpAddress ||
         args.instanceType ||
-        args.instanceProfileName ||
         args.nodePublicKey ||
         args.nodeRootVolumeSize ||
         args.nodeUserData ||
