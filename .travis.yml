@@ -11,11 +11,6 @@ before_install:
     - source ${PULUMI_SCRIPTS}/ci/keep-failed-tests.sh
 install:
     - source ${PULUMI_SCRIPTS}/ci/install-common-toolchain.sh
-    # Install aws-iam-authenticator
-    # See: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
-    - curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/aws-iam-authenticator
-    - chmod +x ./aws-iam-authenticator
-    - sudo mv aws-iam-authenticator /usr/local/bin
     # Install Pulumi
     - curl -L https://get.pulumi.com/ | bash
     - export PATH=$HOME/.pulumi/bin:$PATH
@@ -23,6 +18,12 @@ install:
     - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
     - sudo mv kubectl /usr/local/bin
+    # Setup default AWS credentials.
+    - aws configure set default.aws_access_key_id $DEFAULT_AWS_ACCESS_KEY_ID
+    - aws configure set default.aws_secret_access_key $DEFAULT_AWS_SECRET_ACCESS_KEY
+    # Setup alternative AWS credentials using an AWS Named Profile for testing.
+    - aws configure set aws_access_key_id $ALT_AWS_ACCESS_KEY_ID --profile $ALT_AWS_PROFILE
+    - aws configure set aws_secret_access_key $ALT_AWS_SECRET_ACCESS_KEY --profile $ALT_AWS_PROFILE
 before_script:
     - ${PULUMI_SCRIPTS}/ci/ensure-dependencies
 script:

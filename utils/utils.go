@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pulumi/pulumi/pkg/apitype"
+	"github.com/pulumi/pulumi/sdk/v2/go/common/apitype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
@@ -463,7 +463,8 @@ func mapClusterToKubeAccess(kubeconfigs ...interface{}) (clusterKubeAccessMap, e
 		}
 
 		// Parse the kubeconfig user auth exec args for the cluster name.
-		clusterName := kubeAccess.RESTConfig.ExecProvider.Args[2]
+		clusterNameIndex := len(kubeAccess.RESTConfig.ExecProvider.Args) - 1
+		clusterName := kubeAccess.RESTConfig.ExecProvider.Args[clusterNameIndex]
 		clusterToKubeAccess[clusterName] = kubeAccess
 	}
 

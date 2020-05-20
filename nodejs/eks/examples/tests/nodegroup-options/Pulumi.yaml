@@ -1,0 +1,3 @@
+name: test-nodegroup-options
+description: Tests nodegroup options
+runtime: nodejs

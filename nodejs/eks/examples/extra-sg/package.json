@@ -1,13 +1,11 @@
 {
-    "name": "test-tag-input-types",
+    "name": "extra-sg",
     "devDependencies": {
-        "typescript": "^3.0.0",
-        "@types/node": "latest"
+        "typescript": "^3.0.0"
     },
     "dependencies": {
         "@pulumi/pulumi": "^2.0.0",
         "@pulumi/aws": "^2.0.0",
-        "@pulumi/awsx": "^0.19.3",
         "@pulumi/eks": "latest"
     }
 }

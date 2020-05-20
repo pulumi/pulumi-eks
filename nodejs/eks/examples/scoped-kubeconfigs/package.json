@@ -1,13 +1,12 @@
 {
-    "name": "test-tag-input-types",
+    "name": "scoped-kubeconfigs",
     "devDependencies": {
-        "typescript": "^3.0.0",
-        "@types/node": "latest"
+        "typescript": "^3.0.0"
     },
     "dependencies": {
         "@pulumi/pulumi": "^2.0.0",
         "@pulumi/aws": "^2.0.0",
-        "@pulumi/awsx": "^0.19.3",
+        "@pulumi/kubernetes": "^2.0.0",
         "@pulumi/eks": "latest"
     }
 }

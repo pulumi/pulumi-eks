@@ -2,6 +2,49 @@
 
 ### Improvements
 
+## 0.19.2 (Released May 20, 2020)
+
+### Improvements
+
+- Cutting new release to include missing generated API docs from v0.19.1
+
+## 0.19.1 (Released May 19, 2020)
+
+### Improvements
+
+- feat(nodegroup): add opt to attach extra security groups
+  [#390](https://github.com/pulumi/pulumi-eks/pull/390)
+- feat(cluster): add encryptionConfigKeyArn opt to encrypt k8s Secrets
+  [#389](https://github.com/pulumi/pulumi-eks/pull/389)
+
+## 0.19.0 (Released April 20, 2020)
+
+**For a more detailed list of the changes introduced in this release, please
+visit [#381](https://github.com/pulumi/pulumi-eks/pull/381).**
+
+- fix(dashboard): disable dashboard from deploying if not set
+  [#378](https://github.com/pulumi/pulumi-eks/pull/378)
+- fix(cluster): use scoped kubeconfig with non-default AWS credentials
+  [#367](https://github.com/pulumi/pulumi-eks/pull/367)
+- Update node & go pulumi deps to 2.0
+  [#375](https://github.com/pulumi/pulumi-eks/pull/375)
+- fix(aws): rm sync invokes for AWS data source calls
+  [#373](https://github.com/pulumi/pulumi-eks/pull/373)
+- refactor(aws-auth): replace aws-iam-authenticator with aws eks get-token
+  [#362](https://github.com/pulumi/pulumi-eks/pull/362)
+    - **Note:** for existing clusters, this change will recompute the kubeconfig
+    used, as its auth arguments and settings get updated to work with
+    `aws eks get-token`. It should not affect cluster access or cause
+    replacements of existing k8s resources.
+- feat(nodegroup): use the latest recommended AMIs from the SSM store
+  [#366](https://github.com/pulumi/pulumi-eks/pull/366)
+- feat(cluster): support HTTP(S) proxy for cluster readiness & OIDC config
+  [#365](https://github.com/pulumi/pulumi-eks/pull/365)
+- deps(pulumi): bump node and go pulumi/pulumi to v1.13.1
+  [#361](https://github.com/pulumi/pulumi-eks/pull/361)
+- feat(cluster): add getKubeconfig method to generate scoped kubeconfigs
+  [#356](https://github.com/pulumi/pulumi-eks/pull/356)
+
 ## 0.18.24 (Released March 11, 2020)
 
 ### Improvements

@@ -2,28 +2,23 @@
     "compilerOptions": {
         "outDir": "bin",
         "target": "es6",
+        "lib": [
+            "es6"
+        ],
         "module": "commonjs",
         "moduleResolution": "node",
         "declaration": true,
         "sourceMap": true,
         "stripInternal": true,
         "experimentalDecorators": true,
+        "pretty": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "forceConsistentCasingInFileNames": true,
-        "strictNullChecks": true,
-        "allowSyntheticDefaultImports": true
+        "strictNullChecks": true
     },
     "files": [
-        "cluster.ts",
-        "cni.ts",
-        "nodegroup.ts",
-        "dashboard.ts",
-        "securitygroup.ts",
-        "index.ts",
-        "servicerole.ts",
-        "storageclass.ts"
+        "index.ts"
     ]
 }
-

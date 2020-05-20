@@ -64,7 +64,12 @@ export interface NodeGroupBaseOptions {
     spotPrice?: pulumi.Input<string>;
 
     /**
-     * The security group to use for all nodes in this worker node group.
+     * The security group for the worker node group to communicate with the cluster.
+     *
+     * This security group requires specific inbound and outbound rules.
+     *
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
      *
      * Note: The `nodeSecurityGroup` option and the cluster option
      * `nodeSecurityGroupTags` are mutually exclusive.
@@ -75,6 +80,14 @@ export interface NodeGroupBaseOptions {
      * The ingress rule that gives node group access.
      */
     clusterIngressRule?: aws.ec2.SecurityGroupRule;
+
+    /**
+     * Extra security groups to attach on all nodes in this worker node group.
+     *
+     * This additional set of security groups captures any user application rules
+     * that will be needed for the nodes.
+     */
+    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
 
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
@@ -116,12 +129,31 @@ export interface NodeGroupBaseOptions {
     maxSize?: pulumi.Input<number>;
 
     /**
-     * The AMI to use for worker nodes. Defaults to the current value of Amazon EKS - Optimized AMI at time of resource
-     * creation if no value is provided. More information about the AWS eks optimized ami is available at
-     * https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html. Use the information provided by AWS if
-     * you want to build your own AMI.
+     * The AMI ID to use for the worker nodes.
+     *
+     * Defaults to the latest recommended EKS Optimized Linux AMI from the
+     * AWS Systems Manager Parameter Store.
+     *
+     * Note: `amiId` and `gpu` are mutually exclusive.
+     *
+     * See for more details:
+     * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
      */
     amiId?: pulumi.Input<string>;
+
+    /**
+     * Use the latest recommended EKS Optimized Linux AMI with GPU support for
+     * the worker nodes from the AWS Systems Manager Parameter Store.
+     *
+     * Defaults to false.
+     *
+     * Note: `gpu` and `amiId` are mutually exclusive.
+     *
+     * See for more details:
+     * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+     * - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+     */
+    gpu?: pulumi.Input<boolean>;
 
     /**
      * Custom k8s node labels to be attached to each woker node.  Adds the given key/value pairs to the `--node-labels`
@@ -210,7 +242,7 @@ export interface NodeGroupOptions extends NodeGroupBaseOptions {
  */
 export interface NodeGroupData {
     /**
-     * The security group for the node group.
+     * The security group for the node group to communicate with the cluster.
      */
     nodeSecurityGroup: aws.ec2.SecurityGroup;
     /**
@@ -221,6 +253,10 @@ export interface NodeGroupData {
      * The AutoScalingGroup name for the node group.
      */
     autoScalingGroupName: pulumi.Output<string>;
+    /**
+     * The additional security groups for the node group that captures user-specific rules.
+     */
+    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
 }
 
 /**
@@ -228,9 +264,13 @@ export interface NodeGroupData {
  */
 export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData {
     /**
-     * The security group for the cluster's nodes.
+     * The security group for the node group to communicate with the cluster.
      */
     public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
+    /**
+     * The additional security groups for the node group that captures user-specific rules.
+     */
+    public readonly extraNodeSecurityGroups: aws.ec2.SecurityGroup[];
 
     /**
      * The CloudFormation Stack which defines the Node AutoScalingGroup.
@@ -253,7 +293,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     constructor(name: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:NodeGroup", name, args, opts);
 
-        const group = createNodeGroup(name, args, this);
+        const group = createNodeGroup(name, args, this, opts?.provider);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
         this.cfnStack = group.cfnStack;
         this.autoScalingGroupName = group.autoScalingGroupName;
@@ -273,7 +313,7 @@ function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
  */
-export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource): NodeGroupData {
+export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
     if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
@@ -289,6 +329,10 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
 
     if (args.nodePublicKey && args.keyName) {
         throw new Error("nodePublicKey and keyName are mutually exclusive. Choose a single approach");
+    }
+
+    if (args.amiId && args.gpu) {
+        throw new Error("amiId and gpu are mutually exclusive.");
     }
 
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
@@ -330,16 +374,19 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     const nodeSecurityGroupId = pulumi.all([nodeSecurityGroup.id, eksClusterIngressRule.id])
         .apply(([id]) => id);
 
+    // Collect the IDs of any extra, user-specific security groups.
+    const extraNodeSecurityGroupIds = args.extraNodeSecurityGroups ? args.extraNodeSecurityGroups.map(sg => sg.id): [];
+
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
     let keyName = args.keyName;
     if (args.nodePublicKey) {
         const key = new aws.ec2.KeyPair(`${name}-keyPair`, {
             publicKey: args.nodePublicKey,
-        }, { parent: parent });
+        }, { parent, provider });
         keyName = key.keyName;
     }
 
-    const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent: parent });
+    const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent });
 
     const awsRegion = pulumi.output(aws.getRegion({}, { parent, async: true }));
     const userDataArg = args.nodeUserData || pulumi.output("");
@@ -391,59 +438,16 @@ ${customUserData}
 `;
         });
 
-    let amiId: pulumi.Input<string> = args.amiId!;
-    let ignoreChanges: string[] = [];
-    if (args.amiId === undefined) {
-        const version = pulumi.output(args.version || core.cluster.version);
+    const version = pulumi.output(args.version || core.cluster.version);
+
+    // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+    let amiId: pulumi.Input<string> | undefined = args.amiId;
+    if (!amiId) {
+        const amiType = args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
         amiId = version.apply(v => {
-            const filters: { name: string; values: string[] }[] = [
-                // Filter to target Linux arch
-                {
-                    name: "description",
-                    values: ["*linux*", "*Linux*"],
-                },
-                // Filter to target EKS Nodes
-                {
-                    name: "name",
-                    values: ["amazon-eks-node-*"],
-                },
-                // Filter to target General, non-GPU image class
-                {
-                    name: "manifest-location",
-                    values: ["*amazon-eks-node*"],
-                },
-                // Filter to target architecture
-                {
-                    name: "architecture",
-                    values: ["x86_64"],
-                },
-                // Filter to target a specific k8s version
-                {
-                    name: "description",
-                    values: ["*k8s*" + v + "*"],
-                },
-            ];
-
-            // `602401143452` is the ID assigned to `Amazon` and is required for AMIs that are hosted in AWS default regions
-            // `800184023465` is the owner ID of the creator of the EKS Optimized AMI in ap-east-1
-            // `558608220178` is the owner ID of the creator of the EKS Optimized AMI in me-south-1
-            // It is important to note that neither `800184023465` nor `558608220178` are assigned any IDs in default regions
-            // and `602401143452` is not assigned any AMIs in `ap-east-1` or `me-south-1` regions so this lookup is safe to make
-            // AWS Guide for EKS Optimized AMIs https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
-            const eksWorkerAmiIds = aws.getAmiIds({
-                filters,
-                owners: ["602401143452", "800184023465", "558608220178"],
-                sortAscending: true,
-            }, { parent, async: true });
-
-            const bestAmiId = eksWorkerAmiIds.then(r => r.ids.pop()!);
-            if (!bestAmiId) {
-                throw new Error("No Linux AMI Id was found.");
-            }
-            return bestAmiId;
+            const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
+            return pulumi.output(aws.ssm.getParameter({name: parameterName}, {parent, async: true})).value;
         });
-        // When we automatically pick an image to use, we want to ignore any changes to this later by default.
-        ignoreChanges = ["imageId"];
     }
 
     // Enable auto-assignment of public IP addresses on worker nodes for
@@ -460,7 +464,7 @@ ${customUserData}
         instanceType: args.instanceType || "t2.medium",
         iamInstanceProfile: args.instanceProfile || core.nodeGroupOptions.instanceProfile,
         keyName: keyName,
-        securityGroups: [nodeSecurityGroupId],
+        securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         spotPrice: args.spotPrice,
         rootBlockDevice: {
             volumeSize: args.nodeRootVolumeSize || 20, // GiB
@@ -468,7 +472,7 @@ ${customUserData}
             deleteOnTermination: true,
         },
         userData: userdata,
-    }, { parent: parent, ignoreChanges: ignoreChanges });
+    }, { parent, provider });
 
     // Compute the worker node group subnets to use from the various approaches.
     let workerSubnetIds: pulumi.Output<string[]>;
@@ -546,7 +550,7 @@ ${customUserData}
             ...cloudFormationTags,
             ...tags,
         })),
-    }, { parent: parent, dependsOn: cfnStackDeps });
+    }, { parent, dependsOn: cfnStackDeps, provider });
 
     let autoScalingGroupName = pulumi.output("");
     cfnStack.outputs.apply(outputs => {
@@ -560,6 +564,7 @@ ${customUserData}
         nodeSecurityGroup: nodeSecurityGroup,
         cfnStack: cfnStack,
         autoScalingGroupName: autoScalingGroupName,
+        extraNodeSecurityGroups: args.extraNodeSecurityGroups,
     };
 }
 
@@ -717,7 +722,7 @@ export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" 
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
  */
-export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent?: pulumi.ComponentResource): aws.eks.NodeGroup {
+export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent?: pulumi.ComponentResource, provider?: pulumi.ProviderResource): aws.eks.NodeGroup {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
     const eksCluster = isCoreData(args.cluster) ? args.cluster.cluster : args.cluster;
 
@@ -803,7 +808,7 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
             };
         }),
         subnetIds: subnetIds,
-    }, { parent: parent ? parent : eksCluster, dependsOn: ngDeps });
+    }, { parent: parent ?? eksCluster, dependsOn: ngDeps, provider });
 
     return nodeGroup;
 }

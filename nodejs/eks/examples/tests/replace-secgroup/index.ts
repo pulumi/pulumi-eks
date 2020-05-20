@@ -28,7 +28,7 @@ const nodeSecurityGroup = secgroup.createNodeGroupSecurityGroup(secgroupName, {
     vpcId: vpc.id,
     clusterSecurityGroup: testCluster.clusterSecurityGroup,
     eksCluster: testCluster.core.cluster,
-}, vpc);
+}, testCluster);
 const eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${secgroupName}-eksClusterIngressRule`, {
     description: "Allow pods to communicate with the cluster API Server",
     type: "ingress",

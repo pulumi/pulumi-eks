@@ -13,8 +13,10 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
+import * as http from "http";
 import * as https from "https";
 import * as tls from "tls";
+import * as url from "url";
 
 const THUMBPRINT_MAX_RETRIES: number = 12;
 const THUMBPRINT_SLEEP_MILLISECOND_INTERVAL: number = 5000;
@@ -31,8 +33,18 @@ const THUMBPRINT_SLEEP_MILLISECOND_INTERVAL: number = 5000;
 * - https://medium.com/@marcincuber/amazon-eks-with-oidc-provider-iam-roles-for-kubernetes-services-accounts-59015d15cb0c
 * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
 */
-export function getIssuerCAThumbprint(issuerUrl: pulumi.Output<string>): pulumi.Output<string> {
-    return issuerUrl.apply(url => getThumbprint(url, THUMBPRINT_MAX_RETRIES, THUMBPRINT_SLEEP_MILLISECOND_INTERVAL));
+export function getIssuerCAThumbprint(
+    issuerUrl: pulumi.Input<string>,
+    agent: http.Agent,
+): pulumi.Output<string> {
+    return pulumi.output(issuerUrl).apply(issUrl => {
+        return getThumbprint(
+            issUrl,
+            THUMBPRINT_MAX_RETRIES,
+            THUMBPRINT_SLEEP_MILLISECOND_INTERVAL,
+            agent,
+        );
+    });
 }
 
 // Thumbprint retrieval below adapted from https://git.io/JvGHB.
@@ -59,17 +71,18 @@ function findIntRootCACertificate(certificate: tls.DetailedPeerCertificate): tls
 //  > signed the certificate used by the external identity provider (IdP). The
 //  > thumbprint is a signature for the CA's certificate that was used to issue
 //  > the certificate for the OIDC-compatible IdP.
-async function getThumbprint(issuerUrl: string, retriesLeft: number, interval: number): Promise<string> {
+async function getThumbprint(
+    issuerUrl: string,
+    retriesLeft: number,
+    interval: number,
+    agent: http.Agent,
+): Promise<string> {
     // For up to 60 seconds (12 retries @ 5000 ms), try to contact the issuer URL.
     try {
         return await new Promise((resolve, reject) => {
             const options = {
-                hostname: issuerUrl,
-                port: 443,
-                rejectUnauthorized: false,
-                // Cached sessions can result in the certificate not being available since its already been "accepted",
-                // don't allow any for this purpose.
-                agent: new https.Agent({ maxCachedSessions: 0 }),
+                ...url.parse(issuerUrl),
+                agent: agent,
             };
             const req = https
                 .get(options)
@@ -97,7 +110,7 @@ async function getThumbprint(issuerUrl: string, retriesLeft: number, interval: n
         if (retriesLeft) {
             pulumi.log.info(`Waiting for cert issuer URL(${THUMBPRINT_MAX_RETRIES - retriesLeft})`, undefined, undefined, true);
             await new Promise(resolve => setTimeout(resolve, interval));
-            return getThumbprint(issuerUrl, retriesLeft - 1, interval);
+            return getThumbprint(issuerUrl, retriesLeft - 1, interval, agent);
         }
     }
     throw new Error("Cannot retrieve the certificate fingerprint at the issuer URL: " + issuerUrl);
