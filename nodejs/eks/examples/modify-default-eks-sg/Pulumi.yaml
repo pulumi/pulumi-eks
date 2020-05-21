@@ -1,0 +1,3 @@
+name: modify-default-eks-sg
+description: EKS cluster example that imports and modifies the default EKS cluster security group
+runtime: nodejs

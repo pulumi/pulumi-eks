@@ -10,6 +10,7 @@ clusters.
 1. [Cluster RBAC: Using an AWS Role](./scoped-kubeconfigs)
 1. [Cluster RBAC: Using an AWS Named Profile and Provider](./aws-profile)
 1. [Cluster with Custom Kubernetes Storage Classes](./storage-classes)
+1. [Import and modify the AWS-created default cluster security group](./modify-default-eks-sg)
 1. [Cluster with AWS Resource Tags](./tags)
 1. [Cluster with Fargate Managed Nodes](./fargate)
 1. [Cluster with an OIDC provider and Service Accounts for Pod IAM](./oidc-iam-sa)
