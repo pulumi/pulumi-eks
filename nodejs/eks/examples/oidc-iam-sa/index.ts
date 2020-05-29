@@ -31,7 +31,8 @@ const provider = new k8s.Provider("eks-k8s", {
 const appsNamespace = new k8s.core.v1.Namespace("apps", undefined, {provider: provider});
 export const appsNamespaceName = appsNamespace.metadata.name;
 
-// Create the IAM target policy and role for the Service Account.
+// Create the new IAM policy for the Service Account using the
+// AssumeRoleWebWebIdentity action.
 const saName = "s3";
 const saAssumeRolePolicy = pulumi.all([clusterOidcProviderUrl, clusterOidcProvider.arn, appsNamespaceName]).apply(([url, arn, namespace]) => aws.iam.getPolicyDocument({
     statements: [{
@@ -109,25 +110,24 @@ const bucket = new aws.s3.Bucket("pod-irsa-job-bucket", {
 const bucketName = bucket.id;
 const regionName = pulumi.output(aws.getRegion({}, {async: true})).name;
 const podName = `${saName}-pod-test`;
-const s3Pod = pulumi.all([bucketName, regionName]).apply(([bName, region]) => {
-    return new k8s.core.v1.Pod(podName,
-        {
-            metadata: {labels: labels, namespace: appsNamespaceName},
-            spec: {
-                serviceAccountName: sa.metadata.name,
-                containers: [
-                    {
-                        name: podName,
-                        image: "amazonlinux:2018.03",
-                        command: ["sh", "-c",
-                            `curl -sL -o /s3-echoer https://github.com/mhausenblas/s3-echoer/releases/latest/download/s3-echoer-linux && chmod +x /s3-echoer && echo This is an in-cluster test | /s3-echoer ${bName} && sleep 3600`],
-                        env: [
-                            {name: "AWS_DEFAULT_REGION", value: `${region}`},
-                            {name: "ENABLE_IRP", value: "true"},
-                        ],
-                    },
-                ],
-            },
-        }, { provider: provider },
-    );
-});
+const s3Pod = new k8s.core.v1.Pod(podName,
+    {
+        metadata: {labels: labels, namespace: appsNamespaceName},
+        spec: {
+            serviceAccountName: sa.metadata.name,
+            containers: [
+                {
+                    name: podName,
+                    image: "amazonlinux:2018.03",
+                    command: ["sh", "-c",
+                        pulumi.interpolate`curl -sL -o /s3-echoer https://git.io/JfnGX && chmod +x /s3-echoer && echo This is an in-cluster test | /s3-echoer ${bucketName} && sleep 3600`,
+                    ],
+                    env: [
+                        {name: "AWS_DEFAULT_REGION", value: regionName},
+                        {name: "ENABLE_IRP", value: "true"},
+                    ],
+                },
+            ],
+        },
+    }, { provider: provider },
+);
