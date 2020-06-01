@@ -9,6 +9,7 @@ clusters.
 1. [Cluster with NodeGroups and Security Groups](./extra-sg)
 1. [Cluster RBAC: Using an AWS Role](./scoped-kubeconfigs)
 1. [Cluster RBAC: Using an AWS Named Profile and Provider](./aws-profile)
+1. [Cluster Secrets: Using Envelope Encryption with KMS to secure Secrets in etcd](./encryption-provider)
 1. [Cluster with Custom Kubernetes Storage Classes](./storage-classes)
 1. [Import and modify the AWS-created default cluster security group](./modify-default-eks-sg)
 1. [Cluster with AWS Resource Tags](./tags)
