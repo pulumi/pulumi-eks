@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- nodegroup(asgName): fix asgName definition
+  [#401](https://github.com/pulumi/pulumi-eks/pull/401)
+
 ## 0.19.2 (Released May 20, 2020)
 
 ### Improvements

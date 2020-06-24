@@ -552,12 +552,11 @@ ${customUserData}
         })),
     }, { parent, dependsOn: cfnStackDeps, provider });
 
-    let autoScalingGroupName = pulumi.output("");
-    cfnStack.outputs.apply(outputs => {
+    const autoScalingGroupName = cfnStack.outputs.apply(outputs => {
         if (!("NodeGroup" in outputs)) {
             throw new Error("CloudFormation stack is not ready. Stack output key 'NodeGroup' does not exist.");
         }
-        autoScalingGroupName = outputs["NodeGroup"];
+        return outputs["NodeGroup"];
     });
 
     return {
