@@ -16,9 +16,6 @@ const defaultSecgroupResult = defaultSecgroupId.apply(id => {
             name: "group-id",
             values: [id],
         }],
-        tags: cluster.core.cluster.name.apply(clusterName => ({
-            [`kubernetes.io/cluster/${clusterName}`]: "owned",
-        })),
     }, {async: true}));
 });
 
