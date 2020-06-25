@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(ex/default-sg): rm Output tag values per string type reqs
+  [#404](https://github.com/pulumi/pulumi-eks/pull/404)
 - nodegroup(asgName): fix asgName definition
   [#401](https://github.com/pulumi/pulumi-eks/pull/401)
 
