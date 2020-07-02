@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- feat(nodegroup): Support encryption of the root block device for nodes
+  [#407](https://github.com/pulumi/pulumi-eks/pull/407)
 - fix(ex/default-sg): rm Output tag values per string type reqs
   [#404](https://github.com/pulumi/pulumi-eks/pull/404)
 - nodegroup(asgName): fix asgName definition

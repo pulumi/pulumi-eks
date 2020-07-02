@@ -90,6 +90,11 @@ export interface NodeGroupBaseOptions {
     extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
 
     /**
+     * Encrypt the root block device of the nodes in the node group.
+     */
+    encryptRootBockDevice?: pulumi.Input<boolean>;
+
+    /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
      * If not provided, no SSH access is enabled on VMs.
@@ -467,6 +472,7 @@ ${customUserData}
         securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         spotPrice: args.spotPrice,
         rootBlockDevice: {
+            encrypted: args.encryptRootBockDevice,
             volumeSize: args.nodeRootVolumeSize || 20, // GiB
             volumeType: "gp2", // default is "standard"
             deleteOnTermination: true,
