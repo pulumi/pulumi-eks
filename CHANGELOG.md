@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.19.3 (Released July 7, 2020)
+
+### Improvements
+
 - feat(nodegroup): Support encryption of the root block device for nodes
   [#407](https://github.com/pulumi/pulumi-eks/pull/407)
 - fix(ex/default-sg): rm Output tag values per string type reqs
