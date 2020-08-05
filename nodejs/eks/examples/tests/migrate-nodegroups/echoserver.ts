@@ -122,10 +122,8 @@ interface EchoserverIngressArgs {
 export function createIngress(
     name: string,
     args: EchoserverIngressArgs,
-): k8s.extensions.v1beta1.Ingress {
-    // TODO(metral): change to k8s.networking.v1beta.Ingress
-    // when EKS supports >= 1.14.
-    return new k8s.extensions.v1beta1.Ingress(
+): k8s.networking.v1beta1.Ingress {
+    return new k8s.networking.v1beta1.Ingress(
         name,
         {
             metadata: {
