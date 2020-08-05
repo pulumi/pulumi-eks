@@ -51,9 +51,7 @@ export function makeNginxClusterRole(
                     verbs: ["get", "list", "watch"],
                 },
                 {
-                    // TODO(metral): change to k8s.networking.v1beta.Ingress
-                    // when EKS supports >= 1.14.
-                    apiGroups: ["extensions"],
+                    apiGroups: ["networking.k8s.io"],
                     resources: ["ingresses"],
                     verbs: ["get", "list", "watch"],
                 },
@@ -63,9 +61,7 @@ export function makeNginxClusterRole(
                     verbs: ["create", "patch"],
                 },
                 {
-                    // TODO(metral): change to k8s.networking.v1beta.Ingress
-                    // when EKS supports >= 1.14.
-                    apiGroups: ["extensions"],
+                    apiGroups: ["networking.k8s.io"],
                     resources: ["ingresses/status"],
                     verbs: ["update"],
                 },
