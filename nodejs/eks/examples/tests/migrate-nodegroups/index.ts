@@ -26,7 +26,6 @@ const instanceProfiles = iam.createInstanceProfiles(projectName, roles);
 
 // Create an EKS cluster.
 const myCluster = new eks.Cluster(`${projectName}`, {
-    version: "1.13",
     vpcId: vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     privateSubnetIds: vpc.privateSubnetIds,
@@ -42,7 +41,6 @@ export const clusterName = myCluster.core.cluster.name;
 
 // Create a Standard node group of t2.medium workers.
 const ngStandard = utils.createNodeGroup(`${projectName}-ng-standard`, {
-    ami: "ami-03a55127c613349a7", // k8s v1.13.7 in us-west-2
     instanceType: "t2.medium",
     desiredCapacity: 3,
     cluster: myCluster,
@@ -53,7 +51,6 @@ const ngStandard = utils.createNodeGroup(`${projectName}-ng-standard`, {
 // dedicated for the NGINX Ingress Controller.
 if (config.createNodeGroup2xlarge) {
     const ng2xlarge = utils.createNodeGroup(`${projectName}-ng-2xlarge`, {
-        ami: "ami-0355c210cb3f58aa2", // k8s v1.12.7 in us-west-2
         instanceType: "t3.2xlarge",
         desiredCapacity: config.desiredCapacity2xlarge,
         cluster: myCluster,
@@ -66,7 +63,6 @@ if (config.createNodeGroup2xlarge) {
 // be used to migrate NGINX away from the 2xlarge node group.
 if (config.createNodeGroup4xlarge) {
     const ng4xlarge = utils.createNodeGroup(`${projectName}-ng-4xlarge`, {
-        ami: "ami-03a55127c613349a7", // k8s v1.13.7 in us-west-2
         instanceType: "c5.4xlarge",
         desiredCapacity: config.desiredCapacity4xlarge,
         cluster: myCluster,

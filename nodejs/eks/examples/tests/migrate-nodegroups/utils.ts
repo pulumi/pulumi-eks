@@ -4,7 +4,6 @@ import * as pulumi from "@pulumi/pulumi";
 
 // Creates an EKS NodeGroup.
 interface NodeGroupArgs {
-    ami: string;
     instanceType: pulumi.Input<aws.ec2.InstanceType>;
     desiredCapacity: pulumi.Input<number>;
     cluster: eks.Cluster;
@@ -20,13 +19,11 @@ export function createNodeGroup(
         nodeSecurityGroup: args.cluster.nodeSecurityGroup,
         clusterIngressRule: args.cluster.eksClusterIngressRule,
         instanceType: args.instanceType,
-        amiId: args.ami,
         nodeAssociatePublicIpAddress: false,
         desiredCapacity: args.desiredCapacity,
         minSize: args.desiredCapacity,
         maxSize: 10,
         instanceProfile: args.instanceProfile,
-        labels: {"amiId": args.ami},
         taints: args.taints,
     }, {
         providers: { kubernetes: args.cluster.provider},
