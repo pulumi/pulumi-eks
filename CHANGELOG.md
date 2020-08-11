@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Improvements
+
+## 0.19.4 (Released August 11, 2020)
+
 - Support for the ENI_CONFIG_LABEL_DEF environment variable 
   [#411](https://github.com/pulumi/pulumi-eks/pull/411)
 
