@@ -461,6 +461,24 @@ func TestAccImportDefaultEksSecgroup(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccVpcSubnetTags(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "subnet-tags"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccMigrateNodeGroups(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")

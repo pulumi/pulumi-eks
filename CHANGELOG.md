@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- examples: Add VPC & subnet tag example for subnets managed with Pulumi
+  [#420](https://github.com/pulumi/pulumi-eks/pull/420)
+
 ## 0.19.4 (Released August 11, 2020)
 
 - Support for the ENI_CONFIG_LABEL_DEF environment variable 
