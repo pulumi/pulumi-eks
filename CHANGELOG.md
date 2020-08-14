@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Upgrade to `pulumi-aws` v3.0.0
+
 ### Improvements
 
 ## 0.19.5 (Released August 28, 2020)

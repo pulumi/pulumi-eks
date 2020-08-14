@@ -11,7 +11,7 @@
     "homepage": "https://pulumi.io",
     "repository": "https://github.com/pulumi/pulumi-eks",
     "dependencies": {
-        "@pulumi/aws": "^2.0.0",
+        "@pulumi/aws": "^3.0.0",
         "@pulumi/kubernetes": "^2.0.0",
         "@pulumi/pulumi": "^2.0.0",
         "axios": "^0.19.0",
