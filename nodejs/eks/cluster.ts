@@ -197,7 +197,10 @@ function generateKubeconfig(
         }];
     }
 
-    return {
+    return pulumi.all([
+        args,
+        env,
+    ]).apply(([tokenArgs, envvars]) => ({
         apiVersion: "v1",
         clusters: [{
             cluster: {
@@ -221,12 +224,12 @@ function generateKubeconfig(
                 exec: {
                     apiVersion: "client.authentication.k8s.io/v1alpha1",
                     command: "aws",
-                    args: args,
-                    env: env,
+                    args: tokenArgs,
+                    env: envvars,
                 },
             },
         }],
-    };
+    }));
 }
 
 /**

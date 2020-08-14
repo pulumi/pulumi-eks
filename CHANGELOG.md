@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(kubeconfig): treat auth & env as Output<t> in kubeconfig generation
+  [#421](https://github.com/pulumi/pulumi-eks/pull/421)
 - examples: Add VPC & subnet tag example for subnets managed with Pulumi
   [#420](https://github.com/pulumi/pulumi-eks/pull/420)
 
