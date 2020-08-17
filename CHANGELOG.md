@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(cluster): add https req timeout & show time left waiting for healthz
+  [#427](https://github.com/pulumi/pulumi-eks/pull/427)
 - fix(kubeconfig): treat auth & env as Output<t> in kubeconfig generation
   [#421](https://github.com/pulumi/pulumi-eks/pull/421)
 - examples: Add VPC & subnet tag example for subnets managed with Pulumi
