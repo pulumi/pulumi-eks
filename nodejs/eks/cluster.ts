@@ -1213,8 +1213,7 @@ export interface ClusterNodeGroupOptions extends NodeGroupBaseOptions { }
  */
 export class Cluster extends pulumi.ComponentResource {
     /**
-     * A kubeconfig that can be used to connect to the EKS cluster. This must be serialized as a string before passing
-     * to the Kubernetes provider.
+     * A kubeconfig that can be used to connect to the EKS cluster.
      */
     public readonly kubeconfig: pulumi.Output<any>;
 
@@ -1264,7 +1263,7 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly eksCluster: aws.eks.Cluster;
 
     /**
-     * The EKS cluster and it's dependencies.
+     * The EKS cluster and its dependencies.
      */
     public readonly core: CoreData;
 
