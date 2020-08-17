@@ -480,26 +480,33 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             // endpoint, and verify that it is reachable.
             const healthz = `${clusterEndpoint}/healthz`;
             const agent = createHttpAgent(args.proxy);
-            for (let i = 0; i < 60; i++) {
+            const maxRetries = 60;
+            const reqTimeoutMilliseconds = 1000; // HTTPS request timeout
+            const timeoutMilliseconds = 5000; // Retry timeout
+            for (let i = 0; i < maxRetries; i++) {
                 try {
                     await new Promise((resolve, reject) => {
                         const options = {
                             ...url.parse(healthz),
                             rejectUnauthorized: false, // EKS API server uses self-signed cert
                             agent: agent,
+                            timeout: reqTimeoutMilliseconds,
                         };
                         const req = https
                             .request(options, res => {
                                 res.statusCode === 200 ? resolve() : reject(); // Verify healthz returns 200
                             });
+                        req.on("timeout", reject);
                         req.on("error", reject);
                         req.end();
                     });
+                    pulumi.log.info(`Cluster is ready`, eksCluster, undefined, true);
                     break;
                 } catch (e) {
-                    pulumi.log.info(`Waiting for cluster endpoint (${i + 1})`, eksCluster, undefined, true);
+                    const retrySecondsLeft = (maxRetries - i) * timeoutMilliseconds / 1000;
+                    pulumi.log.info(`Waiting up to (${retrySecondsLeft}) more seconds for cluster readiness...`, eksCluster, undefined, true);
                 }
-                await new Promise(resolve => setTimeout(resolve, 5 * 1000));
+                await new Promise(resolve => setTimeout(resolve, timeoutMilliseconds));
             }
         }
         return clusterEndpoint;
