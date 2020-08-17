@@ -1053,7 +1053,7 @@ export interface ClusterOptions {
      *    web browser.
      * 4. Choose `Token` authentication, paste the token retrieved earlier into the `Token` field, and sign in.
      *
-     * Defaults to `true`.
+     * Defaults to `false`.
      *
      * @deprecated This option has been deprecated due to a lack of
      * support for it on EKS, and the general community recommendation to avoid
