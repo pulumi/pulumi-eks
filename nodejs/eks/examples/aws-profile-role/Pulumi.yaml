@@ -1,0 +1,3 @@
+name: example-aws-profile-role
+description: EKS cluster example that uses an AWS named profile and role for credentials
+runtime: nodejs
