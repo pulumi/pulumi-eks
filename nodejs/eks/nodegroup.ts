@@ -119,6 +119,16 @@ export interface NodeGroupBaseOptions {
     nodeUserData?: pulumi.Input<string>;
 
     /**
+     * User specified code to run on node startup. This code is expected to
+     * handle the full AWS EKS bootstrapping code and signal node readiness
+     * to the managing CloudFormation stack. This code must be a complete
+     * and executable user data script in bash (Linux) or powershell (Windows).
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+     */
+    nodeUserDataOverride?: pulumi.Input<string>;
+
+    /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      */
     desiredCapacity?: pulumi.Input<number>;
@@ -340,6 +350,10 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         throw new Error("amiId and gpu are mutually exclusive.");
     }
 
+    if (args.nodeUserDataOverride && (args.nodeUserData || args.labels || args.taints || args.kubeletExtraArgs || args.bootstrapExtraArgs)) {
+        throw new Error("nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.");
+    }
+
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
     const cfnStackDeps: Array<pulumi.Resource> = [];
 
@@ -477,7 +491,7 @@ ${customUserData}
             volumeType: "gp2", // default is "standard"
             deleteOnTermination: true,
         },
-        userData: userdata,
+        userData: args.nodeUserDataOverride || userdata,
     }, { parent, provider });
 
     // Compute the worker node group subnets to use from the various approaches.
