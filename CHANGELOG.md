@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- feat(nodegroup): add nodeUserDataOverride arg to specify userdata script
+  [#429](https://github.com/pulumi/pulumi-eks/pull/429)
 - fix(fargate): ensure fargate profile name is valid
   [#430](https://github.com/pulumi/pulumi-eks/pull/430)
 - fix(cluster): add https req timeout & show time left waiting for healthz
