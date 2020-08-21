@@ -2,6 +2,8 @@
 
 ### Improvements
 
+- fix(fargate): ensure fargate profile name is valid
+  [#430](https://github.com/pulumi/pulumi-eks/pull/430)
 - fix(cluster): add https req timeout & show time left waiting for healthz
   [#427](https://github.com/pulumi/pulumi-eks/pull/427)
 - fix(kubeconfig): treat auth & env as Output<t> in kubeconfig generation
