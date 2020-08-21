@@ -658,7 +658,19 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             { namespace: "default" },
             { namespace: "kube-system" },
         ];
-        fargateProfile = new aws.eks.FargateProfile(`${name}-fargateProfile`, {
+
+        const reservedAwsPrefix = "eks";
+        let fargateProfileName = name;
+        const profileNameRegex = new RegExp("^" + reservedAwsPrefix + "-", "i"); // starts with (^) 'eks-', (i)gnore casing
+        if (fargateProfileName === reservedAwsPrefix || profileNameRegex.test(name)) {
+            fargateProfileName = fargateProfileName.replace("-", "_");
+            fargateProfileName = `${fargateProfileName}fargateProfile`;
+        } else {
+            // default, and to maintain backwards compat for existing cluster fargate profiles.
+            fargateProfileName = `${fargateProfileName}-fargateProfile`;
+        }
+
+        fargateProfile = new aws.eks.FargateProfile(fargateProfileName, {
             clusterName: eksCluster.name,
             podExecutionRoleArn: podExecutionRoleArn,
             selectors: selectors,
