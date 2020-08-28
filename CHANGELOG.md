@@ -2,6 +2,10 @@
 
 ### Improvements
 
+## 0.19.5 (Released August 28, 2020)
+
+### Improvements
+
 - feat(nodegroup): add nodeUserDataOverride arg to specify userdata script
   [#429](https://github.com/pulumi/pulumi-eks/pull/429)
 - fix(fargate): ensure fargate profile name is valid
