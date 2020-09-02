@@ -1,6 +1,15 @@
 ## Unreleased
 
+### Improvements
+
+## 0.20.0 (Released September 3, 2020)
+
+### Improvements
+
 - Upgrade to `pulumi-aws` v3.0.0
+  Note: The move to v3.0.0 of the AWS provider can cause breaking changes if AWS IAM
+  InstanceProfiles are used that make use of the plural `.roles` field.
+  See [#422](https://github.com/pulumi/pulumi-eks/pull/422) for more details.
 
 ### Improvements
 
