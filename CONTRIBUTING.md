@@ -2,12 +2,6 @@
 
 ## Building Source
 
-### Restore Vendor Dependencies
-
-```bash
-$ make ensure
-```
-
 ### Build and Install
 
 Run the following command to build and install the source.
@@ -15,12 +9,12 @@ Run the following command to build and install the source.
 The output will be stored in `/opt/pulumi/node_modules/@pulumi/eks`.
 
 ```bash
-$ make only_build
+$ make build_nodejs && make install_nodejs_sdk
 ```
 
-There is also a helper [build script](./dev/build.sh) that restores the dependencies, builds, and installs the source.
+There is also a helper [build script](./dev/build.sh) that builds and installs the source.
 
-`cd` into your Pulumi program directory.  After `make` has completed, link the recent `@pulumi/eks` build from `/opt/` by running the following command:
+`cd` into your Pulumi program directory.  After `make` has completed, link the recent `@pulumi/eks` build by running the following command:
 
 ```bash
 $ yarn link @pulumi/eks
@@ -34,5 +28,5 @@ Before submitting PRs, run the integration tests to confirm there are no
 errors.
 
 ```bash
-$ make test_all
+$ make test
 ```
