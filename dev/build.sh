@@ -9,7 +9,7 @@ echo `date`
 
 pushd $PROJECT_DIR
 echo "=> Building commit: `git rev-parse --short HEAD`"
-make ensure && make only_build
+make build_nodejs && make install_nodejs_sdk
 result=$(echo $?)
 popd
 
