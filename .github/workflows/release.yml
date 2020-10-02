@@ -21,7 +21,7 @@ jobs:
       - name: Unshallow clone for tags
         run: git fetch --prune --unshallow --tags
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@release/v1-alpha
+        uses: jaxxstorm/action-install-gh-release@d62853bc9e466834c74cefb34fad78535582e21a
         with:
           repo: pulumi/pulumictl
       - name: Setup Node
@@ -55,7 +55,7 @@ jobs:
         with:
           go-version: ${{ matrix.goversion }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@release/v1-alpha
+        uses: jaxxstorm/action-install-gh-release@d62853bc9e466834c74cefb34fad78535582e21a
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -105,7 +105,7 @@ jobs:
         with:
           go-version: ${{ matrix.goversion }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@release/v1-alpha
+        uses: jaxxstorm/action-install-gh-release@d62853bc9e466834c74cefb34fad78535582e21a
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -140,7 +140,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@release/v1-alpha
+        uses: jaxxstorm/action-install-gh-release@d62853bc9e466834c74cefb34fad78535582e21a
         with:
           repo: pulumi/pulumictl
       - env:
@@ -166,7 +166,7 @@ jobs:
         with:
           go-version: ${{ matrix.goversion }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@release/v1-alpha
+        uses: jaxxstorm/action-install-gh-release@d62853bc9e466834c74cefb34fad78535582e21a
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
