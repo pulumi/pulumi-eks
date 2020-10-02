@@ -210,3 +210,6 @@ name: master
       - v*
       - sdk/*
       - '**'
+  schedule:
+    # Run every day at 06:00AM UTC
+    - cron: '0 6 * * *'
