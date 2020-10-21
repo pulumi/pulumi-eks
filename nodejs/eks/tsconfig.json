@@ -23,7 +23,9 @@
         "securitygroup.ts",
         "index.ts",
         "servicerole.ts",
-        "storageclass.ts"
+        "storageclass.ts",
+
+        "cmd/provider/index.ts"
     ]
 }
 

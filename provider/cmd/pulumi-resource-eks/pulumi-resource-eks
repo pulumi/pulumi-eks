@@ -1,0 +1,5 @@
+#!/bin/bash
+PULUMI_PROVIDER_SCRIPT_PATH=$(node -e "console.log(require.resolve('@pulumi/eks/cmd/provider'))")
+if [ ! -z "$PULUMI_PROVIDER_SCRIPT_PATH" ]; then
+    node "$PULUMI_PROVIDER_SCRIPT_PATH" $@
+fi
