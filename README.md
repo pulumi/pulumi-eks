@@ -28,7 +28,7 @@ This includes:
 
 * [Reference Documentation](https://www.pulumi.com/docs/reference/clouds/kubernetes/)
 * [Node.js API Documentation](https://pulumi.io/reference/pkg/nodejs/@pulumi/eks/index.html)
-* [Examples](./nodejs/eks/examples)
+* [Examples](./examples)
 * [Crosswalk for AWS & EKS Guide](https://www.pulumi.com/docs/guides/crosswalk/aws/eks/)
 * [Tutorials](https://www.pulumi.com/docs/reference/tutorials/kubernetes/)
 
