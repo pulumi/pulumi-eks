@@ -24,9 +24,14 @@ import (
 )
 
 func TestAccClusterPy(t *testing.T) {
+	pathEnv, err := providerPluginPathEnv()
+	if err != nil {
+		t.Fatalf("failed to build provider plugin PATH: %v", err)
+	}
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "./cluster"),
+			Env: []string{pathEnv},
+			Dir: filepath.Join(getCwd(t), "cluster-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,

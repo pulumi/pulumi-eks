@@ -16,6 +16,8 @@ package examples
 
 import (
 	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
@@ -46,4 +48,19 @@ func getBaseOptions() integration.ProgramTestOptions {
 		ReportStats:          integration.NewS3Reporter("us-west-2", "eng.pulumi.com", "testreports"),
 		Tracing:              "https://tracing.pulumi-engineering.com/collector/api/v1/spans",
 	}
+}
+
+//nolint:golint,deadcode
+func providerPluginPathEnv() (string, error) {
+	pluginDir := filepath.Join("..", "provider", "cmd", "pulumi-resource-eks", "bin")
+	absPluginDir, err := filepath.Abs(pluginDir)
+	if err != nil {
+		return "", err
+	}
+
+	pathSeparator := ":"
+	if runtime.GOOS == "windows" {
+		pathSeparator = ";"
+	}
+	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir, nil
 }

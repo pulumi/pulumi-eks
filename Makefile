@@ -69,11 +69,11 @@ install_dotnet_sdk:: build_dotnet
 	find . -name '*.nupkg' -print -exec cp -p {} ${WORKING_DIR}/nuget \;
 
 # TODO add separate targets for each language.
-test_nodejs::
+test_nodejs:: install_nodejs_sdk
 	cd examples && go test -tags=all -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
 
-specific_test:
+specific_test:: install_nodejs_sdk
 	cd examples && go test -tags=all -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
 
 dev:: lint build_nodejs
-test:: install_nodejs_sdk test_nodejs
+test:: test_nodejs
