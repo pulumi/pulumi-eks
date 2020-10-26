@@ -8,3 +8,4 @@ vendor/
 yarn.lock
 .idea/
 **/version.txt
+**/dist

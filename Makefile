@@ -10,6 +10,10 @@ build:: build_nodejs build_python build_dotnet
 schema::
 	cd provider/cmd/pulumi-gen-eks && go run main.go schema ../pulumi-resource-eks
 
+provider::
+	rm -rf provider/cmd/pulumi-resource-eks/bin
+	cd provider/cmd/pulumi-resource-eks && go build -a -o bin/pulumi-resource-eks main.go
+
 build_nodejs:: VERSION := $(shell pulumictl get version --language javascript)
 build_nodejs::
 	rm -rf nodejs/eks/bin
@@ -51,13 +55,12 @@ lint_provider::
 	cd provider && golangci-lint run -c ../.golangci.yml
 
 install_provider:: PROVIDER_VERSION := latest
-install_provider:: PROVIDER_OUTDIR  := bin
-install_provider:: install_nodejs_sdk
+install_provider:: provider install_nodejs_sdk
 	cd provider/cmd/pulumi-resource-eks	&& \
-		rm -rf ./$(PROVIDER_OUTDIR)/ ../provider.$(PROVIDER_OUTDIR)/ && \
-			cp -R . ../provider.$(PROVIDER_OUTDIR) && mv ../provider.$(PROVIDER_OUTDIR) ./$(PROVIDER_OUTDIR) && \
-		sed -e 's/\$${VERSION}/$(PROVIDER_VERSION)/g' < package.json > $(PROVIDER_OUTDIR)/package.json && \
-		cd ./$(PROVIDER_OUTDIR) && \
+		rm -rf ../provider.bin/ && \
+			cp -R . ../provider.bin && mv ../provider.bin ./bin && \
+		sed -e 's/\$${VERSION}/$(PROVIDER_VERSION)/g' < package.json > bin/package.json && \
+		cd ./bin && \
 			yarn install && \
 			yarn link @pulumi/eks
 
