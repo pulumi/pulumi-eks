@@ -24,13 +24,8 @@ import (
 )
 
 func TestAccClusterCs(t *testing.T) {
-	pathEnv, err := providerPluginPathEnv()
-	if err != nil {
-		t.Fatalf("failed to build provider plugin PATH: %v", err)
-	}
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Env: []string{pathEnv},
 			Dir: filepath.Join(getCwd(t), "cluster-cs"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
@@ -47,7 +42,7 @@ func TestAccClusterCs(t *testing.T) {
 
 func getCSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	region := getEnvRegion(t)
-	base := getBaseOptions()
+	base := getBaseOptions(t)
 	csharpBase := base.With(integration.ProgramTestOptions{
 		Config: map[string]string{
 			"aws:region": region,

@@ -20,12 +20,15 @@
         "cni.ts",
         "nodegroup.ts",
         "dashboard.ts",
+        "randomSuffix.ts",
         "securitygroup.ts",
         "index.ts",
         "servicerole.ts",
         "storageclass.ts",
 
-        "cmd/provider/index.ts"
+        "cmd/provider/cluster.ts",
+        "cmd/provider/cni.ts",
+        "cmd/provider/index.ts",
+        "cmd/provider/randomSuffix.ts"
     ]
 }
-
