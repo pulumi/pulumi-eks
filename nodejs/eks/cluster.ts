@@ -346,7 +346,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         nodeAssociatePublicIpAddress: args.nodeAssociatePublicIpAddress,
         instanceType: args.instanceType,
         nodePublicKey: args.nodePublicKey,
-        encryptRootBockDevice: args.encryptRootBockDevice,
+        encryptRootBlockDevice: args.encryptRootBlockDevice || args.encryptRootBockDevice,
         nodeRootVolumeSize: args.nodeRootVolumeSize,
         nodeUserData: args.nodeUserData,
         minSize: args.minSize,
@@ -1003,8 +1003,16 @@ export interface ClusterOptions {
 
     /**
      * Encrypt the root block device of the nodes in the node group.
+     *
+     * @deprecated This option has been deprecated due to a misspelling.
+     * Use the correct encryptRootBlockDevice option instead.
      */
     encryptRootBockDevice?: pulumi.Input<boolean>;
+
+    /**
+     * Encrypt the root block device of the nodes in the node group.
+     */
+    encryptRootBlockDevice?: pulumi.Input<boolean>;
 
     /**
      * The tags to apply to the default `nodeSecurityGroup` created by the cluster.

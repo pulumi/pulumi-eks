@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- fix: correct spelling for encryptRootBlockDevice
+  [#450](https://github.com/pulumi/pulumi-eks/pull/450)
+
 ## 0.20.0 (Released September 3, 2020)
 
 ### Improvements
