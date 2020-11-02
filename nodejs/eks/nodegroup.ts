@@ -91,8 +91,16 @@ export interface NodeGroupBaseOptions {
 
     /**
      * Encrypt the root block device of the nodes in the node group.
+     *
+     * @deprecated This option has been deprecated due to a misspelling.
+     * Use the correct encryptRootBlockDevice option instead.
      */
     encryptRootBockDevice?: pulumi.Input<boolean>;
+
+    /**
+     * Encrypt the root block device of the nodes in the node group.
+     */
+    encryptRootBlockDevice?: pulumi.Input<boolean>;
 
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
@@ -486,7 +494,7 @@ ${customUserData}
         securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         spotPrice: args.spotPrice,
         rootBlockDevice: {
-            encrypted: args.encryptRootBockDevice,
+            encrypted: args.encryptRootBlockDevice || args.encryptRootBockDevice,
             volumeSize: args.nodeRootVolumeSize || 20, // GiB
             volumeType: "gp2", // default is "standard"
             deleteOnTermination: true,
