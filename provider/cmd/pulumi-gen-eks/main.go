@@ -24,6 +24,7 @@ import (
 
 	"github.com/pkg/errors"
 	dotnetgen "github.com/pulumi/pulumi/pkg/v2/codegen/dotnet"
+	gogen "github.com/pulumi/pulumi/pkg/v2/codegen/go"
 	pygen "github.com/pulumi/pulumi/pkg/v2/codegen/python"
 	"github.com/pulumi/pulumi/pkg/v2/codegen/schema"
 	"github.com/pulumi/pulumi/sdk/v2/go/common/util/contract"
@@ -68,7 +69,7 @@ func main() {
 	case DotNet:
 		genDotNet(readSchema(schemaFile, version), outdir)
 	case Go:
-		panic("go support is coming soon")
+		genGo(readSchema(schemaFile, version), outdir)
 	case Python:
 		genPython(readSchema(schemaFile, version), outdir)
 	case Schema:
@@ -647,6 +648,19 @@ func genDotNet(pkg *schema.Package, outdir string) {
 	// The .NET code generator emits a Provider class that we don't need, so remove it.
 	// This should be an option passed to the code generator, but we'll make the tweak here for now.
 	delete(files, "Provider.cs")
+
+	mustWriteFiles(outdir, files)
+}
+
+func genGo(pkg *schema.Package, outdir string) {
+	files, err := gogen.GeneratePackage(Tool, pkg)
+	if err != nil {
+		panic(err)
+	}
+
+	// The Go code generator emits a provider file that we don't need, so remove it.
+	// This should be an option passed to the code generator, but we'll make the tweak here for now.
+	delete(files, "eks/provider.go")
 
 	mustWriteFiles(outdir, files)
 }
