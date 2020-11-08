@@ -4,5 +4,59 @@
 
 # Export this package's modules as members:
 from .cluster import *
+from .cluster_creation_role_provider import *
+from .managed_node_group import *
+from .node_group import *
+from .node_group_security_group import *
 
+from .vpc_cni import *
 from ._inputs import *
+from . import outputs
+
+def _register_module():
+    import pulumi
+    from . import _utilities
+
+
+    class Module(pulumi.runtime.ResourceModule):
+        _version = _utilities.get_semver_version()
+
+        def version(self):
+            return Module._version
+
+        def construct(self, name: str, typ: str, urn: str) -> pulumi.Resource:
+            if typ == "eks:index:Cluster":
+                return Cluster(name, pulumi.ResourceOptions(urn=urn))
+            elif typ == "eks:index:ClusterCreationRoleProvider":
+                return ClusterCreationRoleProvider(name, pulumi.ResourceOptions(urn=urn))
+            elif typ == "eks:index:ManagedNodeGroup":
+                return ManagedNodeGroup(name, pulumi.ResourceOptions(urn=urn))
+            elif typ == "eks:index:NodeGroup":
+                return NodeGroup(name, pulumi.ResourceOptions(urn=urn))
+            elif typ == "eks:index:NodeGroupSecurityGroup":
+                return NodeGroupSecurityGroup(name, pulumi.ResourceOptions(urn=urn))
+            elif typ == "eks:index:VpcCni":
+                return VpcCni(name, pulumi.ResourceOptions(urn=urn))
+            else:
+                raise Exception(f"unknown resource type {typ}")
+
+
+    _module_instance = Module()
+    pulumi.runtime.register_resource_module("eks", "index", _module_instance)
+
+
+    class Package(pulumi.runtime.ResourcePackage):
+        _version = _utilities.get_semver_version()
+
+        def version(self):
+            return Package._version
+
+        def construct_provider(self, name: str, typ: str, urn: str) -> pulumi.ProviderResource:
+            if typ != "pulumi:providers:eks":
+                raise Exception(f"unknown provider type {typ}")
+            return Provider(name, pulumi.ResourceOptions(urn=urn))
+
+
+    pulumi.runtime.register_resource_package("eks", Package())
+
+_register_module()

@@ -232,6 +232,40 @@ function generateKubeconfig(
     }));
 }
 
+export interface ClusterCreationRoleProviderOptions {
+    region?: aws.Region;
+    profile?: string;
+}
+
+/**
+ * ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to
+ * `new eks.Cluster("test", { creationRoleProvider: ... })`. This can be used to provide a
+ * specific role to use for the creation of the EKS cluster different from the role being used
+ * to run the Pulumi deployment.
+ */
+export class ClusterCreationRoleProvider extends pulumi.ComponentResource implements CreationRoleProvider {
+    public readonly role: aws.iam.Role;
+    public readonly provider: pulumi.ProviderResource;
+
+    /**
+     * Creates a role provider that can be passed to `new eks.Cluster("test", { creationRoleProvider: ... })`.
+     * This can be used to provide a specific role to use for the creation of the EKS cluster different from
+     * the role being used to run the Pulumi deployment.
+     *
+     * @param name The _unique_ name of this component.
+     * @param args The arguments for this component.
+     * @param opts A bag of options that control this component's behavior.
+     */
+    constructor(name: string, args: ClusterCreationRoleProviderOptions, opts?: pulumi.ComponentResourceOptions) {
+        super("eks:index:ClusterCreationRoleProvider", name, args, opts);
+
+        const result = getRoleProvider(name, args?.region, args?.profile, this, opts?.provider);
+        this.role = result.role;
+        this.provider = result.provider;
+        this.registerOutputs(undefined);
+    }
+}
+
 /**
  * getRoleProvider creates a role provider that can be passed to `new eks.Cluster("test", {
  * creationRoleProvider: ... })`.  This can be used to provide a specific role to use for the
