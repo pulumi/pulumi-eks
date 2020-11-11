@@ -32,7 +32,8 @@ import (
 func TestAccCluster(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "./cluster"),
+			Dir:           path.Join(getCwd(t), "./cluster"),
+			RunUpdateTest: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -70,7 +71,8 @@ func TestAccFargate(t *testing.T) {
 func TestAccNodeGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "nodegroup"),
+			RunUpdateTest: true,
+			Dir:           path.Join(getCwd(t), "nodegroup"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -86,7 +88,8 @@ func TestAccNodeGroup(t *testing.T) {
 func TestAccManagedNodeGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "managed-nodegroups"),
+			RunUpdateTest: true,
+			Dir:           path.Join(getCwd(t), "managed-nodegroups"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -98,7 +101,7 @@ func TestAccManagedNodeGroup(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestAccManagedNodeGroupMissingRole(t *testing.T) {
+func TestAccMNG_withMissingRole(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:              path.Join(getCwd(t), "tests", "managed-ng-missing-role"),
@@ -111,7 +114,7 @@ func TestAccManagedNodeGroupMissingRole(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestAccManagedNodeGroupAwsAuth(t *testing.T) {
+func TestAccMNG_withAwsAuth(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "tests", "managed-ng-aws-auth"),
@@ -141,7 +144,8 @@ func TestAccManagedNodeGroupAwsAuth(t *testing.T) {
 func TestAccTags(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tags"),
+			Dir:           path.Join(getCwd(t), "tags"),
+			RunUpdateTest: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -157,7 +161,8 @@ func TestAccTags(t *testing.T) {
 func TestAccStorageClasses(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "storage-classes"),
+			RunUpdateTest: true,
+			Dir:           path.Join(getCwd(t), "storage-classes"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -255,110 +260,6 @@ func TestAccExtraSecurityGroups(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "extra-sg"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
-				)
-			},
-		})
-
-	integration.ProgramTest(t, &test)
-}
-
-func TestAccCluster_withUpdate(t *testing.T) {
-	t.Skip("Temp skip while upgrading to a majorversion of pulumi-aws")
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir:           path.Join(getCwd(t), "./cluster"),
-			RunUpdateTest: true,
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		})
-
-	integration.ProgramTest(t, &test)
-}
-
-func TestAccNodeGroup_withUpdate(t *testing.T) {
-	t.Skip("Temp skip while upgrading to a majorversion of pulumi-aws")
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir:           path.Join(getCwd(t), "nodegroup"),
-			RunUpdateTest: true,
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		})
-
-	integration.ProgramTest(t, &test)
-}
-
-func TestAccTags_withUpdate(t *testing.T) {
-	t.Skip("Temp skip while upgrading to a majorversion of pulumi-aws")
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir:           path.Join(getCwd(t), "tags"),
-			RunUpdateTest: true,
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		})
-
-	integration.ProgramTest(t, &test)
-}
-
-func TestAccStorageClasses_withUpdate(t *testing.T) {
-	t.Skip("Temp skip while upgrading to a majorversion of pulumi-aws")
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir:           path.Join(getCwd(t), "storage-classes"),
-			RunUpdateTest: true,
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig1"],
-					info.Outputs["kubeconfig2"],
-				)
-			},
-		})
-
-	integration.ProgramTest(t, &test)
-}
-
-func TestAccManagedNodeGroup_withUpdate(t *testing.T) {
-	t.Skip("Temp skip while upgrading to a majorversion of pulumi-aws")
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir:           path.Join(getCwd(t), "managed-nodegroups"),
-			RunUpdateTest: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
