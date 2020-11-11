@@ -121,7 +121,7 @@ jobs:
           name: ${{ matrix.language }}-sdk.tar.gz
           path: ${{ github.workspace}}/${{ matrix.language }}/
       - name: Uncompress SDK folder
-        run: tar -zxf ${{ github.workspace}}/${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{
+        run: tar -zxf ${{ github.workspace}}/${{ matrix.language }}/${{ matrix.language }}-sdk.tar.gz -C ${{
           github.workspace}}/${{ matrix.language}}/eks
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
