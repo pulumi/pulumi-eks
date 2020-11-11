@@ -29,5 +29,8 @@ install_nodejs_sdk::
 test_nodejs::
 	cd nodejs/eks/examples && go test -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
 
+specific_test:
+	cd nodejs/eks/examples && go test -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
+
 dev:: lint build_nodejs
 test:: install_nodejs_sdk test_nodejs
