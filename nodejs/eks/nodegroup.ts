@@ -479,7 +479,7 @@ ${customUserData}
 
     // Enable auto-assignment of public IP addresses on worker nodes for
     // backwards compatibility on existing EKS clusters launched with it
-    // enabled.
+    // enabled. Defaults to `true`.
     let nodeAssociatePublicIpAddress: boolean = true;
     if (args.nodeAssociatePublicIpAddress !== undefined) {
         nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
