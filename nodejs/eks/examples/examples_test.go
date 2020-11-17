@@ -402,9 +402,10 @@ func TestAccVpcSubnetTags(t *testing.T) {
 }
 
 func TestAccMigrateNodeGroups(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
+	t.Skip("Temporarily skipping test - needs addressed as https://github.com/pulumi/pulumi-eks/issues/467")
+	//if testing.Short() {
+	//	t.Skip("skipping test in short mode.")
+	//}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "tests", "migrate-nodegroups"),
