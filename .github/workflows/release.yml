@@ -121,7 +121,7 @@ jobs:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}/nodejs/
       - name: Uncompress SDK folder
-        run: tar -zxf ${{ github.workspace}}/nodejs/nodejs-sdk.tar.gz -C ${{
+        run: tar -zxf ${{ github.workspace}}/nodejs/nodejs.tar.gz -C ${{
           github.workspace}}/${{ matrix.language}}/eks
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
