@@ -103,7 +103,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ matrix.goversion }}
+          go-version: 1.15.x
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.1.0
         with:
@@ -118,10 +118,10 @@ jobs:
       - name: Download SDK
         uses: actions/download-artifact@v2
         with:
-          name: ${{ matrix.language }}-sdk.tar.gz
-          path: ${{ github.workspace}}/${{ matrix.language }}/
+          name: nodejs-sdk.tar.gz
+          path: ${{ github.workspace}}/nodejs/
       - name: Uncompress SDK folder
-        run: tar -zxf ${{ github.workspace}}/${{ matrix.language }}/${{ matrix.language }}-sdk.tar.gz -C ${{
+        run: tar -zxf ${{ github.workspace}}/nodejs/nodejs-sdk.tar.gz -C ${{
           github.workspace}}/${{ matrix.language}}/eks
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
