@@ -4,6 +4,8 @@
 
 - fix: correct spelling for encryptRootBlockDevice
   [#450](https://github.com/pulumi/pulumi-eks/pull/450)
+- Initial support for Python and .NET
+  [#448](https://github.com/pulumi/pulumi-eks/pull/448)
 
 ## 0.20.0 (Released September 3, 2020)
 

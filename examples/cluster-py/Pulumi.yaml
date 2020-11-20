@@ -1,0 +1,3 @@
+name: example-cluster-py
+description: EKS cluster example
+runtime: python

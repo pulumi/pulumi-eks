@@ -1,8 +1,11 @@
 .pulumi
 **/bin/
+**/obj/
 **/node_modules/
 vendor/
 **/Pulumi.*.yaml
 **/yarn-error.log
 yarn.lock
 .idea/
+**/version.txt
+**/dist
