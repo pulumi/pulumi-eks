@@ -125,11 +125,11 @@ jobs:
       - name: Check worktree clean
         run: ./ci-scripts/ci/check-worktree-is-clean
       - name: Compress Python Folder SDK folder
-        if: ${{ matrix.language }} == python
+        if: matrix.language == "python"
         run: tar -zcf ${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/pulumi_eks
           .
-      - name: Compress Folder SDK folder
-        if: ${{ matrix.language }} != python
+      - name: Compress NodeJS Folder SDK folder
+        if: matrix.language != "python"
         run: tar -zcf ${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/eks
           .
       - name: Upload artifacts

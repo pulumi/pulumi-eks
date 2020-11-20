@@ -140,7 +140,7 @@ jobs:
         if: matrix.language == "python"
         run: tar -zcf ${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/pulumi_eks
           .
-      - name: Compress Folder SDK folder
+      - name: Compress NodeJS Folder SDK folder
         if: matrix.language != "python"
         run: tar -zcf ${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/eks
           .
