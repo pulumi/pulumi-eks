@@ -73,10 +73,10 @@ install_dotnet_sdk:: build_dotnet
 
 # TODO add separate targets for each language.
 test_nodejs:: install_nodejs_sdk
-	cd examples && go test -tags=all -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
+	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
 
 specific_test:: install_nodejs_sdk
-	cd examples && go test -tags=all -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
+	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
 
 dev:: lint build_nodejs
 test:: test_nodejs
