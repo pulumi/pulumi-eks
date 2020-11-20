@@ -37,9 +37,54 @@ jobs:
           echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
       - name: Run lint
         run: make lint
+  prerequisites:
+    name: prerequisites
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Checkout Scripts Repo
+        uses: actions/checkout@v2
+        with:
+          path: ci-scripts
+          repository: pulumi/scripts
+      - name: Unshallow clone for tags
+        run: git fetch --prune --unshallow --tags
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15.x
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        with:
+          repo: pulumi/pulumictl
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@v1.0.1
+      - name: Build provider binary + schema
+        run: make schema provider
+      - name: Check worktree clean
+        run: ./ci-scripts/ci/check-worktree-is-clean
+      - name: Tar provider binaries
+        run: tar -zcf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
+          }}/bin/ pulumi-resource-${{ env.PROVIDER }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PROVIDER }}-provider.tar.gz
+          path: ${{ github.workspace }}/bin/provider.tar.gz
+      - if: failure() && github.event_name == 'push'
+        name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          author_name: Failure in building provider prerequisites
+          fields: repo,commit,author,action
+          status: ${{ job.status }}
+    strategy:
+      fail-fast: true
   build_sdk:
     name: build_sdk
     runs-on: ubuntu-latest
+    requires: prerequisites
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
