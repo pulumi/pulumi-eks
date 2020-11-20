@@ -1,0 +1,370 @@
+{
+    "name": "eks",
+    "description": "Pulumi Amazon Web Services (AWS) EKS Components.",
+    "keywords": [
+        "pulumi",
+        "aws",
+        "eks"
+    ],
+    "homepage": "https://pulumi.com",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/pulumi/pulumi-eks",
+    "config": {},
+    "types": {
+        "eks:index:FargateProfile": {
+            "description": "Defines how Kubernetes pods are executed in Fargate. See aws.eks.FargateProfileArgs for reference.",
+            "properties": {
+                "podExecutionRoleArn": {
+                    "type": "string",
+                    "description": "Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached."
+                },
+                "subnetIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster."
+                }
+            },
+            "type": "object"
+        },
+        "eks:index:KubeconfigOptions": {
+            "description": "Represents the AWS credentials to scope a given kubeconfig when using a non-default credential chain.\n\nThe options can be used independently, or additively.\n\nA scoped kubeconfig is necessary for certain auth scenarios. For example:\n  1. Assume a role on the default account caller,\n  2. Use an AWS creds profile instead of the default account caller,\n  3. Use an AWS creds creds profile instead of the default account caller,\n     and then assume a given role on the profile. This scenario is also\n     possible by only using a profile, iff the profile includes a role to\n     assume in its settings.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html\n- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html\n- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html",
+            "properties": {
+                "profileName": {
+                    "type": "string",
+                    "description": "AWS credential profile name to always use instead of the default AWS credential provider chain.\n\nThe profile is passed to kubeconfig as an authentication environment setting."
+                },
+                "roleArn": {
+                    "type": "string",
+                    "description": "Role ARN to assume instead of the default AWS credential provider chain.\n\nThe role is passed to kubeconfig as an authentication exec argument."
+                }
+            },
+            "type": "object"
+        },
+        "eks:index:RoleMapping": {
+            "description": "Describes a mapping from an AWS IAM role to a Kubernetes user and groups.",
+            "properties": {
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of groups within Kubernetes to which the role is mapped."
+                },
+                "roleArn": {
+                    "type": "string",
+                    "description": "The ARN of the IAM role to add."
+                },
+                "username": {
+                    "type": "string",
+                    "description": "The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role."
+                }
+            },
+            "type": "object",
+            "required": [
+                "roleArn",
+                "username",
+                "groups"
+            ]
+        },
+        "eks:index:UserMapping": {
+            "description": "Describes a mapping from an AWS IAM user to a Kubernetes user and groups.",
+            "properties": {
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of groups within Kubernetes to which the user is mapped to."
+                },
+                "userArn": {
+                    "type": "string",
+                    "description": "The ARN of the IAM user to add."
+                },
+                "username": {
+                    "type": "string",
+                    "description": "The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user."
+                }
+            },
+            "type": "object",
+            "required": [
+                "userArn",
+                "username",
+                "groups"
+            ]
+        },
+        "eks:index:VpcCniOptions": {
+            "description": "Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.",
+            "properties": {
+                "customNetworkConfig": {
+                    "type": "boolean",
+                    "description": "Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.\n\nDefaults to false."
+                },
+                "eniConfigLabelDef": {
+                    "type": "string",
+                    "description": "Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone\nRef: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))\n\nDefaults to the official AWS CNI image in ECR."
+                },
+                "eniMtu": {
+                    "type": "integer",
+                    "description": "Used to configure the MTU size for attached ENIs. The valid range is from 576 to 9001.\n\nDefaults to 9001."
+                },
+                "externalSnat": {
+                    "type": "boolean",
+                    "description": "Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.\n\nDefaults to false."
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI image in ECR."
+                },
+                "logFile": {
+                    "type": "string",
+                    "description": "Specifies the file path used for logs.\n\nDefaults to \"stdout\" to emit Pod logs for `kubectl logs`."
+                },
+                "logLevel": {
+                    "type": "string",
+                    "description": "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nSee more options: https://git.io/fj92K"
+                },
+                "nodePortSupport": {
+                    "type": "boolean",
+                    "description": "Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.\n\nDefaults to true."
+                },
+                "vethPrefix": {
+                    "type": "string",
+                    "description": "Specifies the veth prefix used to generate the host-side veth device name for the CNI.\n\nThe prefix can be at most 4 characters long.\n\nDefaults to \"eni\"."
+                },
+                "warmEniTarget": {
+                    "type": "integer",
+                    "description": "Specifies the number of free elastic network interfaces (and all of their available IP addresses) that the ipamD daemon should attempt to keep available for pod assignment on the node.\n\nDefaults to 1."
+                },
+                "warmIpTarget": {
+                    "type": "integer",
+                    "description": "Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node."
+                }
+            },
+            "type": "object"
+        }
+    },
+    "provider": {},
+    "resources": {
+        "eks:index:Cluster": {
+            "description": "Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.",
+            "properties": {
+                "kubeconfig": {
+                    "$ref": "pulumi.json#/Any",
+                    "description": "A kubeconfig that can be used to connect to the EKS cluster."
+                }
+            },
+            "type": "object",
+            "required": [
+                "kubeconfig"
+            ],
+            "inputProperties": {
+                "clusterSecurityGroupTags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "The tags to apply to the cluster security group."
+                },
+                "clusterTags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "The tags to apply to the EKS cluster."
+                },
+                "createOidcProvider": {
+                    "type": "boolean",
+                    "description": "Indicates whether an IAM OIDC Provider is created for the EKS cluster.\n\nThe OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.\n\nSee for more details:\n - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html\n - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html\n - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/\n - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts"
+                },
+                "desiredCapacity": {
+                    "type": "integer",
+                    "description": "The number of worker nodes that should be running in the cluster. Defaults to 2."
+                },
+                "enabledClusterLogTypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: [\"api\", \"audit\", \"authenticator\", \"controllerManager\", \"scheduler\"]. By default it is off."
+                },
+                "encryptRootBlockDevice": {
+                    "type": "boolean",
+                    "description": "Encrypt the root block device of the nodes in the node group."
+                },
+                "encryptionConfigKeyArn": {
+                    "type": "string",
+                    "description": "KMS Key ARN to use with the encryption configuration for the cluster.\n\nOnly available on Kubernetes 1.13+ clusters created after March 6, 2020.\nSee for more details:\n- https://aws.amazon.com/about-aws/whats-new/2020/03/amazon-eks-adds-envelope-encryption-for-secrets-with-aws-kms/"
+                },
+                "endpointPrivateAccess": {
+                    "type": "boolean",
+                    "description": "Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default is `false`."
+                },
+                "endpointPublicAccess": {
+                    "type": "boolean",
+                    "description": "Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`."
+                },
+                "fargate": {
+                    "type": "boolean",
+                    "oneOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "boolean",
+                            "$ref": "#/types/eks:index:FargateProfile"
+                        }
+                    ],
+                    "description": "Add support for launching pods in Fargate. Defaults to launching pods in the `default` namespace.  If specified, the default node group is skipped as though `skipDefaultNodeGroup: true` had been passed."
+                },
+                "gpu": {
+                    "type": "boolean",
+                    "description": "Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\nNote: `gpu` and `nodeAmiId` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html"
+                },
+                "instanceProfileName": {
+                    "type": "string",
+                    "description": "The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup."
+                },
+                "maxSize": {
+                    "type": "integer",
+                    "description": "The maximum number of worker nodes running in the cluster. Defaults to 2."
+                },
+                "minSize": {
+                    "type": "integer",
+                    "description": "The minimum number of worker nodes running in the cluster. Defaults to 1."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The cluster's physical resource name.\n\nIf not specified, the default is to use auto-naming for the cluster's name, resulting in a physical name with the format `${name}-eksCluster-0123abcd`.\n\nSee for more details: https://www.pulumi.com/docs/intro/concepts/programming-model/#autonaming"
+                },
+                "nodeAmiId": {
+                    "type": "string",
+                    "description": "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.\n\nNote: `nodeAmiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html."
+                },
+                "nodeAssociatePublicIpAddress": {
+                    "type": "boolean",
+                    "description": "Whether or not to auto-assign the EKS worker nodes public IP addresses. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs."
+                },
+                "nodePublicKey": {
+                    "type": "string",
+                    "description": "Public key material for SSH access to worker nodes. See allowed formats at:\nhttps://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html\nIf not provided, no SSH access is enabled on VMs."
+                },
+                "nodeRootVolumeSize": {
+                    "type": "integer",
+                    "description": "The size in GiB of a cluster node's root volume. Defaults to 20."
+                },
+                "nodeSecurityGroupTags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "The tags to apply to the default `nodeSecurityGroup` created by the cluster.\n\nNote: The `nodeSecurityGroupTags` option and the node group option `nodeSecurityGroup` are mutually exclusive."
+                },
+                "nodeSubnetIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The subnets to use for worker nodes. Defaults to the value of subnetIds."
+                },
+                "nodeUserData": {
+                    "type": "string",
+                    "description": "Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node signals its readiness to the managing CloudFormation stack. This code must be a typical user data script: critically it must begin with an interpreter directive (i.e. a `#!`)."
+                },
+                "privateSubnetIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The set of private subnets to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.\n\nIf `vpcId` is not set, the cluster will use the AWS account's default VPC subnets.\n\nWorker network architecture options:\n - Private-only: Only set `privateSubnetIds`.\n   - Default workers to run in a private subnet. In this setting, Kubernetes cannot create public, internet-facing load balancers for your pods.\n - Public-only: Only set `publicSubnetIds`.\n   - Default workers to run in a public subnet.\n - Mixed (recommended): Set both `privateSubnetIds` and `publicSubnetIds`.\n   - Default all worker nodes to run in private subnets, and use the public subnets for internet-facing load balancers.\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.\n\nAlso consider setting `nodeAssociatePublicIpAddress: true` for fully private workers."
+                },
+                "providerCredentialOpts": {
+                    "$ref": "#/types/eks:index:KubeconfigOptions",
+                    "description": "The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.\n\nThis is required for certain auth scenarios. For example:\n- Creating and using a new AWS provider instance, or\n- Setting the AWS_PROFILE environment variable, or\n- Using a named profile configured on the AWS provider via:\n`pulumi config set aws:profile \u003cprofileName\u003e`\n\nSee for more details:\n- https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider\n- https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/\n- https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration\n- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html"
+                },
+                "proxy": {
+                    "type": "string",
+                    "description": "The HTTP(S) proxy to use within a proxied environment.\n\n The proxy is used during cluster creation, and OIDC configuration.\n\nThis is an alternative option to setting the proxy environment variables: HTTP(S)_PROXY and/or http(s)_proxy.\n\nThis option is required iff the proxy environment variables are not set.\n\nFormat:      \u003cprotocol\u003e://\u003chost\u003e:\u003cport\u003e\nAuth Format: \u003cprotocol\u003e://\u003cusername\u003e:\u003cpassword\u003e@\u003chost\u003e:\u003cport\u003e\n\nEx:\n  - \"http://proxy.example.com:3128\"\n  - \"https://proxy.example.com\"\n  - \"http://username:password@proxy.example.com:3128\""
+                },
+                "publicAccessCidrs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Indicates which CIDR blocks can access the Amazon EKS public API server endpoint."
+                },
+                "publicSubnetIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The set of public subnets to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.\n\nIf `vpcId` is not set, the cluster will use the AWS account's default VPC subnets.\n\nWorker network architecture options:\n - Private-only: Only set `privateSubnetIds`.\n   - Default workers to run in a private subnet. In this setting, Kubernetes cannot create public, internet-facing load balancers for your pods.\n - Public-only: Only set `publicSubnetIds`.\n   - Default workers to run in a public subnet.\n - Mixed (recommended): Set both `privateSubnetIds` and `publicSubnetIds`.\n   - Default all worker nodes to run in private subnets, and use the public subnets for internet-facing load balancers.\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged."
+                },
+                "roleMappings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/eks:index:RoleMapping"
+                    },
+                    "description": "Optional mappings from AWS IAM roles to Kubernetes users and groups."
+                },
+                "skipDefaultNodeGroup": {
+                    "type": "boolean",
+                    "description": "If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided."
+                },
+                "subnetIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The set of all subnets, public and private, to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.\n\nIf `vpcId` is not set, the cluster will use the AWS account's default VPC subnets.\n\nIf the list of subnets includes both public and private subnets, the worker nodes will only be attached to the private subnets, and the public subnets will be used for internet-facing load balancers.\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.\n\nNote: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged."
+                },
+                "tags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging."
+                },
+                "userMappings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/eks:index:UserMapping"
+                    },
+                    "description": "Optional mappings from AWS IAM users to Kubernetes users and groups."
+                },
+                "version": {
+                    "type": "string",
+                    "description": "Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used."
+                },
+                "vpcCniOptions": {
+                    "$ref": "#/types/eks:index:VpcCniOptions",
+                    "description": "The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type."
+                },
+                "vpcId": {
+                    "type": "string",
+                    "description": "The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the default VPC."
+                }
+            },
+            "isComponent": true
+        }
+    },
+    "language": {
+        "csharp": {
+            "packageReferences": {
+                "Pulumi": "2.*",
+                "Pulumi.Aws": "3.*",
+                "Pulumi.Kubernetes": "2.*"
+            }
+        },
+        "python": {
+            "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
+            "requires": {
+                "pulumi": "\u003e=2.12.0,\u003c3.0.0",
+                "pulumi-aws": "\u003e=3.2.0,\u003c4.0.0",
+                "pulumi-kubernetes": "\u003e=2.0.0,\u003c3.0.0"
+            },
+            "usesIOClasses": true
+        }
+    }
+}
