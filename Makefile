@@ -16,7 +16,7 @@ schema::
 
 provider::
 	rm -rf provider/cmd/$(PROVIDER)/bin
-	cd provider/cmd/$(PROVIDER) && go build -a -o bin/$(PROVIDER) main.go
+	cd provider/cmd/$(PROVIDER) && go build -a -o $(WORKING_DIR)/bin/$(PROVIDER) main.go
 
 build_nodejs:: VERSION := $(shell pulumictl get version --language javascript)
 build_nodejs::
