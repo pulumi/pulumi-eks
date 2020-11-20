@@ -61,11 +61,21 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{matrix.pythonversion}}
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
           node-version: ${{matrix.nodeversion}}
           registry-url: https://registry.npmjs.org
+      - name: Install Yarn
+        run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
+      - name: Update PATH for Yarn
+        run: |
+          echo "$HOME/.yarn/bin" >> $GITHUB_PATH
+          echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
       - name: Build SDK
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
@@ -85,8 +95,11 @@ jobs:
           - 1.15.x
         language:
           - nodejs
+          - python
         nodeversion:
           - 14.x
+        pythonversion:
+          - 3.8
   prerequisites:
     name: prerequisites
     runs-on: ubuntu-latest
