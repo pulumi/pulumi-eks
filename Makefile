@@ -3,7 +3,7 @@ PROJECT_NAME := Pulumi Amazon Web Services (AWS) EKS Components
 VERSION         := $(shell pulumictl get version)
 TESTPARALLELISM := 12
 
-PACK			:= eks
+PACK            := eks
 PROVIDER        := pulumi-resource-${PACK}
 CODEGEN         := pulumi-gen-${PACK}
 

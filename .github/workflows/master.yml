@@ -242,7 +242,7 @@ jobs:
       - name: Run tests
         run: make specific_test TestName=${{ matrix.test-name }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         goversion:
           - 1.15.x
