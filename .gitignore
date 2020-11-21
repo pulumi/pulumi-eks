@@ -9,3 +9,8 @@ yarn.lock
 .idea/
 **/version.txt
 **/dist
+
+# for goreleaser
+goreleaser
+package.json
+PulumiPlugin.yaml
