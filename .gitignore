@@ -10,6 +10,9 @@ yarn.lock
 **/version.txt
 **/dist
 
+ci-scripts/
+*.tar.gz
+
 # for goreleaser
 goreleaser
 package.json
