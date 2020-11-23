@@ -137,6 +137,7 @@ jobs:
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
           path: ${{ github.workspace}}/${{ matrix.language }}/${{ matrix.language }}.tar.gz
+      - run: git status
     strategy:
       fail-fast: true
       matrix:

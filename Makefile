@@ -9,7 +9,7 @@ CODEGEN         := pulumi-gen-${PACK}
 
 WORKING_DIR     := $(shell pwd)
 
-build:: build_nodejs build_python build_dotnet
+build:: schema provider build_nodejs build_python build_dotnet
 
 schema::
 	cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER)
