@@ -345,7 +345,7 @@ jobs:
         nodeversion:
           - 14.x
         test-name:
-          - cluster-py
+          - ClusterPy
 name: Run Acceptance Tests from PR
 on:
   repository_dispatch:
