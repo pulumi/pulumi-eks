@@ -69,7 +69,7 @@ install_provider:: provider install_nodejs_sdk
 			yarn link @pulumi/eks
 
 install_nodejs_sdk:: build_nodejs
-	cd $(WORKING_DIR)/nodejs/eks/bin && yarn link
+	yarn link --cwd $(WORKING_DIR)/nodejs/eks/bin
 
 install_dotnet_sdk:: build_dotnet
 	mkdir -p $(WORKING_DIR)/nuget
@@ -86,7 +86,7 @@ test_nodejs:: install_nodejs_sdk
 	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
 
 specific_test:: install_nodejs_sdk
-	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
+	cd examples && go test -tags=$(LanguageTags) -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
 
 dev:: lint build_nodejs
 test:: test_nodejs
