@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -12,12 +13,18 @@ import (
 const providerModule = "@pulumi/eks/cmd/provider"
 
 func main() {
+	binaryPath, err := os.Executable()
+	if err != nil {
+		exitError(errors.Wrapf(err, "could not find executable path"))
+	}
+	binaryDir := filepath.Dir(binaryPath)
+
 	nodePath, err := exec.LookPath("node")
 	if err != nil {
 		exitError(errors.Wrapf(err, "could not find node on the $PATH"))
 	}
 
-	runPath, err := locateModule(providerModule, nodePath)
+	runPath, err := locateModule(providerModule, binaryDir, nodePath)
 	if err != nil {
 		exitError(errors.Wrapf(err,
 			"It looks like the Pulumi SDK has not been installed. Have you run npm install or yarn install?"))
@@ -28,6 +35,7 @@ func main() {
 	args = append(args, os.Args[1:]...)
 
 	cmd := exec.Command(nodePath, args...)
+	cmd.Dir = binaryDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -37,9 +45,10 @@ func main() {
 }
 
 // locateModule resolves a node module name to a file path that can be loaded
-func locateModule(mod string, nodePath string) (string, error) {
+func locateModule(mod, cwd, nodePath string) (string, error) {
 	program := fmt.Sprintf("console.log(require.resolve('%s'));", mod)
 	cmd := exec.Command(nodePath, "-e", program)
+	cmd.Dir = cwd
 	out, err := cmd.Output()
 	if err != nil {
 		return "", err

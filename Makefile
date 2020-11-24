@@ -63,6 +63,7 @@ install_provider:: provider install_nodejs_sdk
 	cd provider/cmd/$(PROVIDER)	&& \
 		rm -rf ../provider.bin/ && \
 			cp -R . ../provider.bin && mv ../provider.bin ./bin && \
+			cp ../../../bin/$(PROVIDER) ./bin && \
 		sed -e 's/\$${VERSION}/$(PROVIDER_VERSION)/g' < package.json > bin/package.json && \
 		cd ./bin && \
 			yarn install && \
@@ -81,9 +82,14 @@ install_go_sdk::
 install_python_sdk::
 	#Intentionall empty for CI / CD templating
 
-# TODO add separate targets for each language.
 test_nodejs:: install_nodejs_sdk
 	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
+
+test_python:: install_provider
+	cd examples && go test -tags=python -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
+
+test_dotnet:: install_provider
+	cd examples && go test -tags=dotnet -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
 
 specific_test:: install_nodejs_sdk
 	cd examples && go test -tags=$(LanguageTags) -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
