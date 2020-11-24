@@ -80,19 +80,13 @@ jobs:
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
         run: ./ci-scripts/ci/check-worktree-is-clean
-      - name: Compress Python Folder SDK folder
-        if: matrix.language == 'python'
-        run: tar -zcf ${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/pulumi_eks
-          .
-      - name: Compress Non-python Folder SDK folder
-        if: matrix.language != 'python'
-        run: tar -zcf ${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/eks
-          .
+      - name: Compress SDK folder
+          run: tar -zcf ${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{ matrix.language }} .
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
-          path: ${{ github.workspace}}/${{ matrix.language }}/${{ matrix.language }}.tar.gz
+          path: ${{ github.workspace}}/${{ matrix.language }}.tar.gz
     strategy:
       fail-fast: true
       matrix:
@@ -266,10 +260,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.language }}-sdk.tar.gz
-          path: ${{ github.workspace}}/${{ matrix.language }}/
+          path: ${{ github.workspace}}
       - name: Uncompress SDK folder
-        run: tar -zxf ${{ github.workspace}}/${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{
-          github.workspace}}/${{ matrix.language}}/eks
+        run: tar -zxf ${{ github.workspace}}/${{ matrix.language }}.tar.gz -C ${{github.workspace}}/${{ matrix.language}}
       - name: Install dependencies
         run: make install_${{ matrix.language}}_sdk
       - name: Configure AWS Credentials
@@ -371,20 +364,18 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: nodejs-sdk.tar.gz
-          path: ${{ github.workspace}}/nodejs/
+          path: ${{ github.workspace}}
       - name: Uncompress NodeJS SDK folder
-        run: tar -zxf ${{ github.workspace}}/nodejs/nodejs.tar.gz -C ${{
-          github.workspace}}/nodejs/eks
+        run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
       - name: Download Python SDK
         uses: actions/download-artifact@v2
         with:
           name: python-sdk.tar.gz
-          path: ${{ github.workspace}}/python/
+          path: ${{ github.workspace}}/
       - name: Uncompress Python SDK folder
-        run: tar -zxf ${{ github.workspace}}/python/python.tar.gz -C ${{
-          github.workspace}}/python/pulumi_eks
+        run: tar -zxf ${{ github.workspace}}/python.tar.gz -C ${{github.workspace}}/python
       - name: Install dependencies
         run: make install_python_sdk
       - name: Configure AWS Credentials
