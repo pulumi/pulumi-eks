@@ -75,6 +75,12 @@ install_dotnet_sdk:: build_dotnet
 	mkdir -p $(WORKING_DIR)/nuget
 	find . -name '*.nupkg' -print -exec cp -p {} ${WORKING_DIR}/nuget \;
 
+install_go_sdk::
+	#Intentionally empty for CI / CD templating
+
+install_python_sdk::
+	#Intentionall empty for CI / CD templating
+
 # TODO add separate targets for each language.
 test_nodejs:: install_nodejs_sdk
 	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
