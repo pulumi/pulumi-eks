@@ -151,7 +151,7 @@ jobs:
           - 3.8
   publish:
     name: publish
-    needs: test-nodejs
+    needs: [test-nodejs, test-python]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -318,8 +318,8 @@ jobs:
           - Tags
           - TagInputTypes
           - VpcSubnetTags
-  test-other-langs:
-    name: Run Non-NodeJS Tests
+  test-python:
+    name: Run Python Tests
     needs: build_sdk
     runs-on: ubuntu-latest
     steps:
@@ -372,16 +372,16 @@ jobs:
           github.workspace}}/nodejs/eks
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
-      - name: Download Language SDK
+      - name: Download Python SDK
         uses: actions/download-artifact@v2
         with:
-          name: nodejs-sdk.tar.gz
-          path: ${{ github.workspace}}/nodejs/
-      - name: Uncompress Language SDK folder
-        run: tar -zxf ${{ github.workspace}}/${{ matrix.language }}/${{ matrix.language }}.tar.gz -C ${{
-          github.workspace}}/${{ matrix.language}}/eks
+          name: python-sdk.tar.gz
+          path: ${{ github.workspace}}/python/
+      - name: Uncompress Python SDK folder
+        run: tar -zxf ${{ github.workspace}}/python/python.tar.gz -C ${{
+          github.workspace}}/python/pulumi_eks
       - name: Install dependencies
-        run: make install_${{ matrix.language}}_sdk
+        run: make install_python_sdk
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -406,8 +406,6 @@ jobs:
           - 1.15.x
         pythonversion:
           - 3.8
-        language:
-          - python
         nodeversion:
           - 14.x
         test-name:
