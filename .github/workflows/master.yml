@@ -215,14 +215,20 @@ jobs:
         with:
           always-auth: true
           registry-url: https://registry.npmjs.org
-      - name: Download SDK
+      - name: Download NodeJS SDK
         uses: actions/download-artifact@v2
         with:
           name: nodejs-sdk.tar.gz
-          path: ${{ github.workspace}}/nodejs/
-      - name: Uncompress SDK folder
-        run: tar -zxf ${{ github.workspace}}/nodejs/nodejs.tar.gz -C ${{
-          github.workspace}}/nodejs/eks
+          path: ${{ github.workspace}}
+      - name: Uncompress NodeJS SDK folder
+        run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
+      - name: Download Python SDK
+        uses: actions/download-artifact@v2
+        with:
+          name: python-sdk.tar.gz
+          path: ${{ github.workspace}}
+      - name: Uncompress Python SDK folder
+        run: tar -zxf ${{ github.workspace}}/python.tar.gz -C ${{github.workspace}}/python
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         name: Publish SDK
