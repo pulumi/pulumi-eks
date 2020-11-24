@@ -262,6 +262,19 @@ jobs:
         with:
           node-version: ${{matrix.nodeversion}}
           registry-url: https://registry.npmjs.org
+      - name: Download provider binary
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.PROVIDER }}-provider.tar.gz
+          path: ${{ github.workspace }}/bin
+      - name: Untar provider binaries
+        run: tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
+          }}/bin
+      - name: Restore binary perms
+        run: find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
+          -exec chmod +x {} \;
+      - name: Update path
+        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
       - name: Download SDK
         uses: actions/download-artifact@v2
         with:
@@ -286,6 +299,10 @@ jobs:
           aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
           aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
+      - name: Link nodejs binary for testing
+        run: |
+          cd ${{ github.workspace }}/bin
+          yarn install && yarn link @pulumi/eks
       - name: Run tests
         run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=${{ matrix.language }}
     strategy:
