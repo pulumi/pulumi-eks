@@ -409,7 +409,7 @@ jobs:
         nodeversion:
           - 14.x
         test-name:
-          - cluster-py
+          - ClusterPy
 name: master
 "on":
   push:
