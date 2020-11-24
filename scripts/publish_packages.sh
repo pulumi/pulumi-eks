@@ -61,6 +61,14 @@ publish() {
     mv package.json package.json.publish
     mv package.json.dev package.json
     popd
+
+    ## Publish PIP Packages
+    echo "Publishing Pip package to pypi as pulumi:"
+    twine upload \
+        -u "pulumi" -p "${PYPI_PASSWORD}" \
+        " ${ROOT}/python/bin/dist/*.tar.gz" \
+        --skip-existing \
+        --verbose
 }
 
 publish eks
