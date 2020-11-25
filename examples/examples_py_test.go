@@ -16,11 +16,28 @@
 package examples
 
 import (
+	"path"
 	"path/filepath"
 	"testing"
 
+	"github.com/pulumi/pulumi-eks/utils"
 	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
 )
+
+func TestAccAwsProfilePy(t *testing.T) {
+	test := getPythonBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "aws-profile-py"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
 
 func TestAccClusterPy(t *testing.T) {
 	test := getPythonBaseOptions(t).
