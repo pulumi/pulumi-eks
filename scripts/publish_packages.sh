@@ -64,11 +64,13 @@ publish() {
 
     ## Publish PIP Packages
     echo "Publishing Pip package to pypi as pulumi:"
+    pushd ${ROOT}/python/bin
     twine upload \
         -u "pulumi" -p "${PYPI_PASSWORD}" \
-        " ${ROOT}/python/bin/dist/*.tar.gz" \
+        "dist/*.tar.gz" \
         --skip-existing \
         --verbose
+    popd
 }
 
 publish eks
