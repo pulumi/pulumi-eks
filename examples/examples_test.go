@@ -41,8 +41,13 @@ func getCwd(t *testing.T) string {
 	return cwd
 }
 
-func getBaseOptions() integration.ProgramTestOptions {
+func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
+	pathEnv, err := providerPluginPathEnv()
+	if err != nil {
+		t.Fatalf("failed to build provider plugin PATH: %v", err)
+	}
 	return integration.ProgramTestOptions{
+		Env:                  []string{pathEnv},
 		ExpectRefreshChanges: true,
 		RetryFailedSteps:     true,
 		ReportStats:          integration.NewS3Reporter("us-west-2", "eng.pulumi.com", "testreports"),
@@ -50,7 +55,6 @@ func getBaseOptions() integration.ProgramTestOptions {
 	}
 }
 
-//nolint:golint,deadcode
 func providerPluginPathEnv() (string, error) {
 	pluginDir := filepath.Join("..", "provider", "cmd", "pulumi-resource-eks", "bin")
 	absPluginDir, err := filepath.Abs(pluginDir)

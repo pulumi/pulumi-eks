@@ -43,6 +43,8 @@ class Transform<T, U> extends dynamic.Resource {
 /**
  * transform evaluates the given function on the given input iff the input's value has changed and returns the result
  * as an output.
+ *
+ * @deprecated This is no longer used and will be removed in the future.
  */
 export default function transform<T, U>(name: string, input: T, func: (v: T) => U, opts?: pulumi.CustomResourceOptions): pulumi.Output<U> {
     return (new Transform(name, input, func, opts)).output;

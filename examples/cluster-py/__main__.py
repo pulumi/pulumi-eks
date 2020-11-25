@@ -1,14 +1,6 @@
-import os
 import pulumi
 import pulumi_aws as aws
 import pulumi_eks as eks
-
-# TODO[pulumi/pulumi#5455]: To temporarily workaround an issue with dynamic providers
-# we need to install the @pulumi/eks Node.js package in our example's directory.
-# Once the issue has been addressed, we can remove this.
-with open("package.json", "w") as writer:
-    writer.write('{ "dependencies": { "@pulumi/eks": "latest" } }')
-os.system("yarn install && yarn link @pulumi/eks")
 
 project_name = pulumi.get_project()
 

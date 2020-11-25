@@ -13,14 +13,6 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import * as childProcess from "child_process";
-import * as crypto from "crypto";
-import * as fs from "fs";
-import * as jsyaml from "js-yaml";
-import * as path from "path";
-import * as process from "process";
-import * as tmp from "tmp";
-import which = require("which");
 
 /**
  * VpcCniOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
@@ -114,120 +106,23 @@ export interface VpcCniOptions {
     eniConfigLabelDef?: pulumi.Input<string>;
 }
 
-interface VpcCniInputs {
-    kubeconfig: string;
-    nodePortSupport?: boolean;
-    customNetworkConfig?: boolean;
-    externalSnat?: boolean;
-    warmEniTarget?: number;
-    warmIpTarget?: number;
-    logLevel?: string;
-    logFile?: string;
-    image?: string;
-    vethPrefix?: string;
-    eniMtu?: number;
-    eniConfigLabelDef?: string;
-}
-
-function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
-    const cniYaml = jsyaml.safeLoadAll(cniYamlText);
-
-    // Rewrite the envvars for the CNI daemon set as per the inputs.
-    const daemonSet = cniYaml.filter(o => o.kind === "DaemonSet")[0];
-    const env = daemonSet.spec.template.spec.containers[0].env;
-    if (args.nodePortSupport) {
-        env.push({name: "AWS_VPC_CNI_NODE_PORT_SUPPORT", value: args.nodePortSupport ? "true" : "false"});
-    }
-    if (args.customNetworkConfig) {
-        env.push({name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: args.customNetworkConfig ? "true" : "false"});
-    }
-    if (args.externalSnat) {
-        env.push({name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.externalSnat ? "true" : "false"});
-    }
-    if (args.warmEniTarget) {
-        env.push({name: "WARM_ENI_TARGET", value: args.warmEniTarget.toString()});
-    }
-    if (args.warmIpTarget) {
-        env.push({name: "WARM_IP_TARGET", value: args.warmIpTarget.toString()});
-    }
-    if (args.logLevel) {
-        env.push({name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: args.logLevel.toString()});
-    } else {
-        env.push({name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: "DEBUG"});
-    }
-    if (args.logFile) {
-        env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: args.logFile.toString()});
-    } else {
-        env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: "stdout"});
-    }
-    if (args.vethPrefix) {
-        env.push({name: "AWS_VPC_K8S_CNI_VETHPREFIX", value: args.vethPrefix.toString()});
-    } else {
-        env.push({name: "AWS_VPC_K8S_CNI_VETHPREFIX", value: "eni"});
-    }
-    if (args.eniMtu) {
-        env.push({name: "AWS_VPC_ENI_MTU", value: args.eniMtu.toString()});
-    } else {
-        env.push({name: "AWS_VPC_ENI_MTU", value: "9001"});
-    }
-    if (args.image) {
-        daemonSet.spec.template.spec.containers[0].image = args.image.toString();
-    }
-    if (args.eniConfigLabelDef) {
-        env.push({name: "ENI_CONFIG_LABEL_DEF", value: args.eniConfigLabelDef.toString()});
-    }
-    // Return the computed YAML.
-    return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
-}
-
-function applyVpcCniYaml(cniYamlText: string, args: VpcCniInputs) {
-    // Dump the kubeconfig to a file.
-    const tmpKubeconfig = tmp.fileSync();
-    fs.writeFileSync(tmpKubeconfig.fd, args.kubeconfig);
-
-    // Compute the required CNI YAML and dump it to a file.
-    const tmpYaml = tmp.fileSync();
-    fs.writeFileSync(tmpYaml.fd, computeVpcCniYaml(cniYamlText, args));
-
-    // Call kubectl to apply the YAML.
-    childProcess.execSync(`kubectl apply -f ${tmpYaml.name}`, {
-        env: { ...process.env, "KUBECONFIG": tmpKubeconfig.name },
-    });
-}
+// Dynamic providers don't currently work well with multi-language components [1]. To workaround this, the
+// dynamic providers in this library have been ported to be custom resources implemented by the new provider
+// plugin. An alias is used and care has been taken in the implementation inside the provider to avoid any
+// diffs for any existing stacks that were created using the old dynamic provider.
+// [1] https://github.com/pulumi/pulumi/issues/5455
 
 /**
  * VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart. Once Pulumi is
  * able to programatically manage existing infrastructure, we can replace this with a real k8s resource.
  */
-export class VpcCni extends pulumi.dynamic.Resource {
+export class VpcCni extends pulumi.CustomResource {
     constructor(name: string, kubeconfig: pulumi.Input<any>, args?: VpcCniOptions, opts?: pulumi.CustomResourceOptions) {
-        // Check to ensure that kubectl is installed, as we'll need it in order to deploy k8s resources below.
-        try {
-            which.sync("kubectl");
-        } catch (err) {
-            throw new Error("Could not set VPC CNI options: kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.");
-        }
-
-        const yamlPath = path.join(__dirname, "cni", "aws-k8s-cni.yaml");
-        const cniYamlText = fs.readFileSync(yamlPath).toString();
-
-        const provider = {
-            check: (state: any, inputs: any) => Promise.resolve({inputs: inputs, failedChecks: []}),
-            diff: (id: pulumi.ID, state: any, inputs: any) => Promise.resolve({}),
-            create: (inputs: any) => {
-                applyVpcCniYaml(cniYamlText, <VpcCniInputs>inputs);
-                return Promise.resolve({id: crypto.randomBytes(8).toString("hex"), outs: {}});
-            },
-            update: (id: pulumi.ID, state: any, inputs: any) => {
-                applyVpcCniYaml(cniYamlText, <VpcCniInputs>inputs);
-                return Promise.resolve({outs: {}});
-            },
-            read: (id: pulumi.ID, state: any) => Promise.resolve({id: id, props: state}),
-            delete: (id: pulumi.ID, state: any) => Promise.resolve(),
-        };
-
+        // This was previously implemented as a dynamic provider, so alias the old type.
+        const aliasOpts = { aliases: [{ type: "pulumi-nodejs:dynamic:Resource" }] };
+        opts = pulumi.mergeOptions(opts, aliasOpts);
         args = args || {};
-        super(provider, name, {
+        super("eks:index:VpcCni", name, {
             kubeconfig: pulumi.output(kubeconfig).apply(JSON.stringify),
             nodePortSupport: args.nodePortSupport,
             customNetworkConfig: args.customNetworkConfig,

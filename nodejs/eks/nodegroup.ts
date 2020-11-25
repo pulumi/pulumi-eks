@@ -20,8 +20,8 @@ import * as crypto from "crypto";
 import * as netmask from "netmask";
 
 import { Cluster, CoreData } from "./cluster";
+import randomSuffix from "./randomSuffix";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
-import transform from "./transform";
 import { InputTags } from "./utils";
 
 /**
@@ -413,7 +413,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         keyName = key.keyName;
     }
 
-    const cfnStackName = transform(`${name}-cfnStackName`, name, n => `${n}-${crypto.randomBytes(4).toString("hex")}`, { parent });
+    const cfnStackName = randomSuffix(`${name}-cfnStackName`, name, { parent });
 
     const awsRegion = pulumi.output(aws.getRegion({}, { parent, async: true }));
     const userDataArg = args.nodeUserData || pulumi.output("");
