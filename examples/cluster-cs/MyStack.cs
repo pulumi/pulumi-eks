@@ -12,13 +12,6 @@ class MyStack : Stack
 
     public MyStack()
     {
-        // TODO[pulumi/pulumi#5455]: To temporarily workaround an issue with dynamic providers
-        // we need to install the @pulumi/eks Node.js package in our example's directory.
-        // Once the issue has been addressed, we can remove these lines.
-        System.IO.File.WriteAllText("package.json", "{ \"dependencies\": { \"@pulumi/eks\": \"latest\" } }");
-        System.Diagnostics.Process.Start("yarn", "install").WaitForExit();
-        System.Diagnostics.Process.Start("yarn", "link @pulumi/eks").WaitForExit();
-
         string projectName = Deployment.Instance.ProjectName;
 
         var cluster1 = new Cluster($"{projectName}-1");

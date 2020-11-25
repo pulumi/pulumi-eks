@@ -529,7 +529,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 
 func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	region := getEnvRegion(t)
-	base := getBaseOptions()
+	base := getBaseOptions(t)
 	baseJS := base.With(integration.ProgramTestOptions{
 		Config: map[string]string{
 			"aws:region": region,
