@@ -14,6 +14,6 @@ ci-scripts/
 *.tar.gz
 
 # for goreleaser
-goreleaser
-package.json
-PulumiPlugin.yaml
+/goreleaser
+/package.json
+/PulumiPlugin.yaml
