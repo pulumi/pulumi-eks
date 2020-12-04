@@ -44,7 +44,7 @@ const managedNodeGroup2 = eks.createManagedNodeGroup("example-managed-ng2", {
         maxSize: 2,
     },
     diskSize: 20,
-    instanceTypes: "t2.medium",
+    instanceTypes: ["t2.medium"],
     labels: {"ondemand": "true"},
     tags: {"org": "pulumi"},
 }, cluster);
