@@ -57,6 +57,22 @@ func TestAccClusterPy(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccManagedNodeGroupPy(t *testing.T) {
+	test := getPythonBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			RunUpdateTest: true,
+			Dir:           filepath.Join(getCwd(t), "managed-nodegroups-py"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func getPythonBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	region := getEnvRegion(t)
 	base := getBaseOptions(t)
