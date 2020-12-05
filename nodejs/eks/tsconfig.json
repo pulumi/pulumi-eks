@@ -29,6 +29,8 @@
         "cmd/provider/cluster.ts",
         "cmd/provider/cni.ts",
         "cmd/provider/index.ts",
-        "cmd/provider/randomSuffix.ts"
+        "cmd/provider/nodegroup.ts",
+        "cmd/provider/randomSuffix.ts",
+        "cmd/provider/securitygroup.ts"
     ]
 }

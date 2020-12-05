@@ -21,6 +21,18 @@ namespace Pulumi.Eks.Inputs
         [Input("podExecutionRoleArn")]
         public Input<string>? PodExecutionRoleArn { get; set; }
 
+        [Input("selectors")]
+        private InputList<Pulumi.Aws.Eks.Inputs.FargateProfileSelectorArgs>? _selectors;
+
+        /// <summary>
+        /// Specify the namespace and label selectors to use for launching pods into Fargate.
+        /// </summary>
+        public InputList<Pulumi.Aws.Eks.Inputs.FargateProfileSelectorArgs> Selectors
+        {
+            get => _selectors ?? (_selectors = new InputList<Pulumi.Aws.Eks.Inputs.FargateProfileSelectorArgs>());
+            set => _selectors = value;
+        }
+
         [Input("subnetIds")]
         private InputList<string>? _subnetIds;
 
