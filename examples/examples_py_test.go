@@ -44,6 +44,7 @@ func getPythonBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	region := getEnvRegion(t)
 	base := getBaseOptions(t)
 	pythonBase := base.With(integration.ProgramTestOptions{
+		Env: []string{"PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES=1"},
 		Config: map[string]string{
 			"aws:region": region,
 		},
