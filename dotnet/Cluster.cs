@@ -15,10 +15,64 @@ namespace Pulumi.Eks
     public partial class Cluster : Pulumi.ComponentResource
     {
         /// <summary>
+        /// The AWS resource provider.
+        /// </summary>
+        [Output("awsProvider")]
+        public Output<Pulumi.Aws.Provider> AwsProvider { get; private set; } = null!;
+
+        /// <summary>
+        /// The security group for the EKS cluster.
+        /// </summary>
+        [Output("clusterSecurityGroup")]
+        public Output<Pulumi.Aws.Ec2.SecurityGroup> ClusterSecurityGroup { get; private set; } = null!;
+
+        /// <summary>
+        /// The EKS cluster and its dependencies.
+        /// </summary>
+        [Output("core")]
+        public Output<Outputs.CoreData> Core { get; private set; } = null!;
+
+        /// <summary>
+        /// The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
+        /// </summary>
+        [Output("defaultNodeGroup")]
+        public Output<Outputs.NodeGroupData?> DefaultNodeGroup { get; private set; } = null!;
+
+        /// <summary>
+        /// The EKS cluster.
+        /// </summary>
+        [Output("eksCluster")]
+        public Output<Pulumi.Aws.Eks.Cluster> EksCluster { get; private set; } = null!;
+
+        /// <summary>
+        /// The ingress rule that gives node group access to cluster API server.
+        /// </summary>
+        [Output("eksClusterIngressRule")]
+        public Output<Pulumi.Aws.Ec2.SecurityGroupRule> EksClusterIngressRule { get; private set; } = null!;
+
+        /// <summary>
+        /// The service roles used by the EKS cluster.
+        /// </summary>
+        [Output("instanceRoles")]
+        public Output<ImmutableArray<Pulumi.Aws.Iam.Role>> InstanceRoles { get; private set; } = null!;
+
+        /// <summary>
         /// A kubeconfig that can be used to connect to the EKS cluster.
         /// </summary>
         [Output("kubeconfig")]
         public Output<object> Kubeconfig { get; private set; } = null!;
+
+        /// <summary>
+        /// The security group for the cluster's nodes.
+        /// </summary>
+        [Output("nodeSecurityGroup")]
+        public Output<Pulumi.Aws.Ec2.SecurityGroup> NodeSecurityGroup { get; private set; } = null!;
+
+        /// <summary>
+        /// A Kubernetes resource provider that can be used to deploy into this cluster.
+        /// </summary>
+        [Output("provider")]
+        public Output<Pulumi.Kubernetes.Provider> Provider { get; private set; } = null!;
 
 
         /// <summary>
@@ -48,6 +102,12 @@ namespace Pulumi.Eks
 
     public sealed class ClusterArgs : Pulumi.ResourceArgs
     {
+        /// <summary>
+        /// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
+        /// </summary>
+        [Input("clusterSecurityGroup")]
+        public Input<Pulumi.Aws.Ec2.SecurityGroup>? ClusterSecurityGroup { get; set; }
+
         [Input("clusterSecurityGroupTags")]
         private InputMap<string>? _clusterSecurityGroupTags;
 
@@ -85,6 +145,12 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("createOidcProvider")]
         public Input<bool>? CreateOidcProvider { get; set; }
+
+        /// <summary>
+        /// The IAM Role Provider used to create &amp; authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+        /// </summary>
+        [Input("creationRoleProvider")]
+        public Input<Inputs.CreationRoleProviderArgs>? CreationRoleProvider { get; set; }
 
         /// <summary>
         /// The number of worker nodes that should be running in the cluster. Defaults to 2.
@@ -159,6 +225,34 @@ namespace Pulumi.Eks
         public Input<string>? InstanceProfileName { get; set; }
 
         /// <summary>
+        /// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
+        /// 
+        /// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
+        /// </summary>
+        [Input("instanceRole")]
+        public Input<Pulumi.Aws.Iam.Role>? InstanceRole { get; set; }
+
+        [Input("instanceRoles")]
+        private InputList<Pulumi.Aws.Iam.Role>? _instanceRoles;
+
+        /// <summary>
+        /// This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
+        /// 
+        /// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
+        /// </summary>
+        public InputList<Pulumi.Aws.Iam.Role> InstanceRoles
+        {
+            get => _instanceRoles ?? (_instanceRoles = new InputList<Pulumi.Aws.Iam.Role>());
+            set => _instanceRoles = value;
+        }
+
+        /// <summary>
+        /// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        /// </summary>
+        [Input("instanceType")]
+        public Input<string>? InstanceType { get; set; }
+
+        /// <summary>
         /// The maximum number of worker nodes running in the cluster. Defaults to 2.
         /// </summary>
         [Input("maxSize")]
@@ -198,6 +292,12 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("nodeAssociatePublicIpAddress")]
         public Input<bool>? NodeAssociatePublicIpAddress { get; set; }
+
+        /// <summary>
+        /// The common configuration settings for NodeGroups.
+        /// </summary>
+        [Input("nodeGroupOptions")]
+        public Input<Inputs.ClusterNodeGroupOptionsArgs>? NodeGroupOptions { get; set; }
 
         /// <summary>
         /// Public key material for SSH access to worker nodes. See allowed formats at:
@@ -358,10 +458,24 @@ namespace Pulumi.Eks
         }
 
         /// <summary>
+        /// IAM Service Role for EKS to use to manage the cluster.
+        /// </summary>
+        [Input("serviceRole")]
+        public Input<Pulumi.Aws.Iam.Role>? ServiceRole { get; set; }
+
+        /// <summary>
         /// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
         /// </summary>
         [Input("skipDefaultNodeGroup")]
         public Input<bool>? SkipDefaultNodeGroup { get; set; }
+
+        /// <summary>
+        /// An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
+        /// 
+        /// Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
+        /// </summary>
+        [Input("storageClasses")]
+        public InputUnion<string, Inputs.StorageClassArgs>? StorageClasses { get; set; }
 
         [Input("subnetIds")]
         private InputList<string>? _subnetIds;

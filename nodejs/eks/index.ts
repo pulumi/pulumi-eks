@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export { Cluster, ClusterOptions, ClusterNodeGroupOptions, CoreData, RoleMapping, UserMapping, CreationRoleProvider, getRoleProvider, KubeconfigOptions } from "./cluster";
-export { ManagedNodeGroupOptions, NodeGroup, NodeGroupOptions, NodeGroupData, createManagedNodeGroup } from "./nodegroup";
+export { Cluster, ClusterOptions, ClusterNodeGroupOptions, CoreData, RoleMapping, UserMapping, CreationRoleProvider, ClusterCreationRoleProvider, ClusterCreationRoleProviderOptions, getRoleProvider, KubeconfigOptions } from "./cluster";
+export { ManagedNodeGroup, ManagedNodeGroupOptions, NodeGroup, NodeGroupOptions, NodeGroupData, createManagedNodeGroup } from "./nodegroup";
 export { VpcCni, VpcCniOptions } from "./cni";
-export { createNodeGroupSecurityGroup } from "./securitygroup";
+export { NodeGroupSecurityGroup, createNodeGroupSecurityGroup } from "./securitygroup";
 export { StorageClass, EBSVolumeType, createStorageClass } from "./storageclass";
 export { InputTags, UserStorageClasses } from "./utils";

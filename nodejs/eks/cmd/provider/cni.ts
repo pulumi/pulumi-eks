@@ -23,7 +23,7 @@ import * as tmp from "tmp";
 import which = require("which");
 
 interface VpcCniInputs {
-    kubeconfig: string;
+    kubeconfig: any;
     nodePortSupport?: boolean;
     customNetworkConfig?: boolean;
     externalSnat?: boolean;
@@ -99,9 +99,13 @@ function applyVpcCniYaml(args: VpcCniInputs) {
     const yamlPath = path.join(__dirname, "..", "..", "cni", "aws-k8s-cni.yaml");
     const cniYamlText = fs.readFileSync(yamlPath).toString();
 
+    const kubeconfig: string = typeof args.kubeconfig === "string"
+        ? args.kubeconfig
+        : JSON.stringify(args);
+
     // Dump the kubeconfig to a file.
     const tmpKubeconfig = tmp.fileSync();
-    fs.writeFileSync(tmpKubeconfig.fd, args.kubeconfig);
+    fs.writeFileSync(tmpKubeconfig.fd, kubeconfig);
 
     // Compute the required CNI YAML and dump it to a file.
     const tmpYaml = tmp.fileSync();

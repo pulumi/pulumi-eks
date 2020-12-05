@@ -13,25 +13,19 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { Cluster, ClusterCreationRoleProvider } from "../../cluster";
+import { ManagedNodeGroup, NodeGroup } from "../../nodegroup";
 
-const clusterProvider: pulumi.provider.Provider = {
+const nodeGroupProvider: pulumi.provider.Provider = {
     construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
         try {
-            const cluster = new Cluster(name, inputs, options);
+            const nodegroup = new NodeGroup(name, <any>inputs, options);
             return Promise.resolve({
-                urn: cluster.urn,
+                urn: nodegroup.urn,
                 state: {
-                    kubeconfig: cluster.kubeconfig,
-                    awsProvider: cluster.awsProvider,
-                    provider: cluster.provider,
-                    clusterSecurityGroup: cluster.clusterSecurityGroup,
-                    instanceRoles: cluster.instanceRoles,
-                    nodeSecurityGroup: cluster.nodeSecurityGroup,
-                    eksClusterIngressRule: cluster.eksClusterIngressRule,
-                    defaultNodeGroup: cluster.defaultNodeGroup,
-                    eksCluster: cluster.eksCluster,
-                    core: cluster.core,
+                    nodeSecurityGroup: nodegroup.nodeSecurityGroup,
+                    extraNodeSecurityGroups: nodegroup.extraNodeSecurityGroups,
+                    cfnStack: nodegroup.cfnStack,
+                    autoScalingGroupName: nodegroup.autoScalingGroupName,
                 },
             });
         } catch (e) {
@@ -42,19 +36,18 @@ const clusterProvider: pulumi.provider.Provider = {
 };
 
 /** @internal */
-export function clusterProviderFactory(): pulumi.provider.Provider {
-    return clusterProvider;
+export function nodeGroupProviderFactory(): pulumi.provider.Provider {
+    return nodeGroupProvider;
 }
 
-const clusterCreationRoleProviderProvider: pulumi.provider.Provider = {
+const managedNodeGroupProvider: pulumi.provider.Provider = {
     construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
         try {
-            const roleProvider = new ClusterCreationRoleProvider(name, inputs, options);
+            const nodegroup = new ManagedNodeGroup(name, <any>inputs, options);
             return Promise.resolve({
-                urn: roleProvider.urn,
+                urn: nodegroup.urn,
                 state: {
-                    role: roleProvider.role,
-                    provider: roleProvider.provider,
+                    nodeGroup: nodegroup.nodeGroup,
                 },
             });
         } catch (e) {
@@ -65,6 +58,6 @@ const clusterCreationRoleProviderProvider: pulumi.provider.Provider = {
 };
 
 /** @internal */
-export function clusterCreationRoleProviderProviderFactory(): pulumi.provider.Provider {
-    return clusterCreationRoleProviderProvider;
+export function managedNodeGroupProviderFactory(): pulumi.provider.Provider {
+    return managedNodeGroupProvider;
 }

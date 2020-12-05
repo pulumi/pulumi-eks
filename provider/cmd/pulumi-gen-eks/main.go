@@ -21,6 +21,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/pkg/errors"
 	dotnetgen "github.com/pulumi/pulumi/pkg/v2/codegen/dotnet"
@@ -79,6 +80,19 @@ func main() {
 	}
 }
 
+const (
+	awsVersion = "v3.18.0"
+	k8sVersion = "v2.7.3"
+)
+
+func awsRef(ref string) string {
+	return fmt.Sprintf("/aws/%s/schema.json%s", awsVersion, ref)
+}
+
+func k8sRef(ref string) string {
+	return fmt.Sprintf("/kubernetes/%s/schema.json%s", k8sVersion, ref)
+}
+
 // nolint: lll
 func generateSchema() schema.PackageSpec {
 	return schema.PackageSpec{
@@ -91,9 +105,10 @@ func generateSchema() schema.PackageSpec {
 
 		Resources: map[string]schema.ResourceSpec{
 			"eks:index:Cluster": {
+				// TODO: method: createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup
+				// TODO: method: getKubeconfig(args: KubeconfigOptions): pulumi.Output<string>
 				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
-					Type: "object",
 					Description: "Cluster is a component that wraps the AWS and Kubernetes resources necessary to " +
 						"run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional " +
 						"deployment of the Kubernetes Dashboard.",
@@ -102,18 +117,57 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
 							Description: "A kubeconfig that can be used to connect to the EKS cluster.",
 						},
-						// TODO: public readonly awsProvider: pulumi.ProviderResource;
-						// TODO: public readonly provider: k8s.Provider;
-						// TODO: public readonly clusterSecurityGroup: aws.ec2.SecurityGroup;
-						// TODO: public readonly instanceRoles: pulumi.Output<aws.iam.Role[]>;
-						// TODO: public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
-						// TODO: public readonly eksClusterIngressRule: aws.ec2.SecurityGroupRule;
-						// TODO: public readonly defaultNodeGroup: NodeGroupData | undefined;
-						// TODO: public readonly eksCluster: aws.eks.Cluster;
-						// TODO: public readonly core: CoreData;
+						"awsProvider": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/provider")},
+							Description: "The AWS resource provider.",
+						},
+						"provider": {
+							TypeSpec:    schema.TypeSpec{Ref: k8sRef("#/provider")},
+							Description: "A Kubernetes resource provider that can be used to deploy into this cluster.",
+						},
+						"clusterSecurityGroup": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							Description: "The security group for the EKS cluster.",
+						},
+						"instanceRoles": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+							},
+							Description: "The service roles used by the EKS cluster.",
+						},
+						"nodeSecurityGroup": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							Description: "The security group for the cluster's nodes.",
+						},
+						"eksClusterIngressRule": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule")},
+							Description: "The ingress rule that gives node group access to cluster API server.",
+						},
+						"defaultNodeGroup": {
+							TypeSpec: schema.TypeSpec{Ref: "#/types/eks:index:NodeGroupData"},
+							Description: "The default Node Group configuration, or undefined if " +
+								"`skipDefaultNodeGroup` was specified.",
+						},
+						"eksCluster": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster")},
+							Description: "The EKS cluster.",
+						},
+						"core": {
+							TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+							Description: "The EKS cluster and its dependencies.",
+						},
 					},
 					Required: []string{
 						"kubeconfig",
+						"awsProvider",
+						"provider",
+						"clusterSecurityGroup",
+						"instanceRoles",
+						"nodeSecurityGroup",
+						"eksClusterIngressRule",
+						"eksCluster",
+						"core",
 					},
 				},
 				InputProperties: map[string]schema.PropertySpec{
@@ -176,7 +230,10 @@ func generateSchema() schema.PackageSpec {
 							"exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.\n\n" +
 							"Also consider setting `nodeAssociatePublicIpAddress: true` for fully private workers.",
 					},
-					// TODO: nodeGroupOptions?: ClusterNodeGroupOptions;
+					"nodeGroupOptions": {
+						TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:ClusterNodeGroupOptions"},
+						Description: "The common configuration settings for NodeGroups.",
+					},
 					"nodeAssociatePublicIpAddress": {
 						TypeSpec: schema.TypeSpec{Type: "boolean"},
 						Description: "Whether or not to auto-assign the EKS worker nodes public IP addresses. If " +
@@ -202,16 +259,43 @@ func generateSchema() schema.PackageSpec {
 						Description: "The configuration of the Amazon VPC CNI plugin for this instance. Defaults are " +
 							"described in the documentation for the VpcCniOptions type.",
 					},
-					// TODO: instanceType?: pulumi.Input<aws.ec2.InstanceType>;
-					// TODO: instanceRole?: pulumi.Input<aws.iam.Role>;
+					"instanceType": {
+						TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO: aws.ec2.InstanceType is a string enum.
+						Description: "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\".",
+					},
+					"instanceRole": {
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						Description: "This enables the simple case of only registering a *single* IAM instance role " +
+							"with the cluster, that is required to be shared by *all* node groups in their instance " +
+							"profiles.\n\n" +
+							"Note: options `instanceRole` and `instanceRoles` are mutually exclusive.",
+					},
 					"instanceProfileName": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not " +
 							"already set in the NodeGroup.",
 					},
-					// TODO: serviceRole?: pulumi.Input<aws.iam.Role>;
-					// TODO: creationRoleProvider?: CreationRoleProvider;
-					// TODO: instanceRoles?: pulumi.Input<pulumi.Input<aws.iam.Role>[]>;
+					"serviceRole": {
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						Description: "IAM Service Role for EKS to use to manage the cluster.",
+					},
+					"creationRoleProvider": {
+						// Note: It'd be nice if we could pass the ClusterCreationRoleProvider component here.
+						TypeSpec: schema.TypeSpec{Ref: "#/types/eks:index:CreationRoleProvider"},
+						Description: "The IAM Role Provider used to create & authenticate against the EKS cluster. " +
+							"This role is given `[system:masters]` permission in K8S, See: " +
+							"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html",
+					},
+					"instanceRoles": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "array",
+							Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						},
+						Description: "This enables the advanced case of registering *many* IAM instance roles with " +
+							"the cluster for per node group IAM, instead of the simpler, shared case of " +
+							"`instanceRole`.\n\n" +
+							"Note: options `instanceRole` and `instanceRoles` are mutually exclusive.",
+					},
 					"nodeAmiId": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended " +
@@ -240,7 +324,11 @@ func generateSchema() schema.PackageSpec {
 						},
 						Description: "The subnets to use for worker nodes. Defaults to the value of subnetIds.",
 					},
-					// TODO: clusterSecurityGroup?: aws.ec2.SecurityGroup;
+					"clusterSecurityGroup": {
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+						Description: "The security group to use for the cluster API endpoint. If not provided, a new " +
+							"security group will be created with full internet egress and ingress from node groups.",
+					},
 					"clusterSecurityGroupTags": {
 						TypeSpec: schema.TypeSpec{
 							Type:                 "object",
@@ -284,7 +372,21 @@ func generateSchema() schema.PackageSpec {
 						TypeSpec:    schema.TypeSpec{Type: "integer"},
 						Description: "The maximum number of worker nodes running in the cluster. Defaults to 2.",
 					},
-					// TODO: storageClasses?: { [name: string]: StorageClass } | EBSVolumeType;
+					"storageClasses": {
+						TypeSpec: schema.TypeSpec{
+							Type: "string", // TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1"
+							OneOf: []schema.TypeSpec{
+								{Type: "string"},
+								{Type: "string", Ref: "#/types/eks:index:StorageClass"},
+							},
+						},
+						Description: "An optional set of StorageClasses to enable for the cluster. If this is a " +
+							"single volume type rather than a map, a single StorageClass will be created for that " +
+							"volume type.\n\n" +
+							"Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be " +
+							"created automatically for the cluster by the EKS service. See " +
+							"https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html",
+					},
 					"skipDefaultNodeGroup": {
 						TypeSpec: schema.TypeSpec{Type: "boolean"},
 						Description: "If this toggle is set to true, the EKS cluster will be created without node " +
@@ -401,9 +503,396 @@ func generateSchema() schema.PackageSpec {
 					},
 				},
 			},
+			"eks:index:ClusterCreationRoleProvider": {
+				IsComponent: true,
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Description: "ClusterCreationRoleProvider is a component that wraps creating a role provider that " +
+						"can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a " +
+						"specific role to use for the creation of the EKS cluster different from the role being used " +
+						"to run the Pulumi deployment.",
+					Properties: map[string]schema.PropertySpec{
+						"role": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						},
+						"provider": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
+						},
+					},
+					Required: []string{
+						"role",
+						"provider",
+					},
+				},
+				InputProperties: map[string]schema.PropertySpec{
+					"region": {
+						TypeSpec: schema.TypeSpec{Type: "string"}, // TODO: enum: consider typing as `aws.Region`
+					},
+					"profile": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+					},
+				},
+			},
+			"eks:index:ManagedNodeGroup": {
+				IsComponent: true,
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Description: "ManagedNodeGroup is a component that wraps creating an AWS managed node group.\n\n" +
+						"See for more details:\n" +
+						"https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html",
+					Properties: map[string]schema.PropertySpec{
+						"nodeGroup": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FnodeGroup:NodeGroup")},
+							Description: "The AWS managed node group.",
+						},
+					},
+					Required: []string{
+						"nodeGroup",
+					},
+				},
+				InputProperties: map[string]schema.PropertySpec{
+					"cluster": {
+						// Note: this is typed as `Cluster | CoreData` in the TS API. Ideally, the Cluster could be
+						// passed directly.
+						TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+						Description: "The target EKS cluster.",
+					},
+					// The following inputs are based on `aws.eks.NodeGroupArgs`, with the following properties made
+					// optional since they can be set based on the passed-in `cluster` (clusterName, subnetIds,
+					// and scalingConfig). `nodeRoleArn` is also now optional with convenience `nodeRole` input added.
+					"amiType": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "Type of Amazon Machine Image (AMI) associated with the EKS Node Group. " +
+							"Defaults to `AL2_x86_64`. Valid values: `AL2_x86_64`, `AL2_x86_64_GPU`, `AL2_ARM_64`. " +
+							"This provider will only perform drift detection if a configuration value is provided.",
+					},
+					"clusterName": {
+						TypeSpec:    schema.TypeSpec{Type: "string"},
+						Description: "Name of the EKS Cluster.",
+					},
+					"diskSize": {
+						TypeSpec: schema.TypeSpec{Type: "integer"},
+						Description: "Disk size in GiB for worker nodes. Defaults to `20`. This provider will only " +
+							"perform drift detection if a configuration value is provided.",
+					},
+					"forceUpdateVersion": {
+						TypeSpec: schema.TypeSpec{Type: "boolean"},
+						Description: "Force version update if existing pods are unable to be drained due to a pod " +
+							"disruption budget issue.",
+					},
+					"instanceTypes": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "array",
+							Items: &schema.TypeSpec{Type: "string"},
+						},
+						Description: "Set of instance types associated with the EKS Node Group. Defaults to " +
+							"`[\"t3.medium\"]`. This provider will only perform drift detection if a configuration " +
+							"value is provided. Currently, the EKS API only accepts a single value in the set.",
+					},
+					"labels": {
+						TypeSpec: schema.TypeSpec{
+							Type:                 "object",
+							AdditionalProperties: &schema.TypeSpec{Type: "string"},
+						},
+						Description: "Key-value map of Kubernetes labels. Only labels that are applied with the EKS " +
+							"API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group " +
+							"will not be managed.",
+					},
+					// TODO[pulumi/pulumi/#5819]: The `launchTemplate` property causes a panic in the Python codegen:
+					// panic: interface conversion: interface {} is json.RawMessage, not python.PropertyInfo
+					// github.com/pulumi/pulumi/pkg/v2/codegen/python.recordProperty(0xc000d8c8c0, 0xc0016fc2a0, 0xc0016fc2d0, 0xc000548f58)
+					// github.com/pulumi/pulumi/pkg/v2@v2.14.1-0.20201121160205-9a707c4e03b6/codegen/python/gen.go:1446 +0x3d4
+					// "launchTemplate": {
+					// 	TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate")},
+					// 	Description: "Launch Template settings.",
+					// },
+					"nodeGroupName": {
+						TypeSpec:    schema.TypeSpec{Type: "string"},
+						Description: "Name of the EKS Node Group.",
+					},
+					"nodeRoleArn": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "Amazon Resource Name (ARN) of the IAM Role that provides permissions for the " +
+							"EKS Node Group.\n\n" +
+							"Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be " +
+							"used.",
+					},
+					"nodeRole": {
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						Description: "The IAM Role that provides permissions for the EKS Node Group.\n\n" +
+							"Note, `nodeRole` and `nodeRoleArn` are mutually exclusive, and a single option must be " +
+							"used.",
+					},
+					"releaseVersion": {
+						TypeSpec:    schema.TypeSpec{Type: "string"},
+						Description: "AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.",
+					},
+					// TODO[pulumi/pulumi/#5819]: The `remoteAccess` and `scalingConfig` properties causes a panic in the Python codegen:
+					// panic: interface conversion: interface {} is json.RawMessage, not python.PropertyInfo
+					// github.com/pulumi/pulumi/pkg/v2/codegen/python.recordProperty(0xc000d8c8c0, 0xc0016fc2a0, 0xc0016fc2d0, 0xc000548f58)
+					// github.com/pulumi/pulumi/pkg/v2@v2.14.1-0.20201121160205-9a707c4e03b6/codegen/python/gen.go:1446 +0x3d4
+					// "remoteAccess": {
+					// 	TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupRemoteAccess:NodeGroupRemoteAccess")},
+					// 	Description: "Remote access settings.",
+					// },
+					// "scalingConfig": {
+					// 	TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupScalingConfig:NodeGroupScalingConfig")},
+					// 	Description: "Scaling settings.\n\n" +
+					// 		"Default scaling amounts of the node group autoscaling group are:\n" +
+					// 		"  - desiredSize: 2\n" +
+					// 		"  - minSize: 1\n" +
+					// 		"  - maxSize: 2",
+					// },
+					"subnetIds": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "array",
+							Items: &schema.TypeSpec{Type: "string"},
+						},
+						Description: "Identifiers of EC2 Subnets to associate with the EKS Node Group. These subnets " +
+							"must have the following resource tag: `kubernetes.io/cluster/CLUSTER_NAME` (where " +
+							"`CLUSTER_NAME` is replaced with the name of the EKS Cluster).\n\n" +
+							"Default subnetIds is chosen from the following list, in order, if subnetIds arg is not " +
+							"set:\n" +
+							"  - core.subnetIds\n" +
+							"  - core.privateIds\n" +
+							"  - core.publicSublicSubnetIds\n\n" +
+							"This default logic is based on the existing subnet IDs logic of this package: " +
+							"https://git.io/JeM11",
+					},
+					"tags": {
+						TypeSpec: schema.TypeSpec{
+							Type:                 "object",
+							AdditionalProperties: &schema.TypeSpec{Type: "string"},
+						},
+						Description: "Key-value mapping of resource tags.",
+					},
+					"version": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+					},
+				},
+				RequiredInputs: []string{"cluster"},
+			},
+			"eks:index:NodeGroup": {
+				IsComponent: true,
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Description: "NodeGroup is a component that wraps the AWS EC2 instances that provide compute " +
+						"capacity for an EKS cluster.",
+					Properties: map[string]schema.PropertySpec{
+						"nodeSecurityGroup": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							Description: "The security group for the node group to communicate with the cluster.",
+						},
+						"extraNodeSecurityGroups": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							},
+							Description: "The additional security groups for the node group that captures user-specific rules.",
+						},
+						"cfnStack": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:cloudformation%2Fstack:Stack")},
+							Description: "The CloudFormation Stack which defines the Node AutoScalingGroup.",
+						},
+						"autoScalingGroupName": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The AutoScalingGroup name for the Node group.",
+						},
+					},
+					Required: []string{
+						"nodeSecurityGroup",
+						"extraNodeSecurityGroups",
+						"cfnStack",
+						"autoScalingGroupName",
+					},
+				},
+				InputProperties: nodeGroupProperties(true /*cluster*/),
+				RequiredInputs:  []string{"cluster"},
+			},
+			"eks:index:NodeGroupSecurityGroup": {
+				IsComponent: true,
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Description: "NodeGroupSecurityGroup is a component that wraps creating a security group for " +
+						"node groups with the default ingress & egress rules required to connect and work with the " +
+						"EKS cluster security group.",
+					Properties: map[string]schema.PropertySpec{
+						"securityGroup": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							Description: "The security group for node groups with the default ingress & egress rules " +
+								"required to connect and work with the EKS cluster security group.",
+						},
+						"securityGroupRule": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule")},
+							Description: "The EKS cluster ingress rule.",
+						},
+					},
+					Required: []string{
+						"securityGroup",
+						"securityGroupRule",
+					},
+				},
+				InputProperties: map[string]schema.PropertySpec{
+					"vpcId": {
+						TypeSpec:    schema.TypeSpec{Type: "string"},
+						Description: "The VPC in which to create the worker node group.",
+					},
+					"clusterSecurityGroup": {
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+						Description: "The security group associated with the EKS cluster.",
+					},
+					"tags": {
+						TypeSpec: schema.TypeSpec{
+							Type:                 "object",
+							AdditionalProperties: &schema.TypeSpec{Type: "string"},
+						},
+						Description: "Key-value mapping of tags to apply to this security group.",
+					},
+					"eksCluster": {
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster")},
+						Description: "The EKS cluster associated with the worker node group",
+					},
+				},
+				RequiredInputs: []string{
+					"vpcId",
+					"clusterSecurityGroup",
+					"eksCluster",
+				},
+			},
+			// The TypeScript library exports this at the top-level index.ts, so we expose it here. Although, it's not
+			// super useful on its own, so we could consider *not* exposing it to the other languages.
+			// Note that this is a _custom_ resource (not a component), implemented in the provider plugin.
+			// Previously it was implemented as a dynamic provider.
+			"eks:index:VpcCni": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Description: "VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by " +
+						"applying its YAML chart.",
+				},
+				InputProperties: vpcCniProperties(true /*kubeconfig*/),
+				RequiredInputs:  []string{"kubeconfig"},
+			},
 		},
 
 		Types: map[string]schema.ComplexTypeSpec{
+			"eks:index:CoreData": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type:        "object",
+					Description: "Defines the core set of data associated with an EKS cluster, including the network in which it runs.",
+					Properties: map[string]schema.PropertySpec{
+						"cluster": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster")},
+						},
+						"vpcId": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+						},
+						"subnetIds": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Type: "string"},
+							},
+						},
+						"endpoint": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+						},
+						"clusterSecurityGroup": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+						},
+						"provider": {
+							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/provider")},
+						},
+						"instanceRoles": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+							},
+						},
+						"nodeGroupOptions": {
+							TypeSpec: schema.TypeSpec{Ref: "#/types/eks:index:ClusterNodeGroupOptions"},
+						},
+						"awsProvider": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
+						},
+						"publicSubnetIds": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Type: "string"},
+							},
+						},
+						"privateSubnetIds": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Type: "string"},
+							},
+						},
+						"eksNodeAccess": {
+							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/types/kubernetes:core%2Fv1:ConfigMap")},
+						},
+						"storageClasses": {
+							TypeSpec: schema.TypeSpec{
+								Type:                 "object",
+								AdditionalProperties: &schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:storage.k8s.io%2Fv1:StorageClass")},
+							},
+						},
+						"kubeconfig": {
+							TypeSpec: schema.TypeSpec{Ref: "pulumi.json#/Any"},
+						},
+						"vpcCni": {
+							TypeSpec: schema.TypeSpec{Ref: "#/resources/eks:index:VpcCni"},
+						},
+						"tags": {
+							TypeSpec: schema.TypeSpec{
+								Type:                 "object",
+								AdditionalProperties: &schema.TypeSpec{Type: "string"},
+							},
+						},
+						"nodeSecurityGroupTags": {
+							TypeSpec: schema.TypeSpec{
+								Type:                 "object",
+								AdditionalProperties: &schema.TypeSpec{Type: "string"},
+							},
+						},
+						"fargateProfile": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FfargateProfile:FargateProfile")},
+						},
+						"oidcProvider": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider")},
+						},
+						// TODO[pulumi/pulumi/#5819]: The `encryptionConfig` property causes a panic in the Python codegen:
+						// panic: interface conversion: interface {} is json.RawMessage, not python.PropertyInfo
+						// github.com/pulumi/pulumi/pkg/v2/codegen/python.recordProperty(0xc000d8c8c0, 0xc0016fc2a0, 0xc0016fc2d0, 0xc000548f58)
+						// github.com/pulumi/pulumi/pkg/v2@v2.14.1-0.20201121160205-9a707c4e03b6/codegen/python/gen.go:1446 +0x3d4
+						// "encryptionConfig": {
+						// 	TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig")},
+						// },
+					},
+					Required: []string{
+						"cluster",
+						"vpcId",
+						"subnetIds",
+						"endpoint",
+						"clusterSecurityGroup",
+						"provider",
+						"instanceRoles",
+						"nodeGroupOptions",
+					},
+				},
+			},
+			"eks:index:CreationRoleProvider": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Description: "Contains the AWS Role and Provider necessary to override the `[system:master]` " +
+						"entity ARN. This is an optional argument used when creating `Cluster`. Read more: " +
+						"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html",
+					Properties: map[string]schema.PropertySpec{
+						"role": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						},
+						"provider": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
+						},
+					},
+					Required: []string{
+						"role",
+						"provider",
+					},
+				},
+			},
 			"eks:index:FargateProfile": {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type: "object",
@@ -424,7 +913,13 @@ func generateSchema() schema.PackageSpec {
 							Description: "Specify the subnets in which to execute Fargate tasks for pods. Defaults " +
 								"to the private subnets associated with the cluster.",
 						},
-						// TODO: selectors?: pulumi.Input<pulumi.Input<aws.types.input.eks.FargateProfileSelector>[]>;
+						"selectors": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FFargateProfileSelector:FargateProfileSelector")},
+							},
+							Description: "Specify the namespace and label selectors to use for launching pods into Fargate.",
+						},
 					},
 				},
 			},
@@ -459,6 +954,39 @@ func generateSchema() schema.PackageSpec {
 					},
 				},
 			},
+			"eks:index:NodeGroupData": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type:        "object",
+					Description: "NodeGroupData describes the resources created for the given NodeGroup.",
+					Properties: map[string]schema.PropertySpec{
+						"nodeSecurityGroup": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							Description: "The security group for the node group to communicate with the cluster.",
+						},
+						"extraNodeSecurityGroups": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							},
+							Description: "The additional security groups for the node group that captures user-specific rules.",
+						},
+						"cfnStack": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:cloudformation%2Fstack:Stack")},
+							Description: "The CloudFormation Stack which defines the Node AutoScalingGroup.",
+						},
+						"autoScalingGroupName": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The AutoScalingGroup name for the node group.",
+						},
+					},
+					Required: []string{
+						"nodeSecurityGroup",
+						"extraNodeSecurityGroups",
+						"cfnStack",
+						"autoScalingGroupName",
+					},
+				},
+			},
 			"eks:index:RoleMapping": {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "object",
@@ -485,6 +1013,107 @@ func generateSchema() schema.PackageSpec {
 						"roleArn",
 						"username",
 						"groups",
+					},
+				},
+			},
+			"eks:index:StorageClass": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Description: "StorageClass describes the inputs to a single Kubernetes StorageClass provisioned " +
+						"by AWS. Any number of storage classes can be added to a cluster at creation time. One of " +
+						"these storage classes may be configured the default storage class for the cluster.",
+					Properties: map[string]schema.PropertySpec{
+						"type": {
+							TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1"
+							Description: "The EBS volume type.",
+						},
+						"zones": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Type: "string"},
+							},
+							Description: "The AWS zone or zones for the EBS volume. If zones is not specified, " +
+								"volumes are generally round-robin-ed across all active zones where Kubernetes " +
+								"cluster has a node. zone and zones parameters must not be used at the same time.",
+						},
+						"iopsPerGb": {
+							TypeSpec: schema.TypeSpec{Type: "integer"},
+							Description: "I/O operations per second per GiB for \"io1\" volumes. The AWS volume " +
+								"plugin multiplies this with the size of a requested volume to compute IOPS of the " +
+								"volume and caps the result at 20,000 IOPS.",
+						},
+						"encrypted": {
+							TypeSpec:    schema.TypeSpec{Type: "boolean"},
+							Description: "Denotes whether the EBS volume should be encrypted.",
+						},
+						"kmsKeyId": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+							Description: "The full Amazon Resource Name of the key to use when encrypting the " +
+								"volume. If none is supplied but encrypted is true, a key is generated by AWS.",
+						},
+						"default": {
+							TypeSpec: schema.TypeSpec{Type: "boolean"},
+							Description: "True if this storage class should be a default storage class for the " +
+								"cluster.\n\n" +
+								"Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be " +
+								"created automatically for the cluster by the EKS service. See " +
+								"https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html\n\n" +
+								"Please note that at most one storage class can be marked as default. If two or more " +
+								"of them are marked as default, a PersistentVolumeClaim without `storageClassName` " +
+								"explicitly specified cannot be created. See: " +
+								"https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/#changing-the-default-storageclass",
+						},
+						"allowVolumeExpansion": {
+							TypeSpec:    schema.TypeSpec{Type: "boolean"},
+							Description: "AllowVolumeExpansion shows whether the storage class allow volume expand.",
+						},
+						"metadata": {
+							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/types/kubernetes:meta%2Fv1:ObjectMeta")},
+							Description: "Standard object's metadata. More info: " +
+								"https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
+						},
+						"mountOptions": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Type: "string"},
+							},
+							Description: "Dynamically provisioned PersistentVolumes of this storage class are " +
+								"created with these mountOptions, e.g. [\"ro\", \"soft\"]. Not validated - mount of " +
+								"the PVs will simply fail if one is invalid.",
+						},
+						"reclaimPolicy": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+							Description: "Dynamically provisioned PersistentVolumes of this storage class are " +
+								"created with this reclaimPolicy. Defaults to Delete.",
+						},
+						"volumeBindingMode": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+							Description: "VolumeBindingMode indicates how PersistentVolumeClaims should be " +
+								"provisioned and bound. When unset, VolumeBindingImmediate is used. This field is " +
+								"alpha-level and is only honored by servers that enable the VolumeScheduling feature.",
+						},
+					},
+					Required: []string{"type"},
+				},
+			},
+			"eks:index:Taint": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Description: "Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. " +
+						"See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.",
+					Properties: map[string]schema.PropertySpec{
+						"value": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The value of the taint.",
+						},
+						"effect": {
+							TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO strict string enum: "NoSchedule" | "NoExecute" | "PreferNoSchedule".
+							Description: "The effect of the taint.",
+						},
+					},
+					Required: []string{
+						"value",
+						"effect",
 					},
 				},
 			},
@@ -517,75 +1146,32 @@ func generateSchema() schema.PackageSpec {
 					},
 				},
 			},
+
+			// The Cluster component accepts this for its nodeGroupOptions input property. Technically it represents the
+			// input properties of the NodeGroup component. Unfortunately, we cannot type the Cluster component's
+			// nodeGroupOptions as the NodeGroup resources's input args type because 1) the schema doesn't support it,
+			// and 2) not all languages model input properties as a separate type (e.g. Python currently only exposes
+			// resource inputs as arguments to the resource's constructor). In order to support these as an input to the
+			// Cluster component, we must model it in the schema as its own type.
+			"eks:index:ClusterNodeGroupOptions": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type:        "object",
+					Description: "Describes the configuration options accepted by a cluster to create its own node groups.",
+					Properties:  nodeGroupProperties(false /*cluster*/),
+				},
+			},
+
+			// The Cluster component accepts this for its vpcCniOptions input property. Technically it represents the
+			// input properties of the VpcCni resource (aside from the kubeconfig property). Unfortunately, we cannot
+			// type the Cluster component's vpcCniOptions as the VpcCni resources's input args type because 1) the
+			// schema doesn't support it, and 2) not all languages model input properties as a separate type (e.g.
+			// Python currently only exposes resource inputs as arguments to the resource's constructor). In order to
+			// support these as an input to the Cluster component, we must model it in the schema as its own type.
 			"eks:index:VpcCniOptions": {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "object",
 					Description: "Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.",
-					Properties: map[string]schema.PropertySpec{
-						"nodePortSupport": {
-							TypeSpec: schema.TypeSpec{Type: "boolean"},
-							Description: "Specifies whether NodePort services are enabled on a worker node's primary " +
-								"network interface. This requires additional iptables rules and that the kernel's " +
-								"reverse path filter on the primary interface is set to loose.\n\nDefaults to true.",
-						},
-						"customNetworkConfig": {
-							TypeSpec: schema.TypeSpec{Type: "boolean"},
-							Description: "Specifies that your pods may use subnets and security groups (within the " +
-								"same VPC as your control plane resources) that are independent of your cluster's " +
-								"`resourcesVpcConfig`.\n\nDefaults to false.",
-						},
-						"externalSnat": {
-							TypeSpec: schema.TypeSpec{Type: "boolean"},
-							Description: "Specifies whether an external NAT gateway should be used to provide SNAT " +
-								"of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC " +
-								"IP rule are not applied, and these rules are removed if they have already been " +
-								"applied.\n\nDefaults to false.",
-						},
-						"warmEniTarget": {
-							TypeSpec: schema.TypeSpec{Type: "integer"},
-							Description: "Specifies the number of free elastic network interfaces (and all of their " +
-								"available IP addresses) that the ipamD daemon should attempt to keep available for " +
-								"pod assignment on the node.\n\nDefaults to 1.",
-						},
-						"warmIpTarget": {
-							TypeSpec: schema.TypeSpec{Type: "integer"},
-							Description: "Specifies the number of free IP addresses that the ipamD daemon should " +
-								"attempt to keep available for pod assignment on the node.",
-						},
-						"logLevel": {
-							TypeSpec: schema.TypeSpec{Type: "string"}, // TODO consider typing this as an enum
-							Description: "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nSee more " +
-								"options: https://git.io/fj92K", // TODO this URL is broken.
-						},
-						"logFile": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
-							Description: "Specifies the file path used for logs.\n\nDefaults to \"stdout\" to emit " +
-								"Pod logs for `kubectl logs`.",
-						},
-						"image": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
-							Description: "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\n" +
-								"Defaults to the official AWS CNI image in ECR.",
-						},
-						"vethPrefix": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
-							Description: "Specifies the veth prefix used to generate the host-side veth device name " +
-								"for the CNI.\n\nThe prefix can be at most 4 characters long.\n\nDefaults to \"eni\".",
-						},
-						"eniMtu": {
-							TypeSpec: schema.TypeSpec{Type: "integer"},
-							Description: "Used to configure the MTU size for attached ENIs. The valid range is from " +
-								"576 to 9001.\n\nDefaults to 9001.",
-						},
-						"eniConfigLabelDef": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
-							Description: "Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker " +
-								"nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for " +
-								"each Availability Zone\n" +
-								"Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html " +
-								"(step 5(c))\n\nDefaults to the official AWS CNI image in ECR.",
-						},
-					},
+					Properties:  vpcCniProperties(false /*kubeconfig*/),
 				},
 			},
 		},
@@ -600,9 +1186,9 @@ func generateSchema() schema.PackageSpec {
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
-					"pulumi":            ">=2.12.0,<3.0.0",
-					"pulumi-aws":        ">=3.2.0,<4.0.0",
-					"pulumi-kubernetes": ">=2.0.0,<3.0.0",
+					"pulumi":            ">=2.15.0,<3.0.0",
+					"pulumi-aws":        ">=3.18.0,<4.0.0",
+					"pulumi-kubernetes": ">=2.7.3,<3.0.0",
 				},
 				"usesIOClasses": true,
 				// TODO: Embellish the readme
@@ -610,6 +1196,271 @@ func generateSchema() schema.PackageSpec {
 			}),
 		},
 	}
+}
+
+func nodeGroupProperties(cluster bool) map[string]schema.PropertySpec {
+	props := map[string]schema.PropertySpec{
+		"nodeSubnetIds": {
+			TypeSpec: schema.TypeSpec{
+				Type:  "array",
+				Items: &schema.TypeSpec{Type: "string"},
+			},
+			Description: "The set of subnets to override and use for the worker node group.\n\nSetting " +
+				"this option overrides which subnets to use for the worker node group, regardless if the " +
+				"cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.",
+		},
+		"instanceType": {
+			TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO: aws.ec2.InstanceType is a string enum.
+			Description: "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\".",
+		},
+		"spotPrice": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Bidding price for spot instance. If set, only spot instances will be added as " +
+				"worker node.",
+		},
+		"nodeSecurityGroup": {
+			TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+			Description: "The security group for the worker node group to communicate with the cluster.\n\n" +
+				"This security group requires specific inbound and outbound rules.\n\n" +
+				"See for more details:\n" +
+				"https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\n" +
+				"Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are " +
+				"mutually exclusive.",
+		},
+		"clusterIngressRule": {
+			TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule")},
+			Description: "The ingress rule that gives node group access.",
+		},
+		"extraNodeSecurityGroups": {
+			TypeSpec: schema.TypeSpec{
+				Type:  "array",
+				Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+			},
+			Description: "Extra security groups to attach on all nodes in this worker node group.\n\n" +
+				"This additional set of security groups captures any user application rules that will be " +
+				"needed for the nodes.",
+		},
+		"encryptRootBlockDevice": {
+			TypeSpec:    schema.TypeSpec{Type: "boolean"},
+			Description: "Encrypt the root block device of the nodes in the node group.",
+		},
+		"nodePublicKey": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Public key material for SSH access to worker nodes. See allowed formats at:\n" +
+				"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html\n" +
+				"If not provided, no SSH access is enabled on VMs.",
+		},
+		"keyName": {
+			TypeSpec:    schema.TypeSpec{Type: "string"},
+			Description: "Name of the key pair to use for SSH access to worker nodes.",
+		},
+		"nodeRootVolumeSize": {
+			TypeSpec:    schema.TypeSpec{Type: "integer"},
+			Description: "The size in GiB of a cluster node's root volume. Defaults to 20.",
+		},
+		"nodeUserData": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Extra code to run on node startup. This code will run after the AWS EKS " +
+				"bootstrapping code and before the node signals its readiness to the managing " +
+				"CloudFormation stack. This code must be a typical user data script: critically it must " +
+				"begin with an interpreter directive (i.e. a `#!`).",
+		},
+		"nodeUserDataOverride": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "User specified code to run on node startup. This code is expected to handle " +
+				"the full AWS EKS bootstrapping code and signal node readiness to the managing " +
+				"CloudFormation stack. This code must be a complete and executable user data script in " +
+				"bash (Linux) or powershell (Windows).\n\n" +
+				"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html",
+		},
+		"desiredCapacity": {
+			TypeSpec:    schema.TypeSpec{Type: "integer"},
+			Description: "The number of worker nodes that should be running in the cluster. Defaults to 2.",
+		},
+		"minSize": {
+			TypeSpec:    schema.TypeSpec{Type: "integer"},
+			Description: "The minimum number of worker nodes running in the cluster. Defaults to 1.",
+		},
+		"maxSize": {
+			TypeSpec:    schema.TypeSpec{Type: "integer"},
+			Description: "The maximum number of worker nodes running in the cluster. Defaults to 2.",
+		},
+		"amiId": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended " +
+				"EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.\n\nNote: " +
+				"`amiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n" +
+				"- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.",
+		},
+		"gpu": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Use the latest recommended EKS Optimized Linux AMI with GPU support for the " +
+				"worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\n" +
+				"Note: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details:\n" +
+				"- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n" +
+				"- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html",
+		},
+		"labels": {
+			TypeSpec: schema.TypeSpec{
+				Type:                 "object",
+				AdditionalProperties: &schema.TypeSpec{Type: "string"},
+			},
+			Description: "Custom k8s node labels to be attached to each woker node. Adds the given " +
+				"key/value pairs to the `--node-labels` kubelet argument.",
+		},
+		"taints": {
+			TypeSpec: schema.TypeSpec{
+				Type:                 "object",
+				AdditionalProperties: &schema.TypeSpec{Ref: "#/types/eks:index:Taint"},
+			},
+			Description: "Custom k8s node taints to be attached to each worker node. Adds the given " +
+				"taints to the `--register-with-taints` kubelet argument",
+		},
+		"kubeletExtraArgs": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Extra args to pass to the Kubelet. Corresponds to the options passed in the " +
+				"`--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, " +
+				"'--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will " +
+				"be applied to this list (using `--node-labels` and `--register-with-taints` " +
+				"respectively) after to the expicit `kubeletExtraArgs`.",
+		},
+		"bootstrapExtraArgs": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. Fror details on " +
+				"available options, see: " +
+				"https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. " +
+				"Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` " +
+				"flags are included automatically based on other configuration parameters.",
+		},
+		"nodeAssociatePublicIpAddress": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Whether or not to auto-assign public IP addresses on the EKS worker nodes. If " +
+				"this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, " +
+				"they will not be auto-assigned public IPs.",
+		},
+		"version": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Desired Kubernetes master / control plane version. If you do not specify a " +
+				"value, the latest available version is used.",
+		},
+		"instanceProfile": {
+			TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2FinstanceProfile:InstanceProfile")},
+			Description: "The ingress rule that gives node group access.",
+		},
+		"autoScalingGroupTags": {
+			TypeSpec: schema.TypeSpec{
+				Type:                 "object",
+				AdditionalProperties: &schema.TypeSpec{Type: "string"},
+			},
+			Description: "The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation " +
+				"Stack.\n\nPer AWS, all stack-level tags, including automatically created tags, and the " +
+				"`cloudFormationTags` option are propagated to resources that AWS CloudFormation " +
+				"supports, including the AutoScalingGroup. See " +
+				"https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html\n\n" +
+				"Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you " +
+				"should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not " +
+				"both.",
+		},
+		"cloudFormationTags": {
+			TypeSpec: schema.TypeSpec{
+				Type:                 "object",
+				AdditionalProperties: &schema.TypeSpec{Type: "string"},
+			},
+			Description: "The tags to apply to the CloudFormation Stack of the Worker NodeGroup.\n\n" +
+				"Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you " +
+				"should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not " +
+				"both.",
+		},
+	}
+
+	if cluster {
+		props["cluster"] = schema.PropertySpec{
+			// TODO: this is typed as `Cluster | CoreData` in the TS API.
+			TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+			Description: "The target EKS cluster.",
+		}
+	}
+
+	return props
+}
+
+// vpcCniProperties returns a map of properties that can be used by either the VpcCni resource or VpcCniOptions type.
+// When kubeconfig is set to true, the kubeconfig property is included in the map (for the VpcCni resource).
+func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
+	props := map[string]schema.PropertySpec{
+		"nodePortSupport": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Specifies whether NodePort services are enabled on a worker node's primary " +
+				"network interface. This requires additional iptables rules and that the kernel's " +
+				"reverse path filter on the primary interface is set to loose.\n\nDefaults to true.",
+		},
+		"customNetworkConfig": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Specifies that your pods may use subnets and security groups (within the " +
+				"same VPC as your control plane resources) that are independent of your cluster's " +
+				"`resourcesVpcConfig`.\n\nDefaults to false.",
+		},
+		"externalSnat": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Specifies whether an external NAT gateway should be used to provide SNAT " +
+				"of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC " +
+				"IP rule are not applied, and these rules are removed if they have already been " +
+				"applied.\n\nDefaults to false.",
+		},
+		"warmEniTarget": {
+			TypeSpec: schema.TypeSpec{Type: "integer"},
+			Description: "Specifies the number of free elastic network interfaces (and all of their " +
+				"available IP addresses) that the ipamD daemon should attempt to keep available for " +
+				"pod assignment on the node.\n\nDefaults to 1.",
+		},
+		"warmIpTarget": {
+			TypeSpec: schema.TypeSpec{Type: "integer"},
+			Description: "Specifies the number of free IP addresses that the ipamD daemon should " +
+				"attempt to keep available for pod assignment on the node.",
+		},
+		"logLevel": {
+			TypeSpec: schema.TypeSpec{Type: "string"}, // TODO consider typing this as an enum
+			Description: "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nValid " +
+				"values: \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", or \"FATAL\".",
+		},
+		"logFile": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Specifies the file path used for logs.\n\nDefaults to \"stdout\" to emit " +
+				"Pod logs for `kubectl logs`.",
+		},
+		"image": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\n" +
+				"Defaults to the official AWS CNI image in ECR.",
+		},
+		"vethPrefix": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Specifies the veth prefix used to generate the host-side veth device name " +
+				"for the CNI.\n\nThe prefix can be at most 4 characters long.\n\nDefaults to \"eni\".",
+		},
+		"eniMtu": {
+			TypeSpec: schema.TypeSpec{Type: "integer"},
+			Description: "Used to configure the MTU size for attached ENIs. The valid range is from " +
+				"576 to 9001.\n\nDefaults to 9001.",
+		},
+		"eniConfigLabelDef": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker " +
+				"nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for " +
+				"each Availability Zone\n" +
+				"Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html " +
+				"(step 5(c))\n\nDefaults to the official AWS CNI image in ECR.",
+		},
+	}
+
+	if kubeconfig {
+		props["kubeconfig"] = schema.PropertySpec{
+			TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
+			Description: "The kubeconfig to use when setting the VPC CNI options.",
+		}
+	}
+
+	return props
 }
 
 func rawMessage(v interface{}) json.RawMessage {
@@ -648,6 +1499,44 @@ func genDotNet(pkg *schema.Package, outdir string) {
 	// This should be an option passed to the code generator, but we'll make the tweak here for now.
 	delete(files, "Provider.cs")
 
+	// These are mistakenly added by the codegenerator.
+	delete(files, "Core/README.md")
+	delete(files, "Core/v1/README.md")
+	delete(files, "Eks/README.md")
+	delete(files, "Meta/README.md")
+	delete(files, "Meta/v1/README.md")
+
+	// There are some bugs in the codegen. Temporarily workaround them.
+	// https://github.com/pulumi/pulumi/pull/5810
+	// https://github.com/pulumi/pulumi/pull/5811
+	replacer := strings.NewReplacer(
+		"Pulumi.Pulumi.Aws", "Pulumi.Aws.Provider",
+		"Pulumi.Pulumi.Kubernetes", "Pulumi.Kubernetes.Provider",
+		"using Cluster;\n", "",
+		"using FargateProfile;\n", "",
+		"using InstanceProfile;\n", "",
+		"using NodeGroup;\n", "",
+		"using OpenIdConnectProvider;\n", "",
+		"using Role;\n", "",
+		"using SecurityGroup;\n", "",
+		"using SecurityGroupRule;\n", "",
+		"using Stack;\n", "",
+		"using StorageClass;\n", "",
+		"Pulumi.Aws.Cloudformation/stack.Stack", "Pulumi.Aws.CloudFormation.Stack",
+		"Pulumi.Aws.Ec2/securityGroup.SecurityGroup", "Pulumi.Aws.Ec2.SecurityGroup",
+		"Pulumi.Aws.Ec2/securityGroupRule.SecurityGroupRule", "Pulumi.Aws.Ec2.SecurityGroupRule",
+		"Pulumi.Aws.Eks/cluster.Cluster", "Pulumi.Aws.Eks.Cluster",
+		"Pulumi.Aws.Eks/fargateProfile.FargateProfile", "Pulumi.Aws.Eks.FargateProfile",
+		"Pulumi.Aws.Eks/nodeGroup.NodeGroup", "Pulumi.Aws.Eks.NodeGroup",
+		"Pulumi.Aws.Iam/instanceProfile.InstanceProfile", "Pulumi.Aws.Iam.InstanceProfile",
+		"Pulumi.Aws.Iam/openIdConnectProvider.OpenIdConnectProvider", "Pulumi.Aws.Iam.OpenIdConnectProvider",
+		"Pulumi.Aws.Iam/role.Role", "Pulumi.Aws.Iam.Role",
+		"Pulumi.Kubernetes.Storage.k8s.io/v1.StorageClass", "Pulumi.Kubernetes.Storage.V1.StorageClass")
+	for file, b := range files {
+		replaced := replacer.Replace(string(b))
+		files[file] = []byte(replaced)
+	}
+
 	mustWriteFiles(outdir, files)
 }
 
@@ -666,6 +1555,70 @@ func genPython(pkg *schema.Package, outdir string) {
 		files[init] = []byte(code)
 	}
 	delete(files, "pulumi_eks/provider.py")
+
+	// The generated import for the `VpcCni` resource results in the following error:
+	//
+	//   File "/Users/user/go/src/github.com/pulumi/pulumi-eks/python/bin/pulumi_eks/__init__.py", line 6, in <module>
+	//     from .cluster import *
+	//   File "/Users/user/go/src/github.com/pulumi/pulumi-eks/python/bin/pulumi_eks/cluster.py", line 10, in <module>
+	//     from . import VpcCni
+	// ImportError: cannot import name 'VpcCni' from partially initialized module 'pulumi_eks' (most likely due to a
+	//     circular import) (/Users/user/go/src/github.com/pulumi/pulumi-eks/python/bin/pulumi_eks/__init__.py)
+	//
+	// Until we've fixed this codegen bug, we'll workaround here by replacing how `VpcCni` is imported.
+	for file, b := range files {
+		replaced := strings.ReplaceAll(string(b), "from . import VpcCni", "from .vpc_cni import VpcCni")
+		files[file] = []byte(replaced)
+	}
+
+	// There are some bugs in the codegen. Temporarily workaround them.
+	// https://github.com/pulumi/pulumi/pull/5810
+	// https://github.com/pulumi/pulumi/pull/5811
+	replacer := strings.NewReplacer(
+		"\n# Make subpackages available:\nfrom . import (\n)\n", "",
+		"from pulumi_pulumi import Aws", "import pulumi_aws",
+		"from pulumi_pulumi import Kubernetes", "import pulumi_kubernetes",
+		"from pulumi_aws import _cloudformation_stack.Stack", "import pulumi_aws",
+		"from pulumi_aws import _ec2_securitygroup.SecurityGroup", "import pulumi_aws",
+		"from pulumi_aws import _ec2_securitygrouprule.SecurityGroupRule", "import pulumi_aws",
+		"from pulumi_aws import _eks_cluster.Cluster", "import pulumi_aws",
+		"from pulumi_aws import _eks_fargateprofile.FargateProfile", "import pulumi_aws",
+		"from pulumi_aws import _eks_nodegroup.NodeGroup", "import pulumi_aws",
+		"from pulumi_aws import _iam_instanceprofile.InstanceProfile", "import pulumi_aws",
+		"from pulumi_aws import _iam_openidconnectprovider.OpenIdConnectProvider", "import pulumi_aws",
+		"from pulumi_aws import _iam_role.Role", "import pulumi_aws",
+		"from pulumi_aws import eks_fargateprofileselector as _eks_fargateprofileselector", "import pulumi_aws",
+		"from pulumi_kubernetes import core_v1 as _core_v1", "import pulumi_kubernetes",
+		"from pulumi_kubernetes import meta_v1 as _meta_v1", "import pulumi_kubernetes",
+		"from pulumi_kubernetes import _storage_k8s_io_v1.StorageClass", "import pulumi_kubernetes",
+		"'Aws'", "'pulumi_aws.Provider'",
+		"'Kubernetes'", "'pulumi_kubernetes.Provider'",
+		"_cloudformation_stack.Stack", "pulumi_aws.cloudformation.Stack",
+		"_core_v1.outputs.ConfigMap", "pulumi_kubernetes.core.v1.outputs.ConfigMap",
+		"_ec2_securitygroup.SecurityGroup", "pulumi_aws.ec2.SecurityGroup",
+		"_ec2_securitygrouprule.SecurityGroupRule", "pulumi_aws.ec2.SecurityGroupRule",
+		"_eks_cluster.Cluster", "pulumi_aws.eks.Cluster",
+		"_eks_fargateprofile.FargateProfile", "pulumi_aws.eks.FargateProfile",
+		"_eks_fargateprofileselector.FargateProfileSelectorArgs", "pulumi_aws.eks.FargateProfileSelectorArgs",
+		"_eks_nodegroup.NodeGroup", "pulumi_aws.eks.NodeGroup",
+		"_iam_instanceprofile.InstanceProfile", "pulumi_aws.iam.InstanceProfile",
+		"_iam_openidconnectprovider.OpenIdConnectProvider", "pulumi_aws.iam.OpenIdConnectProvider",
+		"_iam_role.Role", "pulumi_aws.iam.Role",
+		"_core_v1.ConfigMapArgs", "pulumi_kubernetes.core.v1.ConfigMapArgs",
+		"_meta_v1.ObjectMetaArgs", "pulumi_kubernetes.meta.v1.ObjectMetaArgs",
+		"_storage_k8s_io_v1.StorageClass", "pulumi_kubernetes.storage.v1.StorageClass")
+	importReplacer := strings.NewReplacer(
+		"import pulumi_aws\nimport pulumi_aws", "import pulumi_aws",
+		"import pulumi_kubernetes\nimport pulumi_kubernetes", "import pulumi_kubernetes",
+		"import pulumi_kubernetes\nimport pulumi_aws\n", "")
+	for file, b := range files {
+		replaced := replacer.Replace(string(b))
+		// Run this an arbitrary number of times to avoid duplicate imports.
+		for i := 0; i < 25; i++ {
+			replaced = importReplacer.Replace(replaced)
+		}
+		files[file] = []byte(replaced)
+	}
 
 	mustWriteFiles(outdir, files)
 }

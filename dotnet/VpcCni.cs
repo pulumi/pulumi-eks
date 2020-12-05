@@ -7,13 +7,56 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Pulumi.Serialization;
 
-namespace Pulumi.Eks.Inputs
+namespace Pulumi.Eks
 {
-
     /// <summary>
-    /// Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
+    /// VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
     /// </summary>
-    public sealed class VpcCniOptionsArgs : Pulumi.ResourceArgs
+    public partial class VpcCni : Pulumi.CustomResource
+    {
+        /// <summary>
+        /// Create a VpcCni resource with the given unique name, arguments, and options.
+        /// </summary>
+        ///
+        /// <param name="name">The unique name of the resource</param>
+        /// <param name="args">The arguments used to populate this resource's properties</param>
+        /// <param name="options">A bag of options that control this resource's behavior</param>
+        public VpcCni(string name, VpcCniArgs args, CustomResourceOptions? options = null)
+            : base("eks:index:VpcCni", name, args ?? new VpcCniArgs(), MakeResourceOptions(options, ""))
+        {
+        }
+
+        private VpcCni(string name, Input<string> id, CustomResourceOptions? options = null)
+            : base("eks:index:VpcCni", name, null, MakeResourceOptions(options, id))
+        {
+        }
+
+        private static CustomResourceOptions MakeResourceOptions(CustomResourceOptions? options, Input<string>? id)
+        {
+            var defaultOptions = new CustomResourceOptions
+            {
+                Version = Utilities.Version,
+            };
+            var merged = CustomResourceOptions.Merge(defaultOptions, options);
+            // Override the ID if one was specified for consistency with other language SDKs.
+            merged.Id = id ?? merged.Id;
+            return merged;
+        }
+        /// <summary>
+        /// Get an existing VpcCni resource's state with the given name, ID, and optional extra
+        /// properties used to qualify the lookup.
+        /// </summary>
+        ///
+        /// <param name="name">The unique name of the resulting resource.</param>
+        /// <param name="id">The unique provider ID of the resource to lookup.</param>
+        /// <param name="options">A bag of options that control this resource's behavior</param>
+        public static VpcCni Get(string name, Input<string> id, CustomResourceOptions? options = null)
+        {
+            return new VpcCni(name, id, options);
+        }
+    }
+
+    public sealed class VpcCniArgs : Pulumi.ResourceArgs
     {
         /// <summary>
         /// Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
@@ -55,6 +98,12 @@ namespace Pulumi.Eks.Inputs
         /// </summary>
         [Input("image")]
         public Input<string>? Image { get; set; }
+
+        /// <summary>
+        /// The kubeconfig to use when setting the VPC CNI options.
+        /// </summary>
+        [Input("kubeconfig", required: true)]
+        public Input<object> Kubeconfig { get; set; } = null!;
 
         /// <summary>
         /// Specifies the file path used for logs.
@@ -105,7 +154,7 @@ namespace Pulumi.Eks.Inputs
         [Input("warmIpTarget")]
         public Input<int>? WarmIpTarget { get; set; }
 
-        public VpcCniOptionsArgs()
+        public VpcCniArgs()
         {
         }
     }

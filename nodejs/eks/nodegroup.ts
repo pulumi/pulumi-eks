@@ -744,6 +744,33 @@ export type ManagedNodeGroupOptions = Omit<aws.eks.NodeGroupArgs, "clusterName" 
 };
 
 /**
+ * ManagedNodeGroup is a component that wraps creating an AWS managed node group.
+ *
+ * See for more details:
+ * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
+ */
+export class ManagedNodeGroup extends pulumi.ComponentResource {
+    /**
+     * The AWS managed node group.
+     */
+    public readonly nodeGroup: aws.eks.NodeGroup;
+
+    /**
+     * Create a new AWS managed node group.
+     *
+     * @param name The _unique_ name of this component.
+     * @param args The arguments for this node group.
+     * @param opts A bag of options that control this component's behavior.
+     */
+    constructor(name: string, args: ManagedNodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
+        super("eks:index:ManagedNodeGroup", name, args, opts);
+
+        this.nodeGroup = createManagedNodeGroup(name, args, this, opts?.provider);
+        this.registerOutputs(undefined);
+    }
+}
+
+/**
  * Create an AWS managed node group.
  *
  * See for more details:

@@ -13,9 +13,11 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { clusterProviderFactory } from "./cluster";
+import { clusterCreationRoleProviderProviderFactory, clusterProviderFactory } from "./cluster";
 import { vpcCniProviderFactory } from "./cni";
+import { managedNodeGroupProviderFactory, nodeGroupProviderFactory } from "./nodegroup";
 import { randomSuffixProviderFactory } from "./randomSuffix";
+import { nodeGroupSecurityGroupProviderFactory } from "./securitygroup";
 
 class Provider implements pulumi.provider.Provider {
     readonly version = getVersion();
@@ -24,6 +26,10 @@ class Provider implements pulumi.provider.Provider {
     // time or return the same provider instance.
     private readonly typeToProviderFactoryMap: Record<string, () => pulumi.provider.Provider> = {
         "eks:index:Cluster": clusterProviderFactory,
+        "eks:index:ClusterCreationRoleProvider": clusterCreationRoleProviderProviderFactory,
+        "eks:index:ManagedNodeGroup": managedNodeGroupProviderFactory,
+        "eks:index:NodeGroup": nodeGroupProviderFactory,
+        "eks:index:NodeGroupSecurityGroup": nodeGroupSecurityGroupProviderFactory,
         "eks:index:RandomSuffix": randomSuffixProviderFactory,
         "eks:index:VpcCni": vpcCniProviderFactory,
     };
