@@ -1174,7 +1174,7 @@
         "python": {
             "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
             "requires": {
-                "pulumi": "\u003e=2.15.0,\u003c3.0.0",
+                "pulumi": "\u003e=2.15.5,\u003c3.0.0",
                 "pulumi-aws": "\u003e=3.18.0,\u003c4.0.0",
                 "pulumi-kubernetes": "\u003e=2.7.3,\u003c3.0.0"
             },
