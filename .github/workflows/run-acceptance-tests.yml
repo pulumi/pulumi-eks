@@ -341,7 +341,10 @@ jobs:
         nodeversion:
           - 14.x
         test-name:
+          - AwsProfilePy
           - ClusterPy
+          - FargatePy
+          - ManagedNodeGroupPy
 name: Run Acceptance Tests from PR
 on:
   repository_dispatch:
