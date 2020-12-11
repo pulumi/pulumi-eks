@@ -13,7 +13,7 @@
     "dependencies": {
         "@pulumi/aws": "^3.18.0",
         "@pulumi/kubernetes": "^2.7.3",
-        "@pulumi/pulumi": "^2.15.0",
+        "@pulumi/pulumi": "^2.15.5",
         "axios": "^0.19.0",
         "netmask": "^1.0.6",
         "js-yaml": "^3.13.0",
