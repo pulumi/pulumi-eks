@@ -549,8 +549,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
     // depend on the autoscaling group we'll create later so that nothing attempts to use the EKS cluster before
     // its worker nodes have come up.
-    const kubeconfig = pulumi.all([eksCluster.name, endpoint, eksCluster.certificateAuthority])
-        .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority]) => {
+    const kubeconfig = pulumi.all([eksCluster.name, endpoint, eksCluster.certificateAuthority, args.providerCredentialOpts])
+        .apply(([clusterName, clusterEndpoint, clusterCertificateAuthority, providerCredentialOpts]) => {
             let config = {};
 
             if (args.creationRoleProvider) {
@@ -558,8 +558,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
                     const opts: KubeconfigOptions = {roleArn: arn};
                     return generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data, opts);
                 });
-            } else if (args.providerCredentialOpts) {
-                config = generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data, args.providerCredentialOpts);
+            } else if (providerCredentialOpts) {
+                config = generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data, providerCredentialOpts);
             } else {
                 config = generateKubeconfig(clusterName, clusterEndpoint, clusterCertificateAuthority.data);
             }
@@ -1232,7 +1232,7 @@ export interface ClusterOptions {
      * - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
      * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
      */
-    providerCredentialOpts?: KubeconfigOptions;
+    providerCredentialOpts?: pulumi.Input<KubeconfigOptions>;
 
     /**
      * KMS Key ARN to use with the encryption configuration for the cluster.
