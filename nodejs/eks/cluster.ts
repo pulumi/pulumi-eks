@@ -141,7 +141,7 @@ export interface CoreData {
     vpcCni?: VpcCni;
     tags?: InputTags;
     nodeSecurityGroupTags?: InputTags;
-    fargateProfile?: aws.eks.FargateProfile;
+    fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined>;
     oidcProvider?: aws.iam.OpenIdConnectProvider;
     encryptionConfig?: pulumi.Output<aws.types.output.eks.ClusterEncryptionConfig>;
 }
@@ -677,65 +677,68 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         data: nodeAccessData,
     }, { parent, provider: k8sProvider });
 
-    let fargateProfile: aws.eks.FargateProfile | undefined;
-    if (args.fargate) {
-        const fargate = args.fargate !== true ? args.fargate : {};
-        const podExecutionRoleArn = fargate.podExecutionRoleArn || (new ServiceRole(`${name}-podExecutionRole`, {
-            service: "eks-fargate-pods.amazonaws.com",
-            managedPolicyArns: [
-                "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
-            ],
-        }, { parent, provider })).role.apply(r => r.arn);
-        const selectors = fargate.selectors || [
-            // For `fargate: true`, default to including the `default` namespaces and
-            // `kube-system` namespaces so that all pods by default run in Fargate.
-            { namespace: "default" },
-            { namespace: "kube-system" },
-        ];
+    const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi.output(args.fargate).apply(argsFargate => {
+        let result: aws.eks.FargateProfile | undefined;
+        if (argsFargate) {
+            const fargate = argsFargate !== true ? argsFargate : {};
+            const podExecutionRoleArn = fargate.podExecutionRoleArn || (new ServiceRole(`${name}-podExecutionRole`, {
+                service: "eks-fargate-pods.amazonaws.com",
+                managedPolicyArns: [
+                    "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
+                ],
+            }, { parent, provider })).role.apply(r => r.arn);
+            const selectors = fargate.selectors || [
+                // For `fargate: true`, default to including the `default` namespaces and
+                // `kube-system` namespaces so that all pods by default run in Fargate.
+                { namespace: "default" },
+                { namespace: "kube-system" },
+            ];
 
-        const reservedAwsPrefix = "eks";
-        let fargateProfileName = name;
-        const profileNameRegex = new RegExp("^" + reservedAwsPrefix + "-", "i"); // starts with (^) 'eks-', (i)gnore casing
-        if (fargateProfileName === reservedAwsPrefix || profileNameRegex.test(name)) {
-            fargateProfileName = fargateProfileName.replace("-", "_");
-            fargateProfileName = `${fargateProfileName}fargateProfile`;
-        } else {
-            // default, and to maintain backwards compat for existing cluster fargate profiles.
-            fargateProfileName = `${fargateProfileName}-fargateProfile`;
-        }
-
-        fargateProfile = new aws.eks.FargateProfile(fargateProfileName, {
-            clusterName: eksCluster.name,
-            podExecutionRoleArn: podExecutionRoleArn,
-            selectors: selectors,
-            subnetIds: pulumi.output(clusterSubnetIds).apply(subnets => computeWorkerSubnets(parent, subnets)),
-        }, { parent, dependsOn: [eksNodeAccess], provider});
-
-        // Once the FargateProfile has been created, try to patch CoreDNS if needed.  See
-        // https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-coredns.
-        pulumi.all([fargateProfile.id, selectors, kubeconfig]).apply(([_, sels, kconfig]) => {
-            // Only patch CoreDNS if there is a selector in the FargateProfile which causes
-            // `kube-system` pods to launch in Fargate.
-            if (sels.findIndex(s => s.namespace === "kube-system") !== -1) {
-                // Only do the imperative patching during deployments, not previews.
-                if (!pulumi.runtime.isDryRun()) {
-                    // Write the kubeconfig to a tmp file and use it to patch the `coredns`
-                    // deployment that AWS deployed already as part of cluster creation.
-                    const tmpKubeconfig = tmp.fileSync();
-                    fs.writeFileSync(tmpKubeconfig.fd, JSON.stringify(kconfig));
-                    const patch = [{
-                        op: "replace",
-                        path: "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type",
-                        value: "fargate",
-                    }];
-                    const cmd = `kubectl patch deployment coredns -n kube-system --type json -p='${JSON.stringify(patch)}'`;
-                    childProcess.execSync(cmd, {
-                        env: { ...process.env, "KUBECONFIG": tmpKubeconfig.name },
-                    });
-                }
+            const reservedAwsPrefix = "eks";
+            let fargateProfileName = name;
+            const profileNameRegex = new RegExp("^" + reservedAwsPrefix + "-", "i"); // starts with (^) 'eks-', (i)gnore casing
+            if (fargateProfileName === reservedAwsPrefix || profileNameRegex.test(name)) {
+                fargateProfileName = fargateProfileName.replace("-", "_");
+                fargateProfileName = `${fargateProfileName}fargateProfile`;
+            } else {
+                // default, and to maintain backwards compat for existing cluster fargate profiles.
+                fargateProfileName = `${fargateProfileName}-fargateProfile`;
             }
-        });
-    }
+
+            result = new aws.eks.FargateProfile(fargateProfileName, {
+                clusterName: eksCluster.name,
+                podExecutionRoleArn: podExecutionRoleArn,
+                selectors: selectors,
+                subnetIds: pulumi.output(clusterSubnetIds).apply(subnets => computeWorkerSubnets(parent, subnets)),
+            }, { parent, dependsOn: [eksNodeAccess], provider});
+
+            // Once the FargateProfile has been created, try to patch CoreDNS if needed.  See
+            // https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-coredns.
+            pulumi.all([result.id, selectors, kubeconfig]).apply(([_, sels, kconfig]) => {
+                // Only patch CoreDNS if there is a selector in the FargateProfile which causes
+                // `kube-system` pods to launch in Fargate.
+                if (sels.findIndex(s => s.namespace === "kube-system") !== -1) {
+                    // Only do the imperative patching during deployments, not previews.
+                    if (!pulumi.runtime.isDryRun()) {
+                        // Write the kubeconfig to a tmp file and use it to patch the `coredns`
+                        // deployment that AWS deployed already as part of cluster creation.
+                        const tmpKubeconfig = tmp.fileSync();
+                        fs.writeFileSync(tmpKubeconfig.fd, JSON.stringify(kconfig));
+                        const patch = [{
+                            op: "replace",
+                            path: "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type",
+                            value: "fargate",
+                        }];
+                        const cmd = `kubectl patch deployment coredns -n kube-system --type json -p='${JSON.stringify(patch)}'`;
+                        childProcess.execSync(cmd, {
+                            env: { ...process.env, "KUBECONFIG": tmpKubeconfig.name },
+                        });
+                    }
+                }
+            });
+        }
+        return result;
+    });
 
     // Setup OIDC provider to leverage IAM roles for k8s service accounts.
     let oidcProvider: aws.iam.OpenIdConnectProvider | undefined;
@@ -1164,7 +1167,7 @@ export interface ClusterOptions {
      * namespace.  If specified, the default node group is skipped as though `skipDefaultNodeGroup:
      * true` had been passed.
      */
-    fargate?: boolean | FargateProfile;
+    fargate?: pulumi.Input<boolean | FargateProfile>;
 
     /**
      * The tags to apply to the EKS cluster.
