@@ -56,8 +56,16 @@ func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
 }
 
 func providerPluginPathEnv() (string, error) {
+	// Local build of eks plugin.
 	pluginDir := filepath.Join("..", "provider", "cmd", "pulumi-resource-eks", "bin")
 	absPluginDir, err := filepath.Abs(pluginDir)
+	if err != nil {
+		return "", err
+	}
+
+	// Test build of testvpc plugin.
+	testPluginDir := filepath.Join("..", "utils", "testvpc")
+	absTestPluginDir, err := filepath.Abs(testPluginDir)
 	if err != nil {
 		return "", err
 	}
@@ -66,5 +74,5 @@ func providerPluginPathEnv() (string, error) {
 	if runtime.GOOS == "windows" {
 		pathSeparator = ";"
 	}
-	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir, nil
+	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir, nil
 }
