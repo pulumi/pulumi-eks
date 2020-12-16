@@ -1,0 +1,13 @@
+{
+    "name": "pulumi-resource-testvpc",
+    "main": "index.js",
+    "devDependencies": {
+        "typescript": "^3.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "latest",
+        "@pulumi/aws": "latest",
+        "@pulumi/awsx": "latest"
+    }
+}

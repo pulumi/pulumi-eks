@@ -16,11 +16,28 @@
 package examples
 
 import (
+	"path"
 	"path/filepath"
 	"testing"
 
 	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
 )
+
+func TestAccAwsProfilePy(t *testing.T) {
+	test := getPythonBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "aws-profile-py"),
+			// TODO: Temporarily skip the extra runtime validation due to test failure.
+			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+			// 	utils.RunEKSSmokeTest(t,
+			// 		info.Deployment.Resources,
+			// 		info.Outputs["kubeconfig"],
+			// 	)
+			// },
+		})
+
+	integration.ProgramTest(t, &test)
+}
 
 func TestAccClusterPy(t *testing.T) {
 	test := getPythonBaseOptions(t).
@@ -33,6 +50,45 @@ func TestAccClusterPy(t *testing.T) {
 			// 		info.Outputs["kubeconfig1"],
 			// 		// TODO
 			// 		// info.Outputs["kubeconfig2"],
+			// 	)
+			// },
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccFargatePy(t *testing.T) {
+	test := getPythonBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "fargate-py"),
+			Config: map[string]string{
+				// Hard code to us-east-2 since Fargate support is not yet available in all regions
+				// (specifically us-west-2).
+				"aws:region": "us-east-2",
+			},
+			// TODO[pulumi/pulumi-eks#286] Disabled until we address CNI daemonset issues which
+			// cause those daemonset pods not to get scheduled.
+			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+			// 	utils.RunEKSSmokeTest(t,
+			// 		info.Deployment.Resources,
+			// 		info.Outputs["kubeconfig"],
+			// 	)
+			// },
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccManagedNodeGroupPy(t *testing.T) {
+	test := getPythonBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			// RunUpdateTest: true,
+			Dir: filepath.Join(getCwd(t), "managed-nodegroups-py"),
+			// TODO: Temporarily skip the extra runtime validation due to test failure.
+			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+			// 	utils.RunEKSSmokeTest(t,
+			// 		info.Deployment.Resources,
+			// 		info.Outputs["kubeconfig"],
 			// 	)
 			// },
 		})

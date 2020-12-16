@@ -82,16 +82,19 @@ install_go_sdk::
 install_python_sdk::
 	#Intentionall empty for CI / CD templating
 
+test_build::
+	cd utils/testvpc && yarn install && yarn run tsc
+
 test_nodejs:: install_nodejs_sdk
 	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
 
-test_python:: install_provider
+test_python:: install_provider test_build
 	cd examples && go test -tags=python -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
 
 test_dotnet:: install_provider
 	cd examples && go test -tags=dotnet -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
 
-specific_test:: install_nodejs_sdk
+specific_test:: install_nodejs_sdk test_build
 	cd examples && go test -tags=$(LanguageTags) -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
 
 dev:: lint build_nodejs

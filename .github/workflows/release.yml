@@ -12,6 +12,7 @@ env:
   PULUMI_API: https://api.pulumi-staging.io
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+  PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES: 1
 jobs:
   lint:
     name: lint
@@ -62,6 +63,10 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
+        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
+        with:
+          pulumi-version: 2.15.5
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -123,6 +128,10 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
+        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
+        with:
+          pulumi-version: 2.15.5
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check worktree clean
@@ -169,6 +178,10 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
+        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
+        with:
+          pulumi-version: 2.15.5
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -198,6 +211,10 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
+        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
+        with:
+          pulumi-version: 2.15.5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -262,6 +279,10 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
+        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
+        with:
+          pulumi-version: 2.15.5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -364,6 +385,10 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
+        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
+        with:
+          pulumi-version: 2.15.5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
