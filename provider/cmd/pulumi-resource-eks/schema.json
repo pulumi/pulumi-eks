@@ -589,6 +589,10 @@
                     "type": "integer",
                     "description": "The number of worker nodes that should be running in the cluster. Defaults to 2."
                 },
+                "disableVpcCni": {
+                    "type": "boolean",
+                    "description": "Disable creating the VPC CNI."
+                },
                 "enabledClusterLogTypes": {
                     "type": "array",
                     "items": {
