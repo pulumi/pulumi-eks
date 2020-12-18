@@ -588,7 +588,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     // Create the VPC CNI management resource.
     let vpcCni: VpcCni | undefined;
-    if (args.disableVpcCni) {
+    if (!args.disableVpcCni) {
         vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent });
     }
 
