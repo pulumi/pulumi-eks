@@ -587,7 +587,10 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
 
     // Create the VPC CNI management resource.
-    const vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent });
+    let vpcCni: VpcCni | undefined;
+    if (args.disableVpcCni) {
+        vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent });
+    }
 
     let instanceRoleMappings: pulumi.Output<RoleMapping[]>;
     let instanceRoles: pulumi.Output<aws.iam.Role[]>;
@@ -940,6 +943,11 @@ export interface ClusterOptions {
      * for the VpcCniOptions type.
      */
     vpcCniOptions?: VpcCniOptions;
+
+    /**
+     * Disable creating the VPC CNI.
+     */
+    disableVpcCni?: boolean;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
