@@ -26,6 +26,7 @@ class Cluster(pulumi.ComponentResource):
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional[pulumi.Input[pulumi.InputType['CreationRoleProviderArgs']]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
+                 disable_vpc_cni: Optional[pulumi.Input[bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
@@ -85,6 +86,7 @@ class Cluster(pulumi.ComponentResource):
                 - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
         :param pulumi.Input[pulumi.InputType['CreationRoleProviderArgs']] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
+        :param pulumi.Input[bool] disable_vpc_cni: Disable creating the VPC CNI.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] enabled_cluster_log_types: Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
         :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
         :param pulumi.Input[str] encryption_config_key_arn: KMS Key ARN to use with the encryption configuration for the cluster.
@@ -241,6 +243,7 @@ class Cluster(pulumi.ComponentResource):
             __props__['create_oidc_provider'] = create_oidc_provider
             __props__['creation_role_provider'] = creation_role_provider
             __props__['desired_capacity'] = desired_capacity
+            __props__['disable_vpc_cni'] = disable_vpc_cni
             __props__['enabled_cluster_log_types'] = enabled_cluster_log_types
             __props__['encrypt_root_block_device'] = encrypt_root_block_device
             __props__['encryption_config_key_arn'] = encryption_config_key_arn

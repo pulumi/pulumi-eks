@@ -158,6 +158,12 @@ namespace Pulumi.Eks
         [Input("desiredCapacity")]
         public Input<int>? DesiredCapacity { get; set; }
 
+        /// <summary>
+        /// Disable creating the VPC CNI.
+        /// </summary>
+        [Input("disableVpcCni")]
+        public Input<bool>? DisableVpcCni { get; set; }
+
         [Input("enabledClusterLogTypes")]
         private InputList<string>? _enabledClusterLogTypes;
 
