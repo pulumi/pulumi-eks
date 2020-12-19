@@ -26,7 +26,6 @@ class Cluster(pulumi.ComponentResource):
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional[pulumi.Input[pulumi.InputType['CreationRoleProviderArgs']]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
-                 disable_vpc_cni: Optional[pulumi.Input[bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
@@ -60,6 +59,7 @@ class Cluster(pulumi.ComponentResource):
                  storage_classes: Optional[pulumi.Input[Union[str, pulumi.InputType['StorageClassArgs']]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 use_default_vpc_cni: Optional[pulumi.Input[bool]] = None,
                  user_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['UserMappingArgs']]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  vpc_cni_options: Optional[pulumi.Input[pulumi.InputType['VpcCniOptionsArgs']]] = None,
@@ -86,7 +86,6 @@ class Cluster(pulumi.ComponentResource):
                 - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
         :param pulumi.Input[pulumi.InputType['CreationRoleProviderArgs']] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
-        :param pulumi.Input[bool] disable_vpc_cni: Disable creating the VPC CNI.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] enabled_cluster_log_types: Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
         :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
         :param pulumi.Input[str] encryption_config_key_arn: KMS Key ARN to use with the encryption configuration for the cluster.
@@ -213,6 +212,7 @@ class Cluster(pulumi.ComponentResource):
                
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
+        :param pulumi.Input[bool] use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
         :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['UserMappingArgs']]]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups.
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         :param pulumi.Input[pulumi.InputType['VpcCniOptionsArgs']] vpc_cni_options: The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
@@ -243,7 +243,6 @@ class Cluster(pulumi.ComponentResource):
             __props__['create_oidc_provider'] = create_oidc_provider
             __props__['creation_role_provider'] = creation_role_provider
             __props__['desired_capacity'] = desired_capacity
-            __props__['disable_vpc_cni'] = disable_vpc_cni
             __props__['enabled_cluster_log_types'] = enabled_cluster_log_types
             __props__['encrypt_root_block_device'] = encrypt_root_block_device
             __props__['encryption_config_key_arn'] = encryption_config_key_arn
@@ -277,6 +276,7 @@ class Cluster(pulumi.ComponentResource):
             __props__['storage_classes'] = storage_classes
             __props__['subnet_ids'] = subnet_ids
             __props__['tags'] = tags
+            __props__['use_default_vpc_cni'] = use_default_vpc_cni
             __props__['user_mappings'] = user_mappings
             __props__['version'] = version
             __props__['vpc_cni_options'] = vpc_cni_options

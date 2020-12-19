@@ -158,12 +158,6 @@ namespace Pulumi.Eks
         [Input("desiredCapacity")]
         public Input<int>? DesiredCapacity { get; set; }
 
-        /// <summary>
-        /// Disable creating the VPC CNI.
-        /// </summary>
-        [Input("disableVpcCni")]
-        public Input<bool>? DisableVpcCni { get; set; }
-
         [Input("enabledClusterLogTypes")]
         private InputList<string>? _enabledClusterLogTypes;
 
@@ -514,6 +508,12 @@ namespace Pulumi.Eks
             get => _tags ?? (_tags = new InputMap<string>());
             set => _tags = value;
         }
+
+        /// <summary>
+        /// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+        /// </summary>
+        [Input("useDefaultVpcCni")]
+        public Input<bool>? UseDefaultVpcCni { get; set; }
 
         [Input("userMappings")]
         private InputList<Inputs.UserMappingArgs>? _userMappings;

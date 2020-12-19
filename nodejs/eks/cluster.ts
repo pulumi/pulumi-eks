@@ -588,7 +588,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
 
     // Create the VPC CNI management resource.
     let vpcCni: VpcCni | undefined;
-    if (!args.disableVpcCni) {
+    if (!args.useDefaultVpcCni) {
         vpcCni = new VpcCni(`${name}-vpc-cni`, kubeconfig, args.vpcCniOptions, { parent });
     }
 
@@ -945,9 +945,9 @@ export interface ClusterOptions {
     vpcCniOptions?: VpcCniOptions;
 
     /**
-     * Disable creating the VPC CNI.
+     * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
      */
-    disableVpcCni?: boolean;
+    useDefaultVpcCni?: boolean;
 
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".

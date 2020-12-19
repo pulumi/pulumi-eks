@@ -589,10 +589,6 @@
                     "type": "integer",
                     "description": "The number of worker nodes that should be running in the cluster. Defaults to 2."
                 },
-                "disableVpcCni": {
-                    "type": "boolean",
-                    "description": "Disable creating the VPC CNI."
-                },
                 "enabledClusterLogTypes": {
                     "type": "array",
                     "items": {
@@ -772,6 +768,10 @@
                         "type": "string"
                     },
                     "description": "Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging."
+                },
+                "useDefaultVpcCni": {
+                    "type": "boolean",
+                    "description": "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`."
                 },
                 "userMappings": {
                     "type": "array",

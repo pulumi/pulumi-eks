@@ -259,9 +259,9 @@ func generateSchema() schema.PackageSpec {
 						Description: "The configuration of the Amazon VPC CNI plugin for this instance. Defaults are " +
 							"described in the documentation for the VpcCniOptions type.",
 					},
-					"disableVpcCni": {
+					"useDefaultVpcCni": {
 						TypeSpec:    schema.TypeSpec{Type: "boolean"},
-						Description: "Disable creating the VPC CNI.",
+						Description: "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.",
 					},
 					"instanceType": {
 						TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO: aws.ec2.InstanceType is a string enum.
