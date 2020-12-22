@@ -104,6 +104,20 @@ export interface VpcCniOptions {
      * Defaults to the official AWS CNI image in ECR.
      */
     eniConfigLabelDef?: pulumi.Input<string>;
+
+    /**
+     * Specifies the log level used for plugin logs.
+     *
+     * Defaults to "DEBUG".
+     */
+    pluginLogLevel?: pulumi.Input<string>;
+
+    /**
+     * Specifies the file path used for plugin logs.
+     *
+     * Defaults to "stdout" to emit Plugin logs.
+     */
+    pluginLogFile?: pulumi.Input<string>;
 }
 
 // Dynamic providers don't currently work well with multi-language components [1]. To workaround this, the
@@ -133,6 +147,8 @@ export class VpcCni extends pulumi.CustomResource {
             logFile: args.logFile,
             image: args.image,
             eniConfigLabelDef: args.eniConfigLabelDef,
+            pluginLogLevel: args.pluginLogLevel,
+            pluginLogFile: args.pluginLogFile,
         }, opts);
     }
 }

@@ -35,6 +35,8 @@ interface VpcCniInputs {
     vethPrefix?: string;
     eniMtu?: number;
     eniConfigLabelDef?: string;
+    pluginLogLevel?: string;
+    pluginLogFile?: string;
 }
 
 function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
@@ -54,6 +56,8 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     }
     if (args.warmEniTarget) {
         env.push({name: "WARM_ENI_TARGET", value: args.warmEniTarget.toString()});
+    } else {
+        env.push({name: "WARM_ENI_TARGET", value: "1"});
     }
     if (args.warmIpTarget) {
         env.push({name: "WARM_IP_TARGET", value: args.warmIpTarget.toString()});
@@ -66,7 +70,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     if (args.logFile) {
         env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: args.logFile.toString()});
     } else {
-        env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: "stdout"});
+        env.push({name: "AWS_VPC_K8S_CNI_LOG_FILE", value: "/host/var/log/aws-routed-eni/ipamd.log"});
     }
     if (args.vethPrefix) {
         env.push({name: "AWS_VPC_K8S_CNI_VETHPREFIX", value: args.vethPrefix.toString()});
@@ -83,6 +87,16 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     }
     if (args.eniConfigLabelDef) {
         env.push({name: "ENI_CONFIG_LABEL_DEF", value: args.eniConfigLabelDef.toString()});
+    }
+    if (args.pluginLogLevel) {
+        env.push({name: "AWS_VPC_K8S_PLUGIN_LOG_LEVEL", value: args.pluginLogLevel.toString()});
+    } else {
+        env.push({name: "AWS_VPC_K8S_PLUGIN_LOG_LEVEL", value: "DEBUG"});
+    }
+    if (args.pluginLogFile) {
+        env.push({name: "AWS_VPC_K8S_PLUGIN_LOG_FILE", value: args.pluginLogFile.toString()});
+    } else {
+        env.push({name: "AWS_VPC_K8S_PLUGIN_LOG_FILE", value: "/var/log/aws-routed-eni/plugin.log"});
     }
     // Return the computed YAML.
     return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
