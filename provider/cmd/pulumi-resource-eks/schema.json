@@ -769,6 +769,10 @@
                     },
                     "description": "Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging."
                 },
+                "useDefaultVpcCni": {
+                    "type": "boolean",
+                    "description": "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`."
+                },
                 "userMappings": {
                     "type": "array",
                     "items": {

@@ -6,6 +6,8 @@
   [#450](https://github.com/pulumi/pulumi-eks/pull/450)
 - Initial support for Python and .NET
   [#448](https://github.com/pulumi/pulumi-eks/pull/448)
+- Add a flag to allow disabling creation of VPC CNI
+  [#493](https://github.com/pulumi/pulumi-eks/pull/493)
 
 ## 0.20.0 (Released September 3, 2020)
 
