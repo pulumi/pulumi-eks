@@ -509,6 +509,12 @@ namespace Pulumi.Eks
             set => _tags = value;
         }
 
+        /// <summary>
+        /// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+        /// </summary>
+        [Input("useDefaultVpcCni")]
+        public Input<bool>? UseDefaultVpcCni { get; set; }
+
         [Input("userMappings")]
         private InputList<Inputs.UserMappingArgs>? _userMappings;
 
