@@ -24,7 +24,7 @@ import (
 )
 
 func TestAccClusterCs(t *testing.T) {
-	test := getPythonBaseOptions(t).
+	test := getCSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), "cluster-cs"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
