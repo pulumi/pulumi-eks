@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- fix(nodejs): Do not fallback on cluster name when creating node group
+  This is a breaking change as it will recreate the node group on the first deploy
+  [#492](https://github.com/pulumi/pulumi-eks/pull/492)
 - fix: correct spelling for encryptRootBlockDevice
   [#450](https://github.com/pulumi/pulumi-eks/pull/450)
 - Initial support for Python and .NET
