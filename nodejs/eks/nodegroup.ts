@@ -847,7 +847,6 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
     const nodeGroup = new aws.eks.NodeGroup(name, {
         ...nodeGroupArgs,
         clusterName: args.clusterName || core.cluster.name,
-        nodeGroupName: args.nodeGroupName || name,
         nodeRoleArn: roleArn,
         scalingConfig: pulumi.all([
             args.scalingConfig,
