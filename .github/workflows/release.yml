@@ -13,7 +13,7 @@ env:
   PULUMI_API: https://api.pulumi-staging.io
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-  PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES: 1
+  PULUMI_ENABLE_RESOURCE_REFERENCES: 1
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
 jobs:
   lint:

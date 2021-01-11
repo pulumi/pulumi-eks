@@ -12,7 +12,7 @@ env:
   PULUMI_API: https://api.pulumi-staging.io
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   PR_COMMIT_SHA: ${{ github.event.client_payload.pull_request.head.sha }}
-  PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES: 1
+  PULUMI_ENABLE_RESOURCE_REFERENCES: 1
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
 jobs:
   comment-notification:
