@@ -1,4 +1,7 @@
 ## Unreleased
+_(none)_
+
+## 0.21.0 (Released January 12, 2021)
 
 ### Improvements
 
@@ -10,8 +13,6 @@
 - The Node.js SDK now requires an `eks` resource plugin, which will be installed
   automatically during previews/updates (if not already installed).
   [#458](https://github.com/pulumi/pulumi-eks/pull/458)
-- Initial support for Python and .NET
-  [#448](https://github.com/pulumi/pulumi-eks/pull/448)
 - Add a flag to allow disabling creation of VPC CNI
   [#493](https://github.com/pulumi/pulumi-eks/pull/493)
 
