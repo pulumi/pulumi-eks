@@ -7,6 +7,9 @@
   [#492](https://github.com/pulumi/pulumi-eks/pull/492)
 - fix: correct spelling for encryptRootBlockDevice
   [#450](https://github.com/pulumi/pulumi-eks/pull/450)
+- The Node.js SDK now requires an `eks` resource plugin, which will be installed
+  automatically during previews/updates (if not already installed).
+  [#458](https://github.com/pulumi/pulumi-eks/pull/458)
 - Initial support for Python and .NET
   [#448](https://github.com/pulumi/pulumi-eks/pull/448)
 - Add a flag to allow disabling creation of VPC CNI
