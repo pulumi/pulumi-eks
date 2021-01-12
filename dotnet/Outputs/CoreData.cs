@@ -16,7 +16,7 @@ namespace Pulumi.Eks.Outputs
         public readonly Pulumi.Aws.Provider? AwsProvider;
         public readonly Pulumi.Aws.Eks.Cluster Cluster;
         public readonly Pulumi.Aws.Ec2.SecurityGroup ClusterSecurityGroup;
-        public readonly Pulumi.Kubernetes.Types.Outputs.Core.V1.ConfigMap? EksNodeAccess;
+        public readonly Pulumi.Kubernetes.Core.V1.ConfigMap? EksNodeAccess;
         public readonly string Endpoint;
         public readonly Pulumi.Aws.Eks.FargateProfile? FargateProfile;
         public readonly ImmutableArray<Pulumi.Aws.Iam.Role> InstanceRoles;
@@ -41,7 +41,7 @@ namespace Pulumi.Eks.Outputs
 
             Pulumi.Aws.Ec2.SecurityGroup clusterSecurityGroup,
 
-            Pulumi.Kubernetes.Types.Outputs.Core.V1.ConfigMap? eksNodeAccess,
+            Pulumi.Kubernetes.Core.V1.ConfigMap? eksNodeAccess,
 
             string endpoint,
 

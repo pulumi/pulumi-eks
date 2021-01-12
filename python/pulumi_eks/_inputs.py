@@ -532,7 +532,7 @@ class CoreDataArgs:
                  subnet_ids: pulumi.Input[Sequence[pulumi.Input[str]]],
                  vpc_id: pulumi.Input[str],
                  aws_provider: Optional[pulumi.Input['pulumi_aws.Provider']] = None,
-                 eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMapArgs']] = None,
+                 eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']] = None,
                  fargate_profile: Optional[pulumi.Input['pulumi_aws.eks.FargateProfile']] = None,
                  kubeconfig: Optional[Any] = None,
                  node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -659,11 +659,11 @@ class CoreDataArgs:
 
     @property
     @pulumi.getter(name="eksNodeAccess")
-    def eks_node_access(self) -> Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMapArgs']]:
+    def eks_node_access(self) -> Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']]:
         return pulumi.get(self, "eks_node_access")
 
     @eks_node_access.setter
-    def eks_node_access(self, value: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMapArgs']]):
+    def eks_node_access(self, value: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']]):
         pulumi.set(self, "eks_node_access", value)
 
     @property

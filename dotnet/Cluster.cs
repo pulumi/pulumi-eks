@@ -12,6 +12,7 @@ namespace Pulumi.Eks
     /// <summary>
     /// Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
     /// </summary>
+    [EksResourceType("eks:index:Cluster")]
     public partial class Cluster : Pulumi.ComponentResource
     {
         /// <summary>
