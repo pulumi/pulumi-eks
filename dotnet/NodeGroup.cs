@@ -12,6 +12,7 @@ namespace Pulumi.Eks
     /// <summary>
     /// NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
     /// </summary>
+    [EksResourceType("eks:index:NodeGroup")]
     public partial class NodeGroup : Pulumi.ComponentResource
     {
         /// <summary>

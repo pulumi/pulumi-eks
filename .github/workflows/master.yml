@@ -7,12 +7,14 @@ env:
   GO111MODULE: "on"
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
   PROVIDER: eks
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
   PULUMI_API: https://api.pulumi-staging.io
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-  PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES: 1
+  PULUMI_ENABLE_RESOURCE_REFERENCES: 1
+  PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
 jobs:
   lint:
     name: lint
@@ -62,10 +64,6 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
-        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
-        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
-        with:
-          pulumi-version: 2.15.5
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check worktree clean
@@ -111,10 +109,6 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
-        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
-        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
-        with:
-          pulumi-version: 2.15.5
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -187,10 +181,6 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
-        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
-        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
-        with:
-          pulumi-version: 2.15.5
       - name: Set PreRelease Version
         run: echo "GORELEASER_CURRENT_TAG=v$(pulumictl get version --language generic)"
           >> $GITHUB_ENV
@@ -223,10 +213,6 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
-        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
-        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
-        with:
-          pulumi-version: 2.15.5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -278,10 +264,6 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
-        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
-        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
-        with:
-          pulumi-version: 2.15.5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -384,10 +366,6 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
-        # TODO[pulumi/pulumi-eks#489]: Remove the hard coded version once a version of the CLI after 2.15.6 is released
-        # that supports enabling resource references via the PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES feature flag.
-        with:
-          pulumi-version: 2.15.5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -464,6 +442,102 @@ jobs:
           - 14.x
         test-name:
           - ClusterPy
+  test-dotnet:
+    name: Run DotNet Tests
+    needs: build_sdk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Checkout Scripts Repo
+        uses: actions/checkout@v2
+        with:
+          path: ci-scripts
+          repository: pulumi/scripts
+      - name: Unshallow clone for tags
+        run: git fetch --prune --unshallow --tags
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.goversion }}
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        with:
+          repo: pulumi/pulumictl
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@v1.0.1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.nodeversion}}
+          registry-url: https://registry.npmjs.org
+      - name: Setup DotNet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{matrix.dotnetverson}}
+      - name: Download provider binary
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.PROVIDER }}-provider.tar.gz
+          path: ${{ github.workspace }}/bin
+      - name: Untar provider binaries
+        run: tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
+          }}/bin
+      - name: Restore binary perms
+        run: find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
+          -exec chmod +x {} \;
+      - name: Update path
+        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+      - name: Download NodeJS SDK
+        uses: actions/download-artifact@v2
+        with:
+          name: nodejs-sdk.tar.gz
+          path: ${{ github.workspace}}
+      - name: Uncompress NodeJS SDK folder
+        run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
+      - name: Install NodeJS SDK
+        run: make install_nodejs_sdk
+      - name: Download DotNet SDK
+        uses: actions/download-artifact@v2
+        with:
+          name: dotnet-sdk.tar.gz
+          path: ${{ github.workspace}}
+      - name: Uncompress DotNet SDK folder
+        run: tar -zxf ${{ github.workspace}}/dotnet.tar.gz -C ${{github.workspace}}/dotnet
+      - name: Install dependencies
+        run: make install_dotnet_sdk
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ env.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-duration-seconds: 3600
+          role-session-name: ${{ env.PROVIDER }}@githubActions
+          role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
+      - name: Configure AWS CLI
+        run: |
+          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
+          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
+      - name: Link nodejs binary for testing
+        run: |
+          cd ${{ github.workspace }}/bin
+          yarn install && yarn link @pulumi/eks
+      - name: Run tests
+        run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=dotnet
+    strategy:
+      fail-fast: false
+      matrix:
+        goversion:
+          - 1.15.x
+        dotnetversion:
+          - 3.1
+        nodeversion:
+          - 14.x
+        test-name:
+          - ClusterCs
 name: master
 "on":
   push:

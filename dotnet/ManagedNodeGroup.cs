@@ -15,6 +15,7 @@ namespace Pulumi.Eks
     /// See for more details:
     /// https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
     /// </summary>
+    [EksResourceType("eks:index:ManagedNodeGroup")]
     public partial class ManagedNodeGroup : Pulumi.ComponentResource
     {
         /// <summary>

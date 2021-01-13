@@ -77,4 +77,11 @@ namespace Pulumi.Eks
             }
         }
     }
+
+    internal sealed class EksResourceTypeAttribute : Pulumi.ResourceTypeAttribute
+    {
+        public EksResourceTypeAttribute(string type) : base(type, Utilities.Version)
+        {
+        }
+    }
 }

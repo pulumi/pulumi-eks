@@ -152,7 +152,7 @@
                     "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                 },
                 "eksNodeAccess": {
-                    "$ref": "/kubernetes/v2.7.3/schema.json#/types/kubernetes:core%2Fv1:ConfigMap"
+                    "$ref": "/kubernetes/v2.7.3/schema.json#/resources/kubernetes:core%2Fv1:ConfigMap"
                 },
                 "endpoint": {
                     "type": "string"
