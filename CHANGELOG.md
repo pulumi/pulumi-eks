@@ -1,5 +1,9 @@
 ## Unreleased
-_(none)_
+
+### Improvements
+
+- Initial support for Python and .NET
+  [#448](https://github.com/pulumi/pulumi-eks/pull/448)
 
 ## 0.21.0 (Released January 12, 2021)
 
