@@ -37,7 +37,7 @@ class MyStack : Stack
         // # });
 
         // Export the clusters' kubeconfig.
-        Kubeconfig1 = cluster1.kubeconfig;
+        Kubeconfig1 = cluster1.Kubeconfig;
         // TODO
         // Kubeconfig2 = cluster2.kubeconfig;
     }

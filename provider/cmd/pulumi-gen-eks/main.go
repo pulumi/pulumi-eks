@@ -825,7 +825,7 @@ func generateSchema() schema.PackageSpec {
 							},
 						},
 						"eksNodeAccess": {
-							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/types/kubernetes:core%2Fv1:ConfigMap")},
+							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:core%2Fv1:ConfigMap")},
 						},
 						"storageClasses": {
 							TypeSpec: schema.TypeSpec{
@@ -1517,6 +1517,7 @@ func genDotNet(pkg *schema.Package, outdir string) {
 		"Pulumi.Pulumi.Aws", "Pulumi.Aws.Provider",
 		"Pulumi.Pulumi.Kubernetes", "Pulumi.Kubernetes.Provider",
 		"using Cluster;\n", "",
+		"using ConfigMap;\n", "",
 		"using FargateProfile;\n", "",
 		"using InstanceProfile;\n", "",
 		"using NodeGroup;\n", "",
@@ -1535,6 +1536,7 @@ func genDotNet(pkg *schema.Package, outdir string) {
 		"Pulumi.Aws.Iam/instanceProfile.InstanceProfile", "Pulumi.Aws.Iam.InstanceProfile",
 		"Pulumi.Aws.Iam/openIdConnectProvider.OpenIdConnectProvider", "Pulumi.Aws.Iam.OpenIdConnectProvider",
 		"Pulumi.Aws.Iam/role.Role", "Pulumi.Aws.Iam.Role",
+		"Pulumi.Kubernetes.Core/v1.ConfigMap", "Pulumi.Kubernetes.Core.V1.ConfigMap",
 		"Pulumi.Kubernetes.Storage.k8s.io/v1.StorageClass", "Pulumi.Kubernetes.Storage.V1.StorageClass")
 	for file, b := range files {
 		replaced := replacer.Replace(string(b))
@@ -1595,10 +1597,11 @@ func genPython(pkg *schema.Package, outdir string) {
 		"from pulumi_kubernetes import core_v1 as _core_v1", "import pulumi_kubernetes",
 		"from pulumi_kubernetes import meta_v1 as _meta_v1", "import pulumi_kubernetes",
 		"from pulumi_kubernetes import _storage_k8s_io_v1.StorageClass", "import pulumi_kubernetes",
+		"from pulumi_kubernetes import _core_v1.ConfigMap", "import pulumi_kubernetes",
 		"'Aws'", "'pulumi_aws.Provider'",
 		"'Kubernetes'", "'pulumi_kubernetes.Provider'",
 		"_cloudformation_stack.Stack", "pulumi_aws.cloudformation.Stack",
-		"_core_v1.outputs.ConfigMap", "pulumi_kubernetes.core.v1.outputs.ConfigMap",
+		"_core_v1.ConfigMap", "pulumi_kubernetes.core.v1.ConfigMap",
 		"_ec2_securitygroup.SecurityGroup", "pulumi_aws.ec2.SecurityGroup",
 		"_ec2_securitygrouprule.SecurityGroupRule", "pulumi_aws.ec2.SecurityGroupRule",
 		"_eks_cluster.Cluster", "pulumi_aws.eks.Cluster",
@@ -1608,7 +1611,6 @@ func genPython(pkg *schema.Package, outdir string) {
 		"_iam_instanceprofile.InstanceProfile", "pulumi_aws.iam.InstanceProfile",
 		"_iam_openidconnectprovider.OpenIdConnectProvider", "pulumi_aws.iam.OpenIdConnectProvider",
 		"_iam_role.Role", "pulumi_aws.iam.Role",
-		"_core_v1.ConfigMapArgs", "pulumi_kubernetes.core.v1.ConfigMapArgs",
 		"_meta_v1.ObjectMetaArgs", "pulumi_kubernetes.meta.v1.ObjectMetaArgs",
 		"_storage_k8s_io_v1.StorageClass", "pulumi_kubernetes.storage.v1.StorageClass")
 	importReplacer := strings.NewReplacer(

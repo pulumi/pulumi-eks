@@ -48,7 +48,7 @@ setup(name='pulumi_eks',
       packages=find_packages(),
       package_data={
           'pulumi_eks': [
-              'py.typed'
+              'py.typed',
           ]
       },
       install_requires=[

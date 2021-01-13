@@ -25,7 +25,7 @@ namespace Pulumi.Eks.Inputs
         public Input<Pulumi.Aws.Ec2.SecurityGroup> ClusterSecurityGroup { get; set; } = null!;
 
         [Input("eksNodeAccess")]
-        public Input<Pulumi.Kubernetes.Types.Inputs.Core.V1.ConfigMapArgs>? EksNodeAccess { get; set; }
+        public Input<Pulumi.Kubernetes.Core.V1.ConfigMap>? EksNodeAccess { get; set; }
 
         [Input("endpoint", required: true)]
         public Input<string> Endpoint { get; set; } = null!;

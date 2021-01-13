@@ -432,7 +432,7 @@ class CoreData(dict):
                  subnet_ids: Sequence[str],
                  vpc_id: str,
                  aws_provider: Optional['pulumi_aws.Provider'] = None,
-                 eks_node_access: Optional['pulumi_kubernetes.core.v1.outputs.ConfigMap'] = None,
+                 eks_node_access: Optional['pulumi_kubernetes.core.v1.ConfigMap'] = None,
                  fargate_profile: Optional['pulumi_aws.eks.FargateProfile'] = None,
                  kubeconfig: Optional[Any] = None,
                  node_security_group_tags: Optional[Mapping[str, str]] = None,
@@ -523,7 +523,7 @@ class CoreData(dict):
 
     @property
     @pulumi.getter(name="eksNodeAccess")
-    def eks_node_access(self) -> Optional['pulumi_kubernetes.core.v1.outputs.ConfigMap']:
+    def eks_node_access(self) -> Optional['pulumi_kubernetes.core.v1.ConfigMap']:
         return pulumi.get(self, "eks_node_access")
 
     @property

@@ -12,6 +12,7 @@ namespace Pulumi.Eks
     /// <summary>
     /// VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
     /// </summary>
+    [EksResourceType("eks:index:VpcCni")]
     public partial class VpcCni : Pulumi.CustomResource
     {
         /// <summary>
