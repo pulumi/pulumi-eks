@@ -149,7 +149,7 @@ jobs:
           - 3.8
   publish:
     name: publish
-    needs: [test-nodejs, test-python]
+    needs: [test-nodejs, test-python, test-dotnet]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
