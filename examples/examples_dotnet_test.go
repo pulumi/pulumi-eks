@@ -31,8 +31,7 @@ func TestAccClusterCs(t *testing.T) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig1"],
-					// TODO
-					// info.Outputs["kubeconfig2"],
+					info.Outputs["kubeconfig2"],
 				)
 			},
 		})
