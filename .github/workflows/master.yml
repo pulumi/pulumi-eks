@@ -113,6 +113,10 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{matrix.pythonversion}}
+      - name: Setup DotNet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{matrix.dotnetverson}}
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -138,6 +142,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
+        dotnetversion:
+          - 3.1
         goversion:
           - 1.15.x
         language:
