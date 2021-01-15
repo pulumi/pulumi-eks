@@ -73,7 +73,7 @@ publish() {
     popd
 
     ## Publish Nuget Package if any exists
-    find "${SOURCE_ROOT}/sdk/dotnet/bin/Debug/" -name 'Pulumi.*.nupkg' \
+    find "${ROOT}/dotnet/bin/Debug/" -name 'Pulumi.*.nupkg' \
             -exec dotnet nuget push -k "${NUGET_PUBLISH_KEY}" -s https://api.nuget.org/v3/index.json {} ';'
 }
 
