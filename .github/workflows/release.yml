@@ -99,6 +99,7 @@ jobs:
         language:
           - nodejs
           - python
+          - dotnet
         nodeversion:
           - 14.x
         pythonversion:
