@@ -12,8 +12,20 @@ class Vpc : ComponentResource
     [Output("privateSubnetIds")]
     public Output<ImmutableArray<string>> PrivateSubnetIds { get; private set; } = null!;
 
-    public Vpc(string name, ComponentResourceOptions? options = null)
-        : base("testvpc:index:Vpc", name, ResourceArgs.Empty, options, remote: true)
+    public Vpc(string name, VpcArgs args, ComponentResourceOptions? options = null)
+        : base("testvpc:index:Vpc", name, args ?? new VpcArgs(), options, remote: true)
     {
+    }
+}
+
+class VpcArgs : ResourceArgs
+{
+    [Input("tags")]
+    private InputMap<string>? _tags;
+
+    public InputMap<string> Tags
+    {
+        get => _tags ?? (_tags = new InputMap<string>());
+        set => _tags = value;
     }
 }

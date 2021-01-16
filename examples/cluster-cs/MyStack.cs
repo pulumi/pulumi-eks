@@ -17,7 +17,13 @@ class MyStack : Stack
         var cluster1 = new Cluster($"{projectName}-1");
 
         // Create an EKS cluster with a non-default configuration.
-        var vpc = new Vpc($"{projectName}"); // TODO specify tags: tags: { "Name": `${projectName}-2` }
+        var vpc = new Vpc($"{projectName}-2", new VpcArgs
+        {
+            Tags =
+            {
+                { "Name", $"{projectName}-2" },
+            },
+        });
 
         var cluster2 = new Cluster($"{projectName}-2", new ClusterArgs
         {

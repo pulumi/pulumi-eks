@@ -1,5 +1,5 @@
 import pulumi
-from typing import Optional, Sequence
+from typing import Mapping, Optional, Sequence
 
 # Test utility wrapper around @pulumi/awsx's Vpc component.
 # Requires running `make test_build` and having the built component on PATH.
@@ -9,8 +9,12 @@ class Vpc(pulumi.ComponentResource):
     public_subnet_ids: pulumi.Output[Sequence[str]]
     private_subnet_ids: pulumi.Output[Sequence[str]]
 
-    def __init__(self, name: str, opts: Optional[pulumi.ResourceOptions] = None):
+    def __init__(self,
+                 name: str,
+                 tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 opts: Optional[pulumi.ResourceOptions] = None):
         props = dict()
+        props["tags"] = tags
         props["vpc_id"] = None
         props["public_subnet_ids"] = None
         props["private_subnet_ids"] = None

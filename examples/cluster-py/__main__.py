@@ -10,7 +10,7 @@ project_name = pulumi.get_project()
 cluster1 = eks.Cluster(f"{project_name}-1")
 
 # Create an EKS cluster with a non-default configuration.
-vpc = Vpc(f"{project_name}-2") # TODO specify tags: { "Name": f"{project_name}-2" }
+vpc = Vpc(f"{project_name}-2", tags={"Name": f"{project_name}-2"})
 
 cluster2 = eks.Cluster(f"{project_name}-2",
                        vpc_id=vpc.vpc_id,
