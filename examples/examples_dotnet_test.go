@@ -23,6 +23,21 @@ import (
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 )
 
+func TestAccAwsProfileCs(t *testing.T) {
+	test := getCSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "aws-profile-cs"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccClusterCs(t *testing.T) {
 	test := getCSBaseOptions(t).
 		With(integration.ProgramTestOptions{

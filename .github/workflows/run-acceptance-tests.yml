@@ -506,6 +506,7 @@ jobs:
         nodeversion:
           - 14.x
         test-name:
+          - AwsProfileCs
           - ClusterCs
   test-go:
     name: Run Go Tests

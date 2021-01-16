@@ -16,7 +16,6 @@
 package example
 
 import (
-	"path"
 	"path/filepath"
 	"testing"
 
@@ -26,7 +25,7 @@ import (
 func TestAccAwsProfilePy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "aws-profile-py"),
+			Dir: filepath.Join(getCwd(t), "aws-profile-py"),
 			// TODO: Temporarily skip the extra runtime validation due to test failure.
 			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 			// 	utils.RunEKSSmokeTest(t,
