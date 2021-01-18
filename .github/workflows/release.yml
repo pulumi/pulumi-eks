@@ -231,6 +231,13 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/python.tar.gz -C ${{github.workspace}}/python
       - name: Install Twine
         run: python -m pip install pip twine
+      - name: Download DotNet SDK
+        uses: actions/download-artifact@v2
+        with:
+          name: dotnet-sdk.tar.gz
+          path: ${{ github.workspace}}
+      - name: Uncompress DotNet SDK folder
+        run: tar -zxf ${{ github.workspace}}/dotnet.tar.gz -C ${{github.workspace}}/dotnet
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         name: Publish SDK
