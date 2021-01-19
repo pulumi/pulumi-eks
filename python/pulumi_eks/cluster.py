@@ -37,6 +37,7 @@ class Cluster(pulumi.ComponentResource):
                  instance_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
+                 kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
                  name: Optional[pulumi.Input[str]] = None,
@@ -113,6 +114,16 @@ class Cluster(pulumi.ComponentResource):
                
                Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        :param pulumi.Input[str] kubernetes_service_ip_address_range: The CIDR block to assign Kubernetes service IP addresses from. If you don't
+               specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
+               172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
+               with resources in other networks that are peered or connected to your VPC. You can only specify
+               a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
+               
+               The block must meet the following requirements:
+               - Within one of the following private IP address blocks: 10.0.0.0/8, 172.16.0.0.0/12, or 192.168.0.0/16.
+               - Doesn't overlap with any CIDR block assigned to the VPC that you selected for VPC.
+               - Between /24 and /12.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
         :param pulumi.Input[str] name: The cluster's physical resource name.
@@ -254,6 +265,7 @@ class Cluster(pulumi.ComponentResource):
             __props__['instance_role'] = instance_role
             __props__['instance_roles'] = instance_roles
             __props__['instance_type'] = instance_type
+            __props__['kubernetes_service_ip_address_range'] = kubernetes_service_ip_address_range
             __props__['max_size'] = max_size
             __props__['min_size'] = min_size
             __props__['name'] = name
