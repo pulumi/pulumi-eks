@@ -4,6 +4,9 @@
 
 - Initial support for Python and .NET
   [#448](https://github.com/pulumi/pulumi-eks/pull/448)
+  
+- Add support for `gp3` volume types
+  [#511](https://github.com/pulumi/pulumi-eks/pull/511)
 
 ## 0.21.0 (Released January 12, 2021)
 
