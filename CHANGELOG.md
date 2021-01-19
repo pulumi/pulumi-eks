@@ -4,6 +4,9 @@
 
 - Initial support for Python and .NET
   [#448](https://github.com/pulumi/pulumi-eks/pull/448)
+  
+- Add support for `kubernetesServiceIpAddressRange` to `eks.Cluster` 
+  [#509](https://github.com/pulumi/pulumi-eks/pull/509)
 
 ## 0.21.0 (Released January 12, 2021)
 
