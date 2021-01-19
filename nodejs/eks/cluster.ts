@@ -475,6 +475,13 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         }));
     }
 
+    let kubernetesNetworkConfig: pulumi.Output<aws.types.input.eks.ClusterKubernetesNetworkConfig> | undefined;
+    if (args.kubernetesServiceIpAddressRange) {
+        kubernetesNetworkConfig = pulumi.output(args.kubernetesServiceIpAddressRange).apply(
+            serviceIpv4Cidr => ({ serviceIpv4Cidr }),
+        );
+    }
+
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(`${name}-eksCluster`, {
         name: args.name,
@@ -497,6 +504,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             ...tags,
         })),
         encryptionConfig,
+        kubernetesNetworkConfig,
     }, {
         parent,
         provider: args.creationRoleProvider ? args.creationRoleProvider.provider : provider,
@@ -1253,6 +1261,19 @@ export interface ClusterOptions {
      * - https://aws.amazon.com/about-aws/whats-new/2020/03/amazon-eks-adds-envelope-encryption-for-secrets-with-aws-kms/
      */
     encryptionConfigKeyArn?: pulumi.Input<string>;
+
+    /**
+     * The CIDR block to assign Kubernetes service IP addresses from. If you don't specify a block, Kubernetes assigns
+     * addresses from either the 10.100.0.0/16 or 172.20.0.0/16 CIDR blocks. We recommend that you specify a block that
+     * does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
+     * a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
+     *
+     * The block must meet the following requirements:
+     * - Within one of the following private IP address blocks: 10.0.0.0/8, 172.16.0.0.0/12, or 192.168.0.0/16.
+     * - Doesn't overlap with any CIDR block assigned to the VPC that you selected for VPC.
+     * - Between /24 and /12.
+     */
+    kubernetesServiceIpAddressRange?: pulumi.Input<string>;
 }
 
 /**

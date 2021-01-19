@@ -342,6 +342,7 @@ jobs:
           - ExtraSecurityGroups
           - Fargate
           - ImportDefaultEksSecgroup
+          - KubernetesServiceIPv4RangeForCluster
           - ManagedNodeGroup
           - MigrateNodeGroups
           - MNG_withMissingRole
