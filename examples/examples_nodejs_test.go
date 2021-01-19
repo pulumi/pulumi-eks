@@ -47,6 +47,22 @@ func TestAccCluster(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccKubernetesServiceIPv4RangeForCluster(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:           path.Join(getCwd(t), "./cluster-with-serviceiprange"),
+			RunUpdateTest: false, // this is a new feature so will not be available in the existing package
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				serviceIpv4Range := info.Outputs["kubernetesServiceRange"].(string)
+				if serviceIpv4Range != "172.16.0.0/20" {
+					t.Errorf("expected `172.16.0.020`: got %q", serviceIpv4Range)
+				}
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccFargate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{

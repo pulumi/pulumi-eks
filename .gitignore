@@ -6,6 +6,7 @@ vendor/
 **/Pulumi.*.yaml
 **/yarn-error.log
 yarn.lock
+package-lock.json
 .idea/
 **/version.txt
 **/dist

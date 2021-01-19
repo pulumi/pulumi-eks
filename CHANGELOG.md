@@ -8,6 +8,9 @@
 - Add support for `gp3` volume types
   [#511](https://github.com/pulumi/pulumi-eks/pull/511)
 
+- Add support for `kubernetesServiceIpAddressRange` to `eks.Cluster` 
+  [#509](https://github.com/pulumi/pulumi-eks/pull/509)
+
 ## 0.21.0 (Released January 12, 2021)
 
 ### Improvements
