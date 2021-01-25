@@ -69,6 +69,8 @@ install_provider:: provider install_nodejs_sdk
 			yarn install && \
 			yarn link @pulumi/eks
 
+generate_schema:: schema
+
 install_nodejs_sdk:: build_nodejs
 	yarn link --cwd $(WORKING_DIR)/nodejs/eks/bin
 
