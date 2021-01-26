@@ -44,7 +44,7 @@ build_python:: schema
 
 build_go:: schema
 	rm -rf go
-	cd provider/cmd/pulumi-gen-eks && go run main.go go ../../../go ../pulumi-resource-eks/schema.json $(VERSION)
+	cd provider/cmd/pulumi-gen-eks && go run main.go go ../../../sdk/go ../pulumi-resource-eks/schema.json $(VERSION)
 
 build_dotnet:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
 build_dotnet:: schema

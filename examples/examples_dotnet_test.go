@@ -13,7 +13,7 @@
 // limitations under the License.
 // +build dotnet all
 
-package examples
+package main
 
 import (
 	"path/filepath"
