@@ -1571,7 +1571,7 @@ func genGo(pkg *schema.Package, outdir string) {
 
 	// The Go code generator emits a provider file that we don't need, so remove it.
 	// This should be an option passed to the code generator, but we'll make the tweak here for now.
-	delete(files, "eks/provider.go")
+	// delete(files, "eks/provider.go")
 
 	mustWriteFiles(outdir, files)
 }
