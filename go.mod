@@ -3,6 +3,7 @@ module github.com/pulumi/pulumi-eks
 go 1.15
 
 require (
+	github.com/blang/semver v3.5.1+incompatible
 	github.com/docker/docker v1.13.1 // indirect
 	github.com/googleapis/gnostic v0.2.0 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
@@ -11,8 +12,10 @@ require (
 	github.com/onsi/ginkgo v1.12.0 // indirect
 	github.com/onsi/gomega v1.9.0 // indirect
 	github.com/pkg/errors v0.9.1
-	github.com/pulumi/pulumi/pkg/v2 v2.17.0
-	github.com/pulumi/pulumi/sdk/v2 v2.17.0
+	github.com/pulumi/pulumi-aws/sdk/v3 v3.25.1
+	github.com/pulumi/pulumi-kubernetes/sdk/v2 v2.7.7
+	github.com/pulumi/pulumi/pkg/v2 v2.18.2
+	github.com/pulumi/pulumi/sdk/v2 v2.18.2
 	github.com/stretchr/testify v1.6.1
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
