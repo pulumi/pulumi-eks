@@ -1,0 +1,3 @@
+name: cluster-go
+runtime: go
+description: A minimal AWS Go Pulumi Program to create an EKS cluster
