@@ -1180,7 +1180,8 @@
             }
         },
         "go": {
-            "generateResourceContainerTypes": true
+            "generateResourceContainerTypes": true,
+            "importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks"
         },
         "python": {
             "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",

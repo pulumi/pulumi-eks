@@ -1214,6 +1214,7 @@ func generateSchema() schema.PackageSpec {
 			}),
 			"go": rawMessage(map[string]interface{}{
 				"generateResourceContainerTypes": true,
+				"importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks",
 			}),
 		},
 	}
@@ -1568,11 +1569,6 @@ func genGo(pkg *schema.Package, outdir string) {
 	if err != nil {
 		panic(err)
 	}
-
-	// The Go code generator emits a provider file that we don't need, so remove it.
-	// This should be an option passed to the code generator, but we'll make the tweak here for now.
-	// delete(files, "eks/provider.go")
-
 	mustWriteFiles(outdir, files)
 }
 

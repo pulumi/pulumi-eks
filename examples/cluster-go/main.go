@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/pulumi/pulumi-eks/go/eks"
+	"github.com/pulumi/pulumi-eks/sdk/go/eks"
 	"github.com/pulumi/pulumi/sdk/v2/go/pulumi"
 )
 
