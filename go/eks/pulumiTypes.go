@@ -811,7 +811,7 @@ type CoreDataArgs struct {
 	AwsProvider           aws.ProviderInput              `pulumi:"awsProvider"`
 	Cluster               eks.ClusterInput               `pulumi:"cluster"`
 	ClusterSecurityGroup  ec2.SecurityGroupInput         `pulumi:"clusterSecurityGroup"`
-	EksNodeAccess         corev1.ConfigMapPtrInput       `pulumi:"eksNodeAccess"`
+	EksNodeAccess         corev1.ConfigMapInput          `pulumi:"eksNodeAccess"`
 	Endpoint              pulumi.StringInput             `pulumi:"endpoint"`
 	FargateProfile        eks.FargateProfileInput        `pulumi:"fargateProfile"`
 	InstanceRoles         iam.RoleArrayInput             `pulumi:"instanceRoles"`
@@ -918,8 +918,8 @@ func (o CoreDataOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
 	return o.ApplyT(func(v CoreData) ec2.SecurityGroup { return v.ClusterSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
-func (o CoreDataOutput) EksNodeAccess() corev1.ConfigMapPtrOutput {
-	return o.ApplyT(func(v CoreData) *corev1.ConfigMap { return v.EksNodeAccess }).(corev1.ConfigMapPtrOutput)
+func (o CoreDataOutput) EksNodeAccess() corev1.ConfigMapOutput {
+	return o.ApplyT(func(v CoreData) *corev1.ConfigMap { return v.EksNodeAccess }).(corev1.ConfigMapOutput)
 }
 
 func (o CoreDataOutput) Endpoint() pulumi.StringOutput {
@@ -1027,13 +1027,13 @@ func (o CoreDataPtrOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
 	}).(ec2.SecurityGroupOutput)
 }
 
-func (o CoreDataPtrOutput) EksNodeAccess() corev1.ConfigMapPtrOutput {
+func (o CoreDataPtrOutput) EksNodeAccess() corev1.ConfigMapOutput {
 	return o.ApplyT(func(v *CoreData) *corev1.ConfigMap {
 		if v == nil {
 			return nil
 		}
 		return v.EksNodeAccess
-	}).(corev1.ConfigMapPtrOutput)
+	}).(corev1.ConfigMapOutput)
 }
 
 func (o CoreDataPtrOutput) Endpoint() pulumi.StringPtrOutput {
