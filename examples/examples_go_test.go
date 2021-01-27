@@ -46,7 +46,7 @@ func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 			"aws:region": region,
 		},
 		Dependencies: []string{
-			"Pulumi.Eks",
+			"pulumi-eks",
 		},
 	})
 
