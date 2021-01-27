@@ -8,7 +8,7 @@ from .cluster_creation_role_provider import *
 from .managed_node_group import *
 from .node_group import *
 from .node_group_security_group import *
-
+from .provider import *
 from .vpc_cni import *
 from ._inputs import *
 from . import outputs

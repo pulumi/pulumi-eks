@@ -20,7 +20,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -1214,7 +1213,7 @@ func generateSchema() schema.PackageSpec {
 			}),
 			"go": rawMessage(map[string]interface{}{
 				"generateResourceContainerTypes": true,
-				"importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks",
+				"importBasePath":                 "github.com/pulumi/pulumi-eks/sdk/go/eks",
 			}),
 		},
 	}
@@ -1517,10 +1516,6 @@ func genDotNet(pkg *schema.Package, outdir string) {
 		panic(err)
 	}
 
-	// The .NET code generator emits a Provider class that we don't need, so remove it.
-	// This should be an option passed to the code generator, but we'll make the tweak here for now.
-	delete(files, "Provider.cs")
-
 	// These are mistakenly added by the codegenerator.
 	delete(files, "Core/README.md")
 	delete(files, "Core/v1/README.md")
@@ -1577,16 +1572,6 @@ func genPython(pkg *schema.Package, outdir string) {
 	if err != nil {
 		panic(err)
 	}
-
-	// The Python code generator emits a Provider resource that we don't need, so remove it.
-	// This should be an option passed to the code generator, but we'll make the tweak here for now.
-	const init = "pulumi_eks/__init__.py"
-	if bytes, ok := files[init]; ok {
-		code := string(bytes)
-		code = regexp.MustCompile(`(?m)from \.provider.*$`).ReplaceAllString(code, "")
-		files[init] = []byte(code)
-	}
-	delete(files, "pulumi_eks/provider.py")
 
 	// The generated import for the `VpcCni` resource results in the following error:
 	//
