@@ -582,6 +582,7 @@ jobs:
           - 14.x
         test-name:
           - ClusterGo
+          - ClusterCs
 name: Run Acceptance Tests from PR
 on:
   repository_dispatch:
