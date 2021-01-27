@@ -582,6 +582,8 @@ jobs:
           yarn install && yarn link @pulumi/eks
       - name: Run tests
         run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=go
+        env:
+          GOGC: 20
     strategy:
       fail-fast: false
       matrix:
