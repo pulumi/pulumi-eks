@@ -89,7 +89,7 @@ install_python_sdk::
 	#Intentionall empty for CI / CD templating
 
 test_build::
-	cd utils/testvpc && yarn install && yarn run tsc
+	cd examples/utils/testvpc && yarn install && yarn run tsc
 
 test_nodejs:: install_nodejs_sdk
 	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
