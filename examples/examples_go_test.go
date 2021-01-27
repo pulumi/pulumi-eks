@@ -13,7 +13,7 @@
 // limitations under the License.
 // +build go all
 
-package main
+package example
 
 import (
 	"github.com/pulumi/pulumi-eks/examples/utils"

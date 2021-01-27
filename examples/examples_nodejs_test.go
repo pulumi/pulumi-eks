@@ -13,7 +13,7 @@
 // limitations under the License.
 // +build nodejs all
 
-package main
+package example
 
 import (
 	"encoding/json"
