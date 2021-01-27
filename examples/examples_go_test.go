@@ -25,7 +25,8 @@ import (
 func TestAccClusterGo(t *testing.T) {
 	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "cluster-go"),
+			RunUpdateTest: false,
+			Dir:           filepath.Join(getCwd(t), "cluster-go"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -45,12 +46,11 @@ func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Config: map[string]string{
 			"aws:region": region,
 		},
-		Dependencies: []string{
-			"pulumi-eks",
-		},
+		//Dependencies: []string{
+		//	"github.com/pulumi/pulumi-eks/sdk",
+		//},
 		Verbose: true,
 	})
 
 	return goBase
 }
-
