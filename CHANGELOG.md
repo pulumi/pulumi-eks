@@ -2,6 +2,9 @@
 
 ### Improvements
 
+- Initial support for Go
+  [#519](https://github.com/pulumi/pulumi-eks/pull/519)
+
 - Initial support for Python and .NET
   [#448](https://github.com/pulumi/pulumi-eks/pull/448)
   

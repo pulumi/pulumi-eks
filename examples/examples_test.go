@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package examples
+package example
 
 import (
 	"os"
@@ -64,7 +64,7 @@ func providerPluginPathEnv() (string, error) {
 	}
 
 	// Test build of testvpc plugin.
-	testPluginDir := filepath.Join("..", "utils", "testvpc")
+	testPluginDir := filepath.Join("utils", "testvpc")
 	absTestPluginDir, err := filepath.Abs(testPluginDir)
 	if err != nil {
 		return "", err
