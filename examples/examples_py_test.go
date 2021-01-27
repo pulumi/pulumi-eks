@@ -13,7 +13,7 @@
 // limitations under the License.
 // +build python all
 
-package examples
+package example
 
 import (
 	"path"

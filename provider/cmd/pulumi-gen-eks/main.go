@@ -25,6 +25,7 @@ import (
 
 	"github.com/pkg/errors"
 	dotnetgen "github.com/pulumi/pulumi/pkg/v2/codegen/dotnet"
+	gogen "github.com/pulumi/pulumi/pkg/v2/codegen/go"
 	pygen "github.com/pulumi/pulumi/pkg/v2/codegen/python"
 	"github.com/pulumi/pulumi/pkg/v2/codegen/schema"
 	"github.com/pulumi/pulumi/sdk/v2/go/common/util/contract"
@@ -69,7 +70,7 @@ func main() {
 	case DotNet:
 		genDotNet(readSchema(schemaFile, version), outdir)
 	case Go:
-		panic("go support is coming soon")
+		genGo(readSchema(schemaFile, version), outdir)
 	case Python:
 		genPython(readSchema(schemaFile, version), outdir)
 	case Schema:
@@ -81,8 +82,8 @@ func main() {
 }
 
 const (
-	awsVersion = "v3.18.0"
-	k8sVersion = "v2.7.3"
+	awsVersion = "v3.25.1"
+	k8sVersion = "v2.7.7"
 )
 
 func awsRef(ref string) string {
@@ -1211,6 +1212,10 @@ func generateSchema() schema.PackageSpec {
 				// TODO: Embellish the readme
 				"readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
 			}),
+			"go": rawMessage(map[string]interface{}{
+				"generateResourceContainerTypes": true,
+				"importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks",
+			}),
 		},
 	}
 }
@@ -1556,6 +1561,14 @@ func genDotNet(pkg *schema.Package, outdir string) {
 		files[file] = []byte(replaced)
 	}
 
+	mustWriteFiles(outdir, files)
+}
+
+func genGo(pkg *schema.Package, outdir string) {
+	files, err := gogen.GeneratePackage(Tool, pkg)
+	if err != nil {
+		panic(err)
+	}
 	mustWriteFiles(outdir, files)
 }
 

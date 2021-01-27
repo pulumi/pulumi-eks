@@ -9,7 +9,7 @@ CODEGEN         := pulumi-gen-${PACK}
 
 WORKING_DIR     := $(shell pwd)
 
-build:: schema provider build_nodejs build_python build_dotnet
+build:: schema provider build_nodejs build_python build_go build_dotnet
 
 schema::
 	cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER)
@@ -41,6 +41,10 @@ build_python:: schema
 		sed -i.bak -e "s/\$${VERSION}/$(PYPI_VERSION)/g" -e "s/\$${PLUGIN_VERSION}/$(VERSION)/g" ./bin/setup.py && \
 		rm ./bin/setup.py.bak && \
 		cd ./bin && python3 setup.py build sdist
+
+build_go:: schema
+	rm -rf go
+	cd provider/cmd/pulumi-gen-eks && go run main.go go ../../../sdk/go ../pulumi-resource-eks/schema.json $(VERSION)
 
 build_dotnet:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
 build_dotnet:: schema
@@ -85,7 +89,7 @@ install_python_sdk::
 	#Intentionall empty for CI / CD templating
 
 test_build::
-	cd utils/testvpc && yarn install && yarn run tsc
+	cd examples/utils/testvpc && yarn install && yarn run tsc
 
 test_nodejs:: install_nodejs_sdk
 	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .

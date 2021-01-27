@@ -1,4 +1,4 @@
-// Copyright 2016-2020, Pulumi Corporation.
+// Copyright 2016-2021, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,28 +11,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// +build dotnet all
+// +build go all
 
 package example
 
 import (
+	"github.com/pulumi/pulumi-eks/examples/utils"
+	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
 	"path/filepath"
 	"testing"
-
-	"github.com/pulumi/pulumi-eks/utils"
-	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
 )
 
-func TestAccClusterCs(t *testing.T) {
-	test := getCSBaseOptions(t).
+func TestAccClusterGo(t *testing.T) {
+	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "cluster-cs"),
+			Dir: filepath.Join(getCwd(t), "cluster-go"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig1"],
-					// TODO
-					// info.Outputs["kubeconfig2"],
+					info.Outputs["kubeconfig2"],
 				)
 			},
 		})
@@ -40,17 +38,18 @@ func TestAccClusterCs(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func getCSBaseOptions(t *testing.T) integration.ProgramTestOptions {
+func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	region := getEnvRegion(t)
 	base := getBaseOptions(t)
-	csharpBase := base.With(integration.ProgramTestOptions{
+	goBase := base.With(integration.ProgramTestOptions{
 		Config: map[string]string{
 			"aws:region": region,
 		},
 		Dependencies: []string{
-			"Pulumi.Eks",
+			"pulumi-eks",
 		},
 	})
 
-	return csharpBase
+	return goBase
 }
+

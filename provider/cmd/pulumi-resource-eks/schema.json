@@ -37,7 +37,7 @@
                     "description": "The tags to apply to the CloudFormation Stack of the Worker NodeGroup.\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
                 },
                 "clusterIngressRule": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access."
                 },
                 "desiredCapacity": {
@@ -51,7 +51,7 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
@@ -60,7 +60,7 @@
                     "description": "Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\nNote: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html"
                 },
                 "instanceProfile": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "description": "The ingress rule that gives node group access."
                 },
                 "instanceType": {
@@ -103,7 +103,7 @@
                     "description": "The size in GiB of a cluster node's root volume. Defaults to 20."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
@@ -143,27 +143,27 @@
             "description": "Defines the core set of data associated with an EKS cluster, including the network in which it runs.",
             "properties": {
                 "awsProvider": {
-                    "$ref": "/aws/v3.18.0/schema.json#/provider"
+                    "$ref": "/aws/v3.25.1/schema.json#/provider"
                 },
                 "cluster": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:eks%2Fcluster:Cluster"
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:eks%2Fcluster:Cluster"
                 },
                 "clusterSecurityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                 },
                 "eksNodeAccess": {
-                    "$ref": "/kubernetes/v2.7.3/schema.json#/resources/kubernetes:core%2Fv1:ConfigMap"
+                    "$ref": "/kubernetes/v2.7.7/schema.json#/resources/kubernetes:core%2Fv1:ConfigMap"
                 },
                 "endpoint": {
                     "type": "string"
                 },
                 "fargateProfile": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:eks%2FfargateProfile:FargateProfile"
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:eks%2FfargateProfile:FargateProfile"
                 },
                 "instanceRoles": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2Frole:Role"
+                        "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2Frole:Role"
                     }
                 },
                 "kubeconfig": {
@@ -179,7 +179,7 @@
                     }
                 },
                 "oidcProvider": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider"
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider"
                 },
                 "privateSubnetIds": {
                     "type": "array",
@@ -188,7 +188,7 @@
                     }
                 },
                 "provider": {
-                    "$ref": "/kubernetes/v2.7.3/schema.json#/provider"
+                    "$ref": "/kubernetes/v2.7.7/schema.json#/provider"
                 },
                 "publicSubnetIds": {
                     "type": "array",
@@ -199,7 +199,7 @@
                 "storageClasses": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "/kubernetes/v2.7.3/schema.json#/resources/kubernetes:storage.k8s.io%2Fv1:StorageClass"
+                        "$ref": "/kubernetes/v2.7.7/schema.json#/resources/kubernetes:storage.k8s.io%2Fv1:StorageClass"
                     }
                 },
                 "subnetIds": {
@@ -237,10 +237,10 @@
             "description": "Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html",
             "properties": {
                 "provider": {
-                    "$ref": "/aws/v3.18.0/schema.json#/provider"
+                    "$ref": "/aws/v3.25.1/schema.json#/provider"
                 },
                 "role": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2Frole:Role"
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2Frole:Role"
                 }
             },
             "type": "object",
@@ -259,7 +259,7 @@
                 "selectors": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v3.18.0/schema.json#/types/aws:eks%2FFargateProfileSelector:FargateProfileSelector"
+                        "$ref": "/aws/v3.25.1/schema.json#/types/aws:eks%2FFargateProfileSelector:FargateProfileSelector"
                     },
                     "description": "Specify the namespace and label selectors to use for launching pods into Fargate."
                 },
@@ -295,18 +295,18 @@
                     "description": "The AutoScalingGroup name for the node group."
                 },
                 "cfnStack": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:cloudformation%2Fstack:Stack",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:cloudformation%2Fstack:Stack",
                     "description": "The CloudFormation Stack which defines the Node AutoScalingGroup."
                 },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "The additional security groups for the node group that captures user-specific rules."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the node group to communicate with the cluster."
                 }
             },
@@ -368,7 +368,7 @@
                     "description": "The full Amazon Resource Name of the key to use when encrypting the volume. If none is supplied but encrypted is true, a key is generated by AWS."
                 },
                 "metadata": {
-                    "$ref": "/kubernetes/v2.7.3/schema.json#/types/kubernetes:meta%2Fv1:ObjectMeta",
+                    "$ref": "/kubernetes/v2.7.7/schema.json#/types/kubernetes:meta%2Fv1:ObjectMeta",
                     "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata"
                 },
                 "mountOptions": {
@@ -504,11 +504,11 @@
             "description": "Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.",
             "properties": {
                 "awsProvider": {
-                    "$ref": "/aws/v3.18.0/schema.json#/provider",
+                    "$ref": "/aws/v3.25.1/schema.json#/provider",
                     "description": "The AWS resource provider."
                 },
                 "clusterSecurityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the EKS cluster."
                 },
                 "core": {
@@ -520,17 +520,17 @@
                     "description": "The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified."
                 },
                 "eksCluster": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:eks%2Fcluster:Cluster",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:eks%2Fcluster:Cluster",
                     "description": "The EKS cluster."
                 },
                 "eksClusterIngressRule": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access to cluster API server."
                 },
                 "instanceRoles": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2Frole:Role"
+                        "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2Frole:Role"
                     },
                     "description": "The service roles used by the EKS cluster."
                 },
@@ -539,11 +539,11 @@
                     "description": "A kubeconfig that can be used to connect to the EKS cluster."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the cluster's nodes."
                 },
                 "provider": {
-                    "$ref": "/kubernetes/v2.7.3/schema.json#/provider",
+                    "$ref": "/kubernetes/v2.7.7/schema.json#/provider",
                     "description": "A Kubernetes resource provider that can be used to deploy into this cluster."
                 }
             },
@@ -560,7 +560,7 @@
             ],
             "inputProperties": {
                 "clusterSecurityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups."
                 },
                 "clusterSecurityGroupTags": {
@@ -634,13 +634,13 @@
                     "description": "The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup."
                 },
                 "instanceRole": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2Frole:Role",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2Frole:Role",
                     "description": "This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.\n\nNote: options `instanceRole` and `instanceRoles` are mutually exclusive."
                 },
                 "instanceRoles": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2Frole:Role"
+                        "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2Frole:Role"
                     },
                     "description": "This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.\n\nNote: options `instanceRole` and `instanceRoles` are mutually exclusive."
                 },
@@ -739,7 +739,7 @@
                     "description": "Optional mappings from AWS IAM roles to Kubernetes users and groups."
                 },
                 "serviceRole": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2Frole:Role",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2Frole:Role",
                     "description": "IAM Service Role for EKS to use to manage the cluster."
                 },
                 "skipDefaultNodeGroup": {
@@ -803,10 +803,10 @@
             "description": "ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a specific role to use for the creation of the EKS cluster different from the role being used to run the Pulumi deployment.",
             "properties": {
                 "provider": {
-                    "$ref": "/aws/v3.18.0/schema.json#/provider"
+                    "$ref": "/aws/v3.25.1/schema.json#/provider"
                 },
                 "role": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2Frole:Role"
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2Frole:Role"
                 }
             },
             "required": [
@@ -827,7 +827,7 @@
             "description": "ManagedNodeGroup is a component that wraps creating an AWS managed node group.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html",
             "properties": {
                 "nodeGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:eks%2FnodeGroup:NodeGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:eks%2FnodeGroup:NodeGroup",
                     "description": "The AWS managed node group."
                 }
             },
@@ -874,7 +874,7 @@
                     "description": "Name of the EKS Node Group."
                 },
                 "nodeRole": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2Frole:Role",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2Frole:Role",
                     "description": "The IAM Role that provides permissions for the EKS Node Group.\n\nNote, `nodeRole` and `nodeRoleArn` are mutually exclusive, and a single option must be used."
                 },
                 "nodeRoleArn": {
@@ -916,18 +916,18 @@
                     "description": "The AutoScalingGroup name for the Node group."
                 },
                 "cfnStack": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:cloudformation%2Fstack:Stack",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:cloudformation%2Fstack:Stack",
                     "description": "The CloudFormation Stack which defines the Node AutoScalingGroup."
                 },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "The additional security groups for the node group that captures user-specific rules."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the node group to communicate with the cluster."
                 }
             },
@@ -965,7 +965,7 @@
                     "description": "The target EKS cluster."
                 },
                 "clusterIngressRule": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access."
                 },
                 "desiredCapacity": {
@@ -979,7 +979,7 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
@@ -988,7 +988,7 @@
                     "description": "Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\nNote: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html"
                 },
                 "instanceProfile": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "description": "The ingress rule that gives node group access."
                 },
                 "instanceType": {
@@ -1031,7 +1031,7 @@
                     "description": "The size in GiB of a cluster node's root volume. Defaults to 20."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
@@ -1074,11 +1074,11 @@
             "description": "NodeGroupSecurityGroup is a component that wraps creating a security group for node groups with the default ingress \u0026 egress rules required to connect and work with the EKS cluster security group.",
             "properties": {
                 "securityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for node groups with the default ingress \u0026 egress rules required to connect and work with the EKS cluster security group."
                 },
                 "securityGroupRule": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The EKS cluster ingress rule."
                 }
             },
@@ -1088,11 +1088,11 @@
             ],
             "inputProperties": {
                 "clusterSecurityGroup": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group associated with the EKS cluster."
                 },
                 "eksCluster": {
-                    "$ref": "/aws/v3.18.0/schema.json#/resources/aws:eks%2Fcluster:Cluster",
+                    "$ref": "/aws/v3.25.1/schema.json#/resources/aws:eks%2Fcluster:Cluster",
                     "description": "The EKS cluster associated with the worker node group"
                 },
                 "tags": {
@@ -1178,6 +1178,10 @@
                 "Pulumi.Aws": "3.*",
                 "Pulumi.Kubernetes": "2.*"
             }
+        },
+        "go": {
+            "generateResourceContainerTypes": true,
+            "importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks"
         },
         "python": {
             "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",

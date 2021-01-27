@@ -13,7 +13,7 @@
 // limitations under the License.
 // +build nodejs all
 
-package examples
+package example
 
 import (
 	"encoding/json"
@@ -25,7 +25,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pulumi/pulumi-eks/utils"
+	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
 	"github.com/stretchr/testify/assert"
 )
