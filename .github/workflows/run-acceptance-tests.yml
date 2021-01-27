@@ -159,10 +159,10 @@ jobs:
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
         run: ./ci-scripts/ci/check-worktree-is-clean
-      - if: matrix.language != "go"
+      - if: matrix.language != 'go'
         name: Compress non-go SDK folder
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
-      - if: matrix.language == "go"
+      - if: matrix.language == 'go'
         name: Compress go SDK folder
         run: tar -zcf ${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}/ .
       - name: Upload artifacts
