@@ -487,6 +487,17 @@ jobs:
           yarn install && yarn link @pulumi/eks
       - name: Run tests
         run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=dotnet
+    strategy:
+      fail-fast: false
+      matrix:
+        goversion:
+          - 1.15.x
+        dotnetversion:
+          - 3.1
+        nodeversion:
+          - 14.x
+        test-name:
+          - ClusterCs
   test-go:
     name: Run Go Tests
     needs: build_sdk
@@ -582,7 +593,6 @@ jobs:
           - 14.x
         test-name:
           - ClusterGo
-          - ClusterCs
 name: Run Acceptance Tests from PR
 on:
   repository_dispatch:
