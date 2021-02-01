@@ -4,6 +4,9 @@
 - Go codegen fixes for external references
   [#531](https://github.com/pulumi/pulumi-eks/pull/531)
 
+- Documentation addend for build dependencies
+  [#527](https://github.com/pulumi/pulumi-eks/issues/527)
+
 ## 0.22.0 (Released January 27, 2021)
 
 ### Improvements

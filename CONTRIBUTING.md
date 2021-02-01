@@ -2,6 +2,13 @@
 
 ## Building Source
 
+### Requirements
+
+The Makefile makes use of the `pulumictl` binary which isn't part of the pulumi installation itself. The program can
+be obtained from the releases page of the [pulumictl repository](https://github.com/pulumi/pulumictl/releases/).
+
+Second build dependency is the yarn package manager which can be found [here](https://yarnpkg.com/getting-started/install).
+
 ### Build and Install
 
 Run the following command to build and install the source.
