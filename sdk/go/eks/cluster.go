@@ -112,7 +112,7 @@ type clusterArgs struct {
 	// This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
 	//
 	// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
-	InstanceRoles []iam.Role `pulumi:"instanceRoles"`
+	InstanceRoles []*iam.Role `pulumi:"instanceRoles"`
 	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
 	InstanceType *string `pulumi:"instanceType"`
 	// The CIDR block to assign Kubernetes service IP addresses from. If you don't
