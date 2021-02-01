@@ -1,0 +1,3 @@
+name: aws-go-eks-helloworld
+runtime: go
+description: A minimal example of creating an EKS cluster and interacting with resulting Kubernetes cluster using Go.
