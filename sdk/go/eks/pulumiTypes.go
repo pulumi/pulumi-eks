@@ -51,7 +51,7 @@ type ClusterNodeGroupOptions struct {
 	// Extra security groups to attach on all nodes in this worker node group.
 	//
 	// This additional set of security groups captures any user application rules that will be needed for the nodes.
-	ExtraNodeSecurityGroups []ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
+	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
 	// Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 	//
 	// Defaults to false.
@@ -344,7 +344,7 @@ func (o ClusterNodeGroupOptionsOutput) EncryptRootBlockDevice() pulumi.BoolPtrOu
 //
 // This additional set of security groups captures any user application rules that will be needed for the nodes.
 func (o ClusterNodeGroupOptionsOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput {
-	return o.ApplyT(func(v ClusterNodeGroupOptions) []ec2.SecurityGroup { return v.ExtraNodeSecurityGroups }).(ec2.SecurityGroupArrayOutput)
+	return o.ApplyT(func(v ClusterNodeGroupOptions) []*ec2.SecurityGroup { return v.ExtraNodeSecurityGroups }).(ec2.SecurityGroupArrayOutput)
 }
 
 // Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
@@ -563,7 +563,7 @@ func (o ClusterNodeGroupOptionsPtrOutput) EncryptRootBlockDevice() pulumi.BoolPt
 //
 // This additional set of security groups captures any user application rules that will be needed for the nodes.
 func (o ClusterNodeGroupOptionsPtrOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput {
-	return o.ApplyT(func(v *ClusterNodeGroupOptions) []ec2.SecurityGroup {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) []*ec2.SecurityGroup {
 		if v == nil {
 			return nil
 		}
@@ -774,25 +774,25 @@ func (o ClusterNodeGroupOptionsPtrOutput) Version() pulumi.StringPtrOutput {
 
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreData struct {
-	AwsProvider           *aws.Provider                     `pulumi:"awsProvider"`
-	Cluster               eks.Cluster                       `pulumi:"cluster"`
-	ClusterSecurityGroup  ec2.SecurityGroup                 `pulumi:"clusterSecurityGroup"`
-	EksNodeAccess         *corev1.ConfigMap                 `pulumi:"eksNodeAccess"`
-	Endpoint              string                            `pulumi:"endpoint"`
-	FargateProfile        *eks.FargateProfile               `pulumi:"fargateProfile"`
-	InstanceRoles         []iam.Role                        `pulumi:"instanceRoles"`
-	Kubeconfig            interface{}                       `pulumi:"kubeconfig"`
-	NodeGroupOptions      ClusterNodeGroupOptions           `pulumi:"nodeGroupOptions"`
-	NodeSecurityGroupTags map[string]string                 `pulumi:"nodeSecurityGroupTags"`
-	OidcProvider          *iam.OpenIdConnectProvider        `pulumi:"oidcProvider"`
-	PrivateSubnetIds      []string                          `pulumi:"privateSubnetIds"`
-	Provider              kubernetes.Provider               `pulumi:"provider"`
-	PublicSubnetIds       []string                          `pulumi:"publicSubnetIds"`
-	StorageClasses        map[string]storagev1.StorageClass `pulumi:"storageClasses"`
-	SubnetIds             []string                          `pulumi:"subnetIds"`
-	Tags                  map[string]string                 `pulumi:"tags"`
-	VpcCni                *VpcCni                           `pulumi:"vpcCni"`
-	VpcId                 string                            `pulumi:"vpcId"`
+	AwsProvider           *aws.Provider                      `pulumi:"awsProvider"`
+	Cluster               eks.Cluster                        `pulumi:"cluster"`
+	ClusterSecurityGroup  ec2.SecurityGroup                  `pulumi:"clusterSecurityGroup"`
+	EksNodeAccess         *corev1.ConfigMap                  `pulumi:"eksNodeAccess"`
+	Endpoint              string                             `pulumi:"endpoint"`
+	FargateProfile        *eks.FargateProfile                `pulumi:"fargateProfile"`
+	InstanceRoles         []*iam.Role                        `pulumi:"instanceRoles"`
+	Kubeconfig            interface{}                        `pulumi:"kubeconfig"`
+	NodeGroupOptions      ClusterNodeGroupOptions            `pulumi:"nodeGroupOptions"`
+	NodeSecurityGroupTags map[string]string                  `pulumi:"nodeSecurityGroupTags"`
+	OidcProvider          *iam.OpenIdConnectProvider         `pulumi:"oidcProvider"`
+	PrivateSubnetIds      []string                           `pulumi:"privateSubnetIds"`
+	Provider              kubernetes.Provider                `pulumi:"provider"`
+	PublicSubnetIds       []string                           `pulumi:"publicSubnetIds"`
+	StorageClasses        map[string]*storagev1.StorageClass `pulumi:"storageClasses"`
+	SubnetIds             []string                           `pulumi:"subnetIds"`
+	Tags                  map[string]string                  `pulumi:"tags"`
+	VpcCni                *VpcCni                            `pulumi:"vpcCni"`
+	VpcId                 string                             `pulumi:"vpcId"`
 }
 
 // CoreDataInput is an input type that accepts CoreDataArgs and CoreDataOutput values.
@@ -931,7 +931,7 @@ func (o CoreDataOutput) FargateProfile() eks.FargateProfileOutput {
 }
 
 func (o CoreDataOutput) InstanceRoles() iam.RoleArrayOutput {
-	return o.ApplyT(func(v CoreData) []iam.Role { return v.InstanceRoles }).(iam.RoleArrayOutput)
+	return o.ApplyT(func(v CoreData) []*iam.Role { return v.InstanceRoles }).(iam.RoleArrayOutput)
 }
 
 func (o CoreDataOutput) Kubeconfig() pulumi.AnyOutput {
@@ -963,7 +963,7 @@ func (o CoreDataOutput) PublicSubnetIds() pulumi.StringArrayOutput {
 }
 
 func (o CoreDataOutput) StorageClasses() storagev1.StorageClassMapOutput {
-	return o.ApplyT(func(v CoreData) map[string]storagev1.StorageClass { return v.StorageClasses }).(storagev1.StorageClassMapOutput)
+	return o.ApplyT(func(v CoreData) map[string]*storagev1.StorageClass { return v.StorageClasses }).(storagev1.StorageClassMapOutput)
 }
 
 func (o CoreDataOutput) SubnetIds() pulumi.StringArrayOutput {
@@ -1055,7 +1055,7 @@ func (o CoreDataPtrOutput) FargateProfile() eks.FargateProfileOutput {
 }
 
 func (o CoreDataPtrOutput) InstanceRoles() iam.RoleArrayOutput {
-	return o.ApplyT(func(v *CoreData) []iam.Role {
+	return o.ApplyT(func(v *CoreData) []*iam.Role {
 		if v == nil {
 			return nil
 		}
@@ -1127,7 +1127,7 @@ func (o CoreDataPtrOutput) PublicSubnetIds() pulumi.StringArrayOutput {
 }
 
 func (o CoreDataPtrOutput) StorageClasses() storagev1.StorageClassMapOutput {
-	return o.ApplyT(func(v *CoreData) map[string]storagev1.StorageClass {
+	return o.ApplyT(func(v *CoreData) map[string]*storagev1.StorageClass {
 		if v == nil {
 			return nil
 		}
@@ -1320,7 +1320,7 @@ type FargateProfile struct {
 	// Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
 	PodExecutionRoleArn *string `pulumi:"podExecutionRoleArn"`
 	// Specify the namespace and label selectors to use for launching pods into Fargate.
-	Selectors []eks.FargateProfileSelector `pulumi:"selectors"`
+	Selectors []*eks.FargateProfileSelector `pulumi:"selectors"`
 	// Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
 	SubnetIds []string `pulumi:"subnetIds"`
 }
@@ -1380,7 +1380,7 @@ func (o FargateProfileOutput) PodExecutionRoleArn() pulumi.StringPtrOutput {
 
 // Specify the namespace and label selectors to use for launching pods into Fargate.
 func (o FargateProfileOutput) Selectors() eks.FargateProfileSelectorArrayOutput {
-	return o.ApplyT(func(v FargateProfile) []eks.FargateProfileSelector { return v.Selectors }).(eks.FargateProfileSelectorArrayOutput)
+	return o.ApplyT(func(v FargateProfile) []*eks.FargateProfileSelector { return v.Selectors }).(eks.FargateProfileSelectorArrayOutput)
 }
 
 // Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
@@ -1609,7 +1609,7 @@ type NodeGroupData struct {
 	// The CloudFormation Stack which defines the Node AutoScalingGroup.
 	CfnStack cloudformation.Stack `pulumi:"cfnStack"`
 	// The additional security groups for the node group that captures user-specific rules.
-	ExtraNodeSecurityGroups []ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
+	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
 	// The security group for the node group to communicate with the cluster.
 	NodeSecurityGroup ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
 }
@@ -1727,7 +1727,7 @@ func (o NodeGroupDataOutput) CfnStack() cloudformation.StackOutput {
 
 // The additional security groups for the node group that captures user-specific rules.
 func (o NodeGroupDataOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput {
-	return o.ApplyT(func(v NodeGroupData) []ec2.SecurityGroup { return v.ExtraNodeSecurityGroups }).(ec2.SecurityGroupArrayOutput)
+	return o.ApplyT(func(v NodeGroupData) []*ec2.SecurityGroup { return v.ExtraNodeSecurityGroups }).(ec2.SecurityGroupArrayOutput)
 }
 
 // The security group for the node group to communicate with the cluster.
@@ -1775,7 +1775,7 @@ func (o NodeGroupDataPtrOutput) CfnStack() cloudformation.StackOutput {
 
 // The additional security groups for the node group that captures user-specific rules.
 func (o NodeGroupDataPtrOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput {
-	return o.ApplyT(func(v *NodeGroupData) []ec2.SecurityGroup {
+	return o.ApplyT(func(v *NodeGroupData) []*ec2.SecurityGroup {
 		if v == nil {
 			return nil
 		}

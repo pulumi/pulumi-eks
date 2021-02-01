@@ -1,6 +1,8 @@
 ## Unreleased
 
 ### Improvements
+- Go codegen fixes for external references
+  [#531](https://github.com/pulumi/pulumi-eks/pull/531)
 
 ## 0.22.0 (Released January 27, 2021)
 
