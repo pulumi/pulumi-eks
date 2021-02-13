@@ -20,7 +20,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/pkg/errors"
 	dotnetgen "github.com/pulumi/pulumi/pkg/v2/codegen/dotnet"
@@ -613,14 +612,10 @@ func generateSchema() schema.PackageSpec {
 							"API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group " +
 							"will not be managed.",
 					},
-					// TODO[pulumi/pulumi/#5819]: The `launchTemplate` property causes a panic in the Python codegen:
-					// panic: interface conversion: interface {} is json.RawMessage, not python.PropertyInfo
-					// github.com/pulumi/pulumi/pkg/v2/codegen/python.recordProperty(0xc000d8c8c0, 0xc0016fc2a0, 0xc0016fc2d0, 0xc000548f58)
-					// github.com/pulumi/pulumi/pkg/v2@v2.14.1-0.20201121160205-9a707c4e03b6/codegen/python/gen.go:1446 +0x3d4
-					// "launchTemplate": {
-					// 	TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate")},
-					// 	Description: "Launch Template settings.",
-					// },
+					"launchTemplate": {
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate")},
+						Description: "Launch Template settings.",
+					},
 					"nodeGroupName": {
 						TypeSpec:    schema.TypeSpec{Type: "string"},
 						Description: "Name of the EKS Node Group.",
@@ -642,22 +637,18 @@ func generateSchema() schema.PackageSpec {
 						TypeSpec:    schema.TypeSpec{Type: "string"},
 						Description: "AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.",
 					},
-					// TODO[pulumi/pulumi/#5819]: The `remoteAccess` and `scalingConfig` properties causes a panic in the Python codegen:
-					// panic: interface conversion: interface {} is json.RawMessage, not python.PropertyInfo
-					// github.com/pulumi/pulumi/pkg/v2/codegen/python.recordProperty(0xc000d8c8c0, 0xc0016fc2a0, 0xc0016fc2d0, 0xc000548f58)
-					// github.com/pulumi/pulumi/pkg/v2@v2.14.1-0.20201121160205-9a707c4e03b6/codegen/python/gen.go:1446 +0x3d4
-					// "remoteAccess": {
-					// 	TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupRemoteAccess:NodeGroupRemoteAccess")},
-					// 	Description: "Remote access settings.",
-					// },
-					// "scalingConfig": {
-					// 	TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupScalingConfig:NodeGroupScalingConfig")},
-					// 	Description: "Scaling settings.\n\n" +
-					// 		"Default scaling amounts of the node group autoscaling group are:\n" +
-					// 		"  - desiredSize: 2\n" +
-					// 		"  - minSize: 1\n" +
-					// 		"  - maxSize: 2",
-					// },
+					"remoteAccess": {
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupRemoteAccess:NodeGroupRemoteAccess")},
+						Description: "Remote access settings.",
+					},
+					"scalingConfig": {
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupScalingConfig:NodeGroupScalingConfig")},
+						Description: "Scaling settings.\n\n" +
+							"Default scaling amounts of the node group autoscaling group are:\n" +
+							"  - desiredSize: 2\n" +
+							"  - minSize: 1\n" +
+							"  - maxSize: 2",
+					},
 					"subnetIds": {
 						TypeSpec: schema.TypeSpec{
 							Type:  "array",
@@ -870,13 +861,9 @@ func generateSchema() schema.PackageSpec {
 						"oidcProvider": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider")},
 						},
-						// TODO[pulumi/pulumi/#5819]: The `encryptionConfig` property causes a panic in the Python codegen:
-						// panic: interface conversion: interface {} is json.RawMessage, not python.PropertyInfo
-						// github.com/pulumi/pulumi/pkg/v2/codegen/python.recordProperty(0xc000d8c8c0, 0xc0016fc2a0, 0xc0016fc2d0, 0xc000548f58)
-						// github.com/pulumi/pulumi/pkg/v2@v2.14.1-0.20201121160205-9a707c4e03b6/codegen/python/gen.go:1446 +0x3d4
-						// "encryptionConfig": {
-						// 	TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig")},
-						// },
+						"encryptionConfig": {
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig")},
+						},
 					},
 					Required: []string{
 						"cluster",
@@ -1515,47 +1502,6 @@ func genDotNet(pkg *schema.Package, outdir string) {
 	if err != nil {
 		panic(err)
 	}
-
-	// These are mistakenly added by the codegenerator.
-	delete(files, "Core/README.md")
-	delete(files, "Core/v1/README.md")
-	delete(files, "Eks/README.md")
-	delete(files, "Meta/README.md")
-	delete(files, "Meta/v1/README.md")
-
-	// There are some bugs in the codegen. Temporarily workaround them.
-	// https://github.com/pulumi/pulumi/pull/5810
-	// https://github.com/pulumi/pulumi/pull/5811
-	replacer := strings.NewReplacer(
-		"Pulumi.Pulumi.Aws", "Pulumi.Aws.Provider",
-		"Pulumi.Pulumi.Kubernetes", "Pulumi.Kubernetes.Provider",
-		"using Cluster;\n", "",
-		"using ConfigMap;\n", "",
-		"using FargateProfile;\n", "",
-		"using InstanceProfile;\n", "",
-		"using NodeGroup;\n", "",
-		"using OpenIdConnectProvider;\n", "",
-		"using Role;\n", "",
-		"using SecurityGroup;\n", "",
-		"using SecurityGroupRule;\n", "",
-		"using Stack;\n", "",
-		"using StorageClass;\n", "",
-		"Pulumi.Aws.Cloudformation/stack.Stack", "Pulumi.Aws.CloudFormation.Stack",
-		"Pulumi.Aws.Ec2/securityGroup.SecurityGroup", "Pulumi.Aws.Ec2.SecurityGroup",
-		"Pulumi.Aws.Ec2/securityGroupRule.SecurityGroupRule", "Pulumi.Aws.Ec2.SecurityGroupRule",
-		"Pulumi.Aws.Eks/cluster.Cluster", "Pulumi.Aws.Eks.Cluster",
-		"Pulumi.Aws.Eks/fargateProfile.FargateProfile", "Pulumi.Aws.Eks.FargateProfile",
-		"Pulumi.Aws.Eks/nodeGroup.NodeGroup", "Pulumi.Aws.Eks.NodeGroup",
-		"Pulumi.Aws.Iam/instanceProfile.InstanceProfile", "Pulumi.Aws.Iam.InstanceProfile",
-		"Pulumi.Aws.Iam/openIdConnectProvider.OpenIdConnectProvider", "Pulumi.Aws.Iam.OpenIdConnectProvider",
-		"Pulumi.Aws.Iam/role.Role", "Pulumi.Aws.Iam.Role",
-		"Pulumi.Kubernetes.Core/v1.ConfigMap", "Pulumi.Kubernetes.Core.V1.ConfigMap",
-		"Pulumi.Kubernetes.Storage.k8s.io/v1.StorageClass", "Pulumi.Kubernetes.Storage.V1.StorageClass")
-	for file, b := range files {
-		replaced := replacer.Replace(string(b))
-		files[file] = []byte(replaced)
-	}
-
 	mustWriteFiles(outdir, files)
 }
 
@@ -1572,71 +1518,6 @@ func genPython(pkg *schema.Package, outdir string) {
 	if err != nil {
 		panic(err)
 	}
-
-	// The generated import for the `VpcCni` resource results in the following error:
-	//
-	//   File "/Users/user/go/src/github.com/pulumi/pulumi-eks/python/bin/pulumi_eks/__init__.py", line 6, in <module>
-	//     from .cluster import *
-	//   File "/Users/user/go/src/github.com/pulumi/pulumi-eks/python/bin/pulumi_eks/cluster.py", line 10, in <module>
-	//     from . import VpcCni
-	// ImportError: cannot import name 'VpcCni' from partially initialized module 'pulumi_eks' (most likely due to a
-	//     circular import) (/Users/user/go/src/github.com/pulumi/pulumi-eks/python/bin/pulumi_eks/__init__.py)
-	//
-	// Until we've fixed this codegen bug, we'll workaround here by replacing how `VpcCni` is imported.
-	for file, b := range files {
-		replaced := strings.ReplaceAll(string(b), "from . import VpcCni", "from .vpc_cni import VpcCni")
-		files[file] = []byte(replaced)
-	}
-
-	// There are some bugs in the codegen. Temporarily workaround them.
-	// https://github.com/pulumi/pulumi/pull/5810
-	// https://github.com/pulumi/pulumi/pull/5811
-	replacer := strings.NewReplacer(
-		"\n# Make subpackages available:\nfrom . import (\n)\n", "",
-		"from pulumi_pulumi import Aws", "import pulumi_aws",
-		"from pulumi_pulumi import Kubernetes", "import pulumi_kubernetes",
-		"from pulumi_aws import _cloudformation_stack.Stack", "import pulumi_aws",
-		"from pulumi_aws import _ec2_securitygroup.SecurityGroup", "import pulumi_aws",
-		"from pulumi_aws import _ec2_securitygrouprule.SecurityGroupRule", "import pulumi_aws",
-		"from pulumi_aws import _eks_cluster.Cluster", "import pulumi_aws",
-		"from pulumi_aws import _eks_fargateprofile.FargateProfile", "import pulumi_aws",
-		"from pulumi_aws import _eks_nodegroup.NodeGroup", "import pulumi_aws",
-		"from pulumi_aws import _iam_instanceprofile.InstanceProfile", "import pulumi_aws",
-		"from pulumi_aws import _iam_openidconnectprovider.OpenIdConnectProvider", "import pulumi_aws",
-		"from pulumi_aws import _iam_role.Role", "import pulumi_aws",
-		"from pulumi_aws import eks_fargateprofileselector as _eks_fargateprofileselector", "import pulumi_aws",
-		"from pulumi_kubernetes import core_v1 as _core_v1", "import pulumi_kubernetes",
-		"from pulumi_kubernetes import meta_v1 as _meta_v1", "import pulumi_kubernetes",
-		"from pulumi_kubernetes import _storage_k8s_io_v1.StorageClass", "import pulumi_kubernetes",
-		"from pulumi_kubernetes import _core_v1.ConfigMap", "import pulumi_kubernetes",
-		"'Aws'", "'pulumi_aws.Provider'",
-		"'Kubernetes'", "'pulumi_kubernetes.Provider'",
-		"_cloudformation_stack.Stack", "pulumi_aws.cloudformation.Stack",
-		"_core_v1.ConfigMap", "pulumi_kubernetes.core.v1.ConfigMap",
-		"_ec2_securitygroup.SecurityGroup", "pulumi_aws.ec2.SecurityGroup",
-		"_ec2_securitygrouprule.SecurityGroupRule", "pulumi_aws.ec2.SecurityGroupRule",
-		"_eks_cluster.Cluster", "pulumi_aws.eks.Cluster",
-		"_eks_fargateprofile.FargateProfile", "pulumi_aws.eks.FargateProfile",
-		"_eks_fargateprofileselector.FargateProfileSelectorArgs", "pulumi_aws.eks.FargateProfileSelectorArgs",
-		"_eks_nodegroup.NodeGroup", "pulumi_aws.eks.NodeGroup",
-		"_iam_instanceprofile.InstanceProfile", "pulumi_aws.iam.InstanceProfile",
-		"_iam_openidconnectprovider.OpenIdConnectProvider", "pulumi_aws.iam.OpenIdConnectProvider",
-		"_iam_role.Role", "pulumi_aws.iam.Role",
-		"_meta_v1.ObjectMetaArgs", "pulumi_kubernetes.meta.v1.ObjectMetaArgs",
-		"_storage_k8s_io_v1.StorageClass", "pulumi_kubernetes.storage.v1.StorageClass")
-	importReplacer := strings.NewReplacer(
-		"import pulumi_aws\nimport pulumi_aws", "import pulumi_aws",
-		"import pulumi_kubernetes\nimport pulumi_kubernetes", "import pulumi_kubernetes",
-		"import pulumi_kubernetes\nimport pulumi_aws\n", "")
-	for file, b := range files {
-		replaced := replacer.Replace(string(b))
-		// Run this an arbitrary number of times to avoid duplicate imports.
-		for i := 0; i < 25; i++ {
-			replaced = importReplacer.Replace(replaced)
-		}
-		files[file] = []byte(replaced)
-	}
-
 	mustWriteFiles(outdir, files)
 }
 

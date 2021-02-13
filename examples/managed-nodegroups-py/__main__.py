@@ -37,12 +37,11 @@ managed_node_group2 = eks.ManagedNodeGroup("example-managed-ng2",
                                            cluster=cluster.core, # TODO[pulumi/pulumi-eks#483]: Pass cluster directly.
                                            node_group_name="aws-managed-ng2",
                                            node_role_arn=role2.arn,
-                                        # TODO[pulumi/pulumi#5819]: Add this back when it's available in the schema.
-                                        #  scaling_config=eks.ManagedNodeGroupScalingConfigArgs(
-                                        #      desired_size=1,
-                                        #      min_size=1,
-                                        #      max_size=2,
-                                        #  ),
+                                           scaling_config=aws.eks.NodeGroupScalingConfigArgs(
+                                              desired_size=1,
+                                              min_size=1,
+                                              max_size=2,
+                                           ),
                                            disk_size=20,
                                            instance_types=["t2.medium"],
                                            labels={"ondemand": "true"},

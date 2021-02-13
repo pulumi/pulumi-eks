@@ -57,6 +57,8 @@ type managedNodeGroupArgs struct {
 	InstanceTypes []string `pulumi:"instanceTypes"`
 	// Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
 	Labels map[string]string `pulumi:"labels"`
+	// Launch Template settings.
+	LaunchTemplate *eks.NodeGroupLaunchTemplate `pulumi:"launchTemplate"`
 	// Name of the EKS Node Group.
 	NodeGroupName *string `pulumi:"nodeGroupName"`
 	// The IAM Role that provides permissions for the EKS Node Group.
@@ -69,6 +71,15 @@ type managedNodeGroupArgs struct {
 	NodeRoleArn *string `pulumi:"nodeRoleArn"`
 	// AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
 	ReleaseVersion *string `pulumi:"releaseVersion"`
+	// Remote access settings.
+	RemoteAccess *eks.NodeGroupRemoteAccess `pulumi:"remoteAccess"`
+	// Scaling settings.
+	//
+	// Default scaling amounts of the node group autoscaling group are:
+	//   - desiredSize: 2
+	//   - minSize: 1
+	//   - maxSize: 2
+	ScalingConfig *eks.NodeGroupScalingConfig `pulumi:"scalingConfig"`
 	// Identifiers of EC2 Subnets to associate with the EKS Node Group. These subnets must have the following resource tag: `kubernetes.io/cluster/CLUSTER_NAME` (where `CLUSTER_NAME` is replaced with the name of the EKS Cluster).
 	//
 	// Default subnetIds is chosen from the following list, in order, if subnetIds arg is not set:
@@ -99,6 +110,8 @@ type ManagedNodeGroupArgs struct {
 	InstanceTypes pulumi.StringArrayInput
 	// Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
 	Labels pulumi.StringMapInput
+	// Launch Template settings.
+	LaunchTemplate eks.NodeGroupLaunchTemplatePtrInput
 	// Name of the EKS Node Group.
 	NodeGroupName pulumi.StringPtrInput
 	// The IAM Role that provides permissions for the EKS Node Group.
@@ -111,6 +124,15 @@ type ManagedNodeGroupArgs struct {
 	NodeRoleArn pulumi.StringPtrInput
 	// AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
 	ReleaseVersion pulumi.StringPtrInput
+	// Remote access settings.
+	RemoteAccess eks.NodeGroupRemoteAccessPtrInput
+	// Scaling settings.
+	//
+	// Default scaling amounts of the node group autoscaling group are:
+	//   - desiredSize: 2
+	//   - minSize: 1
+	//   - maxSize: 2
+	ScalingConfig eks.NodeGroupScalingConfigPtrInput
 	// Identifiers of EC2 Subnets to associate with the EKS Node Group. These subnets must have the following resource tag: `kubernetes.io/cluster/CLUSTER_NAME` (where `CLUSTER_NAME` is replaced with the name of the EKS Cluster).
 	//
 	// Default subnetIds is chosen from the following list, in order, if subnetIds arg is not set:
