@@ -778,6 +778,7 @@ type CoreData struct {
 	Cluster               eks.Cluster                        `pulumi:"cluster"`
 	ClusterSecurityGroup  ec2.SecurityGroup                  `pulumi:"clusterSecurityGroup"`
 	EksNodeAccess         *corev1.ConfigMap                  `pulumi:"eksNodeAccess"`
+	EncryptionConfig      *eks.ClusterEncryptionConfig       `pulumi:"encryptionConfig"`
 	Endpoint              string                             `pulumi:"endpoint"`
 	FargateProfile        *eks.FargateProfile                `pulumi:"fargateProfile"`
 	InstanceRoles         []*iam.Role                        `pulumi:"instanceRoles"`
@@ -808,25 +809,26 @@ type CoreDataInput interface {
 
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreDataArgs struct {
-	AwsProvider           aws.ProviderInput              `pulumi:"awsProvider"`
-	Cluster               eks.ClusterInput               `pulumi:"cluster"`
-	ClusterSecurityGroup  ec2.SecurityGroupInput         `pulumi:"clusterSecurityGroup"`
-	EksNodeAccess         corev1.ConfigMapInput          `pulumi:"eksNodeAccess"`
-	Endpoint              pulumi.StringInput             `pulumi:"endpoint"`
-	FargateProfile        eks.FargateProfileInput        `pulumi:"fargateProfile"`
-	InstanceRoles         iam.RoleArrayInput             `pulumi:"instanceRoles"`
-	Kubeconfig            pulumi.Input                   `pulumi:"kubeconfig"`
-	NodeGroupOptions      ClusterNodeGroupOptionsInput   `pulumi:"nodeGroupOptions"`
-	NodeSecurityGroupTags pulumi.StringMapInput          `pulumi:"nodeSecurityGroupTags"`
-	OidcProvider          iam.OpenIdConnectProviderInput `pulumi:"oidcProvider"`
-	PrivateSubnetIds      pulumi.StringArrayInput        `pulumi:"privateSubnetIds"`
-	Provider              kubernetes.ProviderInput       `pulumi:"provider"`
-	PublicSubnetIds       pulumi.StringArrayInput        `pulumi:"publicSubnetIds"`
-	StorageClasses        storagev1.StorageClassMapInput `pulumi:"storageClasses"`
-	SubnetIds             pulumi.StringArrayInput        `pulumi:"subnetIds"`
-	Tags                  pulumi.StringMapInput          `pulumi:"tags"`
-	VpcCni                VpcCniInput                    `pulumi:"vpcCni"`
-	VpcId                 pulumi.StringInput             `pulumi:"vpcId"`
+	AwsProvider           aws.ProviderInput                   `pulumi:"awsProvider"`
+	Cluster               eks.ClusterInput                    `pulumi:"cluster"`
+	ClusterSecurityGroup  ec2.SecurityGroupInput              `pulumi:"clusterSecurityGroup"`
+	EksNodeAccess         corev1.ConfigMapInput               `pulumi:"eksNodeAccess"`
+	EncryptionConfig      eks.ClusterEncryptionConfigPtrInput `pulumi:"encryptionConfig"`
+	Endpoint              pulumi.StringInput                  `pulumi:"endpoint"`
+	FargateProfile        eks.FargateProfileInput             `pulumi:"fargateProfile"`
+	InstanceRoles         iam.RoleArrayInput                  `pulumi:"instanceRoles"`
+	Kubeconfig            pulumi.Input                        `pulumi:"kubeconfig"`
+	NodeGroupOptions      ClusterNodeGroupOptionsInput        `pulumi:"nodeGroupOptions"`
+	NodeSecurityGroupTags pulumi.StringMapInput               `pulumi:"nodeSecurityGroupTags"`
+	OidcProvider          iam.OpenIdConnectProviderInput      `pulumi:"oidcProvider"`
+	PrivateSubnetIds      pulumi.StringArrayInput             `pulumi:"privateSubnetIds"`
+	Provider              kubernetes.ProviderInput            `pulumi:"provider"`
+	PublicSubnetIds       pulumi.StringArrayInput             `pulumi:"publicSubnetIds"`
+	StorageClasses        storagev1.StorageClassMapInput      `pulumi:"storageClasses"`
+	SubnetIds             pulumi.StringArrayInput             `pulumi:"subnetIds"`
+	Tags                  pulumi.StringMapInput               `pulumi:"tags"`
+	VpcCni                VpcCniInput                         `pulumi:"vpcCni"`
+	VpcId                 pulumi.StringInput                  `pulumi:"vpcId"`
 }
 
 func (CoreDataArgs) ElementType() reflect.Type {
@@ -920,6 +922,10 @@ func (o CoreDataOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
 
 func (o CoreDataOutput) EksNodeAccess() corev1.ConfigMapOutput {
 	return o.ApplyT(func(v CoreData) *corev1.ConfigMap { return v.EksNodeAccess }).(corev1.ConfigMapOutput)
+}
+
+func (o CoreDataOutput) EncryptionConfig() eks.ClusterEncryptionConfigPtrOutput {
+	return o.ApplyT(func(v CoreData) *eks.ClusterEncryptionConfig { return v.EncryptionConfig }).(eks.ClusterEncryptionConfigPtrOutput)
 }
 
 func (o CoreDataOutput) Endpoint() pulumi.StringOutput {
@@ -1034,6 +1040,15 @@ func (o CoreDataPtrOutput) EksNodeAccess() corev1.ConfigMapOutput {
 		}
 		return v.EksNodeAccess
 	}).(corev1.ConfigMapOutput)
+}
+
+func (o CoreDataPtrOutput) EncryptionConfig() eks.ClusterEncryptionConfigPtrOutput {
+	return o.ApplyT(func(v *CoreData) *eks.ClusterEncryptionConfig {
+		if v == nil {
+			return nil
+		}
+		return v.EncryptionConfig
+	}).(eks.ClusterEncryptionConfigPtrOutput)
 }
 
 func (o CoreDataPtrOutput) Endpoint() pulumi.StringPtrOutput {

@@ -154,6 +154,9 @@
                 "eksNodeAccess": {
                     "$ref": "/kubernetes/v2.7.7/schema.json#/resources/kubernetes:core%2Fv1:ConfigMap"
                 },
+                "encryptionConfig": {
+                    "$ref": "/aws/v3.25.1/schema.json#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig"
+                },
                 "endpoint": {
                     "type": "string"
                 },
@@ -869,6 +872,10 @@
                     },
                     "description": "Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed."
                 },
+                "launchTemplate": {
+                    "$ref": "/aws/v3.25.1/schema.json#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate",
+                    "description": "Launch Template settings."
+                },
                 "nodeGroupName": {
                     "type": "string",
                     "description": "Name of the EKS Node Group."
@@ -884,6 +891,14 @@
                 "releaseVersion": {
                     "type": "string",
                     "description": "AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version."
+                },
+                "remoteAccess": {
+                    "$ref": "/aws/v3.25.1/schema.json#/types/aws:eks%2FNodeGroupRemoteAccess:NodeGroupRemoteAccess",
+                    "description": "Remote access settings."
+                },
+                "scalingConfig": {
+                    "$ref": "/aws/v3.25.1/schema.json#/types/aws:eks%2FNodeGroupScalingConfig:NodeGroupScalingConfig",
+                    "description": "Scaling settings.\n\nDefault scaling amounts of the node group autoscaling group are:\n  - desiredSize: 2\n  - minSize: 1\n  - maxSize: 2"
                 },
                 "subnetIds": {
                     "type": "array",
