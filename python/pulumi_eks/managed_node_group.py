@@ -7,8 +7,8 @@ import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union
 from . import _utilities, _tables
-from .vpc_cni import VpcCni
 from ._inputs import *
+from .vpc_cni import VpcCni
 import pulumi_aws
 import pulumi_kubernetes
 
@@ -26,10 +26,13 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 launch_template: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
+                 remote_access: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']]] = None,
+                 scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
@@ -51,6 +54,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']] launch_template: Launch Template settings.
         :param pulumi.Input[str] node_group_name: Name of the EKS Node Group.
         :param pulumi.Input['pulumi_aws.iam.Role'] node_role: The IAM Role that provides permissions for the EKS Node Group.
                
@@ -59,6 +63,13 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                
                Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
         :param pulumi.Input[str] release_version: AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']] remote_access: Remote access settings.
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']] scaling_config: Scaling settings.
+               
+               Default scaling amounts of the node group autoscaling group are:
+                 - desiredSize: 2
+                 - minSize: 1
+                 - maxSize: 2
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: Identifiers of EC2 Subnets to associate with the EKS Node Group. These subnets must have the following resource tag: `kubernetes.io/cluster/CLUSTER_NAME` (where `CLUSTER_NAME` is replaced with the name of the EKS Cluster).
                
                Default subnetIds is chosen from the following list, in order, if subnetIds arg is not set:
@@ -97,10 +108,13 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__['force_update_version'] = force_update_version
             __props__['instance_types'] = instance_types
             __props__['labels'] = labels
+            __props__['launch_template'] = launch_template
             __props__['node_group_name'] = node_group_name
             __props__['node_role'] = node_role
             __props__['node_role_arn'] = node_role_arn
             __props__['release_version'] = release_version
+            __props__['remote_access'] = remote_access
+            __props__['scaling_config'] = scaling_config
             __props__['subnet_ids'] = subnet_ids
             __props__['tags'] = tags
             __props__['version'] = version

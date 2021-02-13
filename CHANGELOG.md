@@ -7,6 +7,9 @@
 - Documentation addend for build dependencies
   [#527](https://github.com/pulumi/pulumi-eks/issues/527)
 
+- Expose some more properties to Python, .NET, and Go
+  [#536](https://github.com/pulumi/pulumi-eks/pull/536)
+
 ## 0.22.0 (Released January 27, 2021)
 
 ### Improvements

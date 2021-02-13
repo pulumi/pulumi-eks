@@ -27,6 +27,9 @@ namespace Pulumi.Eks.Inputs
         [Input("eksNodeAccess")]
         public Input<Pulumi.Kubernetes.Core.V1.ConfigMap>? EksNodeAccess { get; set; }
 
+        [Input("encryptionConfig")]
+        public Input<Pulumi.Aws.Eks.Inputs.ClusterEncryptionConfigArgs>? EncryptionConfig { get; set; }
+
         [Input("endpoint", required: true)]
         public Input<string> Endpoint { get; set; } = null!;
 

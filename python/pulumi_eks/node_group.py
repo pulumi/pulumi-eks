@@ -7,8 +7,8 @@ import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union
 from . import _utilities, _tables
-from .vpc_cni import VpcCni
 from ._inputs import *
+from .vpc_cni import VpcCni
 import pulumi_aws
 import pulumi_kubernetes
 

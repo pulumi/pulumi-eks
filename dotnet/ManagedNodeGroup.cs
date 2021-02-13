@@ -107,6 +107,12 @@ namespace Pulumi.Eks
         }
 
         /// <summary>
+        /// Launch Template settings.
+        /// </summary>
+        [Input("launchTemplate")]
+        public Input<Pulumi.Aws.Eks.Inputs.NodeGroupLaunchTemplateArgs>? LaunchTemplate { get; set; }
+
+        /// <summary>
         /// Name of the EKS Node Group.
         /// </summary>
         [Input("nodeGroupName")]
@@ -133,6 +139,23 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("releaseVersion")]
         public Input<string>? ReleaseVersion { get; set; }
+
+        /// <summary>
+        /// Remote access settings.
+        /// </summary>
+        [Input("remoteAccess")]
+        public Input<Pulumi.Aws.Eks.Inputs.NodeGroupRemoteAccessArgs>? RemoteAccess { get; set; }
+
+        /// <summary>
+        /// Scaling settings.
+        /// 
+        /// Default scaling amounts of the node group autoscaling group are:
+        ///   - desiredSize: 2
+        ///   - minSize: 1
+        ///   - maxSize: 2
+        /// </summary>
+        [Input("scalingConfig")]
+        public Input<Pulumi.Aws.Eks.Inputs.NodeGroupScalingConfigArgs>? ScalingConfig { get; set; }
 
         [Input("subnetIds")]
         private InputList<string>? _subnetIds;

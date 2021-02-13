@@ -7,8 +7,8 @@ import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union
 from . import _utilities, _tables
-from .vpc_cni import VpcCni
 from . import outputs
+from .vpc_cni import VpcCni
 import pulumi_aws
 import pulumi_kubernetes
 
@@ -433,6 +433,7 @@ class CoreData(dict):
                  vpc_id: str,
                  aws_provider: Optional['pulumi_aws.Provider'] = None,
                  eks_node_access: Optional['pulumi_kubernetes.core.v1.ConfigMap'] = None,
+                 encryption_config: Optional['pulumi_aws.eks.outputs.ClusterEncryptionConfig'] = None,
                  fargate_profile: Optional['pulumi_aws.eks.FargateProfile'] = None,
                  kubeconfig: Optional[Any] = None,
                  node_security_group_tags: Optional[Mapping[str, str]] = None,
@@ -457,6 +458,8 @@ class CoreData(dict):
             pulumi.set(__self__, "aws_provider", aws_provider)
         if eks_node_access is not None:
             pulumi.set(__self__, "eks_node_access", eks_node_access)
+        if encryption_config is not None:
+            pulumi.set(__self__, "encryption_config", encryption_config)
         if fargate_profile is not None:
             pulumi.set(__self__, "fargate_profile", fargate_profile)
         if kubeconfig is not None:
@@ -525,6 +528,11 @@ class CoreData(dict):
     @pulumi.getter(name="eksNodeAccess")
     def eks_node_access(self) -> Optional['pulumi_kubernetes.core.v1.ConfigMap']:
         return pulumi.get(self, "eks_node_access")
+
+    @property
+    @pulumi.getter(name="encryptionConfig")
+    def encryption_config(self) -> Optional['pulumi_aws.eks.outputs.ClusterEncryptionConfig']:
+        return pulumi.get(self, "encryption_config")
 
     @property
     @pulumi.getter(name="fargateProfile")
