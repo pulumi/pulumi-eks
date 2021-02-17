@@ -126,6 +126,7 @@ function getVersion(): string {
 
 /** @internal */
 export function main(args: string[]) {
+    throw new Error("this does not work");
     return pulumi.provider.main(new Provider(), args);
 }
 
