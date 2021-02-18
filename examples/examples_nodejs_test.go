@@ -178,8 +178,8 @@ func TestAccTags(t *testing.T) {
 func TestAccStorageClasses(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			RunUpdateTest: true,
-			Dir:           path.Join(getCwd(t), "storage-classes"),
+			//RunUpdateTest: true, // Cannot run an update test at this time due to a new value that doesn't exist previously
+			Dir: path.Join(getCwd(t), "storage-classes"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,

@@ -1028,7 +1028,8 @@ func generateSchema() schema.PackageSpec {
 						"these storage classes may be configured the default storage class for the cluster.",
 					Properties: map[string]schema.PropertySpec{
 						"type": {
-							TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1"
+							// TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1" | "gp3"
+							TypeSpec:    schema.TypeSpec{Type: "string"},
 							Description: "The EBS volume type.",
 						},
 						"zones": {

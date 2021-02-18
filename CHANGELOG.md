@@ -9,6 +9,26 @@
 
 - Expose some more properties to Python, .NET, and Go
   [#536](https://github.com/pulumi/pulumi-eks/pull/536)
+  
+- Added support for `gp3` storage classes
+  [#536](https://github.com/pulumi/pulumi-eks/pull/536)  
+  Used similar to the following example:
+```
+## Creating an EKS Cluster with a gp3 storage class
+const cluster2 = new eks.Cluster(`${projectName}-2`, {
+    deployDashboard: false,
+    storageClasses: {
+        "mygp2": {
+            type: "gp2",
+            default: true,
+            encrypted: true,
+        },
+        "mygp3": {
+            type: "gp3",
+        }
+    },
+});
+```
 
 ## 0.22.0 (Released January 27, 2021)
 

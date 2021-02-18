@@ -35,6 +35,9 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
         "mysc1": {
             type: "sc1",
         },
+        "mygp3": {
+            type: "gp3",
+        }
     },
 });
 

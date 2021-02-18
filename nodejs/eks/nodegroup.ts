@@ -496,7 +496,7 @@ ${customUserData}
         rootBlockDevice: {
             encrypted: args.encryptRootBlockDevice || args.encryptRootBockDevice,
             volumeSize: args.nodeRootVolumeSize || 20, // GiB
-            volumeType: "gp2", // default is "standard"
+            volumeType: "gp2", // default is "gp2"
             deleteOnTermination: true,
         },
         userData: args.nodeUserDataOverride || userdata,
