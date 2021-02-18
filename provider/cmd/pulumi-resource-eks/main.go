@@ -35,7 +35,6 @@ func main() {
 	args = append(args, os.Args[1:]...)
 
 	cmd := exec.Command(nodePath, args...)
-	cmd.Dir = binaryDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
