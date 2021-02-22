@@ -31,13 +31,13 @@
 
   <ItemGroup>
     <EmbeddedResource Include="version.txt" />
-    <Content Include="version.txt" />
+    <None Include="version.txt" Pack="True" PackagePath="content" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Pulumi" Version="2.*" />
-    <PackageReference Include="Pulumi.Aws" Version="3.*" />
-    <PackageReference Include="Pulumi.Kubernetes" Version="2.*" />
+    <PackageReference Include="Pulumi.Aws" Version="3.*" ExcludeAssets="contentFiles" />
+    <PackageReference Include="Pulumi.Kubernetes" Version="2.*" ExcludeAssets="contentFiles" />
   </ItemGroup>
 
   <ItemGroup>
