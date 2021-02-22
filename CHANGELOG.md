@@ -1,6 +1,7 @@
 ## Unreleased
 
 ### Improvements
+
 - Go codegen fixes for external references
   [#531](https://github.com/pulumi/pulumi-eks/pull/531)
 
@@ -9,6 +10,9 @@
 
 - Expose some more properties to Python, .NET, and Go
   [#536](https://github.com/pulumi/pulumi-eks/pull/536)
+
+- Fix .NET plugin version
+  [#542](https://github.com/pulumi/pulumi-eks/pull/542)
 
 ## 0.22.0 (Released January 27, 2021)
 
