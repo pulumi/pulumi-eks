@@ -4,6 +4,9 @@
 
 - Upgrade version of AWS VPC CNI to v1.7.5
   [#496](https://github.com/pulumi/pulumi-eks/pull/496)
+  
+- Upgrade to Go 1.16
+  [#548](https://github.com/pulumi/pulumi-eks/pull/548)
 
 ## 0.22.0 (Released January 27, 2021)
 
