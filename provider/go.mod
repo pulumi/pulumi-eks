@@ -1,6 +1,6 @@
 module github.com/pulumi/pulumi-eks/provider
 
-go 1.15
+go 1.16
 
 require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

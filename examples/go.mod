@@ -1,6 +1,6 @@
 module github.com/pulumi/pulumi-eks/examples
 
-go 1.15
+go 1.16
 
 require (
 	github.com/imdario/mergo v0.3.11 // indirect
