@@ -1247,7 +1247,11 @@ class UserMappingArgs:
 @pulumi.input_type
 class VpcCniOptionsArgs:
     def __init__(__self__, *,
+                 cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
+                 cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
+                 cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
+                 enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
                  external_snat: Optional[pulumi.Input[bool]] = None,
@@ -1260,9 +1264,13 @@ class VpcCniOptionsArgs:
                  warm_ip_target: Optional[pulumi.Input[int]] = None):
         """
         Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
+        :param pulumi.Input[bool] cni_configure_rpfilter: Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
+        :param pulumi.Input[bool] cni_custom_network_cfg: Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
+        :param pulumi.Input[bool] cni_external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
         :param pulumi.Input[bool] custom_network_config: Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
                
                Defaults to false.
+        :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
                Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
                
@@ -1296,8 +1304,16 @@ class VpcCniOptionsArgs:
                Defaults to 1.
         :param pulumi.Input[int] warm_ip_target: Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
         """
+        if cni_configure_rpfilter is not None:
+            pulumi.set(__self__, "cni_configure_rpfilter", cni_configure_rpfilter)
+        if cni_custom_network_cfg is not None:
+            pulumi.set(__self__, "cni_custom_network_cfg", cni_custom_network_cfg)
+        if cni_external_snat is not None:
+            pulumi.set(__self__, "cni_external_snat", cni_external_snat)
         if custom_network_config is not None:
             pulumi.set(__self__, "custom_network_config", custom_network_config)
+        if enable_pod_eni is not None:
+            pulumi.set(__self__, "enable_pod_eni", enable_pod_eni)
         if eni_config_label_def is not None:
             pulumi.set(__self__, "eni_config_label_def", eni_config_label_def)
         if eni_mtu is not None:
@@ -1320,6 +1336,42 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "warm_ip_target", warm_ip_target)
 
     @property
+    @pulumi.getter(name="cniConfigureRpfilter")
+    def cni_configure_rpfilter(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
+        """
+        return pulumi.get(self, "cni_configure_rpfilter")
+
+    @cni_configure_rpfilter.setter
+    def cni_configure_rpfilter(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "cni_configure_rpfilter", value)
+
+    @property
+    @pulumi.getter(name="cniCustomNetworkCfg")
+    def cni_custom_network_cfg(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
+        """
+        return pulumi.get(self, "cni_custom_network_cfg")
+
+    @cni_custom_network_cfg.setter
+    def cni_custom_network_cfg(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "cni_custom_network_cfg", value)
+
+    @property
+    @pulumi.getter(name="cniExternalSnat")
+    def cni_external_snat(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
+        """
+        return pulumi.get(self, "cni_external_snat")
+
+    @cni_external_snat.setter
+    def cni_external_snat(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "cni_external_snat", value)
+
+    @property
     @pulumi.getter(name="customNetworkConfig")
     def custom_network_config(self) -> Optional[pulumi.Input[bool]]:
         """
@@ -1332,6 +1384,18 @@ class VpcCniOptionsArgs:
     @custom_network_config.setter
     def custom_network_config(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "custom_network_config", value)
+
+    @property
+    @pulumi.getter(name="enablePodEni")
+    def enable_pod_eni(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+        """
+        return pulumi.get(self, "enable_pod_eni")
+
+    @enable_pod_eni.setter
+    def enable_pod_eni(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "enable_pod_eni", value)
 
     @property
     @pulumi.getter(name="eniConfigLabelDef")

@@ -108,14 +108,6 @@ spec:
                       - fargate
       containers:
         - env:
-            - name: ENABLE_POD_ENI
-              value: 'false'
-            - name: AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER
-              value: 'false'
-            - name: AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG
-              value: 'false'
-            - name: AWS_VPC_K8S_CNI_EXTERNALSNAT
-              value: 'false'
             - name: MY_NODE_NAME
               valueFrom:
                 fieldRef:
