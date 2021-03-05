@@ -4,7 +4,6 @@ env:
   ALT_AWS_PROFILE: ${{ secrets.ALT_AWS_PROFILE }}
   AWS_REGION: us-west-2
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GO111MODULE: "on"
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   PROVIDER: eks
@@ -30,6 +29,31 @@ jobs:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
             Please view the PR build - ${{ steps.vars.outputs.run-url }}
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Unshallow clone for tags
+        run: git fetch --prune --unshallow --tags
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        with:
+          repo: pulumi/pulumictl
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.nodeversion}}
+          registry-url: https://registry.npmjs.org
+      - name: Install Yarn
+        run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
+      - name: Update PATH for Yarn
+        run: |
+          echo "$HOME/.yarn/bin" >> $GITHUB_PATH
+          echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
+      - name: Run lint
+        run: make lint
   prerequisites:
     name: prerequisites
     runs-on: ubuntu-latest
@@ -47,7 +71,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.15.x
+          go-version: 1.16.x
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.1.0
         with:
@@ -131,7 +155,7 @@ jobs:
         dotnetversion:
           - 3.1
         goversion:
-          - 1.15.x
+          - 1.16.x
         language:
           - nodejs
           - python
@@ -224,7 +248,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.15.x
+          - 1.16.x
         language:
           - nodejs
         nodeversion:
@@ -345,7 +369,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.15.x
+          - 1.16.x
         pythonversion:
           - 3.8
         nodeversion:
@@ -444,7 +468,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.15.x
+          - 1.16.x
         dotnetversion:
           - 3.1
         nodeversion:
