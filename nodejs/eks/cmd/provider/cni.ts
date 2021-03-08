@@ -37,6 +37,10 @@ interface VpcCniInputs {
     eniConfigLabelDef?: string;
     pluginLogLevel?: string;
     pluginLogFile?: string;
+    enablePodEni?: boolean;
+    cniConfigureRpfilter?: boolean;
+    cniCustomNetworkCfg?: boolean;
+    cniExternalSnat?: boolean;
 }
 
 function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
@@ -97,6 +101,26 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         env.push({name: "AWS_VPC_K8S_PLUGIN_LOG_FILE", value: args.pluginLogFile.toString()});
     } else {
         env.push({name: "AWS_VPC_K8S_PLUGIN_LOG_FILE", value: "/var/log/aws-routed-eni/plugin.log"});
+    }
+    if (args.enablePodEni) {
+        env.push({name: "ENABLE_POD_ENI", value: args.enablePodEni ? "true" : "false"});
+    } else {
+        env.push({name: "ENABLE_POD_ENI", value: "false"});
+    }
+    if (args.cniConfigureRpfilter) {
+        env.push({name: "AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER", value: args.cniConfigureRpfilter ? "true" : "false"});
+    } else {
+        env.push({name: "AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER", value: "false"});
+    }
+    if (args.cniCustomNetworkCfg) {
+        env.push({name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: args.cniCustomNetworkCfg ? "true" : "false"});
+    } else {
+        env.push({name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: "false"});
+    }
+    if (args.cniExternalSnat) {
+        env.push({name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.cniExternalSnat ? "true" : "false"});
+    } else {
+        env.push({name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: "false"});
     }
     // Return the computed YAML.
     return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
