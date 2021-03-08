@@ -1459,6 +1459,38 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 				"Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html " +
 				"(step 5(c))\n\nDefaults to the official AWS CNI image in ECR.",
 		},
+		"enablePodEni": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to" +
+				"the node if the instance has capacity to attach an additional ENI. Default is `false`.",
+		},
+		"cniConfigureRpfilter": {
+			TypeSpec:    schema.TypeSpec{Type: "boolean"},
+			Description: "Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.",
+		},
+		"cniCustomNetworkCfg": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Specifies that your pods may use subnets and security groups that are independent of your " +
+				"worker node's VPC configuration. By default, pods share the same subnet and security groups as the " +
+				"worker node's primary interface. Setting this variable to true causes ipamd to use the security groups " +
+				"and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create " +
+				"an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label " +
+				"each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with " +
+				"the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the " +
+				"subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. " +
+				"For more information, see CNI Custom Networking in the Amazon EKS User Guide." +
+				" Default is `false`",
+		},
+		"cniExternalSnat": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP " +
+				"addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these " +
+				"rules are removed if they have already been applied. Disable SNAT if you need to allow inbound " +
+				"communication to your pods from external VPNs, direct connections, and external VPCs, and your pods " +
+				"do not need to access the Internet directly via an Internet Gateway. However, your nodes must be " +
+				"running in a private subnet and connected to the internet through an AWS NAT Gateway or another " +
+				"external NAT device. Default is `false`",
+		},
 	}
 
 	if kubeconfig {
