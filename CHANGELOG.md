@@ -2,9 +2,21 @@
 
 ### Improvements
 
+- Go codegen fixes for external references
+  [#531](https://github.com/pulumi/pulumi-eks/pull/531)
+
+- Documentation addend for build dependencies
+  [#527](https://github.com/pulumi/pulumi-eks/issues/527)
+
+- Expose some more properties to Python, .NET, and Go
+  [#536](https://github.com/pulumi/pulumi-eks/pull/536)
+
+- Fix .NET plugin version
+  [#542](https://github.com/pulumi/pulumi-eks/pull/542)
+
 - Upgrade version of AWS VPC CNI to v1.7.5
   [#496](https://github.com/pulumi/pulumi-eks/pull/496)
-  
+
 - Upgrade to Go 1.16
   [#548](https://github.com/pulumi/pulumi-eks/pull/548)
 
