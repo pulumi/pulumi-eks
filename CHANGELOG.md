@@ -19,6 +19,9 @@
 
 - Upgrade to Go 1.16
   [#548](https://github.com/pulumi/pulumi-eks/pull/548)
+  
+- Add support for arm64 plugin binaries
+  [#554](https://github.com/pulumi/pulumi-eks/pull/554)
 
 ## 0.22.0 (Released January 27, 2021)
 
