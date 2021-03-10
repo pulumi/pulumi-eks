@@ -1259,6 +1259,7 @@ class VpcCniOptionsArgs:
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
+                 security_context_privileged: Optional[pulumi.Input[bool]] = None,
                  veth_prefix: Optional[pulumi.Input[str]] = None,
                  warm_eni_target: Optional[pulumi.Input[int]] = None,
                  warm_ip_target: Optional[pulumi.Input[int]] = None):
@@ -1294,6 +1295,7 @@ class VpcCniOptionsArgs:
         :param pulumi.Input[bool] node_port_support: Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
                
                Defaults to true.
+        :param pulumi.Input[bool] security_context_privileged: Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
         :param pulumi.Input[str] veth_prefix: Specifies the veth prefix used to generate the host-side veth device name for the CNI.
                
                The prefix can be at most 4 characters long.
@@ -1328,6 +1330,8 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "log_level", log_level)
         if node_port_support is not None:
             pulumi.set(__self__, "node_port_support", node_port_support)
+        if security_context_privileged is not None:
+            pulumi.set(__self__, "security_context_privileged", security_context_privileged)
         if veth_prefix is not None:
             pulumi.set(__self__, "veth_prefix", veth_prefix)
         if warm_eni_target is not None:
@@ -1496,6 +1500,18 @@ class VpcCniOptionsArgs:
     @node_port_support.setter
     def node_port_support(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "node_port_support", value)
+
+    @property
+    @pulumi.getter(name="securityContextPrivileged")
+    def security_context_privileged(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+        """
+        return pulumi.get(self, "security_context_privileged")
+
+    @security_context_privileged.setter
+    def security_context_privileged(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "security_context_privileged", value)
 
     @property
     @pulumi.getter(name="vethPrefix")

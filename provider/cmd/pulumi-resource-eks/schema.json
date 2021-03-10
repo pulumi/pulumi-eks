@@ -501,6 +501,10 @@
                     "type": "boolean",
                     "description": "Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.\n\nDefaults to true."
                 },
+                "securityContextPrivileged": {
+                    "type": "boolean",
+                    "description": "Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default"
+                },
                 "vethPrefix": {
                     "type": "string",
                     "description": "Specifies the veth prefix used to generate the host-side veth device name for the CNI.\n\nThe prefix can be at most 4 characters long.\n\nDefaults to \"eni\"."
@@ -1199,6 +1203,10 @@
                 "nodePortSupport": {
                     "type": "boolean",
                     "description": "Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.\n\nDefaults to true."
+                },
+                "securityContextPrivileged": {
+                    "type": "boolean",
+                    "description": "Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default"
                 },
                 "vethPrefix": {
                     "type": "string",
