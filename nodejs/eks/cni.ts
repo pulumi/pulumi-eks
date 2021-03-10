@@ -160,6 +160,13 @@ export interface VpcCniOptions {
      * Defaults to "false".
      */
     cniExternalSnat?: pulumi.Input<boolean>;
+
+    /**
+     * Pass privilege to containers securityContext
+     * this is required when SELinux is enabled
+     * This value will not be passed to the CNI config by default
+     */
+    securityContextPrivileged?: pulumi.Input<boolean>;
 }
 
 // Dynamic providers don't currently work well with multi-language components [1]. To workaround this, the
@@ -195,6 +202,7 @@ export class VpcCni extends pulumi.CustomResource {
             cniConfigureRpfilter: args.cniConfigureRpfilter,
             cniCustomNetworkCfg: args.cniCustomNetworkCfg,
             cniExternalSnat: args.cniCustomNetworkCfg,
+            securityContextPrivileged: args.securityContextPrivileged,
         }, opts);
     }
 }

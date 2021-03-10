@@ -102,6 +102,8 @@ type vpcCniArgs struct {
 	//
 	// Defaults to true.
 	NodePortSupport *bool `pulumi:"nodePortSupport"`
+	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+	SecurityContextPrivileged *bool `pulumi:"securityContextPrivileged"`
 	// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
 	//
 	// The prefix can be at most 4 characters long.
@@ -162,6 +164,8 @@ type VpcCniArgs struct {
 	//
 	// Defaults to true.
 	NodePortSupport pulumi.BoolPtrInput
+	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+	SecurityContextPrivileged pulumi.BoolPtrInput
 	// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
 	//
 	// The prefix can be at most 4 characters long.

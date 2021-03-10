@@ -1491,6 +1491,11 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 				"running in a private subnet and connected to the internet through an AWS NAT Gateway or another " +
 				"external NAT device. Default is `false`",
 		},
+		"securityContextPrivileged": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Pass privilege to containers securityContext. This is required when SELinux is enabled. " +
+				"This value will not be passed to the CNI config by default",
+		},
 	}
 
 	if kubeconfig {

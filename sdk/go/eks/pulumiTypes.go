@@ -2354,6 +2354,8 @@ type VpcCniOptions struct {
 	//
 	// Defaults to true.
 	NodePortSupport *bool `pulumi:"nodePortSupport"`
+	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+	SecurityContextPrivileged *bool `pulumi:"securityContextPrivileged"`
 	// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
 	//
 	// The prefix can be at most 4 characters long.
@@ -2423,6 +2425,8 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to true.
 	NodePortSupport pulumi.BoolPtrInput `pulumi:"nodePortSupport"`
+	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+	SecurityContextPrivileged pulumi.BoolPtrInput `pulumi:"securityContextPrivileged"`
 	// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
 	//
 	// The prefix can be at most 4 characters long.
@@ -2591,6 +2595,11 @@ func (o VpcCniOptionsOutput) LogLevel() pulumi.StringPtrOutput {
 // Defaults to true.
 func (o VpcCniOptionsOutput) NodePortSupport() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.NodePortSupport }).(pulumi.BoolPtrOutput)
+}
+
+// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+func (o VpcCniOptionsOutput) SecurityContextPrivileged() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *bool { return v.SecurityContextPrivileged }).(pulumi.BoolPtrOutput)
 }
 
 // Specifies the veth prefix used to generate the host-side veth device name for the CNI.
@@ -2767,6 +2776,16 @@ func (o VpcCniOptionsPtrOutput) NodePortSupport() pulumi.BoolPtrOutput {
 			return nil
 		}
 		return v.NodePortSupport
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+func (o VpcCniOptionsPtrOutput) SecurityContextPrivileged() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.SecurityContextPrivileged
 	}).(pulumi.BoolPtrOutput)
 }
 

@@ -28,6 +28,7 @@ class VpcCni(pulumi.CustomResource):
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
+                 security_context_privileged: Optional[pulumi.Input[bool]] = None,
                  veth_prefix: Optional[pulumi.Input[str]] = None,
                  warm_eni_target: Optional[pulumi.Input[int]] = None,
                  warm_ip_target: Optional[pulumi.Input[int]] = None,
@@ -70,6 +71,7 @@ class VpcCni(pulumi.CustomResource):
         :param pulumi.Input[bool] node_port_support: Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
                
                Defaults to true.
+        :param pulumi.Input[bool] security_context_privileged: Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
         :param pulumi.Input[str] veth_prefix: Specifies the veth prefix used to generate the host-side veth device name for the CNI.
                
                The prefix can be at most 4 characters long.
@@ -112,6 +114,7 @@ class VpcCni(pulumi.CustomResource):
             __props__['log_file'] = log_file
             __props__['log_level'] = log_level
             __props__['node_port_support'] = node_port_support
+            __props__['security_context_privileged'] = security_context_privileged
             __props__['veth_prefix'] = veth_prefix
             __props__['warm_eni_target'] = warm_eni_target
             __props__['warm_ip_target'] = warm_ip_target
