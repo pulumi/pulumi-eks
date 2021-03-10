@@ -106,6 +106,12 @@ namespace Pulumi.Eks.Inputs
         public Input<bool>? NodePortSupport { get; set; }
 
         /// <summary>
+        /// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+        /// </summary>
+        [Input("securityContextPrivileged")]
+        public Input<bool>? SecurityContextPrivileged { get; set; }
+
+        /// <summary>
         /// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
         /// 
         /// The prefix can be at most 4 characters long.

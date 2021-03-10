@@ -41,6 +41,7 @@ interface VpcCniInputs {
     cniConfigureRpfilter?: boolean;
     cniCustomNetworkCfg?: boolean;
     cniExternalSnat?: boolean;
+    securityContextPrivileged?: boolean;
 }
 
 function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
@@ -49,6 +50,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     // Rewrite the envvars for the CNI daemon set as per the inputs.
     const daemonSet = cniYaml.filter(o => o.kind === "DaemonSet")[0];
     const env = daemonSet.spec.template.spec.containers[0].env;
+    const securityContext = daemonSet.spec.template.spec.containers[0].securityContext;
     if (args.nodePortSupport) {
         env.push({name: "AWS_VPC_CNI_NODE_PORT_SUPPORT", value: args.nodePortSupport ? "true" : "false"});
     }
@@ -121,6 +123,9 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         env.push({name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.cniExternalSnat ? "true" : "false"});
     } else {
         env.push({name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: "false"});
+    }
+    if (args.securityContextPrivileged) {
+        securityContext.privileged = args.securityContextPrivileged;
     }
     // Return the computed YAML.
     return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
