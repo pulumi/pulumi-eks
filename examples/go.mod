@@ -5,8 +5,8 @@ go 1.16
 require (
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/pulumi/pulumi-eks v0.20.0
-	github.com/pulumi/pulumi/pkg/v2 v2.18.2
-	github.com/pulumi/pulumi/sdk/v2 v2.18.2
+	github.com/pulumi/pulumi/pkg/v2 v2.22.1-0.20210309145724-0d5b3d375d56
+	github.com/pulumi/pulumi/sdk/v2 v2.22.1-0.20210309145724-0d5b3d375d56
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.6.1
 	gopkg.in/yaml.v2 v2.3.0
