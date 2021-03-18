@@ -522,6 +522,7 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/dotnet.tar.gz -C ${{github.workspace}}/dotnet
       - name: Install dependencies
         run: make install_dotnet_sdk
+      - run: dotnet nuget add source ${{ github.workspace }}/nuget
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
