@@ -489,6 +489,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{matrix.dotnetverson}}
+      - run: dotnet nuget add source ${{ github.workspace }}/nuget
       - name: Download provider binary
         uses: actions/download-artifact@v2
         with:
@@ -520,6 +521,7 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/dotnet.tar.gz -C ${{github.workspace}}/dotnet
       - name: Install dependencies
         run: make install_dotnet_sdk
+      - run: dotnet nuget add source ${{ github.workspace }}/nuget
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
