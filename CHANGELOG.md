@@ -1,4 +1,7 @@
 ## Unreleased
+_(none)_
+
+## 0.23.0 (Released March 22, 2021)
 
 ### Improvements
 
@@ -19,7 +22,7 @@
 
 - Upgrade to Go 1.16
   [#548](https://github.com/pulumi/pulumi-eks/pull/548)
-  
+
 - Add support for arm64 plugin binaries
   [#554](https://github.com/pulumi/pulumi-eks/pull/554)
 
@@ -79,7 +82,7 @@
 
 ## 0.19.4 (Released August 11, 2020)
 
-- Support for the ENI_CONFIG_LABEL_DEF environment variable 
+- Support for the ENI_CONFIG_LABEL_DEF environment variable
   [#411](https://github.com/pulumi/pulumi-eks/pull/411)
 
 ### Improvements
