@@ -1379,15 +1379,15 @@ export class Cluster extends pulumi.ComponentResource {
         // Check that AWS provider credential options are set for the kubeconfig
         // to use with the given auth method.
         if (opts?.provider && !args.providerCredentialOpts) {
-            throw new Error("It looks like you're using an explicit AWS provider. Please specify this provider in providerCredentialOpts. For more details, see: https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/eks/#ClusterOptions-providerCredentialOpts")
+            throw new Error("It looks like you're using an explicit AWS provider. Please specify this provider in providerCredentialOpts.");
         }
         if (process.env.AWS_PROFILE && !args.providerCredentialOpts) {
-            throw new Error("It looks like you're using AWS profiles. Please specify this profile in providerCredentialOpts. For more details, see: https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/eks/#ClusterOptions-providerCredentialOpts");
+            throw new Error("It looks like you're using AWS profiles. Please specify this profile in providerCredentialOpts.");
         }
         const awsConfig = new pulumi.Config("aws");
         const awsProfile = awsConfig.get("profile");
         if (awsProfile && !args.providerCredentialOpts) {
-            throw new Error("It looks like you've set an AWS profile in your stack config. Please specify this profile providerCredentialOpts. For more details, see: https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/eks/#ClusterOptions-providerCredentialOpts")
+            throw new Error("It looks like you've set an AWS profile in your stack config. Please specify this profile providerCredentialOpts.");
         }
 
         // Create the core resources required by the cluster.
