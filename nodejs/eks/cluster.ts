@@ -1390,7 +1390,7 @@ export class Cluster extends pulumi.ComponentResource {
         const awsProfile = awsConfig.get("profile");
         if (awsProfile && !args.providerCredentialOpts) {
             args.providerCredentialOpts = {
-                profileName: process.env.AWS_PROFILE
+                profileName: awsProfile
             };
         }
 
