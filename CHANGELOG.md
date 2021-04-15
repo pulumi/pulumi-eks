@@ -1,5 +1,7 @@
 ## Unreleased
-_(none)_
+
+- Update wording for providerCredentialOpt errors
+  [#559](https://github.com/pulumi/pulumi-eks/pull/559)
 
 ## 0.23.0 (Released March 22, 2021)
 
