@@ -1382,12 +1382,16 @@ export class Cluster extends pulumi.ComponentResource {
             throw new Error("providerCredentialOpts and an AWS provider instance must be set together");
         }
         if (process.env.AWS_PROFILE && !args.providerCredentialOpts) {
-            throw new Error("providerCredentialOpts and AWS_PROFILE must be set together");
+            args.providerCredentialOpts = {
+                profileName: process.env.AWS_PROFILE
+            };
         }
         const awsConfig = new pulumi.Config("aws");
         const awsProfile = awsConfig.get("profile");
         if (awsProfile && !args.providerCredentialOpts) {
-            throw new Error("providerCredentialOpts and AWS config setting aws:profile must be set together");
+            args.providerCredentialOpts = {
+                profileName: process.env.AWS_PROFILE
+            };
         }
 
         // Create the core resources required by the cluster.
