@@ -1,5 +1,9 @@
 ## Unreleased
-_(none)_
+
+### Improvements
+
+- Do not require providerCredentialOpts Cluster parameter when using AWS_PROFILE
+  [#561](https://github.com/pulumi/pulumi-eks/pull/561)
 
 ## 0.23.0 (Released March 22, 2021)
 
