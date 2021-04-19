@@ -24,13 +24,13 @@ class ManagedNodeGroupArgs:
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 launch_template: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplate']] = None,
+                 launch_template: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
-                 remote_access: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccess']] = None,
-                 scaling_config: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfig']] = None,
+                 remote_access: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs']] = None,
+                 scaling_config: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs']] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  version: Optional[pulumi.Input[str]] = None):
@@ -43,7 +43,7 @@ class ManagedNodeGroupArgs:
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
-        :param pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplate'] launch_template: Launch Template settings.
+        :param pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs'] launch_template: Launch Template settings.
         :param pulumi.Input[str] node_group_name: Name of the EKS Node Group.
         :param pulumi.Input['pulumi_aws.iam.Role'] node_role: The IAM Role that provides permissions for the EKS Node Group.
                
@@ -52,8 +52,8 @@ class ManagedNodeGroupArgs:
                
                Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
         :param pulumi.Input[str] release_version: AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
-        :param pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccess'] remote_access: Remote access settings.
-        :param pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfig'] scaling_config: Scaling settings.
+        :param pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs'] remote_access: Remote access settings.
+        :param pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs'] scaling_config: Scaling settings.
                
                Default scaling amounts of the node group autoscaling group are:
                  - desiredSize: 2
@@ -189,14 +189,14 @@ class ManagedNodeGroupArgs:
 
     @property
     @pulumi.getter(name="launchTemplate")
-    def launch_template(self) -> Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplate']]:
+    def launch_template(self) -> Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]:
         """
         Launch Template settings.
         """
         return pulumi.get(self, "launch_template")
 
     @launch_template.setter
-    def launch_template(self, value: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplate']]):
+    def launch_template(self, value: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]):
         pulumi.set(self, "launch_template", value)
 
     @property
@@ -253,19 +253,19 @@ class ManagedNodeGroupArgs:
 
     @property
     @pulumi.getter(name="remoteAccess")
-    def remote_access(self) -> Optional[pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccess']]:
+    def remote_access(self) -> Optional[pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs']]:
         """
         Remote access settings.
         """
         return pulumi.get(self, "remote_access")
 
     @remote_access.setter
-    def remote_access(self, value: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccess']]):
+    def remote_access(self, value: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs']]):
         pulumi.set(self, "remote_access", value)
 
     @property
     @pulumi.getter(name="scalingConfig")
-    def scaling_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfig']]:
+    def scaling_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs']]:
         """
         Scaling settings.
 
@@ -277,7 +277,7 @@ class ManagedNodeGroupArgs:
         return pulumi.get(self, "scaling_config")
 
     @scaling_config.setter
-    def scaling_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfig']]):
+    def scaling_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs']]):
         pulumi.set(self, "scaling_config", value)
 
     @property
@@ -333,13 +333,13 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 launch_template: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplate']]] = None,
+                 launch_template: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
-                 remote_access: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccess']]] = None,
-                 scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfig']]] = None,
+                 remote_access: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']]] = None,
+                 scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
@@ -359,7 +359,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
-        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplate']] launch_template: Launch Template settings.
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']] launch_template: Launch Template settings.
         :param pulumi.Input[str] node_group_name: Name of the EKS Node Group.
         :param pulumi.Input['pulumi_aws.iam.Role'] node_role: The IAM Role that provides permissions for the EKS Node Group.
                
@@ -368,8 +368,8 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                
                Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
         :param pulumi.Input[str] release_version: AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
-        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccess']] remote_access: Remote access settings.
-        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfig']] scaling_config: Scaling settings.
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']] remote_access: Remote access settings.
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']] scaling_config: Scaling settings.
                
                Default scaling amounts of the node group autoscaling group are:
                  - desiredSize: 2
@@ -419,13 +419,13 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 launch_template: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplate']]] = None,
+                 launch_template: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
-                 remote_access: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccess']]] = None,
-                 scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfig']]] = None,
+                 remote_access: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']]] = None,
+                 scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,

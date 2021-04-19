@@ -533,7 +533,7 @@ class CoreDataArgs:
                  vpc_id: pulumi.Input[str],
                  aws_provider: Optional[pulumi.Input['pulumi_aws.Provider']] = None,
                  eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']] = None,
-                 encryption_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfig']] = None,
+                 encryption_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']] = None,
                  fargate_profile: Optional[pulumi.Input['pulumi_aws.eks.FargateProfile']] = None,
                  kubeconfig: Optional[Any] = None,
                  node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -671,11 +671,11 @@ class CoreDataArgs:
 
     @property
     @pulumi.getter(name="encryptionConfig")
-    def encryption_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfig']]:
+    def encryption_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']]:
         return pulumi.get(self, "encryption_config")
 
     @encryption_config.setter
-    def encryption_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfig']]):
+    def encryption_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']]):
         pulumi.set(self, "encryption_config", value)
 
     @property
@@ -794,12 +794,12 @@ class CreationRoleProviderArgs:
 class FargateProfileArgs:
     def __init__(__self__, *,
                  pod_execution_role_arn: Optional[pulumi.Input[str]] = None,
-                 selectors: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelector']]]] = None,
+                 selectors: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None):
         """
         Defines how Kubernetes pods are executed in Fargate. See aws.eks.FargateProfileArgs for reference.
         :param pulumi.Input[str] pod_execution_role_arn: Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
-        :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelector']]] selectors: Specify the namespace and label selectors to use for launching pods into Fargate.
+        :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]] selectors: Specify the namespace and label selectors to use for launching pods into Fargate.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
         """
         if pod_execution_role_arn is not None:
@@ -823,14 +823,14 @@ class FargateProfileArgs:
 
     @property
     @pulumi.getter
-    def selectors(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelector']]]]:
+    def selectors(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]]]:
         """
         Specify the namespace and label selectors to use for launching pods into Fargate.
         """
         return pulumi.get(self, "selectors")
 
     @selectors.setter
-    def selectors(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelector']]]]):
+    def selectors(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]]]):
         pulumi.set(self, "selectors", value)
 
     @property
@@ -971,7 +971,7 @@ class StorageClassArgs:
                  encrypted: Optional[pulumi.Input[bool]] = None,
                  iops_per_gb: Optional[pulumi.Input[int]] = None,
                  kms_key_id: Optional[pulumi.Input[str]] = None,
-                 metadata: Optional[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMeta']] = None,
+                 metadata: Optional[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']] = None,
                  mount_options: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  reclaim_policy: Optional[pulumi.Input[str]] = None,
                  volume_binding_mode: Optional[pulumi.Input[str]] = None,
@@ -988,7 +988,7 @@ class StorageClassArgs:
         :param pulumi.Input[bool] encrypted: Denotes whether the EBS volume should be encrypted.
         :param pulumi.Input[int] iops_per_gb: I/O operations per second per GiB for "io1" volumes. The AWS volume plugin multiplies this with the size of a requested volume to compute IOPS of the volume and caps the result at 20,000 IOPS.
         :param pulumi.Input[str] kms_key_id: The full Amazon Resource Name of the key to use when encrypting the volume. If none is supplied but encrypted is true, a key is generated by AWS.
-        :param pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMeta'] metadata: Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+        :param pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs'] metadata: Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
         :param pulumi.Input[Sequence[pulumi.Input[str]]] mount_options: Dynamically provisioned PersistentVolumes of this storage class are created with these mountOptions, e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one is invalid.
         :param pulumi.Input[str] reclaim_policy: Dynamically provisioned PersistentVolumes of this storage class are created with this reclaimPolicy. Defaults to Delete.
         :param pulumi.Input[str] volume_binding_mode: VolumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound. When unset, VolumeBindingImmediate is used. This field is alpha-level and is only honored by servers that enable the VolumeScheduling feature.
@@ -1094,14 +1094,14 @@ class StorageClassArgs:
 
     @property
     @pulumi.getter
-    def metadata(self) -> Optional[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMeta']]:
+    def metadata(self) -> Optional[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']]:
         """
         Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
         """
         return pulumi.get(self, "metadata")
 
     @metadata.setter
-    def metadata(self, value: Optional[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMeta']]):
+    def metadata(self, value: Optional[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']]):
         pulumi.set(self, "metadata", value)
 
     @property
