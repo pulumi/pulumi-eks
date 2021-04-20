@@ -22,11 +22,11 @@ import (
 	"path/filepath"
 
 	"github.com/pkg/errors"
-	dotnetgen "github.com/pulumi/pulumi/pkg/v2/codegen/dotnet"
-	gogen "github.com/pulumi/pulumi/pkg/v2/codegen/go"
-	pygen "github.com/pulumi/pulumi/pkg/v2/codegen/python"
-	"github.com/pulumi/pulumi/pkg/v2/codegen/schema"
-	"github.com/pulumi/pulumi/sdk/v2/go/common/util/contract"
+	dotnetgen "github.com/pulumi/pulumi/pkg/v3/codegen/dotnet"
+	gogen "github.com/pulumi/pulumi/pkg/v3/codegen/go"
+	pygen "github.com/pulumi/pulumi/pkg/v3/codegen/python"
+	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 )
 
 const Tool = "pulumi-gen-eks"
@@ -80,8 +80,8 @@ func main() {
 }
 
 const (
-	awsVersion = "v3.25.1"
-	k8sVersion = "v2.7.7"
+	awsVersion = "v4.0.0"
+	k8sVersion = "v3.0.0"
 )
 
 func awsRef(ref string) string {
@@ -1183,16 +1183,16 @@ func generateSchema() schema.PackageSpec {
 		Language: map[string]json.RawMessage{
 			"csharp": rawMessage(map[string]interface{}{
 				"packageReferences": map[string]string{
-					"Pulumi":            "2.*",
-					"Pulumi.Aws":        "3.*",
-					"Pulumi.Kubernetes": "2.*",
+					"Pulumi":            "3.*",
+					"Pulumi.Aws":        "4.*",
+					"Pulumi.Kubernetes": "3.*",
 				},
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
-					"pulumi":            ">=2.15.5,<3.0.0",
-					"pulumi-aws":        ">=3.18.0,<4.0.0",
-					"pulumi-kubernetes": ">=2.7.3,<3.0.0",
+					"pulumi":            ">=3.0.0,<4.0.0",
+					"pulumi-aws":        ">=4.0.0,<5.0.0",
+					"pulumi-kubernetes": ">=3.0.0,<4.0.0",
 				},
 				"usesIOClasses": true,
 				// TODO: Embellish the readme

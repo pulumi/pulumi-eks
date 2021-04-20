@@ -1379,18 +1379,18 @@ export class Cluster extends pulumi.ComponentResource {
         // Check that AWS provider credential options are set for the kubeconfig
         // to use with the given auth method.
         if (opts?.provider && !args.providerCredentialOpts) {
-            throw new Error("providerCredentialOpts and an AWS provider instance must be set together");
+            throw new Error("It looks like you're using an explicit AWS provider. Please specify this provider in providerCredentialOpts.");
         }
         if (process.env.AWS_PROFILE && !args.providerCredentialOpts) {
             args.providerCredentialOpts = {
-                profileName: process.env.AWS_PROFILE
+                profileName: process.env.AWS_PROFILE,
             };
         }
         const awsConfig = new pulumi.Config("aws");
         const awsProfile = awsConfig.get("profile");
         if (awsProfile && !args.providerCredentialOpts) {
             args.providerCredentialOpts = {
-                profileName: awsProfile
+                profileName: awsProfile,
             };
         }
 

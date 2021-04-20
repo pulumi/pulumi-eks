@@ -17,7 +17,7 @@ const profileName = process.env.ALT_AWS_PROFILE;
 // and current region.
 const awsProvider = new aws.Provider("aws-provider", {
     profile: profileName,
-    region: <aws.Region>aws.getRegion().name,
+    region: aws.getRegion().then(region => <aws.Region>region.name),
 });
 
 // Define the AWS provider credential opts to configure the cluster's
