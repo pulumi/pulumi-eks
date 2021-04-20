@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pulumi/pulumi/sdk/v2/go/common/apitype"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
@@ -89,7 +90,7 @@ func assertEKSConfigMapReady(t *testing.T, clientset *kubernetes.Clientset) {
 
 	// Attempt to validate that the aws-auth ConfigMap exists.
 	for !awsAuthReady && retries > 0 {
-		awsAuth, err = clientset.CoreV1().ConfigMaps(namespace).Get(configMapName, metav1.GetOptions{})
+		awsAuth, err = clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, metav1.GetOptions{})
 		retries--
 		if err != nil {
 			waitFor(t, fmt.Sprintf("ConfigMap %q", configMapName), "returned")
@@ -121,7 +122,7 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 	// Attempt to validate that the total desired worker Node count of
 	// instances are up & running.
 	for i := 0; i < MaxRetries; i++ {
-		nodes, err = clientset.CoreV1().Nodes().List(metav1.ListOptions{})
+		nodes, err = clientset.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
 			waitFor(t, "list of all Nodes", fmt.Sprintf("returned: %s", err))
 			continue
@@ -176,21 +177,21 @@ func AssertKindInAllNamespacesReady(t *testing.T, clientset *kubernetes.Clientse
 	for i := 0; i < MaxRetries; i++ {
 		switch n := strings.ToLower(name); {
 		case n == "deployments" || n == "deployment" || n == "deploy":
-			list, err = clientset.AppsV1().Deployments("").List(metav1.ListOptions{})
+			list, err = clientset.AppsV1().Deployments("").List(context.TODO(), metav1.ListOptions{})
 			if err != nil {
 				waitFor(t, "Deployments list", fmt.Sprintf("returned: %s", err))
 			} else {
 				break
 			}
 		case n == "replicasets" || n == "replicaset" || n == "rs":
-			list, err = clientset.AppsV1().ReplicaSets("").List(metav1.ListOptions{})
+			list, err = clientset.AppsV1().ReplicaSets("").List(context.TODO(), metav1.ListOptions{})
 			if err != nil {
 				waitFor(t, "ReplicaSets list", fmt.Sprintf("returned: %s", err))
 			} else {
 				break
 			}
 		case n == "pods" || n == "pod" || n == "po":
-			list, err = clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+			list, err = clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 			if err != nil {
 				waitFor(t, "Pods list", fmt.Sprintf("returned: %s", err))
 			} else {
@@ -306,7 +307,7 @@ func PrintAndLog(s string, t *testing.T) {
 // IsNodeReady attempts to check if the Node status condition is ready.
 func IsNodeReady(t *testing.T, clientset *kubernetes.Clientset, node *corev1.Node) bool {
 	// Attempt to retrieve Node.
-	o, err := clientset.CoreV1().Nodes().Get(node.Name, metav1.GetOptions{})
+	o, err := clientset.CoreV1().Nodes().Get(context.TODO(), node.Name, metav1.GetOptions{})
 	if err != nil {
 		return false
 	}
@@ -325,7 +326,7 @@ func IsNodeReady(t *testing.T, clientset *kubernetes.Clientset, node *corev1.Nod
 // IsPodReady attempts to check if the Pod's status & condition is ready.
 func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod *corev1.Pod) bool {
 	// Attempt to retrieve Pod.
-	o, err := clientset.CoreV1().Pods(pod.Namespace).Get(pod.Name, metav1.GetOptions{})
+	o, err := clientset.CoreV1().Pods(pod.Namespace).Get(context.TODO(), pod.Name, metav1.GetOptions{})
 	if err != nil {
 		return false
 	}
@@ -350,7 +351,7 @@ func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod *corev1.Pod) 
 // are ready.
 func IsDeploymentReady(t *testing.T, clientset *kubernetes.Clientset, deployment *appsv1.Deployment) bool {
 	// Attempt to retrieve Deployment.
-	o, err := clientset.AppsV1().Deployments(deployment.Namespace).Get(deployment.Name, metav1.GetOptions{})
+	o, err := clientset.AppsV1().Deployments(deployment.Namespace).Get(context.TODO(), deployment.Name, metav1.GetOptions{})
 	if err != nil {
 		return false
 	}
@@ -370,7 +371,7 @@ func IsDeploymentReady(t *testing.T, clientset *kubernetes.Clientset, deployment
 // are ready.
 func IsReplicaSetReady(t *testing.T, clientset *kubernetes.Clientset, replicaSet *appsv1.ReplicaSet) bool {
 	// Attempt to retrieve ReplicaSet.
-	o, err := clientset.AppsV1().ReplicaSets(replicaSet.Namespace).Get(replicaSet.Name, metav1.GetOptions{})
+	o, err := clientset.AppsV1().ReplicaSets(replicaSet.Namespace).Get(context.TODO(), replicaSet.Name, metav1.GetOptions{})
 	if err != nil {
 		return false
 	}
