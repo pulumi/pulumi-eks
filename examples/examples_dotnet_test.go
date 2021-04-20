@@ -19,7 +19,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pulumi/pulumi-eks/utils"
+	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 )
 
