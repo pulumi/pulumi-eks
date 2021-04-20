@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/blang/semver"
-	"github.com/pulumi/pulumi/sdk/v2/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
 type module struct {
@@ -21,21 +21,22 @@ func (m *module) Version() semver.Version {
 func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi.Resource, err error) {
 	switch typ {
 	case "eks:index:Cluster":
-		r, err = NewCluster(ctx, name, nil, pulumi.URN_(urn))
+		r = &Cluster{}
 	case "eks:index:ClusterCreationRoleProvider":
-		r, err = NewClusterCreationRoleProvider(ctx, name, nil, pulumi.URN_(urn))
+		r = &ClusterCreationRoleProvider{}
 	case "eks:index:ManagedNodeGroup":
-		r, err = NewManagedNodeGroup(ctx, name, nil, pulumi.URN_(urn))
+		r = &ManagedNodeGroup{}
 	case "eks:index:NodeGroup":
-		r, err = NewNodeGroup(ctx, name, nil, pulumi.URN_(urn))
+		r = &NodeGroup{}
 	case "eks:index:NodeGroupSecurityGroup":
-		r, err = NewNodeGroupSecurityGroup(ctx, name, nil, pulumi.URN_(urn))
+		r = &NodeGroupSecurityGroup{}
 	case "eks:index:VpcCni":
-		r, err = NewVpcCni(ctx, name, nil, pulumi.URN_(urn))
+		r = &VpcCni{}
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", typ)
 	}
 
+	err = ctx.RegisterResource(typ, name, nil, r, pulumi.URN_(urn))
 	return
 }
 
@@ -52,7 +53,9 @@ func (p *pkg) ConstructProvider(ctx *pulumi.Context, name, typ, urn string) (pul
 		return nil, fmt.Errorf("unknown provider type: %s", typ)
 	}
 
-	return NewProvider(ctx, name, nil, pulumi.URN_(urn))
+	r := &Provider{}
+	err := ctx.RegisterResource(typ, name, nil, r, pulumi.URN_(urn))
+	return r, err
 }
 
 func init() {

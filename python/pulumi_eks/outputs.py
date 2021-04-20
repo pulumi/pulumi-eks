@@ -5,8 +5,8 @@
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Mapping, Optional, Sequence, Union
-from . import _utilities, _tables
+from typing import Any, Mapping, Optional, Sequence, Union, overload
+from . import _utilities
 from . import outputs
 from .vpc_cni import VpcCni
 import pulumi_aws
@@ -24,6 +24,65 @@ class ClusterNodeGroupOptions(dict):
     """
     Describes the configuration options accepted by a cluster to create its own node groups.
     """
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "amiId":
+            suggest = "ami_id"
+        elif key == "autoScalingGroupTags":
+            suggest = "auto_scaling_group_tags"
+        elif key == "bootstrapExtraArgs":
+            suggest = "bootstrap_extra_args"
+        elif key == "cloudFormationTags":
+            suggest = "cloud_formation_tags"
+        elif key == "clusterIngressRule":
+            suggest = "cluster_ingress_rule"
+        elif key == "desiredCapacity":
+            suggest = "desired_capacity"
+        elif key == "encryptRootBlockDevice":
+            suggest = "encrypt_root_block_device"
+        elif key == "extraNodeSecurityGroups":
+            suggest = "extra_node_security_groups"
+        elif key == "instanceProfile":
+            suggest = "instance_profile"
+        elif key == "instanceType":
+            suggest = "instance_type"
+        elif key == "keyName":
+            suggest = "key_name"
+        elif key == "kubeletExtraArgs":
+            suggest = "kubelet_extra_args"
+        elif key == "maxSize":
+            suggest = "max_size"
+        elif key == "minSize":
+            suggest = "min_size"
+        elif key == "nodeAssociatePublicIpAddress":
+            suggest = "node_associate_public_ip_address"
+        elif key == "nodePublicKey":
+            suggest = "node_public_key"
+        elif key == "nodeRootVolumeSize":
+            suggest = "node_root_volume_size"
+        elif key == "nodeSecurityGroup":
+            suggest = "node_security_group"
+        elif key == "nodeSubnetIds":
+            suggest = "node_subnet_ids"
+        elif key == "nodeUserData":
+            suggest = "node_user_data"
+        elif key == "nodeUserDataOverride":
+            suggest = "node_user_data_override"
+        elif key == "spotPrice":
+            suggest = "spot_price"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in ClusterNodeGroupOptions. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        ClusterNodeGroupOptions.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        ClusterNodeGroupOptions.__key_warning(key)
+        return super().get(key, default)
+
     def __init__(__self__, *,
                  ami_id: Optional[str] = None,
                  auto_scaling_group_tags: Optional[Mapping[str, str]] = None,
@@ -113,7 +172,7 @@ class ClusterNodeGroupOptions(dict):
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
         :param str spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
-        :param Mapping[str, 'TaintArgs'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
+        :param Mapping[str, 'Taint'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param str version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         """
         if ami_id is not None:
@@ -413,15 +472,57 @@ class ClusterNodeGroupOptions(dict):
         """
         return pulumi.get(self, "version")
 
-    def _translate_property(self, prop):
-        return _tables.CAMEL_TO_SNAKE_CASE_TABLE.get(prop) or prop
-
 
 @pulumi.output_type
 class CoreData(dict):
     """
     Defines the core set of data associated with an EKS cluster, including the network in which it runs.
     """
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "clusterSecurityGroup":
+            suggest = "cluster_security_group"
+        elif key == "instanceRoles":
+            suggest = "instance_roles"
+        elif key == "nodeGroupOptions":
+            suggest = "node_group_options"
+        elif key == "subnetIds":
+            suggest = "subnet_ids"
+        elif key == "vpcId":
+            suggest = "vpc_id"
+        elif key == "awsProvider":
+            suggest = "aws_provider"
+        elif key == "eksNodeAccess":
+            suggest = "eks_node_access"
+        elif key == "encryptionConfig":
+            suggest = "encryption_config"
+        elif key == "fargateProfile":
+            suggest = "fargate_profile"
+        elif key == "nodeSecurityGroupTags":
+            suggest = "node_security_group_tags"
+        elif key == "oidcProvider":
+            suggest = "oidc_provider"
+        elif key == "privateSubnetIds":
+            suggest = "private_subnet_ids"
+        elif key == "publicSubnetIds":
+            suggest = "public_subnet_ids"
+        elif key == "storageClasses":
+            suggest = "storage_classes"
+        elif key == "vpcCni":
+            suggest = "vpc_cni"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in CoreData. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        CoreData.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        CoreData.__key_warning(key)
+        return super().get(key, default)
+
     def __init__(__self__, *,
                  cluster: 'pulumi_aws.eks.Cluster',
                  cluster_security_group: 'pulumi_aws.ec2.SecurityGroup',
@@ -579,15 +680,35 @@ class CoreData(dict):
     def vpc_cni(self) -> Optional['VpcCni']:
         return pulumi.get(self, "vpc_cni")
 
-    def _translate_property(self, prop):
-        return _tables.CAMEL_TO_SNAKE_CASE_TABLE.get(prop) or prop
-
 
 @pulumi.output_type
 class NodeGroupData(dict):
     """
     NodeGroupData describes the resources created for the given NodeGroup.
     """
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "autoScalingGroupName":
+            suggest = "auto_scaling_group_name"
+        elif key == "cfnStack":
+            suggest = "cfn_stack"
+        elif key == "extraNodeSecurityGroups":
+            suggest = "extra_node_security_groups"
+        elif key == "nodeSecurityGroup":
+            suggest = "node_security_group"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in NodeGroupData. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        NodeGroupData.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        NodeGroupData.__key_warning(key)
+        return super().get(key, default)
+
     def __init__(__self__, *,
                  auto_scaling_group_name: str,
                  cfn_stack: 'pulumi_aws.cloudformation.Stack',
@@ -637,9 +758,6 @@ class NodeGroupData(dict):
         """
         return pulumi.get(self, "node_security_group")
 
-    def _translate_property(self, prop):
-        return _tables.CAMEL_TO_SNAKE_CASE_TABLE.get(prop) or prop
-
 
 @pulumi.output_type
 class Taint(dict):
@@ -672,8 +790,5 @@ class Taint(dict):
         The value of the taint.
         """
         return pulumi.get(self, "value")
-
-    def _translate_property(self, prop):
-        return _tables.CAMEL_TO_SNAKE_CASE_TABLE.get(prop) or prop
 
 

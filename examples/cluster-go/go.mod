@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/pulumi/pulumi-eks/sdk v0.21.0
-	github.com/pulumi/pulumi/sdk/v2 v2.18.2
+	github.com/pulumi/pulumi/sdk/v3 v3.0.0
 )
 
 // TODO: remove and update pulumi-eks/sdk dependency above

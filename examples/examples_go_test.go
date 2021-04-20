@@ -17,7 +17,7 @@ package example
 
 import (
 	"github.com/pulumi/pulumi-eks/examples/utils"
-	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
+	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"path/filepath"
 	"testing"
 )
