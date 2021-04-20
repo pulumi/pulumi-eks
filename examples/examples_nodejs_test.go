@@ -26,7 +26,7 @@ import (
 	"time"
 
 	"github.com/pulumi/pulumi-eks/examples/utils"
-	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
+	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/stretchr/testify/assert"
 )
 
