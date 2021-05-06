@@ -107,6 +107,7 @@ func getPythonBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Dependencies: []string{
 			filepath.Join("..", "python", "bin"),
 		},
+		Verbose: true,
 	})
 
 	return pythonBase
