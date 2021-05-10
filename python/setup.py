@@ -55,7 +55,7 @@ setup(name='pulumi_eks',
           'parver>=0.2.1',
           'pulumi>=3.0.0,<4.0.0',
           'pulumi-aws>=4.0.0,<5.0.0',
-          'pulumi-kubernetes>=3.0.0,<4.0.0',
+          'pulumi-kubernetes==3.1.0',
           'semver>=2.8.1'
       ],
       zip_safe=False)

@@ -1243,7 +1243,7 @@
             "requires": {
                 "pulumi": "\u003e=3.0.0,\u003c4.0.0",
                 "pulumi-aws": "\u003e=4.0.0,\u003c5.0.0",
-                "pulumi-kubernetes": "\u003e=3.0.0,\u003c4.0.0"
+                "pulumi-kubernetes": "==3.1.0"
             },
             "usesIOClasses": true
         }

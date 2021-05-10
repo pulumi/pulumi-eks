@@ -1192,7 +1192,7 @@ func generateSchema() schema.PackageSpec {
 				"requires": map[string]string{
 					"pulumi":            ">=3.0.0,<4.0.0",
 					"pulumi-aws":        ">=4.0.0,<5.0.0",
-					"pulumi-kubernetes": ">=3.0.0,<4.0.0",
+					"pulumi-kubernetes": "==3.1.0",
 				},
 				"usesIOClasses": true,
 				// TODO: Embellish the readme
