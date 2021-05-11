@@ -50,7 +50,9 @@ func getCSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Dependencies: []string{
 			"Pulumi.Eks",
 		},
-		Verbose: true,
+		Verbose:       true,
+		DebugUpdates:  true,
+		DebugLogLevel: 9,
 	})
 
 	return csharpBase
