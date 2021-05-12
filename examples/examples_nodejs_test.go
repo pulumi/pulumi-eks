@@ -553,6 +553,7 @@ func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Dependencies: []string{
 			"@pulumi/eks",
 		},
+		Verbose: true,
 	})
 
 	return baseJS
