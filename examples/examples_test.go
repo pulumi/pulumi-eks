@@ -51,7 +51,6 @@ func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		ExpectRefreshChanges: true,
 		RetryFailedSteps:     true,
 		ReportStats:          integration.NewS3Reporter("us-west-2", "eng.pulumi.com", "testreports"),
-		Tracing:              "https://tracing.pulumi-engineering.com/collector/api/v1/spans",
 	}
 }
 
