@@ -1387,7 +1387,7 @@ export class Cluster extends pulumi.ComponentResource {
         const awsConfig = new pulumi.Config("aws");
         const awsProfile = awsConfig.get("profile");
         if (awsProfile && !args.providerCredentialOpts) {
-            throw new Error("It looks like you've set an AWS profile in your stack config. Please specify this profile providerCredentialOpts.");
+            throw new Error("It looks like you've set an AWS profile in your stack config. Please specify this profile in providerCredentialOpts.");
         }
 
         // Create the core resources required by the cluster.
