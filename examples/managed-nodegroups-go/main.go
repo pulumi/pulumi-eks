@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/iam"
 	"github.com/pulumi/pulumi-eks/sdk/go/eks"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -13,7 +14,7 @@ var managedPolicyArns = []string{
 	"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
 }
 
-func createRole(ctx *pulumi.Context, name string) (iam.RoleInput, error) {
+func createRole(ctx *pulumi.Context, name string) (*iam.Role, error) {
 	version := "2012-10-17"
 	statementId := "AllowAssumeRole"
 	effect := "Allow"
@@ -91,32 +92,32 @@ func main() {
 
 		// Create a simple AWS managed node group using a cluster as input and the
 		// refactored API.
-		_, err = eks.NewManagedNodeGroup(ctx, "aws-managed-ng0",
+		_, err = eks.NewManagedNodeGroup(ctx,
+			"aws-managed-ng0",
 			&eks.ManagedNodeGroupArgs{
-				Cluster: cluster.Core,
+				Cluster:  cluster.Core,
 				NodeRole: role0,
 			})
 		if err != nil {
 			return err
 		}
 
-		result := pulumi.All(cluster, role1, role2).ApplyT(func(args []interface{}) (string, error) {
-			role1 := args[1].(iam.Role)
-			// Create a simple AWS managed node group using a cluster as input and the
-			// refactored API.
-			_, err := eks.NewManagedNodeGroup(ctx,
-				"example-managed-ng1",
-				&eks.ManagedNodeGroupArgs{
-					Cluster:       cluster.Core,
-					NodeGroupName: pulumi.String("aws-managed-ng1"),
-					NodeRoleArn:   role1.Arn,
-				})
-			if err != nil {
-				return "", err
-			}
+		// Create a simple AWS managed node group using a cluster as input and the
+		// refactored API.
+		_, err = eks.NewManagedNodeGroup(ctx,
+			"example-managed-ng1",
+			&eks.ManagedNodeGroupArgs{
+				Cluster:       cluster.Core,
+				NodeGroupName: pulumi.String("aws-managed-ng1"),
+				NodeRoleArn:   role1.Arn,
+			})
+		if err != nil {
+			return err
+		}
 
-			role2 := args[2].(iam.Role)
-			_, err = eks.NewManagedNodeGroup(ctx, "example-managed-ng2", &eks.ManagedNodeGroupArgs{
+		_, err = eks.NewManagedNodeGroup(ctx,
+			"example-managed-ng2",
+			&eks.ManagedNodeGroupArgs{
 				Cluster:       cluster.Core,
 				NodeGroupName: pulumi.String("aws-managed-ng2"),
 				NodeRoleArn:   role2.Arn,
@@ -125,15 +126,10 @@ func main() {
 				Labels:        pulumi.StringMap{"ondemand": pulumi.String("true")},
 				Tags:          pulumi.StringMap{"org": pulumi.String("pulumi")},
 			})
-			if err != nil {
-				return "", err
-			}
+		if err != nil {
+			return err
+		}
 
-			return "success", nil
-		}).(pulumi.StringOutput)
-
-		// Export the name of the bucket
-		ctx.Export("result", result)
 		return nil
 	})
 }
