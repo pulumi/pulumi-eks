@@ -1,9 +1,12 @@
 ## Unreleased
 
+- Upgrade Pulumi dependencies
+  [#589](https://github.com/pulumi/pulumi-eks/pull/589)
+
 ## 0.30.0 (Released April 19, 2021)
 
 - Upgrade Pulumi dependencies to 3.0 releases
-  [#548](https://github.com/pulumi/pulumi-eks/pull/564)
+  [#564](https://github.com/pulumi/pulumi-eks/pull/564)
 
 - Update wording for providerCredentialOpt errors
   [#559](https://github.com/pulumi/pulumi-eks/pull/559)
