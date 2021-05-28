@@ -16,10 +16,11 @@
 package example
 
 import (
-	"github.com/pulumi/pulumi-eks/examples/utils"
-	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"path/filepath"
 	"testing"
+
+	"github.com/pulumi/pulumi-eks/examples/utils"
+	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 )
 
 func TestAccClusterGo(t *testing.T) {
@@ -46,9 +47,9 @@ func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Config: map[string]string{
 			"aws:region": region,
 		},
-		//Dependencies: []string{
-		//	"github.com/pulumi/pulumi-eks/sdk",
-		//},
+		Dependencies: []string{
+			"github.com/pulumi/pulumi-eks/sdk",
+		},
 		Verbose: true,
 	})
 
