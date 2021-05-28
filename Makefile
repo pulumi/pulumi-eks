@@ -20,7 +20,7 @@ provider::
 
 build_nodejs:: VERSION := $(shell pulumictl get version --language javascript)
 build_nodejs::
-	rm -rf nodejs/eks/bin
+	rm -rf nodejs/eks/bin/*
 	cd nodejs/eks && \
 		yarn install && \
 		yarn run tsc && \
