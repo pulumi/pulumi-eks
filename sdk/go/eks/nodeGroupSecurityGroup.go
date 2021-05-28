@@ -49,9 +49,9 @@ func NewNodeGroupSecurityGroup(ctx *pulumi.Context,
 
 type nodeGroupSecurityGroupArgs struct {
 	// The security group associated with the EKS cluster.
-	ClusterSecurityGroup ec2.SecurityGroup `pulumi:"clusterSecurityGroup"`
+	ClusterSecurityGroup *ec2.SecurityGroup `pulumi:"clusterSecurityGroup"`
 	// The EKS cluster associated with the worker node group
-	EksCluster eks.Cluster `pulumi:"eksCluster"`
+	EksCluster *eks.Cluster `pulumi:"eksCluster"`
 	// Key-value mapping of tags to apply to this security group.
 	Tags map[string]string `pulumi:"tags"`
 	// The VPC in which to create the worker node group.
