@@ -775,8 +775,8 @@ func (o ClusterNodeGroupOptionsPtrOutput) Version() pulumi.StringPtrOutput {
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreData struct {
 	AwsProvider           *aws.Provider                      `pulumi:"awsProvider"`
-	Cluster               eks.Cluster                        `pulumi:"cluster"`
-	ClusterSecurityGroup  ec2.SecurityGroup                  `pulumi:"clusterSecurityGroup"`
+	Cluster               *eks.Cluster                       `pulumi:"cluster"`
+	ClusterSecurityGroup  *ec2.SecurityGroup                 `pulumi:"clusterSecurityGroup"`
 	EksNodeAccess         *corev1.ConfigMap                  `pulumi:"eksNodeAccess"`
 	EncryptionConfig      *eks.ClusterEncryptionConfig       `pulumi:"encryptionConfig"`
 	Endpoint              string                             `pulumi:"endpoint"`
@@ -787,7 +787,7 @@ type CoreData struct {
 	NodeSecurityGroupTags map[string]string                  `pulumi:"nodeSecurityGroupTags"`
 	OidcProvider          *iam.OpenIdConnectProvider         `pulumi:"oidcProvider"`
 	PrivateSubnetIds      []string                           `pulumi:"privateSubnetIds"`
-	Provider              kubernetes.Provider                `pulumi:"provider"`
+	Provider              *kubernetes.Provider               `pulumi:"provider"`
 	PublicSubnetIds       []string                           `pulumi:"publicSubnetIds"`
 	StorageClasses        map[string]*storagev1.StorageClass `pulumi:"storageClasses"`
 	SubnetIds             []string                           `pulumi:"subnetIds"`
@@ -913,11 +913,11 @@ func (o CoreDataOutput) AwsProvider() aws.ProviderOutput {
 }
 
 func (o CoreDataOutput) Cluster() eks.ClusterOutput {
-	return o.ApplyT(func(v CoreData) eks.Cluster { return v.Cluster }).(eks.ClusterOutput)
+	return o.ApplyT(func(v CoreData) *eks.Cluster { return v.Cluster }).(eks.ClusterOutput)
 }
 
 func (o CoreDataOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v CoreData) ec2.SecurityGroup { return v.ClusterSecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v CoreData) *ec2.SecurityGroup { return v.ClusterSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
 func (o CoreDataOutput) EksNodeAccess() corev1.ConfigMapOutput {
@@ -961,7 +961,7 @@ func (o CoreDataOutput) PrivateSubnetIds() pulumi.StringArrayOutput {
 }
 
 func (o CoreDataOutput) Provider() kubernetes.ProviderOutput {
-	return o.ApplyT(func(v CoreData) kubernetes.Provider { return v.Provider }).(kubernetes.ProviderOutput)
+	return o.ApplyT(func(v CoreData) *kubernetes.Provider { return v.Provider }).(kubernetes.ProviderOutput)
 }
 
 func (o CoreDataOutput) PublicSubnetIds() pulumi.StringArrayOutput {
@@ -1020,7 +1020,7 @@ func (o CoreDataPtrOutput) Cluster() eks.ClusterOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.Cluster
+		return v.Cluster
 	}).(eks.ClusterOutput)
 }
 
@@ -1029,7 +1029,7 @@ func (o CoreDataPtrOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.ClusterSecurityGroup
+		return v.ClusterSecurityGroup
 	}).(ec2.SecurityGroupOutput)
 }
 
@@ -1128,7 +1128,7 @@ func (o CoreDataPtrOutput) Provider() kubernetes.ProviderOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.Provider
+		return v.Provider
 	}).(kubernetes.ProviderOutput)
 }
 
@@ -1188,8 +1188,8 @@ func (o CoreDataPtrOutput) VpcId() pulumi.StringPtrOutput {
 
 // Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
 type CreationRoleProvider struct {
-	Provider aws.Provider `pulumi:"provider"`
-	Role     iam.Role     `pulumi:"role"`
+	Provider *aws.Provider `pulumi:"provider"`
+	Role     *iam.Role     `pulumi:"role"`
 }
 
 // CreationRoleProviderInput is an input type that accepts CreationRoleProviderArgs and CreationRoleProviderOutput values.
@@ -1287,11 +1287,11 @@ func (o CreationRoleProviderOutput) ToCreationRoleProviderPtrOutputWithContext(c
 	}).(CreationRoleProviderPtrOutput)
 }
 func (o CreationRoleProviderOutput) Provider() aws.ProviderOutput {
-	return o.ApplyT(func(v CreationRoleProvider) aws.Provider { return v.Provider }).(aws.ProviderOutput)
+	return o.ApplyT(func(v CreationRoleProvider) *aws.Provider { return v.Provider }).(aws.ProviderOutput)
 }
 
 func (o CreationRoleProviderOutput) Role() iam.RoleOutput {
-	return o.ApplyT(func(v CreationRoleProvider) iam.Role { return v.Role }).(iam.RoleOutput)
+	return o.ApplyT(func(v CreationRoleProvider) *iam.Role { return v.Role }).(iam.RoleOutput)
 }
 
 type CreationRoleProviderPtrOutput struct{ *pulumi.OutputState }
@@ -1317,7 +1317,7 @@ func (o CreationRoleProviderPtrOutput) Provider() aws.ProviderOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.Provider
+		return v.Provider
 	}).(aws.ProviderOutput)
 }
 
@@ -1326,7 +1326,7 @@ func (o CreationRoleProviderPtrOutput) Role() iam.RoleOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.Role
+		return v.Role
 	}).(iam.RoleOutput)
 }
 
@@ -1335,7 +1335,7 @@ type FargateProfile struct {
 	// Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
 	PodExecutionRoleArn *string `pulumi:"podExecutionRoleArn"`
 	// Specify the namespace and label selectors to use for launching pods into Fargate.
-	Selectors []*eks.FargateProfileSelector `pulumi:"selectors"`
+	Selectors []eks.FargateProfileSelector `pulumi:"selectors"`
 	// Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
 	SubnetIds []string `pulumi:"subnetIds"`
 }
@@ -1395,7 +1395,7 @@ func (o FargateProfileOutput) PodExecutionRoleArn() pulumi.StringPtrOutput {
 
 // Specify the namespace and label selectors to use for launching pods into Fargate.
 func (o FargateProfileOutput) Selectors() eks.FargateProfileSelectorArrayOutput {
-	return o.ApplyT(func(v FargateProfile) []*eks.FargateProfileSelector { return v.Selectors }).(eks.FargateProfileSelectorArrayOutput)
+	return o.ApplyT(func(v FargateProfile) []eks.FargateProfileSelector { return v.Selectors }).(eks.FargateProfileSelectorArrayOutput)
 }
 
 // Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
@@ -1622,11 +1622,11 @@ type NodeGroupData struct {
 	// The AutoScalingGroup name for the node group.
 	AutoScalingGroupName string `pulumi:"autoScalingGroupName"`
 	// The CloudFormation Stack which defines the Node AutoScalingGroup.
-	CfnStack cloudformation.Stack `pulumi:"cfnStack"`
+	CfnStack *cloudformation.Stack `pulumi:"cfnStack"`
 	// The additional security groups for the node group that captures user-specific rules.
 	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
 	// The security group for the node group to communicate with the cluster.
-	NodeSecurityGroup ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
+	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
 }
 
 // NodeGroupDataInput is an input type that accepts NodeGroupDataArgs and NodeGroupDataOutput values.
@@ -1737,7 +1737,7 @@ func (o NodeGroupDataOutput) AutoScalingGroupName() pulumi.StringOutput {
 
 // The CloudFormation Stack which defines the Node AutoScalingGroup.
 func (o NodeGroupDataOutput) CfnStack() cloudformation.StackOutput {
-	return o.ApplyT(func(v NodeGroupData) cloudformation.Stack { return v.CfnStack }).(cloudformation.StackOutput)
+	return o.ApplyT(func(v NodeGroupData) *cloudformation.Stack { return v.CfnStack }).(cloudformation.StackOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.
@@ -1747,7 +1747,7 @@ func (o NodeGroupDataOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOut
 
 // The security group for the node group to communicate with the cluster.
 func (o NodeGroupDataOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v NodeGroupData) ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v NodeGroupData) *ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
 type NodeGroupDataPtrOutput struct{ *pulumi.OutputState }
@@ -1784,7 +1784,7 @@ func (o NodeGroupDataPtrOutput) CfnStack() cloudformation.StackOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.CfnStack
+		return v.CfnStack
 	}).(cloudformation.StackOutput)
 }
 
@@ -1804,7 +1804,7 @@ func (o NodeGroupDataPtrOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.NodeSecurityGroup
+		return v.NodeSecurityGroup
 	}).(ec2.SecurityGroupOutput)
 }
 
