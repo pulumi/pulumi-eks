@@ -92,7 +92,8 @@ func main() {
 
 		// Create a simple AWS managed node group using a cluster as input and the
 		// refactored API.
-		_, err = eks.NewManagedNodeGroup(ctx, "aws-managed-ng0",
+		_, err = eks.NewManagedNodeGroup(ctx,
+			"aws-managed-ng0",
 			&eks.ManagedNodeGroupArgs{
 				Cluster:  cluster.Core,
 				NodeRole: role0,
@@ -101,42 +102,34 @@ func main() {
 			return err
 		}
 
-		result := pulumi.All(cluster.ToClusterOutput(), role1.ToRoleOutput(), role2.ToRoleOutput()).ApplyT(
-			func(args []interface{}) (string, error) {
-				cluster := args[0].(*eks.Cluster)
-				role1 := args[1].(iam.Role)
-				// Create a simple AWS managed node group using a cluster as input and the
-				// refactored API.
-				_, err := eks.NewManagedNodeGroup(ctx,
-					"example-managed-ng1",
-					&eks.ManagedNodeGroupArgs{
-						Cluster:       cluster.Core,
-						NodeGroupName: pulumi.String("aws-managed-ng1"),
-						NodeRoleArn:   role1.Arn,
-					})
-				if err != nil {
-					return "", err
-				}
+		// Create a simple AWS managed node group using a cluster as input and the
+		// refactored API.
+		_, err = eks.NewManagedNodeGroup(ctx,
+			"example-managed-ng1",
+			&eks.ManagedNodeGroupArgs{
+				Cluster:       cluster.Core,
+				NodeGroupName: pulumi.String("aws-managed-ng1"),
+				NodeRoleArn:   role1.Arn,
+			})
+		if err != nil {
+			return err
+		}
 
-				role2 := args[2].(iam.Role)
-				_, err = eks.NewManagedNodeGroup(ctx, "example-managed-ng2", &eks.ManagedNodeGroupArgs{
-					Cluster:       cluster.Core,
-					NodeGroupName: pulumi.String("aws-managed-ng2"),
-					NodeRoleArn:   role2.Arn,
-					DiskSize:      pulumi.Int(20),
-					InstanceTypes: pulumi.StringArray{pulumi.String("t2.medium")},
-					Labels:        pulumi.StringMap{"ondemand": pulumi.String("true")},
-					Tags:          pulumi.StringMap{"org": pulumi.String("pulumi")},
-				})
-				if err != nil {
-					return "", err
-				}
+		_, err = eks.NewManagedNodeGroup(ctx,
+			"example-managed-ng2",
+			&eks.ManagedNodeGroupArgs{
+				Cluster:       cluster.Core,
+				NodeGroupName: pulumi.String("aws-managed-ng2"),
+				NodeRoleArn:   role2.Arn,
+				DiskSize:      pulumi.Int(20),
+				InstanceTypes: pulumi.StringArray{pulumi.String("t2.medium")},
+				Labels:        pulumi.StringMap{"ondemand": pulumi.String("true")},
+				Tags:          pulumi.StringMap{"org": pulumi.String("pulumi")},
+			})
+		if err != nil {
+			return err
+		}
 
-				return "success", nil
-			}).(pulumi.StringOutput)
-
-		// Export the name of the bucket
-		ctx.Export("result", result)
 		return nil
 	})
 }
