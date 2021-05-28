@@ -1,3 +1,11 @@
+name: Run Acceptance Tests from PR
+on:
+  repository_dispatch:
+    types: [run-acceptance-tests-command]
+  pull_request:
+    branches:
+      - master
+
 env:
   ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
   ALT_AWS_SECRET_ACCESS_KEY: ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }}
@@ -593,10 +601,3 @@ jobs:
           - 14.x
         test-name:
           - ClusterGo
-name: Run Acceptance Tests from PR
-on:
-  repository_dispatch:
-    types: [run-acceptance-tests-command]
-  pull_request:
-    branches:
-      - master
