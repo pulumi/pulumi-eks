@@ -16,16 +16,18 @@
 package example
 
 import (
-	"github.com/pulumi/pulumi-eks/examples/utils"
-	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"path/filepath"
 	"testing"
+
+	"github.com/pulumi/pulumi-eks/examples/utils"
+	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 )
 
 func TestAccClusterGo(t *testing.T) {
 	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "cluster-go"),
+			RunUpdateTest: false,
+			Dir:           filepath.Join(getCwd(t), "cluster-go"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -45,12 +47,8 @@ func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Config: map[string]string{
 			"aws:region": region,
 		},
-		Dependencies: []string{
-			"pulumi-eks",
-		},
 		Verbose: true,
 	})
 
 	return goBase
 }
-

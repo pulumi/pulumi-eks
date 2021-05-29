@@ -42,9 +42,10 @@ build_python:: schema
 		rm ./bin/setup.py.bak && \
 		cd ./bin && python3 setup.py build sdist
 
+build_go:: VERSION := $(shell pulumictl get version --language generic)
 build_go:: schema
 	rm -rf go
-	cd provider/cmd/pulumi-gen-eks && go run main.go go ../../../sdk/go ../pulumi-resource-eks/schema.json $(VERSION)
+	cd provider/cmd/$(CODEGEN) && go run main.go go ../../../sdk/go ../$(PROVIDER)/schema.json $(VERSION)
 
 build_dotnet:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
 build_dotnet:: schema
