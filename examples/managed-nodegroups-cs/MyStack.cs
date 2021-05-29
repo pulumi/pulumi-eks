@@ -19,7 +19,7 @@ class MyStack : Stack
         // Create an EKS cluster.
         var cluster = new Eks.Cluster("example-managed-nodegroups", new Eks.ClusterArgs
         {
-            SkipDefaultNodeGroups = true,
+            SkipDefaultNodeGroup = true,
             InstanceRoles = { role0, role1, role2 },
         });
 
