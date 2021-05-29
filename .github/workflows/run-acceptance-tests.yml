@@ -508,6 +508,7 @@ jobs:
         test-name:
           - AwsProfileCs
           - ClusterCs
+          - ManagedNodeGroupCs
   test-go:
     name: Run Go Tests
     needs: build_sdk
