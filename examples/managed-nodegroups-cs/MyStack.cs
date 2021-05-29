@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Immutable;
 using Pulumi;
 using Aws = Pulumi.Aws;
 using Eks = Pulumi.Eks;
@@ -13,8 +11,8 @@ class MyStack : Stack
     {
         // IAM roles for the node groups.
         var role0 = Iam.CreateRole("example-role0");
-        var role1 = iam.CreateRole("example-role1");
-        var role2 = iam.CreateRole("example-role2");
+        var role1 = Iam.CreateRole("example-role1");
+        var role2 = Iam.CreateRole("example-role2");
 
         // Create an EKS cluster.
         var cluster = new Eks.Cluster("example-managed-nodegroups", new Eks.ClusterArgs

@@ -1,4 +1,3 @@
-using Pulumi;
 using Aws = Pulumi.Aws;
 
 static class Iam
@@ -33,11 +32,13 @@ static class Iam
         for (int i = 0; i < s_managedPolicyArns.Length; i++)
         {
             // Create RolePolicyAttachment without returning it.
-            var rpa = Aws.Iam.RolePolicyAttachment($"{name}-policy-{i}", new Aws.Iam.RolePolicyAttachmentArgs
+            new Aws.Iam.RolePolicyAttachment($"{name}-policy-{i}", new Aws.Iam.RolePolicyAttachmentArgs
             {
                 PolicyArn = s_managedPolicyArns[i],
                 Role = role.Id,
             });
         }
+
+        return role;
     }
 }
