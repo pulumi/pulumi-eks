@@ -52,7 +52,7 @@ class MyStack : Stack
             Cluster = cluster.Core.Apply(c => c.ToArgs<Eks.Inputs.CoreDataArgs>()), // TODO[pulumi/pulumi-eks#483]: Pass cluster directly.
             NodeGroupName = "aws-managed-ng2",
             NodeRoleArn = role2.Arn,
-            ScalingConfig = new Eks.Inputs.ManagedNodeGroupScalingConfigArgs
+            ScalingConfig = new Aws.Eks.Inputs.NodeGroupScalingConfigArgs
             {
                 DesiredSize = 1,
                 MinSize = 1,
