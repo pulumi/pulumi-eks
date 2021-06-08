@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.31.0 (Released June 8, 2021)
+
 - Upgrade Pulumi dependencies
   [#589](https://github.com/pulumi/pulumi-eks/pull/589)
 
