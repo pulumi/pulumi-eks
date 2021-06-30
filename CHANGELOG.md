@@ -1,4 +1,6 @@
 ## Unreleased
+- Model storageclasses as a map in schema
+  [#596](https://github.com/pulumi/pulumi-eks/pull/596)
 
 ## 0.31.0 (Released June 8, 2021)
 
