@@ -377,10 +377,9 @@ func generateSchema() schema.PackageSpec {
 					},
 					"storageClasses": {
 						TypeSpec: schema.TypeSpec{
-							Type: "string", // TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1"
 							OneOf: []schema.TypeSpec{
 								{Type: "string"},
-								{Type: "string", Ref: "#/types/eks:index:StorageClass"},
+								{Type: "object", AdditionalProperties: &schema.TypeSpec{Ref: "#/types/eks:index:StorageClass"}},
 							},
 						},
 						Description: "An optional set of StorageClasses to enable for the cluster. If this is a " +
@@ -436,10 +435,9 @@ func generateSchema() schema.PackageSpec {
 					},
 					"fargate": {
 						TypeSpec: schema.TypeSpec{
-							Type: "boolean",
 							OneOf: []schema.TypeSpec{
 								{Type: "boolean"},
-								{Type: "boolean", Ref: "#/types/eks:index:FargateProfile"},
+								{Ref: "#/types/eks:index:FargateProfile"},
 							},
 						},
 						Description: "Add support for launching pods in Fargate. Defaults to launching pods in the " +

@@ -55,7 +55,7 @@ class ClusterArgs:
                  role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[pulumi.Input[bool]] = None,
-                 storage_classes: Optional[pulumi.Input[Union[str, 'StorageClassArgs']]] = None,
+                 storage_classes: Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input['StorageClassArgs']]]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  use_default_vpc_cni: Optional[pulumi.Input[bool]] = None,
@@ -202,7 +202,7 @@ class ClusterArgs:
         :param pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups.
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
         :param pulumi.Input[bool] skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-        :param pulumi.Input[Union[str, 'StorageClassArgs']] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
+        :param pulumi.Input[Union[str, Mapping[str, pulumi.Input['StorageClassArgs']]]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
                
                Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: The set of all subnets, public and private, to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
@@ -858,7 +858,7 @@ class ClusterArgs:
 
     @property
     @pulumi.getter(name="storageClasses")
-    def storage_classes(self) -> Optional[pulumi.Input[Union[str, 'StorageClassArgs']]]:
+    def storage_classes(self) -> Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input['StorageClassArgs']]]]]:
         """
         An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
 
@@ -867,7 +867,7 @@ class ClusterArgs:
         return pulumi.get(self, "storage_classes")
 
     @storage_classes.setter
-    def storage_classes(self, value: Optional[pulumi.Input[Union[str, 'StorageClassArgs']]]):
+    def storage_classes(self, value: Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input['StorageClassArgs']]]]]):
         pulumi.set(self, "storage_classes", value)
 
     @property
@@ -1005,7 +1005,7 @@ class Cluster(pulumi.ComponentResource):
                  role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[pulumi.Input[bool]] = None,
-                 storage_classes: Optional[pulumi.Input[Union[str, pulumi.InputType['StorageClassArgs']]]] = None,
+                 storage_classes: Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input[pulumi.InputType['StorageClassArgs']]]]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  use_default_vpc_cni: Optional[pulumi.Input[bool]] = None,
@@ -1156,7 +1156,7 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups.
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
         :param pulumi.Input[bool] skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-        :param pulumi.Input[Union[str, pulumi.InputType['StorageClassArgs']]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
+        :param pulumi.Input[Union[str, Mapping[str, pulumi.Input[pulumi.InputType['StorageClassArgs']]]]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
                
                Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: The set of all subnets, public and private, to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
@@ -1236,7 +1236,7 @@ class Cluster(pulumi.ComponentResource):
                  role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[pulumi.Input[bool]] = None,
-                 storage_classes: Optional[pulumi.Input[Union[str, pulumi.InputType['StorageClassArgs']]]] = None,
+                 storage_classes: Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input[pulumi.InputType['StorageClassArgs']]]]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  use_default_vpc_cni: Optional[pulumi.Input[bool]] = None,
