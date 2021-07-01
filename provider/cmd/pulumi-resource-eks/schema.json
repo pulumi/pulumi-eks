@@ -636,13 +636,11 @@
                     "description": "Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`."
                 },
                 "fargate": {
-                    "type": "boolean",
                     "oneOf": [
                         {
                             "type": "boolean"
                         },
                         {
-                            "type": "boolean",
                             "$ref": "#/types/eks:index:FargateProfile"
                         }
                     ],
@@ -770,14 +768,15 @@
                     "description": "If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided."
                 },
                 "storageClasses": {
-                    "type": "string",
                     "oneOf": [
                         {
                             "type": "string"
                         },
                         {
-                            "type": "string",
-                            "$ref": "#/types/eks:index:StorageClass"
+                            "type": "object",
+                            "additionalProperties": {
+                                "$ref": "#/types/eks:index:StorageClass"
+                            }
                         }
                     ],
                     "description": "An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.\n\nNote: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html"
