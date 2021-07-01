@@ -2009,6 +2009,31 @@ func (i StorageClassArgs) ToStorageClassOutputWithContext(ctx context.Context) S
 	return pulumi.ToOutputWithContext(ctx, i).(StorageClassOutput)
 }
 
+// StorageClassMapInput is an input type that accepts StorageClassMap and StorageClassMapOutput values.
+// You can construct a concrete instance of `StorageClassMapInput` via:
+//
+//          StorageClassMap{ "key": StorageClassArgs{...} }
+type StorageClassMapInput interface {
+	pulumi.Input
+
+	ToStorageClassMapOutput() StorageClassMapOutput
+	ToStorageClassMapOutputWithContext(context.Context) StorageClassMapOutput
+}
+
+type StorageClassMap map[string]StorageClassInput
+
+func (StorageClassMap) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]StorageClass)(nil)).Elem()
+}
+
+func (i StorageClassMap) ToStorageClassMapOutput() StorageClassMapOutput {
+	return i.ToStorageClassMapOutputWithContext(context.Background())
+}
+
+func (i StorageClassMap) ToStorageClassMapOutputWithContext(ctx context.Context) StorageClassMapOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(StorageClassMapOutput)
+}
+
 // StorageClass describes the inputs to a single Kubernetes StorageClass provisioned by AWS. Any number of storage classes can be added to a cluster at creation time. One of these storage classes may be configured the default storage class for the cluster.
 type StorageClassOutput struct{ *pulumi.OutputState }
 
@@ -2081,6 +2106,26 @@ func (o StorageClassOutput) VolumeBindingMode() pulumi.StringPtrOutput {
 // The AWS zone or zones for the EBS volume. If zones is not specified, volumes are generally round-robin-ed across all active zones where Kubernetes cluster has a node. zone and zones parameters must not be used at the same time.
 func (o StorageClassOutput) Zones() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v StorageClass) []string { return v.Zones }).(pulumi.StringArrayOutput)
+}
+
+type StorageClassMapOutput struct{ *pulumi.OutputState }
+
+func (StorageClassMapOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]StorageClass)(nil)).Elem()
+}
+
+func (o StorageClassMapOutput) ToStorageClassMapOutput() StorageClassMapOutput {
+	return o
+}
+
+func (o StorageClassMapOutput) ToStorageClassMapOutputWithContext(ctx context.Context) StorageClassMapOutput {
+	return o
+}
+
+func (o StorageClassMapOutput) MapIndex(k pulumi.StringInput) StorageClassOutput {
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) StorageClass {
+		return vs[0].(map[string]StorageClass)[vs[1].(string)]
+	}).(StorageClassOutput)
 }
 
 // Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
@@ -2840,6 +2885,7 @@ func init() {
 	pulumi.RegisterOutputType(RoleMappingOutput{})
 	pulumi.RegisterOutputType(RoleMappingArrayOutput{})
 	pulumi.RegisterOutputType(StorageClassOutput{})
+	pulumi.RegisterOutputType(StorageClassMapOutput{})
 	pulumi.RegisterOutputType(TaintOutput{})
 	pulumi.RegisterOutputType(TaintMapOutput{})
 	pulumi.RegisterOutputType(UserMappingOutput{})

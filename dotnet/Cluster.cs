@@ -491,7 +491,7 @@ namespace Pulumi.Eks
         /// Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
         /// </summary>
         [Input("storageClasses")]
-        public InputUnion<string, Inputs.StorageClassArgs>? StorageClasses { get; set; }
+        public InputUnion<string, ImmutableDictionary<string, Inputs.StorageClassArgs>>? StorageClasses { get; set; }
 
         [Input("subnetIds")]
         private InputList<string>? _subnetIds;
