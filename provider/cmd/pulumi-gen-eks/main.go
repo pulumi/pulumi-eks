@@ -378,7 +378,7 @@ func generateSchema() schema.PackageSpec {
 					"storageClasses": {
 						TypeSpec: schema.TypeSpec{
 							OneOf: []schema.TypeSpec{
-								{Type: "string"},
+								{Type: "string"}, // TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1"
 								{Type: "object", AdditionalProperties: &schema.TypeSpec{Ref: "#/types/eks:index:StorageClass"}},
 							},
 						},
