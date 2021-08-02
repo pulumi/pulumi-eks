@@ -7,6 +7,9 @@
 - Upgrade Pulumi dependencies
   [#589](https://github.com/pulumi/pulumi-eks/pull/589)
 
+- Add resource registration for VpcCni
+  [#590](https://github.com/pulumi/pulumi-eks/pull/590)
+
 ## 0.30.0 (Released April 19, 2021)
 
 - Upgrade Pulumi dependencies to 3.0 releases

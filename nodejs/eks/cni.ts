@@ -184,25 +184,24 @@ export class VpcCni extends pulumi.CustomResource {
         // This was previously implemented as a dynamic provider, so alias the old type.
         const aliasOpts = { aliases: [{ type: "pulumi-nodejs:dynamic:Resource" }] };
         opts = pulumi.mergeOptions(opts, aliasOpts);
-        args = args || {};
         super("eks:index:VpcCni", name, {
-            kubeconfig: pulumi.output(kubeconfig).apply(JSON.stringify),
-            nodePortSupport: args.nodePortSupport,
-            customNetworkConfig: args.customNetworkConfig,
-            externalSnat: args.externalSnat,
-            warmEniTarget: args.warmEniTarget,
-            warmIpTarget: args.warmIpTarget,
-            logLevel: args.logLevel,
-            logFile: args.logFile,
-            image: args.image,
-            eniConfigLabelDef: args.eniConfigLabelDef,
-            pluginLogLevel: args.pluginLogLevel,
-            pluginLogFile: args.pluginLogFile,
-            enablePodEni: args.enablePodEni,
-            cniConfigureRpfilter: args.cniConfigureRpfilter,
-            cniCustomNetworkCfg: args.cniCustomNetworkCfg,
-            cniExternalSnat: args.cniCustomNetworkCfg,
-            securityContextPrivileged: args.securityContextPrivileged,
+            kubeconfig: kubeconfig ? pulumi.output(kubeconfig).apply(JSON.stringify) : undefined,
+            nodePortSupport: args?.nodePortSupport,
+            customNetworkConfig: args?.customNetworkConfig,
+            externalSnat: args?.externalSnat,
+            warmEniTarget: args?.warmEniTarget,
+            warmIpTarget: args?.warmIpTarget,
+            logLevel: args?.logLevel,
+            logFile: args?.logFile,
+            image: args?.image,
+            eniConfigLabelDef: args?.eniConfigLabelDef,
+            pluginLogLevel: args?.pluginLogLevel,
+            pluginLogFile: args?.pluginLogFile,
+            enablePodEni: args?.enablePodEni,
+            cniConfigureRpfilter: args?.cniConfigureRpfilter,
+            cniCustomNetworkCfg: args?.cniCustomNetworkCfg,
+            cniExternalSnat: args?.cniCustomNetworkCfg,
+            securityContextPrivileged: args?.securityContextPrivileged,
         }, opts);
     }
 }
