@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
+import { VpcCni } from "../../cni";
 import { clusterCreationRoleProviderProviderFactory, clusterProviderFactory } from "./cluster";
 import { vpcCniProviderFactory } from "./cni";
 import { managedNodeGroupProviderFactory, nodeGroupProviderFactory } from "./nodegroup";
@@ -33,6 +34,21 @@ class Provider implements pulumi.provider.Provider {
         "eks:index:RandomSuffix": randomSuffixProviderFactory,
         "eks:index:VpcCni": vpcCniProviderFactory,
     };
+
+    constructor() {
+        // Register any resources that can come back as resource references that need to be rehydrated.
+        pulumi.runtime.registerResourceModule("eks", "index", {
+            version: getVersion(),
+            construct: (name, type, urn) => {
+                switch (type) {
+                    case "eks:index:VpcCni":
+                        return new VpcCni(name, undefined, undefined, { urn });
+                    default:
+                        throw new Error(`unknown resource type ${type}`);
+                }
+            },
+        });
+    }
 
     check(urn: pulumi.URN, olds: any, news: any): Promise<pulumi.provider.CheckResult> {
         const provider = this.getProviderForURN(urn);
