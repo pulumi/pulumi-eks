@@ -1,14 +1,19 @@
 ## Unreleased
+
+
+
+## 0.32.0 (Released August 4, 2021)
+
 - Model storageclasses as a map in schema
   [#596](https://github.com/pulumi/pulumi-eks/pull/596)
+
+- Add resource registration for VpcCni (fixes use of NodeGroup)
+  [#590](https://github.com/pulumi/pulumi-eks/pull/590)
 
 ## 0.31.0 (Released June 8, 2021)
 
 - Upgrade Pulumi dependencies
   [#589](https://github.com/pulumi/pulumi-eks/pull/589)
-
-- Add resource registration for VpcCni
-  [#590](https://github.com/pulumi/pulumi-eks/pull/590)
 
 ## 0.30.0 (Released April 19, 2021)
 
