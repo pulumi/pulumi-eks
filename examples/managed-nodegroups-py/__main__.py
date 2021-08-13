@@ -46,4 +46,5 @@ managed_node_group2 = eks.ManagedNodeGroup("example-managed-ng2",
                                            instance_types=["t2.medium"],
                                            labels={"ondemand": "true"},
                                            tags={"org": "pulumi"},
+                                           taints=[aws.eks.NodeGroupTaintArgs(effect="NO_SCHEDULE", key="dedicated", value="gpuGroup")],
                                            opts=pulumi.ResourceOptions(parent=cluster))

@@ -80,7 +80,7 @@ func main() {
 }
 
 const (
-	awsVersion = "v4.0.0"
+	awsVersion = "v4.15.0"
 	k8sVersion = "v3.0.0"
 )
 
@@ -578,6 +578,12 @@ func generateSchema() schema.PackageSpec {
 							"Defaults to `AL2_x86_64`. Valid values: `AL2_x86_64`, `AL2_x86_64_GPU`, `AL2_ARM_64`. " +
 							"This provider will only perform drift detection if a configuration value is provided.",
 					},
+					"capacityType": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "Type of capacity associated with the EKS Node Group. " +
+							"Valid values: `ON_DEMAND`, `SPOT`. " +
+							"This provider will only perform drift detection if a configuration value is provided.",
+					},
 					"clusterName": {
 						TypeSpec:    schema.TypeSpec{Type: "string"},
 						Description: "Name of the EKS Cluster.",
@@ -615,8 +621,15 @@ func generateSchema() schema.PackageSpec {
 						Description: "Launch Template settings.",
 					},
 					"nodeGroupName": {
-						TypeSpec:    schema.TypeSpec{Type: "string"},
-						Description: "Name of the EKS Node Group.",
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "Name of the EKS Node Group. " +
+							"If omitted, this provider will assign a random, unique name. " +
+							"Conflicts with `nodeGroupNamePrefix`.",
+					},
+					"nodeGroupNamePrefix": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "Creates a unique name beginning with the specified prefix. " +
+							"Conflicts with `nodeGroupName`.",
 					},
 					"nodeRoleArn": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -669,6 +682,13 @@ func generateSchema() schema.PackageSpec {
 							AdditionalProperties: &schema.TypeSpec{Type: "string"},
 						},
 						Description: "Key-value mapping of resource tags.",
+					},
+					"taints": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "array",
+							Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupTaint:NodeGroupTaint")},
+						},
+						Description: "The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.",
 					},
 					"version": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -1182,14 +1202,14 @@ func generateSchema() schema.PackageSpec {
 			"csharp": rawMessage(map[string]interface{}{
 				"packageReferences": map[string]string{
 					"Pulumi":            "3.*",
-					"Pulumi.Aws":        "4.*",
+					"Pulumi.Aws":        "4.15.*",
 					"Pulumi.Kubernetes": "3.*",
 				},
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
 					"pulumi":            ">=3.0.0,<4.0.0",
-					"pulumi-aws":        ">=4.0.0,<5.0.0",
+					"pulumi-aws":        ">=4.15.0,<5.0.0",
 					"pulumi-kubernetes": ">=3.0.0,<4.0.0",
 				},
 				"usesIOClasses": true,
