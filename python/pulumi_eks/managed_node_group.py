@@ -19,6 +19,7 @@ class ManagedNodeGroupArgs:
     def __init__(__self__, *,
                  cluster: pulumi.Input['CoreDataArgs'],
                  ami_type: Optional[pulumi.Input[str]] = None,
+                 capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
@@ -26,6 +27,7 @@ class ManagedNodeGroupArgs:
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  launch_template: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
+                 node_group_name_prefix: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
@@ -33,18 +35,21 @@ class ManagedNodeGroupArgs:
                  scaling_config: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs']] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 taints: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.NodeGroupTaintArgs']]]] = None,
                  version: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a ManagedNodeGroup resource.
         :param pulumi.Input['CoreDataArgs'] cluster: The target EKS cluster.
         :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. Valid values: `AL2_x86_64`, `AL2_x86_64_GPU`, `AL2_ARM_64`. This provider will only perform drift detection if a configuration value is provided.
+        :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
         :param pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs'] launch_template: Launch Template settings.
-        :param pulumi.Input[str] node_group_name: Name of the EKS Node Group.
+        :param pulumi.Input[str] node_group_name: Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
+        :param pulumi.Input[str] node_group_name_prefix: Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`.
         :param pulumi.Input['pulumi_aws.iam.Role'] node_role: The IAM Role that provides permissions for the EKS Node Group.
                
                Note, `nodeRole` and `nodeRoleArn` are mutually exclusive, and a single option must be used.
@@ -68,10 +73,13 @@ class ManagedNodeGroupArgs:
                
                This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of resource tags.
+        :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.NodeGroupTaintArgs']]] taints: The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
         """
         pulumi.set(__self__, "cluster", cluster)
         if ami_type is not None:
             pulumi.set(__self__, "ami_type", ami_type)
+        if capacity_type is not None:
+            pulumi.set(__self__, "capacity_type", capacity_type)
         if cluster_name is not None:
             pulumi.set(__self__, "cluster_name", cluster_name)
         if disk_size is not None:
@@ -86,6 +94,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "launch_template", launch_template)
         if node_group_name is not None:
             pulumi.set(__self__, "node_group_name", node_group_name)
+        if node_group_name_prefix is not None:
+            pulumi.set(__self__, "node_group_name_prefix", node_group_name_prefix)
         if node_role is not None:
             pulumi.set(__self__, "node_role", node_role)
         if node_role_arn is not None:
@@ -100,6 +110,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "subnet_ids", subnet_ids)
         if tags is not None:
             pulumi.set(__self__, "tags", tags)
+        if taints is not None:
+            pulumi.set(__self__, "taints", taints)
         if version is not None:
             pulumi.set(__self__, "version", version)
 
@@ -126,6 +138,18 @@ class ManagedNodeGroupArgs:
     @ami_type.setter
     def ami_type(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "ami_type", value)
+
+    @property
+    @pulumi.getter(name="capacityType")
+    def capacity_type(self) -> Optional[pulumi.Input[str]]:
+        """
+        Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
+        """
+        return pulumi.get(self, "capacity_type")
+
+    @capacity_type.setter
+    def capacity_type(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "capacity_type", value)
 
     @property
     @pulumi.getter(name="clusterName")
@@ -203,13 +227,25 @@ class ManagedNodeGroupArgs:
     @pulumi.getter(name="nodeGroupName")
     def node_group_name(self) -> Optional[pulumi.Input[str]]:
         """
-        Name of the EKS Node Group.
+        Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
         """
         return pulumi.get(self, "node_group_name")
 
     @node_group_name.setter
     def node_group_name(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "node_group_name", value)
+
+    @property
+    @pulumi.getter(name="nodeGroupNamePrefix")
+    def node_group_name_prefix(self) -> Optional[pulumi.Input[str]]:
+        """
+        Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`.
+        """
+        return pulumi.get(self, "node_group_name_prefix")
+
+    @node_group_name_prefix.setter
+    def node_group_name_prefix(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "node_group_name_prefix", value)
 
     @property
     @pulumi.getter(name="nodeRole")
@@ -313,6 +349,18 @@ class ManagedNodeGroupArgs:
 
     @property
     @pulumi.getter
+    def taints(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.NodeGroupTaintArgs']]]]:
+        """
+        The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
+        """
+        return pulumi.get(self, "taints")
+
+    @taints.setter
+    def taints(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.NodeGroupTaintArgs']]]]):
+        pulumi.set(self, "taints", value)
+
+    @property
+    @pulumi.getter
     def version(self) -> Optional[pulumi.Input[str]]:
         return pulumi.get(self, "version")
 
@@ -327,6 +375,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
+                 capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster: Optional[pulumi.Input[pulumi.InputType['CoreDataArgs']]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
@@ -335,6 +384,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  launch_template: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
+                 node_group_name_prefix: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
@@ -342,6 +392,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 taints: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupTaintArgs']]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
@@ -353,6 +404,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. Valid values: `AL2_x86_64`, `AL2_x86_64_GPU`, `AL2_ARM_64`. This provider will only perform drift detection if a configuration value is provided.
+        :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[pulumi.InputType['CoreDataArgs']] cluster: The target EKS cluster.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
@@ -360,7 +412,8 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
         :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']] launch_template: Launch Template settings.
-        :param pulumi.Input[str] node_group_name: Name of the EKS Node Group.
+        :param pulumi.Input[str] node_group_name: Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
+        :param pulumi.Input[str] node_group_name_prefix: Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`.
         :param pulumi.Input['pulumi_aws.iam.Role'] node_role: The IAM Role that provides permissions for the EKS Node Group.
                
                Note, `nodeRole` and `nodeRoleArn` are mutually exclusive, and a single option must be used.
@@ -384,6 +437,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                
                This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of resource tags.
+        :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupTaintArgs']]]] taints: The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
         """
         ...
     @overload
@@ -413,6 +467,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
+                 capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster: Optional[pulumi.Input[pulumi.InputType['CoreDataArgs']]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
@@ -421,6 +476,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  launch_template: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
+                 node_group_name_prefix: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
@@ -428,6 +484,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 taints: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupTaintArgs']]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         if opts is None:
@@ -444,6 +501,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__ = ManagedNodeGroupArgs.__new__(ManagedNodeGroupArgs)
 
             __props__.__dict__["ami_type"] = ami_type
+            __props__.__dict__["capacity_type"] = capacity_type
             if cluster is None and not opts.urn:
                 raise TypeError("Missing required property 'cluster'")
             __props__.__dict__["cluster"] = cluster
@@ -454,6 +512,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["labels"] = labels
             __props__.__dict__["launch_template"] = launch_template
             __props__.__dict__["node_group_name"] = node_group_name
+            __props__.__dict__["node_group_name_prefix"] = node_group_name_prefix
             __props__.__dict__["node_role"] = node_role
             __props__.__dict__["node_role_arn"] = node_role_arn
             __props__.__dict__["release_version"] = release_version
@@ -461,6 +520,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["scaling_config"] = scaling_config
             __props__.__dict__["subnet_ids"] = subnet_ids
             __props__.__dict__["tags"] = tags
+            __props__.__dict__["taints"] = taints
             __props__.__dict__["version"] = version
             __props__.__dict__["node_group"] = None
         super(ManagedNodeGroup, __self__).__init__(

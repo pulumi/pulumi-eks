@@ -18,3 +18,5 @@ ci-scripts/
 /goreleaser
 /package.json
 /PulumiPlugin.yaml
+
+**/venv
