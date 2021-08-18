@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.33.0 (Released August 18, 2021)
+
 - Add `capacityType` and `taints` to `ManagedNodeGroup`
   [#614](https://github.com/pulumi/pulumi-eks/pull/614)
 
