@@ -2367,7 +2367,9 @@ type VpcCniOptions struct {
 	//
 	// Defaults to false.
 	CustomNetworkConfig *bool `pulumi:"customNetworkConfig"`
-	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+	DisableTcpEarlyDemux *bool `pulumi:"disableTcpEarlyDemux"`
+	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni *bool `pulumi:"enablePodEni"`
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
@@ -2378,14 +2380,14 @@ type VpcCniOptions struct {
 	//
 	// Defaults to 9001.
 	EniMtu *int `pulumi:"eniMtu"`
-	// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
-	//
-	// Defaults to false.
-	ExternalSnat *bool `pulumi:"externalSnat"`
 	// Specifies the container image to use in the AWS CNI cluster DaemonSet.
 	//
 	// Defaults to the official AWS CNI image in ECR.
 	Image *string `pulumi:"image"`
+	// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+	//
+	// Defaults to the official AWS CNI init container image in ECR.
+	InitImage *string `pulumi:"initImage"`
 	// Specifies the file path used for logs.
 	//
 	// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -2438,7 +2440,9 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to false.
 	CustomNetworkConfig pulumi.BoolPtrInput `pulumi:"customNetworkConfig"`
-	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+	DisableTcpEarlyDemux pulumi.BoolPtrInput `pulumi:"disableTcpEarlyDemux"`
+	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni pulumi.BoolPtrInput `pulumi:"enablePodEni"`
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
@@ -2449,14 +2453,14 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to 9001.
 	EniMtu pulumi.IntPtrInput `pulumi:"eniMtu"`
-	// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
-	//
-	// Defaults to false.
-	ExternalSnat pulumi.BoolPtrInput `pulumi:"externalSnat"`
 	// Specifies the container image to use in the AWS CNI cluster DaemonSet.
 	//
 	// Defaults to the official AWS CNI image in ECR.
 	Image pulumi.StringPtrInput `pulumi:"image"`
+	// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+	//
+	// Defaults to the official AWS CNI init container image in ECR.
+	InitImage pulumi.StringPtrInput `pulumi:"initImage"`
 	// Specifies the file path used for logs.
 	//
 	// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -2586,7 +2590,12 @@ func (o VpcCniOptionsOutput) CustomNetworkConfig() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.CustomNetworkConfig }).(pulumi.BoolPtrOutput)
 }
 
-// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+func (o VpcCniOptionsOutput) DisableTcpEarlyDemux() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *bool { return v.DisableTcpEarlyDemux }).(pulumi.BoolPtrOutput)
+}
+
+// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 func (o VpcCniOptionsOutput) EnablePodEni() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.EnablePodEni }).(pulumi.BoolPtrOutput)
 }
@@ -2606,18 +2615,18 @@ func (o VpcCniOptionsOutput) EniMtu() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *int { return v.EniMtu }).(pulumi.IntPtrOutput)
 }
 
-// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
-//
-// Defaults to false.
-func (o VpcCniOptionsOutput) ExternalSnat() pulumi.BoolPtrOutput {
-	return o.ApplyT(func(v VpcCniOptions) *bool { return v.ExternalSnat }).(pulumi.BoolPtrOutput)
-}
-
 // Specifies the container image to use in the AWS CNI cluster DaemonSet.
 //
 // Defaults to the official AWS CNI image in ECR.
 func (o VpcCniOptionsOutput) Image() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *string { return v.Image }).(pulumi.StringPtrOutput)
+}
+
+// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+//
+// Defaults to the official AWS CNI init container image in ECR.
+func (o VpcCniOptionsOutput) InitImage() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *string { return v.InitImage }).(pulumi.StringPtrOutput)
 }
 
 // Specifies the file path used for logs.
@@ -2728,7 +2737,17 @@ func (o VpcCniOptionsPtrOutput) CustomNetworkConfig() pulumi.BoolPtrOutput {
 	}).(pulumi.BoolPtrOutput)
 }
 
-// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+func (o VpcCniOptionsPtrOutput) DisableTcpEarlyDemux() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.DisableTcpEarlyDemux
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 func (o VpcCniOptionsPtrOutput) EnablePodEni() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *VpcCniOptions) *bool {
 		if v == nil {
@@ -2763,18 +2782,6 @@ func (o VpcCniOptionsPtrOutput) EniMtu() pulumi.IntPtrOutput {
 	}).(pulumi.IntPtrOutput)
 }
 
-// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
-//
-// Defaults to false.
-func (o VpcCniOptionsPtrOutput) ExternalSnat() pulumi.BoolPtrOutput {
-	return o.ApplyT(func(v *VpcCniOptions) *bool {
-		if v == nil {
-			return nil
-		}
-		return v.ExternalSnat
-	}).(pulumi.BoolPtrOutput)
-}
-
 // Specifies the container image to use in the AWS CNI cluster DaemonSet.
 //
 // Defaults to the official AWS CNI image in ECR.
@@ -2784,6 +2791,18 @@ func (o VpcCniOptionsPtrOutput) Image() pulumi.StringPtrOutput {
 			return nil
 		}
 		return v.Image
+	}).(pulumi.StringPtrOutput)
+}
+
+// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+//
+// Defaults to the official AWS CNI init container image in ECR.
+func (o VpcCniOptionsPtrOutput) InitImage() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.InitImage
 	}).(pulumi.StringPtrOutput)
 }
 

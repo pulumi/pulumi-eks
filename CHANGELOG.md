@@ -1,5 +1,9 @@
 ## Unreleased
 
+- Add support for setting the init container image.
+- Add support for setting `DISABLE_TCP_EARLY_DEMUX`.
+- Remove duplicate `externalSnat` argument.
+
 ## 0.33.0 (Released August 18, 2021)
 
 - Add `capacityType` and `taints` to `ManagedNodeGroup`

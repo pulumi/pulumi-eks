@@ -35,15 +35,6 @@ export interface VpcCniOptions {
     customNetworkConfig?: pulumi.Input<boolean>;
 
     /**
-     * Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set
-     * to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have
-     * already been applied.
-     *
-     * Defaults to false.
-     */
-    externalSnat?: pulumi.Input<boolean>;
-
-    /**
      * Specifies the number of free elastic network interfaces (and all of their available IP addresses) that the ipamD
      * daemon should attempt to keep available for pod assignment on the node.
      *
@@ -78,6 +69,13 @@ export interface VpcCniOptions {
      * Defaults to the official AWS CNI image in ECR.
      */
     image?: pulumi.Input<string>;
+
+    /**
+     * Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+     *
+     * Defaults to the official AWS CNI init container image in ECR.
+     */
+    initImage?: pulumi.Input<string>;
 
     /**
      * Specifies the veth prefix used to generate the host-side veth device
@@ -123,9 +121,19 @@ export interface VpcCniOptions {
      * Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the
      * instance has capacity to attach an additional ENI.
      *
+     * If using liveness and readiness probes, you will also need to disable TCP early demux.
+     *
      * Defaults to "false".
      */
     enablePodEni?: pulumi.Input<boolean>;
+
+    /**
+     * Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled.
+     * This will slightly increase local TCP connection latency.
+     *
+     * Defaults to "false".
+     */
+    disableTcpEarlyDemux?: pulumi.Input<boolean>;
 
     /**
      * Specifies whether ipamd should configure rp filter for primary interface.
@@ -188,16 +196,17 @@ export class VpcCni extends pulumi.CustomResource {
             kubeconfig: kubeconfig ? pulumi.output(kubeconfig).apply(JSON.stringify) : undefined,
             nodePortSupport: args?.nodePortSupport,
             customNetworkConfig: args?.customNetworkConfig,
-            externalSnat: args?.externalSnat,
             warmEniTarget: args?.warmEniTarget,
             warmIpTarget: args?.warmIpTarget,
             logLevel: args?.logLevel,
             logFile: args?.logFile,
             image: args?.image,
+            initImage: args?.initImage,
             eniConfigLabelDef: args?.eniConfigLabelDef,
             pluginLogLevel: args?.pluginLogLevel,
             pluginLogFile: args?.pluginLogFile,
             enablePodEni: args?.enablePodEni,
+            disableTcpEarlyDemux: args?.disableTcpEarlyDemux,
             cniConfigureRpfilter: args?.cniConfigureRpfilter,
             cniCustomNetworkCfg: args?.cniCustomNetworkCfg,
             cniExternalSnat: args?.cniCustomNetworkCfg,
