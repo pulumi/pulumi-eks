@@ -18,11 +18,12 @@ class VpcCniArgs:
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
+                 disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
-                 external_snat: Optional[pulumi.Input[bool]] = None,
                  image: Optional[pulumi.Input[str]] = None,
+                 init_image: Optional[pulumi.Input[str]] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
@@ -39,7 +40,8 @@ class VpcCniArgs:
         :param pulumi.Input[bool] custom_network_config: Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
                
                Defaults to false.
-        :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+        :param pulumi.Input[bool] disable_tcp_early_demux: Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
                Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
                
@@ -47,12 +49,12 @@ class VpcCniArgs:
         :param pulumi.Input[int] eni_mtu: Used to configure the MTU size for attached ENIs. The valid range is from 576 to 9001.
                
                Defaults to 9001.
-        :param pulumi.Input[bool] external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
-               
-               Defaults to false.
         :param pulumi.Input[str] image: Specifies the container image to use in the AWS CNI cluster DaemonSet.
                
                Defaults to the official AWS CNI image in ECR.
+        :param pulumi.Input[str] init_image: Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+               
+               Defaults to the official AWS CNI init container image in ECR.
         :param pulumi.Input[str] log_file: Specifies the file path used for logs.
                
                Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -83,16 +85,18 @@ class VpcCniArgs:
             pulumi.set(__self__, "cni_external_snat", cni_external_snat)
         if custom_network_config is not None:
             pulumi.set(__self__, "custom_network_config", custom_network_config)
+        if disable_tcp_early_demux is not None:
+            pulumi.set(__self__, "disable_tcp_early_demux", disable_tcp_early_demux)
         if enable_pod_eni is not None:
             pulumi.set(__self__, "enable_pod_eni", enable_pod_eni)
         if eni_config_label_def is not None:
             pulumi.set(__self__, "eni_config_label_def", eni_config_label_def)
         if eni_mtu is not None:
             pulumi.set(__self__, "eni_mtu", eni_mtu)
-        if external_snat is not None:
-            pulumi.set(__self__, "external_snat", external_snat)
         if image is not None:
             pulumi.set(__self__, "image", image)
+        if init_image is not None:
+            pulumi.set(__self__, "init_image", init_image)
         if log_file is not None:
             pulumi.set(__self__, "log_file", log_file)
         if log_level is not None:
@@ -171,10 +175,22 @@ class VpcCniArgs:
         pulumi.set(self, "custom_network_config", value)
 
     @property
+    @pulumi.getter(name="disableTcpEarlyDemux")
+    def disable_tcp_early_demux(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        """
+        return pulumi.get(self, "disable_tcp_early_demux")
+
+    @disable_tcp_early_demux.setter
+    def disable_tcp_early_demux(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "disable_tcp_early_demux", value)
+
+    @property
     @pulumi.getter(name="enablePodEni")
     def enable_pod_eni(self) -> Optional[pulumi.Input[bool]]:
         """
-        Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+        Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         """
         return pulumi.get(self, "enable_pod_eni")
 
@@ -212,20 +228,6 @@ class VpcCniArgs:
         pulumi.set(self, "eni_mtu", value)
 
     @property
-    @pulumi.getter(name="externalSnat")
-    def external_snat(self) -> Optional[pulumi.Input[bool]]:
-        """
-        Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
-
-        Defaults to false.
-        """
-        return pulumi.get(self, "external_snat")
-
-    @external_snat.setter
-    def external_snat(self, value: Optional[pulumi.Input[bool]]):
-        pulumi.set(self, "external_snat", value)
-
-    @property
     @pulumi.getter
     def image(self) -> Optional[pulumi.Input[str]]:
         """
@@ -238,6 +240,20 @@ class VpcCniArgs:
     @image.setter
     def image(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "image", value)
+
+    @property
+    @pulumi.getter(name="initImage")
+    def init_image(self) -> Optional[pulumi.Input[str]]:
+        """
+        Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+
+        Defaults to the official AWS CNI init container image in ECR.
+        """
+        return pulumi.get(self, "init_image")
+
+    @init_image.setter
+    def init_image(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "init_image", value)
 
     @property
     @pulumi.getter(name="logFile")
@@ -346,11 +362,12 @@ class VpcCni(pulumi.CustomResource):
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
+                 disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
-                 external_snat: Optional[pulumi.Input[bool]] = None,
                  image: Optional[pulumi.Input[str]] = None,
+                 init_image: Optional[pulumi.Input[str]] = None,
                  kubeconfig: Optional[Any] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
@@ -371,7 +388,8 @@ class VpcCni(pulumi.CustomResource):
         :param pulumi.Input[bool] custom_network_config: Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
                
                Defaults to false.
-        :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+        :param pulumi.Input[bool] disable_tcp_early_demux: Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
                Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
                
@@ -379,12 +397,12 @@ class VpcCni(pulumi.CustomResource):
         :param pulumi.Input[int] eni_mtu: Used to configure the MTU size for attached ENIs. The valid range is from 576 to 9001.
                
                Defaults to 9001.
-        :param pulumi.Input[bool] external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
-               
-               Defaults to false.
         :param pulumi.Input[str] image: Specifies the container image to use in the AWS CNI cluster DaemonSet.
                
                Defaults to the official AWS CNI image in ECR.
+        :param pulumi.Input[str] init_image: Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+               
+               Defaults to the official AWS CNI init container image in ECR.
         :param Any kubeconfig: The kubeconfig to use when setting the VPC CNI options.
         :param pulumi.Input[str] log_file: Specifies the file path used for logs.
                
@@ -435,11 +453,12 @@ class VpcCni(pulumi.CustomResource):
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
+                 disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
-                 external_snat: Optional[pulumi.Input[bool]] = None,
                  image: Optional[pulumi.Input[str]] = None,
+                 init_image: Optional[pulumi.Input[str]] = None,
                  kubeconfig: Optional[Any] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
@@ -464,11 +483,12 @@ class VpcCni(pulumi.CustomResource):
             __props__.__dict__["cni_custom_network_cfg"] = cni_custom_network_cfg
             __props__.__dict__["cni_external_snat"] = cni_external_snat
             __props__.__dict__["custom_network_config"] = custom_network_config
+            __props__.__dict__["disable_tcp_early_demux"] = disable_tcp_early_demux
             __props__.__dict__["enable_pod_eni"] = enable_pod_eni
             __props__.__dict__["eni_config_label_def"] = eni_config_label_def
             __props__.__dict__["eni_mtu"] = eni_mtu
-            __props__.__dict__["external_snat"] = external_snat
             __props__.__dict__["image"] = image
+            __props__.__dict__["init_image"] = init_image
             if kubeconfig is None and not opts.urn:
                 raise TypeError("Missing required property 'kubeconfig'")
             __props__.__dict__["kubeconfig"] = kubeconfig
