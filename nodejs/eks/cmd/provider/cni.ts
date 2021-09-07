@@ -29,6 +29,8 @@ interface VpcCniInputs {
     externalSnat?: boolean;
     warmEniTarget?: number;
     warmIpTarget?: number;
+    warmPrefixTarget?: number;
+    enablePrefixDelegation?: boolean;
     logLevel?: string;
     logFile?: string;
     image?: string;
@@ -70,6 +72,12 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     }
     if (args.warmIpTarget) {
         env.push({name: "WARM_IP_TARGET", value: args.warmIpTarget.toString()});
+    }
+    if (args.warmPrefixTarget) {
+        env.push({name: "WARM_PREFIX_TARGET", value: args.warmPrefixTarget.toString()});
+    }
+    if (args.enablePrefixDelegation) {
+        env.push({name: "ENABLE_PREFIX_DELEGATION ", value: args.enablePrefixDelegation.toString()});
     }
     if (args.logLevel) {
         env.push({name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: args.logLevel.toString()});
