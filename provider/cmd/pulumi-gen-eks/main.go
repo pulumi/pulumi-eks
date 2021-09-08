@@ -1426,6 +1426,13 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 				"same VPC as your control plane resources) that are independent of your cluster's " +
 				"`resourcesVpcConfig`.\n\nDefaults to false.",
 		},
+		"externalSnat": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Specifies whether an external NAT gateway should be used to provide SNAT " +
+				"of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC " +
+				"IP rule are not applied, and these rules are removed if they have already been " +
+				"applied.\n\nDefaults to false.",
+		},
 		"warmEniTarget": {
 			TypeSpec: schema.TypeSpec{Type: "integer"},
 			Description: "Specifies the number of free elastic network interfaces (and all of their " +
@@ -1482,8 +1489,9 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 				"If using liveness and readiness probes, you will also need to disable TCP early demux.",
 		},
 		"disableTcpEarlyDemux": {
-			TypeSpec:    schema.TypeSpec{Type: "boolean"},
-			Description: "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.",
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled." +
+				" This will slightly increase local TCP connection latency.",
 		},
 		"cniConfigureRpfilter": {
 			TypeSpec:    schema.TypeSpec{Type: "boolean"},

@@ -35,6 +35,15 @@ export interface VpcCniOptions {
     customNetworkConfig?: pulumi.Input<boolean>;
 
     /**
+     * Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set
+     * to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have
+     * already been applied.
+     *
+     * Defaults to false.
+     */
+    externalSnat?: pulumi.Input<boolean>;
+
+    /**
      * Specifies the number of free elastic network interfaces (and all of their available IP addresses) that the ipamD
      * daemon should attempt to keep available for pod assignment on the node.
      *
@@ -196,6 +205,7 @@ export class VpcCni extends pulumi.CustomResource {
             kubeconfig: kubeconfig ? pulumi.output(kubeconfig).apply(JSON.stringify) : undefined,
             nodePortSupport: args?.nodePortSupport,
             customNetworkConfig: args?.customNetworkConfig,
+            externalSnat: args?.externalSnat,
             warmEniTarget: args?.warmEniTarget,
             warmIpTarget: args?.warmIpTarget,
             logLevel: args?.logLevel,
@@ -209,7 +219,7 @@ export class VpcCni extends pulumi.CustomResource {
             disableTcpEarlyDemux: args?.disableTcpEarlyDemux,
             cniConfigureRpfilter: args?.cniConfigureRpfilter,
             cniCustomNetworkCfg: args?.cniCustomNetworkCfg,
-            cniExternalSnat: args?.cniCustomNetworkCfg,
+            cniExternalSnat: args?.cniExternalSnat,
             securityContextPrivileged: args?.securityContextPrivileged,
         }, opts);
     }
