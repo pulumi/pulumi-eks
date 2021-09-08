@@ -81,6 +81,10 @@ type vpcCniArgs struct {
 	//
 	// Defaults to 9001.
 	EniMtu *int `pulumi:"eniMtu"`
+	// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
+	//
+	// Defaults to false.
+	ExternalSnat *bool `pulumi:"externalSnat"`
 	// Specifies the container image to use in the AWS CNI cluster DaemonSet.
 	//
 	// Defaults to the official AWS CNI image in ECR.
@@ -145,6 +149,10 @@ type VpcCniArgs struct {
 	//
 	// Defaults to 9001.
 	EniMtu pulumi.IntPtrInput
+	// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
+	//
+	// Defaults to false.
+	ExternalSnat pulumi.BoolPtrInput
 	// Specifies the container image to use in the AWS CNI cluster DaemonSet.
 	//
 	// Defaults to the official AWS CNI image in ECR.

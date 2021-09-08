@@ -26,6 +26,7 @@ interface VpcCniInputs {
     kubeconfig: any;
     nodePortSupport?: boolean;
     customNetworkConfig?: boolean;
+    externalSnat?: boolean;
     warmEniTarget?: number;
     warmIpTarget?: number;
     logLevel?: string;
@@ -58,6 +59,9 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     }
     if (args.customNetworkConfig) {
         env.push({name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: args.customNetworkConfig ? "true" : "false"});
+    }
+    if (args.externalSnat) {
+        env.push({name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.externalSnat ? "true" : "false"});
     }
     if (args.warmEniTarget) {
         env.push({name: "WARM_ENI_TARGET", value: args.warmEniTarget.toString()});

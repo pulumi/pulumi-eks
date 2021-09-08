@@ -24,6 +24,10 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
         "audit",
         "authenticator",
     ],
+    vpcCniOptions: {
+        image: "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.9.0",
+        initImage: "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni-init:v1.9.0",
+    },
 });
 
 // Export the clusters' kubeconfig.

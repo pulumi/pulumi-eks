@@ -1255,6 +1255,7 @@ class VpcCniOptionsArgs:
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
+                 external_snat: Optional[pulumi.Input[bool]] = None,
                  image: Optional[pulumi.Input[str]] = None,
                  init_image: Optional[pulumi.Input[str]] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
@@ -1281,6 +1282,9 @@ class VpcCniOptionsArgs:
         :param pulumi.Input[int] eni_mtu: Used to configure the MTU size for attached ENIs. The valid range is from 576 to 9001.
                
                Defaults to 9001.
+        :param pulumi.Input[bool] external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
+               
+               Defaults to false.
         :param pulumi.Input[str] image: Specifies the container image to use in the AWS CNI cluster DaemonSet.
                
                Defaults to the official AWS CNI image in ECR.
@@ -1324,6 +1328,8 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "eni_config_label_def", eni_config_label_def)
         if eni_mtu is not None:
             pulumi.set(__self__, "eni_mtu", eni_mtu)
+        if external_snat is not None:
+            pulumi.set(__self__, "external_snat", external_snat)
         if image is not None:
             pulumi.set(__self__, "image", image)
         if init_image is not None:
@@ -1445,6 +1451,20 @@ class VpcCniOptionsArgs:
     @eni_mtu.setter
     def eni_mtu(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "eni_mtu", value)
+
+    @property
+    @pulumi.getter(name="externalSnat")
+    def external_snat(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
+
+        Defaults to false.
+        """
+        return pulumi.get(self, "external_snat")
+
+    @external_snat.setter
+    def external_snat(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "external_snat", value)
 
     @property
     @pulumi.getter

@@ -2380,6 +2380,10 @@ type VpcCniOptions struct {
 	//
 	// Defaults to 9001.
 	EniMtu *int `pulumi:"eniMtu"`
+	// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
+	//
+	// Defaults to false.
+	ExternalSnat *bool `pulumi:"externalSnat"`
 	// Specifies the container image to use in the AWS CNI cluster DaemonSet.
 	//
 	// Defaults to the official AWS CNI image in ECR.
@@ -2453,6 +2457,10 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to 9001.
 	EniMtu pulumi.IntPtrInput `pulumi:"eniMtu"`
+	// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
+	//
+	// Defaults to false.
+	ExternalSnat pulumi.BoolPtrInput `pulumi:"externalSnat"`
 	// Specifies the container image to use in the AWS CNI cluster DaemonSet.
 	//
 	// Defaults to the official AWS CNI image in ECR.
@@ -2613,6 +2621,13 @@ func (o VpcCniOptionsOutput) EniConfigLabelDef() pulumi.StringPtrOutput {
 // Defaults to 9001.
 func (o VpcCniOptionsOutput) EniMtu() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *int { return v.EniMtu }).(pulumi.IntPtrOutput)
+}
+
+// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
+//
+// Defaults to false.
+func (o VpcCniOptionsOutput) ExternalSnat() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *bool { return v.ExternalSnat }).(pulumi.BoolPtrOutput)
 }
 
 // Specifies the container image to use in the AWS CNI cluster DaemonSet.
@@ -2780,6 +2795,18 @@ func (o VpcCniOptionsPtrOutput) EniMtu() pulumi.IntPtrOutput {
 		}
 		return v.EniMtu
 	}).(pulumi.IntPtrOutput)
+}
+
+// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
+//
+// Defaults to false.
+func (o VpcCniOptionsPtrOutput) ExternalSnat() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.ExternalSnat
+	}).(pulumi.BoolPtrOutput)
 }
 
 // Specifies the container image to use in the AWS CNI cluster DaemonSet.
