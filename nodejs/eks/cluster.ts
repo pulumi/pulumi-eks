@@ -1372,7 +1372,18 @@ export class Cluster extends pulumi.ComponentResource {
      * @param opts A bag of options that control this component's behavior.
      */
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
-        super("eks:index:Cluster", name, args, opts);
+        const type = "eks:index:Cluster";
+
+        if (opts?.urn) {
+            const props = {
+                kubeconfig: undefined,
+                eksCluster: undefined,
+            };
+            super(type, name, props, opts);
+            return;
+        }
+
+        super(type, name, args, opts);
 
         args = args || {};
 
@@ -1441,7 +1452,10 @@ export class Cluster extends pulumi.ComponentResource {
             createDashboard(name, {}, this, this.provider);
         }
 
-        this.registerOutputs({ kubeconfig: this.kubeconfig });
+        this.registerOutputs({
+            kubeconfig: this.kubeconfig,
+            eksCluster: this.eksCluster,
+        });
     }
 
     /**

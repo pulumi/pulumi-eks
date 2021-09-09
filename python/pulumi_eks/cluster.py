@@ -1398,3 +1398,43 @@ class Cluster(pulumi.ComponentResource):
         """
         return pulumi.get(self, "provider")
 
+    @pulumi.output_type
+    class GetKubeconfigResult:
+        def __init__(__self__, result=None):
+            if result and not isinstance(result, str):
+                raise TypeError("Expected argument 'result' to be a str")
+            pulumi.set(__self__, "result", result)
+
+        @property
+        @pulumi.getter
+        def result(self) -> str:
+            return pulumi.get(self, "result")
+
+    def get_kubeconfig(__self__, *,
+                       profile_name: Optional[pulumi.Input[str]] = None,
+                       role_arn: Optional[pulumi.Input[str]] = None) -> pulumi.Output['str']:
+        """
+        Generate a kubeconfig for cluster authentication that does not use the default AWS credential provider chain, and instead is scoped to the supported options in `KubeconfigOptions`.
+
+        The kubeconfig generated is automatically stringified for ease of use with the pulumi/kubernetes provider.
+
+        See for more details:
+        - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
+        - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
+        - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+
+
+        :param pulumi.Input[str] profile_name: AWS credential profile name to always use instead of the default AWS credential provider chain.
+               
+               The profile is passed to kubeconfig as an authentication environment setting.
+        :param pulumi.Input[str] role_arn: Role ARN to assume instead of the default AWS credential provider chain.
+               
+               The role is passed to kubeconfig as an authentication exec argument.
+        """
+        __args__ = dict()
+        __args__['__self__'] = __self__
+        __args__['profileName'] = profile_name
+        __args__['roleArn'] = role_arn
+        __result__ = pulumi.runtime.call('eks:index:Cluster/getKubeconfig', __args__, res=__self__, typ=Cluster.GetKubeconfigResult)
+        return __result__.result
+

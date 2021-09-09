@@ -407,6 +407,7 @@ jobs:
           - 14.x
         test-name:
           - AwsProfilePy
+          - AwsProfileRolePy
           - ClusterPy
           - FargatePy
   test-dotnet:
