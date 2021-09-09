@@ -10,6 +10,9 @@ using Pulumi.Serialization;
 namespace Pulumi.Eks.Outputs
 {
 
+    /// <summary>
+    /// Defines the core set of data associated with an EKS cluster, including the network in which it runs.
+    /// </summary>
     [OutputType]
     public sealed class CoreData
     {
