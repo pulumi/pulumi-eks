@@ -1,6 +1,6 @@
 [![Build Status](https://github.com/pulumi/pulumi-eks/actions/workflows/master.yml/badge.svg)](https://github.com/pulumi/pulumi-eks/actions/workflows/master.yml)
 [![Slack](http://www.pulumi.com/images/docs/badges/slack.svg)](https://slack.pulumi.com)
-[![NPM version](https://badge.fury.io/js/%40pulumi%2Faws.svg)](https://www.npmjs.com/package/@pulumi/eks)
+[![npm version](https://badge.fury.io/js/@pulumi%2Feks.svg)](https://badge.fury.io/js/@pulumi%2Feks)
 [![Python version](https://badge.fury.io/py/pulumi-eks.svg)](https://pypi.org/project/pulumi-eks)
 [![NuGet version](https://badge.fury.io/nu/pulumi.eks.svg)](https://badge.fury.io/nu/pulumi.eks)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/pulumi/pulumi-eks/sdk/go/eks)](https://pkg.go.dev/github.com/pulumi/pulumi-eks/sdk/go/eks)
