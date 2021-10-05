@@ -43,7 +43,7 @@ func TestAccAwsProfileRolePy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "aws-profile-role-py"),
-			// TODO: Temporarily skip the extra runtime validation due to test failure.
+			// TODO: [pulumi/pulumi-eks#629] Temporarily skip the extra runtime validation due to test failure.
 			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 			// 	utils.RunEKSSmokeTest(t,
 			// 		info.Deployment.Resources,
