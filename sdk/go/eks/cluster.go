@@ -467,6 +467,63 @@ func (ClusterArgs) ElementType() reflect.Type {
 	return reflect.TypeOf((*clusterArgs)(nil)).Elem()
 }
 
+// Generate a kubeconfig for cluster authentication that does not use the default AWS credential provider chain, and instead is scoped to the supported options in `KubeconfigOptions`.
+//
+// The kubeconfig generated is automatically stringified for ease of use with the pulumi/kubernetes provider.
+//
+// See for more details:
+// - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
+// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
+// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+func (r *Cluster) GetKubeconfig(ctx *pulumi.Context, args *ClusterGetKubeconfigArgs) (pulumi.StringOutput, error) {
+	out, err := ctx.Call("eks:index:Cluster/getKubeconfig", args, clusterGetKubeconfigResultOutput{}, r)
+	if err != nil {
+		return pulumi.StringOutput{}, err
+	}
+	return out.(clusterGetKubeconfigResultOutput).Result(), nil
+}
+
+type clusterGetKubeconfigArgs struct {
+	// AWS credential profile name to always use instead of the default AWS credential provider chain.
+	//
+	// The profile is passed to kubeconfig as an authentication environment setting.
+	ProfileName *string `pulumi:"profileName"`
+	// Role ARN to assume instead of the default AWS credential provider chain.
+	//
+	// The role is passed to kubeconfig as an authentication exec argument.
+	RoleArn *string `pulumi:"roleArn"`
+}
+
+// The set of arguments for the GetKubeconfig method of the Cluster resource.
+type ClusterGetKubeconfigArgs struct {
+	// AWS credential profile name to always use instead of the default AWS credential provider chain.
+	//
+	// The profile is passed to kubeconfig as an authentication environment setting.
+	ProfileName pulumi.StringPtrInput
+	// Role ARN to assume instead of the default AWS credential provider chain.
+	//
+	// The role is passed to kubeconfig as an authentication exec argument.
+	RoleArn pulumi.StringPtrInput
+}
+
+func (ClusterGetKubeconfigArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*clusterGetKubeconfigArgs)(nil)).Elem()
+}
+
+type clusterGetKubeconfigResult struct {
+	Result string `pulumi:"result"`
+}
+
+type clusterGetKubeconfigResultOutput struct{ *pulumi.OutputState }
+
+func (clusterGetKubeconfigResultOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*clusterGetKubeconfigResult)(nil)).Elem()
+}
+
+func (o clusterGetKubeconfigResultOutput) Result() pulumi.StringOutput {
+	return o.ApplyT(func(v clusterGetKubeconfigResult) string { return v.Result }).(pulumi.StringOutput)
+}
+
 type ClusterInput interface {
 	pulumi.Input
 
@@ -529,7 +586,7 @@ type ClusterArrayInput interface {
 type ClusterArray []ClusterInput
 
 func (ClusterArray) ElementType() reflect.Type {
-	return reflect.TypeOf(([]*Cluster)(nil))
+	return reflect.TypeOf((*[]*Cluster)(nil)).Elem()
 }
 
 func (i ClusterArray) ToClusterArrayOutput() ClusterArrayOutput {
@@ -554,7 +611,7 @@ type ClusterMapInput interface {
 type ClusterMap map[string]ClusterInput
 
 func (ClusterMap) ElementType() reflect.Type {
-	return reflect.TypeOf((map[string]*Cluster)(nil))
+	return reflect.TypeOf((*map[string]*Cluster)(nil)).Elem()
 }
 
 func (i ClusterMap) ToClusterMapOutput() ClusterMapOutput {
@@ -565,9 +622,7 @@ func (i ClusterMap) ToClusterMapOutputWithContext(ctx context.Context) ClusterMa
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterMapOutput)
 }
 
-type ClusterOutput struct {
-	*pulumi.OutputState
-}
+type ClusterOutput struct{ *pulumi.OutputState }
 
 func (ClusterOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((*Cluster)(nil))
@@ -586,14 +641,12 @@ func (o ClusterOutput) ToClusterPtrOutput() ClusterPtrOutput {
 }
 
 func (o ClusterOutput) ToClusterPtrOutputWithContext(ctx context.Context) ClusterPtrOutput {
-	return o.ApplyT(func(v Cluster) *Cluster {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v Cluster) *Cluster {
 		return &v
 	}).(ClusterPtrOutput)
 }
 
-type ClusterPtrOutput struct {
-	*pulumi.OutputState
-}
+type ClusterPtrOutput struct{ *pulumi.OutputState }
 
 func (ClusterPtrOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((**Cluster)(nil))
@@ -605,6 +658,16 @@ func (o ClusterPtrOutput) ToClusterPtrOutput() ClusterPtrOutput {
 
 func (o ClusterPtrOutput) ToClusterPtrOutputWithContext(ctx context.Context) ClusterPtrOutput {
 	return o
+}
+
+func (o ClusterPtrOutput) Elem() ClusterOutput {
+	return o.ApplyT(func(v *Cluster) Cluster {
+		if v != nil {
+			return *v
+		}
+		var ret Cluster
+		return ret
+	}).(ClusterOutput)
 }
 
 type ClusterArrayOutput struct{ *pulumi.OutputState }
@@ -649,6 +712,7 @@ func (o ClusterMapOutput) MapIndex(k pulumi.StringInput) ClusterOutput {
 
 func init() {
 	pulumi.RegisterOutputType(ClusterOutput{})
+	pulumi.RegisterOutputType(clusterGetKubeconfigResultOutput{})
 	pulumi.RegisterOutputType(ClusterPtrOutput{})
 	pulumi.RegisterOutputType(ClusterArrayOutput{})
 	pulumi.RegisterOutputType(ClusterMapOutput{})

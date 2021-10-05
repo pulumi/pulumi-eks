@@ -225,7 +225,7 @@ type ManagedNodeGroupArrayInput interface {
 type ManagedNodeGroupArray []ManagedNodeGroupInput
 
 func (ManagedNodeGroupArray) ElementType() reflect.Type {
-	return reflect.TypeOf(([]*ManagedNodeGroup)(nil))
+	return reflect.TypeOf((*[]*ManagedNodeGroup)(nil)).Elem()
 }
 
 func (i ManagedNodeGroupArray) ToManagedNodeGroupArrayOutput() ManagedNodeGroupArrayOutput {
@@ -250,7 +250,7 @@ type ManagedNodeGroupMapInput interface {
 type ManagedNodeGroupMap map[string]ManagedNodeGroupInput
 
 func (ManagedNodeGroupMap) ElementType() reflect.Type {
-	return reflect.TypeOf((map[string]*ManagedNodeGroup)(nil))
+	return reflect.TypeOf((*map[string]*ManagedNodeGroup)(nil)).Elem()
 }
 
 func (i ManagedNodeGroupMap) ToManagedNodeGroupMapOutput() ManagedNodeGroupMapOutput {
@@ -261,9 +261,7 @@ func (i ManagedNodeGroupMap) ToManagedNodeGroupMapOutputWithContext(ctx context.
 	return pulumi.ToOutputWithContext(ctx, i).(ManagedNodeGroupMapOutput)
 }
 
-type ManagedNodeGroupOutput struct {
-	*pulumi.OutputState
-}
+type ManagedNodeGroupOutput struct{ *pulumi.OutputState }
 
 func (ManagedNodeGroupOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((*ManagedNodeGroup)(nil))
@@ -282,14 +280,12 @@ func (o ManagedNodeGroupOutput) ToManagedNodeGroupPtrOutput() ManagedNodeGroupPt
 }
 
 func (o ManagedNodeGroupOutput) ToManagedNodeGroupPtrOutputWithContext(ctx context.Context) ManagedNodeGroupPtrOutput {
-	return o.ApplyT(func(v ManagedNodeGroup) *ManagedNodeGroup {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v ManagedNodeGroup) *ManagedNodeGroup {
 		return &v
 	}).(ManagedNodeGroupPtrOutput)
 }
 
-type ManagedNodeGroupPtrOutput struct {
-	*pulumi.OutputState
-}
+type ManagedNodeGroupPtrOutput struct{ *pulumi.OutputState }
 
 func (ManagedNodeGroupPtrOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((**ManagedNodeGroup)(nil))
@@ -301,6 +297,16 @@ func (o ManagedNodeGroupPtrOutput) ToManagedNodeGroupPtrOutput() ManagedNodeGrou
 
 func (o ManagedNodeGroupPtrOutput) ToManagedNodeGroupPtrOutputWithContext(ctx context.Context) ManagedNodeGroupPtrOutput {
 	return o
+}
+
+func (o ManagedNodeGroupPtrOutput) Elem() ManagedNodeGroupOutput {
+	return o.ApplyT(func(v *ManagedNodeGroup) ManagedNodeGroup {
+		if v != nil {
+			return *v
+		}
+		var ret ManagedNodeGroup
+		return ret
+	}).(ManagedNodeGroupOutput)
 }
 
 type ManagedNodeGroupArrayOutput struct{ *pulumi.OutputState }

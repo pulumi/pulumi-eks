@@ -10,6 +10,9 @@ using Pulumi.Serialization;
 namespace Pulumi.Eks.Outputs
 {
 
+    /// <summary>
+    /// Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
+    /// </summary>
     [OutputType]
     public sealed class Taint
     {
