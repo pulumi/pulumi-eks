@@ -287,7 +287,7 @@ func (o ClusterNodeGroupOptionsOutput) ToClusterNodeGroupOptionsPtrOutput() Clus
 }
 
 func (o ClusterNodeGroupOptionsOutput) ToClusterNodeGroupOptionsPtrOutputWithContext(ctx context.Context) ClusterNodeGroupOptionsPtrOutput {
-	return o.ApplyT(func(v ClusterNodeGroupOptions) *ClusterNodeGroupOptions {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v ClusterNodeGroupOptions) *ClusterNodeGroupOptions {
 		return &v
 	}).(ClusterNodeGroupOptionsPtrOutput)
 }
@@ -473,7 +473,13 @@ func (o ClusterNodeGroupOptionsPtrOutput) ToClusterNodeGroupOptionsPtrOutputWith
 }
 
 func (o ClusterNodeGroupOptionsPtrOutput) Elem() ClusterNodeGroupOptionsOutput {
-	return o.ApplyT(func(v *ClusterNodeGroupOptions) ClusterNodeGroupOptions { return *v }).(ClusterNodeGroupOptionsOutput)
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) ClusterNodeGroupOptions {
+		if v != nil {
+			return *v
+		}
+		var ret ClusterNodeGroupOptions
+		return ret
+	}).(ClusterNodeGroupOptionsOutput)
 }
 
 // The AMI ID to use for the worker nodes.
@@ -904,10 +910,11 @@ func (o CoreDataOutput) ToCoreDataPtrOutput() CoreDataPtrOutput {
 }
 
 func (o CoreDataOutput) ToCoreDataPtrOutputWithContext(ctx context.Context) CoreDataPtrOutput {
-	return o.ApplyT(func(v CoreData) *CoreData {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v CoreData) *CoreData {
 		return &v
 	}).(CoreDataPtrOutput)
 }
+
 func (o CoreDataOutput) AwsProvider() aws.ProviderOutput {
 	return o.ApplyT(func(v CoreData) *aws.Provider { return v.AwsProvider }).(aws.ProviderOutput)
 }
@@ -1003,7 +1010,13 @@ func (o CoreDataPtrOutput) ToCoreDataPtrOutputWithContext(ctx context.Context) C
 }
 
 func (o CoreDataPtrOutput) Elem() CoreDataOutput {
-	return o.ApplyT(func(v *CoreData) CoreData { return *v }).(CoreDataOutput)
+	return o.ApplyT(func(v *CoreData) CoreData {
+		if v != nil {
+			return *v
+		}
+		var ret CoreData
+		return ret
+	}).(CoreDataOutput)
 }
 
 func (o CoreDataPtrOutput) AwsProvider() aws.ProviderOutput {
@@ -1282,10 +1295,11 @@ func (o CreationRoleProviderOutput) ToCreationRoleProviderPtrOutput() CreationRo
 }
 
 func (o CreationRoleProviderOutput) ToCreationRoleProviderPtrOutputWithContext(ctx context.Context) CreationRoleProviderPtrOutput {
-	return o.ApplyT(func(v CreationRoleProvider) *CreationRoleProvider {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v CreationRoleProvider) *CreationRoleProvider {
 		return &v
 	}).(CreationRoleProviderPtrOutput)
 }
+
 func (o CreationRoleProviderOutput) Provider() aws.ProviderOutput {
 	return o.ApplyT(func(v CreationRoleProvider) *aws.Provider { return v.Provider }).(aws.ProviderOutput)
 }
@@ -1309,7 +1323,13 @@ func (o CreationRoleProviderPtrOutput) ToCreationRoleProviderPtrOutputWithContex
 }
 
 func (o CreationRoleProviderPtrOutput) Elem() CreationRoleProviderOutput {
-	return o.ApplyT(func(v *CreationRoleProvider) CreationRoleProvider { return *v }).(CreationRoleProviderOutput)
+	return o.ApplyT(func(v *CreationRoleProvider) CreationRoleProvider {
+		if v != nil {
+			return *v
+		}
+		var ret CreationRoleProvider
+		return ret
+	}).(CreationRoleProviderOutput)
 }
 
 func (o CreationRoleProviderPtrOutput) Provider() aws.ProviderOutput {
@@ -1556,7 +1576,7 @@ func (o KubeconfigOptionsOutput) ToKubeconfigOptionsPtrOutput() KubeconfigOption
 }
 
 func (o KubeconfigOptionsOutput) ToKubeconfigOptionsPtrOutputWithContext(ctx context.Context) KubeconfigOptionsPtrOutput {
-	return o.ApplyT(func(v KubeconfigOptions) *KubeconfigOptions {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v KubeconfigOptions) *KubeconfigOptions {
 		return &v
 	}).(KubeconfigOptionsPtrOutput)
 }
@@ -1590,7 +1610,13 @@ func (o KubeconfigOptionsPtrOutput) ToKubeconfigOptionsPtrOutputWithContext(ctx 
 }
 
 func (o KubeconfigOptionsPtrOutput) Elem() KubeconfigOptionsOutput {
-	return o.ApplyT(func(v *KubeconfigOptions) KubeconfigOptions { return *v }).(KubeconfigOptionsOutput)
+	return o.ApplyT(func(v *KubeconfigOptions) KubeconfigOptions {
+		if v != nil {
+			return *v
+		}
+		var ret KubeconfigOptions
+		return ret
+	}).(KubeconfigOptionsOutput)
 }
 
 // AWS credential profile name to always use instead of the default AWS credential provider chain.
@@ -1725,7 +1751,7 @@ func (o NodeGroupDataOutput) ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput {
 }
 
 func (o NodeGroupDataOutput) ToNodeGroupDataPtrOutputWithContext(ctx context.Context) NodeGroupDataPtrOutput {
-	return o.ApplyT(func(v NodeGroupData) *NodeGroupData {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v NodeGroupData) *NodeGroupData {
 		return &v
 	}).(NodeGroupDataPtrOutput)
 }
@@ -1765,7 +1791,13 @@ func (o NodeGroupDataPtrOutput) ToNodeGroupDataPtrOutputWithContext(ctx context.
 }
 
 func (o NodeGroupDataPtrOutput) Elem() NodeGroupDataOutput {
-	return o.ApplyT(func(v *NodeGroupData) NodeGroupData { return *v }).(NodeGroupDataOutput)
+	return o.ApplyT(func(v *NodeGroupData) NodeGroupData {
+		if v != nil {
+			return *v
+		}
+		var ret NodeGroupData
+		return ret
+	}).(NodeGroupDataOutput)
 }
 
 // The AutoScalingGroup name for the node group.
@@ -2009,31 +2041,6 @@ func (i StorageClassArgs) ToStorageClassOutputWithContext(ctx context.Context) S
 	return pulumi.ToOutputWithContext(ctx, i).(StorageClassOutput)
 }
 
-// StorageClassMapInput is an input type that accepts StorageClassMap and StorageClassMapOutput values.
-// You can construct a concrete instance of `StorageClassMapInput` via:
-//
-//          StorageClassMap{ "key": StorageClassArgs{...} }
-type StorageClassMapInput interface {
-	pulumi.Input
-
-	ToStorageClassMapOutput() StorageClassMapOutput
-	ToStorageClassMapOutputWithContext(context.Context) StorageClassMapOutput
-}
-
-type StorageClassMap map[string]StorageClassInput
-
-func (StorageClassMap) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]StorageClass)(nil)).Elem()
-}
-
-func (i StorageClassMap) ToStorageClassMapOutput() StorageClassMapOutput {
-	return i.ToStorageClassMapOutputWithContext(context.Background())
-}
-
-func (i StorageClassMap) ToStorageClassMapOutputWithContext(ctx context.Context) StorageClassMapOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(StorageClassMapOutput)
-}
-
 // StorageClass describes the inputs to a single Kubernetes StorageClass provisioned by AWS. Any number of storage classes can be added to a cluster at creation time. One of these storage classes may be configured the default storage class for the cluster.
 type StorageClassOutput struct{ *pulumi.OutputState }
 
@@ -2106,26 +2113,6 @@ func (o StorageClassOutput) VolumeBindingMode() pulumi.StringPtrOutput {
 // The AWS zone or zones for the EBS volume. If zones is not specified, volumes are generally round-robin-ed across all active zones where Kubernetes cluster has a node. zone and zones parameters must not be used at the same time.
 func (o StorageClassOutput) Zones() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v StorageClass) []string { return v.Zones }).(pulumi.StringArrayOutput)
-}
-
-type StorageClassMapOutput struct{ *pulumi.OutputState }
-
-func (StorageClassMapOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]StorageClass)(nil)).Elem()
-}
-
-func (o StorageClassMapOutput) ToStorageClassMapOutput() StorageClassMapOutput {
-	return o
-}
-
-func (o StorageClassMapOutput) ToStorageClassMapOutputWithContext(ctx context.Context) StorageClassMapOutput {
-	return o
-}
-
-func (o StorageClassMapOutput) MapIndex(k pulumi.StringInput) StorageClassOutput {
-	return pulumi.All(o, k).ApplyT(func(vs []interface{}) StorageClass {
-		return vs[0].(map[string]StorageClass)[vs[1].(string)]
-	}).(StorageClassOutput)
 }
 
 // Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
@@ -2559,7 +2546,7 @@ func (o VpcCniOptionsOutput) ToVpcCniOptionsPtrOutput() VpcCniOptionsPtrOutput {
 }
 
 func (o VpcCniOptionsOutput) ToVpcCniOptionsPtrOutputWithContext(ctx context.Context) VpcCniOptionsPtrOutput {
-	return o.ApplyT(func(v VpcCniOptions) *VpcCniOptions {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v VpcCniOptions) *VpcCniOptions {
 		return &v
 	}).(VpcCniOptionsPtrOutput)
 }
@@ -2683,7 +2670,13 @@ func (o VpcCniOptionsPtrOutput) ToVpcCniOptionsPtrOutputWithContext(ctx context.
 }
 
 func (o VpcCniOptionsPtrOutput) Elem() VpcCniOptionsOutput {
-	return o.ApplyT(func(v *VpcCniOptions) VpcCniOptions { return *v }).(VpcCniOptionsOutput)
+	return o.ApplyT(func(v *VpcCniOptions) VpcCniOptions {
+		if v != nil {
+			return *v
+		}
+		var ret VpcCniOptions
+		return ret
+	}).(VpcCniOptionsOutput)
 }
 
 // Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
@@ -2885,7 +2878,6 @@ func init() {
 	pulumi.RegisterOutputType(RoleMappingOutput{})
 	pulumi.RegisterOutputType(RoleMappingArrayOutput{})
 	pulumi.RegisterOutputType(StorageClassOutput{})
-	pulumi.RegisterOutputType(StorageClassMapOutput{})
 	pulumi.RegisterOutputType(TaintOutput{})
 	pulumi.RegisterOutputType(TaintMapOutput{})
 	pulumi.RegisterOutputType(UserMappingOutput{})

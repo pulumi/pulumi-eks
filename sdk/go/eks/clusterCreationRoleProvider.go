@@ -112,7 +112,7 @@ type ClusterCreationRoleProviderArrayInput interface {
 type ClusterCreationRoleProviderArray []ClusterCreationRoleProviderInput
 
 func (ClusterCreationRoleProviderArray) ElementType() reflect.Type {
-	return reflect.TypeOf(([]*ClusterCreationRoleProvider)(nil))
+	return reflect.TypeOf((*[]*ClusterCreationRoleProvider)(nil)).Elem()
 }
 
 func (i ClusterCreationRoleProviderArray) ToClusterCreationRoleProviderArrayOutput() ClusterCreationRoleProviderArrayOutput {
@@ -137,7 +137,7 @@ type ClusterCreationRoleProviderMapInput interface {
 type ClusterCreationRoleProviderMap map[string]ClusterCreationRoleProviderInput
 
 func (ClusterCreationRoleProviderMap) ElementType() reflect.Type {
-	return reflect.TypeOf((map[string]*ClusterCreationRoleProvider)(nil))
+	return reflect.TypeOf((*map[string]*ClusterCreationRoleProvider)(nil)).Elem()
 }
 
 func (i ClusterCreationRoleProviderMap) ToClusterCreationRoleProviderMapOutput() ClusterCreationRoleProviderMapOutput {
@@ -148,9 +148,7 @@ func (i ClusterCreationRoleProviderMap) ToClusterCreationRoleProviderMapOutputWi
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterCreationRoleProviderMapOutput)
 }
 
-type ClusterCreationRoleProviderOutput struct {
-	*pulumi.OutputState
-}
+type ClusterCreationRoleProviderOutput struct{ *pulumi.OutputState }
 
 func (ClusterCreationRoleProviderOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((*ClusterCreationRoleProvider)(nil))
@@ -169,14 +167,12 @@ func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderPtrOutpu
 }
 
 func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderPtrOutputWithContext(ctx context.Context) ClusterCreationRoleProviderPtrOutput {
-	return o.ApplyT(func(v ClusterCreationRoleProvider) *ClusterCreationRoleProvider {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v ClusterCreationRoleProvider) *ClusterCreationRoleProvider {
 		return &v
 	}).(ClusterCreationRoleProviderPtrOutput)
 }
 
-type ClusterCreationRoleProviderPtrOutput struct {
-	*pulumi.OutputState
-}
+type ClusterCreationRoleProviderPtrOutput struct{ *pulumi.OutputState }
 
 func (ClusterCreationRoleProviderPtrOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((**ClusterCreationRoleProvider)(nil))
@@ -188,6 +184,16 @@ func (o ClusterCreationRoleProviderPtrOutput) ToClusterCreationRoleProviderPtrOu
 
 func (o ClusterCreationRoleProviderPtrOutput) ToClusterCreationRoleProviderPtrOutputWithContext(ctx context.Context) ClusterCreationRoleProviderPtrOutput {
 	return o
+}
+
+func (o ClusterCreationRoleProviderPtrOutput) Elem() ClusterCreationRoleProviderOutput {
+	return o.ApplyT(func(v *ClusterCreationRoleProvider) ClusterCreationRoleProvider {
+		if v != nil {
+			return *v
+		}
+		var ret ClusterCreationRoleProvider
+		return ret
+	}).(ClusterCreationRoleProviderOutput)
 }
 
 type ClusterCreationRoleProviderArrayOutput struct{ *pulumi.OutputState }

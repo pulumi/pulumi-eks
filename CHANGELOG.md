@@ -1,5 +1,8 @@
 ## Unreleased
 
+- Make getKubeconfig method available to multi-lang
+  [#628](https://github.com/pulumi/pulumi-eks/pull/628)
+
 ## 0.33.0 (Released August 18, 2021)
 
 - Add `capacityType` and `taints` to `ManagedNodeGroup`

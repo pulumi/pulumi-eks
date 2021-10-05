@@ -10,6 +10,9 @@ using Pulumi.Serialization;
 namespace Pulumi.Eks.Outputs
 {
 
+    /// <summary>
+    /// Describes the configuration options accepted by a cluster to create its own node groups.
+    /// </summary>
     [OutputType]
     public sealed class ClusterNodeGroupOptions
     {

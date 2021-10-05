@@ -99,6 +99,19 @@ namespace Pulumi.Eks
             merged.Id = id ?? merged.Id;
             return merged;
         }
+
+        /// <summary>
+        /// Generate a kubeconfig for cluster authentication that does not use the default AWS credential provider chain, and instead is scoped to the supported options in `KubeconfigOptions`.
+        /// 
+        /// The kubeconfig generated is automatically stringified for ease of use with the pulumi/kubernetes provider.
+        /// 
+        /// See for more details:
+        /// - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
+        /// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
+        /// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+        /// </summary>
+        public Pulumi.Output<string> GetKubeconfig(ClusterGetKubeconfigArgs? args = null)
+            => Pulumi.Deployment.Instance.Call<ClusterGetKubeconfigResult>("eks:index:Cluster/getKubeconfig", args ?? new ClusterGetKubeconfigArgs(), this).Apply(v => v.Result);
     }
 
     public sealed class ClusterArgs : Pulumi.ResourceArgs
@@ -563,6 +576,47 @@ namespace Pulumi.Eks
 
         public ClusterArgs()
         {
+        }
+    }
+
+    /// <summary>
+    /// The set of arguments for the <see cref="Cluster.GetKubeconfig"/> method.
+    /// </summary>
+    public sealed class ClusterGetKubeconfigArgs : Pulumi.CallArgs
+    {
+        /// <summary>
+        /// AWS credential profile name to always use instead of the default AWS credential provider chain.
+        /// 
+        /// The profile is passed to kubeconfig as an authentication environment setting.
+        /// </summary>
+        [Input("profileName")]
+        public Input<string>? ProfileName { get; set; }
+
+        /// <summary>
+        /// Role ARN to assume instead of the default AWS credential provider chain.
+        /// 
+        /// The role is passed to kubeconfig as an authentication exec argument.
+        /// </summary>
+        [Input("roleArn")]
+        public Input<string>? RoleArn { get; set; }
+
+        public ClusterGetKubeconfigArgs()
+        {
+        }
+    }
+
+    /// <summary>
+    /// The results of the <see cref="Cluster.GetKubeconfig"/> method.
+    /// </summary>
+    [OutputType]
+    internal sealed class ClusterGetKubeconfigResult
+    {
+        public readonly string Result;
+
+        [OutputConstructor]
+        private ClusterGetKubeconfigResult(string result)
+        {
+            Result = result;
         }
     }
 }
