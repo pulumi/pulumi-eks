@@ -102,10 +102,51 @@ func generateSchema() schema.PackageSpec {
 		Homepage:    "https://pulumi.com",
 		Repository:  "https://github.com/pulumi/pulumi-eks",
 
+		Functions: map[string]schema.FunctionSpec{
+			"eks:index:Cluster/getKubeconfig": {
+				Description: "Generate a kubeconfig for cluster authentication that does not use the default AWS " +
+					"credential provider chain, and instead is scoped to the supported options in " +
+					"`KubeconfigOptions`.\n\n" +
+					"The kubeconfig generated is automatically stringified for ease of use with the " +
+					"pulumi/kubernetes provider.\n\n" +
+					"See for more details:\n" +
+					"- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html\n" +
+					"- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html\n" +
+					"- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html",
+				Inputs: &schema.ObjectTypeSpec{
+					Properties: map[string]schema.PropertySpec{
+						"__self__": {
+							TypeSpec: schema.TypeSpec{Ref: "#/resources/eks:index:Cluster"},
+						},
+						"roleArn": {
+							Description: "Role ARN to assume instead of the default AWS credential provider " +
+								"chain.\n\n" +
+								"The role is passed to kubeconfig as an authentication exec argument.",
+							TypeSpec: schema.TypeSpec{Type: "string"},
+						},
+						"profileName": {
+							Description: "AWS credential profile name to always use instead of the default AWS " +
+								"credential provider chain.\n\n" +
+								"The profile is passed to kubeconfig as an authentication environment setting.",
+							TypeSpec: schema.TypeSpec{Type: "string"},
+						},
+					},
+					Required: []string{"__self__"},
+				},
+				Outputs: &schema.ObjectTypeSpec{
+					Properties: map[string]schema.PropertySpec{
+						"result": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+						},
+					},
+					Required: []string{"result"},
+				},
+			},
+		},
+
 		Resources: map[string]schema.ResourceSpec{
 			"eks:index:Cluster": {
 				// TODO: method: createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup
-				// TODO: method: getKubeconfig(args: KubeconfigOptions): pulumi.Output<string>
 				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Description: "Cluster is a component that wraps the AWS and Kubernetes resources necessary to " +
@@ -515,6 +556,9 @@ func generateSchema() schema.PackageSpec {
 							"- Between /24 and /12." +
 							"",
 					},
+				},
+				Methods: map[string]string{
+					"getKubeconfig": "eks:index:Cluster/getKubeconfig",
 				},
 			},
 			"eks:index:ClusterCreationRoleProvider": {
@@ -1198,13 +1242,14 @@ func generateSchema() schema.PackageSpec {
 			},
 		},
 
-		Language: map[string]json.RawMessage{
+		Language: map[string]schema.RawMessage{
 			"csharp": rawMessage(map[string]interface{}{
 				"packageReferences": map[string]string{
 					"Pulumi":            "3.*",
 					"Pulumi.Aws":        "4.15.*",
 					"Pulumi.Kubernetes": "3.*",
 				},
+				"liftSingleValueMethodReturns": true,
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
@@ -1214,11 +1259,13 @@ func generateSchema() schema.PackageSpec {
 				},
 				"usesIOClasses": true,
 				// TODO: Embellish the readme
-				"readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
+				"readme":                       "Pulumi Amazon Web Services (AWS) EKS Components.",
+				"liftSingleValueMethodReturns": true,
 			}),
 			"go": rawMessage(map[string]interface{}{
 				"generateResourceContainerTypes": true,
 				"importBasePath":                 "github.com/pulumi/pulumi-eks/sdk/go/eks",
+				"liftSingleValueMethodReturns":   true,
 			}),
 		},
 	}
@@ -1537,7 +1584,7 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 	return props
 }
 
-func rawMessage(v interface{}) json.RawMessage {
+func rawMessage(v interface{}) schema.RawMessage {
 	bytes, err := json.Marshal(v)
 	contract.Assert(err == nil)
 	return bytes
