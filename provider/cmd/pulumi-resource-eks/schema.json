@@ -827,7 +827,10 @@
                     "description": "The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the default VPC."
                 }
             },
-            "isComponent": true
+            "isComponent": true,
+            "methods": {
+                "getKubeconfig": "eks:index:Cluster/getKubeconfig"
+            }
         },
         "eks:index:ClusterCreationRoleProvider": {
             "description": "ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a specific role to use for the creation of the EKS cluster different from the role being used to run the Pulumi deployment.",
@@ -1256,8 +1259,42 @@
             ]
         }
     },
+    "functions": {
+        "eks:index:Cluster/getKubeconfig": {
+            "description": "Generate a kubeconfig for cluster authentication that does not use the default AWS credential provider chain, and instead is scoped to the supported options in `KubeconfigOptions`.\n\nThe kubeconfig generated is automatically stringified for ease of use with the pulumi/kubernetes provider.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html\n- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html\n- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html",
+            "inputs": {
+                "properties": {
+                    "__self__": {
+                        "$ref": "#/resources/eks:index:Cluster"
+                    },
+                    "profileName": {
+                        "type": "string",
+                        "description": "AWS credential profile name to always use instead of the default AWS credential provider chain.\n\nThe profile is passed to kubeconfig as an authentication environment setting."
+                    },
+                    "roleArn": {
+                        "type": "string",
+                        "description": "Role ARN to assume instead of the default AWS credential provider chain.\n\nThe role is passed to kubeconfig as an authentication exec argument."
+                    }
+                },
+                "required": [
+                    "__self__"
+                ]
+            },
+            "outputs": {
+                "properties": {
+                    "result": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "result"
+                ]
+            }
+        }
+    },
     "language": {
         "csharp": {
+            "liftSingleValueMethodReturns": true,
             "packageReferences": {
                 "Pulumi": "3.*",
                 "Pulumi.Aws": "4.15.*",
@@ -1266,9 +1303,11 @@
         },
         "go": {
             "generateResourceContainerTypes": true,
-            "importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks"
+            "importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks",
+            "liftSingleValueMethodReturns": true
         },
         "python": {
+            "liftSingleValueMethodReturns": true,
             "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
             "requires": {
                 "pulumi": "\u003e=3.0.0,\u003c4.0.0",

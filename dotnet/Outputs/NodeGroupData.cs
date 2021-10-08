@@ -10,6 +10,9 @@ using Pulumi.Serialization;
 namespace Pulumi.Eks.Outputs
 {
 
+    /// <summary>
+    /// NodeGroupData describes the resources created for the given NodeGroup.
+    /// </summary>
     [OutputType]
     public sealed class NodeGroupData
     {

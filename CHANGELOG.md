@@ -2,6 +2,9 @@
 
 - Add support for setting the init container image.
 - Add support for setting `DISABLE_TCP_EARLY_DEMUX`.
+- Make getKubeconfig method available to multi-lang
+  [#628](https://github.com/pulumi/pulumi-eks/pull/628)
+
 
 ## 0.33.0 (Released August 18, 2021)
 
