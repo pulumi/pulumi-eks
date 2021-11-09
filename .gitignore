@@ -10,6 +10,7 @@ package-lock.json
 .idea/
 **/version.txt
 **/dist
+.DS_Store
 
 ci-scripts/
 *.tar.gz

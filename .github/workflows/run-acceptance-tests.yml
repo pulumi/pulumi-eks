@@ -98,7 +98,8 @@ jobs:
           echo 'SCHEMA_CHANGES<<EOF' >> $GITHUB_ENV
           schema-tools compare ${{ env.PROVIDER }} master --local-path=provider/cmd/pulumi-resource-${{ env.PROVIDER }}/schema.json >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-      - name: Comment on PR with Details of Schema Check
+      - if: github.event_name == 'pull_request'
+        name: Comment on PR with Details of Schema Check
         uses: thollander/actions-comment-pull-request@1.0.1
         with:
           message: |
