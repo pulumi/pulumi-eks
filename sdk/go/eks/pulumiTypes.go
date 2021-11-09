@@ -2358,6 +2358,8 @@ type VpcCniOptions struct {
 	DisableTcpEarlyDemux *bool `pulumi:"disableTcpEarlyDemux"`
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni *bool `pulumi:"enablePodEni"`
+	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+	EnablePrefixDelegation *bool `pulumi:"enablePrefixDelegation"`
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
 	//
@@ -2406,6 +2408,8 @@ type VpcCniOptions struct {
 	WarmEniTarget *int `pulumi:"warmEniTarget"`
 	// Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
 	WarmIpTarget *int `pulumi:"warmIpTarget"`
+	// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+	WarmPrefixTarget *int `pulumi:"warmPrefixTarget"`
 }
 
 // VpcCniOptionsInput is an input type that accepts VpcCniOptionsArgs and VpcCniOptionsOutput values.
@@ -2435,6 +2439,8 @@ type VpcCniOptionsArgs struct {
 	DisableTcpEarlyDemux pulumi.BoolPtrInput `pulumi:"disableTcpEarlyDemux"`
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni pulumi.BoolPtrInput `pulumi:"enablePodEni"`
+	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+	EnablePrefixDelegation pulumi.BoolPtrInput `pulumi:"enablePrefixDelegation"`
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
 	//
@@ -2483,6 +2489,8 @@ type VpcCniOptionsArgs struct {
 	WarmEniTarget pulumi.IntPtrInput `pulumi:"warmEniTarget"`
 	// Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
 	WarmIpTarget pulumi.IntPtrInput `pulumi:"warmIpTarget"`
+	// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+	WarmPrefixTarget pulumi.IntPtrInput `pulumi:"warmPrefixTarget"`
 }
 
 func (VpcCniOptionsArgs) ElementType() reflect.Type {
@@ -2595,6 +2603,11 @@ func (o VpcCniOptionsOutput) EnablePodEni() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.EnablePodEni }).(pulumi.BoolPtrOutput)
 }
 
+// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+func (o VpcCniOptionsOutput) EnablePrefixDelegation() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *bool { return v.EnablePrefixDelegation }).(pulumi.BoolPtrOutput)
+}
+
 // Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 // Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
 //
@@ -2677,6 +2690,11 @@ func (o VpcCniOptionsOutput) WarmEniTarget() pulumi.IntPtrOutput {
 // Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
 func (o VpcCniOptionsOutput) WarmIpTarget() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *int { return v.WarmIpTarget }).(pulumi.IntPtrOutput)
+}
+
+// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+func (o VpcCniOptionsOutput) WarmPrefixTarget() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *int { return v.WarmPrefixTarget }).(pulumi.IntPtrOutput)
 }
 
 type VpcCniOptionsPtrOutput struct{ *pulumi.OutputState }
@@ -2762,6 +2780,16 @@ func (o VpcCniOptionsPtrOutput) EnablePodEni() pulumi.BoolPtrOutput {
 			return nil
 		}
 		return v.EnablePodEni
+	}).(pulumi.BoolPtrOutput)
+}
+
+// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+func (o VpcCniOptionsPtrOutput) EnablePrefixDelegation() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.EnablePrefixDelegation
 	}).(pulumi.BoolPtrOutput)
 }
 
@@ -2906,6 +2934,16 @@ func (o VpcCniOptionsPtrOutput) WarmIpTarget() pulumi.IntPtrOutput {
 			return nil
 		}
 		return v.WarmIpTarget
+	}).(pulumi.IntPtrOutput)
+}
+
+// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+func (o VpcCniOptionsPtrOutput) WarmPrefixTarget() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *int {
+		if v == nil {
+			return nil
+		}
+		return v.WarmPrefixTarget
 	}).(pulumi.IntPtrOutput)
 }
 

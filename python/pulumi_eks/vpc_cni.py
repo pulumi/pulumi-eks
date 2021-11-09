@@ -20,6 +20,7 @@ class VpcCniArgs:
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
+                 enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
                  external_snat: Optional[pulumi.Input[bool]] = None,
@@ -31,7 +32,8 @@ class VpcCniArgs:
                  security_context_privileged: Optional[pulumi.Input[bool]] = None,
                  veth_prefix: Optional[pulumi.Input[str]] = None,
                  warm_eni_target: Optional[pulumi.Input[int]] = None,
-                 warm_ip_target: Optional[pulumi.Input[int]] = None):
+                 warm_ip_target: Optional[pulumi.Input[int]] = None,
+                 warm_prefix_target: Optional[pulumi.Input[int]] = None):
         """
         The set of arguments for constructing a VpcCni resource.
         :param Any kubeconfig: The kubeconfig to use when setting the VPC CNI options.
@@ -79,6 +81,7 @@ class VpcCniArgs:
                
                Defaults to 1.
         :param pulumi.Input[int] warm_ip_target: Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
+        :param pulumi.Input[int] warm_prefix_target: WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
         """
         pulumi.set(__self__, "kubeconfig", kubeconfig)
         if cni_configure_rpfilter is not None:
@@ -93,6 +96,8 @@ class VpcCniArgs:
             pulumi.set(__self__, "disable_tcp_early_demux", disable_tcp_early_demux)
         if enable_pod_eni is not None:
             pulumi.set(__self__, "enable_pod_eni", enable_pod_eni)
+        if enable_prefix_delegation is not None:
+            pulumi.set(__self__, "enable_prefix_delegation", enable_prefix_delegation)
         if eni_config_label_def is not None:
             pulumi.set(__self__, "eni_config_label_def", eni_config_label_def)
         if eni_mtu is not None:
@@ -117,6 +122,8 @@ class VpcCniArgs:
             pulumi.set(__self__, "warm_eni_target", warm_eni_target)
         if warm_ip_target is not None:
             pulumi.set(__self__, "warm_ip_target", warm_ip_target)
+        if warm_prefix_target is not None:
+            pulumi.set(__self__, "warm_prefix_target", warm_prefix_target)
 
     @property
     @pulumi.getter
@@ -203,6 +210,18 @@ class VpcCniArgs:
     @enable_pod_eni.setter
     def enable_pod_eni(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "enable_pod_eni", value)
+
+    @property
+    @pulumi.getter(name="enablePrefixDelegation")
+    def enable_prefix_delegation(self) -> Optional[pulumi.Input[bool]]:
+        """
+        IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+        """
+        return pulumi.get(self, "enable_prefix_delegation")
+
+    @enable_prefix_delegation.setter
+    def enable_prefix_delegation(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "enable_prefix_delegation", value)
 
     @property
     @pulumi.getter(name="eniConfigLabelDef")
@@ -372,6 +391,18 @@ class VpcCniArgs:
     def warm_ip_target(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "warm_ip_target", value)
 
+    @property
+    @pulumi.getter(name="warmPrefixTarget")
+    def warm_prefix_target(self) -> Optional[pulumi.Input[int]]:
+        """
+        WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+        """
+        return pulumi.get(self, "warm_prefix_target")
+
+    @warm_prefix_target.setter
+    def warm_prefix_target(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "warm_prefix_target", value)
+
 
 class VpcCni(pulumi.CustomResource):
     @overload
@@ -384,6 +415,7 @@ class VpcCni(pulumi.CustomResource):
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
+                 enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
                  external_snat: Optional[pulumi.Input[bool]] = None,
@@ -397,6 +429,7 @@ class VpcCni(pulumi.CustomResource):
                  veth_prefix: Optional[pulumi.Input[str]] = None,
                  warm_eni_target: Optional[pulumi.Input[int]] = None,
                  warm_ip_target: Optional[pulumi.Input[int]] = None,
+                 warm_prefix_target: Optional[pulumi.Input[int]] = None,
                  __props__=None):
         """
         VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
@@ -448,6 +481,7 @@ class VpcCni(pulumi.CustomResource):
                
                Defaults to 1.
         :param pulumi.Input[int] warm_ip_target: Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
+        :param pulumi.Input[int] warm_prefix_target: WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
         """
         ...
     @overload
@@ -479,6 +513,7 @@ class VpcCni(pulumi.CustomResource):
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
+                 enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
                  external_snat: Optional[pulumi.Input[bool]] = None,
@@ -492,6 +527,7 @@ class VpcCni(pulumi.CustomResource):
                  veth_prefix: Optional[pulumi.Input[str]] = None,
                  warm_eni_target: Optional[pulumi.Input[int]] = None,
                  warm_ip_target: Optional[pulumi.Input[int]] = None,
+                 warm_prefix_target: Optional[pulumi.Input[int]] = None,
                  __props__=None):
         if opts is None:
             opts = pulumi.ResourceOptions()
@@ -510,6 +546,7 @@ class VpcCni(pulumi.CustomResource):
             __props__.__dict__["custom_network_config"] = custom_network_config
             __props__.__dict__["disable_tcp_early_demux"] = disable_tcp_early_demux
             __props__.__dict__["enable_pod_eni"] = enable_pod_eni
+            __props__.__dict__["enable_prefix_delegation"] = enable_prefix_delegation
             __props__.__dict__["eni_config_label_def"] = eni_config_label_def
             __props__.__dict__["eni_mtu"] = eni_mtu
             __props__.__dict__["external_snat"] = external_snat
@@ -525,6 +562,7 @@ class VpcCni(pulumi.CustomResource):
             __props__.__dict__["veth_prefix"] = veth_prefix
             __props__.__dict__["warm_eni_target"] = warm_eni_target
             __props__.__dict__["warm_ip_target"] = warm_ip_target
+            __props__.__dict__["warm_prefix_target"] = warm_prefix_target
         super(VpcCni, __self__).__init__(
             'eks:index:VpcCni',
             resource_name,

@@ -1491,6 +1491,16 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 			Description: "Specifies the number of free IP addresses that the ipamD daemon should " +
 				"attempt to keep available for pod assignment on the node.",
 		},
+		"warmPrefixTarget": {
+			TypeSpec: schema.TypeSpec{Type: "integer"},
+			Description: "WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  " +
+				"is consumed with the existing prefix. " +
+				"Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md",
+		},
+		"enablePrefixDelegation": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.",
+		},
 		"logLevel": {
 			TypeSpec: schema.TypeSpec{Type: "string"}, // TODO consider typing this as an enum
 			Description: "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nValid " +
