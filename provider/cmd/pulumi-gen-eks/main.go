@@ -1506,6 +1506,11 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 			Description: "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\n" +
 				"Defaults to the official AWS CNI image in ECR.",
 		},
+		"initImage": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Specifies the init container image to use in the AWS CNI cluster DaemonSet.\n\n" +
+				"Defaults to the official AWS CNI init container image in ECR.",
+		},
 		"vethPrefix": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
 			Description: "Specifies the veth prefix used to generate the host-side veth device name " +
@@ -1526,8 +1531,14 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 		},
 		"enablePodEni": {
 			TypeSpec: schema.TypeSpec{Type: "boolean"},
-			Description: "Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to" +
-				"the node if the instance has capacity to attach an additional ENI. Default is `false`.",
+			Description: "Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to " +
+				"the node if the instance has capacity to attach an additional ENI. Default is `false`. " +
+				"If using liveness and readiness probes, you will also need to disable TCP early demux.",
+		},
+		"disableTcpEarlyDemux": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled." +
+				" This will slightly increase local TCP connection latency.",
 		},
 		"cniConfigureRpfilter": {
 			TypeSpec:    schema.TypeSpec{Type: "boolean"},

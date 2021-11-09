@@ -469,9 +469,13 @@
                     "type": "boolean",
                     "description": "Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.\n\nDefaults to false."
                 },
+                "disableTcpEarlyDemux": {
+                    "type": "boolean",
+                    "description": "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency."
+                },
                 "enablePodEni": {
                     "type": "boolean",
-                    "description": "Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`."
+                    "description": "Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux."
                 },
                 "eniConfigLabelDef": {
                     "type": "string",
@@ -488,6 +492,10 @@
                 "image": {
                     "type": "string",
                     "description": "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI image in ECR."
+                },
+                "initImage": {
+                    "type": "string",
+                    "description": "Specifies the init container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI init container image in ECR."
                 },
                 "logFile": {
                     "type": "string",
@@ -1185,9 +1193,13 @@
                     "type": "boolean",
                     "description": "Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.\n\nDefaults to false."
                 },
+                "disableTcpEarlyDemux": {
+                    "type": "boolean",
+                    "description": "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency."
+                },
                 "enablePodEni": {
                     "type": "boolean",
-                    "description": "Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`."
+                    "description": "Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux."
                 },
                 "eniConfigLabelDef": {
                     "type": "string",
@@ -1204,6 +1216,10 @@
                 "image": {
                     "type": "string",
                     "description": "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI image in ECR."
+                },
+                "initImage": {
+                    "type": "string",
+                    "description": "Specifies the init container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI init container image in ECR."
                 },
                 "kubeconfig": {
                     "$ref": "pulumi.json#/Any",
