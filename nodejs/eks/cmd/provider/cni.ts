@@ -32,12 +32,14 @@ interface VpcCniInputs {
     logLevel?: string;
     logFile?: string;
     image?: string;
+    initImage?: string;
     vethPrefix?: string;
     eniMtu?: number;
     eniConfigLabelDef?: string;
     pluginLogLevel?: string;
     pluginLogFile?: string;
     enablePodEni?: boolean;
+    disableTcpEarlyDemux?: boolean;
     cniConfigureRpfilter?: boolean;
     cniCustomNetworkCfg?: boolean;
     cniExternalSnat?: boolean;
@@ -50,6 +52,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     // Rewrite the envvars for the CNI daemon set as per the inputs.
     const daemonSet = cniYaml.filter(o => o.kind === "DaemonSet")[0];
     const env = daemonSet.spec.template.spec.containers[0].env;
+    const initEnv = daemonSet.spec.template.spec.initContainers[0].env;
     const securityContext = daemonSet.spec.template.spec.containers[0].securityContext;
     if (args.nodePortSupport) {
         env.push({name: "AWS_VPC_CNI_NODE_PORT_SUPPORT", value: args.nodePortSupport ? "true" : "false"});
@@ -91,6 +94,9 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     if (args.image) {
         daemonSet.spec.template.spec.containers[0].image = args.image.toString();
     }
+    if (args.initImage) {
+        daemonSet.spec.template.spec.initContainers[0].image = args.initImage.toString();
+    }
     if (args.eniConfigLabelDef) {
         env.push({name: "ENI_CONFIG_LABEL_DEF", value: args.eniConfigLabelDef.toString()});
     }
@@ -108,6 +114,11 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         env.push({name: "ENABLE_POD_ENI", value: args.enablePodEni ? "true" : "false"});
     } else {
         env.push({name: "ENABLE_POD_ENI", value: "false"});
+    }
+    if (args.disableTcpEarlyDemux) {
+        initEnv.push({name: "DISABLE_TCP_EARLY_DEMUX", value: args.disableTcpEarlyDemux ? "true" : "false"});
+    } else {
+        initEnv.push({name: "DISABLE_TCP_EARLY_DEMUX", value: "false"});
     }
     if (args.cniConfigureRpfilter) {
         env.push({name: "AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER", value: args.cniConfigureRpfilter ? "true" : "false"});

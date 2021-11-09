@@ -86,7 +86,13 @@ namespace Pulumi.Eks
         public Input<bool>? CustomNetworkConfig { get; set; }
 
         /// <summary>
-        /// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+        /// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        /// </summary>
+        [Input("disableTcpEarlyDemux")]
+        public Input<bool>? DisableTcpEarlyDemux { get; set; }
+
+        /// <summary>
+        /// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         /// </summary>
         [Input("enablePodEni")]
         public Input<bool>? EnablePodEni { get; set; }
@@ -123,6 +129,14 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("image")]
         public Input<string>? Image { get; set; }
+
+        /// <summary>
+        /// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+        /// 
+        /// Defaults to the official AWS CNI init container image in ECR.
+        /// </summary>
+        [Input("initImage")]
+        public Input<string>? InitImage { get; set; }
 
         /// <summary>
         /// The kubeconfig to use when setting the VPC CNI options.
