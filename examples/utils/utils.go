@@ -347,6 +347,48 @@ func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod *corev1.Pod) 
 	return false
 }
 
+func ValidateDaemonSet(t *testing.T, kubeconfig interface{}, namespace, name string, validateFn func(*appsv1.DaemonSet)) error {
+	clusterMap, err := mapClusterToKubeAccess(kubeconfig)
+	if err != nil {
+		return err
+	}
+	if len(clusterMap) == 0 {
+		return fmt.Errorf("missing cluster kubeconfig")
+	}
+	var clientSet *kubernetes.Clientset
+	for _, kubeAccess := range clusterMap {
+		clientSet = kubeAccess.Clientset
+	}
+
+	var ds *appsv1.DaemonSet
+	ready := false
+	for i := 0; i < MaxRetries; i++ {
+		ds, ready = IsDaemonSetReady(t, clientSet, namespace, name)
+		if ready {
+			break
+		} else {
+			waitFor(t, fmt.Sprintf("Daemonset %s/%s", namespace, name), "ready")
+		}
+	}
+
+	if !ready {
+		fmt.Errorf("daemonset wasn't ready in time")
+	}
+
+	validateFn(ds)
+	return nil
+}
+
+func IsDaemonSetReady(t *testing.T, clientset *kubernetes.Clientset, namespace, name string) (*appsv1.DaemonSet, bool) {
+	// Attempt to retrieve Deployment.
+	o, err := clientset.AppsV1().DaemonSets(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		return nil, false
+	}
+
+	return o, o.Status.DesiredNumberScheduled == o.Status.NumberReady
+}
+
 // IsDeploymentReady attempts to check if the Deployments's status conditions
 // are ready.
 func IsDeploymentReady(t *testing.T, clientset *kubernetes.Clientset, deployment *appsv1.Deployment) bool {
