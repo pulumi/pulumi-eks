@@ -450,7 +450,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 				endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
 				headers := map[string]string{"Host": "apps.example.com"}
-				utils.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
+				integration.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
 					return assert.NotEmpty(t, body, "Body should not be empty")
 				})
 			},
@@ -462,7 +462,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 						endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
 						headers := map[string]string{"Host": "apps.example.com"}
-						utils.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
+						integration.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
 							return assert.NotEmpty(t, body, "Body should not be empty")
 						})
 					},
@@ -476,7 +476,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 						endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
 						headers := map[string]string{"Host": "apps.example.com"}
-						utils.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
+						integration.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
 							return assert.NotEmpty(t, body, "Body should not be empty")
 						})
 
