@@ -1277,6 +1277,7 @@ class VpcCniOptionsArgs:
                Defaults to false.
         :param pulumi.Input[bool] disable_tcp_early_demux: Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
         :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
+        :param pulumi.Input[bool] enable_prefix_delegation: IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
                Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
                

@@ -66,7 +66,6 @@ export interface VpcCniOptions {
     /**
      * IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
      * Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
-     * 
      */
      enablePrefixDelegation?: pulumi.Input<boolean>;
 
