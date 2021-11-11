@@ -58,6 +58,18 @@ export interface VpcCniOptions {
     warmIpTarget?: pulumi.Input<number>;
 
     /**
+     * WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP is consumed with the existing prefix.
+     * Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+     */
+    warmPrefixTarget?: pulumi.Input<number>;
+
+    /**
+     * IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+     * Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+     */
+     enablePrefixDelegation?: pulumi.Input<boolean>;
+
+    /**
      * Specifies the log level used for logs.
      *
      * Defaults to "DEBUG".
@@ -208,6 +220,8 @@ export class VpcCni extends pulumi.CustomResource {
             externalSnat: args?.externalSnat,
             warmEniTarget: args?.warmEniTarget,
             warmIpTarget: args?.warmIpTarget,
+            enablePrefixDelegation: args?.enablePrefixDelegation,
+            warmPrefixTarget: args?.warmPrefixTarget,
             logLevel: args?.logLevel,
             logFile: args?.logFile,
             image: args?.image,
