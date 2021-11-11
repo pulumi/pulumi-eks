@@ -98,6 +98,12 @@ namespace Pulumi.Eks
         public Input<bool>? EnablePodEni { get; set; }
 
         /// <summary>
+        /// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+        /// </summary>
+        [Input("enablePrefixDelegation")]
+        public Input<bool>? EnablePrefixDelegation { get; set; }
+
+        /// <summary>
         /// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
         /// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
         /// 
@@ -198,6 +204,12 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("warmIpTarget")]
         public Input<int>? WarmIpTarget { get; set; }
+
+        /// <summary>
+        /// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+        /// </summary>
+        [Input("warmPrefixTarget")]
+        public Input<int>? WarmPrefixTarget { get; set; }
 
         public VpcCniArgs()
         {

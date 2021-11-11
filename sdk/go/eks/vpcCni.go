@@ -72,6 +72,8 @@ type vpcCniArgs struct {
 	DisableTcpEarlyDemux *bool `pulumi:"disableTcpEarlyDemux"`
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni *bool `pulumi:"enablePodEni"`
+	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+	EnablePrefixDelegation *bool `pulumi:"enablePrefixDelegation"`
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
 	//
@@ -122,6 +124,8 @@ type vpcCniArgs struct {
 	WarmEniTarget *int `pulumi:"warmEniTarget"`
 	// Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
 	WarmIpTarget *int `pulumi:"warmIpTarget"`
+	// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+	WarmPrefixTarget *int `pulumi:"warmPrefixTarget"`
 }
 
 // The set of arguments for constructing a VpcCni resource.
@@ -140,6 +144,8 @@ type VpcCniArgs struct {
 	DisableTcpEarlyDemux pulumi.BoolPtrInput
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni pulumi.BoolPtrInput
+	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+	EnablePrefixDelegation pulumi.BoolPtrInput
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
 	//
@@ -190,6 +196,8 @@ type VpcCniArgs struct {
 	WarmEniTarget pulumi.IntPtrInput
 	// Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
 	WarmIpTarget pulumi.IntPtrInput
+	// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+	WarmPrefixTarget pulumi.IntPtrInput
 }
 
 func (VpcCniArgs) ElementType() reflect.Type {
