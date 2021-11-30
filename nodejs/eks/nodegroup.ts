@@ -56,7 +56,7 @@ export interface NodeGroupBaseOptions {
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
-    instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+    instanceType?: pulumi.Input<string | aws.ec2.InstanceType>;
 
     /**
      * Bidding price for spot instance. If set, only spot instances will be added as worker node
