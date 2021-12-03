@@ -1,10 +1,13 @@
 ## Unreleased
+
+## 0.36.0 (Released December 3, 2021)
 - Add support for all EC2 LaunchConfiguration EBS parameters related to cluster root node volumes
   [#597](https://github.com/pulumi/pulumi-eks/issues/597)
 - Add support for setting `WARM_PREFIX_TARGET` and `ENABLE_PREFIX_DELEGATION`
   [#618](https://github.com/pulumi/pulumi-eks/pull/618)
 - NodeGroups accept strings as InstanceTypes
   [#639](https://github.com/pulumi/pulumi-eks/pull/639)
+
 ## 0.35.0 (Released November 10, 2021)
 - Add support for setting the init container image
   [#631](https://github.com/pulumi/pulumi-eks/pull/631)
