@@ -1,4 +1,6 @@
 ## Unreleased
+- Add support for all EC2 LaunchConfiguration EBS parameters related to cluster root node volumes
+  [#597](https://github.com/pulumi/pulumi-eks/issues/597)
 - Add support for setting `WARM_PREFIX_TARGET` and `ENABLE_PREFIX_DELEGATION`
   [#618](https://github.com/pulumi/pulumi-eks/pull/618)
 - NodeGroups accept strings as InstanceTypes

@@ -99,6 +99,8 @@ export interface NodeGroupBaseOptions {
 
     /**
      * Encrypt the root block device of the nodes in the node group.
+     * @deprecated This option has been deprecated for parameter naming coherence.
+     * Use the nodeRootVolumeEncrypted option instead.
      */
     encryptRootBlockDevice?: pulumi.Input<boolean>;
 
@@ -118,6 +120,33 @@ export interface NodeGroupBaseOptions {
      * The size in GiB of a cluster node's root volume. Defaults to 20.
      */
     nodeRootVolumeSize?: pulumi.Input<number>;
+
+    /**
+     * Whether to delete a cluster node's root volume on termination. Defaults to true.
+     */
+    nodeRootVolumeDeleteOnTermination?: pulumi.Input<boolean>;
+
+    /**
+     * Whether to encrypt a cluster node's root volume. Defaults to false.
+     */
+    nodeRootVolumeEncrypted?: pulumi.Input<boolean>;
+
+    /**
+     * Provisioned IOPS for a cluster node's root volume.
+     * Only valid for io1 volumes.
+     */
+    nodeRootVolumeIops?: pulumi.Input<number> | undefined;
+
+    /**
+     * Provisioned throughput performance in integer MiB/s for a cluster node's root volume.
+     * Only valid for gp3 volumes.
+     */
+    nodeRootVolumeThroughput?: pulumi.Input<number> | undefined;
+
+    /**
+     * Configured EBS type for a cluster node's root volume. Default is gp2.
+     */
+    nodeRootVolumeType?: "standard" | "gp2" | "gp3" | "st1" | "sc1" | "io1";
 
     /**
      * Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node
@@ -485,6 +514,28 @@ ${customUserData}
         nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
     }
 
+    const numeric = new RegExp("^\d+$");
+
+    if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
+        throw new Error("Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).");
+    }
+
+    if (args.nodeRootVolumeType === "io1" && args.nodeRootVolumeIops) {
+        if (!numeric.test(args.nodeRootVolumeIops?.toString())) {
+            throw new Error("Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.");
+        }
+    }
+
+    if (args.nodeRootVolumeThroughput && args.nodeRootVolumeType !== "gp3") {
+        throw new Error("Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).");
+    }
+
+    if (args.nodeRootVolumeType === "gp3" && args.nodeRootVolumeThroughput) {
+        if (!numeric.test(args.nodeRootVolumeThroughput?.toString())) {
+            throw new Error("Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.");
+        }
+    }
+
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
         associatePublicIpAddress: nodeAssociatePublicIpAddress,
         imageId: amiId,
@@ -494,10 +545,12 @@ ${customUserData}
         securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         spotPrice: args.spotPrice,
         rootBlockDevice: {
-            encrypted: args.encryptRootBlockDevice || args.encryptRootBockDevice,
-            volumeSize: args.nodeRootVolumeSize || 20, // GiB
-            volumeType: "gp2", // default is "standard"
-            deleteOnTermination: true,
+            encrypted: ((args.encryptRootBlockDevice ?? args.encryptRootBockDevice) ?? args.nodeRootVolumeEncrypted) ?? false,
+            volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
+            volumeType: args.nodeRootVolumeType ?? "gp2",
+            iops: args.nodeRootVolumeIops,
+            throughput: args.nodeRootVolumeThroughput,
+            deleteOnTermination: args.nodeRootVolumeDeleteOnTermination ?? true,
         },
         userData: args.nodeUserDataOverride || userdata,
     }, { parent, provider });

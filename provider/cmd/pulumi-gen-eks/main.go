@@ -396,6 +396,30 @@ func generateSchema() schema.PackageSpec {
 					"nodeRootVolumeSize": {
 						TypeSpec:    schema.TypeSpec{Type: "integer"},
 						Description: "The size in GiB of a cluster node's root volume. Defaults to 20.",
+						Default:     20,
+					},
+					"nodeRootVolumeDeleteOnTermination": {
+						TypeSpec:    schema.TypeSpec{Type: "boolean"},
+						Description: "Whether to delete a cluster node's root volume on termination. Defaults to true.",
+						Default:     true,
+					},
+					"nodeRootVolumeEncrypted": {
+						TypeSpec:    schema.TypeSpec{Type: "boolean"},
+						Description: "Whether to encrypt a cluster node's root volume. Defaults to false.",
+						Default:     false,
+					},
+					"nodeRootVolumeIops": {
+						TypeSpec:    schema.TypeSpec{Type: "integer"},
+						Description: "Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.",
+					},
+					"nodeRootVolumeThroughput": {
+						TypeSpec:    schema.TypeSpec{Type: "integer"},
+						Description: "Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.",
+					},
+					"nodeRootVolumeType": {
+						TypeSpec:    schema.TypeSpec{Type: "string"},
+						Description: "Configured EBS type for a cluster node's root volume. Default is gp2.",
+						Default:     "gp2",
 					},
 					"nodeUserData": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -1498,7 +1522,7 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 				"Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md",
 		},
 		"enablePrefixDelegation": {
-			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			TypeSpec:    schema.TypeSpec{Type: "boolean"},
 			Description: "IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.",
 		},
 		"logLevel": {
