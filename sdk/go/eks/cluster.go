@@ -60,7 +60,6 @@ func NewCluster(ctx *pulumi.Context,
 	if args.NodeRootVolumeType == nil {
 		args.NodeRootVolumeType = pulumi.StringPtr("gp2")
 	}
-
 	var resource Cluster
 	err := ctx.RegisterRemoteComponentResource("eks:index:Cluster", name, args, &resource, opts...)
 	if err != nil {
