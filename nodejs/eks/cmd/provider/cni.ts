@@ -77,7 +77,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         env.push({name: "WARM_PREFIX_TARGET", value: args.warmPrefixTarget.toString()});
     }
     if (args.enablePrefixDelegation) {
-        env.push({name: "ENABLE_PREFIX_DELEGATION ", value: args.enablePrefixDelegation ? "true" : "false"});
+        env.push({name: "ENABLE_PREFIX_DELEGATION", value: args.enablePrefixDelegation ? "true" : "false"});
     }
     if (args.logLevel) {
         env.push({name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: args.logLevel.toString()});
