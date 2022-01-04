@@ -740,7 +740,7 @@ func generateSchema() schema.PackageSpec {
 							"set:\n" +
 							"  - core.subnetIds\n" +
 							"  - core.privateIds\n" +
-							"  - core.publicSublicSubnetIds\n\n" +
+							"  - core.publicSubnetIds\n\n" +
 							"This default logic is based on the existing subnet IDs logic of this package: " +
 							"https://git.io/JeM11",
 					},
@@ -1402,7 +1402,7 @@ func nodeGroupProperties(cluster bool) map[string]schema.PropertySpec {
 				Type:                 "object",
 				AdditionalProperties: &schema.TypeSpec{Type: "string"},
 			},
-			Description: "Custom k8s node labels to be attached to each woker node. Adds the given " +
+			Description: "Custom k8s node labels to be attached to each worker node. Adds the given " +
 				"key/value pairs to the `--node-labels` kubelet argument.",
 		},
 		"taints": {
@@ -1419,11 +1419,11 @@ func nodeGroupProperties(cluster bool) map[string]schema.PropertySpec {
 				"`--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, " +
 				"'--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will " +
 				"be applied to this list (using `--node-labels` and `--register-with-taints` " +
-				"respectively) after to the expicit `kubeletExtraArgs`.",
+				"respectively) after to the explicit `kubeletExtraArgs`.",
 		},
 		"bootstrapExtraArgs": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. Fror details on " +
+			Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on " +
 				"available options, see: " +
 				"https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. " +
 				"Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` " +
