@@ -89,7 +89,7 @@ type managedNodeGroupArgs struct {
 	// Default subnetIds is chosen from the following list, in order, if subnetIds arg is not set:
 	//   - core.subnetIds
 	//   - core.privateIds
-	//   - core.publicSublicSubnetIds
+	//   - core.publicSubnetIds
 	//
 	// This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
 	SubnetIds []string `pulumi:"subnetIds"`
@@ -148,7 +148,7 @@ type ManagedNodeGroupArgs struct {
 	// Default subnetIds is chosen from the following list, in order, if subnetIds arg is not set:
 	//   - core.subnetIds
 	//   - core.privateIds
-	//   - core.publicSublicSubnetIds
+	//   - core.publicSubnetIds
 	//
 	// This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
 	SubnetIds pulumi.StringArrayInput
