@@ -904,8 +904,8 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
         scalingConfig: pulumi.all([
             args.scalingConfig,
         ]).apply(([config]) => {
-            const desiredSize = config && config.desiredSize !== undefined ? config.desiredSize : 2;
-            const minSize = config && config.minSize !== undefined ? config.minSzie : 1;
+            const desiredSize = config?.desiredSize ?? 2;
+            const minSize = config?.minSize ?? 1;
             const maxSize = config && config.maxSize || 2;
             return {
                 desiredSize: desiredSize,
