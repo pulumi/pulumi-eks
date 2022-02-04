@@ -906,7 +906,7 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
         ]).apply(([config]) => {
             const desiredSize = config?.desiredSize ?? 2;
             const minSize = config?.minSize ?? 1;
-            const maxSize = config && config.maxSize || 2;
+            const maxSize = config?.maxSize ?? 2;
             return {
                 desiredSize: desiredSize,
                 minSize: minSize,
