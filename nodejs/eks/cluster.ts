@@ -960,7 +960,7 @@ export interface ClusterOptions {
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
-    instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+    instanceType?: pulumi.Input<aws.ec2.InstanceType | string>;
 
     /**
      * This enables the simple case of only registering a *single* IAM
