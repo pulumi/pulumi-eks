@@ -1,6 +1,8 @@
 ## Unreleased
 - Fix `ENABLE_PREFIX_DELEGATION` not working
   [#646](https://github.com/pulumi/pulumi-eks/pull/646)
+- Fix node group's `minSize` and `desiredSize` cannot be 0
+  [#645](https://github.com/pulumi/pulumi-eks/issues/645)
 
 ## 0.36.0 (Released December 3, 2021)
 - Add support for all EC2 LaunchConfiguration EBS parameters related to cluster root node volumes
