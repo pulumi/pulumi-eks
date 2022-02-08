@@ -1,4 +1,7 @@
 ## Unreleased
+(None)
+
+## 0.37.0 (Released February 8, 2022)
 - Fix `ENABLE_PREFIX_DELEGATION` not working
   [#646](https://github.com/pulumi/pulumi-eks/pull/646)
 - Fix node group's `minSize` and `desiredSize` cannot be 0
