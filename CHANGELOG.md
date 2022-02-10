@@ -1,5 +1,5 @@
-## Unreleased
-(None)
+## 0.37.1 (Released Feb 10, 2022)
+- Support GetSchema RPC (https://github.com/pulumi/pulumi-eks/issues/659)
 
 ## 0.37.0 (Released February 8, 2022)
 - Fix `ENABLE_PREFIX_DELEGATION` not working
