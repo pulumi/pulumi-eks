@@ -1,6 +1,10 @@
 ## Unreleased
 (None)
 
+## 0.37.1 (Released February 10, 2020)
+- Ensure Schema is part of the Provider for the GetSchema option
+  [#660](https://github.com/pulumi/pulumi-eks/pull/600)
+
 ## 0.37.0 (Released February 8, 2022)
 - Fix `ENABLE_PREFIX_DELEGATION` not working
   [#646](https://github.com/pulumi/pulumi-eks/pull/646)
