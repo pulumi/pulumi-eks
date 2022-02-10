@@ -93,16 +93,16 @@ test_build::
 	cd examples/utils/testvpc && yarn install && yarn run tsc
 
 test_nodejs:: install_nodejs_sdk
-	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
+	cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_python:: install_provider test_build
-	cd examples && go test -tags=python -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
+	cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_dotnet:: install_provider
-	cd examples && go test -tags=dotnet -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
+	cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 specific_test:: install_nodejs_sdk test_build
-	cd examples && go test -tags=$(LanguageTags) -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
+	cd examples && go test -tags=$(LanguageTags) -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName) 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 dev:: lint build_nodejs
 test:: test_nodejs
