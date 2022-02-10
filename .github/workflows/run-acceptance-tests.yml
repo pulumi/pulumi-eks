@@ -255,6 +255,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/${{ matrix.language }}.tar.gz -C ${{github.workspace}}/${{ matrix.language}}
       - name: Install dependencies
         run: make install_${{ matrix.language}}_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -367,6 +371,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - name: Download Python SDK
         uses: actions/download-artifact@v2
         with:
@@ -467,6 +475,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - name: Download DotNet SDK
         uses: actions/download-artifact@v2
         with:
@@ -565,6 +577,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - name: Download Go SDK
         uses: actions/download-artifact@v2
         with:
