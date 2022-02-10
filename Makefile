@@ -12,7 +12,7 @@ WORKING_DIR     := $(shell pwd)
 build:: schema provider build_nodejs build_python build_go build_dotnet
 
 schema::
-	cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER)
+	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER))
 
 provider::
 	rm -rf provider/cmd/$(PROVIDER)/bin
@@ -28,7 +28,8 @@ build_nodejs::
 		sed -e 's/\$${VERSION}/$(VERSION)/g' < package.json > bin/package.json && \
 		cp ../../README.md ../../LICENSE bin/ && \
 		cp -R dashboard bin/ && \
-		cp -R cni bin/
+		cp -R cni bin/ && \
+		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
 
 build_python:: PYPI_VERSION := $(shell pulumictl get version --language python)
 build_python:: schema
