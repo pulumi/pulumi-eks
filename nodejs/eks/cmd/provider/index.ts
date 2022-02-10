@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
+import { readFileSync } from "fs";
 import { Cluster } from "../../cluster";
 import { VpcCni } from "../../cni";
 import { clusterCreationRoleProviderProviderFactory, clusterProviderFactory } from "./cluster";
@@ -22,8 +23,6 @@ import { randomSuffixProviderFactory } from "./randomSuffix";
 import { nodeGroupSecurityGroupProviderFactory } from "./securitygroup";
 
 class Provider implements pulumi.provider.Provider {
-    readonly version = getVersion();
-
     // A map of types to provider factories. Calling a factory may return a new instance each
     // time or return the same provider instance.
     private readonly typeToProviderFactoryMap: Record<string, () => pulumi.provider.Provider> = {
@@ -36,10 +35,10 @@ class Provider implements pulumi.provider.Provider {
         "eks:index:VpcCni": vpcCniProviderFactory,
     };
 
-    constructor() {
+    constructor(readonly version: string, readonly schema: string) {
         // Register any resources that can come back as resource references that need to be rehydrated.
         pulumi.runtime.registerResourceModule("eks", "index", {
-            version: getVersion(),
+            version: version,
             construct: (name, type, urn) => {
                 switch (type) {
                     case "eks:index:Cluster":
@@ -153,16 +152,17 @@ function getType(urn: pulumi.URN): string {
     return lastType;
 }
 
-function getVersion(): string {
-    const version: string = require("../../package.json").version;
-    // Node allows for the version to be prefixed by a "v", while semver doesn't.
-    // If there is a v, strip it off.
-    return version.startsWith("v") ? version.slice(1) : version;
-}
-
 /** @internal */
 export function main(args: string[]) {
-    return pulumi.provider.main(new Provider(), args);
+    const schema: string = readFileSync(require.resolve("./schema.json"), {encoding: "utf-8"});
+    let version: string = require("../../package.json").version;
+    // Node allows for the version to be prefixed by a "v",
+    // while semver doesn't. If there is a v, strip it off.
+    if (version.startsWith("v")) {
+        version = version.slice(1);
+    }
+
+    return pulumi.provider.main(new Provider(version, schema), args);
 }
 
 main(process.argv.slice(2));
