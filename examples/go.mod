@@ -8,8 +8,8 @@ require (
 	github.com/googleapis/gnostic v0.5.4 // indirect
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/pulumi/pulumi-eks/sdk v0.0.0-00010101000000-000000000000
-	github.com/pulumi/pulumi/pkg/v3 v3.17.2-0.20211110005625-d7ec7ce06c6a
-	github.com/pulumi/pulumi/sdk/v3 v3.17.1
+	github.com/pulumi/pulumi/pkg/v3 v3.27.0
+	github.com/pulumi/pulumi/sdk/v3 v3.27.0
 	github.com/stretchr/testify v1.6.1
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.21.0

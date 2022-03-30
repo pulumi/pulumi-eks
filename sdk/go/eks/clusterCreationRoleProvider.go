@@ -7,8 +7,8 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/iam"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -58,7 +58,7 @@ type ClusterCreationRoleProviderInput interface {
 }
 
 func (*ClusterCreationRoleProvider) ElementType() reflect.Type {
-	return reflect.TypeOf((*ClusterCreationRoleProvider)(nil))
+	return reflect.TypeOf((**ClusterCreationRoleProvider)(nil)).Elem()
 }
 
 func (i *ClusterCreationRoleProvider) ToClusterCreationRoleProviderOutput() ClusterCreationRoleProviderOutput {
@@ -67,35 +67,6 @@ func (i *ClusterCreationRoleProvider) ToClusterCreationRoleProviderOutput() Clus
 
 func (i *ClusterCreationRoleProvider) ToClusterCreationRoleProviderOutputWithContext(ctx context.Context) ClusterCreationRoleProviderOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterCreationRoleProviderOutput)
-}
-
-func (i *ClusterCreationRoleProvider) ToClusterCreationRoleProviderPtrOutput() ClusterCreationRoleProviderPtrOutput {
-	return i.ToClusterCreationRoleProviderPtrOutputWithContext(context.Background())
-}
-
-func (i *ClusterCreationRoleProvider) ToClusterCreationRoleProviderPtrOutputWithContext(ctx context.Context) ClusterCreationRoleProviderPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(ClusterCreationRoleProviderPtrOutput)
-}
-
-type ClusterCreationRoleProviderPtrInput interface {
-	pulumi.Input
-
-	ToClusterCreationRoleProviderPtrOutput() ClusterCreationRoleProviderPtrOutput
-	ToClusterCreationRoleProviderPtrOutputWithContext(ctx context.Context) ClusterCreationRoleProviderPtrOutput
-}
-
-type clusterCreationRoleProviderPtrType ClusterCreationRoleProviderArgs
-
-func (*clusterCreationRoleProviderPtrType) ElementType() reflect.Type {
-	return reflect.TypeOf((**ClusterCreationRoleProvider)(nil))
-}
-
-func (i *clusterCreationRoleProviderPtrType) ToClusterCreationRoleProviderPtrOutput() ClusterCreationRoleProviderPtrOutput {
-	return i.ToClusterCreationRoleProviderPtrOutputWithContext(context.Background())
-}
-
-func (i *clusterCreationRoleProviderPtrType) ToClusterCreationRoleProviderPtrOutputWithContext(ctx context.Context) ClusterCreationRoleProviderPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(ClusterCreationRoleProviderPtrOutput)
 }
 
 // ClusterCreationRoleProviderArrayInput is an input type that accepts ClusterCreationRoleProviderArray and ClusterCreationRoleProviderArrayOutput values.
@@ -151,7 +122,7 @@ func (i ClusterCreationRoleProviderMap) ToClusterCreationRoleProviderMapOutputWi
 type ClusterCreationRoleProviderOutput struct{ *pulumi.OutputState }
 
 func (ClusterCreationRoleProviderOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*ClusterCreationRoleProvider)(nil))
+	return reflect.TypeOf((**ClusterCreationRoleProvider)(nil)).Elem()
 }
 
 func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderOutput() ClusterCreationRoleProviderOutput {
@@ -162,44 +133,10 @@ func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderOutputWi
 	return o
 }
 
-func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderPtrOutput() ClusterCreationRoleProviderPtrOutput {
-	return o.ToClusterCreationRoleProviderPtrOutputWithContext(context.Background())
-}
-
-func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderPtrOutputWithContext(ctx context.Context) ClusterCreationRoleProviderPtrOutput {
-	return o.ApplyTWithContext(ctx, func(_ context.Context, v ClusterCreationRoleProvider) *ClusterCreationRoleProvider {
-		return &v
-	}).(ClusterCreationRoleProviderPtrOutput)
-}
-
-type ClusterCreationRoleProviderPtrOutput struct{ *pulumi.OutputState }
-
-func (ClusterCreationRoleProviderPtrOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((**ClusterCreationRoleProvider)(nil))
-}
-
-func (o ClusterCreationRoleProviderPtrOutput) ToClusterCreationRoleProviderPtrOutput() ClusterCreationRoleProviderPtrOutput {
-	return o
-}
-
-func (o ClusterCreationRoleProviderPtrOutput) ToClusterCreationRoleProviderPtrOutputWithContext(ctx context.Context) ClusterCreationRoleProviderPtrOutput {
-	return o
-}
-
-func (o ClusterCreationRoleProviderPtrOutput) Elem() ClusterCreationRoleProviderOutput {
-	return o.ApplyT(func(v *ClusterCreationRoleProvider) ClusterCreationRoleProvider {
-		if v != nil {
-			return *v
-		}
-		var ret ClusterCreationRoleProvider
-		return ret
-	}).(ClusterCreationRoleProviderOutput)
-}
-
 type ClusterCreationRoleProviderArrayOutput struct{ *pulumi.OutputState }
 
 func (ClusterCreationRoleProviderArrayOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]ClusterCreationRoleProvider)(nil))
+	return reflect.TypeOf((*[]*ClusterCreationRoleProvider)(nil)).Elem()
 }
 
 func (o ClusterCreationRoleProviderArrayOutput) ToClusterCreationRoleProviderArrayOutput() ClusterCreationRoleProviderArrayOutput {
@@ -211,15 +148,15 @@ func (o ClusterCreationRoleProviderArrayOutput) ToClusterCreationRoleProviderArr
 }
 
 func (o ClusterCreationRoleProviderArrayOutput) Index(i pulumi.IntInput) ClusterCreationRoleProviderOutput {
-	return pulumi.All(o, i).ApplyT(func(vs []interface{}) ClusterCreationRoleProvider {
-		return vs[0].([]ClusterCreationRoleProvider)[vs[1].(int)]
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *ClusterCreationRoleProvider {
+		return vs[0].([]*ClusterCreationRoleProvider)[vs[1].(int)]
 	}).(ClusterCreationRoleProviderOutput)
 }
 
 type ClusterCreationRoleProviderMapOutput struct{ *pulumi.OutputState }
 
 func (ClusterCreationRoleProviderMapOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]ClusterCreationRoleProvider)(nil))
+	return reflect.TypeOf((*map[string]*ClusterCreationRoleProvider)(nil)).Elem()
 }
 
 func (o ClusterCreationRoleProviderMapOutput) ToClusterCreationRoleProviderMapOutput() ClusterCreationRoleProviderMapOutput {
@@ -231,14 +168,16 @@ func (o ClusterCreationRoleProviderMapOutput) ToClusterCreationRoleProviderMapOu
 }
 
 func (o ClusterCreationRoleProviderMapOutput) MapIndex(k pulumi.StringInput) ClusterCreationRoleProviderOutput {
-	return pulumi.All(o, k).ApplyT(func(vs []interface{}) ClusterCreationRoleProvider {
-		return vs[0].(map[string]ClusterCreationRoleProvider)[vs[1].(string)]
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) *ClusterCreationRoleProvider {
+		return vs[0].(map[string]*ClusterCreationRoleProvider)[vs[1].(string)]
 	}).(ClusterCreationRoleProviderOutput)
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*ClusterCreationRoleProviderInput)(nil)).Elem(), &ClusterCreationRoleProvider{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ClusterCreationRoleProviderArrayInput)(nil)).Elem(), ClusterCreationRoleProviderArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ClusterCreationRoleProviderMapInput)(nil)).Elem(), ClusterCreationRoleProviderMap{})
 	pulumi.RegisterOutputType(ClusterCreationRoleProviderOutput{})
-	pulumi.RegisterOutputType(ClusterCreationRoleProviderPtrOutput{})
 	pulumi.RegisterOutputType(ClusterCreationRoleProviderArrayOutput{})
 	pulumi.RegisterOutputType(ClusterCreationRoleProviderMapOutput{})
 }

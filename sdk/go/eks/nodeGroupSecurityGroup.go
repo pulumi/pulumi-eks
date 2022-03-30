@@ -8,8 +8,8 @@ import (
 	"reflect"
 
 	"github.com/pkg/errors"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/ec2"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/eks"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -82,7 +82,7 @@ type NodeGroupSecurityGroupInput interface {
 }
 
 func (*NodeGroupSecurityGroup) ElementType() reflect.Type {
-	return reflect.TypeOf((*NodeGroupSecurityGroup)(nil))
+	return reflect.TypeOf((**NodeGroupSecurityGroup)(nil)).Elem()
 }
 
 func (i *NodeGroupSecurityGroup) ToNodeGroupSecurityGroupOutput() NodeGroupSecurityGroupOutput {
@@ -91,35 +91,6 @@ func (i *NodeGroupSecurityGroup) ToNodeGroupSecurityGroupOutput() NodeGroupSecur
 
 func (i *NodeGroupSecurityGroup) ToNodeGroupSecurityGroupOutputWithContext(ctx context.Context) NodeGroupSecurityGroupOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupSecurityGroupOutput)
-}
-
-func (i *NodeGroupSecurityGroup) ToNodeGroupSecurityGroupPtrOutput() NodeGroupSecurityGroupPtrOutput {
-	return i.ToNodeGroupSecurityGroupPtrOutputWithContext(context.Background())
-}
-
-func (i *NodeGroupSecurityGroup) ToNodeGroupSecurityGroupPtrOutputWithContext(ctx context.Context) NodeGroupSecurityGroupPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupSecurityGroupPtrOutput)
-}
-
-type NodeGroupSecurityGroupPtrInput interface {
-	pulumi.Input
-
-	ToNodeGroupSecurityGroupPtrOutput() NodeGroupSecurityGroupPtrOutput
-	ToNodeGroupSecurityGroupPtrOutputWithContext(ctx context.Context) NodeGroupSecurityGroupPtrOutput
-}
-
-type nodeGroupSecurityGroupPtrType NodeGroupSecurityGroupArgs
-
-func (*nodeGroupSecurityGroupPtrType) ElementType() reflect.Type {
-	return reflect.TypeOf((**NodeGroupSecurityGroup)(nil))
-}
-
-func (i *nodeGroupSecurityGroupPtrType) ToNodeGroupSecurityGroupPtrOutput() NodeGroupSecurityGroupPtrOutput {
-	return i.ToNodeGroupSecurityGroupPtrOutputWithContext(context.Background())
-}
-
-func (i *nodeGroupSecurityGroupPtrType) ToNodeGroupSecurityGroupPtrOutputWithContext(ctx context.Context) NodeGroupSecurityGroupPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupSecurityGroupPtrOutput)
 }
 
 // NodeGroupSecurityGroupArrayInput is an input type that accepts NodeGroupSecurityGroupArray and NodeGroupSecurityGroupArrayOutput values.
@@ -175,7 +146,7 @@ func (i NodeGroupSecurityGroupMap) ToNodeGroupSecurityGroupMapOutputWithContext(
 type NodeGroupSecurityGroupOutput struct{ *pulumi.OutputState }
 
 func (NodeGroupSecurityGroupOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*NodeGroupSecurityGroup)(nil))
+	return reflect.TypeOf((**NodeGroupSecurityGroup)(nil)).Elem()
 }
 
 func (o NodeGroupSecurityGroupOutput) ToNodeGroupSecurityGroupOutput() NodeGroupSecurityGroupOutput {
@@ -186,44 +157,10 @@ func (o NodeGroupSecurityGroupOutput) ToNodeGroupSecurityGroupOutputWithContext(
 	return o
 }
 
-func (o NodeGroupSecurityGroupOutput) ToNodeGroupSecurityGroupPtrOutput() NodeGroupSecurityGroupPtrOutput {
-	return o.ToNodeGroupSecurityGroupPtrOutputWithContext(context.Background())
-}
-
-func (o NodeGroupSecurityGroupOutput) ToNodeGroupSecurityGroupPtrOutputWithContext(ctx context.Context) NodeGroupSecurityGroupPtrOutput {
-	return o.ApplyTWithContext(ctx, func(_ context.Context, v NodeGroupSecurityGroup) *NodeGroupSecurityGroup {
-		return &v
-	}).(NodeGroupSecurityGroupPtrOutput)
-}
-
-type NodeGroupSecurityGroupPtrOutput struct{ *pulumi.OutputState }
-
-func (NodeGroupSecurityGroupPtrOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((**NodeGroupSecurityGroup)(nil))
-}
-
-func (o NodeGroupSecurityGroupPtrOutput) ToNodeGroupSecurityGroupPtrOutput() NodeGroupSecurityGroupPtrOutput {
-	return o
-}
-
-func (o NodeGroupSecurityGroupPtrOutput) ToNodeGroupSecurityGroupPtrOutputWithContext(ctx context.Context) NodeGroupSecurityGroupPtrOutput {
-	return o
-}
-
-func (o NodeGroupSecurityGroupPtrOutput) Elem() NodeGroupSecurityGroupOutput {
-	return o.ApplyT(func(v *NodeGroupSecurityGroup) NodeGroupSecurityGroup {
-		if v != nil {
-			return *v
-		}
-		var ret NodeGroupSecurityGroup
-		return ret
-	}).(NodeGroupSecurityGroupOutput)
-}
-
 type NodeGroupSecurityGroupArrayOutput struct{ *pulumi.OutputState }
 
 func (NodeGroupSecurityGroupArrayOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]NodeGroupSecurityGroup)(nil))
+	return reflect.TypeOf((*[]*NodeGroupSecurityGroup)(nil)).Elem()
 }
 
 func (o NodeGroupSecurityGroupArrayOutput) ToNodeGroupSecurityGroupArrayOutput() NodeGroupSecurityGroupArrayOutput {
@@ -235,15 +172,15 @@ func (o NodeGroupSecurityGroupArrayOutput) ToNodeGroupSecurityGroupArrayOutputWi
 }
 
 func (o NodeGroupSecurityGroupArrayOutput) Index(i pulumi.IntInput) NodeGroupSecurityGroupOutput {
-	return pulumi.All(o, i).ApplyT(func(vs []interface{}) NodeGroupSecurityGroup {
-		return vs[0].([]NodeGroupSecurityGroup)[vs[1].(int)]
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *NodeGroupSecurityGroup {
+		return vs[0].([]*NodeGroupSecurityGroup)[vs[1].(int)]
 	}).(NodeGroupSecurityGroupOutput)
 }
 
 type NodeGroupSecurityGroupMapOutput struct{ *pulumi.OutputState }
 
 func (NodeGroupSecurityGroupMapOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]NodeGroupSecurityGroup)(nil))
+	return reflect.TypeOf((*map[string]*NodeGroupSecurityGroup)(nil)).Elem()
 }
 
 func (o NodeGroupSecurityGroupMapOutput) ToNodeGroupSecurityGroupMapOutput() NodeGroupSecurityGroupMapOutput {
@@ -255,14 +192,16 @@ func (o NodeGroupSecurityGroupMapOutput) ToNodeGroupSecurityGroupMapOutputWithCo
 }
 
 func (o NodeGroupSecurityGroupMapOutput) MapIndex(k pulumi.StringInput) NodeGroupSecurityGroupOutput {
-	return pulumi.All(o, k).ApplyT(func(vs []interface{}) NodeGroupSecurityGroup {
-		return vs[0].(map[string]NodeGroupSecurityGroup)[vs[1].(string)]
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) *NodeGroupSecurityGroup {
+		return vs[0].(map[string]*NodeGroupSecurityGroup)[vs[1].(string)]
 	}).(NodeGroupSecurityGroupOutput)
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupSecurityGroupInput)(nil)).Elem(), &NodeGroupSecurityGroup{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupSecurityGroupArrayInput)(nil)).Elem(), NodeGroupSecurityGroupArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupSecurityGroupMapInput)(nil)).Elem(), NodeGroupSecurityGroupMap{})
 	pulumi.RegisterOutputType(NodeGroupSecurityGroupOutput{})
-	pulumi.RegisterOutputType(NodeGroupSecurityGroupPtrOutput{})
 	pulumi.RegisterOutputType(NodeGroupSecurityGroupArrayOutput{})
 	pulumi.RegisterOutputType(NodeGroupSecurityGroupMapOutput{})
 }

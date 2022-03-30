@@ -80,7 +80,7 @@ func main() {
 }
 
 const (
-	awsVersion = "v4.15.0"
+	awsVersion = "v5.1.0"
 	k8sVersion = "v3.0.0"
 )
 
@@ -1270,7 +1270,7 @@ func generateSchema() schema.PackageSpec {
 			"csharp": rawMessage(map[string]interface{}{
 				"packageReferences": map[string]string{
 					"Pulumi":            "3.*",
-					"Pulumi.Aws":        "4.15.*",
+					"Pulumi.Aws":        "5.*",
 					"Pulumi.Kubernetes": "3.*",
 				},
 				"liftSingleValueMethodReturns": true,
@@ -1278,7 +1278,7 @@ func generateSchema() schema.PackageSpec {
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
 					"pulumi":            ">=3.0.0,<4.0.0",
-					"pulumi-aws":        ">=4.15.0,<5.0.0",
+					"pulumi-aws":        ">=5.0.0,<6.0.0",
 					"pulumi-kubernetes": ">=3.0.0,<4.0.0",
 				},
 				"usesIOClasses": true,

@@ -7,10 +7,10 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/ec2"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/eks"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/iam"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
 	"github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -48,16 +48,16 @@ func NewCluster(ctx *pulumi.Context,
 		args = &ClusterArgs{}
 	}
 
-	if args.NodeRootVolumeDeleteOnTermination == nil {
+	if isZero(args.NodeRootVolumeDeleteOnTermination) {
 		args.NodeRootVolumeDeleteOnTermination = pulumi.BoolPtr(true)
 	}
-	if args.NodeRootVolumeEncrypted == nil {
+	if isZero(args.NodeRootVolumeEncrypted) {
 		args.NodeRootVolumeEncrypted = pulumi.BoolPtr(false)
 	}
-	if args.NodeRootVolumeSize == nil {
+	if isZero(args.NodeRootVolumeSize) {
 		args.NodeRootVolumeSize = pulumi.IntPtr(20)
 	}
-	if args.NodeRootVolumeType == nil {
+	if isZero(args.NodeRootVolumeType) {
 		args.NodeRootVolumeType = pulumi.StringPtr("gp2")
 	}
 	var resource Cluster
@@ -564,7 +564,7 @@ type ClusterInput interface {
 }
 
 func (*Cluster) ElementType() reflect.Type {
-	return reflect.TypeOf((*Cluster)(nil))
+	return reflect.TypeOf((**Cluster)(nil)).Elem()
 }
 
 func (i *Cluster) ToClusterOutput() ClusterOutput {
@@ -573,35 +573,6 @@ func (i *Cluster) ToClusterOutput() ClusterOutput {
 
 func (i *Cluster) ToClusterOutputWithContext(ctx context.Context) ClusterOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterOutput)
-}
-
-func (i *Cluster) ToClusterPtrOutput() ClusterPtrOutput {
-	return i.ToClusterPtrOutputWithContext(context.Background())
-}
-
-func (i *Cluster) ToClusterPtrOutputWithContext(ctx context.Context) ClusterPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(ClusterPtrOutput)
-}
-
-type ClusterPtrInput interface {
-	pulumi.Input
-
-	ToClusterPtrOutput() ClusterPtrOutput
-	ToClusterPtrOutputWithContext(ctx context.Context) ClusterPtrOutput
-}
-
-type clusterPtrType ClusterArgs
-
-func (*clusterPtrType) ElementType() reflect.Type {
-	return reflect.TypeOf((**Cluster)(nil))
-}
-
-func (i *clusterPtrType) ToClusterPtrOutput() ClusterPtrOutput {
-	return i.ToClusterPtrOutputWithContext(context.Background())
-}
-
-func (i *clusterPtrType) ToClusterPtrOutputWithContext(ctx context.Context) ClusterPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(ClusterPtrOutput)
 }
 
 // ClusterArrayInput is an input type that accepts ClusterArray and ClusterArrayOutput values.
@@ -657,7 +628,7 @@ func (i ClusterMap) ToClusterMapOutputWithContext(ctx context.Context) ClusterMa
 type ClusterOutput struct{ *pulumi.OutputState }
 
 func (ClusterOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*Cluster)(nil))
+	return reflect.TypeOf((**Cluster)(nil)).Elem()
 }
 
 func (o ClusterOutput) ToClusterOutput() ClusterOutput {
@@ -668,44 +639,10 @@ func (o ClusterOutput) ToClusterOutputWithContext(ctx context.Context) ClusterOu
 	return o
 }
 
-func (o ClusterOutput) ToClusterPtrOutput() ClusterPtrOutput {
-	return o.ToClusterPtrOutputWithContext(context.Background())
-}
-
-func (o ClusterOutput) ToClusterPtrOutputWithContext(ctx context.Context) ClusterPtrOutput {
-	return o.ApplyTWithContext(ctx, func(_ context.Context, v Cluster) *Cluster {
-		return &v
-	}).(ClusterPtrOutput)
-}
-
-type ClusterPtrOutput struct{ *pulumi.OutputState }
-
-func (ClusterPtrOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((**Cluster)(nil))
-}
-
-func (o ClusterPtrOutput) ToClusterPtrOutput() ClusterPtrOutput {
-	return o
-}
-
-func (o ClusterPtrOutput) ToClusterPtrOutputWithContext(ctx context.Context) ClusterPtrOutput {
-	return o
-}
-
-func (o ClusterPtrOutput) Elem() ClusterOutput {
-	return o.ApplyT(func(v *Cluster) Cluster {
-		if v != nil {
-			return *v
-		}
-		var ret Cluster
-		return ret
-	}).(ClusterOutput)
-}
-
 type ClusterArrayOutput struct{ *pulumi.OutputState }
 
 func (ClusterArrayOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]Cluster)(nil))
+	return reflect.TypeOf((*[]*Cluster)(nil)).Elem()
 }
 
 func (o ClusterArrayOutput) ToClusterArrayOutput() ClusterArrayOutput {
@@ -717,15 +654,15 @@ func (o ClusterArrayOutput) ToClusterArrayOutputWithContext(ctx context.Context)
 }
 
 func (o ClusterArrayOutput) Index(i pulumi.IntInput) ClusterOutput {
-	return pulumi.All(o, i).ApplyT(func(vs []interface{}) Cluster {
-		return vs[0].([]Cluster)[vs[1].(int)]
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *Cluster {
+		return vs[0].([]*Cluster)[vs[1].(int)]
 	}).(ClusterOutput)
 }
 
 type ClusterMapOutput struct{ *pulumi.OutputState }
 
 func (ClusterMapOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]Cluster)(nil))
+	return reflect.TypeOf((*map[string]*Cluster)(nil)).Elem()
 }
 
 func (o ClusterMapOutput) ToClusterMapOutput() ClusterMapOutput {
@@ -737,15 +674,17 @@ func (o ClusterMapOutput) ToClusterMapOutputWithContext(ctx context.Context) Clu
 }
 
 func (o ClusterMapOutput) MapIndex(k pulumi.StringInput) ClusterOutput {
-	return pulumi.All(o, k).ApplyT(func(vs []interface{}) Cluster {
-		return vs[0].(map[string]Cluster)[vs[1].(string)]
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) *Cluster {
+		return vs[0].(map[string]*Cluster)[vs[1].(string)]
 	}).(ClusterOutput)
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*ClusterInput)(nil)).Elem(), &Cluster{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ClusterArrayInput)(nil)).Elem(), ClusterArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ClusterMapInput)(nil)).Elem(), ClusterMap{})
 	pulumi.RegisterOutputType(ClusterOutput{})
 	pulumi.RegisterOutputType(clusterGetKubeconfigResultOutput{})
-	pulumi.RegisterOutputType(ClusterPtrOutput{})
 	pulumi.RegisterOutputType(ClusterArrayOutput{})
 	pulumi.RegisterOutputType(ClusterMapOutput{})
 }

@@ -7,11 +7,11 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/cloudformation"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/ec2"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/eks"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/iam"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/cloudformation"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
 	"github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes"
 	corev1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/core/v1"
 	metav1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/meta/v1"
@@ -849,47 +849,6 @@ func (i CoreDataArgs) ToCoreDataOutputWithContext(ctx context.Context) CoreDataO
 	return pulumi.ToOutputWithContext(ctx, i).(CoreDataOutput)
 }
 
-func (i CoreDataArgs) ToCoreDataPtrOutput() CoreDataPtrOutput {
-	return i.ToCoreDataPtrOutputWithContext(context.Background())
-}
-
-func (i CoreDataArgs) ToCoreDataPtrOutputWithContext(ctx context.Context) CoreDataPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(CoreDataOutput).ToCoreDataPtrOutputWithContext(ctx)
-}
-
-// CoreDataPtrInput is an input type that accepts CoreDataArgs, CoreDataPtr and CoreDataPtrOutput values.
-// You can construct a concrete instance of `CoreDataPtrInput` via:
-//
-//          CoreDataArgs{...}
-//
-//  or:
-//
-//          nil
-type CoreDataPtrInput interface {
-	pulumi.Input
-
-	ToCoreDataPtrOutput() CoreDataPtrOutput
-	ToCoreDataPtrOutputWithContext(context.Context) CoreDataPtrOutput
-}
-
-type coreDataPtrType CoreDataArgs
-
-func CoreDataPtr(v *CoreDataArgs) CoreDataPtrInput {
-	return (*coreDataPtrType)(v)
-}
-
-func (*coreDataPtrType) ElementType() reflect.Type {
-	return reflect.TypeOf((**CoreData)(nil)).Elem()
-}
-
-func (i *coreDataPtrType) ToCoreDataPtrOutput() CoreDataPtrOutput {
-	return i.ToCoreDataPtrOutputWithContext(context.Background())
-}
-
-func (i *coreDataPtrType) ToCoreDataPtrOutputWithContext(ctx context.Context) CoreDataPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(CoreDataPtrOutput)
-}
-
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreDataOutput struct{ *pulumi.OutputState }
 
@@ -903,16 +862,6 @@ func (o CoreDataOutput) ToCoreDataOutput() CoreDataOutput {
 
 func (o CoreDataOutput) ToCoreDataOutputWithContext(ctx context.Context) CoreDataOutput {
 	return o
-}
-
-func (o CoreDataOutput) ToCoreDataPtrOutput() CoreDataPtrOutput {
-	return o.ToCoreDataPtrOutputWithContext(context.Background())
-}
-
-func (o CoreDataOutput) ToCoreDataPtrOutputWithContext(ctx context.Context) CoreDataPtrOutput {
-	return o.ApplyTWithContext(ctx, func(_ context.Context, v CoreData) *CoreData {
-		return &v
-	}).(CoreDataPtrOutput)
 }
 
 func (o CoreDataOutput) AwsProvider() aws.ProviderOutput {
@@ -993,210 +942,6 @@ func (o CoreDataOutput) VpcCni() VpcCniOutput {
 
 func (o CoreDataOutput) VpcId() pulumi.StringOutput {
 	return o.ApplyT(func(v CoreData) string { return v.VpcId }).(pulumi.StringOutput)
-}
-
-type CoreDataPtrOutput struct{ *pulumi.OutputState }
-
-func (CoreDataPtrOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((**CoreData)(nil)).Elem()
-}
-
-func (o CoreDataPtrOutput) ToCoreDataPtrOutput() CoreDataPtrOutput {
-	return o
-}
-
-func (o CoreDataPtrOutput) ToCoreDataPtrOutputWithContext(ctx context.Context) CoreDataPtrOutput {
-	return o
-}
-
-func (o CoreDataPtrOutput) Elem() CoreDataOutput {
-	return o.ApplyT(func(v *CoreData) CoreData {
-		if v != nil {
-			return *v
-		}
-		var ret CoreData
-		return ret
-	}).(CoreDataOutput)
-}
-
-func (o CoreDataPtrOutput) AwsProvider() aws.ProviderOutput {
-	return o.ApplyT(func(v *CoreData) *aws.Provider {
-		if v == nil {
-			return nil
-		}
-		return v.AwsProvider
-	}).(aws.ProviderOutput)
-}
-
-func (o CoreDataPtrOutput) Cluster() eks.ClusterOutput {
-	return o.ApplyT(func(v *CoreData) *eks.Cluster {
-		if v == nil {
-			return nil
-		}
-		return v.Cluster
-	}).(eks.ClusterOutput)
-}
-
-func (o CoreDataPtrOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v *CoreData) *ec2.SecurityGroup {
-		if v == nil {
-			return nil
-		}
-		return v.ClusterSecurityGroup
-	}).(ec2.SecurityGroupOutput)
-}
-
-func (o CoreDataPtrOutput) EksNodeAccess() corev1.ConfigMapOutput {
-	return o.ApplyT(func(v *CoreData) *corev1.ConfigMap {
-		if v == nil {
-			return nil
-		}
-		return v.EksNodeAccess
-	}).(corev1.ConfigMapOutput)
-}
-
-func (o CoreDataPtrOutput) EncryptionConfig() eks.ClusterEncryptionConfigPtrOutput {
-	return o.ApplyT(func(v *CoreData) *eks.ClusterEncryptionConfig {
-		if v == nil {
-			return nil
-		}
-		return v.EncryptionConfig
-	}).(eks.ClusterEncryptionConfigPtrOutput)
-}
-
-func (o CoreDataPtrOutput) Endpoint() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *CoreData) *string {
-		if v == nil {
-			return nil
-		}
-		return &v.Endpoint
-	}).(pulumi.StringPtrOutput)
-}
-
-func (o CoreDataPtrOutput) FargateProfile() eks.FargateProfileOutput {
-	return o.ApplyT(func(v *CoreData) *eks.FargateProfile {
-		if v == nil {
-			return nil
-		}
-		return v.FargateProfile
-	}).(eks.FargateProfileOutput)
-}
-
-func (o CoreDataPtrOutput) InstanceRoles() iam.RoleArrayOutput {
-	return o.ApplyT(func(v *CoreData) []*iam.Role {
-		if v == nil {
-			return nil
-		}
-		return v.InstanceRoles
-	}).(iam.RoleArrayOutput)
-}
-
-func (o CoreDataPtrOutput) Kubeconfig() pulumi.AnyOutput {
-	return o.ApplyT(func(v *CoreData) interface{} {
-		if v == nil {
-			return nil
-		}
-		return v.Kubeconfig
-	}).(pulumi.AnyOutput)
-}
-
-func (o CoreDataPtrOutput) NodeGroupOptions() ClusterNodeGroupOptionsPtrOutput {
-	return o.ApplyT(func(v *CoreData) *ClusterNodeGroupOptions {
-		if v == nil {
-			return nil
-		}
-		return &v.NodeGroupOptions
-	}).(ClusterNodeGroupOptionsPtrOutput)
-}
-
-func (o CoreDataPtrOutput) NodeSecurityGroupTags() pulumi.StringMapOutput {
-	return o.ApplyT(func(v *CoreData) map[string]string {
-		if v == nil {
-			return nil
-		}
-		return v.NodeSecurityGroupTags
-	}).(pulumi.StringMapOutput)
-}
-
-func (o CoreDataPtrOutput) OidcProvider() iam.OpenIdConnectProviderOutput {
-	return o.ApplyT(func(v *CoreData) *iam.OpenIdConnectProvider {
-		if v == nil {
-			return nil
-		}
-		return v.OidcProvider
-	}).(iam.OpenIdConnectProviderOutput)
-}
-
-func (o CoreDataPtrOutput) PrivateSubnetIds() pulumi.StringArrayOutput {
-	return o.ApplyT(func(v *CoreData) []string {
-		if v == nil {
-			return nil
-		}
-		return v.PrivateSubnetIds
-	}).(pulumi.StringArrayOutput)
-}
-
-func (o CoreDataPtrOutput) Provider() kubernetes.ProviderOutput {
-	return o.ApplyT(func(v *CoreData) *kubernetes.Provider {
-		if v == nil {
-			return nil
-		}
-		return v.Provider
-	}).(kubernetes.ProviderOutput)
-}
-
-func (o CoreDataPtrOutput) PublicSubnetIds() pulumi.StringArrayOutput {
-	return o.ApplyT(func(v *CoreData) []string {
-		if v == nil {
-			return nil
-		}
-		return v.PublicSubnetIds
-	}).(pulumi.StringArrayOutput)
-}
-
-func (o CoreDataPtrOutput) StorageClasses() storagev1.StorageClassMapOutput {
-	return o.ApplyT(func(v *CoreData) map[string]*storagev1.StorageClass {
-		if v == nil {
-			return nil
-		}
-		return v.StorageClasses
-	}).(storagev1.StorageClassMapOutput)
-}
-
-func (o CoreDataPtrOutput) SubnetIds() pulumi.StringArrayOutput {
-	return o.ApplyT(func(v *CoreData) []string {
-		if v == nil {
-			return nil
-		}
-		return v.SubnetIds
-	}).(pulumi.StringArrayOutput)
-}
-
-func (o CoreDataPtrOutput) Tags() pulumi.StringMapOutput {
-	return o.ApplyT(func(v *CoreData) map[string]string {
-		if v == nil {
-			return nil
-		}
-		return v.Tags
-	}).(pulumi.StringMapOutput)
-}
-
-func (o CoreDataPtrOutput) VpcCni() VpcCniOutput {
-	return o.ApplyT(func(v *CoreData) *VpcCni {
-		if v == nil {
-			return nil
-		}
-		return v.VpcCni
-	}).(VpcCniOutput)
-}
-
-func (o CoreDataPtrOutput) VpcId() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *CoreData) *string {
-		if v == nil {
-			return nil
-		}
-		return &v.VpcId
-	}).(pulumi.StringPtrOutput)
 }
 
 // Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
@@ -1358,69 +1103,6 @@ type FargateProfile struct {
 	Selectors []eks.FargateProfileSelector `pulumi:"selectors"`
 	// Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
 	SubnetIds []string `pulumi:"subnetIds"`
-}
-
-// FargateProfileInput is an input type that accepts FargateProfileArgs and FargateProfileOutput values.
-// You can construct a concrete instance of `FargateProfileInput` via:
-//
-//          FargateProfileArgs{...}
-type FargateProfileInput interface {
-	pulumi.Input
-
-	ToFargateProfileOutput() FargateProfileOutput
-	ToFargateProfileOutputWithContext(context.Context) FargateProfileOutput
-}
-
-// Defines how Kubernetes pods are executed in Fargate. See aws.eks.FargateProfileArgs for reference.
-type FargateProfileArgs struct {
-	// Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
-	PodExecutionRoleArn pulumi.StringPtrInput `pulumi:"podExecutionRoleArn"`
-	// Specify the namespace and label selectors to use for launching pods into Fargate.
-	Selectors eks.FargateProfileSelectorArrayInput `pulumi:"selectors"`
-	// Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
-	SubnetIds pulumi.StringArrayInput `pulumi:"subnetIds"`
-}
-
-func (FargateProfileArgs) ElementType() reflect.Type {
-	return reflect.TypeOf((*FargateProfile)(nil)).Elem()
-}
-
-func (i FargateProfileArgs) ToFargateProfileOutput() FargateProfileOutput {
-	return i.ToFargateProfileOutputWithContext(context.Background())
-}
-
-func (i FargateProfileArgs) ToFargateProfileOutputWithContext(ctx context.Context) FargateProfileOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(FargateProfileOutput)
-}
-
-// Defines how Kubernetes pods are executed in Fargate. See aws.eks.FargateProfileArgs for reference.
-type FargateProfileOutput struct{ *pulumi.OutputState }
-
-func (FargateProfileOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*FargateProfile)(nil)).Elem()
-}
-
-func (o FargateProfileOutput) ToFargateProfileOutput() FargateProfileOutput {
-	return o
-}
-
-func (o FargateProfileOutput) ToFargateProfileOutputWithContext(ctx context.Context) FargateProfileOutput {
-	return o
-}
-
-// Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
-func (o FargateProfileOutput) PodExecutionRoleArn() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v FargateProfile) *string { return v.PodExecutionRoleArn }).(pulumi.StringPtrOutput)
-}
-
-// Specify the namespace and label selectors to use for launching pods into Fargate.
-func (o FargateProfileOutput) Selectors() eks.FargateProfileSelectorArrayOutput {
-	return o.ApplyT(func(v FargateProfile) []eks.FargateProfileSelector { return v.Selectors }).(eks.FargateProfileSelectorArrayOutput)
-}
-
-// Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
-func (o FargateProfileOutput) SubnetIds() pulumi.StringArrayOutput {
-	return o.ApplyT(func(v FargateProfile) []string { return v.SubnetIds }).(pulumi.StringArrayOutput)
 }
 
 // Represents the AWS credentials to scope a given kubeconfig when using a non-default credential chain.
@@ -1655,82 +1337,6 @@ type NodeGroupData struct {
 	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
 }
 
-// NodeGroupDataInput is an input type that accepts NodeGroupDataArgs and NodeGroupDataOutput values.
-// You can construct a concrete instance of `NodeGroupDataInput` via:
-//
-//          NodeGroupDataArgs{...}
-type NodeGroupDataInput interface {
-	pulumi.Input
-
-	ToNodeGroupDataOutput() NodeGroupDataOutput
-	ToNodeGroupDataOutputWithContext(context.Context) NodeGroupDataOutput
-}
-
-// NodeGroupData describes the resources created for the given NodeGroup.
-type NodeGroupDataArgs struct {
-	// The AutoScalingGroup name for the node group.
-	AutoScalingGroupName pulumi.StringInput `pulumi:"autoScalingGroupName"`
-	// The CloudFormation Stack which defines the Node AutoScalingGroup.
-	CfnStack cloudformation.StackInput `pulumi:"cfnStack"`
-	// The additional security groups for the node group that captures user-specific rules.
-	ExtraNodeSecurityGroups ec2.SecurityGroupArrayInput `pulumi:"extraNodeSecurityGroups"`
-	// The security group for the node group to communicate with the cluster.
-	NodeSecurityGroup ec2.SecurityGroupInput `pulumi:"nodeSecurityGroup"`
-}
-
-func (NodeGroupDataArgs) ElementType() reflect.Type {
-	return reflect.TypeOf((*NodeGroupData)(nil)).Elem()
-}
-
-func (i NodeGroupDataArgs) ToNodeGroupDataOutput() NodeGroupDataOutput {
-	return i.ToNodeGroupDataOutputWithContext(context.Background())
-}
-
-func (i NodeGroupDataArgs) ToNodeGroupDataOutputWithContext(ctx context.Context) NodeGroupDataOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupDataOutput)
-}
-
-func (i NodeGroupDataArgs) ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput {
-	return i.ToNodeGroupDataPtrOutputWithContext(context.Background())
-}
-
-func (i NodeGroupDataArgs) ToNodeGroupDataPtrOutputWithContext(ctx context.Context) NodeGroupDataPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupDataOutput).ToNodeGroupDataPtrOutputWithContext(ctx)
-}
-
-// NodeGroupDataPtrInput is an input type that accepts NodeGroupDataArgs, NodeGroupDataPtr and NodeGroupDataPtrOutput values.
-// You can construct a concrete instance of `NodeGroupDataPtrInput` via:
-//
-//          NodeGroupDataArgs{...}
-//
-//  or:
-//
-//          nil
-type NodeGroupDataPtrInput interface {
-	pulumi.Input
-
-	ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput
-	ToNodeGroupDataPtrOutputWithContext(context.Context) NodeGroupDataPtrOutput
-}
-
-type nodeGroupDataPtrType NodeGroupDataArgs
-
-func NodeGroupDataPtr(v *NodeGroupDataArgs) NodeGroupDataPtrInput {
-	return (*nodeGroupDataPtrType)(v)
-}
-
-func (*nodeGroupDataPtrType) ElementType() reflect.Type {
-	return reflect.TypeOf((**NodeGroupData)(nil)).Elem()
-}
-
-func (i *nodeGroupDataPtrType) ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput {
-	return i.ToNodeGroupDataPtrOutputWithContext(context.Background())
-}
-
-func (i *nodeGroupDataPtrType) ToNodeGroupDataPtrOutputWithContext(ctx context.Context) NodeGroupDataPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupDataPtrOutput)
-}
-
 // NodeGroupData describes the resources created for the given NodeGroup.
 type NodeGroupDataOutput struct{ *pulumi.OutputState }
 
@@ -1744,16 +1350,6 @@ func (o NodeGroupDataOutput) ToNodeGroupDataOutput() NodeGroupDataOutput {
 
 func (o NodeGroupDataOutput) ToNodeGroupDataOutputWithContext(ctx context.Context) NodeGroupDataOutput {
 	return o
-}
-
-func (o NodeGroupDataOutput) ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput {
-	return o.ToNodeGroupDataPtrOutputWithContext(context.Background())
-}
-
-func (o NodeGroupDataOutput) ToNodeGroupDataPtrOutputWithContext(ctx context.Context) NodeGroupDataPtrOutput {
-	return o.ApplyTWithContext(ctx, func(_ context.Context, v NodeGroupData) *NodeGroupData {
-		return &v
-	}).(NodeGroupDataPtrOutput)
 }
 
 // The AutoScalingGroup name for the node group.
@@ -1986,133 +1582,6 @@ type StorageClass struct {
 	VolumeBindingMode *string `pulumi:"volumeBindingMode"`
 	// The AWS zone or zones for the EBS volume. If zones is not specified, volumes are generally round-robin-ed across all active zones where Kubernetes cluster has a node. zone and zones parameters must not be used at the same time.
 	Zones []string `pulumi:"zones"`
-}
-
-// StorageClassInput is an input type that accepts StorageClassArgs and StorageClassOutput values.
-// You can construct a concrete instance of `StorageClassInput` via:
-//
-//          StorageClassArgs{...}
-type StorageClassInput interface {
-	pulumi.Input
-
-	ToStorageClassOutput() StorageClassOutput
-	ToStorageClassOutputWithContext(context.Context) StorageClassOutput
-}
-
-// StorageClass describes the inputs to a single Kubernetes StorageClass provisioned by AWS. Any number of storage classes can be added to a cluster at creation time. One of these storage classes may be configured the default storage class for the cluster.
-type StorageClassArgs struct {
-	// AllowVolumeExpansion shows whether the storage class allow volume expand.
-	AllowVolumeExpansion pulumi.BoolPtrInput `pulumi:"allowVolumeExpansion"`
-	// True if this storage class should be a default storage class for the cluster.
-	//
-	// Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
-	//
-	// Please note that at most one storage class can be marked as default. If two or more of them are marked as default, a PersistentVolumeClaim without `storageClassName` explicitly specified cannot be created. See: https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/#changing-the-default-storageclass
-	Default pulumi.BoolPtrInput `pulumi:"default"`
-	// Denotes whether the EBS volume should be encrypted.
-	Encrypted pulumi.BoolPtrInput `pulumi:"encrypted"`
-	// I/O operations per second per GiB for "io1" volumes. The AWS volume plugin multiplies this with the size of a requested volume to compute IOPS of the volume and caps the result at 20,000 IOPS.
-	IopsPerGb pulumi.IntPtrInput `pulumi:"iopsPerGb"`
-	// The full Amazon Resource Name of the key to use when encrypting the volume. If none is supplied but encrypted is true, a key is generated by AWS.
-	KmsKeyId pulumi.StringPtrInput `pulumi:"kmsKeyId"`
-	// Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
-	Metadata metav1.ObjectMetaPtrInput `pulumi:"metadata"`
-	// Dynamically provisioned PersistentVolumes of this storage class are created with these mountOptions, e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one is invalid.
-	MountOptions pulumi.StringArrayInput `pulumi:"mountOptions"`
-	// Dynamically provisioned PersistentVolumes of this storage class are created with this reclaimPolicy. Defaults to Delete.
-	ReclaimPolicy pulumi.StringPtrInput `pulumi:"reclaimPolicy"`
-	// The EBS volume type.
-	Type pulumi.StringInput `pulumi:"type"`
-	// VolumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound. When unset, VolumeBindingImmediate is used. This field is alpha-level and is only honored by servers that enable the VolumeScheduling feature.
-	VolumeBindingMode pulumi.StringPtrInput `pulumi:"volumeBindingMode"`
-	// The AWS zone or zones for the EBS volume. If zones is not specified, volumes are generally round-robin-ed across all active zones where Kubernetes cluster has a node. zone and zones parameters must not be used at the same time.
-	Zones pulumi.StringArrayInput `pulumi:"zones"`
-}
-
-func (StorageClassArgs) ElementType() reflect.Type {
-	return reflect.TypeOf((*StorageClass)(nil)).Elem()
-}
-
-func (i StorageClassArgs) ToStorageClassOutput() StorageClassOutput {
-	return i.ToStorageClassOutputWithContext(context.Background())
-}
-
-func (i StorageClassArgs) ToStorageClassOutputWithContext(ctx context.Context) StorageClassOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(StorageClassOutput)
-}
-
-// StorageClass describes the inputs to a single Kubernetes StorageClass provisioned by AWS. Any number of storage classes can be added to a cluster at creation time. One of these storage classes may be configured the default storage class for the cluster.
-type StorageClassOutput struct{ *pulumi.OutputState }
-
-func (StorageClassOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*StorageClass)(nil)).Elem()
-}
-
-func (o StorageClassOutput) ToStorageClassOutput() StorageClassOutput {
-	return o
-}
-
-func (o StorageClassOutput) ToStorageClassOutputWithContext(ctx context.Context) StorageClassOutput {
-	return o
-}
-
-// AllowVolumeExpansion shows whether the storage class allow volume expand.
-func (o StorageClassOutput) AllowVolumeExpansion() pulumi.BoolPtrOutput {
-	return o.ApplyT(func(v StorageClass) *bool { return v.AllowVolumeExpansion }).(pulumi.BoolPtrOutput)
-}
-
-// True if this storage class should be a default storage class for the cluster.
-//
-// Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
-//
-// Please note that at most one storage class can be marked as default. If two or more of them are marked as default, a PersistentVolumeClaim without `storageClassName` explicitly specified cannot be created. See: https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/#changing-the-default-storageclass
-func (o StorageClassOutput) Default() pulumi.BoolPtrOutput {
-	return o.ApplyT(func(v StorageClass) *bool { return v.Default }).(pulumi.BoolPtrOutput)
-}
-
-// Denotes whether the EBS volume should be encrypted.
-func (o StorageClassOutput) Encrypted() pulumi.BoolPtrOutput {
-	return o.ApplyT(func(v StorageClass) *bool { return v.Encrypted }).(pulumi.BoolPtrOutput)
-}
-
-// I/O operations per second per GiB for "io1" volumes. The AWS volume plugin multiplies this with the size of a requested volume to compute IOPS of the volume and caps the result at 20,000 IOPS.
-func (o StorageClassOutput) IopsPerGb() pulumi.IntPtrOutput {
-	return o.ApplyT(func(v StorageClass) *int { return v.IopsPerGb }).(pulumi.IntPtrOutput)
-}
-
-// The full Amazon Resource Name of the key to use when encrypting the volume. If none is supplied but encrypted is true, a key is generated by AWS.
-func (o StorageClassOutput) KmsKeyId() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v StorageClass) *string { return v.KmsKeyId }).(pulumi.StringPtrOutput)
-}
-
-// Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
-func (o StorageClassOutput) Metadata() metav1.ObjectMetaPtrOutput {
-	return o.ApplyT(func(v StorageClass) *metav1.ObjectMeta { return v.Metadata }).(metav1.ObjectMetaPtrOutput)
-}
-
-// Dynamically provisioned PersistentVolumes of this storage class are created with these mountOptions, e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one is invalid.
-func (o StorageClassOutput) MountOptions() pulumi.StringArrayOutput {
-	return o.ApplyT(func(v StorageClass) []string { return v.MountOptions }).(pulumi.StringArrayOutput)
-}
-
-// Dynamically provisioned PersistentVolumes of this storage class are created with this reclaimPolicy. Defaults to Delete.
-func (o StorageClassOutput) ReclaimPolicy() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v StorageClass) *string { return v.ReclaimPolicy }).(pulumi.StringPtrOutput)
-}
-
-// The EBS volume type.
-func (o StorageClassOutput) Type() pulumi.StringOutput {
-	return o.ApplyT(func(v StorageClass) string { return v.Type }).(pulumi.StringOutput)
-}
-
-// VolumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound. When unset, VolumeBindingImmediate is used. This field is alpha-level and is only honored by servers that enable the VolumeScheduling feature.
-func (o StorageClassOutput) VolumeBindingMode() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v StorageClass) *string { return v.VolumeBindingMode }).(pulumi.StringPtrOutput)
-}
-
-// The AWS zone or zones for the EBS volume. If zones is not specified, volumes are generally round-robin-ed across all active zones where Kubernetes cluster has a node. zone and zones parameters must not be used at the same time.
-func (o StorageClassOutput) Zones() pulumi.StringArrayOutput {
-	return o.ApplyT(func(v StorageClass) []string { return v.Zones }).(pulumi.StringArrayOutput)
 }
 
 // Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
@@ -2948,20 +2417,32 @@ func (o VpcCniOptionsPtrOutput) WarmPrefixTarget() pulumi.IntPtrOutput {
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsPtrInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*CoreDataInput)(nil)).Elem(), CoreDataArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*CreationRoleProviderInput)(nil)).Elem(), CreationRoleProviderArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*CreationRoleProviderPtrInput)(nil)).Elem(), CreationRoleProviderArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*KubeconfigOptionsInput)(nil)).Elem(), KubeconfigOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*KubeconfigOptionsPtrInput)(nil)).Elem(), KubeconfigOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*RoleMappingInput)(nil)).Elem(), RoleMappingArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*RoleMappingArrayInput)(nil)).Elem(), RoleMappingArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*TaintInput)(nil)).Elem(), TaintArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*TaintMapInput)(nil)).Elem(), TaintMap{})
+	pulumi.RegisterInputType(reflect.TypeOf((*UserMappingInput)(nil)).Elem(), UserMappingArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*UserMappingArrayInput)(nil)).Elem(), UserMappingArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniOptionsInput)(nil)).Elem(), VpcCniOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniOptionsPtrInput)(nil)).Elem(), VpcCniOptionsArgs{})
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsOutput{})
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsPtrOutput{})
 	pulumi.RegisterOutputType(CoreDataOutput{})
-	pulumi.RegisterOutputType(CoreDataPtrOutput{})
 	pulumi.RegisterOutputType(CreationRoleProviderOutput{})
 	pulumi.RegisterOutputType(CreationRoleProviderPtrOutput{})
-	pulumi.RegisterOutputType(FargateProfileOutput{})
 	pulumi.RegisterOutputType(KubeconfigOptionsOutput{})
 	pulumi.RegisterOutputType(KubeconfigOptionsPtrOutput{})
 	pulumi.RegisterOutputType(NodeGroupDataOutput{})
 	pulumi.RegisterOutputType(NodeGroupDataPtrOutput{})
 	pulumi.RegisterOutputType(RoleMappingOutput{})
 	pulumi.RegisterOutputType(RoleMappingArrayOutput{})
-	pulumi.RegisterOutputType(StorageClassOutput{})
 	pulumi.RegisterOutputType(TaintOutput{})
 	pulumi.RegisterOutputType(TaintMapOutput{})
 	pulumi.RegisterOutputType(UserMappingOutput{})

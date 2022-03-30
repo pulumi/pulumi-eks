@@ -8,8 +8,8 @@ import (
 	"reflect"
 
 	"github.com/pkg/errors"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/eks"
-	"github.com/pulumi/pulumi-aws/sdk/v4/go/aws/iam"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -171,7 +171,7 @@ type ManagedNodeGroupInput interface {
 }
 
 func (*ManagedNodeGroup) ElementType() reflect.Type {
-	return reflect.TypeOf((*ManagedNodeGroup)(nil))
+	return reflect.TypeOf((**ManagedNodeGroup)(nil)).Elem()
 }
 
 func (i *ManagedNodeGroup) ToManagedNodeGroupOutput() ManagedNodeGroupOutput {
@@ -180,35 +180,6 @@ func (i *ManagedNodeGroup) ToManagedNodeGroupOutput() ManagedNodeGroupOutput {
 
 func (i *ManagedNodeGroup) ToManagedNodeGroupOutputWithContext(ctx context.Context) ManagedNodeGroupOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ManagedNodeGroupOutput)
-}
-
-func (i *ManagedNodeGroup) ToManagedNodeGroupPtrOutput() ManagedNodeGroupPtrOutput {
-	return i.ToManagedNodeGroupPtrOutputWithContext(context.Background())
-}
-
-func (i *ManagedNodeGroup) ToManagedNodeGroupPtrOutputWithContext(ctx context.Context) ManagedNodeGroupPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(ManagedNodeGroupPtrOutput)
-}
-
-type ManagedNodeGroupPtrInput interface {
-	pulumi.Input
-
-	ToManagedNodeGroupPtrOutput() ManagedNodeGroupPtrOutput
-	ToManagedNodeGroupPtrOutputWithContext(ctx context.Context) ManagedNodeGroupPtrOutput
-}
-
-type managedNodeGroupPtrType ManagedNodeGroupArgs
-
-func (*managedNodeGroupPtrType) ElementType() reflect.Type {
-	return reflect.TypeOf((**ManagedNodeGroup)(nil))
-}
-
-func (i *managedNodeGroupPtrType) ToManagedNodeGroupPtrOutput() ManagedNodeGroupPtrOutput {
-	return i.ToManagedNodeGroupPtrOutputWithContext(context.Background())
-}
-
-func (i *managedNodeGroupPtrType) ToManagedNodeGroupPtrOutputWithContext(ctx context.Context) ManagedNodeGroupPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(ManagedNodeGroupPtrOutput)
 }
 
 // ManagedNodeGroupArrayInput is an input type that accepts ManagedNodeGroupArray and ManagedNodeGroupArrayOutput values.
@@ -264,7 +235,7 @@ func (i ManagedNodeGroupMap) ToManagedNodeGroupMapOutputWithContext(ctx context.
 type ManagedNodeGroupOutput struct{ *pulumi.OutputState }
 
 func (ManagedNodeGroupOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*ManagedNodeGroup)(nil))
+	return reflect.TypeOf((**ManagedNodeGroup)(nil)).Elem()
 }
 
 func (o ManagedNodeGroupOutput) ToManagedNodeGroupOutput() ManagedNodeGroupOutput {
@@ -275,44 +246,10 @@ func (o ManagedNodeGroupOutput) ToManagedNodeGroupOutputWithContext(ctx context.
 	return o
 }
 
-func (o ManagedNodeGroupOutput) ToManagedNodeGroupPtrOutput() ManagedNodeGroupPtrOutput {
-	return o.ToManagedNodeGroupPtrOutputWithContext(context.Background())
-}
-
-func (o ManagedNodeGroupOutput) ToManagedNodeGroupPtrOutputWithContext(ctx context.Context) ManagedNodeGroupPtrOutput {
-	return o.ApplyTWithContext(ctx, func(_ context.Context, v ManagedNodeGroup) *ManagedNodeGroup {
-		return &v
-	}).(ManagedNodeGroupPtrOutput)
-}
-
-type ManagedNodeGroupPtrOutput struct{ *pulumi.OutputState }
-
-func (ManagedNodeGroupPtrOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((**ManagedNodeGroup)(nil))
-}
-
-func (o ManagedNodeGroupPtrOutput) ToManagedNodeGroupPtrOutput() ManagedNodeGroupPtrOutput {
-	return o
-}
-
-func (o ManagedNodeGroupPtrOutput) ToManagedNodeGroupPtrOutputWithContext(ctx context.Context) ManagedNodeGroupPtrOutput {
-	return o
-}
-
-func (o ManagedNodeGroupPtrOutput) Elem() ManagedNodeGroupOutput {
-	return o.ApplyT(func(v *ManagedNodeGroup) ManagedNodeGroup {
-		if v != nil {
-			return *v
-		}
-		var ret ManagedNodeGroup
-		return ret
-	}).(ManagedNodeGroupOutput)
-}
-
 type ManagedNodeGroupArrayOutput struct{ *pulumi.OutputState }
 
 func (ManagedNodeGroupArrayOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]ManagedNodeGroup)(nil))
+	return reflect.TypeOf((*[]*ManagedNodeGroup)(nil)).Elem()
 }
 
 func (o ManagedNodeGroupArrayOutput) ToManagedNodeGroupArrayOutput() ManagedNodeGroupArrayOutput {
@@ -324,15 +261,15 @@ func (o ManagedNodeGroupArrayOutput) ToManagedNodeGroupArrayOutputWithContext(ct
 }
 
 func (o ManagedNodeGroupArrayOutput) Index(i pulumi.IntInput) ManagedNodeGroupOutput {
-	return pulumi.All(o, i).ApplyT(func(vs []interface{}) ManagedNodeGroup {
-		return vs[0].([]ManagedNodeGroup)[vs[1].(int)]
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *ManagedNodeGroup {
+		return vs[0].([]*ManagedNodeGroup)[vs[1].(int)]
 	}).(ManagedNodeGroupOutput)
 }
 
 type ManagedNodeGroupMapOutput struct{ *pulumi.OutputState }
 
 func (ManagedNodeGroupMapOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]ManagedNodeGroup)(nil))
+	return reflect.TypeOf((*map[string]*ManagedNodeGroup)(nil)).Elem()
 }
 
 func (o ManagedNodeGroupMapOutput) ToManagedNodeGroupMapOutput() ManagedNodeGroupMapOutput {
@@ -344,14 +281,16 @@ func (o ManagedNodeGroupMapOutput) ToManagedNodeGroupMapOutputWithContext(ctx co
 }
 
 func (o ManagedNodeGroupMapOutput) MapIndex(k pulumi.StringInput) ManagedNodeGroupOutput {
-	return pulumi.All(o, k).ApplyT(func(vs []interface{}) ManagedNodeGroup {
-		return vs[0].(map[string]ManagedNodeGroup)[vs[1].(string)]
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) *ManagedNodeGroup {
+		return vs[0].(map[string]*ManagedNodeGroup)[vs[1].(string)]
 	}).(ManagedNodeGroupOutput)
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*ManagedNodeGroupInput)(nil)).Elem(), &ManagedNodeGroup{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ManagedNodeGroupArrayInput)(nil)).Elem(), ManagedNodeGroupArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ManagedNodeGroupMapInput)(nil)).Elem(), ManagedNodeGroupMap{})
 	pulumi.RegisterOutputType(ManagedNodeGroupOutput{})
-	pulumi.RegisterOutputType(ManagedNodeGroupPtrOutput{})
 	pulumi.RegisterOutputType(ManagedNodeGroupArrayOutput{})
 	pulumi.RegisterOutputType(ManagedNodeGroupMapOutput{})
 }
