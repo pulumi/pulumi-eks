@@ -532,6 +532,10 @@
                 "warmPrefixTarget": {
                     "type": "integer",
                     "description": "WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md"
+                },
+                "enableIpv6": {
+                    "type": "boolean",
+                    "description": "VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances."
                 }
             },
             "type": "object"
@@ -1292,6 +1296,10 @@
                 "warmPrefixTarget": {
                     "type": "integer",
                     "description": "WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md"
+                },
+                "enableIpv6": {
+                    "type": "boolean",
+                    "description": "VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances."
                 }
             },
             "requiredInputs": [

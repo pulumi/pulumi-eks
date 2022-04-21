@@ -19,6 +19,7 @@ class VpcCniArgs:
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
+                 enable_ipv6: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
@@ -44,6 +45,7 @@ class VpcCniArgs:
                
                Defaults to false.
         :param pulumi.Input[bool] disable_tcp_early_demux: Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        :param pulumi.Input[bool] enable_ipv6: VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
         :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         :param pulumi.Input[bool] enable_prefix_delegation: IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
@@ -95,6 +97,8 @@ class VpcCniArgs:
             pulumi.set(__self__, "custom_network_config", custom_network_config)
         if disable_tcp_early_demux is not None:
             pulumi.set(__self__, "disable_tcp_early_demux", disable_tcp_early_demux)
+        if enable_ipv6 is not None:
+            pulumi.set(__self__, "enable_ipv6", enable_ipv6)
         if enable_pod_eni is not None:
             pulumi.set(__self__, "enable_pod_eni", enable_pod_eni)
         if enable_prefix_delegation is not None:
@@ -199,6 +203,18 @@ class VpcCniArgs:
     @disable_tcp_early_demux.setter
     def disable_tcp_early_demux(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "disable_tcp_early_demux", value)
+
+    @property
+    @pulumi.getter(name="enableIpv6")
+    def enable_ipv6(self) -> Optional[pulumi.Input[bool]]:
+        """
+        VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+        """
+        return pulumi.get(self, "enable_ipv6")
+
+    @enable_ipv6.setter
+    def enable_ipv6(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "enable_ipv6", value)
 
     @property
     @pulumi.getter(name="enablePodEni")
@@ -415,6 +431,7 @@ class VpcCni(pulumi.CustomResource):
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
+                 enable_ipv6: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
@@ -444,6 +461,7 @@ class VpcCni(pulumi.CustomResource):
                
                Defaults to false.
         :param pulumi.Input[bool] disable_tcp_early_demux: Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        :param pulumi.Input[bool] enable_ipv6: VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
         :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         :param pulumi.Input[bool] enable_prefix_delegation: IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
@@ -514,6 +532,7 @@ class VpcCni(pulumi.CustomResource):
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
+                 enable_ipv6: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
@@ -547,6 +566,7 @@ class VpcCni(pulumi.CustomResource):
             __props__.__dict__["cni_external_snat"] = cni_external_snat
             __props__.__dict__["custom_network_config"] = custom_network_config
             __props__.__dict__["disable_tcp_early_demux"] = disable_tcp_early_demux
+            __props__.__dict__["enable_ipv6"] = enable_ipv6
             __props__.__dict__["enable_pod_eni"] = enable_pod_eni
             __props__.__dict__["enable_prefix_delegation"] = enable_prefix_delegation
             __props__.__dict__["eni_config_label_def"] = eni_config_label_def
