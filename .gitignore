@@ -21,3 +21,4 @@ ci-scripts/
 /PulumiPlugin.yaml
 
 **/venv
+.vs

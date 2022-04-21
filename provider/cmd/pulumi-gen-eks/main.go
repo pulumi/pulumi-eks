@@ -1525,6 +1525,10 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 			TypeSpec:    schema.TypeSpec{Type: "boolean"},
 			Description: "IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.",
 		},
+		"enableIpv6": {
+			TypeSpec:    schema.TypeSpec{Type: "boolean"},
+			Description: "VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.",
+		},
 		"logLevel": {
 			TypeSpec: schema.TypeSpec{Type: "string"}, // TODO consider typing this as an enum
 			Description: "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nValid " +
