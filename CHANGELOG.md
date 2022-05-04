@@ -1,5 +1,6 @@
 ## Unreleased
-(None)
+- Add `enableIPv6` to VPC CNI options
+- **BREAKING** Update API version for `eniconfigs.crd.k8s.amazonaws.com` CRD to  `apiextensions.k8s.io/v1` since `apiextensions.k8s.io/v1beta1` support was dropped in Kubernetes 1.22
 
 ## 0.37.1 (Released February 10, 2020)
 - Ensure Schema is part of the Provider for the GetSchema option
