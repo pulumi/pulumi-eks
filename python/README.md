@@ -18,6 +18,7 @@ This includes:
 
 1. [Install Pulumi](https://www.pulumi.com/docs/reference/install).
 1. [Install `kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl).
+1. [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) 
 
 ## Installing
 
