@@ -1825,6 +1825,8 @@ type VpcCniOptions struct {
 	CustomNetworkConfig *bool `pulumi:"customNetworkConfig"`
 	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
 	DisableTcpEarlyDemux *bool `pulumi:"disableTcpEarlyDemux"`
+	// VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+	EnableIpv6 *bool `pulumi:"enableIpv6"`
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni *bool `pulumi:"enablePodEni"`
 	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
@@ -1906,6 +1908,8 @@ type VpcCniOptionsArgs struct {
 	CustomNetworkConfig pulumi.BoolPtrInput `pulumi:"customNetworkConfig"`
 	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
 	DisableTcpEarlyDemux pulumi.BoolPtrInput `pulumi:"disableTcpEarlyDemux"`
+	// VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+	EnableIpv6 pulumi.BoolPtrInput `pulumi:"enableIpv6"`
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni pulumi.BoolPtrInput `pulumi:"enablePodEni"`
 	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
@@ -2065,6 +2069,11 @@ func (o VpcCniOptionsOutput) CustomNetworkConfig() pulumi.BoolPtrOutput {
 // Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
 func (o VpcCniOptionsOutput) DisableTcpEarlyDemux() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.DisableTcpEarlyDemux }).(pulumi.BoolPtrOutput)
+}
+
+// VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+func (o VpcCniOptionsOutput) EnableIpv6() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *bool { return v.EnableIpv6 }).(pulumi.BoolPtrOutput)
 }
 
 // Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
@@ -2239,6 +2248,16 @@ func (o VpcCniOptionsPtrOutput) DisableTcpEarlyDemux() pulumi.BoolPtrOutput {
 			return nil
 		}
 		return v.DisableTcpEarlyDemux
+	}).(pulumi.BoolPtrOutput)
+}
+
+// VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+func (o VpcCniOptionsPtrOutput) EnableIpv6() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.EnableIpv6
 	}).(pulumi.BoolPtrOutput)
 }
 

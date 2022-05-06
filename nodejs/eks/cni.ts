@@ -70,6 +70,14 @@ export interface VpcCniOptions {
      enablePrefixDelegation?: pulumi.Input<boolean>;
 
     /**
+     * VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode.
+     * Note that IPv6 is only supported in Prefix Delegation mode so enablePrefixDelegation must also be set.
+     *
+     * Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/README.md#enable_ipv6-v1100
+     */
+    enableIpv6?: pulumi.Input<boolean>;
+
+    /**
      * Specifies the log level used for logs.
      *
      * Defaults to "DEBUG".
@@ -221,6 +229,7 @@ export class VpcCni extends pulumi.CustomResource {
             warmEniTarget: args?.warmEniTarget,
             warmIpTarget: args?.warmIpTarget,
             enablePrefixDelegation: args?.enablePrefixDelegation,
+            enableIpv6: args?.enableIpv6,
             warmPrefixTarget: args?.warmPrefixTarget,
             logLevel: args?.logLevel,
             logFile: args?.logFile,
