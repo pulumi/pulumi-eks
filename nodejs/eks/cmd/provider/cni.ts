@@ -78,8 +78,8 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         env.push({name: "WARM_PREFIX_TARGET", value: args.warmPrefixTarget.toString()});
     }
     if (args.enableIpv6) {
-        env.push({name: "ENABLE_IPv6", value: "true"});
-        initEnv.push({name: "ENABLE_IPv6", value: "true"});
+        env.push({name: "ENABLE_IPv6", value: args.enableIpv6 ? "true" : "false"});
+        initEnv.push({name: "ENABLE_IPv6", value: args.enableIpv6 ? "true" : "false"});
     } else {
         env.push({name: "ENABLE_IPv6", value: "false"});
         initEnv.push({name: "ENABLE_IPv6", value: "false"});
