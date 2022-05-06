@@ -78,7 +78,10 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         env.push({name: "WARM_PREFIX_TARGET", value: args.warmPrefixTarget.toString()});
     }
     if (args.enableIpv6) {
+        // Avoid mistakenly setting dual stack mode which is not supported.
+        env.push({name: "ENABLE_IPv4", value: args.enableIpv6 ? "false": "true"});
         env.push({name: "ENABLE_IPv6", value: args.enableIpv6 ? "true" : "false"});
+        initEnv.push({name: "ENABLE_IPv4", value: args.enableIpv6 ? "false": "true"});
         initEnv.push({name: "ENABLE_IPv6", value: args.enableIpv6 ? "true" : "false"});
     } else {
         env.push({name: "ENABLE_IPv6", value: "false"});
