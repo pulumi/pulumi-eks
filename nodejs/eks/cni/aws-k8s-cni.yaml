@@ -113,6 +113,8 @@ spec:
               command:
                 - /app/grpc-health-probe
                 - -addr=:50051
+                - -connect-timeout=5s
+                - -rpc-timeout=5s
             initialDelaySeconds: 60
             timeoutSeconds: 10
           readinessProbe:
@@ -120,6 +122,8 @@ spec:
               command:
                 - /app/grpc-health-probe
                 - -addr=:50051
+                - -connect-timeout=5s
+                - -rpc-timeout=5s
             initialDelaySeconds: 1
             timeoutSeconds: 10
           env:
