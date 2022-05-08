@@ -83,6 +83,8 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     } else {
         env.push({name: "ENABLE_IPv6", value: "false"});
         initEnv.push({name: "ENABLE_IPv6", value: "false"});
+        env.push({name: "ENABLE_IPv4", value: "true"});
+        initEnv.push({name: "ENABLE_IPv4", value: "true"});
     }
     if (args.enablePrefixDelegation) {
         env.push({name: "ENABLE_PREFIX_DELEGATION", value: args.enablePrefixDelegation ? "true" : "false"});
