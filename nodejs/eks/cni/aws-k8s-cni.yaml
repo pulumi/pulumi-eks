@@ -63,7 +63,7 @@ metadata:
     app.kubernetes.io/name: aws-node
     app.kubernetes.io/instance: aws-vpc-cni
     k8s-app: aws-node
-    app.kubernetes.io/version: "v1.10.3"
+    app.kubernetes.io/version: "v1.11.0"
 spec:
   updateStrategy:
     rollingUpdate:
