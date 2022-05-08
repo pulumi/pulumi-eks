@@ -84,7 +84,7 @@ spec:
       hostNetwork: true
       initContainers:
         - name: aws-vpc-cni-init
-          image: "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni-init:v1.10.3"
+          image: "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni-init:v1.11.0"
           env: []
           securityContext:
             privileged: true
@@ -98,7 +98,7 @@ spec:
         {}
       containers:
         - name: aws-node
-          image: "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.10.3"
+          image: "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.11.0"
           ports:
             - containerPort: 61678
               name: metrics
