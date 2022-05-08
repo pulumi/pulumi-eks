@@ -1,8 +1,11 @@
 ## Unreleased
+(None)
+
+## 0.38.0 (Released May 8, 2022)
 - Use apiextensions.k8s.io/v1 for eniconfigs.crd.k8s.amazonaws.com
   [#693](https://github.com/pulumi/pulumi-eks/pull/693)
 
-## 0.37.1 (Released February 10, 2020)
+## 0.37.1 (Released February 10, 2022)
 - Ensure Schema is part of the Provider for the GetSchema option
   [#660](https://github.com/pulumi/pulumi-eks/pull/600)
 
