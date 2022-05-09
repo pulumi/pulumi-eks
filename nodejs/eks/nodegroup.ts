@@ -181,6 +181,16 @@ export interface NodeGroupBaseOptions {
     maxSize?: pulumi.Input<number>;
 
     /**
+     * The AMI type for the instance.
+     *
+     * If you are passing an amiId that is `arm64` type, then we need to ensure
+     * that this value is set as `amazon-linux-2-arm64`.
+     *
+     * Note: `amiType` and `gpu` are mutually exclusive.
+     */
+    amiType?: pulumi.Input<string>;
+
+    /**
      * The AMI ID to use for the worker nodes.
      *
      * Defaults to the latest recommended EKS Optimized Linux AMI from the
@@ -499,7 +509,7 @@ ${customUserData}
     // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
     let amiId: pulumi.Input<string> | undefined = args.amiId;
     if (!amiId) {
-        const amiType = args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
+        const amiType = args.amiType ?? args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
         amiId = version.apply(v => {
             const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
             return pulumi.output(aws.ssm.getParameter({name: parameterName}, {parent, async: true})).value;

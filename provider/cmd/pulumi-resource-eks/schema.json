@@ -18,6 +18,10 @@
                     "type": "string",
                     "description": "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.\n\nNote: `amiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html."
                 },
+                "amiType": {
+                    "type": "string",
+                    "description": "The AMI Type to use for the worker nodes. \n\nOnly applicable when setting an AMI ID that is of type `arm64`. \n\nNote: `amiType` and `gpu` are mutually exclusive.\n\n"
+                },
                 "autoScalingGroupTags": {
                     "type": "object",
                     "additionalProperties": {
@@ -1033,6 +1037,10 @@
                 "amiId": {
                     "type": "string",
                     "description": "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.\n\nNote: `amiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html."
+                },
+                "amiType": {
+                    "type": "string",
+                    "description": "The AMI Type to use for the worker nodes. \n\nOnly applicable when setting an AMI ID that is of type `arm64`. \n\nNote: `amiType` and `gpu` are mutually exclusive.\n\n"
                 },
                 "autoScalingGroupTags": {
                     "type": "object",

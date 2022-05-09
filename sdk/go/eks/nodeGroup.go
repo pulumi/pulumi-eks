@@ -56,6 +56,12 @@ type nodeGroupArgs struct {
 	// See for more details:
 	// - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	AmiId *string `pulumi:"amiId"`
+	// The AMI Type to use for the worker nodes.
+	//
+	// Only applicable when setting an AMI ID that is of type `arm64`.
+	//
+	// Note: `amiType` and `gpu` are mutually exclusive.
+	AmiType *string `pulumi:"amiType"`
 	// The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
 	//
 	// Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
@@ -150,6 +156,12 @@ type NodeGroupArgs struct {
 	// See for more details:
 	// - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	AmiId pulumi.StringPtrInput
+	// The AMI Type to use for the worker nodes.
+	//
+	// Only applicable when setting an AMI ID that is of type `arm64`.
+	//
+	// Note: `amiType` and `gpu` are mutually exclusive.
+	AmiType pulumi.StringPtrInput
 	// The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
 	//
 	// Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
