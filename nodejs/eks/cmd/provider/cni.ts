@@ -31,6 +31,7 @@ interface VpcCniInputs {
     warmIpTarget?: number;
     warmPrefixTarget?: number;
     enablePrefixDelegation?: boolean;
+    enableIpv6?: boolean;
     logLevel?: string;
     logFile?: string;
     image?: string;
@@ -75,6 +76,15 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     }
     if (args.warmPrefixTarget) {
         env.push({name: "WARM_PREFIX_TARGET", value: args.warmPrefixTarget.toString()});
+    }
+    if (args.enableIpv6) {
+        env.push({name: "ENABLE_IPv6", value: args.enableIpv6 ? "true" : "false"});
+        initEnv.push({name: "ENABLE_IPv6", value: args.enableIpv6 ? "true" : "false"});
+    } else {
+        env.push({name: "ENABLE_IPv6", value: "false"});
+        initEnv.push({name: "ENABLE_IPv6", value: "false"});
+        env.push({name: "ENABLE_IPv4", value: "true"});
+        initEnv.push({name: "ENABLE_IPv4", value: "true"});
     }
     if (args.enablePrefixDelegation) {
         env.push({name: "ENABLE_PREFIX_DELEGATION", value: args.enablePrefixDelegation ? "true" : "false"});

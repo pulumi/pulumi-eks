@@ -92,6 +92,12 @@ namespace Pulumi.Eks
         public Input<bool>? DisableTcpEarlyDemux { get; set; }
 
         /// <summary>
+        /// VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+        /// </summary>
+        [Input("enableIpv6")]
+        public Input<bool>? EnableIpv6 { get; set; }
+
+        /// <summary>
         /// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         /// </summary>
         [Input("enablePodEni")]
