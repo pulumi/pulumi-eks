@@ -5,6 +5,8 @@
   [#737](https://github.com/pulumi/pulumi-eks/pull/737)
 - Fix an issue where VpcCni options for externalSnat and cniExternalSnat were overwriting each other
   [#752](https://github.com/pulumi/pulumi-eks/pull/752)
+- Add IP family support for cluster network config
+  [#700](https://github.com/pulumi/pulumi-eks/pull/700/)
 
 ## 0.41.2 (Released Jul 12, 2022)
 - Allow removal of default Kubernetes addons
