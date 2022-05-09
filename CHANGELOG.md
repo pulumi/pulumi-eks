@@ -1,5 +1,8 @@
 ## Unreleased
-(None)
+
+## 0.39.0 (Released May 9, 2022)
+- Add support for Pulumi AWS 5.x
+  [#675](https://github.com/pulumi/pulumi-eks/pull/675)
 
 ## 0.38.0 (Released May 8, 2022)
 - Use apiextensions.k8s.io/v1 for eniconfigs.crd.k8s.amazonaws.com
