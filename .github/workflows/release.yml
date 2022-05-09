@@ -278,6 +278,13 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+      - name: Install Kubectl
+        run: |
+          # https://github.com/aws/aws-cli/issues/6920
+          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv kubectl /usr/local/bin
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -305,6 +312,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/${{ matrix.language }}.tar.gz -C ${{github.workspace}}/${{ matrix.language}}
       - name: Install dependencies
         run: make install_${{ matrix.language}}_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -386,6 +397,13 @@ jobs:
         with:
           node-version: ${{matrix.nodeversion}}
           registry-url: https://registry.npmjs.org
+      - name: Install Kubectl
+        run: |
+          # https://github.com/aws/aws-cli/issues/6920
+          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv kubectl /usr/local/bin
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -425,6 +443,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/python.tar.gz -C ${{github.workspace}}/python
       - name: Install dependencies
         run: make install_python_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -486,6 +508,13 @@ jobs:
         with:
           node-version: ${{matrix.nodeversion}}
           registry-url: https://registry.npmjs.org
+      - name: Install Kubectl
+        run: |
+          # https://github.com/aws/aws-cli/issues/6920
+          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv kubectl /usr/local/bin
       - name: Setup DotNet
         uses: actions/setup-dotnet@v1
         with:
@@ -521,6 +550,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/dotnet.tar.gz -C ${{github.workspace}}/dotnet
       - name: Install dependencies
         run: make install_dotnet_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - run: dotnet nuget add source ${{ github.workspace }}/nuget
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

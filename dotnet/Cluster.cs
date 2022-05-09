@@ -99,6 +99,19 @@ namespace Pulumi.Eks
             merged.Id = id ?? merged.Id;
             return merged;
         }
+
+        /// <summary>
+        /// Generate a kubeconfig for cluster authentication that does not use the default AWS credential provider chain, and instead is scoped to the supported options in `KubeconfigOptions`.
+        /// 
+        /// The kubeconfig generated is automatically stringified for ease of use with the pulumi/kubernetes provider.
+        /// 
+        /// See for more details:
+        /// - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
+        /// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
+        /// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+        /// </summary>
+        public Pulumi.Output<string> GetKubeconfig(ClusterGetKubeconfigArgs? args = null)
+            => Pulumi.Deployment.Instance.Call<ClusterGetKubeconfigResult>("eks:index:Cluster/getKubeconfig", args ?? new ClusterGetKubeconfigArgs(), this).Apply(v => v.Result);
     }
 
     public sealed class ClusterArgs : Pulumi.ResourceArgs
@@ -324,10 +337,40 @@ namespace Pulumi.Eks
         public Input<string>? NodePublicKey { get; set; }
 
         /// <summary>
+        /// Whether to delete a cluster node's root volume on termination. Defaults to true.
+        /// </summary>
+        [Input("nodeRootVolumeDeleteOnTermination")]
+        public Input<bool>? NodeRootVolumeDeleteOnTermination { get; set; }
+
+        /// <summary>
+        /// Whether to encrypt a cluster node's root volume. Defaults to false.
+        /// </summary>
+        [Input("nodeRootVolumeEncrypted")]
+        public Input<bool>? NodeRootVolumeEncrypted { get; set; }
+
+        /// <summary>
+        /// Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
+        /// </summary>
+        [Input("nodeRootVolumeIops")]
+        public Input<int>? NodeRootVolumeIops { get; set; }
+
+        /// <summary>
         /// The size in GiB of a cluster node's root volume. Defaults to 20.
         /// </summary>
         [Input("nodeRootVolumeSize")]
         public Input<int>? NodeRootVolumeSize { get; set; }
+
+        /// <summary>
+        /// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
+        /// </summary>
+        [Input("nodeRootVolumeThroughput")]
+        public Input<int>? NodeRootVolumeThroughput { get; set; }
+
+        /// <summary>
+        /// Configured EBS type for a cluster node's root volume. Default is gp2.
+        /// </summary>
+        [Input("nodeRootVolumeType")]
+        public Input<string>? NodeRootVolumeType { get; set; }
 
         [Input("nodeSecurityGroupTags")]
         private InputMap<string>? _nodeSecurityGroupTags;
@@ -491,7 +534,7 @@ namespace Pulumi.Eks
         /// Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
         /// </summary>
         [Input("storageClasses")]
-        public InputUnion<string, Inputs.StorageClassArgs>? StorageClasses { get; set; }
+        public InputUnion<string, ImmutableDictionary<string, Inputs.StorageClassArgs>>? StorageClasses { get; set; }
 
         [Input("subnetIds")]
         private InputList<string>? _subnetIds;
@@ -563,6 +606,51 @@ namespace Pulumi.Eks
 
         public ClusterArgs()
         {
+            NodeRootVolumeDeleteOnTermination = true;
+            NodeRootVolumeEncrypted = false;
+            NodeRootVolumeSize = 20;
+            NodeRootVolumeType = "gp2";
+        }
+    }
+
+    /// <summary>
+    /// The set of arguments for the <see cref="Cluster.GetKubeconfig"/> method.
+    /// </summary>
+    public sealed class ClusterGetKubeconfigArgs : Pulumi.CallArgs
+    {
+        /// <summary>
+        /// AWS credential profile name to always use instead of the default AWS credential provider chain.
+        /// 
+        /// The profile is passed to kubeconfig as an authentication environment setting.
+        /// </summary>
+        [Input("profileName")]
+        public Input<string>? ProfileName { get; set; }
+
+        /// <summary>
+        /// Role ARN to assume instead of the default AWS credential provider chain.
+        /// 
+        /// The role is passed to kubeconfig as an authentication exec argument.
+        /// </summary>
+        [Input("roleArn")]
+        public Input<string>? RoleArn { get; set; }
+
+        public ClusterGetKubeconfigArgs()
+        {
+        }
+    }
+
+    /// <summary>
+    /// The results of the <see cref="Cluster.GetKubeconfig"/> method.
+    /// </summary>
+    [OutputType]
+    internal sealed class ClusterGetKubeconfigResult
+    {
+        public readonly string Result;
+
+        [OutputConstructor]
+        private ClusterGetKubeconfigResult(string result)
+        {
+            Result = result;
         }
     }
 }

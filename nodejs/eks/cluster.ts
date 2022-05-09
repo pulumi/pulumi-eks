@@ -427,7 +427,6 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             description: "Allows EKS to manage clusters on your behalf.",
             managedPolicyArns: [
                 "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
-                "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
             ],
         }, { parent, provider })).role;
     }
@@ -960,7 +959,7 @@ export interface ClusterOptions {
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
-    instanceType?: pulumi.Input<aws.ec2.InstanceType>;
+    instanceType?: pulumi.Input<aws.ec2.InstanceType | string>;
 
     /**
      * This enables the simple case of only registering a *single* IAM
@@ -1372,7 +1371,18 @@ export class Cluster extends pulumi.ComponentResource {
      * @param opts A bag of options that control this component's behavior.
      */
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
-        super("eks:index:Cluster", name, args, opts);
+        const type = "eks:index:Cluster";
+
+        if (opts?.urn) {
+            const props = {
+                kubeconfig: undefined,
+                eksCluster: undefined,
+            };
+            super(type, name, props, opts);
+            return;
+        }
+
+        super(type, name, args, opts);
 
         args = args || {};
 
@@ -1445,7 +1455,10 @@ export class Cluster extends pulumi.ComponentResource {
             createDashboard(name, {}, this, this.provider);
         }
 
-        this.registerOutputs({ kubeconfig: this.kubeconfig });
+        this.registerOutputs({
+            kubeconfig: this.kubeconfig,
+            eksCluster: this.eksCluster,
+        });
     }
 
     /**

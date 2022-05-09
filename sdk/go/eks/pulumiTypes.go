@@ -36,7 +36,7 @@ type ClusterNodeGroupOptions struct {
 	//
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
 	AutoScalingGroupTags map[string]string `pulumi:"autoScalingGroupTags"`
-	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. Fror details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 	BootstrapExtraArgs *string `pulumi:"bootstrapExtraArgs"`
 	// The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
 	//
@@ -68,9 +68,9 @@ type ClusterNodeGroupOptions struct {
 	InstanceType *string `pulumi:"instanceType"`
 	// Name of the key pair to use for SSH access to worker nodes.
 	KeyName *string `pulumi:"keyName"`
-	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the expicit `kubeletExtraArgs`.
+	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
 	KubeletExtraArgs *string `pulumi:"kubeletExtraArgs"`
-	// Custom k8s node labels to be attached to each woker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+	// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
 	Labels map[string]string `pulumi:"labels"`
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize *int `pulumi:"maxSize"`
@@ -139,7 +139,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	//
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
 	AutoScalingGroupTags pulumi.StringMapInput `pulumi:"autoScalingGroupTags"`
-	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. Fror details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 	BootstrapExtraArgs pulumi.StringPtrInput `pulumi:"bootstrapExtraArgs"`
 	// The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
 	//
@@ -171,9 +171,9 @@ type ClusterNodeGroupOptionsArgs struct {
 	InstanceType pulumi.StringPtrInput `pulumi:"instanceType"`
 	// Name of the key pair to use for SSH access to worker nodes.
 	KeyName pulumi.StringPtrInput `pulumi:"keyName"`
-	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the expicit `kubeletExtraArgs`.
+	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
 	KubeletExtraArgs pulumi.StringPtrInput `pulumi:"kubeletExtraArgs"`
-	// Custom k8s node labels to be attached to each woker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+	// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
 	Labels pulumi.StringMapInput `pulumi:"labels"`
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize pulumi.IntPtrInput `pulumi:"maxSize"`
@@ -287,7 +287,7 @@ func (o ClusterNodeGroupOptionsOutput) ToClusterNodeGroupOptionsPtrOutput() Clus
 }
 
 func (o ClusterNodeGroupOptionsOutput) ToClusterNodeGroupOptionsPtrOutputWithContext(ctx context.Context) ClusterNodeGroupOptionsPtrOutput {
-	return o.ApplyT(func(v ClusterNodeGroupOptions) *ClusterNodeGroupOptions {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v ClusterNodeGroupOptions) *ClusterNodeGroupOptions {
 		return &v
 	}).(ClusterNodeGroupOptionsPtrOutput)
 }
@@ -313,7 +313,7 @@ func (o ClusterNodeGroupOptionsOutput) AutoScalingGroupTags() pulumi.StringMapOu
 	return o.ApplyT(func(v ClusterNodeGroupOptions) map[string]string { return v.AutoScalingGroupTags }).(pulumi.StringMapOutput)
 }
 
-// Additional args to pass directly to `/etc/eks/bootstrap.sh`. Fror details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 func (o ClusterNodeGroupOptionsOutput) BootstrapExtraArgs() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.BootstrapExtraArgs }).(pulumi.StringPtrOutput)
 }
@@ -375,12 +375,12 @@ func (o ClusterNodeGroupOptionsOutput) KeyName() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.KeyName }).(pulumi.StringPtrOutput)
 }
 
-// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the expicit `kubeletExtraArgs`.
+// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
 func (o ClusterNodeGroupOptionsOutput) KubeletExtraArgs() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.KubeletExtraArgs }).(pulumi.StringPtrOutput)
 }
 
-// Custom k8s node labels to be attached to each woker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
 func (o ClusterNodeGroupOptionsOutput) Labels() pulumi.StringMapOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) map[string]string { return v.Labels }).(pulumi.StringMapOutput)
 }
@@ -473,7 +473,13 @@ func (o ClusterNodeGroupOptionsPtrOutput) ToClusterNodeGroupOptionsPtrOutputWith
 }
 
 func (o ClusterNodeGroupOptionsPtrOutput) Elem() ClusterNodeGroupOptionsOutput {
-	return o.ApplyT(func(v *ClusterNodeGroupOptions) ClusterNodeGroupOptions { return *v }).(ClusterNodeGroupOptionsOutput)
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) ClusterNodeGroupOptions {
+		if v != nil {
+			return *v
+		}
+		var ret ClusterNodeGroupOptions
+		return ret
+	}).(ClusterNodeGroupOptionsOutput)
 }
 
 // The AMI ID to use for the worker nodes.
@@ -507,7 +513,7 @@ func (o ClusterNodeGroupOptionsPtrOutput) AutoScalingGroupTags() pulumi.StringMa
 	}).(pulumi.StringMapOutput)
 }
 
-// Additional args to pass directly to `/etc/eks/bootstrap.sh`. Fror details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 func (o ClusterNodeGroupOptionsPtrOutput) BootstrapExtraArgs() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) *string {
 		if v == nil {
@@ -619,7 +625,7 @@ func (o ClusterNodeGroupOptionsPtrOutput) KeyName() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
-// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the expicit `kubeletExtraArgs`.
+// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
 func (o ClusterNodeGroupOptionsPtrOutput) KubeletExtraArgs() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) *string {
 		if v == nil {
@@ -629,7 +635,7 @@ func (o ClusterNodeGroupOptionsPtrOutput) KubeletExtraArgs() pulumi.StringPtrOut
 	}).(pulumi.StringPtrOutput)
 }
 
-// Custom k8s node labels to be attached to each woker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
 func (o ClusterNodeGroupOptionsPtrOutput) Labels() pulumi.StringMapOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) map[string]string {
 		if v == nil {
@@ -775,8 +781,8 @@ func (o ClusterNodeGroupOptionsPtrOutput) Version() pulumi.StringPtrOutput {
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreData struct {
 	AwsProvider           *aws.Provider                      `pulumi:"awsProvider"`
-	Cluster               eks.Cluster                        `pulumi:"cluster"`
-	ClusterSecurityGroup  ec2.SecurityGroup                  `pulumi:"clusterSecurityGroup"`
+	Cluster               *eks.Cluster                       `pulumi:"cluster"`
+	ClusterSecurityGroup  *ec2.SecurityGroup                 `pulumi:"clusterSecurityGroup"`
 	EksNodeAccess         *corev1.ConfigMap                  `pulumi:"eksNodeAccess"`
 	EncryptionConfig      *eks.ClusterEncryptionConfig       `pulumi:"encryptionConfig"`
 	Endpoint              string                             `pulumi:"endpoint"`
@@ -787,7 +793,7 @@ type CoreData struct {
 	NodeSecurityGroupTags map[string]string                  `pulumi:"nodeSecurityGroupTags"`
 	OidcProvider          *iam.OpenIdConnectProvider         `pulumi:"oidcProvider"`
 	PrivateSubnetIds      []string                           `pulumi:"privateSubnetIds"`
-	Provider              kubernetes.Provider                `pulumi:"provider"`
+	Provider              *kubernetes.Provider               `pulumi:"provider"`
 	PublicSubnetIds       []string                           `pulumi:"publicSubnetIds"`
 	StorageClasses        map[string]*storagev1.StorageClass `pulumi:"storageClasses"`
 	SubnetIds             []string                           `pulumi:"subnetIds"`
@@ -904,20 +910,21 @@ func (o CoreDataOutput) ToCoreDataPtrOutput() CoreDataPtrOutput {
 }
 
 func (o CoreDataOutput) ToCoreDataPtrOutputWithContext(ctx context.Context) CoreDataPtrOutput {
-	return o.ApplyT(func(v CoreData) *CoreData {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v CoreData) *CoreData {
 		return &v
 	}).(CoreDataPtrOutput)
 }
+
 func (o CoreDataOutput) AwsProvider() aws.ProviderOutput {
 	return o.ApplyT(func(v CoreData) *aws.Provider { return v.AwsProvider }).(aws.ProviderOutput)
 }
 
 func (o CoreDataOutput) Cluster() eks.ClusterOutput {
-	return o.ApplyT(func(v CoreData) eks.Cluster { return v.Cluster }).(eks.ClusterOutput)
+	return o.ApplyT(func(v CoreData) *eks.Cluster { return v.Cluster }).(eks.ClusterOutput)
 }
 
 func (o CoreDataOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v CoreData) ec2.SecurityGroup { return v.ClusterSecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v CoreData) *ec2.SecurityGroup { return v.ClusterSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
 func (o CoreDataOutput) EksNodeAccess() corev1.ConfigMapOutput {
@@ -961,7 +968,7 @@ func (o CoreDataOutput) PrivateSubnetIds() pulumi.StringArrayOutput {
 }
 
 func (o CoreDataOutput) Provider() kubernetes.ProviderOutput {
-	return o.ApplyT(func(v CoreData) kubernetes.Provider { return v.Provider }).(kubernetes.ProviderOutput)
+	return o.ApplyT(func(v CoreData) *kubernetes.Provider { return v.Provider }).(kubernetes.ProviderOutput)
 }
 
 func (o CoreDataOutput) PublicSubnetIds() pulumi.StringArrayOutput {
@@ -1003,7 +1010,13 @@ func (o CoreDataPtrOutput) ToCoreDataPtrOutputWithContext(ctx context.Context) C
 }
 
 func (o CoreDataPtrOutput) Elem() CoreDataOutput {
-	return o.ApplyT(func(v *CoreData) CoreData { return *v }).(CoreDataOutput)
+	return o.ApplyT(func(v *CoreData) CoreData {
+		if v != nil {
+			return *v
+		}
+		var ret CoreData
+		return ret
+	}).(CoreDataOutput)
 }
 
 func (o CoreDataPtrOutput) AwsProvider() aws.ProviderOutput {
@@ -1020,7 +1033,7 @@ func (o CoreDataPtrOutput) Cluster() eks.ClusterOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.Cluster
+		return v.Cluster
 	}).(eks.ClusterOutput)
 }
 
@@ -1029,7 +1042,7 @@ func (o CoreDataPtrOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.ClusterSecurityGroup
+		return v.ClusterSecurityGroup
 	}).(ec2.SecurityGroupOutput)
 }
 
@@ -1128,7 +1141,7 @@ func (o CoreDataPtrOutput) Provider() kubernetes.ProviderOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.Provider
+		return v.Provider
 	}).(kubernetes.ProviderOutput)
 }
 
@@ -1188,8 +1201,8 @@ func (o CoreDataPtrOutput) VpcId() pulumi.StringPtrOutput {
 
 // Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
 type CreationRoleProvider struct {
-	Provider aws.Provider `pulumi:"provider"`
-	Role     iam.Role     `pulumi:"role"`
+	Provider *aws.Provider `pulumi:"provider"`
+	Role     *iam.Role     `pulumi:"role"`
 }
 
 // CreationRoleProviderInput is an input type that accepts CreationRoleProviderArgs and CreationRoleProviderOutput values.
@@ -1282,16 +1295,17 @@ func (o CreationRoleProviderOutput) ToCreationRoleProviderPtrOutput() CreationRo
 }
 
 func (o CreationRoleProviderOutput) ToCreationRoleProviderPtrOutputWithContext(ctx context.Context) CreationRoleProviderPtrOutput {
-	return o.ApplyT(func(v CreationRoleProvider) *CreationRoleProvider {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v CreationRoleProvider) *CreationRoleProvider {
 		return &v
 	}).(CreationRoleProviderPtrOutput)
 }
+
 func (o CreationRoleProviderOutput) Provider() aws.ProviderOutput {
-	return o.ApplyT(func(v CreationRoleProvider) aws.Provider { return v.Provider }).(aws.ProviderOutput)
+	return o.ApplyT(func(v CreationRoleProvider) *aws.Provider { return v.Provider }).(aws.ProviderOutput)
 }
 
 func (o CreationRoleProviderOutput) Role() iam.RoleOutput {
-	return o.ApplyT(func(v CreationRoleProvider) iam.Role { return v.Role }).(iam.RoleOutput)
+	return o.ApplyT(func(v CreationRoleProvider) *iam.Role { return v.Role }).(iam.RoleOutput)
 }
 
 type CreationRoleProviderPtrOutput struct{ *pulumi.OutputState }
@@ -1309,7 +1323,13 @@ func (o CreationRoleProviderPtrOutput) ToCreationRoleProviderPtrOutputWithContex
 }
 
 func (o CreationRoleProviderPtrOutput) Elem() CreationRoleProviderOutput {
-	return o.ApplyT(func(v *CreationRoleProvider) CreationRoleProvider { return *v }).(CreationRoleProviderOutput)
+	return o.ApplyT(func(v *CreationRoleProvider) CreationRoleProvider {
+		if v != nil {
+			return *v
+		}
+		var ret CreationRoleProvider
+		return ret
+	}).(CreationRoleProviderOutput)
 }
 
 func (o CreationRoleProviderPtrOutput) Provider() aws.ProviderOutput {
@@ -1317,7 +1337,7 @@ func (o CreationRoleProviderPtrOutput) Provider() aws.ProviderOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.Provider
+		return v.Provider
 	}).(aws.ProviderOutput)
 }
 
@@ -1326,7 +1346,7 @@ func (o CreationRoleProviderPtrOutput) Role() iam.RoleOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.Role
+		return v.Role
 	}).(iam.RoleOutput)
 }
 
@@ -1335,7 +1355,7 @@ type FargateProfile struct {
 	// Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
 	PodExecutionRoleArn *string `pulumi:"podExecutionRoleArn"`
 	// Specify the namespace and label selectors to use for launching pods into Fargate.
-	Selectors []*eks.FargateProfileSelector `pulumi:"selectors"`
+	Selectors []eks.FargateProfileSelector `pulumi:"selectors"`
 	// Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
 	SubnetIds []string `pulumi:"subnetIds"`
 }
@@ -1395,7 +1415,7 @@ func (o FargateProfileOutput) PodExecutionRoleArn() pulumi.StringPtrOutput {
 
 // Specify the namespace and label selectors to use for launching pods into Fargate.
 func (o FargateProfileOutput) Selectors() eks.FargateProfileSelectorArrayOutput {
-	return o.ApplyT(func(v FargateProfile) []*eks.FargateProfileSelector { return v.Selectors }).(eks.FargateProfileSelectorArrayOutput)
+	return o.ApplyT(func(v FargateProfile) []eks.FargateProfileSelector { return v.Selectors }).(eks.FargateProfileSelectorArrayOutput)
 }
 
 // Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
@@ -1556,7 +1576,7 @@ func (o KubeconfigOptionsOutput) ToKubeconfigOptionsPtrOutput() KubeconfigOption
 }
 
 func (o KubeconfigOptionsOutput) ToKubeconfigOptionsPtrOutputWithContext(ctx context.Context) KubeconfigOptionsPtrOutput {
-	return o.ApplyT(func(v KubeconfigOptions) *KubeconfigOptions {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v KubeconfigOptions) *KubeconfigOptions {
 		return &v
 	}).(KubeconfigOptionsPtrOutput)
 }
@@ -1590,7 +1610,13 @@ func (o KubeconfigOptionsPtrOutput) ToKubeconfigOptionsPtrOutputWithContext(ctx 
 }
 
 func (o KubeconfigOptionsPtrOutput) Elem() KubeconfigOptionsOutput {
-	return o.ApplyT(func(v *KubeconfigOptions) KubeconfigOptions { return *v }).(KubeconfigOptionsOutput)
+	return o.ApplyT(func(v *KubeconfigOptions) KubeconfigOptions {
+		if v != nil {
+			return *v
+		}
+		var ret KubeconfigOptions
+		return ret
+	}).(KubeconfigOptionsOutput)
 }
 
 // AWS credential profile name to always use instead of the default AWS credential provider chain.
@@ -1622,11 +1648,11 @@ type NodeGroupData struct {
 	// The AutoScalingGroup name for the node group.
 	AutoScalingGroupName string `pulumi:"autoScalingGroupName"`
 	// The CloudFormation Stack which defines the Node AutoScalingGroup.
-	CfnStack cloudformation.Stack `pulumi:"cfnStack"`
+	CfnStack *cloudformation.Stack `pulumi:"cfnStack"`
 	// The additional security groups for the node group that captures user-specific rules.
 	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
 	// The security group for the node group to communicate with the cluster.
-	NodeSecurityGroup ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
+	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
 }
 
 // NodeGroupDataInput is an input type that accepts NodeGroupDataArgs and NodeGroupDataOutput values.
@@ -1725,7 +1751,7 @@ func (o NodeGroupDataOutput) ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput {
 }
 
 func (o NodeGroupDataOutput) ToNodeGroupDataPtrOutputWithContext(ctx context.Context) NodeGroupDataPtrOutput {
-	return o.ApplyT(func(v NodeGroupData) *NodeGroupData {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v NodeGroupData) *NodeGroupData {
 		return &v
 	}).(NodeGroupDataPtrOutput)
 }
@@ -1737,7 +1763,7 @@ func (o NodeGroupDataOutput) AutoScalingGroupName() pulumi.StringOutput {
 
 // The CloudFormation Stack which defines the Node AutoScalingGroup.
 func (o NodeGroupDataOutput) CfnStack() cloudformation.StackOutput {
-	return o.ApplyT(func(v NodeGroupData) cloudformation.Stack { return v.CfnStack }).(cloudformation.StackOutput)
+	return o.ApplyT(func(v NodeGroupData) *cloudformation.Stack { return v.CfnStack }).(cloudformation.StackOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.
@@ -1747,7 +1773,7 @@ func (o NodeGroupDataOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOut
 
 // The security group for the node group to communicate with the cluster.
 func (o NodeGroupDataOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v NodeGroupData) ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v NodeGroupData) *ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
 type NodeGroupDataPtrOutput struct{ *pulumi.OutputState }
@@ -1765,7 +1791,13 @@ func (o NodeGroupDataPtrOutput) ToNodeGroupDataPtrOutputWithContext(ctx context.
 }
 
 func (o NodeGroupDataPtrOutput) Elem() NodeGroupDataOutput {
-	return o.ApplyT(func(v *NodeGroupData) NodeGroupData { return *v }).(NodeGroupDataOutput)
+	return o.ApplyT(func(v *NodeGroupData) NodeGroupData {
+		if v != nil {
+			return *v
+		}
+		var ret NodeGroupData
+		return ret
+	}).(NodeGroupDataOutput)
 }
 
 // The AutoScalingGroup name for the node group.
@@ -1784,7 +1816,7 @@ func (o NodeGroupDataPtrOutput) CfnStack() cloudformation.StackOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.CfnStack
+		return v.CfnStack
 	}).(cloudformation.StackOutput)
 }
 
@@ -1804,7 +1836,7 @@ func (o NodeGroupDataPtrOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
 		if v == nil {
 			return nil
 		}
-		return &v.NodeSecurityGroup
+		return v.NodeSecurityGroup
 	}).(ec2.SecurityGroupOutput)
 }
 
@@ -2322,8 +2354,12 @@ type VpcCniOptions struct {
 	//
 	// Defaults to false.
 	CustomNetworkConfig *bool `pulumi:"customNetworkConfig"`
-	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+	DisableTcpEarlyDemux *bool `pulumi:"disableTcpEarlyDemux"`
+	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni *bool `pulumi:"enablePodEni"`
+	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+	EnablePrefixDelegation *bool `pulumi:"enablePrefixDelegation"`
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
 	//
@@ -2341,6 +2377,10 @@ type VpcCniOptions struct {
 	//
 	// Defaults to the official AWS CNI image in ECR.
 	Image *string `pulumi:"image"`
+	// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+	//
+	// Defaults to the official AWS CNI init container image in ECR.
+	InitImage *string `pulumi:"initImage"`
 	// Specifies the file path used for logs.
 	//
 	// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -2368,6 +2408,8 @@ type VpcCniOptions struct {
 	WarmEniTarget *int `pulumi:"warmEniTarget"`
 	// Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
 	WarmIpTarget *int `pulumi:"warmIpTarget"`
+	// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+	WarmPrefixTarget *int `pulumi:"warmPrefixTarget"`
 }
 
 // VpcCniOptionsInput is an input type that accepts VpcCniOptionsArgs and VpcCniOptionsOutput values.
@@ -2393,8 +2435,12 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to false.
 	CustomNetworkConfig pulumi.BoolPtrInput `pulumi:"customNetworkConfig"`
-	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+	DisableTcpEarlyDemux pulumi.BoolPtrInput `pulumi:"disableTcpEarlyDemux"`
+	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni pulumi.BoolPtrInput `pulumi:"enablePodEni"`
+	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+	EnablePrefixDelegation pulumi.BoolPtrInput `pulumi:"enablePrefixDelegation"`
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
 	//
@@ -2412,6 +2458,10 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to the official AWS CNI image in ECR.
 	Image pulumi.StringPtrInput `pulumi:"image"`
+	// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+	//
+	// Defaults to the official AWS CNI init container image in ECR.
+	InitImage pulumi.StringPtrInput `pulumi:"initImage"`
 	// Specifies the file path used for logs.
 	//
 	// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -2439,6 +2489,8 @@ type VpcCniOptionsArgs struct {
 	WarmEniTarget pulumi.IntPtrInput `pulumi:"warmEniTarget"`
 	// Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
 	WarmIpTarget pulumi.IntPtrInput `pulumi:"warmIpTarget"`
+	// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+	WarmPrefixTarget pulumi.IntPtrInput `pulumi:"warmPrefixTarget"`
 }
 
 func (VpcCniOptionsArgs) ElementType() reflect.Type {
@@ -2514,7 +2566,7 @@ func (o VpcCniOptionsOutput) ToVpcCniOptionsPtrOutput() VpcCniOptionsPtrOutput {
 }
 
 func (o VpcCniOptionsOutput) ToVpcCniOptionsPtrOutputWithContext(ctx context.Context) VpcCniOptionsPtrOutput {
-	return o.ApplyT(func(v VpcCniOptions) *VpcCniOptions {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v VpcCniOptions) *VpcCniOptions {
 		return &v
 	}).(VpcCniOptionsPtrOutput)
 }
@@ -2541,9 +2593,19 @@ func (o VpcCniOptionsOutput) CustomNetworkConfig() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.CustomNetworkConfig }).(pulumi.BoolPtrOutput)
 }
 
-// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+func (o VpcCniOptionsOutput) DisableTcpEarlyDemux() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *bool { return v.DisableTcpEarlyDemux }).(pulumi.BoolPtrOutput)
+}
+
+// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 func (o VpcCniOptionsOutput) EnablePodEni() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.EnablePodEni }).(pulumi.BoolPtrOutput)
+}
+
+// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+func (o VpcCniOptionsOutput) EnablePrefixDelegation() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *bool { return v.EnablePrefixDelegation }).(pulumi.BoolPtrOutput)
 }
 
 // Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
@@ -2573,6 +2635,13 @@ func (o VpcCniOptionsOutput) ExternalSnat() pulumi.BoolPtrOutput {
 // Defaults to the official AWS CNI image in ECR.
 func (o VpcCniOptionsOutput) Image() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *string { return v.Image }).(pulumi.StringPtrOutput)
+}
+
+// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+//
+// Defaults to the official AWS CNI init container image in ECR.
+func (o VpcCniOptionsOutput) InitImage() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *string { return v.InitImage }).(pulumi.StringPtrOutput)
 }
 
 // Specifies the file path used for logs.
@@ -2623,6 +2692,11 @@ func (o VpcCniOptionsOutput) WarmIpTarget() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *int { return v.WarmIpTarget }).(pulumi.IntPtrOutput)
 }
 
+// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+func (o VpcCniOptionsOutput) WarmPrefixTarget() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *int { return v.WarmPrefixTarget }).(pulumi.IntPtrOutput)
+}
+
 type VpcCniOptionsPtrOutput struct{ *pulumi.OutputState }
 
 func (VpcCniOptionsPtrOutput) ElementType() reflect.Type {
@@ -2638,7 +2712,13 @@ func (o VpcCniOptionsPtrOutput) ToVpcCniOptionsPtrOutputWithContext(ctx context.
 }
 
 func (o VpcCniOptionsPtrOutput) Elem() VpcCniOptionsOutput {
-	return o.ApplyT(func(v *VpcCniOptions) VpcCniOptions { return *v }).(VpcCniOptionsOutput)
+	return o.ApplyT(func(v *VpcCniOptions) VpcCniOptions {
+		if v != nil {
+			return *v
+		}
+		var ret VpcCniOptions
+		return ret
+	}).(VpcCniOptionsOutput)
 }
 
 // Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
@@ -2683,13 +2763,33 @@ func (o VpcCniOptionsPtrOutput) CustomNetworkConfig() pulumi.BoolPtrOutput {
 	}).(pulumi.BoolPtrOutput)
 }
 
-// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+func (o VpcCniOptionsPtrOutput) DisableTcpEarlyDemux() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.DisableTcpEarlyDemux
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 func (o VpcCniOptionsPtrOutput) EnablePodEni() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *VpcCniOptions) *bool {
 		if v == nil {
 			return nil
 		}
 		return v.EnablePodEni
+	}).(pulumi.BoolPtrOutput)
+}
+
+// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+func (o VpcCniOptionsPtrOutput) EnablePrefixDelegation() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.EnablePrefixDelegation
 	}).(pulumi.BoolPtrOutput)
 }
 
@@ -2739,6 +2839,18 @@ func (o VpcCniOptionsPtrOutput) Image() pulumi.StringPtrOutput {
 			return nil
 		}
 		return v.Image
+	}).(pulumi.StringPtrOutput)
+}
+
+// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+//
+// Defaults to the official AWS CNI init container image in ECR.
+func (o VpcCniOptionsPtrOutput) InitImage() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.InitImage
 	}).(pulumi.StringPtrOutput)
 }
 
@@ -2822,6 +2934,16 @@ func (o VpcCniOptionsPtrOutput) WarmIpTarget() pulumi.IntPtrOutput {
 			return nil
 		}
 		return v.WarmIpTarget
+	}).(pulumi.IntPtrOutput)
+}
+
+// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+func (o VpcCniOptionsPtrOutput) WarmPrefixTarget() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *int {
+		if v == nil {
+			return nil
+		}
+		return v.WarmPrefixTarget
 	}).(pulumi.IntPtrOutput)
 }
 

@@ -80,7 +80,7 @@ func main() {
 }
 
 const (
-	awsVersion = "v4.0.0"
+	awsVersion = "v4.15.0"
 	k8sVersion = "v3.0.0"
 )
 
@@ -102,10 +102,51 @@ func generateSchema() schema.PackageSpec {
 		Homepage:    "https://pulumi.com",
 		Repository:  "https://github.com/pulumi/pulumi-eks",
 
+		Functions: map[string]schema.FunctionSpec{
+			"eks:index:Cluster/getKubeconfig": {
+				Description: "Generate a kubeconfig for cluster authentication that does not use the default AWS " +
+					"credential provider chain, and instead is scoped to the supported options in " +
+					"`KubeconfigOptions`.\n\n" +
+					"The kubeconfig generated is automatically stringified for ease of use with the " +
+					"pulumi/kubernetes provider.\n\n" +
+					"See for more details:\n" +
+					"- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html\n" +
+					"- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html\n" +
+					"- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html",
+				Inputs: &schema.ObjectTypeSpec{
+					Properties: map[string]schema.PropertySpec{
+						"__self__": {
+							TypeSpec: schema.TypeSpec{Ref: "#/resources/eks:index:Cluster"},
+						},
+						"roleArn": {
+							Description: "Role ARN to assume instead of the default AWS credential provider " +
+								"chain.\n\n" +
+								"The role is passed to kubeconfig as an authentication exec argument.",
+							TypeSpec: schema.TypeSpec{Type: "string"},
+						},
+						"profileName": {
+							Description: "AWS credential profile name to always use instead of the default AWS " +
+								"credential provider chain.\n\n" +
+								"The profile is passed to kubeconfig as an authentication environment setting.",
+							TypeSpec: schema.TypeSpec{Type: "string"},
+						},
+					},
+					Required: []string{"__self__"},
+				},
+				Outputs: &schema.ObjectTypeSpec{
+					Properties: map[string]schema.PropertySpec{
+						"result": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+						},
+					},
+					Required: []string{"result"},
+				},
+			},
+		},
+
 		Resources: map[string]schema.ResourceSpec{
 			"eks:index:Cluster": {
 				// TODO: method: createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup
-				// TODO: method: getKubeconfig(args: KubeconfigOptions): pulumi.Output<string>
 				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Description: "Cluster is a component that wraps the AWS and Kubernetes resources necessary to " +
@@ -355,6 +396,30 @@ func generateSchema() schema.PackageSpec {
 					"nodeRootVolumeSize": {
 						TypeSpec:    schema.TypeSpec{Type: "integer"},
 						Description: "The size in GiB of a cluster node's root volume. Defaults to 20.",
+						Default:     20,
+					},
+					"nodeRootVolumeDeleteOnTermination": {
+						TypeSpec:    schema.TypeSpec{Type: "boolean"},
+						Description: "Whether to delete a cluster node's root volume on termination. Defaults to true.",
+						Default:     true,
+					},
+					"nodeRootVolumeEncrypted": {
+						TypeSpec:    schema.TypeSpec{Type: "boolean"},
+						Description: "Whether to encrypt a cluster node's root volume. Defaults to false.",
+						Default:     false,
+					},
+					"nodeRootVolumeIops": {
+						TypeSpec:    schema.TypeSpec{Type: "integer"},
+						Description: "Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.",
+					},
+					"nodeRootVolumeThroughput": {
+						TypeSpec:    schema.TypeSpec{Type: "integer"},
+						Description: "Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.",
+					},
+					"nodeRootVolumeType": {
+						TypeSpec:    schema.TypeSpec{Type: "string"},
+						Description: "Configured EBS type for a cluster node's root volume. Default is gp2.",
+						Default:     "gp2",
 					},
 					"nodeUserData": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -377,10 +442,9 @@ func generateSchema() schema.PackageSpec {
 					},
 					"storageClasses": {
 						TypeSpec: schema.TypeSpec{
-							Type: "string", // TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1"
 							OneOf: []schema.TypeSpec{
-								{Type: "string"},
-								{Type: "string", Ref: "#/types/eks:index:StorageClass"},
+								{Type: "string"}, // TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1"
+								{Type: "object", AdditionalProperties: &schema.TypeSpec{Ref: "#/types/eks:index:StorageClass"}},
 							},
 						},
 						Description: "An optional set of StorageClasses to enable for the cluster. If this is a " +
@@ -436,10 +500,9 @@ func generateSchema() schema.PackageSpec {
 					},
 					"fargate": {
 						TypeSpec: schema.TypeSpec{
-							Type: "boolean",
 							OneOf: []schema.TypeSpec{
 								{Type: "boolean"},
-								{Type: "boolean", Ref: "#/types/eks:index:FargateProfile"},
+								{Ref: "#/types/eks:index:FargateProfile"},
 							},
 						},
 						Description: "Add support for launching pods in Fargate. Defaults to launching pods in the " +
@@ -518,6 +581,9 @@ func generateSchema() schema.PackageSpec {
 							"",
 					},
 				},
+				Methods: map[string]string{
+					"getKubeconfig": "eks:index:Cluster/getKubeconfig",
+				},
 			},
 			"eks:index:ClusterCreationRoleProvider": {
 				IsComponent: true,
@@ -580,6 +646,12 @@ func generateSchema() schema.PackageSpec {
 							"Defaults to `AL2_x86_64`. Valid values: `AL2_x86_64`, `AL2_x86_64_GPU`, `AL2_ARM_64`. " +
 							"This provider will only perform drift detection if a configuration value is provided.",
 					},
+					"capacityType": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "Type of capacity associated with the EKS Node Group. " +
+							"Valid values: `ON_DEMAND`, `SPOT`. " +
+							"This provider will only perform drift detection if a configuration value is provided.",
+					},
 					"clusterName": {
 						TypeSpec:    schema.TypeSpec{Type: "string"},
 						Description: "Name of the EKS Cluster.",
@@ -617,8 +689,15 @@ func generateSchema() schema.PackageSpec {
 						Description: "Launch Template settings.",
 					},
 					"nodeGroupName": {
-						TypeSpec:    schema.TypeSpec{Type: "string"},
-						Description: "Name of the EKS Node Group.",
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "Name of the EKS Node Group. " +
+							"If omitted, this provider will assign a random, unique name. " +
+							"Conflicts with `nodeGroupNamePrefix`.",
+					},
+					"nodeGroupNamePrefix": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "Creates a unique name beginning with the specified prefix. " +
+							"Conflicts with `nodeGroupName`.",
 					},
 					"nodeRoleArn": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -661,7 +740,7 @@ func generateSchema() schema.PackageSpec {
 							"set:\n" +
 							"  - core.subnetIds\n" +
 							"  - core.privateIds\n" +
-							"  - core.publicSublicSubnetIds\n\n" +
+							"  - core.publicSubnetIds\n\n" +
 							"This default logic is based on the existing subnet IDs logic of this package: " +
 							"https://git.io/JeM11",
 					},
@@ -671,6 +750,13 @@ func generateSchema() schema.PackageSpec {
 							AdditionalProperties: &schema.TypeSpec{Type: "string"},
 						},
 						Description: "Key-value mapping of resource tags.",
+					},
+					"taints": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "array",
+							Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupTaint:NodeGroupTaint")},
+						},
+						Description: "The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.",
 					},
 					"version": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -1180,27 +1266,30 @@ func generateSchema() schema.PackageSpec {
 			},
 		},
 
-		Language: map[string]json.RawMessage{
+		Language: map[string]schema.RawMessage{
 			"csharp": rawMessage(map[string]interface{}{
 				"packageReferences": map[string]string{
 					"Pulumi":            "3.*",
-					"Pulumi.Aws":        "4.*",
+					"Pulumi.Aws":        "4.15.*",
 					"Pulumi.Kubernetes": "3.*",
 				},
+				"liftSingleValueMethodReturns": true,
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
 					"pulumi":            ">=3.0.0,<4.0.0",
-					"pulumi-aws":        ">=4.0.0,<5.0.0",
+					"pulumi-aws":        ">=4.15.0,<5.0.0",
 					"pulumi-kubernetes": ">=3.0.0,<4.0.0",
 				},
 				"usesIOClasses": true,
 				// TODO: Embellish the readme
-				"readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
+				"readme":                       "Pulumi Amazon Web Services (AWS) EKS Components.",
+				"liftSingleValueMethodReturns": true,
 			}),
 			"go": rawMessage(map[string]interface{}{
 				"generateResourceContainerTypes": true,
 				"importBasePath":                 "github.com/pulumi/pulumi-eks/sdk/go/eks",
+				"liftSingleValueMethodReturns":   true,
 			}),
 		},
 	}
@@ -1313,7 +1402,7 @@ func nodeGroupProperties(cluster bool) map[string]schema.PropertySpec {
 				Type:                 "object",
 				AdditionalProperties: &schema.TypeSpec{Type: "string"},
 			},
-			Description: "Custom k8s node labels to be attached to each woker node. Adds the given " +
+			Description: "Custom k8s node labels to be attached to each worker node. Adds the given " +
 				"key/value pairs to the `--node-labels` kubelet argument.",
 		},
 		"taints": {
@@ -1330,11 +1419,11 @@ func nodeGroupProperties(cluster bool) map[string]schema.PropertySpec {
 				"`--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, " +
 				"'--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will " +
 				"be applied to this list (using `--node-labels` and `--register-with-taints` " +
-				"respectively) after to the expicit `kubeletExtraArgs`.",
+				"respectively) after to the explicit `kubeletExtraArgs`.",
 		},
 		"bootstrapExtraArgs": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. Fror details on " +
+			Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on " +
 				"available options, see: " +
 				"https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. " +
 				"Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` " +
@@ -1426,6 +1515,16 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 			Description: "Specifies the number of free IP addresses that the ipamD daemon should " +
 				"attempt to keep available for pod assignment on the node.",
 		},
+		"warmPrefixTarget": {
+			TypeSpec: schema.TypeSpec{Type: "integer"},
+			Description: "WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  " +
+				"is consumed with the existing prefix. " +
+				"Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md",
+		},
+		"enablePrefixDelegation": {
+			TypeSpec:    schema.TypeSpec{Type: "boolean"},
+			Description: "IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.",
+		},
 		"logLevel": {
 			TypeSpec: schema.TypeSpec{Type: "string"}, // TODO consider typing this as an enum
 			Description: "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nValid " +
@@ -1440,6 +1539,11 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 			TypeSpec: schema.TypeSpec{Type: "string"},
 			Description: "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\n" +
 				"Defaults to the official AWS CNI image in ECR.",
+		},
+		"initImage": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Specifies the init container image to use in the AWS CNI cluster DaemonSet.\n\n" +
+				"Defaults to the official AWS CNI init container image in ECR.",
 		},
 		"vethPrefix": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
@@ -1461,8 +1565,14 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 		},
 		"enablePodEni": {
 			TypeSpec: schema.TypeSpec{Type: "boolean"},
-			Description: "Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to" +
-				"the node if the instance has capacity to attach an additional ENI. Default is `false`.",
+			Description: "Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to " +
+				"the node if the instance has capacity to attach an additional ENI. Default is `false`. " +
+				"If using liveness and readiness probes, you will also need to disable TCP early demux.",
+		},
+		"disableTcpEarlyDemux": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled." +
+				" This will slightly increase local TCP connection latency.",
 		},
 		"cniConfigureRpfilter": {
 			TypeSpec:    schema.TypeSpec{Type: "boolean"},
@@ -1508,7 +1618,7 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 	return props
 }
 
-func rawMessage(v interface{}) json.RawMessage {
+func rawMessage(v interface{}) schema.RawMessage {
 	bytes, err := json.Marshal(v)
 	contract.Assert(err == nil)
 	return bytes

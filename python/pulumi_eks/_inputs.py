@@ -68,7 +68,7 @@ class ClusterNodeGroupOptionsArgs:
                Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
-        :param pulumi.Input[str] bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. Fror details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+        :param pulumi.Input[str] bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cloud_formation_tags: The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
@@ -90,8 +90,8 @@ class ClusterNodeGroupOptionsArgs:
         :param pulumi.Input['pulumi_aws.iam.InstanceProfile'] instance_profile: The ingress rule that gives node group access.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
-        :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the expicit `kubeletExtraArgs`.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Custom k8s node labels to be attached to each woker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
         :param pulumi.Input[bool] node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
@@ -210,7 +210,7 @@ class ClusterNodeGroupOptionsArgs:
     @pulumi.getter(name="bootstrapExtraArgs")
     def bootstrap_extra_args(self) -> Optional[pulumi.Input[str]]:
         """
-        Additional args to pass directly to `/etc/eks/bootstrap.sh`. Fror details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+        Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         """
         return pulumi.get(self, "bootstrap_extra_args")
 
@@ -342,7 +342,7 @@ class ClusterNodeGroupOptionsArgs:
     @pulumi.getter(name="kubeletExtraArgs")
     def kubelet_extra_args(self) -> Optional[pulumi.Input[str]]:
         """
-        Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the expicit `kubeletExtraArgs`.
+        Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         """
         return pulumi.get(self, "kubelet_extra_args")
 
@@ -354,7 +354,7 @@ class ClusterNodeGroupOptionsArgs:
     @pulumi.getter
     def labels(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
         """
-        Custom k8s node labels to be attached to each woker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         """
         return pulumi.get(self, "labels")
 
@@ -1251,18 +1251,22 @@ class VpcCniOptionsArgs:
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
+                 disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
+                 enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
                  external_snat: Optional[pulumi.Input[bool]] = None,
                  image: Optional[pulumi.Input[str]] = None,
+                 init_image: Optional[pulumi.Input[str]] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
                  security_context_privileged: Optional[pulumi.Input[bool]] = None,
                  veth_prefix: Optional[pulumi.Input[str]] = None,
                  warm_eni_target: Optional[pulumi.Input[int]] = None,
-                 warm_ip_target: Optional[pulumi.Input[int]] = None):
+                 warm_ip_target: Optional[pulumi.Input[int]] = None,
+                 warm_prefix_target: Optional[pulumi.Input[int]] = None):
         """
         Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
         :param pulumi.Input[bool] cni_configure_rpfilter: Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
@@ -1271,7 +1275,9 @@ class VpcCniOptionsArgs:
         :param pulumi.Input[bool] custom_network_config: Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
                
                Defaults to false.
-        :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+        :param pulumi.Input[bool] disable_tcp_early_demux: Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
+        :param pulumi.Input[bool] enable_prefix_delegation: IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
                Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
                
@@ -1285,6 +1291,9 @@ class VpcCniOptionsArgs:
         :param pulumi.Input[str] image: Specifies the container image to use in the AWS CNI cluster DaemonSet.
                
                Defaults to the official AWS CNI image in ECR.
+        :param pulumi.Input[str] init_image: Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+               
+               Defaults to the official AWS CNI init container image in ECR.
         :param pulumi.Input[str] log_file: Specifies the file path used for logs.
                
                Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -1305,6 +1314,7 @@ class VpcCniOptionsArgs:
                
                Defaults to 1.
         :param pulumi.Input[int] warm_ip_target: Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
+        :param pulumi.Input[int] warm_prefix_target: WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
         """
         if cni_configure_rpfilter is not None:
             pulumi.set(__self__, "cni_configure_rpfilter", cni_configure_rpfilter)
@@ -1314,8 +1324,12 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "cni_external_snat", cni_external_snat)
         if custom_network_config is not None:
             pulumi.set(__self__, "custom_network_config", custom_network_config)
+        if disable_tcp_early_demux is not None:
+            pulumi.set(__self__, "disable_tcp_early_demux", disable_tcp_early_demux)
         if enable_pod_eni is not None:
             pulumi.set(__self__, "enable_pod_eni", enable_pod_eni)
+        if enable_prefix_delegation is not None:
+            pulumi.set(__self__, "enable_prefix_delegation", enable_prefix_delegation)
         if eni_config_label_def is not None:
             pulumi.set(__self__, "eni_config_label_def", eni_config_label_def)
         if eni_mtu is not None:
@@ -1324,6 +1338,8 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "external_snat", external_snat)
         if image is not None:
             pulumi.set(__self__, "image", image)
+        if init_image is not None:
+            pulumi.set(__self__, "init_image", init_image)
         if log_file is not None:
             pulumi.set(__self__, "log_file", log_file)
         if log_level is not None:
@@ -1338,6 +1354,8 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "warm_eni_target", warm_eni_target)
         if warm_ip_target is not None:
             pulumi.set(__self__, "warm_ip_target", warm_ip_target)
+        if warm_prefix_target is not None:
+            pulumi.set(__self__, "warm_prefix_target", warm_prefix_target)
 
     @property
     @pulumi.getter(name="cniConfigureRpfilter")
@@ -1390,16 +1408,40 @@ class VpcCniOptionsArgs:
         pulumi.set(self, "custom_network_config", value)
 
     @property
+    @pulumi.getter(name="disableTcpEarlyDemux")
+    def disable_tcp_early_demux(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        """
+        return pulumi.get(self, "disable_tcp_early_demux")
+
+    @disable_tcp_early_demux.setter
+    def disable_tcp_early_demux(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "disable_tcp_early_demux", value)
+
+    @property
     @pulumi.getter(name="enablePodEni")
     def enable_pod_eni(self) -> Optional[pulumi.Input[bool]]:
         """
-        Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+        Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         """
         return pulumi.get(self, "enable_pod_eni")
 
     @enable_pod_eni.setter
     def enable_pod_eni(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "enable_pod_eni", value)
+
+    @property
+    @pulumi.getter(name="enablePrefixDelegation")
+    def enable_prefix_delegation(self) -> Optional[pulumi.Input[bool]]:
+        """
+        IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+        """
+        return pulumi.get(self, "enable_prefix_delegation")
+
+    @enable_prefix_delegation.setter
+    def enable_prefix_delegation(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "enable_prefix_delegation", value)
 
     @property
     @pulumi.getter(name="eniConfigLabelDef")
@@ -1457,6 +1499,20 @@ class VpcCniOptionsArgs:
     @image.setter
     def image(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "image", value)
+
+    @property
+    @pulumi.getter(name="initImage")
+    def init_image(self) -> Optional[pulumi.Input[str]]:
+        """
+        Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+
+        Defaults to the official AWS CNI init container image in ECR.
+        """
+        return pulumi.get(self, "init_image")
+
+    @init_image.setter
+    def init_image(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "init_image", value)
 
     @property
     @pulumi.getter(name="logFile")
@@ -1554,5 +1610,17 @@ class VpcCniOptionsArgs:
     @warm_ip_target.setter
     def warm_ip_target(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "warm_ip_target", value)
+
+    @property
+    @pulumi.getter(name="warmPrefixTarget")
+    def warm_prefix_target(self) -> Optional[pulumi.Input[int]]:
+        """
+        WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+        """
+        return pulumi.get(self, "warm_prefix_target")
+
+    @warm_prefix_target.setter
+    def warm_prefix_target(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "warm_prefix_target", value)
 
 

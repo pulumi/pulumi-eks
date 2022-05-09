@@ -45,6 +45,8 @@ func NewManagedNodeGroup(ctx *pulumi.Context,
 type managedNodeGroupArgs struct {
 	// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. Valid values: `AL2_x86_64`, `AL2_x86_64_GPU`, `AL2_ARM_64`. This provider will only perform drift detection if a configuration value is provided.
 	AmiType *string `pulumi:"amiType"`
+	// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
+	CapacityType *string `pulumi:"capacityType"`
 	// The target EKS cluster.
 	Cluster CoreData `pulumi:"cluster"`
 	// Name of the EKS Cluster.
@@ -59,8 +61,10 @@ type managedNodeGroupArgs struct {
 	Labels map[string]string `pulumi:"labels"`
 	// Launch Template settings.
 	LaunchTemplate *eks.NodeGroupLaunchTemplate `pulumi:"launchTemplate"`
-	// Name of the EKS Node Group.
+	// Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
 	NodeGroupName *string `pulumi:"nodeGroupName"`
+	// Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`.
+	NodeGroupNamePrefix *string `pulumi:"nodeGroupNamePrefix"`
 	// The IAM Role that provides permissions for the EKS Node Group.
 	//
 	// Note, `nodeRole` and `nodeRoleArn` are mutually exclusive, and a single option must be used.
@@ -85,19 +89,23 @@ type managedNodeGroupArgs struct {
 	// Default subnetIds is chosen from the following list, in order, if subnetIds arg is not set:
 	//   - core.subnetIds
 	//   - core.privateIds
-	//   - core.publicSublicSubnetIds
+	//   - core.publicSubnetIds
 	//
 	// This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
 	SubnetIds []string `pulumi:"subnetIds"`
 	// Key-value mapping of resource tags.
-	Tags    map[string]string `pulumi:"tags"`
-	Version *string           `pulumi:"version"`
+	Tags map[string]string `pulumi:"tags"`
+	// The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
+	Taints  []eks.NodeGroupTaint `pulumi:"taints"`
+	Version *string              `pulumi:"version"`
 }
 
 // The set of arguments for constructing a ManagedNodeGroup resource.
 type ManagedNodeGroupArgs struct {
 	// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. Valid values: `AL2_x86_64`, `AL2_x86_64_GPU`, `AL2_ARM_64`. This provider will only perform drift detection if a configuration value is provided.
 	AmiType pulumi.StringPtrInput
+	// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
+	CapacityType pulumi.StringPtrInput
 	// The target EKS cluster.
 	Cluster CoreDataInput
 	// Name of the EKS Cluster.
@@ -112,8 +120,10 @@ type ManagedNodeGroupArgs struct {
 	Labels pulumi.StringMapInput
 	// Launch Template settings.
 	LaunchTemplate eks.NodeGroupLaunchTemplatePtrInput
-	// Name of the EKS Node Group.
+	// Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
 	NodeGroupName pulumi.StringPtrInput
+	// Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`.
+	NodeGroupNamePrefix pulumi.StringPtrInput
 	// The IAM Role that provides permissions for the EKS Node Group.
 	//
 	// Note, `nodeRole` and `nodeRoleArn` are mutually exclusive, and a single option must be used.
@@ -138,12 +148,14 @@ type ManagedNodeGroupArgs struct {
 	// Default subnetIds is chosen from the following list, in order, if subnetIds arg is not set:
 	//   - core.subnetIds
 	//   - core.privateIds
-	//   - core.publicSublicSubnetIds
+	//   - core.publicSubnetIds
 	//
 	// This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
 	SubnetIds pulumi.StringArrayInput
 	// Key-value mapping of resource tags.
-	Tags    pulumi.StringMapInput
+	Tags pulumi.StringMapInput
+	// The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
+	Taints  eks.NodeGroupTaintArrayInput
 	Version pulumi.StringPtrInput
 }
 
@@ -213,7 +225,7 @@ type ManagedNodeGroupArrayInput interface {
 type ManagedNodeGroupArray []ManagedNodeGroupInput
 
 func (ManagedNodeGroupArray) ElementType() reflect.Type {
-	return reflect.TypeOf(([]*ManagedNodeGroup)(nil))
+	return reflect.TypeOf((*[]*ManagedNodeGroup)(nil)).Elem()
 }
 
 func (i ManagedNodeGroupArray) ToManagedNodeGroupArrayOutput() ManagedNodeGroupArrayOutput {
@@ -238,7 +250,7 @@ type ManagedNodeGroupMapInput interface {
 type ManagedNodeGroupMap map[string]ManagedNodeGroupInput
 
 func (ManagedNodeGroupMap) ElementType() reflect.Type {
-	return reflect.TypeOf((map[string]*ManagedNodeGroup)(nil))
+	return reflect.TypeOf((*map[string]*ManagedNodeGroup)(nil)).Elem()
 }
 
 func (i ManagedNodeGroupMap) ToManagedNodeGroupMapOutput() ManagedNodeGroupMapOutput {
@@ -249,9 +261,7 @@ func (i ManagedNodeGroupMap) ToManagedNodeGroupMapOutputWithContext(ctx context.
 	return pulumi.ToOutputWithContext(ctx, i).(ManagedNodeGroupMapOutput)
 }
 
-type ManagedNodeGroupOutput struct {
-	*pulumi.OutputState
-}
+type ManagedNodeGroupOutput struct{ *pulumi.OutputState }
 
 func (ManagedNodeGroupOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((*ManagedNodeGroup)(nil))
@@ -270,14 +280,12 @@ func (o ManagedNodeGroupOutput) ToManagedNodeGroupPtrOutput() ManagedNodeGroupPt
 }
 
 func (o ManagedNodeGroupOutput) ToManagedNodeGroupPtrOutputWithContext(ctx context.Context) ManagedNodeGroupPtrOutput {
-	return o.ApplyT(func(v ManagedNodeGroup) *ManagedNodeGroup {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v ManagedNodeGroup) *ManagedNodeGroup {
 		return &v
 	}).(ManagedNodeGroupPtrOutput)
 }
 
-type ManagedNodeGroupPtrOutput struct {
-	*pulumi.OutputState
-}
+type ManagedNodeGroupPtrOutput struct{ *pulumi.OutputState }
 
 func (ManagedNodeGroupPtrOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((**ManagedNodeGroup)(nil))
@@ -289,6 +297,16 @@ func (o ManagedNodeGroupPtrOutput) ToManagedNodeGroupPtrOutput() ManagedNodeGrou
 
 func (o ManagedNodeGroupPtrOutput) ToManagedNodeGroupPtrOutputWithContext(ctx context.Context) ManagedNodeGroupPtrOutput {
 	return o
+}
+
+func (o ManagedNodeGroupPtrOutput) Elem() ManagedNodeGroupOutput {
+	return o.ApplyT(func(v *ManagedNodeGroup) ManagedNodeGroup {
+		if v != nil {
+			return *v
+		}
+		var ret ManagedNodeGroup
+		return ret
+	}).(ManagedNodeGroupOutput)
 }
 
 type ManagedNodeGroupArrayOutput struct{ *pulumi.OutputState }

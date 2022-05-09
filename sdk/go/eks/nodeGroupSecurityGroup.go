@@ -49,9 +49,9 @@ func NewNodeGroupSecurityGroup(ctx *pulumi.Context,
 
 type nodeGroupSecurityGroupArgs struct {
 	// The security group associated with the EKS cluster.
-	ClusterSecurityGroup ec2.SecurityGroup `pulumi:"clusterSecurityGroup"`
+	ClusterSecurityGroup *ec2.SecurityGroup `pulumi:"clusterSecurityGroup"`
 	// The EKS cluster associated with the worker node group
-	EksCluster eks.Cluster `pulumi:"eksCluster"`
+	EksCluster *eks.Cluster `pulumi:"eksCluster"`
 	// Key-value mapping of tags to apply to this security group.
 	Tags map[string]string `pulumi:"tags"`
 	// The VPC in which to create the worker node group.
@@ -136,7 +136,7 @@ type NodeGroupSecurityGroupArrayInput interface {
 type NodeGroupSecurityGroupArray []NodeGroupSecurityGroupInput
 
 func (NodeGroupSecurityGroupArray) ElementType() reflect.Type {
-	return reflect.TypeOf(([]*NodeGroupSecurityGroup)(nil))
+	return reflect.TypeOf((*[]*NodeGroupSecurityGroup)(nil)).Elem()
 }
 
 func (i NodeGroupSecurityGroupArray) ToNodeGroupSecurityGroupArrayOutput() NodeGroupSecurityGroupArrayOutput {
@@ -161,7 +161,7 @@ type NodeGroupSecurityGroupMapInput interface {
 type NodeGroupSecurityGroupMap map[string]NodeGroupSecurityGroupInput
 
 func (NodeGroupSecurityGroupMap) ElementType() reflect.Type {
-	return reflect.TypeOf((map[string]*NodeGroupSecurityGroup)(nil))
+	return reflect.TypeOf((*map[string]*NodeGroupSecurityGroup)(nil)).Elem()
 }
 
 func (i NodeGroupSecurityGroupMap) ToNodeGroupSecurityGroupMapOutput() NodeGroupSecurityGroupMapOutput {
@@ -172,9 +172,7 @@ func (i NodeGroupSecurityGroupMap) ToNodeGroupSecurityGroupMapOutputWithContext(
 	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupSecurityGroupMapOutput)
 }
 
-type NodeGroupSecurityGroupOutput struct {
-	*pulumi.OutputState
-}
+type NodeGroupSecurityGroupOutput struct{ *pulumi.OutputState }
 
 func (NodeGroupSecurityGroupOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((*NodeGroupSecurityGroup)(nil))
@@ -193,14 +191,12 @@ func (o NodeGroupSecurityGroupOutput) ToNodeGroupSecurityGroupPtrOutput() NodeGr
 }
 
 func (o NodeGroupSecurityGroupOutput) ToNodeGroupSecurityGroupPtrOutputWithContext(ctx context.Context) NodeGroupSecurityGroupPtrOutput {
-	return o.ApplyT(func(v NodeGroupSecurityGroup) *NodeGroupSecurityGroup {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v NodeGroupSecurityGroup) *NodeGroupSecurityGroup {
 		return &v
 	}).(NodeGroupSecurityGroupPtrOutput)
 }
 
-type NodeGroupSecurityGroupPtrOutput struct {
-	*pulumi.OutputState
-}
+type NodeGroupSecurityGroupPtrOutput struct{ *pulumi.OutputState }
 
 func (NodeGroupSecurityGroupPtrOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((**NodeGroupSecurityGroup)(nil))
@@ -212,6 +208,16 @@ func (o NodeGroupSecurityGroupPtrOutput) ToNodeGroupSecurityGroupPtrOutput() Nod
 
 func (o NodeGroupSecurityGroupPtrOutput) ToNodeGroupSecurityGroupPtrOutputWithContext(ctx context.Context) NodeGroupSecurityGroupPtrOutput {
 	return o
+}
+
+func (o NodeGroupSecurityGroupPtrOutput) Elem() NodeGroupSecurityGroupOutput {
+	return o.ApplyT(func(v *NodeGroupSecurityGroup) NodeGroupSecurityGroup {
+		if v != nil {
+			return *v
+		}
+		var ret NodeGroupSecurityGroup
+		return ret
+	}).(NodeGroupSecurityGroupOutput)
 }
 
 type NodeGroupSecurityGroupArrayOutput struct{ *pulumi.OutputState }

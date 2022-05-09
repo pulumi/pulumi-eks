@@ -1,3 +1,11 @@
+name: Run Acceptance Tests from PR
+on:
+  repository_dispatch:
+    types: [run-acceptance-tests-command]
+  pull_request:
+    branches:
+      - master
+
 env:
   ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
   ALT_AWS_SECRET_ACCESS_KEY: ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }}
@@ -9,6 +17,7 @@ env:
   PROVIDER: eks
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
   PULUMI_API: https://api.pulumi-staging.io
+  PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   PR_COMMIT_SHA: ${{ github.event.client_payload.pull_request.head.sha }}
   PULUMI_ENABLE_RESOURCE_REFERENCES: 1
@@ -76,10 +85,28 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.1.0
         with:
           repo: pulumi/pulumictl
+      - name: Install Schema Tools
+        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        with:
+          repo: mikhailshilkov/schema-tools
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
       - name: Build provider binary + schema
         run: make schema provider
+      - name: Check Schema is Valid
+        run: |
+          echo 'SCHEMA_CHANGES<<EOF' >> $GITHUB_ENV
+          schema-tools compare ${{ env.PROVIDER }} master --local-path=provider/cmd/pulumi-resource-${{ env.PROVIDER }}/schema.json >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+      - if: github.event_name == 'pull_request'
+        name: Comment on PR with Details of Schema Check
+        uses: thollander/actions-comment-pull-request@1.0.1
+        with:
+          message: |
+            ### Does the PR have any schema changes?
+
+            ${{ env.SCHEMA_CHANGES }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check worktree clean
         run: ./ci-scripts/ci/check-worktree-is-clean
       - name: Tar provider binaries
@@ -142,8 +169,12 @@ jobs:
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
         run: ./ci-scripts/ci/check-worktree-is-clean
-      - name: Compress SDK folder
+      - if: matrix.language != 'go'
+        name: Compress non-go SDK folder
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
+      - if: matrix.language == 'go'
+        name: Compress go SDK folder
+        run: tar -zcf ${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}/ .
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -160,6 +191,7 @@ jobs:
           - nodejs
           - python
           - dotnet
+          - go
         nodeversion:
           - 14.x
         pythonversion:
@@ -187,7 +219,9 @@ jobs:
           go-version: ${{ matrix.goversion }}
       - name: Install Kubectl
         run: |
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          # https://github.com/aws/aws-cli/issues/6920
+          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
           chmod +x ./kubectl
           sudo mv kubectl /usr/local/bin
       - name: Install pulumictl
@@ -223,6 +257,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/${{ matrix.language }}.tar.gz -C ${{github.workspace}}/${{ matrix.language}}
       - name: Install dependencies
         run: make install_${{ matrix.language}}_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -300,6 +338,13 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+      - name: Install Kubectl
+        run: |
+          # https://github.com/aws/aws-cli/issues/6920
+          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv kubectl /usr/local/bin
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -335,6 +380,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - name: Download Python SDK
         uses: actions/download-artifact@v2
         with:
@@ -376,6 +425,7 @@ jobs:
           - 14.x
         test-name:
           - AwsProfilePy
+          - AwsProfileRolePy
           - ClusterPy
           - FargatePy
   test-dotnet:
@@ -408,6 +458,13 @@ jobs:
         with:
           node-version: ${{matrix.nodeversion}}
           registry-url: https://registry.npmjs.org
+      - name: Install Kubectl
+        run: |
+          # https://github.com/aws/aws-cli/issues/6920
+          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv kubectl /usr/local/bin
       - name: Setup DotNet
         uses: actions/setup-dotnet@v1
         with:
@@ -434,6 +491,10 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
       - name: Download DotNet SDK
         uses: actions/download-artifact@v2
         with:
@@ -476,10 +537,109 @@ jobs:
           - 14.x
         test-name:
           - ClusterCs
-name: Run Acceptance Tests from PR
-on:
-  repository_dispatch:
-    types: [run-acceptance-tests-command]
-  pull_request:
-    branches:
-      - master
+  test-go:
+    name: Run Go Tests
+    needs: build_sdk
+    runs-on: ubuntu-latest
+    if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Checkout Scripts Repo
+        uses: actions/checkout@v2
+        with:
+          path: ci-scripts
+          repository: pulumi/scripts
+      - name: Unshallow clone for tags
+        run: git fetch --prune --unshallow --tags
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.goversion }}
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        with:
+          repo: pulumi/pulumictl
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@v1.0.1
+      - name: Install Kubectl
+        run: |
+          # https://github.com/aws/aws-cli/issues/6920
+          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv kubectl /usr/local/bin
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.nodeversion}}
+          registry-url: https://registry.npmjs.org
+      - name: Setup DotNet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{matrix.dotnetverson}}
+      - name: Download provider binary
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.PROVIDER }}-provider.tar.gz
+          path: ${{ github.workspace }}/bin
+      - name: Untar provider binaries
+        run: tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
+          }}/bin
+      - name: Restore binary perms
+        run: find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
+          -exec chmod +x {} \;
+      - name: Update path
+        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+      - name: Download NodeJS SDK
+        uses: actions/download-artifact@v2
+        with:
+          name: nodejs-sdk.tar.gz
+          path: ${{ github.workspace}}
+      - name: Uncompress NodeJS SDK folder
+        run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
+      - name: Install NodeJS SDK
+        run: make install_nodejs_sdk
+      - name: Install gotestfmt
+        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        with:
+          repo: haveyoudebuggedit/gotestfmt
+      - name: Download Go SDK
+        uses: actions/download-artifact@v2
+        with:
+          name: go-sdk.tar.gz
+          path: ${{ github.workspace}}
+      - name: Uncompress Go SDK folder
+        run: tar -zxf ${{ github.workspace}}/go.tar.gz -C ${{github.workspace}}/sdk/go
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ env.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-duration-seconds: 3600
+          role-session-name: ${{ env.PROVIDER }}@githubActions
+          role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
+      - name: Configure AWS CLI
+        run: |
+          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
+          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
+      - name: Link nodejs binary for testing
+        run: |
+          cd ${{ github.workspace }}/bin
+          yarn install && yarn link @pulumi/eks
+      - name: Run tests
+        run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=go
+    strategy:
+      fail-fast: false
+      matrix:
+        goversion:
+          - 1.16.x
+        pythonversion:
+          - 3.8
+        nodeversion:
+          - 14.x
+        test-name:
+          - ClusterGo

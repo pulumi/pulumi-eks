@@ -48,6 +48,18 @@ func NewCluster(ctx *pulumi.Context,
 		args = &ClusterArgs{}
 	}
 
+	if args.NodeRootVolumeDeleteOnTermination == nil {
+		args.NodeRootVolumeDeleteOnTermination = pulumi.BoolPtr(true)
+	}
+	if args.NodeRootVolumeEncrypted == nil {
+		args.NodeRootVolumeEncrypted = pulumi.BoolPtr(false)
+	}
+	if args.NodeRootVolumeSize == nil {
+		args.NodeRootVolumeSize = pulumi.IntPtr(20)
+	}
+	if args.NodeRootVolumeType == nil {
+		args.NodeRootVolumeType = pulumi.StringPtr("gp2")
+	}
 	var resource Cluster
 	err := ctx.RegisterRemoteComponentResource("eks:index:Cluster", name, args, &resource, opts...)
 	if err != nil {
@@ -153,8 +165,18 @@ type clusterArgs struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey *string `pulumi:"nodePublicKey"`
+	// Whether to delete a cluster node's root volume on termination. Defaults to true.
+	NodeRootVolumeDeleteOnTermination *bool `pulumi:"nodeRootVolumeDeleteOnTermination"`
+	// Whether to encrypt a cluster node's root volume. Defaults to false.
+	NodeRootVolumeEncrypted *bool `pulumi:"nodeRootVolumeEncrypted"`
+	// Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
+	NodeRootVolumeIops *int `pulumi:"nodeRootVolumeIops"`
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize *int `pulumi:"nodeRootVolumeSize"`
+	// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
+	NodeRootVolumeThroughput *int `pulumi:"nodeRootVolumeThroughput"`
+	// Configured EBS type for a cluster node's root volume. Default is gp2.
+	NodeRootVolumeType *string `pulumi:"nodeRootVolumeType"`
 	// The tags to apply to the default `nodeSecurityGroup` created by the cluster.
 	//
 	// Note: The `nodeSecurityGroupTags` option and the node group option `nodeSecurityGroup` are mutually exclusive.
@@ -357,8 +379,18 @@ type ClusterArgs struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey pulumi.StringPtrInput
+	// Whether to delete a cluster node's root volume on termination. Defaults to true.
+	NodeRootVolumeDeleteOnTermination pulumi.BoolPtrInput
+	// Whether to encrypt a cluster node's root volume. Defaults to false.
+	NodeRootVolumeEncrypted pulumi.BoolPtrInput
+	// Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
+	NodeRootVolumeIops pulumi.IntPtrInput
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize pulumi.IntPtrInput
+	// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
+	NodeRootVolumeThroughput pulumi.IntPtrInput
+	// Configured EBS type for a cluster node's root volume. Default is gp2.
+	NodeRootVolumeType pulumi.StringPtrInput
 	// The tags to apply to the default `nodeSecurityGroup` created by the cluster.
 	//
 	// Note: The `nodeSecurityGroupTags` option and the node group option `nodeSecurityGroup` are mutually exclusive.
@@ -467,6 +499,63 @@ func (ClusterArgs) ElementType() reflect.Type {
 	return reflect.TypeOf((*clusterArgs)(nil)).Elem()
 }
 
+// Generate a kubeconfig for cluster authentication that does not use the default AWS credential provider chain, and instead is scoped to the supported options in `KubeconfigOptions`.
+//
+// The kubeconfig generated is automatically stringified for ease of use with the pulumi/kubernetes provider.
+//
+// See for more details:
+// - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
+// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
+// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+func (r *Cluster) GetKubeconfig(ctx *pulumi.Context, args *ClusterGetKubeconfigArgs) (pulumi.StringOutput, error) {
+	out, err := ctx.Call("eks:index:Cluster/getKubeconfig", args, clusterGetKubeconfigResultOutput{}, r)
+	if err != nil {
+		return pulumi.StringOutput{}, err
+	}
+	return out.(clusterGetKubeconfigResultOutput).Result(), nil
+}
+
+type clusterGetKubeconfigArgs struct {
+	// AWS credential profile name to always use instead of the default AWS credential provider chain.
+	//
+	// The profile is passed to kubeconfig as an authentication environment setting.
+	ProfileName *string `pulumi:"profileName"`
+	// Role ARN to assume instead of the default AWS credential provider chain.
+	//
+	// The role is passed to kubeconfig as an authentication exec argument.
+	RoleArn *string `pulumi:"roleArn"`
+}
+
+// The set of arguments for the GetKubeconfig method of the Cluster resource.
+type ClusterGetKubeconfigArgs struct {
+	// AWS credential profile name to always use instead of the default AWS credential provider chain.
+	//
+	// The profile is passed to kubeconfig as an authentication environment setting.
+	ProfileName pulumi.StringPtrInput
+	// Role ARN to assume instead of the default AWS credential provider chain.
+	//
+	// The role is passed to kubeconfig as an authentication exec argument.
+	RoleArn pulumi.StringPtrInput
+}
+
+func (ClusterGetKubeconfigArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*clusterGetKubeconfigArgs)(nil)).Elem()
+}
+
+type clusterGetKubeconfigResult struct {
+	Result string `pulumi:"result"`
+}
+
+type clusterGetKubeconfigResultOutput struct{ *pulumi.OutputState }
+
+func (clusterGetKubeconfigResultOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*clusterGetKubeconfigResult)(nil)).Elem()
+}
+
+func (o clusterGetKubeconfigResultOutput) Result() pulumi.StringOutput {
+	return o.ApplyT(func(v clusterGetKubeconfigResult) string { return v.Result }).(pulumi.StringOutput)
+}
+
 type ClusterInput interface {
 	pulumi.Input
 
@@ -529,7 +618,7 @@ type ClusterArrayInput interface {
 type ClusterArray []ClusterInput
 
 func (ClusterArray) ElementType() reflect.Type {
-	return reflect.TypeOf(([]*Cluster)(nil))
+	return reflect.TypeOf((*[]*Cluster)(nil)).Elem()
 }
 
 func (i ClusterArray) ToClusterArrayOutput() ClusterArrayOutput {
@@ -554,7 +643,7 @@ type ClusterMapInput interface {
 type ClusterMap map[string]ClusterInput
 
 func (ClusterMap) ElementType() reflect.Type {
-	return reflect.TypeOf((map[string]*Cluster)(nil))
+	return reflect.TypeOf((*map[string]*Cluster)(nil)).Elem()
 }
 
 func (i ClusterMap) ToClusterMapOutput() ClusterMapOutput {
@@ -565,9 +654,7 @@ func (i ClusterMap) ToClusterMapOutputWithContext(ctx context.Context) ClusterMa
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterMapOutput)
 }
 
-type ClusterOutput struct {
-	*pulumi.OutputState
-}
+type ClusterOutput struct{ *pulumi.OutputState }
 
 func (ClusterOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((*Cluster)(nil))
@@ -586,14 +673,12 @@ func (o ClusterOutput) ToClusterPtrOutput() ClusterPtrOutput {
 }
 
 func (o ClusterOutput) ToClusterPtrOutputWithContext(ctx context.Context) ClusterPtrOutput {
-	return o.ApplyT(func(v Cluster) *Cluster {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v Cluster) *Cluster {
 		return &v
 	}).(ClusterPtrOutput)
 }
 
-type ClusterPtrOutput struct {
-	*pulumi.OutputState
-}
+type ClusterPtrOutput struct{ *pulumi.OutputState }
 
 func (ClusterPtrOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((**Cluster)(nil))
@@ -605,6 +690,16 @@ func (o ClusterPtrOutput) ToClusterPtrOutput() ClusterPtrOutput {
 
 func (o ClusterPtrOutput) ToClusterPtrOutputWithContext(ctx context.Context) ClusterPtrOutput {
 	return o
+}
+
+func (o ClusterPtrOutput) Elem() ClusterOutput {
+	return o.ApplyT(func(v *Cluster) Cluster {
+		if v != nil {
+			return *v
+		}
+		var ret Cluster
+		return ret
+	}).(ClusterOutput)
 }
 
 type ClusterArrayOutput struct{ *pulumi.OutputState }
@@ -649,6 +744,7 @@ func (o ClusterMapOutput) MapIndex(k pulumi.StringInput) ClusterOutput {
 
 func init() {
 	pulumi.RegisterOutputType(ClusterOutput{})
+	pulumi.RegisterOutputType(clusterGetKubeconfigResultOutput{})
 	pulumi.RegisterOutputType(ClusterPtrOutput{})
 	pulumi.RegisterOutputType(ClusterArrayOutput{})
 	pulumi.RegisterOutputType(ClusterMapOutput{})

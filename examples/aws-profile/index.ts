@@ -28,6 +28,7 @@ const kubeconfigOpts: eks.KubeconfigOptions = {profileName: profileName};
 const cluster = new eks.Cluster(`${projectName}`, {
     providerCredentialOpts: kubeconfigOpts,
     deployDashboard: false,
+    version: "1.22", // Force 1.22 to test fix for https://github.com/pulumi/pulumi-eks/issues/679
 }, {provider: awsProvider});
 
 // Export the cluster kubeconfig.

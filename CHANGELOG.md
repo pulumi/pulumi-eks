@@ -1,4 +1,56 @@
 ## Unreleased
+(None)
+
+## 0.38.0 (Released May 8, 2022)
+- Use apiextensions.k8s.io/v1 for eniconfigs.crd.k8s.amazonaws.com
+  [#693](https://github.com/pulumi/pulumi-eks/pull/693)
+
+## 0.37.1 (Released February 10, 2022)
+- Ensure Schema is part of the Provider for the GetSchema option
+  [#660](https://github.com/pulumi/pulumi-eks/pull/600)
+
+## 0.37.0 (Released February 8, 2022)
+- Fix `ENABLE_PREFIX_DELEGATION` not working
+  [#646](https://github.com/pulumi/pulumi-eks/pull/646)
+- Fix node group's `minSize` and `desiredSize` cannot be 0
+  [#645](https://github.com/pulumi/pulumi-eks/issues/645)
+
+## 0.36.0 (Released December 3, 2021)
+- Add support for all EC2 LaunchConfiguration EBS parameters related to cluster root node volumes
+  [#597](https://github.com/pulumi/pulumi-eks/issues/597)
+- Add support for setting `WARM_PREFIX_TARGET` and `ENABLE_PREFIX_DELEGATION`
+  [#618](https://github.com/pulumi/pulumi-eks/pull/618)
+- NodeGroups accept strings as InstanceTypes
+  [#639](https://github.com/pulumi/pulumi-eks/pull/639)
+
+## 0.35.0 (Released November 10, 2021)
+- Add support for setting the init container image
+  [#631](https://github.com/pulumi/pulumi-eks/pull/631)
+- Add support for setting `DISABLE_TCP_EARLY_DEMUX`
+  [#631](https://github.com/pulumi/pulumi-eks/pull/631)
+
+## 0.34.0 (Released October 6, 2021)
+- Make getKubeconfig method available to multi-lang
+  [#628](https://github.com/pulumi/pulumi-eks/pull/628)
+
+
+## 0.33.0 (Released August 18, 2021)
+
+- Add `capacityType` and `taints` to `ManagedNodeGroup`
+  [#614](https://github.com/pulumi/pulumi-eks/pull/614)
+
+## 0.32.0 (Released August 4, 2021)
+
+- Model storageclasses as a map in schema
+  [#596](https://github.com/pulumi/pulumi-eks/pull/596)
+
+- Add resource registration for VpcCni (fixes use of NodeGroup)
+  [#590](https://github.com/pulumi/pulumi-eks/pull/590)
+
+## 0.31.0 (Released June 8, 2021)
+
+- Upgrade Pulumi dependencies
+  [#589](https://github.com/pulumi/pulumi-eks/pull/589)
 
 ### Improvements
 
@@ -8,7 +60,7 @@
 ## 0.30.0 (Released April 19, 2021)
 
 - Upgrade Pulumi dependencies to 3.0 releases
-  [#548](https://github.com/pulumi/pulumi-eks/pull/564)
+  [#564](https://github.com/pulumi/pulumi-eks/pull/564)
 
 - Update wording for providerCredentialOpt errors
   [#559](https://github.com/pulumi/pulumi-eks/pull/559)

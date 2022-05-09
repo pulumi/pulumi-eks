@@ -68,8 +68,12 @@ type vpcCniArgs struct {
 	//
 	// Defaults to false.
 	CustomNetworkConfig *bool `pulumi:"customNetworkConfig"`
-	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+	DisableTcpEarlyDemux *bool `pulumi:"disableTcpEarlyDemux"`
+	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni *bool `pulumi:"enablePodEni"`
+	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+	EnablePrefixDelegation *bool `pulumi:"enablePrefixDelegation"`
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
 	//
@@ -87,6 +91,10 @@ type vpcCniArgs struct {
 	//
 	// Defaults to the official AWS CNI image in ECR.
 	Image *string `pulumi:"image"`
+	// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+	//
+	// Defaults to the official AWS CNI init container image in ECR.
+	InitImage *string `pulumi:"initImage"`
 	// The kubeconfig to use when setting the VPC CNI options.
 	Kubeconfig interface{} `pulumi:"kubeconfig"`
 	// Specifies the file path used for logs.
@@ -116,6 +124,8 @@ type vpcCniArgs struct {
 	WarmEniTarget *int `pulumi:"warmEniTarget"`
 	// Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
 	WarmIpTarget *int `pulumi:"warmIpTarget"`
+	// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+	WarmPrefixTarget *int `pulumi:"warmPrefixTarget"`
 }
 
 // The set of arguments for constructing a VpcCni resource.
@@ -130,8 +140,12 @@ type VpcCniArgs struct {
 	//
 	// Defaults to false.
 	CustomNetworkConfig pulumi.BoolPtrInput
-	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label tothe node if the instance has capacity to attach an additional ENI. Default is `false`.
+	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+	DisableTcpEarlyDemux pulumi.BoolPtrInput
+	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni pulumi.BoolPtrInput
+	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+	EnablePrefixDelegation pulumi.BoolPtrInput
 	// Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
 	// Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
 	//
@@ -149,6 +163,10 @@ type VpcCniArgs struct {
 	//
 	// Defaults to the official AWS CNI image in ECR.
 	Image pulumi.StringPtrInput
+	// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
+	//
+	// Defaults to the official AWS CNI init container image in ECR.
+	InitImage pulumi.StringPtrInput
 	// The kubeconfig to use when setting the VPC CNI options.
 	Kubeconfig pulumi.Input
 	// Specifies the file path used for logs.
@@ -178,6 +196,8 @@ type VpcCniArgs struct {
 	WarmEniTarget pulumi.IntPtrInput
 	// Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
 	WarmIpTarget pulumi.IntPtrInput
+	// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+	WarmPrefixTarget pulumi.IntPtrInput
 }
 
 func (VpcCniArgs) ElementType() reflect.Type {
@@ -246,7 +266,7 @@ type VpcCniArrayInput interface {
 type VpcCniArray []VpcCniInput
 
 func (VpcCniArray) ElementType() reflect.Type {
-	return reflect.TypeOf(([]*VpcCni)(nil))
+	return reflect.TypeOf((*[]*VpcCni)(nil)).Elem()
 }
 
 func (i VpcCniArray) ToVpcCniArrayOutput() VpcCniArrayOutput {
@@ -271,7 +291,7 @@ type VpcCniMapInput interface {
 type VpcCniMap map[string]VpcCniInput
 
 func (VpcCniMap) ElementType() reflect.Type {
-	return reflect.TypeOf((map[string]*VpcCni)(nil))
+	return reflect.TypeOf((*map[string]*VpcCni)(nil)).Elem()
 }
 
 func (i VpcCniMap) ToVpcCniMapOutput() VpcCniMapOutput {
@@ -282,9 +302,7 @@ func (i VpcCniMap) ToVpcCniMapOutputWithContext(ctx context.Context) VpcCniMapOu
 	return pulumi.ToOutputWithContext(ctx, i).(VpcCniMapOutput)
 }
 
-type VpcCniOutput struct {
-	*pulumi.OutputState
-}
+type VpcCniOutput struct{ *pulumi.OutputState }
 
 func (VpcCniOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((*VpcCni)(nil))
@@ -303,14 +321,12 @@ func (o VpcCniOutput) ToVpcCniPtrOutput() VpcCniPtrOutput {
 }
 
 func (o VpcCniOutput) ToVpcCniPtrOutputWithContext(ctx context.Context) VpcCniPtrOutput {
-	return o.ApplyT(func(v VpcCni) *VpcCni {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v VpcCni) *VpcCni {
 		return &v
 	}).(VpcCniPtrOutput)
 }
 
-type VpcCniPtrOutput struct {
-	*pulumi.OutputState
-}
+type VpcCniPtrOutput struct{ *pulumi.OutputState }
 
 func (VpcCniPtrOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((**VpcCni)(nil))
@@ -322,6 +338,16 @@ func (o VpcCniPtrOutput) ToVpcCniPtrOutput() VpcCniPtrOutput {
 
 func (o VpcCniPtrOutput) ToVpcCniPtrOutputWithContext(ctx context.Context) VpcCniPtrOutput {
 	return o
+}
+
+func (o VpcCniPtrOutput) Elem() VpcCniOutput {
+	return o.ApplyT(func(v *VpcCni) VpcCni {
+		if v != nil {
+			return *v
+		}
+		var ret VpcCni
+		return ret
+	}).(VpcCniOutput)
 }
 
 type VpcCniArrayOutput struct{ *pulumi.OutputState }

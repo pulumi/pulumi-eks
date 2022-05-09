@@ -43,7 +43,12 @@ class ClusterArgs:
                  node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_group_options: Optional[pulumi.Input['ClusterNodeGroupOptionsArgs']] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
+                 node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_iops: Optional[pulumi.Input[int]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_throughput: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_type: Optional[pulumi.Input[str]] = None,
                  node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
@@ -55,7 +60,7 @@ class ClusterArgs:
                  role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[pulumi.Input[bool]] = None,
-                 storage_classes: Optional[pulumi.Input[Union[str, 'StorageClassArgs']]] = None,
+                 storage_classes: Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input['StorageClassArgs']]]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  use_default_vpc_cni: Optional[pulumi.Input[bool]] = None,
@@ -136,7 +141,12 @@ class ClusterArgs:
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
+        :param pulumi.Input[bool] node_root_volume_delete_on_termination: Whether to delete a cluster node's root volume on termination. Defaults to true.
+        :param pulumi.Input[bool] node_root_volume_encrypted: Whether to encrypt a cluster node's root volume. Defaults to false.
+        :param pulumi.Input[int] node_root_volume_iops: Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
         :param pulumi.Input[int] node_root_volume_size: The size in GiB of a cluster node's root volume. Defaults to 20.
+        :param pulumi.Input[int] node_root_volume_throughput: Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
+        :param pulumi.Input[str] node_root_volume_type: Configured EBS type for a cluster node's root volume. Default is gp2.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] node_security_group_tags: The tags to apply to the default `nodeSecurityGroup` created by the cluster.
                
                Note: The `nodeSecurityGroupTags` option and the node group option `nodeSecurityGroup` are mutually exclusive.
@@ -202,7 +212,7 @@ class ClusterArgs:
         :param pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups.
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
         :param pulumi.Input[bool] skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-        :param pulumi.Input[Union[str, 'StorageClassArgs']] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
+        :param pulumi.Input[Union[str, Mapping[str, pulumi.Input['StorageClassArgs']]]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
                
                Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: The set of all subnets, public and private, to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
@@ -271,8 +281,26 @@ class ClusterArgs:
             pulumi.set(__self__, "node_group_options", node_group_options)
         if node_public_key is not None:
             pulumi.set(__self__, "node_public_key", node_public_key)
+        if node_root_volume_delete_on_termination is None:
+            node_root_volume_delete_on_termination = True
+        if node_root_volume_delete_on_termination is not None:
+            pulumi.set(__self__, "node_root_volume_delete_on_termination", node_root_volume_delete_on_termination)
+        if node_root_volume_encrypted is None:
+            node_root_volume_encrypted = False
+        if node_root_volume_encrypted is not None:
+            pulumi.set(__self__, "node_root_volume_encrypted", node_root_volume_encrypted)
+        if node_root_volume_iops is not None:
+            pulumi.set(__self__, "node_root_volume_iops", node_root_volume_iops)
+        if node_root_volume_size is None:
+            node_root_volume_size = 20
         if node_root_volume_size is not None:
             pulumi.set(__self__, "node_root_volume_size", node_root_volume_size)
+        if node_root_volume_throughput is not None:
+            pulumi.set(__self__, "node_root_volume_throughput", node_root_volume_throughput)
+        if node_root_volume_type is None:
+            node_root_volume_type = 'gp2'
+        if node_root_volume_type is not None:
+            pulumi.set(__self__, "node_root_volume_type", node_root_volume_type)
         if node_security_group_tags is not None:
             pulumi.set(__self__, "node_security_group_tags", node_security_group_tags)
         if node_subnet_ids is not None:
@@ -659,6 +687,42 @@ class ClusterArgs:
         pulumi.set(self, "node_public_key", value)
 
     @property
+    @pulumi.getter(name="nodeRootVolumeDeleteOnTermination")
+    def node_root_volume_delete_on_termination(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Whether to delete a cluster node's root volume on termination. Defaults to true.
+        """
+        return pulumi.get(self, "node_root_volume_delete_on_termination")
+
+    @node_root_volume_delete_on_termination.setter
+    def node_root_volume_delete_on_termination(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "node_root_volume_delete_on_termination", value)
+
+    @property
+    @pulumi.getter(name="nodeRootVolumeEncrypted")
+    def node_root_volume_encrypted(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Whether to encrypt a cluster node's root volume. Defaults to false.
+        """
+        return pulumi.get(self, "node_root_volume_encrypted")
+
+    @node_root_volume_encrypted.setter
+    def node_root_volume_encrypted(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "node_root_volume_encrypted", value)
+
+    @property
+    @pulumi.getter(name="nodeRootVolumeIops")
+    def node_root_volume_iops(self) -> Optional[pulumi.Input[int]]:
+        """
+        Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
+        """
+        return pulumi.get(self, "node_root_volume_iops")
+
+    @node_root_volume_iops.setter
+    def node_root_volume_iops(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "node_root_volume_iops", value)
+
+    @property
     @pulumi.getter(name="nodeRootVolumeSize")
     def node_root_volume_size(self) -> Optional[pulumi.Input[int]]:
         """
@@ -669,6 +733,30 @@ class ClusterArgs:
     @node_root_volume_size.setter
     def node_root_volume_size(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "node_root_volume_size", value)
+
+    @property
+    @pulumi.getter(name="nodeRootVolumeThroughput")
+    def node_root_volume_throughput(self) -> Optional[pulumi.Input[int]]:
+        """
+        Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
+        """
+        return pulumi.get(self, "node_root_volume_throughput")
+
+    @node_root_volume_throughput.setter
+    def node_root_volume_throughput(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "node_root_volume_throughput", value)
+
+    @property
+    @pulumi.getter(name="nodeRootVolumeType")
+    def node_root_volume_type(self) -> Optional[pulumi.Input[str]]:
+        """
+        Configured EBS type for a cluster node's root volume. Default is gp2.
+        """
+        return pulumi.get(self, "node_root_volume_type")
+
+    @node_root_volume_type.setter
+    def node_root_volume_type(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "node_root_volume_type", value)
 
     @property
     @pulumi.getter(name="nodeSecurityGroupTags")
@@ -858,7 +946,7 @@ class ClusterArgs:
 
     @property
     @pulumi.getter(name="storageClasses")
-    def storage_classes(self) -> Optional[pulumi.Input[Union[str, 'StorageClassArgs']]]:
+    def storage_classes(self) -> Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input['StorageClassArgs']]]]]:
         """
         An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
 
@@ -867,7 +955,7 @@ class ClusterArgs:
         return pulumi.get(self, "storage_classes")
 
     @storage_classes.setter
-    def storage_classes(self, value: Optional[pulumi.Input[Union[str, 'StorageClassArgs']]]):
+    def storage_classes(self, value: Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input['StorageClassArgs']]]]]):
         pulumi.set(self, "storage_classes", value)
 
     @property
@@ -993,7 +1081,12 @@ class Cluster(pulumi.ComponentResource):
                  node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_group_options: Optional[pulumi.Input[pulumi.InputType['ClusterNodeGroupOptionsArgs']]] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
+                 node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_iops: Optional[pulumi.Input[int]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_throughput: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_type: Optional[pulumi.Input[str]] = None,
                  node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
@@ -1005,7 +1098,7 @@ class Cluster(pulumi.ComponentResource):
                  role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[pulumi.Input[bool]] = None,
-                 storage_classes: Optional[pulumi.Input[Union[str, pulumi.InputType['StorageClassArgs']]]] = None,
+                 storage_classes: Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input[pulumi.InputType['StorageClassArgs']]]]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  use_default_vpc_cni: Optional[pulumi.Input[bool]] = None,
@@ -1090,7 +1183,12 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
+        :param pulumi.Input[bool] node_root_volume_delete_on_termination: Whether to delete a cluster node's root volume on termination. Defaults to true.
+        :param pulumi.Input[bool] node_root_volume_encrypted: Whether to encrypt a cluster node's root volume. Defaults to false.
+        :param pulumi.Input[int] node_root_volume_iops: Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
         :param pulumi.Input[int] node_root_volume_size: The size in GiB of a cluster node's root volume. Defaults to 20.
+        :param pulumi.Input[int] node_root_volume_throughput: Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
+        :param pulumi.Input[str] node_root_volume_type: Configured EBS type for a cluster node's root volume. Default is gp2.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] node_security_group_tags: The tags to apply to the default `nodeSecurityGroup` created by the cluster.
                
                Note: The `nodeSecurityGroupTags` option and the node group option `nodeSecurityGroup` are mutually exclusive.
@@ -1156,7 +1254,7 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups.
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
         :param pulumi.Input[bool] skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-        :param pulumi.Input[Union[str, pulumi.InputType['StorageClassArgs']]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
+        :param pulumi.Input[Union[str, Mapping[str, pulumi.Input[pulumi.InputType['StorageClassArgs']]]]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
                
                Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: The set of all subnets, public and private, to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
@@ -1224,7 +1322,12 @@ class Cluster(pulumi.ComponentResource):
                  node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_group_options: Optional[pulumi.Input[pulumi.InputType['ClusterNodeGroupOptionsArgs']]] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
+                 node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_iops: Optional[pulumi.Input[int]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_throughput: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_type: Optional[pulumi.Input[str]] = None,
                  node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
@@ -1236,7 +1339,7 @@ class Cluster(pulumi.ComponentResource):
                  role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[pulumi.Input[bool]] = None,
-                 storage_classes: Optional[pulumi.Input[Union[str, pulumi.InputType['StorageClassArgs']]]] = None,
+                 storage_classes: Optional[pulumi.Input[Union[str, Mapping[str, pulumi.Input[pulumi.InputType['StorageClassArgs']]]]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  use_default_vpc_cni: Optional[pulumi.Input[bool]] = None,
@@ -1283,7 +1386,20 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["node_associate_public_ip_address"] = node_associate_public_ip_address
             __props__.__dict__["node_group_options"] = node_group_options
             __props__.__dict__["node_public_key"] = node_public_key
+            if node_root_volume_delete_on_termination is None:
+                node_root_volume_delete_on_termination = True
+            __props__.__dict__["node_root_volume_delete_on_termination"] = node_root_volume_delete_on_termination
+            if node_root_volume_encrypted is None:
+                node_root_volume_encrypted = False
+            __props__.__dict__["node_root_volume_encrypted"] = node_root_volume_encrypted
+            __props__.__dict__["node_root_volume_iops"] = node_root_volume_iops
+            if node_root_volume_size is None:
+                node_root_volume_size = 20
             __props__.__dict__["node_root_volume_size"] = node_root_volume_size
+            __props__.__dict__["node_root_volume_throughput"] = node_root_volume_throughput
+            if node_root_volume_type is None:
+                node_root_volume_type = 'gp2'
+            __props__.__dict__["node_root_volume_type"] = node_root_volume_type
             __props__.__dict__["node_security_group_tags"] = node_security_group_tags
             __props__.__dict__["node_subnet_ids"] = node_subnet_ids
             __props__.__dict__["node_user_data"] = node_user_data
@@ -1397,4 +1513,44 @@ class Cluster(pulumi.ComponentResource):
         A Kubernetes resource provider that can be used to deploy into this cluster.
         """
         return pulumi.get(self, "provider")
+
+    @pulumi.output_type
+    class GetKubeconfigResult:
+        def __init__(__self__, result=None):
+            if result and not isinstance(result, str):
+                raise TypeError("Expected argument 'result' to be a str")
+            pulumi.set(__self__, "result", result)
+
+        @property
+        @pulumi.getter
+        def result(self) -> str:
+            return pulumi.get(self, "result")
+
+    def get_kubeconfig(__self__, *,
+                       profile_name: Optional[pulumi.Input[str]] = None,
+                       role_arn: Optional[pulumi.Input[str]] = None) -> pulumi.Output['str']:
+        """
+        Generate a kubeconfig for cluster authentication that does not use the default AWS credential provider chain, and instead is scoped to the supported options in `KubeconfigOptions`.
+
+        The kubeconfig generated is automatically stringified for ease of use with the pulumi/kubernetes provider.
+
+        See for more details:
+        - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
+        - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
+        - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+
+
+        :param pulumi.Input[str] profile_name: AWS credential profile name to always use instead of the default AWS credential provider chain.
+               
+               The profile is passed to kubeconfig as an authentication environment setting.
+        :param pulumi.Input[str] role_arn: Role ARN to assume instead of the default AWS credential provider chain.
+               
+               The role is passed to kubeconfig as an authentication exec argument.
+        """
+        __args__ = dict()
+        __args__['__self__'] = __self__
+        __args__['profileName'] = profile_name
+        __args__['roleArn'] = role_arn
+        __result__ = pulumi.runtime.call('eks:index:Cluster/getKubeconfig', __args__, res=__self__, typ=Cluster.GetKubeconfigResult)
+        return __result__.result
 

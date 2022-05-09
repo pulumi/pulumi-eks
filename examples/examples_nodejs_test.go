@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	appsv1 "k8s.io/api/apps/v1"
 	"os"
 	"os/exec"
 	"path"
@@ -31,16 +32,35 @@ import (
 )
 
 func TestAccCluster(t *testing.T) {
+
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:           path.Join(getCwd(t), "./cluster"),
-			RunUpdateTest: true,
+			RunUpdateTest: false,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig1"],
 					info.Outputs["kubeconfig2"],
 				)
+
+				assert.NoError(t, utils.ValidateDaemonSet(t, info.Outputs["kubeconfig2"], "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
+					for _, c := range ds.Spec.Template.Spec.Containers {
+						assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.9.0", c.Image)
+					}
+
+					for _, ic := range ds.Spec.Template.Spec.InitContainers {
+						assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni-init:v1.9.0", ic.Image)
+						var tcpEarly bool
+						for _, env := range ic.Env {
+							if env.Name == "DISABLE_TCP_EARLY_DEMUX" {
+								tcpEarly = env.Value == "true"
+								assert.Equal(t, env.Value, "true")
+							}
+						}
+						assert.True(t, tcpEarly)
+					}
+				}))
 			},
 		})
 
@@ -430,7 +450,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 				endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
 				headers := map[string]string{"Host": "apps.example.com"}
-				utils.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
+				integration.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
 					return assert.NotEmpty(t, body, "Body should not be empty")
 				})
 			},
@@ -442,7 +462,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 						endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
 						headers := map[string]string{"Host": "apps.example.com"}
-						utils.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
+						integration.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
 							return assert.NotEmpty(t, body, "Body should not be empty")
 						})
 					},
@@ -456,7 +476,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 						endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
 						headers := map[string]string{"Host": "apps.example.com"}
-						utils.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
+						integration.AssertHTTPResultWithRetry(t, endpoint, headers, 10*time.Minute, func(body string) bool {
 							return assert.NotEmpty(t, body, "Body should not be empty")
 						})
 
@@ -553,6 +573,7 @@ func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Dependencies: []string{
 			"@pulumi/eks",
 		},
+		Verbose: true,
 	})
 
 	return baseJS

@@ -13,6 +13,9 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
+import { readFileSync } from "fs";
+import { Cluster } from "../../cluster";
+import { VpcCni } from "../../cni";
 import { clusterCreationRoleProviderProviderFactory, clusterProviderFactory } from "./cluster";
 import { vpcCniProviderFactory } from "./cni";
 import { managedNodeGroupProviderFactory, nodeGroupProviderFactory } from "./nodegroup";
@@ -20,8 +23,6 @@ import { randomSuffixProviderFactory } from "./randomSuffix";
 import { nodeGroupSecurityGroupProviderFactory } from "./securitygroup";
 
 class Provider implements pulumi.provider.Provider {
-    readonly version = getVersion();
-
     // A map of types to provider factories. Calling a factory may return a new instance each
     // time or return the same provider instance.
     private readonly typeToProviderFactoryMap: Record<string, () => pulumi.provider.Provider> = {
@@ -33,6 +34,40 @@ class Provider implements pulumi.provider.Provider {
         "eks:index:RandomSuffix": randomSuffixProviderFactory,
         "eks:index:VpcCni": vpcCniProviderFactory,
     };
+
+    constructor(readonly version: string, readonly schema: string) {
+        // Register any resources that can come back as resource references that need to be rehydrated.
+        pulumi.runtime.registerResourceModule("eks", "index", {
+            version: version,
+            construct: (name, type, urn) => {
+                switch (type) {
+                    case "eks:index:Cluster":
+                        return new Cluster(name, undefined, { urn });
+                    case "eks:index:VpcCni":
+                        return new VpcCni(name, undefined, undefined, { urn });
+                    default:
+                        throw new Error(`unknown resource type ${type}`);
+                }
+            },
+        });
+    }
+
+    async call(token: string, inputs: pulumi.Inputs): Promise<pulumi.provider.InvokeResult> {
+        switch (token) {
+            case "eks:index:Cluster/getKubeconfig":
+                const self: Cluster = inputs.__self__;
+                const result = self.getKubeconfig({
+                    profileName: inputs.profileName,
+                    roleArn: inputs.roleArn,
+                });
+                return {
+                    outputs: {result},
+                };
+
+            default:
+                throw new Error(`unknown method ${token}`);
+        }
+    }
 
     check(urn: pulumi.URN, olds: any, news: any): Promise<pulumi.provider.CheckResult> {
         const provider = this.getProviderForURN(urn);
@@ -117,16 +152,17 @@ function getType(urn: pulumi.URN): string {
     return lastType;
 }
 
-function getVersion(): string {
-    const version: string = require("../../package.json").version;
-    // Node allows for the version to be prefixed by a "v", while semver doesn't.
-    // If there is a v, strip it off.
-    return version.startsWith("v") ? version.slice(1) : version;
-}
-
 /** @internal */
 export function main(args: string[]) {
-    return pulumi.provider.main(new Provider(), args);
+    const schema: string = readFileSync(require.resolve("./schema.json"), {encoding: "utf-8"});
+    let version: string = require("../../package.json").version;
+    // Node allows for the version to be prefixed by a "v",
+    // while semver doesn't. If there is a v, strip it off.
+    if (version.startsWith("v")) {
+        version = version.slice(1);
+    }
+
+    return pulumi.provider.main(new Provider(version, schema), args);
 }
 
 main(process.argv.slice(2));

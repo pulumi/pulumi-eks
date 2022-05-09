@@ -12,15 +12,15 @@ WORKING_DIR     := $(shell pwd)
 build:: schema provider build_nodejs build_python build_go build_dotnet
 
 schema::
-	cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER)
+	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER))
 
 provider::
 	rm -rf provider/cmd/$(PROVIDER)/bin
-	cd provider/cmd/$(PROVIDER) && go build -a -o $(WORKING_DIR)/bin/$(PROVIDER) main.go
+	cd provider/cmd/$(PROVIDER) && go build -o $(WORKING_DIR)/bin/$(PROVIDER) main.go
 
 build_nodejs:: VERSION := $(shell pulumictl get version --language javascript)
 build_nodejs::
-	rm -rf nodejs/eks/bin
+	rm -rf nodejs/eks/bin/*
 	cd nodejs/eks && \
 		yarn install && \
 		yarn run tsc && \
@@ -28,7 +28,8 @@ build_nodejs::
 		sed -e 's/\$${VERSION}/$(VERSION)/g' < package.json > bin/package.json && \
 		cp ../../README.md ../../LICENSE bin/ && \
 		cp -R dashboard bin/ && \
-		cp -R cni bin/
+		cp -R cni bin/ && \
+		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
 
 build_python:: PYPI_VERSION := $(shell pulumictl get version --language python)
 build_python:: schema
@@ -38,13 +39,14 @@ build_python:: schema
 		cp ../README.md . && \
 		python3 setup.py clean --all 2>/dev/null && \
 		rm -rf ./bin/ ../python.bin/ && cp -R . ../python.bin && mv ../python.bin ./bin && \
-		sed -i.bak -e "s/\$${VERSION}/$(PYPI_VERSION)/g" -e "s/\$${PLUGIN_VERSION}/$(VERSION)/g" ./bin/setup.py && \
+		sed -i.bak -e 's/^VERSION = .*/VERSION = "$(PYPI_VERSION)"/g' -e 's/^PLUGIN_VERSION = .*/PLUGIN_VERSION = "$(VERSION)"/g' ./bin/setup.py && \
 		rm ./bin/setup.py.bak && \
 		cd ./bin && python3 setup.py build sdist
 
+build_go:: VERSION := $(shell pulumictl get version --language generic)
 build_go:: schema
 	rm -rf go
-	cd provider/cmd/pulumi-gen-eks && go run main.go go ../../../sdk/go ../pulumi-resource-eks/schema.json $(VERSION)
+	cd provider/cmd/$(CODEGEN) && go run main.go go ../../../sdk/go ../$(PROVIDER)/schema.json $(VERSION)
 
 build_dotnet:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
 build_dotnet:: schema
@@ -92,16 +94,16 @@ test_build::
 	cd examples/utils/testvpc && yarn install && yarn run tsc
 
 test_nodejs:: install_nodejs_sdk
-	cd examples && go test -tags=nodejs -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
+	cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_python:: install_provider test_build
-	cd examples && go test -tags=python -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
+	cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_dotnet:: install_provider
-	cd examples && go test -tags=dotnet -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
+	cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 specific_test:: install_nodejs_sdk test_build
-	cd examples && go test -tags=$(LanguageTags) -v -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName)
+	cd examples && go test -tags=$(LanguageTags) -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName) 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 dev:: lint build_nodejs
 test:: test_nodejs

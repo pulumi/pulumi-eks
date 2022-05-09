@@ -59,6 +59,12 @@ namespace Pulumi.Eks
         public Input<string>? AmiType { get; set; }
 
         /// <summary>
+        /// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
+        /// </summary>
+        [Input("capacityType")]
+        public Input<string>? CapacityType { get; set; }
+
+        /// <summary>
         /// The target EKS cluster.
         /// </summary>
         [Input("cluster", required: true)]
@@ -113,10 +119,16 @@ namespace Pulumi.Eks
         public Input<Pulumi.Aws.Eks.Inputs.NodeGroupLaunchTemplateArgs>? LaunchTemplate { get; set; }
 
         /// <summary>
-        /// Name of the EKS Node Group.
+        /// Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
         /// </summary>
         [Input("nodeGroupName")]
         public Input<string>? NodeGroupName { get; set; }
+
+        /// <summary>
+        /// Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`.
+        /// </summary>
+        [Input("nodeGroupNamePrefix")]
+        public Input<string>? NodeGroupNamePrefix { get; set; }
 
         /// <summary>
         /// The IAM Role that provides permissions for the EKS Node Group.
@@ -166,7 +178,7 @@ namespace Pulumi.Eks
         /// Default subnetIds is chosen from the following list, in order, if subnetIds arg is not set:
         ///   - core.subnetIds
         ///   - core.privateIds
-        ///   - core.publicSublicSubnetIds
+        ///   - core.publicSubnetIds
         /// 
         /// This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
         /// </summary>
@@ -186,6 +198,18 @@ namespace Pulumi.Eks
         {
             get => _tags ?? (_tags = new InputMap<string>());
             set => _tags = value;
+        }
+
+        [Input("taints")]
+        private InputList<Pulumi.Aws.Eks.Inputs.NodeGroupTaintArgs>? _taints;
+
+        /// <summary>
+        /// The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
+        /// </summary>
+        public InputList<Pulumi.Aws.Eks.Inputs.NodeGroupTaintArgs> Taints
+        {
+            get => _taints ?? (_taints = new InputList<Pulumi.Aws.Eks.Inputs.NodeGroupTaintArgs>());
+            set => _taints = value;
         }
 
         [Input("version")]
