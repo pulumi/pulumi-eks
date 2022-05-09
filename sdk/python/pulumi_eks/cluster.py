@@ -37,6 +37,7 @@ class ClusterArgs:
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
+                 kubernetes_service_ip_family: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
                  name: Optional[pulumi.Input[str]] = None,
@@ -123,6 +124,9 @@ class ClusterArgs:
                - Within one of the following private IP address blocks: 10.0.0.0/8, 172.16.0.0.0/12, or 192.168.0.0/16.
                - Doesn't overlap with any CIDR block assigned to the VPC that you selected for VPC.
                - Between /24 and /12.
+        :param pulumi.Input[str] kubernetes_service_ip_family: The IP family used to assign Kubernetes pod and service addresses.
+               Valid values are ipv4 (default) and ipv6. You can only specify an IP family
+               when you create a cluster, changing this value will force a new cluster to be created.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
         :param pulumi.Input[str] name: The cluster's physical resource name.
@@ -271,6 +275,8 @@ class ClusterArgs:
             pulumi.set(__self__, "instance_type", instance_type)
         if kubernetes_service_ip_address_range is not None:
             pulumi.set(__self__, "kubernetes_service_ip_address_range", kubernetes_service_ip_address_range)
+        if kubernetes_service_ip_family is not None:
+            pulumi.set(__self__, "kubernetes_service_ip_family", kubernetes_service_ip_family)
         if max_size is not None:
             pulumi.set(__self__, "max_size", max_size)
         if min_size is not None:
@@ -604,6 +610,20 @@ class ClusterArgs:
     @kubernetes_service_ip_address_range.setter
     def kubernetes_service_ip_address_range(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "kubernetes_service_ip_address_range", value)
+
+    @property
+    @pulumi.getter(name="kubernetesServiceIpFamily")
+    def kubernetes_service_ip_family(self) -> Optional[pulumi.Input[str]]:
+        """
+        The IP family used to assign Kubernetes pod and service addresses.
+        Valid values are ipv4 (default) and ipv6. You can only specify an IP family
+        when you create a cluster, changing this value will force a new cluster to be created.
+        """
+        return pulumi.get(self, "kubernetes_service_ip_family")
+
+    @kubernetes_service_ip_family.setter
+    def kubernetes_service_ip_family(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "kubernetes_service_ip_family", value)
 
     @property
     @pulumi.getter(name="maxSize")
@@ -1091,6 +1111,7 @@ class Cluster(pulumi.ComponentResource):
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
+                 kubernetes_service_ip_family: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
                  name: Optional[pulumi.Input[str]] = None,
@@ -1181,6 +1202,9 @@ class Cluster(pulumi.ComponentResource):
                - Within one of the following private IP address blocks: 10.0.0.0/8, 172.16.0.0.0/12, or 192.168.0.0/16.
                - Doesn't overlap with any CIDR block assigned to the VPC that you selected for VPC.
                - Between /24 and /12.
+        :param pulumi.Input[str] kubernetes_service_ip_family: The IP family used to assign Kubernetes pod and service addresses.
+               Valid values are ipv4 (default) and ipv6. You can only specify an IP family
+               when you create a cluster, changing this value will force a new cluster to be created.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
         :param pulumi.Input[str] name: The cluster's physical resource name.
@@ -1334,6 +1358,7 @@ class Cluster(pulumi.ComponentResource):
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
+                 kubernetes_service_ip_family: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
                  name: Optional[pulumi.Input[str]] = None,
@@ -1399,6 +1424,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["instance_roles"] = instance_roles
             __props__.__dict__["instance_type"] = instance_type
             __props__.__dict__["kubernetes_service_ip_address_range"] = kubernetes_service_ip_address_range
+            __props__.__dict__["kubernetes_service_ip_family"] = kubernetes_service_ip_family
             __props__.__dict__["max_size"] = max_size
             __props__.__dict__["min_size"] = min_size
             __props__.__dict__["name"] = name

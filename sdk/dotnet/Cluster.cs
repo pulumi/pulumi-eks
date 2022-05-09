@@ -288,6 +288,14 @@ namespace Pulumi.Eks
         public Input<string>? KubernetesServiceIpAddressRange { get; set; }
 
         /// <summary>
+        /// The IP family used to assign Kubernetes pod and service addresses.
+        /// Valid values are ipv4 (default) and ipv6. You can only specify an IP family
+        /// when you create a cluster, changing this value will force a new cluster to be created.
+        /// </summary>
+        [Input("kubernetesServiceIpFamily")]
+        public Input<string>? KubernetesServiceIpFamily { get; set; }
+
+        /// <summary>
         /// The maximum number of worker nodes running in the cluster. Defaults to 2.
         /// </summary>
         [Input("maxSize")]

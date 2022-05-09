@@ -137,6 +137,10 @@ type clusterArgs struct {
 	// - Doesn't overlap with any CIDR block assigned to the VPC that you selected for VPC.
 	// - Between /24 and /12.
 	KubernetesServiceIpAddressRange *string `pulumi:"kubernetesServiceIpAddressRange"`
+	// The IP family used to assign Kubernetes pod and service addresses.
+	// Valid values are ipv4 (default) and ipv6. You can only specify an IP family
+	// when you create a cluster, changing this value will force a new cluster to be created.
+	KubernetesServiceIpFamily *string `pulumi:"kubernetesServiceIpFamily"`
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize *int `pulumi:"maxSize"`
 	// The minimum number of worker nodes running in the cluster. Defaults to 1.
@@ -353,6 +357,10 @@ type ClusterArgs struct {
 	// - Doesn't overlap with any CIDR block assigned to the VPC that you selected for VPC.
 	// - Between /24 and /12.
 	KubernetesServiceIpAddressRange pulumi.StringPtrInput
+	// The IP family used to assign Kubernetes pod and service addresses.
+	// Valid values are ipv4 (default) and ipv6. You can only specify an IP family
+	// when you create a cluster, changing this value will force a new cluster to be created.
+	KubernetesServiceIpFamily pulumi.StringPtrInput
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize pulumi.IntPtrInput
 	// The minimum number of worker nodes running in the cluster. Defaults to 1.

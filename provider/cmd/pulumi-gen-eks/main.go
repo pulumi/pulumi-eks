@@ -589,6 +589,13 @@ func generateSchema() schema.PackageSpec {
 							"- Between /24 and /12." +
 							"",
 					},
+					"kubernetesServiceIpFamily": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "The IP family used to assign Kubernetes pod and service addresses.\n" +
+							"Valid values are ipv4 (default) and ipv6. You can only specify an IP family\n" +
+							"when you create a cluster, changing this value will force a new cluster to be created.",
+						ReplaceOnChanges: true,
+					},
 				},
 				Methods: map[string]string{
 					"getKubeconfig": "eks:index:Cluster/getKubeconfig",
