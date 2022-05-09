@@ -1392,12 +1392,16 @@ export class Cluster extends pulumi.ComponentResource {
             throw new Error("It looks like you're using an explicit AWS provider. Please specify this provider in providerCredentialOpts.");
         }
         if (process.env.AWS_PROFILE && !args.providerCredentialOpts) {
-            throw new Error("It looks like you're using AWS profiles. Please specify this profile in providerCredentialOpts.");
+            args.providerCredentialOpts = {
+                profileName: process.env.AWS_PROFILE,
+            };
         }
         const awsConfig = new pulumi.Config("aws");
         const awsProfile = awsConfig.get("profile");
         if (awsProfile && !args.providerCredentialOpts) {
-            throw new Error("It looks like you've set an AWS profile in your stack config. Please specify this profile in providerCredentialOpts.");
+            args.providerCredentialOpts = {
+                profileName: awsProfile,
+            };
         }
 
         // Create the core resources required by the cluster.
