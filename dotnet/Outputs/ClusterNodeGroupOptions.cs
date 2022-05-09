@@ -28,6 +28,14 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly string? AmiId;
         /// <summary>
+        /// The AMI Type to use for the worker nodes. 
+        /// 
+        /// Only applicable when setting an AMI ID that is of type `arm64`. 
+        /// 
+        /// Note: `amiType` and `gpu` are mutually exclusive.
+        /// </summary>
+        public readonly string? AmiType;
+        /// <summary>
         /// The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
         /// 
         /// Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
@@ -161,6 +169,8 @@ namespace Pulumi.Eks.Outputs
         private ClusterNodeGroupOptions(
             string? amiId,
 
+            string? amiType,
+
             ImmutableDictionary<string, string>? autoScalingGroupTags,
 
             string? bootstrapExtraArgs,
@@ -212,6 +222,7 @@ namespace Pulumi.Eks.Outputs
             string? version)
         {
             AmiId = amiId;
+            AmiType = amiType;
             AutoScalingGroupTags = autoScalingGroupTags;
             BootstrapExtraArgs = bootstrapExtraArgs;
             CloudFormationTags = cloudFormationTags;

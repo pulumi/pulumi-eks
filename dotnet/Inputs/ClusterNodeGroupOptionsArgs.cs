@@ -28,6 +28,16 @@ namespace Pulumi.Eks.Inputs
         [Input("amiId")]
         public Input<string>? AmiId { get; set; }
 
+        /// <summary>
+        /// The AMI Type to use for the worker nodes. 
+        /// 
+        /// Only applicable when setting an AMI ID that is of type `arm64`. 
+        /// 
+        /// Note: `amiType` and `gpu` are mutually exclusive.
+        /// </summary>
+        [Input("amiType")]
+        public Input<string>? AmiType { get; set; }
+
         [Input("autoScalingGroupTags")]
         private InputMap<string>? _autoScalingGroupTags;
 
