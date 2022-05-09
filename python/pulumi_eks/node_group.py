@@ -19,6 +19,7 @@ class NodeGroupArgs:
     def __init__(__self__, *,
                  cluster: pulumi.Input['CoreDataArgs'],
                  ami_id: Optional[pulumi.Input[str]] = None,
+                 ami_type: Optional[pulumi.Input[str]] = None,
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  bootstrap_extra_args: Optional[pulumi.Input[str]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -55,6 +56,11 @@ class NodeGroupArgs:
                
                See for more details:
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+        :param pulumi.Input[str] ami_type: The AMI Type to use for the worker nodes. 
+               
+               Only applicable when setting an AMI ID that is of type `arm64`. 
+               
+               Note: `amiType` and `gpu` are mutually exclusive.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] auto_scaling_group_tags: The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
                
                Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
@@ -113,6 +119,8 @@ class NodeGroupArgs:
         pulumi.set(__self__, "cluster", cluster)
         if ami_id is not None:
             pulumi.set(__self__, "ami_id", ami_id)
+        if ami_type is not None:
+            pulumi.set(__self__, "ami_type", ami_type)
         if auto_scaling_group_tags is not None:
             pulumi.set(__self__, "auto_scaling_group_tags", auto_scaling_group_tags)
         if bootstrap_extra_args is not None:
@@ -194,6 +202,22 @@ class NodeGroupArgs:
     @ami_id.setter
     def ami_id(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "ami_id", value)
+
+    @property
+    @pulumi.getter(name="amiType")
+    def ami_type(self) -> Optional[pulumi.Input[str]]:
+        """
+        The AMI Type to use for the worker nodes. 
+
+        Only applicable when setting an AMI ID that is of type `arm64`. 
+
+        Note: `amiType` and `gpu` are mutually exclusive.
+        """
+        return pulumi.get(self, "ami_type")
+
+    @ami_type.setter
+    def ami_type(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "ami_type", value)
 
     @property
     @pulumi.getter(name="autoScalingGroupTags")
@@ -531,6 +555,7 @@ class NodeGroup(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_id: Optional[pulumi.Input[str]] = None,
+                 ami_type: Optional[pulumi.Input[str]] = None,
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  bootstrap_extra_args: Optional[pulumi.Input[str]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -571,6 +596,11 @@ class NodeGroup(pulumi.ComponentResource):
                
                See for more details:
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+        :param pulumi.Input[str] ami_type: The AMI Type to use for the worker nodes. 
+               
+               Only applicable when setting an AMI ID that is of type `arm64`. 
+               
+               Note: `amiType` and `gpu` are mutually exclusive.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] auto_scaling_group_tags: The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
                
                Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
@@ -652,6 +682,7 @@ class NodeGroup(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_id: Optional[pulumi.Input[str]] = None,
+                 ami_type: Optional[pulumi.Input[str]] = None,
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  bootstrap_extra_args: Optional[pulumi.Input[str]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -693,6 +724,7 @@ class NodeGroup(pulumi.ComponentResource):
             __props__ = NodeGroupArgs.__new__(NodeGroupArgs)
 
             __props__.__dict__["ami_id"] = ami_id
+            __props__.__dict__["ami_type"] = ami_type
             __props__.__dict__["auto_scaling_group_tags"] = auto_scaling_group_tags
             __props__.__dict__["bootstrap_extra_args"] = bootstrap_extra_args
             __props__.__dict__["cloud_formation_tags"] = cloud_formation_tags
