@@ -29,6 +29,8 @@ class ClusterNodeGroupOptions(dict):
         suggest = None
         if key == "amiId":
             suggest = "ami_id"
+        elif key == "amiType":
+            suggest = "ami_type"
         elif key == "autoScalingGroupTags":
             suggest = "auto_scaling_group_tags"
         elif key == "bootstrapExtraArgs":
@@ -85,6 +87,7 @@ class ClusterNodeGroupOptions(dict):
 
     def __init__(__self__, *,
                  ami_id: Optional[str] = None,
+                 ami_type: Optional[str] = None,
                  auto_scaling_group_tags: Optional[Mapping[str, str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
                  cloud_formation_tags: Optional[Mapping[str, str]] = None,
@@ -120,6 +123,11 @@ class ClusterNodeGroupOptions(dict):
                
                See for more details:
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+        :param str ami_type: The AMI Type to use for the worker nodes. 
+               
+               Only applicable when setting an AMI ID that is of type `arm64`. 
+               
+               Note: `amiType` and `gpu` are mutually exclusive.
         :param Mapping[str, str] auto_scaling_group_tags: The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
                
                Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
@@ -177,6 +185,8 @@ class ClusterNodeGroupOptions(dict):
         """
         if ami_id is not None:
             pulumi.set(__self__, "ami_id", ami_id)
+        if ami_type is not None:
+            pulumi.set(__self__, "ami_type", ami_type)
         if auto_scaling_group_tags is not None:
             pulumi.set(__self__, "auto_scaling_group_tags", auto_scaling_group_tags)
         if bootstrap_extra_args is not None:
@@ -242,6 +252,18 @@ class ClusterNodeGroupOptions(dict):
         - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
         """
         return pulumi.get(self, "ami_id")
+
+    @property
+    @pulumi.getter(name="amiType")
+    def ami_type(self) -> Optional[str]:
+        """
+        The AMI Type to use for the worker nodes. 
+
+        Only applicable when setting an AMI ID that is of type `arm64`. 
+
+        Note: `amiType` and `gpu` are mutually exclusive.
+        """
+        return pulumi.get(self, "ami_type")
 
     @property
     @pulumi.getter(name="autoScalingGroupTags")

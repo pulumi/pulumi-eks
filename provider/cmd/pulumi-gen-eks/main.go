@@ -1389,6 +1389,11 @@ func nodeGroupProperties(cluster bool) map[string]schema.PropertySpec {
 				"`amiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n" +
 				"- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.",
 		},
+		"amiType": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "The AMI Type to use for the worker nodes. \n\nOnly applicable when setting an " +
+				"AMI ID that is of type `arm64`. \n\nNote: `amiType` and `gpu` are mutually exclusive.\n\n",
+		},
 		"gpu": {
 			TypeSpec: schema.TypeSpec{Type: "boolean"},
 			Description: "Use the latest recommended EKS Optimized Linux AMI with GPU support for the " +

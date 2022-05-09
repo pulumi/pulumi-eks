@@ -30,6 +30,12 @@ type ClusterNodeGroupOptions struct {
 	// See for more details:
 	// - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	AmiId *string `pulumi:"amiId"`
+	// The AMI Type to use for the worker nodes.
+	//
+	// Only applicable when setting an AMI ID that is of type `arm64`.
+	//
+	// Note: `amiType` and `gpu` are mutually exclusive.
+	AmiType *string `pulumi:"amiType"`
 	// The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
 	//
 	// Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
@@ -133,6 +139,12 @@ type ClusterNodeGroupOptionsArgs struct {
 	// See for more details:
 	// - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	AmiId pulumi.StringPtrInput `pulumi:"amiId"`
+	// The AMI Type to use for the worker nodes.
+	//
+	// Only applicable when setting an AMI ID that is of type `arm64`.
+	//
+	// Note: `amiType` and `gpu` are mutually exclusive.
+	AmiType pulumi.StringPtrInput `pulumi:"amiType"`
 	// The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
 	//
 	// Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
@@ -302,6 +314,15 @@ func (o ClusterNodeGroupOptionsOutput) ToClusterNodeGroupOptionsPtrOutputWithCon
 // - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 func (o ClusterNodeGroupOptionsOutput) AmiId() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.AmiId }).(pulumi.StringPtrOutput)
+}
+
+// The AMI Type to use for the worker nodes.
+//
+// Only applicable when setting an AMI ID that is of type `arm64`.
+//
+// Note: `amiType` and `gpu` are mutually exclusive.
+func (o ClusterNodeGroupOptionsOutput) AmiType() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.AmiType }).(pulumi.StringPtrOutput)
 }
 
 // The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
@@ -496,6 +517,20 @@ func (o ClusterNodeGroupOptionsPtrOutput) AmiId() pulumi.StringPtrOutput {
 			return nil
 		}
 		return v.AmiId
+	}).(pulumi.StringPtrOutput)
+}
+
+// The AMI Type to use for the worker nodes.
+//
+// Only applicable when setting an AMI ID that is of type `arm64`.
+//
+// Note: `amiType` and `gpu` are mutually exclusive.
+func (o ClusterNodeGroupOptionsPtrOutput) AmiType() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.AmiType
 	}).(pulumi.StringPtrOutput)
 }
 
