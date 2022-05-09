@@ -80,7 +80,7 @@ func main() {
 }
 
 const (
-	awsVersion = "v5.1.0"
+	awsVersion = "v5.4.0"
 	k8sVersion = "v3.0.0"
 )
 
