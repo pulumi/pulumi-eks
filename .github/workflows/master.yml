@@ -282,13 +282,6 @@ jobs:
         with:
           node-version: ${{matrix.nodeversion}}
           registry-url: https://registry.npmjs.org
-      - name: Install Kubectl
-        run: |
-          # https://github.com/aws/aws-cli/issues/6920
-          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
-          chmod +x ./kubectl
-          sudo mv kubectl /usr/local/bin
       - name: Download provider binary
         uses: actions/download-artifact@v2
         with:
@@ -396,13 +389,6 @@ jobs:
         with:
           node-version: ${{matrix.nodeversion}}
           registry-url: https://registry.npmjs.org
-      - name: Install Kubectl
-        run: |
-          # https://github.com/aws/aws-cli/issues/6920
-          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
-          chmod +x ./kubectl
-          sudo mv kubectl /usr/local/bin
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -507,13 +493,6 @@ jobs:
         with:
           node-version: ${{matrix.nodeversion}}
           registry-url: https://registry.npmjs.org
-      - name: Install Kubectl
-        run: |
-          # https://github.com/aws/aws-cli/issues/6920
-          # curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
-          chmod +x ./kubectl
-          sudo mv kubectl /usr/local/bin
       - name: Setup DotNet
         uses: actions/setup-dotnet@v1
         with:
