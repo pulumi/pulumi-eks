@@ -190,6 +190,7 @@ func TestAccTags(t *testing.T) {
 					info.Outputs["kubeconfig2"],
 				)
 			},
+			Verbose: true,
 		})
 
 	integration.ProgramTest(t, &test)

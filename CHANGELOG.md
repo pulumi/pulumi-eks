@@ -2,6 +2,8 @@
 - Add enableIpv6 option to clusters
   [#695](https://github.com/pulumi/pulumi-eks/pull/695)
   This change upgrades amazon-vpc-cni-k8s to v1.11.
+- Switch kubeconfig to use client.authentication.k8s.io/v1beta1
+  [#701](https://github.com/pulumi/pulumi-eks/pull/701)
 
 ## 0.39.0 (Released May 9, 2022)
 - Add support for Pulumi AWS 5.x
