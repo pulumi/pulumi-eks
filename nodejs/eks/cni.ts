@@ -222,7 +222,7 @@ export class VpcCni extends pulumi.CustomResource {
         const aliasOpts = { aliases: [{ type: "pulumi-nodejs:dynamic:Resource" }] };
         opts = pulumi.mergeOptions(opts, aliasOpts);
         super("eks:index:VpcCni", name, {
-            kubeconfig: kubeconfig ? pulumi.output(kubeconfig).apply(JSON.stringify) : undefined,
+            kubeconfig: kubeconfig,
             nodePortSupport: args?.nodePortSupport,
             customNetworkConfig: args?.customNetworkConfig,
             externalSnat: args?.externalSnat,
