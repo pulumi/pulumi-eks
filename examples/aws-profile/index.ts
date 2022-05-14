@@ -10,14 +10,20 @@ if (!process.env.ALT_AWS_PROFILE) {
     throw new Error("ALT_AWS_PROFILE must be set");
 }
 
+if (!process.env.AWS_REGION) {
+    throw new Error("AWS_REGION must be set");
+}
+
 // AWS named profile to use.
 const profileName = process.env.ALT_AWS_PROFILE;
+// AWS region to use.
+const region = pulumi.output(process.env.AWS_REGION as aws.types.enums.Region);
 
 // Create an AWS provider instance using the named profile creds
 // and current region.
 const awsProvider = new aws.Provider("aws-provider", {
     profile: profileName,
-    region: aws.getRegion().then(region => <aws.Region>region.name),
+    region: region,
 });
 
 // Define the AWS provider credential opts to configure the cluster's
