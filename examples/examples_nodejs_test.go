@@ -181,7 +181,7 @@ func TestAccMNG_withAwsAuth(t *testing.T) {
 func TestAccTags(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:           path.Join(getCwd(t), "tags"),
+			Dir: path.Join(getCwd(t), "tags"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -197,7 +197,7 @@ func TestAccTags(t *testing.T) {
 func TestAccStorageClasses(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:           path.Join(getCwd(t), "storage-classes"),
+			Dir: path.Join(getCwd(t), "storage-classes"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -241,7 +241,28 @@ func TestAccScopedKubeconfig(t *testing.T) {
 }
 
 func TestAccAwsProfile(t *testing.T) {
-	t.Skip("Temporarily skipping, see https://github.com/pulumi/pulumi-eks/issues/697")
+	// EKS token retrieval using the AWS_PROFILE seems to prefer the
+	// the following variables over AWS_PROFILE so you end up with
+	// authentication failures in the tests. So drop these environment
+	// variables if set and reapply them after the test.
+	oldEnvVars := map[string]string{}
+	if val := os.Getenv("AWS_SECRET_ACCESS_KEY"); val != "" {
+		oldEnvVars["AWS_SECRET_ACCESS_KEY"] = val
+		assert.NoError(t, os.Unsetenv("AWS_SECRET_ACCESS_KEY"))
+	}
+	if val := os.Getenv("AWS_ACCESS_KEY_ID"); val != "" {
+		oldEnvVars["AWS_ACCESS_KEY_ID"] = val
+		assert.NoError(t, os.Unsetenv("AWS_ACCESS_KEY_ID"))
+	}
+	if val := os.Getenv("AWS_SESSION_TOKEN"); val != "" {
+		oldEnvVars["AWS_SESSION_TOKEN"] = val
+		assert.NoError(t, os.Unsetenv("AWS_SESSION_TOKEN"))
+	}
+	defer func() {
+		for k, v := range oldEnvVars {
+			assert.NoError(t, os.Setenv(k, v))
+		}
+	}()
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "aws-profile"),
@@ -251,6 +272,7 @@ func TestAccAwsProfile(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 			},
+			NoParallel: true,
 		})
 
 	integration.ProgramTest(t, &test)
@@ -266,8 +288,8 @@ func TestAccAwsProfileRole(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 			},
+			NoParallel: true,
 		})
-
 	integration.ProgramTest(t, &test)
 }
 
