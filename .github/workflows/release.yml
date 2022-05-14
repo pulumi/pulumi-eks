@@ -276,6 +276,14 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.1.0
         with:
           repo: pulumi/pulumictl
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - name: Install awscli
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli --upgrade
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
       - name: Setup Node
@@ -394,6 +402,14 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{matrix.pythonversion}}
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - name: Install awscli
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli --upgrade
       - name: Install Python deps
         run: |-
           pip3 install virtualenv==20.0.23
@@ -489,6 +505,14 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - name: Install awscli
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli --upgrade
       - name: Setup Node
         uses: actions/setup-node@v1
         with:

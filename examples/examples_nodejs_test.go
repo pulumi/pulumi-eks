@@ -108,7 +108,7 @@ func TestAccFargate(t *testing.T) {
 func TestAccNodeGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			RunUpdateTest: true,
+			RunUpdateTest: false,
 			Dir:           path.Join(getCwd(t), "nodegroup"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
@@ -125,7 +125,7 @@ func TestAccNodeGroup(t *testing.T) {
 func TestAccManagedNodeGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			RunUpdateTest: true,
+			RunUpdateTest: false,
 			Dir:           path.Join(getCwd(t), "managed-nodegroups"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
@@ -182,7 +182,6 @@ func TestAccTags(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:           path.Join(getCwd(t), "tags"),
-			RunUpdateTest: true,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -198,7 +197,6 @@ func TestAccTags(t *testing.T) {
 func TestAccStorageClasses(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			RunUpdateTest: true,
 			Dir:           path.Join(getCwd(t), "storage-classes"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
