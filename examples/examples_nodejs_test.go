@@ -241,6 +241,7 @@ func TestAccScopedKubeconfig(t *testing.T) {
 }
 
 func TestAccAwsProfile(t *testing.T) {
+	t.Skip("Temporarily skipping, see https://github.com/pulumi/pulumi-eks/issues/697")
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "aws-profile"),

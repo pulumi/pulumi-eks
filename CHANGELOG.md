@@ -1,4 +1,7 @@
 ## Unreleased
+(None)
+
+## 0.40.0 (Released May 13, 2022)
 - Add enableIpv6 option to clusters
   [#695](https://github.com/pulumi/pulumi-eks/pull/695)
   This change upgrades amazon-vpc-cni-k8s to v1.11.
