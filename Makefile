@@ -103,6 +103,9 @@ test_dotnet:: install_provider
 	cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 specific_test:: install_nodejs_sdk test_build
+	cd examples && go test -tags=$(LanguageTags) -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName) 2>&1 | tee /tmp/gotest.log | gotestfmt
+
+specific_test_local:: install_nodejs_sdk test_build
 	cd examples && go test -tags=$(LanguageTags) -v -count=1 -cover -timeout 3h . --run=TestAcc$(TestName)
 
 dev:: lint build_nodejs
