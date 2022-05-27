@@ -407,7 +407,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         const invokeOpts = { parent, async: true };
         const vpc = aws.ec2.getVpc({ default: true }, invokeOpts);
         vpcId = vpc.then(v => v.id);
-        clusterSubnetIds = vpc.then(v => aws.ec2.getSubnetIds({ vpcId: v.id }, invokeOpts)).then(subnets => subnets.ids);
+        clusterSubnetIds = vpc.then(v => aws.ec2.getSubnets({ tags: { vpcId: v.id }}, invokeOpts)).then(subnets => subnets.ids);
     }
 
     // Form the subnetIds to use on the cluster from either:
