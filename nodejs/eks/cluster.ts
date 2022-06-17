@@ -30,12 +30,12 @@ import * as which from "which";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
+import { assertCompatibleAWSCLIExists, assertCompatibleKubectlVersionExists } from "./dependencies";
 import { computeWorkerSubnets, createNodeGroup, NodeGroup, NodeGroupBaseOptions, NodeGroupData } from "./nodegroup";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import { InputTags, UserStorageClasses } from "./utils";
-import {assertCompatibleAWSCLIExists, assertCompatibleKubectlVersionExists} from "./dependencies";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -350,7 +350,7 @@ export function getRoleProvider(
  * Create the core components and settings required for the EKS cluster.
  */
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): CoreData {
-    // Check to ensure that a compatible version of aws CLI is installed, as we'll need it in order 
+    // Check to ensure that a compatible version of aws CLI is installed, as we'll need it in order
     // to retrieve a token to login to the EKS cluster later.
     assertCompatibleAWSCLIExists();
     // Check to ensure that a compatible kubectl is installed, as we'll need it in order to deploy
@@ -407,7 +407,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         const invokeOpts = { parent, async: true };
         const vpc = aws.ec2.getVpc({ default: true }, invokeOpts);
         vpcId = vpc.then(v => v.id);
-        clusterSubnetIds = vpc.then(v => aws.ec2.getSubnets({ filters: [{name: "vpc-id", values: [v.id]}]}, invokeOpts)).then(subnets => subnets.ids);
+        clusterSubnetIds = vpc.then(v => aws.ec2.getSubnets({ filters: [{ name: "vpc-id", values: [v.id] }] }, invokeOpts)).then(subnets => subnets.ids);
     }
 
     // Form the subnetIds to use on the cluster from either:
