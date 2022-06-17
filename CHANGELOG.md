@@ -1,5 +1,6 @@
 ## Unreleased
-(None)
+- Add checks to validate versions of kubectl and aws-cli installed
+  [#722](https://github.com/pulumi/pulumi-eks/pull/722)
 
 ## 0.40.0 (Released May 13, 2022)
 - Add enableIpv6 option to clusters
