@@ -17,8 +17,8 @@ This includes:
 ## Pre-Requisites
 
 1. [Install Pulumi](https://www.pulumi.com/docs/reference/install).
-1. [Install `kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl).
-1. [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+1. [Install `kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl) (v1.24.0 or higher).
+1. [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) (>=v1.24.0 for v1 or >=2.7.0 for v2).
 1. [Install Node.js](https://nodejs.org/en/download/) (required even if using this library from another Pulumi language).
 
 ## Installing

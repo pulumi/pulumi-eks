@@ -30,6 +30,7 @@ import * as which from "which";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
+import { assertCompatibleAWSCLIExists, assertCompatibleKubectlVersionExists } from "./dependencies";
 import { computeWorkerSubnets, createNodeGroup, NodeGroup, NodeGroupBaseOptions, NodeGroupData } from "./nodegroup";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
@@ -349,13 +350,12 @@ export function getRoleProvider(
  * Create the core components and settings required for the EKS cluster.
  */
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): CoreData {
-    // Check to ensure that aws CLI is installed, as we'll need it in order to deploy k8s resources
-    // to the EKS cluster.
-    try {
-        which.sync("aws");
-    } catch (err) {
-        throw new Error("Could not find aws CLI for EKS. See https://github.com/pulumi/pulumi-eks for installation instructions.");
-    }
+    // Check to ensure that a compatible version of aws CLI is installed, as we'll need it in order
+    // to retrieve a token to login to the EKS cluster later.
+    assertCompatibleAWSCLIExists();
+    // Check to ensure that a compatible kubectl is installed, as we'll need it in order to deploy
+    // k8s resources later.
+    assertCompatibleKubectlVersionExists();
 
     if (args.instanceRole && args.instanceRoles) {
         throw new Error("instanceRole and instanceRoles are mutually exclusive, and cannot both be set.");
@@ -407,7 +407,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         const invokeOpts = { parent, async: true };
         const vpc = aws.ec2.getVpc({ default: true }, invokeOpts);
         vpcId = vpc.then(v => v.id);
-        clusterSubnetIds = vpc.then(v => aws.ec2.getSubnets({ filters: [{name: "vpc-id", values: [v.id]}]}, invokeOpts)).then(subnets => subnets.ids);
+        clusterSubnetIds = vpc.then(v => aws.ec2.getSubnets({ filters: [{ name: "vpc-id", values: [v.id] }] }, invokeOpts)).then(subnets => subnets.ids);
     }
 
     // Form the subnetIds to use on the cluster from either:
