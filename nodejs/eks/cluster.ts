@@ -35,6 +35,7 @@ import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import { InputTags, UserStorageClasses } from "./utils";
+import {assertCompatibleAWSCLIExists, assertCompatibleKubectlVersionExists} from "./dependencies";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -349,13 +350,12 @@ export function getRoleProvider(
  * Create the core components and settings required for the EKS cluster.
  */
 export function createCore(name: string, args: ClusterOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): CoreData {
-    // Check to ensure that aws CLI is installed, as we'll need it in order to deploy k8s resources
-    // to the EKS cluster.
-    try {
-        which.sync("aws");
-    } catch (err) {
-        throw new Error("Could not find aws CLI for EKS. See https://github.com/pulumi/pulumi-eks for installation instructions.");
-    }
+    // Check to ensure that a compatible version of aws CLI is installed, as we'll need it in order 
+    // to retrieve a token to login to the EKS cluster later.
+    assertCompatibleAWSCLIExists();
+    // Check to ensure that a compatible kubectl is installed, as we'll need it in order to deploy
+    // k8s resources later.
+    assertCompatibleKubectlVersionExists();
 
     if (args.instanceRole && args.instanceRoles) {
         throw new Error("instanceRole and instanceRoles are mutually exclusive, and cannot both be set.");

@@ -20,6 +20,7 @@ import * as jsyaml from "js-yaml";
 import * as path from "path";
 import * as process from "process";
 import * as tmp from "tmp";
+import {assertCompatibleKubectlVersionExists} from "../../dependencies";
 import which = require("which");
 
 interface VpcCniInputs {
@@ -161,12 +162,8 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
 }
 
 function applyVpcCniYaml(args: VpcCniInputs) {
-    // Check to ensure that kubectl is installed, as we'll need it in order to deploy k8s resources below.
-    try {
-        which.sync("kubectl");
-    } catch (err) {
-        throw new Error("Could not set VPC CNI options: kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.");
-    }
+    // Check to ensure that a compatible kubectl is installed, as we'll need it in order to deploy k8s resources below.
+    assertCompatibleKubectlVersionExists();
 
     const yamlPath = path.join(__dirname, "..", "..", "cni", "aws-k8s-cni.yaml");
     const cniYamlText = fs.readFileSync(yamlPath).toString();
