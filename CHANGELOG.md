@@ -1,4 +1,7 @@
 ## Unreleased
+(None)
+
+## 0.41.0 (Released Jun 21, 2022)
 - Add checks to validate versions of kubectl and aws-cli installed
   [#722](https://github.com/pulumi/pulumi-eks/pull/722)
 
