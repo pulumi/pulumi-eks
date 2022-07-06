@@ -18,6 +18,10 @@ namespace Pulumi.Eks.Outputs
     {
         public readonly Pulumi.Aws.Provider? AwsProvider;
         public readonly Pulumi.Aws.Eks.Cluster Cluster;
+        /// <summary>
+        /// The IAM Role attached to the EKS Cluster
+        /// </summary>
+        public readonly Pulumi.Aws.Iam.Role ClusterIamRole;
         public readonly Pulumi.Aws.Ec2.SecurityGroup ClusterSecurityGroup;
         public readonly Pulumi.Kubernetes.Core.V1.ConfigMap? EksNodeAccess;
         public readonly Pulumi.Aws.Eks.Outputs.ClusterEncryptionConfig? EncryptionConfig;
@@ -42,6 +46,8 @@ namespace Pulumi.Eks.Outputs
             Pulumi.Aws.Provider? awsProvider,
 
             Pulumi.Aws.Eks.Cluster cluster,
+
+            Pulumi.Aws.Iam.Role clusterIamRole,
 
             Pulumi.Aws.Ec2.SecurityGroup clusterSecurityGroup,
 
@@ -81,6 +87,7 @@ namespace Pulumi.Eks.Outputs
         {
             AwsProvider = awsProvider;
             Cluster = cluster;
+            ClusterIamRole = clusterIamRole;
             ClusterSecurityGroup = clusterSecurityGroup;
             EksNodeAccess = eksNodeAccess;
             EncryptionConfig = encryptionConfig;
