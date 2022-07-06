@@ -434,6 +434,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             description: "Allows EKS to manage clusters on your behalf.",
             managedPolicyArns: [
                 "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+                "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
             ],
         }, { parent, provider })).role;
     }
