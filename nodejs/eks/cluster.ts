@@ -146,6 +146,7 @@ export interface CoreData {
     fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined>;
     oidcProvider?: aws.iam.OpenIdConnectProvider;
     encryptionConfig?: pulumi.Output<aws.types.output.eks.ClusterEncryptionConfig>;
+    clusterIamRole: pulumi.Output<aws.iam.Role>;
 }
 
 function createOrGetInstanceProfile(
@@ -800,6 +801,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         fargateProfile: fargateProfile,
         oidcProvider: oidcProvider,
         encryptionConfig: encryptionConfig,
+        clusterIamRole: eksRole,
     };
 }
 

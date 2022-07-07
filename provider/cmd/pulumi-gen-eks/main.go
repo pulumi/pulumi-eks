@@ -950,6 +950,10 @@ func generateSchema() schema.PackageSpec {
 						"encryptionConfig": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig")},
 						},
+						"clusterIamRole": {
+							Description: "The IAM Role attached to the EKS Cluster",
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						},
 					},
 					Required: []string{
 						"cluster",
@@ -960,6 +964,7 @@ func generateSchema() schema.PackageSpec {
 						"provider",
 						"instanceRoles",
 						"nodeGroupOptions",
+						"clusterIamRole",
 					},
 				},
 			},

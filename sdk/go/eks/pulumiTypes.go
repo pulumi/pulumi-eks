@@ -815,8 +815,10 @@ func (o ClusterNodeGroupOptionsPtrOutput) Version() pulumi.StringPtrOutput {
 
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreData struct {
-	AwsProvider           *aws.Provider                      `pulumi:"awsProvider"`
-	Cluster               *eks.Cluster                       `pulumi:"cluster"`
+	AwsProvider *aws.Provider `pulumi:"awsProvider"`
+	Cluster     *eks.Cluster  `pulumi:"cluster"`
+	// The IAM Role attached to the EKS Cluster
+	ClusterIamRole        *iam.Role                          `pulumi:"clusterIamRole"`
 	ClusterSecurityGroup  *ec2.SecurityGroup                 `pulumi:"clusterSecurityGroup"`
 	EksNodeAccess         *corev1.ConfigMap                  `pulumi:"eksNodeAccess"`
 	EncryptionConfig      *eks.ClusterEncryptionConfig       `pulumi:"encryptionConfig"`
@@ -850,8 +852,10 @@ type CoreDataInput interface {
 
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreDataArgs struct {
-	AwsProvider           aws.ProviderInput                   `pulumi:"awsProvider"`
-	Cluster               eks.ClusterInput                    `pulumi:"cluster"`
+	AwsProvider aws.ProviderInput `pulumi:"awsProvider"`
+	Cluster     eks.ClusterInput  `pulumi:"cluster"`
+	// The IAM Role attached to the EKS Cluster
+	ClusterIamRole        iam.RoleInput                       `pulumi:"clusterIamRole"`
 	ClusterSecurityGroup  ec2.SecurityGroupInput              `pulumi:"clusterSecurityGroup"`
 	EksNodeAccess         corev1.ConfigMapInput               `pulumi:"eksNodeAccess"`
 	EncryptionConfig      eks.ClusterEncryptionConfigPtrInput `pulumi:"encryptionConfig"`
@@ -905,6 +909,11 @@ func (o CoreDataOutput) AwsProvider() aws.ProviderOutput {
 
 func (o CoreDataOutput) Cluster() eks.ClusterOutput {
 	return o.ApplyT(func(v CoreData) *eks.Cluster { return v.Cluster }).(eks.ClusterOutput)
+}
+
+// The IAM Role attached to the EKS Cluster
+func (o CoreDataOutput) ClusterIamRole() iam.RoleOutput {
+	return o.ApplyT(func(v CoreData) *iam.Role { return v.ClusterIamRole }).(iam.RoleOutput)
 }
 
 func (o CoreDataOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
