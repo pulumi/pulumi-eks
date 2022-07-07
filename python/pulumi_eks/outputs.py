@@ -503,7 +503,9 @@ class CoreData(dict):
     @staticmethod
     def __key_warning(key: str):
         suggest = None
-        if key == "clusterSecurityGroup":
+        if key == "clusterIamRole":
+            suggest = "cluster_iam_role"
+        elif key == "clusterSecurityGroup":
             suggest = "cluster_security_group"
         elif key == "instanceRoles":
             suggest = "instance_roles"
@@ -547,6 +549,7 @@ class CoreData(dict):
 
     def __init__(__self__, *,
                  cluster: 'pulumi_aws.eks.Cluster',
+                 cluster_iam_role: 'pulumi_aws.iam.Role',
                  cluster_security_group: 'pulumi_aws.ec2.SecurityGroup',
                  endpoint: str,
                  instance_roles: Sequence['pulumi_aws.iam.Role'],
@@ -568,8 +571,10 @@ class CoreData(dict):
                  vpc_cni: Optional['VpcCni'] = None):
         """
         Defines the core set of data associated with an EKS cluster, including the network in which it runs.
+        :param 'pulumi_aws.iam.Role' cluster_iam_role: The IAM Role attached to the EKS Cluster
         """
         pulumi.set(__self__, "cluster", cluster)
+        pulumi.set(__self__, "cluster_iam_role", cluster_iam_role)
         pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         pulumi.set(__self__, "endpoint", endpoint)
         pulumi.set(__self__, "instance_roles", instance_roles)
@@ -606,6 +611,14 @@ class CoreData(dict):
     @pulumi.getter
     def cluster(self) -> 'pulumi_aws.eks.Cluster':
         return pulumi.get(self, "cluster")
+
+    @property
+    @pulumi.getter(name="clusterIamRole")
+    def cluster_iam_role(self) -> 'pulumi_aws.iam.Role':
+        """
+        The IAM Role attached to the EKS Cluster
+        """
+        return pulumi.get(self, "cluster_iam_role")
 
     @property
     @pulumi.getter(name="clusterSecurityGroup")

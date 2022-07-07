@@ -32,3 +32,6 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
 // Export the clusters' kubeconfig.
 export const kubeconfig1 = cluster1.kubeconfig;
 export const kubeconfig2 = cluster2.kubeconfig;
+
+// export the IAM Role ARN of the cluster
+export const iamRoleArn = cluster1.core.clusterIamRole.arn;

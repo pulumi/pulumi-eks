@@ -21,6 +21,12 @@ namespace Pulumi.Eks.Inputs
         [Input("cluster", required: true)]
         public Input<Pulumi.Aws.Eks.Cluster> Cluster { get; set; } = null!;
 
+        /// <summary>
+        /// The IAM Role attached to the EKS Cluster
+        /// </summary>
+        [Input("clusterIamRole", required: true)]
+        public Input<Pulumi.Aws.Iam.Role> ClusterIamRole { get; set; } = null!;
+
         [Input("clusterSecurityGroup", required: true)]
         public Input<Pulumi.Aws.Ec2.SecurityGroup> ClusterSecurityGroup { get; set; } = null!;
 

@@ -44,6 +44,9 @@ func TestAccCluster(t *testing.T) {
 					info.Outputs["kubeconfig2"],
 				)
 
+				// let's test there's a iamRoleArn specified for the cluster
+				assert.NotEmpty(t, info.Outputs["iamRoleArn"])
+
 				assert.NoError(t, utils.ValidateDaemonSet(t, info.Outputs["kubeconfig2"], "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
 					for _, ic := range ds.Spec.Template.Spec.InitContainers {
 						assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni-init:v1.11.0",

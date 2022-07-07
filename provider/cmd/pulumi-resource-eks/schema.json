@@ -152,6 +152,10 @@
                 "cluster": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:eks%2Fcluster:Cluster"
                 },
+                "clusterIamRole": {
+                    "$ref": "/aws/v5.4.0/schema.json#/resources/aws:iam%2Frole:Role",
+                    "description": "The IAM Role attached to the EKS Cluster"
+                },
                 "clusterSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                 },
@@ -237,7 +241,8 @@
                 "clusterSecurityGroup",
                 "provider",
                 "instanceRoles",
-                "nodeGroupOptions"
+                "nodeGroupOptions",
+                "clusterIamRole"
             ]
         },
         "eks:index:CreationRoleProvider": {
