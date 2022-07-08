@@ -186,7 +186,7 @@ jobs:
         dotnetversion:
           - 3.1
         goversion:
-          - 1.16.x
+          - 1.18.x
         language:
           - nodejs
           - python
@@ -292,7 +292,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.16.x
+          - 1.18.x
         language:
           - nodejs
         nodeversion:
@@ -421,7 +421,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.16.x
+          - 1.18.x
         pythonversion:
           - 3.8
         nodeversion:
@@ -534,7 +534,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.16.x
+          - 1.18.x
         dotnetversion:
           - 3.1
         nodeversion:
@@ -641,7 +641,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.16.x
+          - 1.18.x
         pythonversion:
           - 3.8
         nodeversion:
