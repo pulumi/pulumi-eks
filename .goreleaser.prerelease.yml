@@ -27,6 +27,9 @@ builds:
   - darwin
   - windows
   - linux
+  ignore:
+    - goos: windows
+      goarch: arm64
   main: ./cmd/pulumi-resource-eks/main.go
 changelog:
   skip: true
