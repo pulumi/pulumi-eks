@@ -23,6 +23,7 @@ class ClusterArgs:
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional[pulumi.Input['CreationRoleProviderArgs']] = None,
+                 default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
@@ -83,6 +84,7 @@ class ClusterArgs:
                 - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
                 - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
         :param pulumi.Input['CreationRoleProviderArgs'] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] enabled_cluster_log_types: Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
         :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
@@ -241,6 +243,8 @@ class ClusterArgs:
             pulumi.set(__self__, "create_oidc_provider", create_oidc_provider)
         if creation_role_provider is not None:
             pulumi.set(__self__, "creation_role_provider", creation_role_provider)
+        if default_addons_to_remove is not None:
+            pulumi.set(__self__, "default_addons_to_remove", default_addons_to_remove)
         if desired_capacity is not None:
             pulumi.set(__self__, "desired_capacity", desired_capacity)
         if enabled_cluster_log_types is not None:
@@ -407,6 +411,18 @@ class ClusterArgs:
     @creation_role_provider.setter
     def creation_role_provider(self, value: Optional[pulumi.Input['CreationRoleProviderArgs']]):
         pulumi.set(self, "creation_role_provider", value)
+
+    @property
+    @pulumi.getter(name="defaultAddonsToRemove")
+    def default_addons_to_remove(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
+        """
+        List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
+        """
+        return pulumi.get(self, "default_addons_to_remove")
+
+    @default_addons_to_remove.setter
+    def default_addons_to_remove(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
+        pulumi.set(self, "default_addons_to_remove", value)
 
     @property
     @pulumi.getter(name="desiredCapacity")
@@ -1061,6 +1077,7 @@ class Cluster(pulumi.ComponentResource):
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional[pulumi.Input[pulumi.InputType['CreationRoleProviderArgs']]] = None,
+                 default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
@@ -1125,6 +1142,7 @@ class Cluster(pulumi.ComponentResource):
                 - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
                 - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
         :param pulumi.Input[pulumi.InputType['CreationRoleProviderArgs']] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] enabled_cluster_log_types: Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
         :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
@@ -1302,6 +1320,7 @@ class Cluster(pulumi.ComponentResource):
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional[pulumi.Input[pulumi.InputType['CreationRoleProviderArgs']]] = None,
+                 default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
@@ -1366,6 +1385,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["cluster_tags"] = cluster_tags
             __props__.__dict__["create_oidc_provider"] = create_oidc_provider
             __props__.__dict__["creation_role_provider"] = creation_role_provider
+            __props__.__dict__["default_addons_to_remove"] = default_addons_to_remove
             __props__.__dict__["desired_capacity"] = desired_capacity
             __props__.__dict__["enabled_cluster_log_types"] = enabled_cluster_log_types
             __props__.__dict__["encrypt_root_block_device"] = encrypt_root_block_device

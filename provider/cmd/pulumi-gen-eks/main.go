@@ -481,6 +481,15 @@ func generateSchema() schema.PackageSpec {
 							"of values are: [\"api\", \"audit\", \"authenticator\", \"controllerManager\", " +
 							"\"scheduler\"]. By default it is off.",
 					},
+					"defaultAddonsToRemove": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "array",
+							Items: &schema.TypeSpec{Type: "string"},
+						},
+						Description: "List of addons to remove upon creation. Any addon listed will be \"adopted\" and then removed. " +
+							"This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons " +
+							"via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.",
+					},
 					"endpointPublicAccess": {
 						TypeSpec: schema.TypeSpec{Type: "boolean"},
 						Description: "Indicates whether or not the Amazon EKS public API server endpoint is enabled. " +

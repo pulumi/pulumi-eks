@@ -166,6 +166,18 @@ namespace Pulumi.Eks
         [Input("creationRoleProvider")]
         public Input<Inputs.CreationRoleProviderArgs>? CreationRoleProvider { get; set; }
 
+        [Input("defaultAddonsToRemove")]
+        private InputList<string>? _defaultAddonsToRemove;
+
+        /// <summary>
+        /// List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
+        /// </summary>
+        public InputList<string> DefaultAddonsToRemove
+        {
+            get => _defaultAddonsToRemove ?? (_defaultAddonsToRemove = new InputList<string>());
+            set => _defaultAddonsToRemove = value;
+        }
+
         /// <summary>
         /// The number of worker nodes that should be running in the cluster. Defaults to 2.
         /// </summary>
