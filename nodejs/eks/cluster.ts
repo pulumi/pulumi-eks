@@ -502,6 +502,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         },
         version: args.version,
         enabledClusterLogTypes: args.enabledClusterLogTypes,
+        defaultAddonsToRemoves: args.defaultAddonsToRemove,
         tags: pulumi.all([
             args.tags,
             args.clusterTags,
@@ -1175,6 +1176,13 @@ export interface ClusterOptions {
      * By default it is off.
      */
     enabledClusterLogTypes?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * List of addons to remove upon creation. Any addon listed will be "adopted" and then removed.
+     * This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources.
+     * Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
+     */
+    defaultAddonsToRemove?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
      * Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`.
