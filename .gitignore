@@ -21,3 +21,9 @@ ci-scripts/
 /PulumiPlugin.yaml
 
 **/venv
+
+java/build
+java/.gradle
+java/gradle
+java/gradlew
+java/gradlew.bat
