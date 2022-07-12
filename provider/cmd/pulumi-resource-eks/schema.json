@@ -1374,6 +1374,12 @@
             "importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks",
             "liftSingleValueMethodReturns": true
         },
+        "java": {
+            "packages": {
+                "com.pulumi:aws": "5.4.0",
+                "com.pulumi:kubernetes": "3.19.1"
+            }
+        },
         "python": {
             "liftSingleValueMethodReturns": true,
             "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",

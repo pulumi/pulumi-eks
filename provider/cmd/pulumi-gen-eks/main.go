@@ -1305,6 +1305,12 @@ func generateSchema() schema.PackageSpec {
 				"importBasePath":                 "github.com/pulumi/pulumi-eks/sdk/go/eks",
 				"liftSingleValueMethodReturns":   true,
 			}),
+			"java": rawMessage(map[string]interface{}{
+				"packages": map[string]string{
+					"com.pulumi:aws":        "5.4.0",
+					"com.pulumi:kubernetes": "3.19.1",
+				},
+			}),
 		},
 	}
 }
