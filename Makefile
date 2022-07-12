@@ -9,7 +9,10 @@ CODEGEN         := pulumi-gen-${PACK}
 
 WORKING_DIR     := $(shell pwd)
 
-build:: schema provider build_nodejs build_python build_go build_dotnet
+JAVA_GEN 		 := pulumi-java-gen
+JAVA_GEN_VERSION := v0.4.1
+
+build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
 schema::
 	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER))
@@ -30,6 +33,17 @@ build_nodejs::
 		cp -R dashboard bin/ && \
 		cp -R cni bin/ && \
 		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
+
+bin/pulumi-java-gen::
+	mkdir -p bin/
+	pulumictl download-binary -n pulumi-language-java -v $(JAVA_GEN_VERSION) -r pulumi/pulumi-java
+
+build_java:: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
+build_java:: bin/pulumi-java-gen schema
+	rm -rf java
+	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema provider/cmd/$(PROVIDER)/schema.json --out java
+	cd java && \
+		gradle --console=plain build
 
 build_python:: PYPI_VERSION := $(shell pulumictl get version --language python)
 build_python:: schema
@@ -90,6 +104,9 @@ install_go_sdk::
 install_python_sdk::
 	#Intentionall empty for CI / CD templating
 
+install_java_sdk::
+	#Intentionall empty for CI / CD templating
+
 test_build::
 	cd examples/utils/testvpc && yarn install && yarn run tsc
 
@@ -101,6 +118,9 @@ test_python:: install_provider test_build
 
 test_dotnet:: install_provider
 	cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
+
+test_java:: install_provider
+	cd examples && go test -tags=java -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 specific_test:: install_nodejs_sdk test_build
 	cd examples && go test -tags=$(LanguageTags) -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName) 2>&1 | tee /tmp/gotest.log | gotestfmt
