@@ -2,7 +2,7 @@
 (None)
 
 ## 0.41.1 (Released Jul 10, 2022)
-- Export the Cluster IAM Role so that external IAM policies can be attacked
+- Export the Cluster IAM Role so that external IAM policies can be attached
   [#https://github.com/pulumi/pulumi-eks/pull/730)
 
 ## 0.41.0 (Released Jun 21, 2022)
