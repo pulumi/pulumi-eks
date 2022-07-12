@@ -1,9 +1,13 @@
 ## Unreleased
 (None)
 
+## 0.41.2 (Released Jul 12, 2022)
+- Allow removal of default Kubernetes addons
+  [#732](https://github.com/pulumi/pulumi-eks/pull/732)
+
 ## 0.41.1 (Released Jul 10, 2022)
 - Export the Cluster IAM Role so that external IAM policies can be attached
-  [#https://github.com/pulumi/pulumi-eks/pull/730)
+  [#730](https://github.com/pulumi/pulumi-eks/pull/730)
 
 ## 0.41.0 (Released Jun 21, 2022)
 - Add checks to validate versions of kubectl and aws-cli installed
