@@ -1,5 +1,6 @@
 ## Unreleased
-(None)
+- Fix issue with duplicated AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER env var on aws-node daemonset. 
+  [#737](https://github.com/pulumi/pulumi-eks/pull/737)
 
 ## 0.41.2 (Released Jul 12, 2022)
 - Allow removal of default Kubernetes addons
