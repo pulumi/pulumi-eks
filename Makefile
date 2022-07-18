@@ -10,7 +10,7 @@ CODEGEN         := pulumi-gen-${PACK}
 WORKING_DIR     := $(shell pwd)
 
 JAVA_GEN 		 := pulumi-java-gen
-JAVA_GEN_VERSION := v0.4.1
+JAVA_GEN_VERSION := v0.5.0
 
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
@@ -41,7 +41,7 @@ bin/pulumi-java-gen::
 build_java:: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
 build_java:: bin/pulumi-java-gen schema
 	rm -rf java
-	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema provider/cmd/$(PROVIDER)/schema.json --out java
+	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema provider/cmd/$(PROVIDER)/schema.json --out java --build gradle-nexus
 	cd java && \
 		gradle --console=plain build
 
