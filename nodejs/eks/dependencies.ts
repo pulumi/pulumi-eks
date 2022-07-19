@@ -47,7 +47,7 @@ export function assertCompatibleKubectlVersionExists() {
     try {
         kctlVersion = JSON.parse(kubectlVersionJson);
     } catch (err) {
-        throw new Error(`Failed to parse kubectl version JSON output. Received: ${kubectlVersionJson}`)
+        throw new Error(`Failed to parse kubectl version JSON output. Received: ${kubectlVersionJson}`);
     }
     const kcVersion = semver.clean(kctlVersion.clientVersion.gitVersion, { loose: true, includePrerelease: true });
     if (semver.lt(kcVersion!, minKubectlVersion)) {
