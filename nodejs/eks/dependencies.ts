@@ -43,7 +43,12 @@ export function assertCompatibleKubectlVersionExists() {
         kubectlVersionJson = err.stdout; // Might see partial failure if the the remote cluster is inaccessible. Ignore.
     }
 
-    const kctlVersion: KubectlVersion = JSON.parse(kubectlVersionJson);
+    let kctlVersion: KubectlVersion;
+    try {
+        kctlVersion = JSON.parse(kubectlVersionJson);
+    } catch (err) {
+        throw new Error(`Failed to parse kubectl version JSON output. Received: ${kubectlVersionJson}`)
+    }
     const kcVersion = semver.clean(kctlVersion.clientVersion.gitVersion, { loose: true, includePrerelease: true });
     if (semver.lt(kcVersion!, minKubectlVersion)) {
         throw new Error(`At least v${minKubectlVersion} of kubectl is required.`
