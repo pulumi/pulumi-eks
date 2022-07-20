@@ -9,7 +9,6 @@ env:
   NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
   PROVIDER: eks
   PUBLISH_REPO_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-  PUBLISH_REPO_URL: https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
   PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
   PULUMI_API: https://api.pulumi-staging.io
@@ -218,7 +217,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Set PACKAGE_VERSION to Env
-        run: echo "PACKAGE_VERSION=v$(pulumictl get version --language generic)" >>
+        run: echo "PACKAGE_VERSION=$(pulumictl get version --language generic)" >>
           $GITHUB_ENV
       - name: Checkout Scripts Repo
         uses: actions/checkout@v2
@@ -287,8 +286,8 @@ jobs:
       - name: Publish Java SDK
         uses: gradle/gradle-build-action@9b814496b50909128c6a52622b416c5ffa04db49
         with:
-          arguments: publish
-          build-root-directory: ./sdk/java
+          arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository
+          build-root-directory: ./java
           gradle-version: 7.4.1
   test-nodejs:
     name: Run NodeJS Tests
