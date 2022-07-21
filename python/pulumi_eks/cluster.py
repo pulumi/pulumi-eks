@@ -1446,7 +1446,6 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["eks_cluster_ingress_rule"] = None
             __props__.__dict__["kubeconfig"] = None
             __props__.__dict__["node_security_group"] = None
-            __props__.__dict__["provider"] = None
         super(Cluster, __self__).__init__(
             'eks:index:Cluster',
             resource_name,
@@ -1525,14 +1524,6 @@ class Cluster(pulumi.ComponentResource):
         The security group for the cluster's nodes.
         """
         return pulumi.get(self, "node_security_group")
-
-    @property
-    @pulumi.getter
-    def provider(self) -> pulumi.Output['pulumi_kubernetes.Provider']:
-        """
-        A Kubernetes resource provider that can be used to deploy into this cluster.
-        """
-        return pulumi.get(self, "provider")
 
     @pulumi.output_type
     class GetKubeconfigResult:

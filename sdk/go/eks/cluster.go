@@ -11,7 +11,6 @@ import (
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/eks"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
-	"github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -37,8 +36,6 @@ type Cluster struct {
 	Kubeconfig pulumi.AnyOutput `pulumi:"kubeconfig"`
 	// The security group for the cluster's nodes.
 	NodeSecurityGroup ec2.SecurityGroupOutput `pulumi:"nodeSecurityGroup"`
-	// A Kubernetes resource provider that can be used to deploy into this cluster.
-	Provider kubernetes.ProviderOutput `pulumi:"provider"`
 }
 
 // NewCluster registers a new resource with the given unique name, arguments, and options.
@@ -686,11 +683,6 @@ func (o ClusterOutput) Kubeconfig() pulumi.AnyOutput {
 // The security group for the cluster's nodes.
 func (o ClusterOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
 	return o.ApplyT(func(v *Cluster) ec2.SecurityGroupOutput { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
-}
-
-// A Kubernetes resource provider that can be used to deploy into this cluster.
-func (o ClusterOutput) Provider() kubernetes.ProviderOutput {
-	return o.ApplyT(func(v *Cluster) kubernetes.ProviderOutput { return v.Provider }).(kubernetes.ProviderOutput)
 }
 
 type ClusterArrayOutput struct{ *pulumi.OutputState }
