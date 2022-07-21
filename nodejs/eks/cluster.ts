@@ -1348,7 +1348,7 @@ export class Cluster extends pulumi.ComponentResource {
      *     let pod = new kubernetes.core.v1.Pod("pod", { ... }, { provider: eks.provider });
      *
      */
-    private readonly provider: k8s.Provider;
+    public readonly provider: k8s.Provider;
 
     /**
      * The security group for the EKS cluster.
