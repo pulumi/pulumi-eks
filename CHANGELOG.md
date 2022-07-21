@@ -1,5 +1,6 @@
 ## Unreleased
-(None)
+- Remove cluster provider from schema
+  [#746](https://github.com/pulumi/pulumi-eks/pull/746)
 
 ## 0.41.2 (Released Jul 12, 2022)
 - Allow removal of default Kubernetes addons
