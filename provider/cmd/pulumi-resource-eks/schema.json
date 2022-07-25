@@ -593,16 +593,11 @@
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the cluster's nodes."
-                },
-                "provider": {
-                    "$ref": "/kubernetes/v3.0.0/schema.json#/provider",
-                    "description": "A Kubernetes resource provider that can be used to deploy into this cluster."
                 }
             },
             "required": [
                 "kubeconfig",
                 "awsProvider",
-                "provider",
                 "clusterSecurityGroup",
                 "instanceRoles",
                 "nodeSecurityGroup",

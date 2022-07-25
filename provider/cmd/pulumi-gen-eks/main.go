@@ -161,10 +161,10 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/provider")},
 							Description: "The AWS resource provider.",
 						},
-						"provider": {
-							TypeSpec:    schema.TypeSpec{Ref: k8sRef("#/provider")},
-							Description: "A Kubernetes resource provider that can be used to deploy into this cluster.",
-						},
+						// "provider": {
+						// 	TypeSpec:    schema.TypeSpec{Ref: k8sRef("#/provider")},
+						// 	Description: "A Kubernetes resource provider that can be used to deploy into this cluster.",
+						// },
 						"clusterSecurityGroup": {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
 							Description: "The security group for the EKS cluster.",
@@ -201,7 +201,7 @@ func generateSchema() schema.PackageSpec {
 					Required: []string{
 						"kubeconfig",
 						"awsProvider",
-						"provider",
+						// "provider",
 						"clusterSecurityGroup",
 						"instanceRoles",
 						"nodeSecurityGroup",
