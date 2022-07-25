@@ -1,5 +1,5 @@
 ## Unreleased
-- Remove cluster provider from schema
+- Due to https://github.com/pulumi/pulumi/issues/7012 including the provider in the generated SDK never really worked. This is removed now. Note - existing uses in Nodejs should not be affected.
   [#746](https://github.com/pulumi/pulumi-eks/pull/746)
 
 ## 0.41.2 (Released Jul 12, 2022)
