@@ -142,8 +142,6 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     }
     if (args.cniConfigureRpfilter) {
         env.push({ name: "AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER", value: args.cniConfigureRpfilter ? "true" : "false" });
-    } else {
-        env.push({ name: "AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER", value: "false" });
     }
     if (args.cniCustomNetworkCfg) {
         env.push({ name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: args.cniCustomNetworkCfg ? "true" : "false" });
