@@ -69,12 +69,6 @@ namespace Pulumi.Eks
         [Output("nodeSecurityGroup")]
         public Output<Pulumi.Aws.Ec2.SecurityGroup> NodeSecurityGroup { get; private set; } = null!;
 
-        /// <summary>
-        /// A Kubernetes resource provider that can be used to deploy into this cluster.
-        /// </summary>
-        [Output("provider")]
-        public Output<Pulumi.Kubernetes.Provider> Provider { get; private set; } = null!;
-
 
         /// <summary>
         /// Create a Cluster resource with the given unique name, arguments, and options.

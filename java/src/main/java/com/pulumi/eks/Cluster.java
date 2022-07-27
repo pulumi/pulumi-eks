@@ -152,20 +152,6 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
     public Output<SecurityGroup> nodeSecurityGroup() {
         return this.nodeSecurityGroup;
     }
-    /**
-     * A Kubernetes resource provider that can be used to deploy into this cluster.
-     * 
-     */
-    @Export(name="provider", type=com.pulumi.kubernetes.Provider.class, parameters={})
-    private Output<com.pulumi.kubernetes.Provider> provider;
-
-    /**
-     * @return A Kubernetes resource provider that can be used to deploy into this cluster.
-     * 
-     */
-    public Output<com.pulumi.kubernetes.Provider> provider() {
-        return this.provider;
-    }
 
     /**
      *
