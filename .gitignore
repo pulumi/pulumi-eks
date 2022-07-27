@@ -22,8 +22,8 @@ ci-scripts/
 
 **/venv
 
-java/build
-java/.gradle
-java/gradle
-java/gradlew
-java/gradlew.bat
+sdk/java/build
+sdk/java/.gradle
+sdk/java/gradle
+sdk/java/gradlew
+sdk/java/gradlew.bat

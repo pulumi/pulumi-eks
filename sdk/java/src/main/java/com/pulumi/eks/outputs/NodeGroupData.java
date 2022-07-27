@@ -16,35 +16,24 @@ public final class NodeGroupData {
      * @return The AutoScalingGroup name for the node group.
      * 
      */
-    private final String autoScalingGroupName;
+    private String autoScalingGroupName;
     /**
      * @return The CloudFormation Stack which defines the Node AutoScalingGroup.
      * 
      */
-    private final Stack cfnStack;
+    private Stack cfnStack;
     /**
      * @return The additional security groups for the node group that captures user-specific rules.
      * 
      */
-    private final List<SecurityGroup> extraNodeSecurityGroups;
+    private List<SecurityGroup> extraNodeSecurityGroups;
     /**
      * @return The security group for the node group to communicate with the cluster.
      * 
      */
-    private final SecurityGroup nodeSecurityGroup;
+    private SecurityGroup nodeSecurityGroup;
 
-    @CustomType.Constructor
-    private NodeGroupData(
-        @CustomType.Parameter("autoScalingGroupName") String autoScalingGroupName,
-        @CustomType.Parameter("cfnStack") Stack cfnStack,
-        @CustomType.Parameter("extraNodeSecurityGroups") List<SecurityGroup> extraNodeSecurityGroups,
-        @CustomType.Parameter("nodeSecurityGroup") SecurityGroup nodeSecurityGroup) {
-        this.autoScalingGroupName = autoScalingGroupName;
-        this.cfnStack = cfnStack;
-        this.extraNodeSecurityGroups = extraNodeSecurityGroups;
-        this.nodeSecurityGroup = nodeSecurityGroup;
-    }
-
+    private NodeGroupData() {}
     /**
      * @return The AutoScalingGroup name for the node group.
      * 
@@ -81,17 +70,13 @@ public final class NodeGroupData {
     public static Builder builder(NodeGroupData defaults) {
         return new Builder(defaults);
     }
-
+    @CustomType.Builder
     public static final class Builder {
         private String autoScalingGroupName;
         private Stack cfnStack;
         private List<SecurityGroup> extraNodeSecurityGroups;
         private SecurityGroup nodeSecurityGroup;
-
-        public Builder() {
-    	      // Empty
-        }
-
+        public Builder() {}
         public Builder(NodeGroupData defaults) {
     	      Objects.requireNonNull(defaults);
     	      this.autoScalingGroupName = defaults.autoScalingGroupName;
@@ -100,14 +85,17 @@ public final class NodeGroupData {
     	      this.nodeSecurityGroup = defaults.nodeSecurityGroup;
         }
 
+        @CustomType.Setter
         public Builder autoScalingGroupName(String autoScalingGroupName) {
             this.autoScalingGroupName = Objects.requireNonNull(autoScalingGroupName);
             return this;
         }
+        @CustomType.Setter
         public Builder cfnStack(Stack cfnStack) {
             this.cfnStack = Objects.requireNonNull(cfnStack);
             return this;
         }
+        @CustomType.Setter
         public Builder extraNodeSecurityGroups(List<SecurityGroup> extraNodeSecurityGroups) {
             this.extraNodeSecurityGroups = Objects.requireNonNull(extraNodeSecurityGroups);
             return this;
@@ -115,11 +103,18 @@ public final class NodeGroupData {
         public Builder extraNodeSecurityGroups(SecurityGroup... extraNodeSecurityGroups) {
             return extraNodeSecurityGroups(List.of(extraNodeSecurityGroups));
         }
+        @CustomType.Setter
         public Builder nodeSecurityGroup(SecurityGroup nodeSecurityGroup) {
             this.nodeSecurityGroup = Objects.requireNonNull(nodeSecurityGroup);
             return this;
-        }        public NodeGroupData build() {
-            return new NodeGroupData(autoScalingGroupName, cfnStack, extraNodeSecurityGroups, nodeSecurityGroup);
+        }
+        public NodeGroupData build() {
+            final var o = new NodeGroupData();
+            o.autoScalingGroupName = autoScalingGroupName;
+            o.cfnStack = cfnStack;
+            o.extraNodeSecurityGroups = extraNodeSecurityGroups;
+            o.nodeSecurityGroup = nodeSecurityGroup;
+            return o;
         }
     }
 }

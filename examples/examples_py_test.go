@@ -124,7 +124,7 @@ func getPythonBaseOptions(t *testing.T) integration.ProgramTestOptions {
 			"aws:region": region,
 		},
 		Dependencies: []string{
-			filepath.Join("..", "python", "bin"),
+			filepath.Join("..", "sdk", "python", "bin"),
 		},
 		Verbose: true,
 	})

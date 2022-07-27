@@ -180,17 +180,24 @@ jobs:
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
         run: ./ci-scripts/ci/check-worktree-is-clean
-      - if: matrix.language != 'go'
-        name: Compress non-go SDK folder
+      - name: Compress NodeJS SDK folder
+        if: matrix.language == 'nodejs'
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
-      - if: matrix.language == 'go'
-        name: Compress go SDK folder
-        run: tar -zcf ${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}/ .
-      - name: Upload artifacts
+      - name: Upload NodeJS artifacts
+        if: matrix.language == 'nodejs'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
           path: ${{ github.workspace}}/${{ matrix.language }}.tar.gz
+      - name: Compress Other Lang SDK folder
+        if: matrix.language != 'nodejs'
+        run: tar -zcf sdk/${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}/ .
+      - name: Upload Other Lang artifacts
+        if: matrix.language != 'nodejs'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.language  }}-sdk.tar.gz
+          path: ${{ github.workspace}}/sdk/${{ matrix.language }}.tar.gz
     strategy:
       fail-fast: true
       matrix:
@@ -405,9 +412,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: python-sdk.tar.gz
-          path: ${{ github.workspace}}
+          path: ${{ github.workspace}}/sdk/
       - name: Uncompress Python SDK folder
-        run: tar -zxf ${{ github.workspace}}/python.tar.gz -C ${{github.workspace}}/python
+        run: tar -zxf ${{ github.workspace}}/sdk/python.tar.gz -C ${{github.workspace}}/sdk/python
       - name: Install dependencies
         run: make install_python_sdk
       - name: Configure AWS Credentials
@@ -517,9 +524,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: dotnet-sdk.tar.gz
-          path: ${{ github.workspace}}
+          path: ${{ github.workspace}}/sdk/
       - name: Uncompress DotNet SDK folder
-        run: tar -zxf ${{ github.workspace}}/dotnet.tar.gz -C ${{github.workspace}}/dotnet
+        run: tar -zxf ${{ github.workspace}}/sdk/dotnet.tar.gz -C ${{github.workspace}}/sdk/dotnet
       - name: Install dependencies
         run: make install_dotnet_sdk
       - run: dotnet nuget add source ${{ github.workspace }}/nuget
@@ -627,9 +634,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: go-sdk.tar.gz
-          path: ${{ github.workspace}}
+          path: ${{ github.workspace}}/sdk/
       - name: Uncompress Go SDK folder
-        run: tar -zxf ${{ github.workspace}}/go.tar.gz -C ${{github.workspace}}/sdk/go
+        run: tar -zxf ${{ github.workspace}}/sdk/go.tar.gz -C ${{github.workspace}}/sdk/go
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

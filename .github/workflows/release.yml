@@ -98,13 +98,24 @@ jobs:
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
         run: ./ci-scripts/ci/check-worktree-is-clean
-      - name: Compress SDK folder
+      - name: Compress NodeJS SDK folder
+        if: matrix.language == 'nodejs'
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
-      - name: Upload artifacts
+      - name: Upload NodeJS artifacts
+        if: matrix.language == 'nodejs'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
           path: ${{ github.workspace}}/${{ matrix.language }}.tar.gz
+      - name: Compress Other Lang SDK folder
+        if: matrix.language != 'nodejs'
+        run: tar -zcf sdk/${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}/ .
+      - name: Upload Other Lang artifacts
+        if: matrix.language != 'nodejs'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.language  }}-sdk.tar.gz
+          path: ${{ github.workspace}}/sdk/${{ matrix.language }}.tar.gz
     strategy:
       fail-fast: true
       matrix:
@@ -248,25 +259,25 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: python-sdk.tar.gz
-          path: ${{ github.workspace}}
+          path: ${{ github.workspace}}/sdk/
       - name: Uncompress Python SDK folder
-        run: tar -zxf ${{ github.workspace}}/python.tar.gz -C ${{github.workspace}}/python
+        run: tar -zxf ${{ github.workspace}}/sdk/python.tar.gz -C ${{github.workspace}}/sdk/python
       - name: Install Twine
         run: python -m pip install pip twine
       - name: Download DotNet SDK
         uses: actions/download-artifact@v2
         with:
           name: dotnet-sdk.tar.gz
-          path: ${{ github.workspace}}
+          path: ${{ github.workspace}}/sdk/
       - name: Uncompress DotNet SDK folder
-        run: tar -zxf ${{ github.workspace}}/dotnet.tar.gz -C ${{github.workspace}}/dotnet
+        run: tar -zxf ${{ github.workspace}}/sdk/dotnet.tar.gz -C ${{github.workspace}}/sdk/dotnet
       - name: Download Java SDK
         uses: actions/download-artifact@v2
         with:
           name: java-sdk.tar.gz
-          path: ${{ github.workspace}}
+          path: ${{ github.workspace}}/sdk/
       - name: Uncompress Java SDK folder
-        run: tar -zxf ${{ github.workspace}}/java.tar.gz -C ${{github.workspace}}/java
+        run: tar -zxf ${{ github.workspace}}/sdk/java.tar.gz -C ${{github.workspace}}/sdk/java
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         name: Publish SDK
@@ -275,7 +286,7 @@ jobs:
         uses: gradle/gradle-build-action@9b814496b50909128c6a52622b416c5ffa04db49
         with:
           arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository
-          build-root-directory: ./java
+          build-root-directory: ./sdk/java
           gradle-version: 7.4.1
   create_docs_build:
     name: Create docs build
@@ -476,9 +487,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: python-sdk.tar.gz
-          path: ${{ github.workspace}}/
+          path: ${{ github.workspace}}/sdk/
       - name: Uncompress Python SDK folder
-        run: tar -zxf ${{ github.workspace}}/python.tar.gz -C ${{github.workspace}}/python
+        run: tar -zxf ${{ github.workspace}}/sdk/python.tar.gz -C ${{github.workspace}}/sdk/python
       - name: Install dependencies
         run: make install_python_sdk
       - name: Install gotestfmt
@@ -584,9 +595,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: dotnet-sdk.tar.gz
-          path: ${{ github.workspace}}
+          path: ${{ github.workspace}}/sdk/
       - name: Uncompress DotNet SDK folder
-        run: tar -zxf ${{ github.workspace}}/dotnet.tar.gz -C ${{github.workspace}}/dotnet
+        run: tar -zxf ${{ github.workspace}}/sdk/dotnet.tar.gz -C ${{github.workspace}}/sdk/dotnet
       - name: Install dependencies
         run: make install_dotnet_sdk
       - name: Install gotestfmt
