@@ -1306,7 +1306,7 @@ func generateSchema() schema.PackageSpec {
 				"liftSingleValueMethodReturns":   true,
 			}),
 			"java": rawMessage(map[string]interface{}{
-				"packages": map[string]string{
+				"dependencies": map[string]string{
 					"com.pulumi:aws":        "5.4.0",
 					"com.pulumi:kubernetes": "3.19.1",
 				},

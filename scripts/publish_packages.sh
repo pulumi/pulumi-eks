@@ -64,7 +64,7 @@ publish() {
 
     ## Publish PIP Packages
     echo "Publishing Pip package to pypi as pulumi:"
-    pushd ${ROOT}/python/bin
+    pushd ${ROOT}/sdk/python/bin
     twine upload \
         -u "pulumi" -p "${PYPI_PASSWORD}" \
         "dist/*.tar.gz" \
@@ -73,7 +73,7 @@ publish() {
     popd
 
     ## Publish Nuget Package if any exists
-    find "${ROOT}/dotnet/bin/Debug/" -name 'Pulumi.*.nupkg' \
+    find "${ROOT}/sdk/dotnet/bin/Debug/" -name 'Pulumi.*.nupkg' \
             -exec dotnet nuget push -k "${NUGET_PUBLISH_KEY}" -s https://api.nuget.org/v3/index.json {} ';'
 }
 
