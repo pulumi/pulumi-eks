@@ -30,7 +30,7 @@ public final class ClusterNodeGroupOptions {
      * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
      * 
      */
-    private final @Nullable String amiId;
+    private @Nullable String amiId;
     /**
      * @return The AMI Type to use for the worker nodes.
      * 
@@ -39,7 +39,7 @@ public final class ClusterNodeGroupOptions {
      * Note: `amiType` and `gpu` are mutually exclusive.
      * 
      */
-    private final @Nullable String amiType;
+    private @Nullable String amiType;
     /**
      * @return The tags to apply to the NodeGroup&#39;s AutoScalingGroup in the CloudFormation Stack.
      * 
@@ -48,41 +48,41 @@ public final class ClusterNodeGroupOptions {
      * Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      * 
      */
-    private final @Nullable Map<String,String> autoScalingGroupTags;
+    private @Nullable Map<String,String> autoScalingGroupTags;
     /**
      * @return Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
      * 
      */
-    private final @Nullable String bootstrapExtraArgs;
+    private @Nullable String bootstrapExtraArgs;
     /**
      * @return The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
      * 
      * Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      * 
      */
-    private final @Nullable Map<String,String> cloudFormationTags;
+    private @Nullable Map<String,String> cloudFormationTags;
     /**
      * @return The ingress rule that gives node group access.
      * 
      */
-    private final @Nullable SecurityGroupRule clusterIngressRule;
+    private @Nullable SecurityGroupRule clusterIngressRule;
     /**
      * @return The number of worker nodes that should be running in the cluster. Defaults to 2.
      * 
      */
-    private final @Nullable Integer desiredCapacity;
+    private @Nullable Integer desiredCapacity;
     /**
      * @return Encrypt the root block device of the nodes in the node group.
      * 
      */
-    private final @Nullable Boolean encryptRootBlockDevice;
+    private @Nullable Boolean encryptRootBlockDevice;
     /**
      * @return Extra security groups to attach on all nodes in this worker node group.
      * 
      * This additional set of security groups captures any user application rules that will be needed for the nodes.
      * 
      */
-    private final @Nullable List<SecurityGroup> extraNodeSecurityGroups;
+    private @Nullable List<SecurityGroup> extraNodeSecurityGroups;
     /**
      * @return Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
      * 
@@ -95,59 +95,59 @@ public final class ClusterNodeGroupOptions {
      * - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
      * 
      */
-    private final @Nullable Boolean gpu;
+    private @Nullable Boolean gpu;
     /**
      * @return The ingress rule that gives node group access.
      * 
      */
-    private final @Nullable InstanceProfile instanceProfile;
+    private @Nullable InstanceProfile instanceProfile;
     /**
      * @return The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t2.medium&#34;.
      * 
      */
-    private final @Nullable String instanceType;
+    private @Nullable String instanceType;
     /**
      * @return Name of the key pair to use for SSH access to worker nodes.
      * 
      */
-    private final @Nullable String keyName;
+    private @Nullable String keyName;
     /**
      * @return Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
      * 
      */
-    private final @Nullable String kubeletExtraArgs;
+    private @Nullable String kubeletExtraArgs;
     /**
      * @return Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
      * 
      */
-    private final @Nullable Map<String,String> labels;
+    private @Nullable Map<String,String> labels;
     /**
      * @return The maximum number of worker nodes running in the cluster. Defaults to 2.
      * 
      */
-    private final @Nullable Integer maxSize;
+    private @Nullable Integer maxSize;
     /**
      * @return The minimum number of worker nodes running in the cluster. Defaults to 1.
      * 
      */
-    private final @Nullable Integer minSize;
+    private @Nullable Integer minSize;
     /**
      * @return Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
      * 
      */
-    private final @Nullable Boolean nodeAssociatePublicIpAddress;
+    private @Nullable Boolean nodeAssociatePublicIpAddress;
     /**
      * @return Public key material for SSH access to worker nodes. See allowed formats at:
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
      * If not provided, no SSH access is enabled on VMs.
      * 
      */
-    private final @Nullable String nodePublicKey;
+    private @Nullable String nodePublicKey;
     /**
      * @return The size in GiB of a cluster node&#39;s root volume. Defaults to 20.
      * 
      */
-    private final @Nullable Integer nodeRootVolumeSize;
+    private @Nullable Integer nodeRootVolumeSize;
     /**
      * @return The security group for the worker node group to communicate with the cluster.
      * 
@@ -159,100 +159,43 @@ public final class ClusterNodeGroupOptions {
      * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
      * 
      */
-    private final @Nullable SecurityGroup nodeSecurityGroup;
+    private @Nullable SecurityGroup nodeSecurityGroup;
     /**
      * @return The set of subnets to override and use for the worker node group.
      * 
      * Setting this option overrides which subnets to use for the worker node group, regardless if the cluster&#39;s `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
      * 
      */
-    private final @Nullable List<String> nodeSubnetIds;
+    private @Nullable List<String> nodeSubnetIds;
     /**
      * @return Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node signals its readiness to the managing CloudFormation stack. This code must be a typical user data script: critically it must begin with an interpreter directive (i.e. a `#!`).
      * 
      */
-    private final @Nullable String nodeUserData;
+    private @Nullable String nodeUserData;
     /**
      * @return User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
      * 
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
      * 
      */
-    private final @Nullable String nodeUserDataOverride;
+    private @Nullable String nodeUserDataOverride;
     /**
      * @return Bidding price for spot instance. If set, only spot instances will be added as worker node.
      * 
      */
-    private final @Nullable String spotPrice;
+    private @Nullable String spotPrice;
     /**
      * @return Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
      * 
      */
-    private final @Nullable Map<String,Taint> taints;
+    private @Nullable Map<String,Taint> taints;
     /**
      * @return Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
      * 
      */
-    private final @Nullable String version;
+    private @Nullable String version;
 
-    @CustomType.Constructor
-    private ClusterNodeGroupOptions(
-        @CustomType.Parameter("amiId") @Nullable String amiId,
-        @CustomType.Parameter("amiType") @Nullable String amiType,
-        @CustomType.Parameter("autoScalingGroupTags") @Nullable Map<String,String> autoScalingGroupTags,
-        @CustomType.Parameter("bootstrapExtraArgs") @Nullable String bootstrapExtraArgs,
-        @CustomType.Parameter("cloudFormationTags") @Nullable Map<String,String> cloudFormationTags,
-        @CustomType.Parameter("clusterIngressRule") @Nullable SecurityGroupRule clusterIngressRule,
-        @CustomType.Parameter("desiredCapacity") @Nullable Integer desiredCapacity,
-        @CustomType.Parameter("encryptRootBlockDevice") @Nullable Boolean encryptRootBlockDevice,
-        @CustomType.Parameter("extraNodeSecurityGroups") @Nullable List<SecurityGroup> extraNodeSecurityGroups,
-        @CustomType.Parameter("gpu") @Nullable Boolean gpu,
-        @CustomType.Parameter("instanceProfile") @Nullable InstanceProfile instanceProfile,
-        @CustomType.Parameter("instanceType") @Nullable String instanceType,
-        @CustomType.Parameter("keyName") @Nullable String keyName,
-        @CustomType.Parameter("kubeletExtraArgs") @Nullable String kubeletExtraArgs,
-        @CustomType.Parameter("labels") @Nullable Map<String,String> labels,
-        @CustomType.Parameter("maxSize") @Nullable Integer maxSize,
-        @CustomType.Parameter("minSize") @Nullable Integer minSize,
-        @CustomType.Parameter("nodeAssociatePublicIpAddress") @Nullable Boolean nodeAssociatePublicIpAddress,
-        @CustomType.Parameter("nodePublicKey") @Nullable String nodePublicKey,
-        @CustomType.Parameter("nodeRootVolumeSize") @Nullable Integer nodeRootVolumeSize,
-        @CustomType.Parameter("nodeSecurityGroup") @Nullable SecurityGroup nodeSecurityGroup,
-        @CustomType.Parameter("nodeSubnetIds") @Nullable List<String> nodeSubnetIds,
-        @CustomType.Parameter("nodeUserData") @Nullable String nodeUserData,
-        @CustomType.Parameter("nodeUserDataOverride") @Nullable String nodeUserDataOverride,
-        @CustomType.Parameter("spotPrice") @Nullable String spotPrice,
-        @CustomType.Parameter("taints") @Nullable Map<String,Taint> taints,
-        @CustomType.Parameter("version") @Nullable String version) {
-        this.amiId = amiId;
-        this.amiType = amiType;
-        this.autoScalingGroupTags = autoScalingGroupTags;
-        this.bootstrapExtraArgs = bootstrapExtraArgs;
-        this.cloudFormationTags = cloudFormationTags;
-        this.clusterIngressRule = clusterIngressRule;
-        this.desiredCapacity = desiredCapacity;
-        this.encryptRootBlockDevice = encryptRootBlockDevice;
-        this.extraNodeSecurityGroups = extraNodeSecurityGroups;
-        this.gpu = gpu;
-        this.instanceProfile = instanceProfile;
-        this.instanceType = instanceType;
-        this.keyName = keyName;
-        this.kubeletExtraArgs = kubeletExtraArgs;
-        this.labels = labels;
-        this.maxSize = maxSize;
-        this.minSize = minSize;
-        this.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
-        this.nodePublicKey = nodePublicKey;
-        this.nodeRootVolumeSize = nodeRootVolumeSize;
-        this.nodeSecurityGroup = nodeSecurityGroup;
-        this.nodeSubnetIds = nodeSubnetIds;
-        this.nodeUserData = nodeUserData;
-        this.nodeUserDataOverride = nodeUserDataOverride;
-        this.spotPrice = spotPrice;
-        this.taints = taints;
-        this.version = version;
-    }
-
+    private ClusterNodeGroupOptions() {}
     /**
      * @return The AMI ID to use for the worker nodes.
      * 
@@ -490,7 +433,7 @@ public final class ClusterNodeGroupOptions {
     public static Builder builder(ClusterNodeGroupOptions defaults) {
         return new Builder(defaults);
     }
-
+    @CustomType.Builder
     public static final class Builder {
         private @Nullable String amiId;
         private @Nullable String amiType;
@@ -519,11 +462,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable String spotPrice;
         private @Nullable Map<String,Taint> taints;
         private @Nullable String version;
-
-        public Builder() {
-    	      // Empty
-        }
-
+        public Builder() {}
         public Builder(ClusterNodeGroupOptions defaults) {
     	      Objects.requireNonNull(defaults);
     	      this.amiId = defaults.amiId;
@@ -555,38 +494,47 @@ public final class ClusterNodeGroupOptions {
     	      this.version = defaults.version;
         }
 
+        @CustomType.Setter
         public Builder amiId(@Nullable String amiId) {
             this.amiId = amiId;
             return this;
         }
+        @CustomType.Setter
         public Builder amiType(@Nullable String amiType) {
             this.amiType = amiType;
             return this;
         }
+        @CustomType.Setter
         public Builder autoScalingGroupTags(@Nullable Map<String,String> autoScalingGroupTags) {
             this.autoScalingGroupTags = autoScalingGroupTags;
             return this;
         }
+        @CustomType.Setter
         public Builder bootstrapExtraArgs(@Nullable String bootstrapExtraArgs) {
             this.bootstrapExtraArgs = bootstrapExtraArgs;
             return this;
         }
+        @CustomType.Setter
         public Builder cloudFormationTags(@Nullable Map<String,String> cloudFormationTags) {
             this.cloudFormationTags = cloudFormationTags;
             return this;
         }
+        @CustomType.Setter
         public Builder clusterIngressRule(@Nullable SecurityGroupRule clusterIngressRule) {
             this.clusterIngressRule = clusterIngressRule;
             return this;
         }
+        @CustomType.Setter
         public Builder desiredCapacity(@Nullable Integer desiredCapacity) {
             this.desiredCapacity = desiredCapacity;
             return this;
         }
+        @CustomType.Setter
         public Builder encryptRootBlockDevice(@Nullable Boolean encryptRootBlockDevice) {
             this.encryptRootBlockDevice = encryptRootBlockDevice;
             return this;
         }
+        @CustomType.Setter
         public Builder extraNodeSecurityGroups(@Nullable List<SecurityGroup> extraNodeSecurityGroups) {
             this.extraNodeSecurityGroups = extraNodeSecurityGroups;
             return this;
@@ -594,54 +542,67 @@ public final class ClusterNodeGroupOptions {
         public Builder extraNodeSecurityGroups(SecurityGroup... extraNodeSecurityGroups) {
             return extraNodeSecurityGroups(List.of(extraNodeSecurityGroups));
         }
+        @CustomType.Setter
         public Builder gpu(@Nullable Boolean gpu) {
             this.gpu = gpu;
             return this;
         }
+        @CustomType.Setter
         public Builder instanceProfile(@Nullable InstanceProfile instanceProfile) {
             this.instanceProfile = instanceProfile;
             return this;
         }
+        @CustomType.Setter
         public Builder instanceType(@Nullable String instanceType) {
             this.instanceType = instanceType;
             return this;
         }
+        @CustomType.Setter
         public Builder keyName(@Nullable String keyName) {
             this.keyName = keyName;
             return this;
         }
+        @CustomType.Setter
         public Builder kubeletExtraArgs(@Nullable String kubeletExtraArgs) {
             this.kubeletExtraArgs = kubeletExtraArgs;
             return this;
         }
+        @CustomType.Setter
         public Builder labels(@Nullable Map<String,String> labels) {
             this.labels = labels;
             return this;
         }
+        @CustomType.Setter
         public Builder maxSize(@Nullable Integer maxSize) {
             this.maxSize = maxSize;
             return this;
         }
+        @CustomType.Setter
         public Builder minSize(@Nullable Integer minSize) {
             this.minSize = minSize;
             return this;
         }
+        @CustomType.Setter
         public Builder nodeAssociatePublicIpAddress(@Nullable Boolean nodeAssociatePublicIpAddress) {
             this.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
             return this;
         }
+        @CustomType.Setter
         public Builder nodePublicKey(@Nullable String nodePublicKey) {
             this.nodePublicKey = nodePublicKey;
             return this;
         }
+        @CustomType.Setter
         public Builder nodeRootVolumeSize(@Nullable Integer nodeRootVolumeSize) {
             this.nodeRootVolumeSize = nodeRootVolumeSize;
             return this;
         }
+        @CustomType.Setter
         public Builder nodeSecurityGroup(@Nullable SecurityGroup nodeSecurityGroup) {
             this.nodeSecurityGroup = nodeSecurityGroup;
             return this;
         }
+        @CustomType.Setter
         public Builder nodeSubnetIds(@Nullable List<String> nodeSubnetIds) {
             this.nodeSubnetIds = nodeSubnetIds;
             return this;
@@ -649,27 +610,61 @@ public final class ClusterNodeGroupOptions {
         public Builder nodeSubnetIds(String... nodeSubnetIds) {
             return nodeSubnetIds(List.of(nodeSubnetIds));
         }
+        @CustomType.Setter
         public Builder nodeUserData(@Nullable String nodeUserData) {
             this.nodeUserData = nodeUserData;
             return this;
         }
+        @CustomType.Setter
         public Builder nodeUserDataOverride(@Nullable String nodeUserDataOverride) {
             this.nodeUserDataOverride = nodeUserDataOverride;
             return this;
         }
+        @CustomType.Setter
         public Builder spotPrice(@Nullable String spotPrice) {
             this.spotPrice = spotPrice;
             return this;
         }
+        @CustomType.Setter
         public Builder taints(@Nullable Map<String,Taint> taints) {
             this.taints = taints;
             return this;
         }
+        @CustomType.Setter
         public Builder version(@Nullable String version) {
             this.version = version;
             return this;
-        }        public ClusterNodeGroupOptions build() {
-            return new ClusterNodeGroupOptions(amiId, amiType, autoScalingGroupTags, bootstrapExtraArgs, cloudFormationTags, clusterIngressRule, desiredCapacity, encryptRootBlockDevice, extraNodeSecurityGroups, gpu, instanceProfile, instanceType, keyName, kubeletExtraArgs, labels, maxSize, minSize, nodeAssociatePublicIpAddress, nodePublicKey, nodeRootVolumeSize, nodeSecurityGroup, nodeSubnetIds, nodeUserData, nodeUserDataOverride, spotPrice, taints, version);
+        }
+        public ClusterNodeGroupOptions build() {
+            final var o = new ClusterNodeGroupOptions();
+            o.amiId = amiId;
+            o.amiType = amiType;
+            o.autoScalingGroupTags = autoScalingGroupTags;
+            o.bootstrapExtraArgs = bootstrapExtraArgs;
+            o.cloudFormationTags = cloudFormationTags;
+            o.clusterIngressRule = clusterIngressRule;
+            o.desiredCapacity = desiredCapacity;
+            o.encryptRootBlockDevice = encryptRootBlockDevice;
+            o.extraNodeSecurityGroups = extraNodeSecurityGroups;
+            o.gpu = gpu;
+            o.instanceProfile = instanceProfile;
+            o.instanceType = instanceType;
+            o.keyName = keyName;
+            o.kubeletExtraArgs = kubeletExtraArgs;
+            o.labels = labels;
+            o.maxSize = maxSize;
+            o.minSize = minSize;
+            o.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
+            o.nodePublicKey = nodePublicKey;
+            o.nodeRootVolumeSize = nodeRootVolumeSize;
+            o.nodeSecurityGroup = nodeSecurityGroup;
+            o.nodeSubnetIds = nodeSubnetIds;
+            o.nodeUserData = nodeUserData;
+            o.nodeUserDataOverride = nodeUserDataOverride;
+            o.spotPrice = spotPrice;
+            o.taints = taints;
+            o.version = version;
+            return o;
         }
     }
 }

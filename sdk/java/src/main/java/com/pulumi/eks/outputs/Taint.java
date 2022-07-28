@@ -13,21 +13,14 @@ public final class Taint {
      * @return The effect of the taint.
      * 
      */
-    private final String effect;
+    private String effect;
     /**
      * @return The value of the taint.
      * 
      */
-    private final String value;
+    private String value;
 
-    @CustomType.Constructor
-    private Taint(
-        @CustomType.Parameter("effect") String effect,
-        @CustomType.Parameter("value") String value) {
-        this.effect = effect;
-        this.value = value;
-    }
-
+    private Taint() {}
     /**
      * @return The effect of the taint.
      * 
@@ -50,30 +43,32 @@ public final class Taint {
     public static Builder builder(Taint defaults) {
         return new Builder(defaults);
     }
-
+    @CustomType.Builder
     public static final class Builder {
         private String effect;
         private String value;
-
-        public Builder() {
-    	      // Empty
-        }
-
+        public Builder() {}
         public Builder(Taint defaults) {
     	      Objects.requireNonNull(defaults);
     	      this.effect = defaults.effect;
     	      this.value = defaults.value;
         }
 
+        @CustomType.Setter
         public Builder effect(String effect) {
             this.effect = Objects.requireNonNull(effect);
             return this;
         }
+        @CustomType.Setter
         public Builder value(String value) {
             this.value = Objects.requireNonNull(value);
             return this;
-        }        public Taint build() {
-            return new Taint(effect, value);
+        }
+        public Taint build() {
+            final var o = new Taint();
+            o.effect = effect;
+            o.value = value;
+            return o;
         }
     }
 }

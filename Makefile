@@ -10,7 +10,7 @@ CODEGEN         := pulumi-gen-${PACK}
 WORKING_DIR     := $(shell pwd)
 
 JAVA_GEN 		 := pulumi-java-gen
-JAVA_GEN_VERSION := v0.5.0
+JAVA_GEN_VERSION := v0.5.2
 
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
@@ -40,17 +40,19 @@ bin/pulumi-java-gen::
 
 build_java:: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
 build_java:: bin/pulumi-java-gen schema
-	rm -rf java
-	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema provider/cmd/$(PROVIDER)/schema.json --out java --build gradle-nexus
-	cd java && \
+	rm -rf sdk/java
+	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema provider/cmd/$(PROVIDER)/schema.json --out sdk/java --build gradle-nexus
+	cd sdk/java && \
+		echo "module fake_java_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		gradle --console=plain build
 
 build_python:: PYPI_VERSION := $(shell pulumictl get version --language python)
 build_python:: schema
-	rm -rf python
-	cd provider/cmd/$(CODEGEN) && go run main.go python ../../../python ../$(PROVIDER)/schema.json $(VERSION)
-	cd python/ && \
-		cp ../README.md . && \
+	rm -rf sdk/python
+	cd provider/cmd/$(CODEGEN) && go run main.go python ../../../sdk/python ../$(PROVIDER)/schema.json $(VERSION)
+	cd sdk/python/ && \
+		echo "module fake_python_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
+		cp ../../README.md . && \
 		python3 setup.py clean --all 2>/dev/null && \
 		rm -rf ./bin/ ../python.bin/ && cp -R . ../python.bin && mv ../python.bin ./bin && \
 		sed -i.bak -e 's/^VERSION = .*/VERSION = "$(PYPI_VERSION)"/g' -e 's/^PLUGIN_VERSION = .*/PLUGIN_VERSION = "$(VERSION)"/g' ./bin/setup.py && \
@@ -59,14 +61,15 @@ build_python:: schema
 
 build_go:: VERSION := $(shell pulumictl get version --language generic)
 build_go:: schema
-	rm -rf go
+	rm -rf sdk/go
 	cd provider/cmd/$(CODEGEN) && go run main.go go ../../../sdk/go ../$(PROVIDER)/schema.json $(VERSION)
 
 build_dotnet:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
 build_dotnet:: schema
-	rm -rf dotnet
-	cd provider/cmd/$(CODEGEN) && go run main.go dotnet ../../../dotnet ../$(PROVIDER)/schema.json $(VERSION)
-	cd dotnet/ && \
+	rm -rf sdk/dotnet
+	cd provider/cmd/$(CODEGEN) && go run main.go dotnet ../../../sdk/dotnet ../$(PROVIDER)/schema.json $(VERSION)
+	cd sdk/dotnet/ && \
+		echo "module fake_dotnet_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		echo "${DOTNET_VERSION}" >version.txt && \
 		dotnet build /p:Version=${DOTNET_VERSION}
 
