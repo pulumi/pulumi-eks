@@ -50,7 +50,6 @@ func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
 		Env:                  []string{pathEnv},
 		ExpectRefreshChanges: true,
 		RetryFailedSteps:     true,
-		ReportStats:          integration.NewS3Reporter("us-west-2", "eng.pulumi.com", "testreports"),
 	}
 }
 
