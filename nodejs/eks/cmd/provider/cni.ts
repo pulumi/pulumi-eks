@@ -65,9 +65,6 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     if (args.customNetworkConfig) {
         env.push({ name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: args.customNetworkConfig ? "true" : "false" });
     }
-    if (args.externalSnat) {
-        env.push({ name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.externalSnat ? "true" : "false" });
-    }
     if (args.warmEniTarget) {
         env.push({ name: "WARM_ENI_TARGET", value: args.warmEniTarget.toString() });
     } else {
@@ -148,7 +145,13 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     } else {
         env.push({ name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: "false" });
     }
-    if (args.cniExternalSnat) {
+    // A user would usually specify externalSnat or cniExternalSnat NOT both
+    if (args.cniExternalSnat && args.externalSnat) {
+        throw new Error("Please specify one of `cniExternalSnat` or `externalSnat` in your VpcCniOptions");
+    }
+    if (args.externalSnat) {
+        env.push({ name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.externalSnat ? "true" : "false" });
+    } else if (args.cniExternalSnat) {
         env.push({ name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.cniExternalSnat ? "true" : "false" });
     } else {
         env.push({ name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: "false" });
