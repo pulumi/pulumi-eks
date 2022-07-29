@@ -1440,6 +1440,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["vpc_cni_options"] = vpc_cni_options
             __props__.__dict__["vpc_id"] = vpc_id
             __props__.__dict__["aws_provider"] = None
+            __props__.__dict__["cluster_name"] = None
             __props__.__dict__["core"] = None
             __props__.__dict__["default_node_group"] = None
             __props__.__dict__["eks_cluster"] = None
@@ -1460,6 +1461,11 @@ class Cluster(pulumi.ComponentResource):
         The AWS resource provider.
         """
         return pulumi.get(self, "aws_provider")
+
+    @property
+    @pulumi.getter(name="clusterName")
+    def cluster_name(self) -> pulumi.Output[str]:
+        return pulumi.get(self, "cluster_name")
 
     @property
     @pulumi.getter(name="clusterSecurityGroup")

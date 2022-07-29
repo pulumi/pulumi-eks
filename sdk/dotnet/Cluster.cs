@@ -21,6 +21,9 @@ namespace Pulumi.Eks
         [Output("awsProvider")]
         public Output<Pulumi.Aws.Provider> AwsProvider { get; private set; } = null!;
 
+        [Output("clusterName")]
+        public Output<string> ClusterName { get; private set; } = null!;
+
         /// <summary>
         /// The security group for the EKS cluster.
         /// </summary>

@@ -127,6 +127,7 @@ export interface KubeconfigOptions {
  */
 export interface CoreData {
     cluster: aws.eks.Cluster;
+    clusterName: pulumi.Output<string>;
     vpcId: pulumi.Output<string>;
     subnetIds: pulumi.Output<string[]>;
     endpoint: pulumi.Output<string>;
@@ -788,6 +789,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         privateSubnetIds: args.privateSubnetIds ? pulumi.output(args.privateSubnetIds) : undefined,
         clusterSecurityGroup: eksClusterSecurityGroup,
         cluster: eksCluster,
+        clusterName: eksCluster.name,
         endpoint: endpoint,
         nodeGroupOptions: nodeGroupOptions,
         kubeconfig: kubeconfig,
@@ -1386,6 +1388,12 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly core: CoreData;
 
     /**
+     * The name of the EKS Cluster. Exported for use with other
+     * kubernetes resources launched into the cluster
+     */
+    public readonly clusterName: pulumi.Output<string>;
+
+    /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
      * requested.
      *
@@ -1433,6 +1441,7 @@ export class Cluster extends pulumi.ComponentResource {
         this.clusterSecurityGroup = core.clusterSecurityGroup;
         this.eksCluster = core.cluster;
         this.instanceRoles = core.instanceRoles;
+        this.clusterName = core.clusterName;
 
         // Create default node group security group and cluster ingress rule.
         [this.nodeSecurityGroup, this.eksClusterIngressRule] = createNodeGroupSecurityGroup(name, {

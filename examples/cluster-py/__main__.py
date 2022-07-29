@@ -30,6 +30,9 @@ cluster2 = eks.Cluster('eks-cluster',
                               "authenticator",
                           ],)
 
+# Export the cluster' names.
+pulumi.export("cluster_1_name", cluster1.cluster_name)
+pulumi.export("cluster_2_name", cluster2.cluster_name)
 
 # Export the clusters' kubeconfig.
 pulumi.export("kubeconfig1", cluster1.kubeconfig)

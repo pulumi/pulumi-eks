@@ -16,6 +16,7 @@ import com.pulumi.eks.Utilities;
 import com.pulumi.eks.outputs.CoreData;
 import com.pulumi.eks.outputs.NodeGroupData;
 import java.lang.Object;
+import java.lang.String;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -39,6 +40,12 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<Provider> awsProvider() {
         return this.awsProvider;
+    }
+    @Export(name="clusterName", type=String.class, parameters={})
+    private Output<String> clusterName;
+
+    public Output<String> clusterName() {
+        return this.clusterName;
     }
     /**
      * The security group for the EKS cluster.

@@ -197,6 +197,9 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
 							Description: "The EKS cluster and its dependencies.",
 						},
+						"clusterName": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+						},
 					},
 					Required: []string{
 						"kubeconfig",
@@ -208,6 +211,7 @@ func generateSchema() schema.PackageSpec {
 						"eksClusterIngressRule",
 						"eksCluster",
 						"core",
+						"clusterName",
 					},
 				},
 				InputProperties: map[string]schema.PropertySpec{

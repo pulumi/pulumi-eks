@@ -19,7 +19,8 @@ type Cluster struct {
 	pulumi.ResourceState
 
 	// The AWS resource provider.
-	AwsProvider aws.ProviderOutput `pulumi:"awsProvider"`
+	AwsProvider aws.ProviderOutput  `pulumi:"awsProvider"`
+	ClusterName pulumi.StringOutput `pulumi:"clusterName"`
 	// The security group for the EKS cluster.
 	ClusterSecurityGroup ec2.SecurityGroupOutput `pulumi:"clusterSecurityGroup"`
 	// The EKS cluster and its dependencies.
@@ -643,6 +644,10 @@ func (o ClusterOutput) ToClusterOutputWithContext(ctx context.Context) ClusterOu
 // The AWS resource provider.
 func (o ClusterOutput) AwsProvider() aws.ProviderOutput {
 	return o.ApplyT(func(v *Cluster) aws.ProviderOutput { return v.AwsProvider }).(aws.ProviderOutput)
+}
+
+func (o ClusterOutput) ClusterName() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.ClusterName }).(pulumi.StringOutput)
 }
 
 // The security group for the EKS cluster.

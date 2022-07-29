@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAccAwsProfilePy(t *testing.T) {
@@ -61,16 +62,19 @@ func TestAccAwsProfileRolePy(t *testing.T) {
 func TestAccClusterPy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "cluster-py"),
-			// TODO: Temporarily skip the extra runtime validation due to test failure.
-			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-			// 	utils.RunEKSSmokeTest(t,
-			// 		info.Deployment.Resources,
-			// 		info.Outputs["kubeconfig1"],
-			// 		// TODO
-			// 		// info.Outputs["kubeconfig2"],
-			// 	)
-			// },
+			RunUpdateTest: false,
+			Dir:           filepath.Join(getCwd(t), "cluster-py"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				assert.NotEmpty(t, info.Outputs["cluster_1_name"])
+				assert.NotEmpty(t, info.Outputs["cluster_2_name"])
+				// TODO: Temporarily skip the extra runtime validation due to test failure.
+				// 	utils.RunEKSSmokeTest(t,
+				// 		info.Deployment.Resources,
+				// 		info.Outputs["kubeconfig1"],
+				// 		// TODO
+				// 		// info.Outputs["kubeconfig2"],
+				// 	)
+			},
 		})
 
 	integration.ProgramTest(t, &test)

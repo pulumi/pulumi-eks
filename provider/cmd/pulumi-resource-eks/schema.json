@@ -559,6 +559,9 @@
                     "$ref": "/aws/v5.4.0/schema.json#/provider",
                     "description": "The AWS resource provider."
                 },
+                "clusterName": {
+                    "type": "string"
+                },
                 "clusterSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the EKS cluster."
@@ -603,7 +606,8 @@
                 "nodeSecurityGroup",
                 "eksClusterIngressRule",
                 "eksCluster",
-                "core"
+                "core",
+                "clusterName"
             ],
             "inputProperties": {
                 "clusterSecurityGroup": {
