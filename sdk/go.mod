@@ -7,6 +7,5 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/pulumi/pulumi-aws/sdk/v5 v5.1.2
 	github.com/pulumi/pulumi-kubernetes/sdk/v3 v3.17.0
-	github.com/pulumi/pulumi/sdk/v3 v3.27.0
-	gopkg.in/yaml.v2 v2.3.0 // indirect
+	github.com/pulumi/pulumi/sdk/v3 v3.36.0
 )
