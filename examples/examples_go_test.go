@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//go:build go || all
 // +build go all
 
 package example
@@ -46,6 +47,9 @@ func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	goBase := base.With(integration.ProgramTestOptions{
 		Config: map[string]string{
 			"aws:region": region,
+		},
+		Dependencies: []string{
+			"github.com/pulumi/pulumi-eks/sdk",
 		},
 		Verbose: true,
 	})
