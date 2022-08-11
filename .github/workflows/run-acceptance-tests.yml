@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - master
+      - feature/1.x
 
 env:
   ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
