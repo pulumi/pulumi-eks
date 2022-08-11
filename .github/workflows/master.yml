@@ -641,6 +641,7 @@ name: master
   push:
     branches:
       - master
+      - feature/1.x
     paths-ignore:
       - CHANGELOG.md
     tags-ignore:
