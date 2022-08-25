@@ -40,7 +40,7 @@ class RandomSuffix extends pulumi.CustomResource {
 }
 
 /**
- * Appends a random string to the given input iff the input's value has changed and returns the result
+ * Appends a random string to the given input if the input's value has changed and returns the result
  * as an output.
  * @internal
  */
