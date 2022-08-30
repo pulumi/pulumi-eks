@@ -419,7 +419,28 @@ function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
 export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
-    checkArgs(args, core)
+    if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
+        throw new Error(`an instanceProfile is required`);
+    }
+
+    if (core.nodeGroupOptions.nodeSecurityGroup && args.nodeSecurityGroup) {
+        if (core.nodeSecurityGroupTags &&
+            core.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
+            throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`);
+        }
+    }
+
+    if (args.nodePublicKey && args.keyName) {
+        throw new Error("nodePublicKey and keyName are mutually exclusive. Choose a single approach");
+    }
+
+    if (args.amiId && args.gpu) {
+        throw new Error("amiId and gpu are mutually exclusive.");
+    }
+
+    if (args.nodeUserDataOverride && (args.nodeUserData || args.labels || args.taints || args.kubeletExtraArgs || args.bootstrapExtraArgs)) {
+        throw new Error("nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.");
+    }
 
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
     const cfnStackDeps: Array<pulumi.Resource> = [];
@@ -474,10 +495,69 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
 
     const cfnStackName = randomSuffix(`${name}-cfnStackName`, name, { parent });
 
-    const userdata = createUserData(cfnStackName, args, parent, eksCluster, true);
+    const awsRegion = pulumi.output(aws.getRegion({}, { parent, async: true }));
+    const userDataArg = args.nodeUserData || pulumi.output("");
+
+    const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
+    if (args.labels) {
+        const parts = [];
+        for (const key of Object.keys(args.labels)) {
+            parts.push(key + "=" + args.labels[key]);
+        }
+        if (parts.length > 0) {
+            kubeletExtraArgs.push("--node-labels=" + parts.join(","));
+        }
+    }
+    if (args.taints) {
+        const parts = [];
+        for (const key of Object.keys(args.taints)) {
+            const taint = args.taints[key];
+            parts.push(key + "=" + taint.value + ":" + taint.effect);
+        }
+        if (parts.length > 0) {
+            kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
+        }
+    }
+    let bootstrapExtraArgs = args.bootstrapExtraArgs ? (" " + args.bootstrapExtraArgs) : "";
+    if (kubeletExtraArgs.length === 1) {
+        // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
+        bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
+    } else if (kubeletExtraArgs.length > 1) {
+        bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
+    }
+
+    const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, cfnStackName, userDataArg])
+        .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
+            if (customUserData !== "") {
+                customUserData = `cat >/opt/user-data <<${stackName}-user-data
+${customUserData}
+${stackName}-user-data
+chmod +x /opt/user-data
+/opt/user-data
+`;
+            }
+
+            return `#!/bin/bash
+
+/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"${bootstrapExtraArgs}
+${customUserData}
+/opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
+`;
+        });
 
     const version = pulumi.output(args.version || core.cluster.version);
-    const amiId = getAMI(args, version, parent)
+
+    // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+    let amiId: pulumi.Input<string> | undefined = args.amiId;
+    if (!amiId) {
+        const amiType = args.amiType ?? args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
+        amiId = version.apply(v => {
+            const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
+            return pulumi.output(aws.ssm.getParameter({name: parameterName}, {parent, async: true})).value;
+        });
+    }
+
+    
 
     // Enable auto-assignment of public IP addresses on worker nodes for
     // backwards compatibility on existing EKS clusters launched with it
@@ -485,6 +565,28 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     let nodeAssociatePublicIpAddress: boolean = true;
     if (args.nodeAssociatePublicIpAddress !== undefined) {
         nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
+    }
+
+    const numeric = new RegExp("^\d+$");
+
+    if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
+        throw new Error("Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).");
+    }
+
+    if (args.nodeRootVolumeType === "io1" && args.nodeRootVolumeIops) {
+        if (!numeric.test(args.nodeRootVolumeIops?.toString())) {
+            throw new Error("Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.");
+        }
+    }
+
+    if (args.nodeRootVolumeThroughput && args.nodeRootVolumeType !== "gp3") {
+        throw new Error("Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).");
+    }
+
+    if (args.nodeRootVolumeType === "gp3" && args.nodeRootVolumeThroughput) {
+        if (!numeric.test(args.nodeRootVolumeThroughput?.toString())) {
+            throw new Error("Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.");
+        }
     }
 
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(`${name}-nodeLaunchConfiguration`, {
@@ -503,11 +605,21 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
             throughput: args.nodeRootVolumeThroughput,
             deleteOnTermination: args.nodeRootVolumeDeleteOnTermination ?? true,
         },
-        userData: userdata,
+        userData: args.nodeUserDataOverride || userdata,
     }, { parent, provider });
 
     // Compute the worker node group subnets to use from the various approaches.
-    const workerSubnetIds = getWorkerSubnetIds(args, core, parent)
+    let workerSubnetIds: pulumi.Output<string[]>;
+    if (args.nodeSubnetIds !== undefined) { // Use the specified override subnetIds.
+        workerSubnetIds = pulumi.output(args.nodeSubnetIds);
+    } else if (core.privateSubnetIds !== undefined) { // Use the specified private subnetIds.
+        workerSubnetIds = core.privateSubnetIds;
+    } else if (core.publicSubnetIds !== undefined) { // Use the specified public subnetIds.
+        workerSubnetIds = core.publicSubnetIds;
+    } else {
+        // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
+        workerSubnetIds = pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+    }
 
     // Configure the settings for the autoscaling group.
     if (args.desiredCapacity === undefined) {
@@ -598,7 +710,28 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
  export function createNodeGroup2(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
-    checkArgs(args, core);
+    if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
+        throw new Error(`an instanceProfile is required`);
+    }
+
+    if (core.nodeGroupOptions.nodeSecurityGroup && args.nodeSecurityGroup) {
+        if (core.nodeSecurityGroupTags &&
+            core.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
+            throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`);
+        }
+    }
+
+    if (args.nodePublicKey && args.keyName) {
+        throw new Error("nodePublicKey and keyName are mutually exclusive. Choose a single approach");
+    }
+
+    if (args.amiId && args.gpu) {
+        throw new Error("amiId and gpu are mutually exclusive.");
+    }
+
+    if (args.nodeUserDataOverride && (args.nodeUserData || args.labels || args.taints || args.kubeletExtraArgs || args.bootstrapExtraArgs)) {
+        throw new Error("nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.");
+    }
 
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
     const nodeGroupDeps: Array<pulumi.Resource> = [];
@@ -639,8 +772,9 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     const nodeSecurityGroupId = pulumi.all([nodeSecurityGroup.id, eksClusterIngressRule.id])
         .apply(([id]) => id);
 
-    // Collect the names of any extra, user-specific security groups.
+    // Collect the IDs of any extra, user-specific security groups.
     const extraNodeSecurityGroupIds = args.extraNodeSecurityGroups ? args.extraNodeSecurityGroups.map(sg => sg.id): [];
+    const extraNodeSecurityGroupNames = args.extraNodeSecurityGroups ? args.extraNodeSecurityGroups.map(sg => sg.name): [];
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
     let keyName = args.keyName;
@@ -651,13 +785,66 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         keyName = key.keyName;
     }
 
-    const userdataName = randomSuffix(`${name}`, name, { parent });
-    // LaunchTemplates require the userdata to already be base64.
-    const userdata = createUserData(userdataName, args, parent, eksCluster, false).apply(x => Buffer.from(x, "utf-8").toString("base64"));
+    const awsRegion = pulumi.output(aws.getRegion({}, { parent, async: true }));
+    const userDataArg = args.nodeUserData || pulumi.output("");
 
+    const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
+    if (args.labels) {
+        const parts = [];
+        for (const key of Object.keys(args.labels)) {
+            parts.push(key + "=" + args.labels[key]);
+        }
+        if (parts.length > 0) {
+            kubeletExtraArgs.push("--node-labels=" + parts.join(","));
+        }
+    }
+    if (args.taints) {
+        const parts = [];
+        for (const key of Object.keys(args.taints)) {
+            const taint = args.taints[key];
+            parts.push(key + "=" + taint.value + ":" + taint.effect);
+        }
+        if (parts.length > 0) {
+            kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
+        }
+    }
+    let bootstrapExtraArgs = args.bootstrapExtraArgs ? (" " + args.bootstrapExtraArgs) : "";
+    if (kubeletExtraArgs.length === 1) {
+        // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
+        bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
+    } else if (kubeletExtraArgs.length > 1) {
+        bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
+    }
+
+    const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, name, userDataArg])
+        .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
+            if (customUserData !== "") {
+                customUserData = `cat >/opt/user-data <<${stackName}-user-data
+${customUserData}
+${stackName}-user-data
+chmod +x /opt/user-data
+/opt/user-data
+`;
+            }
+
+            return `#!/bin/bash
+
+/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"${bootstrapExtraArgs}
+${customUserData}
+`;
+        }).apply(x => Buffer.from(x, "utf-8").toString("base64")); // Launch Templates require user data to be passed as base64.
 
     const version = pulumi.output(args.version || core.cluster.version);
-    const amiId = getAMI(args, version, parent)
+
+    // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+    let amiId: pulumi.Input<string> | undefined = args.amiId;
+    if (!amiId) {
+        const amiType = args.amiType ?? args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
+        amiId = version.apply(v => {
+            const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
+            return pulumi.output(aws.ssm.getParameter({name: parameterName}, {parent, async: true})).value;
+        });
+    }
 
     // Enable auto-assignment of public IP addresses on worker nodes for
     // backwards compatibility on existing EKS clusters launched with it
@@ -665,6 +852,28 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     let nodeAssociatePublicIpAddress: boolean = true;
     if (args.nodeAssociatePublicIpAddress !== undefined) {
         nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
+    }
+
+    const numeric = new RegExp("^\d+$");
+
+    if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
+        throw new Error("Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).");
+    }
+
+    if (args.nodeRootVolumeType === "io1" && args.nodeRootVolumeIops) {
+        if (!numeric.test(args.nodeRootVolumeIops?.toString())) {
+            throw new Error("Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.");
+        }
+    }
+
+    if (args.nodeRootVolumeThroughput && args.nodeRootVolumeType !== "gp3") {
+        throw new Error("Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).");
+    }
+
+    if (args.nodeRootVolumeType === "gp3" && args.nodeRootVolumeThroughput) {
+        if (!numeric.test(args.nodeRootVolumeThroughput?.toString())) {
+            throw new Error("Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.");
+        }
     }
 
     const marketOptions = args.spotPrice ? {
@@ -681,7 +890,7 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
         keyName: keyName,
         instanceMarketOptions: marketOptions,
         blockDeviceMappings: [{
-            deviceName: "/dev/sda1",
+            deviceName: "/dev/xvda", // TODO: This needs to change per AMI.
             ebs: {
                 encrypted: (args.nodeRootVolumeEncrypted ?? false) ? "true" : "false",
                 volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
@@ -699,9 +908,18 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     }, { parent, provider})
 
     // Compute the worker node group subnets to use from the various approaches.
-    const workerSubnetIds = getWorkerSubnetIds(args, core, parent)
+    let workerSubnetIds: pulumi.Output<string[]>;
+    if (args.nodeSubnetIds !== undefined) { // Use the specified override subnetIds.
+        workerSubnetIds = pulumi.output(args.nodeSubnetIds);
+    } else if (core.privateSubnetIds !== undefined) { // Use the specified private subnetIds.
+        workerSubnetIds = core.privateSubnetIds;
+    } else if (core.publicSubnetIds !== undefined) { // Use the specified public subnetIds.
+        workerSubnetIds = core.publicSubnetIds;
+    } else {
+        // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
+        workerSubnetIds = pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+    }
 
-    // Cast the tags from a single object into individual tag objects.
     const tags = pulumi.all([eksCluster.name, args.autoScalingGroupTags]).apply(([clusterName, tags]) => asgTags(clusterName, tags))
 
     const asGroup = new aws.autoscaling.Group(name, {
@@ -750,140 +968,6 @@ function asgTags(clusterName: string, tags: InputTags | undefined): awsInputs.au
     })
     
     return asgTags
-}
-
-function getWorkerSubnetIds(args: NodeGroupOptions, core: CoreData, parent: pulumi.ComponentResource): pulumi.Output<string[]> {
-    let workerSubnetIds: pulumi.Output<string[]>;
-    if (args.nodeSubnetIds !== undefined) { // Use the specified override subnetIds.
-        workerSubnetIds = pulumi.output(args.nodeSubnetIds);
-    } else if (core.privateSubnetIds !== undefined) { // Use the specified private subnetIds.
-        workerSubnetIds = core.privateSubnetIds;
-    } else if (core.publicSubnetIds !== undefined) { // Use the specified public subnetIds.
-        workerSubnetIds = core.publicSubnetIds;
-    } else {
-        // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
-        workerSubnetIds = pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
-    }
-    return workerSubnetIds
-}
-
-function checkArgs(args: NodeGroupOptions, core: CoreData) {
-    if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
-        throw new Error(`an instanceProfile is required`);
-    }
-
-    if (core.nodeGroupOptions.nodeSecurityGroup && args.nodeSecurityGroup) {
-        if (core.nodeSecurityGroupTags &&
-            core.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
-            throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`);
-        }
-    }
-
-    if (args.nodePublicKey && args.keyName) {
-        throw new Error("nodePublicKey and keyName are mutually exclusive. Choose a single approach");
-    }
-
-    if (args.amiId && args.gpu) {
-        throw new Error("amiId and gpu are mutually exclusive.");
-    }
-
-    if (args.nodeUserDataOverride && (args.nodeUserData || args.labels || args.taints || args.kubeletExtraArgs || args.bootstrapExtraArgs)) {
-        throw new Error("nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.");
-    }
-
-    const numeric = new RegExp("^\d+$");
-
-    if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
-        throw new Error("Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).");
-    }
-
-    if (args.nodeRootVolumeType === "io1" && args.nodeRootVolumeIops) {
-        if (!numeric.test(args.nodeRootVolumeIops?.toString())) {
-            throw new Error("Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.");
-        }
-    }
-
-    if (args.nodeRootVolumeThroughput && args.nodeRootVolumeType !== "gp3") {
-        throw new Error("Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).");
-    }
-
-    if (args.nodeRootVolumeType === "gp3" && args.nodeRootVolumeThroughput) {
-        if (!numeric.test(args.nodeRootVolumeThroughput?.toString())) {
-            throw new Error("Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.");
-        }
-    }
-}
-
-function getAMI(args: NodeGroupOptions, version: pulumi.Output<string>, parent: pulumi.ComponentResource): pulumi.Input<string> {
-        // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
-        let amiId: pulumi.Input<string> | undefined = args.amiId;
-        if (!amiId) {
-            const amiType = args.amiType ?? args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
-            amiId = version.apply(v => {
-                const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
-                return pulumi.output(aws.ssm.getParameter({name: parameterName}, {parent, async: true})).value;
-            });
-        }
-        return amiId
-}
-
-function createUserData(name: pulumi.Output<string>, args: NodeGroupOptions, parent: pulumi.ComponentResource, cluster: aws.eks.Cluster, cfn: boolean): pulumi.Output<string> {
-
-    if (args.nodeUserDataOverride) { 
-        return pulumi.output(args.nodeUserDataOverride)
-    }
-    const awsRegion = pulumi.output(aws.getRegion({}, { parent, async: true }));
-    const userDataArg = args.nodeUserData || pulumi.output("");
-
-    const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
-    if (args.labels) {
-        const parts = [];
-        for (const key of Object.keys(args.labels)) {
-            parts.push(key + "=" + args.labels[key]);
-        }
-        if (parts.length > 0) {
-            kubeletExtraArgs.push("--node-labels=" + parts.join(","));
-        }
-    }
-    if (args.taints) {
-        const parts = [];
-        for (const key of Object.keys(args.taints)) {
-            const taint = args.taints[key];
-            parts.push(key + "=" + taint.value + ":" + taint.effect);
-        }
-        if (parts.length > 0) {
-            kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
-        }
-    }
-    let bootstrapExtraArgs = args.bootstrapExtraArgs ? (" " + args.bootstrapExtraArgs) : "";
-    if (kubeletExtraArgs.length === 1) {
-        // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
-        bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
-    } else if (kubeletExtraArgs.length > 1) {
-        bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
-    }
-    const cfnSignal = pulumi.all([name, awsRegion]).apply(([name, region]) => {
-        cfn ? `/opt/aws/bin/cfn-signal --exit-code $? --stack ${name} --resource NodeGroup --region ${region}` : ""
-    })
-
-    return pulumi.all([cluster.name, cluster.endpoint, cluster.certificateAuthority, name, userDataArg])
-        .apply(([clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
-            if (customUserData !== "") {
-                customUserData = `cat >/opt/user-data <<${stackName}-user-data
-${customUserData}
-${stackName}-user-data
-chmod +x /opt/user-data
-/opt/user-data
-`;
-            }
-
-            return `#!/bin/bash
-
-/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}" ${bootstrapExtraArgs}
-${customUserData}
-${cfnSignal}
-`;
-        });
 }
 
 /** computeWorkerSubnets attempts to determine the subset of the given subnets to use for worker nodes.
