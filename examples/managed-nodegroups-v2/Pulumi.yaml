@@ -1,0 +1,3 @@
+name: managed-nodegroups-v2
+runtime: nodejs
+description: A minimal AWS TypeScript Pulumi program
