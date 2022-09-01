@@ -557,8 +557,6 @@ ${customUserData}
         });
     }
 
-    
-
     // Enable auto-assignment of public IP addresses on worker nodes for
     // backwards compatibility on existing EKS clusters launched with it
     // enabled. Defaults to `true`.
@@ -707,7 +705,7 @@ ${customUserData}
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
  */
- export function createNodeGroup2(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
+export function createNodeGroup2(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
     if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
@@ -881,12 +879,12 @@ ${customUserData}
         spotOptions: {
             maxPrice: args.spotPrice,
         },
-    } : {}
+    } : {};
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(`${name}-launchTemplate`, {
         imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
-        iamInstanceProfile: { arn: args.instanceProfile?.arn || core.nodeGroupOptions.instanceProfile?.arn,},
+        iamInstanceProfile: { arn: args.instanceProfile?.arn || core.nodeGroupOptions.instanceProfile?.arn },
         keyName: keyName,
         instanceMarketOptions: marketOptions,
         blockDeviceMappings: [{
@@ -898,14 +896,14 @@ ${customUserData}
                 iops: args.nodeRootVolumeIops,
                 throughput: args.nodeRootVolumeThroughput,
                 deleteOnTermination: (args.nodeRootVolumeDeleteOnTermination ?? true) ? "true" : "false",
-            }
+            },
         }],
         networkInterfaces: [{
             associatePublicIpAddress: String(nodeAssociatePublicIpAddress),
             securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         }],
         userData: userdata,
-    }, { parent, provider})
+    }, { parent, provider});
 
     // Compute the worker node group subnets to use from the various approaches.
     let workerSubnetIds: pulumi.Output<string[]>;
@@ -920,7 +918,7 @@ ${customUserData}
         workerSubnetIds = pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
     }
 
-    const tags = pulumi.all([eksCluster.name, args.autoScalingGroupTags]).apply(([clusterName, tags]) => asgTags(clusterName, tags))
+    const asgTags = pulumi.all([eksCluster.name, args.autoScalingGroupTags]).apply(([clusterName, tags]) => inputTagsToASGTags(clusterName, tags));
 
     const asGroup = new aws.autoscaling.Group(name, {
         name: name,
@@ -935,11 +933,11 @@ ${customUserData}
         instanceRefresh: {
             strategy: "Rolling",
             preferences: {
-                minHealthyPercentage: args.minRefreshPercentage ?? 50
+                minHealthyPercentage: args.minRefreshPercentage ?? 50,
             },
         },
-        tags: tags
-    }, {parent, dependsOn: nodeGroupDeps, provider})
+        tags: asgTags,
+    }, {parent, dependsOn: nodeGroupDeps, provider});
 
     return {
         nodeSecurityGroup: nodeSecurityGroup,
@@ -948,13 +946,13 @@ ${customUserData}
     };
 }
 
-function asgTags(clusterName: string, tags: InputTags | undefined): awsInputs.autoscaling.GroupTag[] {
+function inputTagsToASGTags(clusterName: string, tags: InputTags | undefined): awsInputs.autoscaling.GroupTag[] {
 
     const asgTags = Object.entries(tags??{}).map(([key, value]) => (<awsInputs.autoscaling.GroupTag>{
         key,
         value,
         propagateAtLaunch: true,
-    }))
+    }));
 
     asgTags.push({
         value: "owned",
@@ -965,9 +963,9 @@ function asgTags(clusterName: string, tags: InputTags | undefined): awsInputs.au
         key: "Name",
         value: clusterName + "-worker",
         propagateAtLaunch: true,
-    })
-    
-    return asgTags
+    });
+
+    return asgTags;
 }
 
 /** computeWorkerSubnets attempts to determine the subset of the given subnets to use for worker nodes.

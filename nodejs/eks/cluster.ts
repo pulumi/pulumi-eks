@@ -1459,8 +1459,8 @@ export class Cluster extends pulumi.ComponentResource {
                 cluster: core,
                 ...core.nodeGroupOptions,
             }, this);
-            if (this.defaultNodeGroup.cfnStack){
-            configDeps.push(this.defaultNodeGroup.cfnStack.id);
+            if (this.defaultNodeGroup.cfnStack) {
+                configDeps.push(this.defaultNodeGroup.cfnStack.id);
             }
         }
 
