@@ -30,6 +30,8 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 		r = &NodeGroup{}
 	case "eks:index:NodeGroupSecurityGroup":
 		r = &NodeGroupSecurityGroup{}
+	case "eks:index:NodeGroupV2":
+		r = &NodeGroupV2{}
 	case "eks:index:VpcCni":
 		r = &VpcCni{}
 	default:

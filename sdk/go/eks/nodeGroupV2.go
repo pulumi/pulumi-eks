@@ -8,29 +8,26 @@ import (
 	"reflect"
 
 	"github.com/pkg/errors"
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/cloudformation"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
 // NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
-type NodeGroup struct {
+type NodeGroupV2 struct {
 	pulumi.ResourceState
 
 	// The AutoScalingGroup name for the Node group.
 	AutoScalingGroupName pulumi.StringOutput `pulumi:"autoScalingGroupName"`
-	// The CloudFormation Stack which defines the Node AutoScalingGroup.
-	CfnStack cloudformation.StackOutput `pulumi:"cfnStack"`
 	// The additional security groups for the node group that captures user-specific rules.
 	ExtraNodeSecurityGroups ec2.SecurityGroupArrayOutput `pulumi:"extraNodeSecurityGroups"`
 	// The security group for the node group to communicate with the cluster.
 	NodeSecurityGroup ec2.SecurityGroupOutput `pulumi:"nodeSecurityGroup"`
 }
 
-// NewNodeGroup registers a new resource with the given unique name, arguments, and options.
-func NewNodeGroup(ctx *pulumi.Context,
-	name string, args *NodeGroupArgs, opts ...pulumi.ResourceOption) (*NodeGroup, error) {
+// NewNodeGroupV2 registers a new resource with the given unique name, arguments, and options.
+func NewNodeGroupV2(ctx *pulumi.Context,
+	name string, args *NodeGroupV2Args, opts ...pulumi.ResourceOption) (*NodeGroupV2, error) {
 	if args == nil {
 		return nil, errors.New("missing one or more required arguments")
 	}
@@ -38,15 +35,15 @@ func NewNodeGroup(ctx *pulumi.Context,
 	if args.Cluster == nil {
 		return nil, errors.New("invalid value for required argument 'Cluster'")
 	}
-	var resource NodeGroup
-	err := ctx.RegisterRemoteComponentResource("eks:index:NodeGroup", name, args, &resource, opts...)
+	var resource NodeGroupV2
+	err := ctx.RegisterRemoteComponentResource("eks:index:NodeGroupV2", name, args, &resource, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return &resource, nil
 }
 
-type nodeGroupArgs struct {
+type nodeGroupV2Args struct {
 	// The AMI ID to use for the worker nodes.
 	//
 	// Defaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.
@@ -145,8 +142,8 @@ type nodeGroupArgs struct {
 	Version *string `pulumi:"version"`
 }
 
-// The set of arguments for constructing a NodeGroup resource.
-type NodeGroupArgs struct {
+// The set of arguments for constructing a NodeGroupV2 resource.
+type NodeGroupV2Args struct {
 	// The AMI ID to use for the worker nodes.
 	//
 	// Defaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.
@@ -245,158 +242,153 @@ type NodeGroupArgs struct {
 	Version pulumi.StringPtrInput
 }
 
-func (NodeGroupArgs) ElementType() reflect.Type {
-	return reflect.TypeOf((*nodeGroupArgs)(nil)).Elem()
+func (NodeGroupV2Args) ElementType() reflect.Type {
+	return reflect.TypeOf((*nodeGroupV2Args)(nil)).Elem()
 }
 
-type NodeGroupInput interface {
+type NodeGroupV2Input interface {
 	pulumi.Input
 
-	ToNodeGroupOutput() NodeGroupOutput
-	ToNodeGroupOutputWithContext(ctx context.Context) NodeGroupOutput
+	ToNodeGroupV2Output() NodeGroupV2Output
+	ToNodeGroupV2OutputWithContext(ctx context.Context) NodeGroupV2Output
 }
 
-func (*NodeGroup) ElementType() reflect.Type {
-	return reflect.TypeOf((**NodeGroup)(nil)).Elem()
+func (*NodeGroupV2) ElementType() reflect.Type {
+	return reflect.TypeOf((**NodeGroupV2)(nil)).Elem()
 }
 
-func (i *NodeGroup) ToNodeGroupOutput() NodeGroupOutput {
-	return i.ToNodeGroupOutputWithContext(context.Background())
+func (i *NodeGroupV2) ToNodeGroupV2Output() NodeGroupV2Output {
+	return i.ToNodeGroupV2OutputWithContext(context.Background())
 }
 
-func (i *NodeGroup) ToNodeGroupOutputWithContext(ctx context.Context) NodeGroupOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupOutput)
+func (i *NodeGroupV2) ToNodeGroupV2OutputWithContext(ctx context.Context) NodeGroupV2Output {
+	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupV2Output)
 }
 
-// NodeGroupArrayInput is an input type that accepts NodeGroupArray and NodeGroupArrayOutput values.
-// You can construct a concrete instance of `NodeGroupArrayInput` via:
+// NodeGroupV2ArrayInput is an input type that accepts NodeGroupV2Array and NodeGroupV2ArrayOutput values.
+// You can construct a concrete instance of `NodeGroupV2ArrayInput` via:
 //
-//	NodeGroupArray{ NodeGroupArgs{...} }
-type NodeGroupArrayInput interface {
+//	NodeGroupV2Array{ NodeGroupV2Args{...} }
+type NodeGroupV2ArrayInput interface {
 	pulumi.Input
 
-	ToNodeGroupArrayOutput() NodeGroupArrayOutput
-	ToNodeGroupArrayOutputWithContext(context.Context) NodeGroupArrayOutput
+	ToNodeGroupV2ArrayOutput() NodeGroupV2ArrayOutput
+	ToNodeGroupV2ArrayOutputWithContext(context.Context) NodeGroupV2ArrayOutput
 }
 
-type NodeGroupArray []NodeGroupInput
+type NodeGroupV2Array []NodeGroupV2Input
 
-func (NodeGroupArray) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]*NodeGroup)(nil)).Elem()
+func (NodeGroupV2Array) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]*NodeGroupV2)(nil)).Elem()
 }
 
-func (i NodeGroupArray) ToNodeGroupArrayOutput() NodeGroupArrayOutput {
-	return i.ToNodeGroupArrayOutputWithContext(context.Background())
+func (i NodeGroupV2Array) ToNodeGroupV2ArrayOutput() NodeGroupV2ArrayOutput {
+	return i.ToNodeGroupV2ArrayOutputWithContext(context.Background())
 }
 
-func (i NodeGroupArray) ToNodeGroupArrayOutputWithContext(ctx context.Context) NodeGroupArrayOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupArrayOutput)
+func (i NodeGroupV2Array) ToNodeGroupV2ArrayOutputWithContext(ctx context.Context) NodeGroupV2ArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupV2ArrayOutput)
 }
 
-// NodeGroupMapInput is an input type that accepts NodeGroupMap and NodeGroupMapOutput values.
-// You can construct a concrete instance of `NodeGroupMapInput` via:
+// NodeGroupV2MapInput is an input type that accepts NodeGroupV2Map and NodeGroupV2MapOutput values.
+// You can construct a concrete instance of `NodeGroupV2MapInput` via:
 //
-//	NodeGroupMap{ "key": NodeGroupArgs{...} }
-type NodeGroupMapInput interface {
+//	NodeGroupV2Map{ "key": NodeGroupV2Args{...} }
+type NodeGroupV2MapInput interface {
 	pulumi.Input
 
-	ToNodeGroupMapOutput() NodeGroupMapOutput
-	ToNodeGroupMapOutputWithContext(context.Context) NodeGroupMapOutput
+	ToNodeGroupV2MapOutput() NodeGroupV2MapOutput
+	ToNodeGroupV2MapOutputWithContext(context.Context) NodeGroupV2MapOutput
 }
 
-type NodeGroupMap map[string]NodeGroupInput
+type NodeGroupV2Map map[string]NodeGroupV2Input
 
-func (NodeGroupMap) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]*NodeGroup)(nil)).Elem()
+func (NodeGroupV2Map) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]*NodeGroupV2)(nil)).Elem()
 }
 
-func (i NodeGroupMap) ToNodeGroupMapOutput() NodeGroupMapOutput {
-	return i.ToNodeGroupMapOutputWithContext(context.Background())
+func (i NodeGroupV2Map) ToNodeGroupV2MapOutput() NodeGroupV2MapOutput {
+	return i.ToNodeGroupV2MapOutputWithContext(context.Background())
 }
 
-func (i NodeGroupMap) ToNodeGroupMapOutputWithContext(ctx context.Context) NodeGroupMapOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupMapOutput)
+func (i NodeGroupV2Map) ToNodeGroupV2MapOutputWithContext(ctx context.Context) NodeGroupV2MapOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupV2MapOutput)
 }
 
-type NodeGroupOutput struct{ *pulumi.OutputState }
+type NodeGroupV2Output struct{ *pulumi.OutputState }
 
-func (NodeGroupOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((**NodeGroup)(nil)).Elem()
+func (NodeGroupV2Output) ElementType() reflect.Type {
+	return reflect.TypeOf((**NodeGroupV2)(nil)).Elem()
 }
 
-func (o NodeGroupOutput) ToNodeGroupOutput() NodeGroupOutput {
+func (o NodeGroupV2Output) ToNodeGroupV2Output() NodeGroupV2Output {
 	return o
 }
 
-func (o NodeGroupOutput) ToNodeGroupOutputWithContext(ctx context.Context) NodeGroupOutput {
+func (o NodeGroupV2Output) ToNodeGroupV2OutputWithContext(ctx context.Context) NodeGroupV2Output {
 	return o
 }
 
 // The AutoScalingGroup name for the Node group.
-func (o NodeGroupOutput) AutoScalingGroupName() pulumi.StringOutput {
-	return o.ApplyT(func(v *NodeGroup) pulumi.StringOutput { return v.AutoScalingGroupName }).(pulumi.StringOutput)
-}
-
-// The CloudFormation Stack which defines the Node AutoScalingGroup.
-func (o NodeGroupOutput) CfnStack() cloudformation.StackOutput {
-	return o.ApplyT(func(v *NodeGroup) cloudformation.StackOutput { return v.CfnStack }).(cloudformation.StackOutput)
+func (o NodeGroupV2Output) AutoScalingGroupName() pulumi.StringOutput {
+	return o.ApplyT(func(v *NodeGroupV2) pulumi.StringOutput { return v.AutoScalingGroupName }).(pulumi.StringOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.
-func (o NodeGroupOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput {
-	return o.ApplyT(func(v *NodeGroup) ec2.SecurityGroupArrayOutput { return v.ExtraNodeSecurityGroups }).(ec2.SecurityGroupArrayOutput)
+func (o NodeGroupV2Output) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput {
+	return o.ApplyT(func(v *NodeGroupV2) ec2.SecurityGroupArrayOutput { return v.ExtraNodeSecurityGroups }).(ec2.SecurityGroupArrayOutput)
 }
 
 // The security group for the node group to communicate with the cluster.
-func (o NodeGroupOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v *NodeGroup) ec2.SecurityGroupOutput { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+func (o NodeGroupV2Output) NodeSecurityGroup() ec2.SecurityGroupOutput {
+	return o.ApplyT(func(v *NodeGroupV2) ec2.SecurityGroupOutput { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
-type NodeGroupArrayOutput struct{ *pulumi.OutputState }
+type NodeGroupV2ArrayOutput struct{ *pulumi.OutputState }
 
-func (NodeGroupArrayOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]*NodeGroup)(nil)).Elem()
+func (NodeGroupV2ArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]*NodeGroupV2)(nil)).Elem()
 }
 
-func (o NodeGroupArrayOutput) ToNodeGroupArrayOutput() NodeGroupArrayOutput {
+func (o NodeGroupV2ArrayOutput) ToNodeGroupV2ArrayOutput() NodeGroupV2ArrayOutput {
 	return o
 }
 
-func (o NodeGroupArrayOutput) ToNodeGroupArrayOutputWithContext(ctx context.Context) NodeGroupArrayOutput {
+func (o NodeGroupV2ArrayOutput) ToNodeGroupV2ArrayOutputWithContext(ctx context.Context) NodeGroupV2ArrayOutput {
 	return o
 }
 
-func (o NodeGroupArrayOutput) Index(i pulumi.IntInput) NodeGroupOutput {
-	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *NodeGroup {
-		return vs[0].([]*NodeGroup)[vs[1].(int)]
-	}).(NodeGroupOutput)
+func (o NodeGroupV2ArrayOutput) Index(i pulumi.IntInput) NodeGroupV2Output {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *NodeGroupV2 {
+		return vs[0].([]*NodeGroupV2)[vs[1].(int)]
+	}).(NodeGroupV2Output)
 }
 
-type NodeGroupMapOutput struct{ *pulumi.OutputState }
+type NodeGroupV2MapOutput struct{ *pulumi.OutputState }
 
-func (NodeGroupMapOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]*NodeGroup)(nil)).Elem()
+func (NodeGroupV2MapOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]*NodeGroupV2)(nil)).Elem()
 }
 
-func (o NodeGroupMapOutput) ToNodeGroupMapOutput() NodeGroupMapOutput {
+func (o NodeGroupV2MapOutput) ToNodeGroupV2MapOutput() NodeGroupV2MapOutput {
 	return o
 }
 
-func (o NodeGroupMapOutput) ToNodeGroupMapOutputWithContext(ctx context.Context) NodeGroupMapOutput {
+func (o NodeGroupV2MapOutput) ToNodeGroupV2MapOutputWithContext(ctx context.Context) NodeGroupV2MapOutput {
 	return o
 }
 
-func (o NodeGroupMapOutput) MapIndex(k pulumi.StringInput) NodeGroupOutput {
-	return pulumi.All(o, k).ApplyT(func(vs []interface{}) *NodeGroup {
-		return vs[0].(map[string]*NodeGroup)[vs[1].(string)]
-	}).(NodeGroupOutput)
+func (o NodeGroupV2MapOutput) MapIndex(k pulumi.StringInput) NodeGroupV2Output {
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) *NodeGroupV2 {
+		return vs[0].(map[string]*NodeGroupV2)[vs[1].(string)]
+	}).(NodeGroupV2Output)
 }
 
 func init() {
-	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupInput)(nil)).Elem(), &NodeGroup{})
-	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupArrayInput)(nil)).Elem(), NodeGroupArray{})
-	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupMapInput)(nil)).Elem(), NodeGroupMap{})
-	pulumi.RegisterOutputType(NodeGroupOutput{})
-	pulumi.RegisterOutputType(NodeGroupArrayOutput{})
-	pulumi.RegisterOutputType(NodeGroupMapOutput{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupV2Input)(nil)).Elem(), &NodeGroupV2{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupV2ArrayInput)(nil)).Elem(), NodeGroupV2Array{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupV2MapInput)(nil)).Elem(), NodeGroupV2Map{})
+	pulumi.RegisterOutputType(NodeGroupV2Output{})
+	pulumi.RegisterOutputType(NodeGroupV2ArrayOutput{})
+	pulumi.RegisterOutputType(NodeGroupV2MapOutput{})
 }

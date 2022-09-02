@@ -120,7 +120,7 @@ type ClusterNodeGroupOptions struct {
 // ClusterNodeGroupOptionsInput is an input type that accepts ClusterNodeGroupOptionsArgs and ClusterNodeGroupOptionsOutput values.
 // You can construct a concrete instance of `ClusterNodeGroupOptionsInput` via:
 //
-//          ClusterNodeGroupOptionsArgs{...}
+//	ClusterNodeGroupOptionsArgs{...}
 type ClusterNodeGroupOptionsInput interface {
 	pulumi.Input
 
@@ -249,11 +249,11 @@ func (i ClusterNodeGroupOptionsArgs) ToClusterNodeGroupOptionsPtrOutputWithConte
 // ClusterNodeGroupOptionsPtrInput is an input type that accepts ClusterNodeGroupOptionsArgs, ClusterNodeGroupOptionsPtr and ClusterNodeGroupOptionsPtrOutput values.
 // You can construct a concrete instance of `ClusterNodeGroupOptionsPtrInput` via:
 //
-//          ClusterNodeGroupOptionsArgs{...}
+//	        ClusterNodeGroupOptionsArgs{...}
 //
-//  or:
+//	or:
 //
-//          nil
+//	        nil
 type ClusterNodeGroupOptionsPtrInput interface {
 	pulumi.Input
 
@@ -842,7 +842,7 @@ type CoreData struct {
 // CoreDataInput is an input type that accepts CoreDataArgs and CoreDataOutput values.
 // You can construct a concrete instance of `CoreDataInput` via:
 //
-//          CoreDataArgs{...}
+//	CoreDataArgs{...}
 type CoreDataInput interface {
 	pulumi.Input
 
@@ -997,7 +997,7 @@ type CreationRoleProvider struct {
 // CreationRoleProviderInput is an input type that accepts CreationRoleProviderArgs and CreationRoleProviderOutput values.
 // You can construct a concrete instance of `CreationRoleProviderInput` via:
 //
-//          CreationRoleProviderArgs{...}
+//	CreationRoleProviderArgs{...}
 type CreationRoleProviderInput interface {
 	pulumi.Input
 
@@ -1034,11 +1034,11 @@ func (i CreationRoleProviderArgs) ToCreationRoleProviderPtrOutputWithContext(ctx
 // CreationRoleProviderPtrInput is an input type that accepts CreationRoleProviderArgs, CreationRoleProviderPtr and CreationRoleProviderPtrOutput values.
 // You can construct a concrete instance of `CreationRoleProviderPtrInput` via:
 //
-//          CreationRoleProviderArgs{...}
+//	        CreationRoleProviderArgs{...}
 //
-//  or:
+//	or:
 //
-//          nil
+//	        nil
 type CreationRoleProviderPtrInput interface {
 	pulumi.Input
 
@@ -1154,12 +1154,12 @@ type FargateProfile struct {
 // The options can be used independently, or additively.
 //
 // A scoped kubeconfig is necessary for certain auth scenarios. For example:
-//   1. Assume a role on the default account caller,
-//   2. Use an AWS creds profile instead of the default account caller,
-//   3. Use an AWS creds creds profile instead of the default account caller,
-//      and then assume a given role on the profile. This scenario is also
-//      possible by only using a profile, iff the profile includes a role to
-//      assume in its settings.
+//  1. Assume a role on the default account caller,
+//  2. Use an AWS creds profile instead of the default account caller,
+//  3. Use an AWS creds creds profile instead of the default account caller,
+//     and then assume a given role on the profile. This scenario is also
+//     possible by only using a profile, iff the profile includes a role to
+//     assume in its settings.
 //
 // See for more details:
 // - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
@@ -1179,7 +1179,7 @@ type KubeconfigOptions struct {
 // KubeconfigOptionsInput is an input type that accepts KubeconfigOptionsArgs and KubeconfigOptionsOutput values.
 // You can construct a concrete instance of `KubeconfigOptionsInput` via:
 //
-//          KubeconfigOptionsArgs{...}
+//	KubeconfigOptionsArgs{...}
 type KubeconfigOptionsInput interface {
 	pulumi.Input
 
@@ -1192,12 +1192,12 @@ type KubeconfigOptionsInput interface {
 // The options can be used independently, or additively.
 //
 // A scoped kubeconfig is necessary for certain auth scenarios. For example:
-//   1. Assume a role on the default account caller,
-//   2. Use an AWS creds profile instead of the default account caller,
-//   3. Use an AWS creds creds profile instead of the default account caller,
-//      and then assume a given role on the profile. This scenario is also
-//      possible by only using a profile, iff the profile includes a role to
-//      assume in its settings.
+//  1. Assume a role on the default account caller,
+//  2. Use an AWS creds profile instead of the default account caller,
+//  3. Use an AWS creds creds profile instead of the default account caller,
+//     and then assume a given role on the profile. This scenario is also
+//     possible by only using a profile, iff the profile includes a role to
+//     assume in its settings.
 //
 // See for more details:
 // - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
@@ -1237,11 +1237,11 @@ func (i KubeconfigOptionsArgs) ToKubeconfigOptionsPtrOutputWithContext(ctx conte
 // KubeconfigOptionsPtrInput is an input type that accepts KubeconfigOptionsArgs, KubeconfigOptionsPtr and KubeconfigOptionsPtrOutput values.
 // You can construct a concrete instance of `KubeconfigOptionsPtrInput` via:
 //
-//          KubeconfigOptionsArgs{...}
+//	        KubeconfigOptionsArgs{...}
 //
-//  or:
+//	or:
 //
-//          nil
+//	        nil
 type KubeconfigOptionsPtrInput interface {
 	pulumi.Input
 
@@ -1272,12 +1272,12 @@ func (i *kubeconfigOptionsPtrType) ToKubeconfigOptionsPtrOutputWithContext(ctx c
 // The options can be used independently, or additively.
 //
 // A scoped kubeconfig is necessary for certain auth scenarios. For example:
-//   1. Assume a role on the default account caller,
-//   2. Use an AWS creds profile instead of the default account caller,
-//   3. Use an AWS creds creds profile instead of the default account caller,
-//      and then assume a given role on the profile. This scenario is also
-//      possible by only using a profile, iff the profile includes a role to
-//      assume in its settings.
+//  1. Assume a role on the default account caller,
+//  2. Use an AWS creds profile instead of the default account caller,
+//  3. Use an AWS creds creds profile instead of the default account caller,
+//     and then assume a given role on the profile. This scenario is also
+//     possible by only using a profile, iff the profile includes a role to
+//     assume in its settings.
 //
 // See for more details:
 // - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
@@ -1493,7 +1493,7 @@ type RoleMapping struct {
 // RoleMappingInput is an input type that accepts RoleMappingArgs and RoleMappingOutput values.
 // You can construct a concrete instance of `RoleMappingInput` via:
 //
-//          RoleMappingArgs{...}
+//	RoleMappingArgs{...}
 type RoleMappingInput interface {
 	pulumi.Input
 
@@ -1526,7 +1526,7 @@ func (i RoleMappingArgs) ToRoleMappingOutputWithContext(ctx context.Context) Rol
 // RoleMappingArrayInput is an input type that accepts RoleMappingArray and RoleMappingArrayOutput values.
 // You can construct a concrete instance of `RoleMappingArrayInput` via:
 //
-//          RoleMappingArray{ RoleMappingArgs{...} }
+//	RoleMappingArray{ RoleMappingArgs{...} }
 type RoleMappingArrayInput interface {
 	pulumi.Input
 
@@ -1639,7 +1639,7 @@ type Taint struct {
 // TaintInput is an input type that accepts TaintArgs and TaintOutput values.
 // You can construct a concrete instance of `TaintInput` via:
 //
-//          TaintArgs{...}
+//	TaintArgs{...}
 type TaintInput interface {
 	pulumi.Input
 
@@ -1670,7 +1670,7 @@ func (i TaintArgs) ToTaintOutputWithContext(ctx context.Context) TaintOutput {
 // TaintMapInput is an input type that accepts TaintMap and TaintMapOutput values.
 // You can construct a concrete instance of `TaintMapInput` via:
 //
-//          TaintMap{ "key": TaintArgs{...} }
+//	TaintMap{ "key": TaintArgs{...} }
 type TaintMapInput interface {
 	pulumi.Input
 
@@ -1750,7 +1750,7 @@ type UserMapping struct {
 // UserMappingInput is an input type that accepts UserMappingArgs and UserMappingOutput values.
 // You can construct a concrete instance of `UserMappingInput` via:
 //
-//          UserMappingArgs{...}
+//	UserMappingArgs{...}
 type UserMappingInput interface {
 	pulumi.Input
 
@@ -1783,7 +1783,7 @@ func (i UserMappingArgs) ToUserMappingOutputWithContext(ctx context.Context) Use
 // UserMappingArrayInput is an input type that accepts UserMappingArray and UserMappingArrayOutput values.
 // You can construct a concrete instance of `UserMappingArrayInput` via:
 //
-//          UserMappingArray{ UserMappingArgs{...} }
+//	UserMappingArray{ UserMappingArgs{...} }
 type UserMappingArrayInput interface {
 	pulumi.Input
 
@@ -1930,7 +1930,7 @@ type VpcCniOptions struct {
 // VpcCniOptionsInput is an input type that accepts VpcCniOptionsArgs and VpcCniOptionsOutput values.
 // You can construct a concrete instance of `VpcCniOptionsInput` via:
 //
-//          VpcCniOptionsArgs{...}
+//	VpcCniOptionsArgs{...}
 type VpcCniOptionsInput interface {
 	pulumi.Input
 
@@ -2033,11 +2033,11 @@ func (i VpcCniOptionsArgs) ToVpcCniOptionsPtrOutputWithContext(ctx context.Conte
 // VpcCniOptionsPtrInput is an input type that accepts VpcCniOptionsArgs, VpcCniOptionsPtr and VpcCniOptionsPtrOutput values.
 // You can construct a concrete instance of `VpcCniOptionsPtrInput` via:
 //
-//          VpcCniOptionsArgs{...}
+//	        VpcCniOptionsArgs{...}
 //
-//  or:
+//	or:
 //
-//          nil
+//	        nil
 type VpcCniOptionsPtrInput interface {
 	pulumi.Input
 

@@ -10,6 +10,7 @@ from .cluster_creation_role_provider import *
 from .managed_node_group import *
 from .node_group import *
 from .node_group_security_group import *
+from .node_group_v2 import *
 from .provider import *
 from .vpc_cni import *
 from ._inputs import *
@@ -27,6 +28,7 @@ _utilities.register(
    "eks:index:ManagedNodeGroup": "ManagedNodeGroup",
    "eks:index:NodeGroup": "NodeGroup",
    "eks:index:NodeGroupSecurityGroup": "NodeGroupSecurityGroup",
+   "eks:index:NodeGroupV2": "NodeGroupV2",
    "eks:index:VpcCni": "VpcCni"
   }
  }
