@@ -1225,6 +1225,167 @@
             ],
             "isComponent": true
         },
+        "eks:index:NodeGroupV2": {
+            "description": "NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.",
+            "properties": {
+                "autoScalingGroupName": {
+                    "type": "string",
+                    "description": "The AutoScalingGroup name for the Node group."
+                },
+                "extraNodeSecurityGroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                    },
+                    "description": "The additional security groups for the node group that captures user-specific rules."
+                },
+                "nodeSecurityGroup": {
+                    "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "description": "The security group for the node group to communicate with the cluster."
+                }
+            },
+            "required": [
+                "nodeSecurityGroup",
+                "extraNodeSecurityGroups",
+                "autoScalingGroupName"
+            ],
+            "inputProperties": {
+                "amiId": {
+                    "type": "string",
+                    "description": "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.\n\nNote: `amiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html."
+                },
+                "amiType": {
+                    "type": "string",
+                    "description": "The AMI Type to use for the worker nodes. \n\nOnly applicable when setting an AMI ID that is of type `arm64`. \n\nNote: `amiType` and `gpu` are mutually exclusive.\n\n"
+                },
+                "autoScalingGroupTags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.\n\nPer AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
+                },
+                "bootstrapExtraArgs": {
+                    "type": "string",
+                    "description": "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters."
+                },
+                "cloudFormationTags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "The tags to apply to the CloudFormation Stack of the Worker NodeGroup.\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
+                },
+                "cluster": {
+                    "$ref": "#/types/eks:index:CoreData",
+                    "description": "The target EKS cluster."
+                },
+                "clusterIngressRule": {
+                    "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "description": "The ingress rule that gives node group access."
+                },
+                "desiredCapacity": {
+                    "type": "integer",
+                    "description": "The number of worker nodes that should be running in the cluster. Defaults to 2."
+                },
+                "encryptRootBlockDevice": {
+                    "type": "boolean",
+                    "description": "Encrypt the root block device of the nodes in the node group."
+                },
+                "extraNodeSecurityGroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                    },
+                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
+                },
+                "gpu": {
+                    "type": "boolean",
+                    "description": "Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\nNote: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html"
+                },
+                "instanceProfile": {
+                    "$ref": "/aws/v5.4.0/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                    "description": "The ingress rule that gives node group access."
+                },
+                "instanceType": {
+                    "type": "string",
+                    "description": "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\"."
+                },
+                "keyName": {
+                    "type": "string",
+                    "description": "Name of the key pair to use for SSH access to worker nodes."
+                },
+                "kubeletExtraArgs": {
+                    "type": "string",
+                    "description": "Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`."
+                },
+                "labels": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument."
+                },
+                "maxSize": {
+                    "type": "integer",
+                    "description": "The maximum number of worker nodes running in the cluster. Defaults to 2."
+                },
+                "minSize": {
+                    "type": "integer",
+                    "description": "The minimum number of worker nodes running in the cluster. Defaults to 1."
+                },
+                "nodeAssociatePublicIpAddress": {
+                    "type": "boolean",
+                    "description": "Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs."
+                },
+                "nodePublicKey": {
+                    "type": "string",
+                    "description": "Public key material for SSH access to worker nodes. See allowed formats at:\nhttps://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html\nIf not provided, no SSH access is enabled on VMs."
+                },
+                "nodeRootVolumeSize": {
+                    "type": "integer",
+                    "description": "The size in GiB of a cluster node's root volume. Defaults to 20."
+                },
+                "nodeSecurityGroup": {
+                    "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
+                },
+                "nodeSubnetIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The set of subnets to override and use for the worker node group.\n\nSetting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set."
+                },
+                "nodeUserData": {
+                    "type": "string",
+                    "description": "Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node signals its readiness to the managing CloudFormation stack. This code must be a typical user data script: critically it must begin with an interpreter directive (i.e. a `#!`)."
+                },
+                "nodeUserDataOverride": {
+                    "type": "string",
+                    "description": "User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html"
+                },
+                "spotPrice": {
+                    "type": "string",
+                    "description": "Bidding price for spot instance. If set, only spot instances will be added as worker node."
+                },
+                "taints": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/types/eks:index:Taint"
+                    },
+                    "description": "Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used."
+                }
+            },
+            "requiredInputs": [
+                "cluster"
+            ],
+            "isComponent": true
+        },
         "eks:index:VpcCni": {
             "description": "VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.",
             "inputProperties": {
