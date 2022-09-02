@@ -288,6 +288,10 @@ export interface NodeGroupBaseOptions {
      */
     cloudFormationTags?: InputTags;
 
+    /**
+     * The minimum amount of instances that should remain available during an instance refresh,
+     * expressed as a percentage.
+     */
     minRefreshPercentage?: number;
 }
 
@@ -881,6 +885,16 @@ ${customUserData}
         },
     } : {};
 
+    const device = pulumi.output(amiId).apply(id => aws.ec2.getAmi({
+        owners: ["self", "amazon"],
+        filters: [
+            {
+                name: "image-ids",
+                values: [id],
+            },
+        ],
+    })).blockDeviceMappings[0].deviceName;
+
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(`${name}-launchTemplate`, {
         imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
@@ -888,7 +902,7 @@ ${customUserData}
         keyName: keyName,
         instanceMarketOptions: marketOptions,
         blockDeviceMappings: [{
-            deviceName: "/dev/xvda", // TODO: This needs to change per AMI.
+            deviceName: device,
             ebs: {
                 encrypted: (args.nodeRootVolumeEncrypted ?? false) ? "true" : "false",
                 volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
