@@ -817,6 +817,37 @@ func generateSchema() schema.PackageSpec {
 				InputProperties: nodeGroupProperties(true /*cluster*/),
 				RequiredInputs:  []string{"cluster"},
 			},
+			"eks:index:NodeGroupV2": {
+				IsComponent: true,
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Description: "NodeGroup is a component that wraps the AWS EC2 instances that provide compute " +
+						"capacity for an EKS cluster.",
+					Properties: map[string]schema.PropertySpec{
+						"nodeSecurityGroup": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							Description: "The security group for the node group to communicate with the cluster.",
+						},
+						"extraNodeSecurityGroups": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							},
+							Description: "The additional security groups for the node group that captures user-specific rules.",
+						},
+						"autoScalingGroupName": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The AutoScalingGroup name for the Node group.",
+						},
+					},
+					Required: []string{
+						"nodeSecurityGroup",
+						"extraNodeSecurityGroups",
+						"autoScalingGroupName",
+					},
+				},
+				InputProperties: nodeGroupProperties(true /*cluster*/),
+				RequiredInputs:  []string{"cluster"},
+			},
 			"eks:index:NodeGroupSecurityGroup": {
 				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
