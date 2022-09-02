@@ -86,7 +86,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16.x
+          go-version: 1.19.x
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.1.0
         with:
@@ -205,7 +205,7 @@ jobs:
         dotnetversion:
           - 3.1
         goversion:
-          - 1.18.x
+          - 1.19.x
         language:
           - nodejs
           - python
@@ -314,7 +314,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.18.x
+          - 1.19.x
         language:
           - nodejs
         nodeversion:
@@ -443,7 +443,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.18.x
+          - 1.19.x
         pythonversion:
           - 3.8
         nodeversion:
@@ -556,7 +556,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.18.x
+          - 1.19.x
         dotnetversion:
           - 3.1
         nodeversion:
@@ -663,7 +663,7 @@ jobs:
       fail-fast: false
       matrix:
         goversion:
-          - 1.18.x
+          - 1.19.x
         pythonversion:
           - 3.8
         nodeversion:
