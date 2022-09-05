@@ -168,7 +168,7 @@ class ClusterArgs:
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
                
-               Also consider setting `nodeAssociatePublicIpAddress: true` for fully private workers.
+               Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.
         :param pulumi.Input['KubeconfigOptionsArgs'] provider_credential_opts: The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.
                
                This is required for certain auth scenarios. For example:
@@ -830,7 +830,7 @@ class ClusterArgs:
 
         See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
 
-        Also consider setting `nodeAssociatePublicIpAddress: true` for fully private workers.
+        Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.
         """
         return pulumi.get(self, "private_subnet_ids")
 
@@ -1226,7 +1226,7 @@ class Cluster(pulumi.ComponentResource):
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
                
-               Also consider setting `nodeAssociatePublicIpAddress: true` for fully private workers.
+               Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.
         :param pulumi.Input[pulumi.InputType['KubeconfigOptionsArgs']] provider_credential_opts: The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.
                
                This is required for certain auth scenarios. For example:
