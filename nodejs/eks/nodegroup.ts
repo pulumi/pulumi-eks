@@ -93,7 +93,7 @@ export interface NodeGroupBaseOptions {
      * Encrypt the root block device of the nodes in the node group.
      *
      * @deprecated This option has been deprecated due to a misspelling.
-     * Use the correct encryptRootBlockDevice option instead.
+     * Use the correct nodeRootVolumeEncrypted option instead.
      */
     encryptRootBockDevice?: pulumi.Input<boolean>;
 
@@ -287,13 +287,9 @@ export interface NodeGroupBaseOptions {
      * `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      */
     cloudFormationTags?: InputTags;
-
-    /**
-     * The minimum amount of instances that should remain available during an instance refresh,
-     * expressed as a percentage.
-     */
-    minRefreshPercentage?: number;
 }
+
+
 
 /**
  * NodeGroupOptions describes the configuration options accepted by a NodeGroup component.
@@ -303,6 +299,16 @@ export interface NodeGroupOptions extends NodeGroupBaseOptions {
      * The target EKS cluster.
      */
     cluster: Cluster | CoreData;
+}
+
+export interface NodeGroupV2Options extends NodeGroupOptions {
+    /**
+     * The minimum amount of instances that should remain available during an instance refresh,
+     * expressed as a percentage.
+     * 
+     * Defaults to 50.
+     */
+     minRefreshPercentage?: number;
 }
 
 /**
@@ -380,11 +386,6 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupDa
     public readonly extraNodeSecurityGroups: aws.ec2.SecurityGroup[];
 
     /**
-     * The CloudFormation Stack which defines the Node AutoScalingGroup.
-     */
-    cfnStack?: aws.cloudformation.Stack;
-
-    /**
      * The AutoScalingGroup name for the Node group.
      */
     autoScalingGroupName: pulumi.Output<string>;
@@ -400,9 +401,8 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupDa
     constructor(name: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:NodeGroupV2", name, args, opts);
 
-        const group = createNodeGroup2(name, args, this, opts?.provider);
+        const group = createNodeGroupV2(name, args, this, opts?.provider);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
-        this.cfnStack = group.cfnStack;
         this.autoScalingGroupName = group.autoScalingGroupName;
         this.registerOutputs(undefined);
     }
@@ -709,7 +709,7 @@ ${customUserData}
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
  */
-export function createNodeGroup2(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
+export function createNodeGroupV2(name: string, args: NodeGroupV2Options, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
     if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
@@ -889,7 +889,7 @@ ${customUserData}
         owners: ["self", "amazon"],
         filters: [
             {
-                name: "image-ids",
+                name: "image-id",
                 values: [id],
             },
         ],
@@ -933,6 +933,8 @@ ${customUserData}
     }
 
     const asgTags = pulumi.all([eksCluster.name, args.autoScalingGroupTags]).apply(([clusterName, tags]) => inputTagsToASGTags(clusterName, tags));
+    
+    const launchTemplateVersion = nodeLaunchTemplate.latestVersion.apply(v => v.toString())
 
     const asGroup = new aws.autoscaling.Group(name, {
         name: name,
@@ -941,7 +943,7 @@ ${customUserData}
         desiredCapacity: args?.desiredCapacity ?? 2,
         launchTemplate: {
             name: nodeLaunchTemplate.name,
-            version: "$Latest",
+            version: launchTemplateVersion,
         },
         vpcZoneIdentifiers: workerSubnetIds,
         instanceRefresh: {
