@@ -268,7 +268,7 @@ func generateSchema() schema.PackageSpec {
 							"https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of " +
 							"`subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually " +
 							"exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.\n\n" +
-							"Also consider setting `nodeAssociatePublicIpAddress: true` for fully private workers.",
+							"Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.",
 					},
 					"nodeGroupOptions": {
 						TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:ClusterNodeGroupOptions"},

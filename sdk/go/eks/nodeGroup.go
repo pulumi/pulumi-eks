@@ -271,7 +271,7 @@ func (i *NodeGroup) ToNodeGroupOutputWithContext(ctx context.Context) NodeGroupO
 // NodeGroupArrayInput is an input type that accepts NodeGroupArray and NodeGroupArrayOutput values.
 // You can construct a concrete instance of `NodeGroupArrayInput` via:
 //
-//          NodeGroupArray{ NodeGroupArgs{...} }
+//	NodeGroupArray{ NodeGroupArgs{...} }
 type NodeGroupArrayInput interface {
 	pulumi.Input
 
@@ -296,7 +296,7 @@ func (i NodeGroupArray) ToNodeGroupArrayOutputWithContext(ctx context.Context) N
 // NodeGroupMapInput is an input type that accepts NodeGroupMap and NodeGroupMapOutput values.
 // You can construct a concrete instance of `NodeGroupMapInput` via:
 //
-//          NodeGroupMap{ "key": NodeGroupArgs{...} }
+//	NodeGroupMap{ "key": NodeGroupArgs{...} }
 type NodeGroupMapInput interface {
 	pulumi.Input
 
