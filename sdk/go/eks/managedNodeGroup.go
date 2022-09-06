@@ -185,7 +185,7 @@ func (i *ManagedNodeGroup) ToManagedNodeGroupOutputWithContext(ctx context.Conte
 // ManagedNodeGroupArrayInput is an input type that accepts ManagedNodeGroupArray and ManagedNodeGroupArrayOutput values.
 // You can construct a concrete instance of `ManagedNodeGroupArrayInput` via:
 //
-//          ManagedNodeGroupArray{ ManagedNodeGroupArgs{...} }
+//	ManagedNodeGroupArray{ ManagedNodeGroupArgs{...} }
 type ManagedNodeGroupArrayInput interface {
 	pulumi.Input
 
@@ -210,7 +210,7 @@ func (i ManagedNodeGroupArray) ToManagedNodeGroupArrayOutputWithContext(ctx cont
 // ManagedNodeGroupMapInput is an input type that accepts ManagedNodeGroupMap and ManagedNodeGroupMapOutput values.
 // You can construct a concrete instance of `ManagedNodeGroupMapInput` via:
 //
-//          ManagedNodeGroupMap{ "key": ManagedNodeGroupArgs{...} }
+//	ManagedNodeGroupMap{ "key": ManagedNodeGroupArgs{...} }
 type ManagedNodeGroupMapInput interface {
 	pulumi.Input
 

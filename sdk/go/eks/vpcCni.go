@@ -230,7 +230,7 @@ func (i *VpcCni) ToVpcCniOutputWithContext(ctx context.Context) VpcCniOutput {
 // VpcCniArrayInput is an input type that accepts VpcCniArray and VpcCniArrayOutput values.
 // You can construct a concrete instance of `VpcCniArrayInput` via:
 //
-//          VpcCniArray{ VpcCniArgs{...} }
+//	VpcCniArray{ VpcCniArgs{...} }
 type VpcCniArrayInput interface {
 	pulumi.Input
 
@@ -255,7 +255,7 @@ func (i VpcCniArray) ToVpcCniArrayOutputWithContext(ctx context.Context) VpcCniA
 // VpcCniMapInput is an input type that accepts VpcCniMap and VpcCniMapOutput values.
 // You can construct a concrete instance of `VpcCniMapInput` via:
 //
-//          VpcCniMap{ "key": VpcCniArgs{...} }
+//	VpcCniMap{ "key": VpcCniArgs{...} }
 type VpcCniMapInput interface {
 	pulumi.Input
 
