@@ -72,7 +72,7 @@ func (i *ClusterCreationRoleProvider) ToClusterCreationRoleProviderOutputWithCon
 // ClusterCreationRoleProviderArrayInput is an input type that accepts ClusterCreationRoleProviderArray and ClusterCreationRoleProviderArrayOutput values.
 // You can construct a concrete instance of `ClusterCreationRoleProviderArrayInput` via:
 //
-//          ClusterCreationRoleProviderArray{ ClusterCreationRoleProviderArgs{...} }
+//	ClusterCreationRoleProviderArray{ ClusterCreationRoleProviderArgs{...} }
 type ClusterCreationRoleProviderArrayInput interface {
 	pulumi.Input
 
@@ -97,7 +97,7 @@ func (i ClusterCreationRoleProviderArray) ToClusterCreationRoleProviderArrayOutp
 // ClusterCreationRoleProviderMapInput is an input type that accepts ClusterCreationRoleProviderMap and ClusterCreationRoleProviderMapOutput values.
 // You can construct a concrete instance of `ClusterCreationRoleProviderMapInput` via:
 //
-//          ClusterCreationRoleProviderMap{ "key": ClusterCreationRoleProviderArgs{...} }
+//	ClusterCreationRoleProviderMap{ "key": ClusterCreationRoleProviderArgs{...} }
 type ClusterCreationRoleProviderMapInput interface {
 	pulumi.Input
 

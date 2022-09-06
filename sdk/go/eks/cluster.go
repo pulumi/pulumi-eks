@@ -202,7 +202,7 @@ type clusterArgs struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
 	//
-	// Also consider setting `nodeAssociatePublicIpAddress: true` for fully private workers.
+	// Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.
 	PrivateSubnetIds []string `pulumi:"privateSubnetIds"`
 	// The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.
 	//
@@ -422,7 +422,7 @@ type ClusterArgs struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
 	//
-	// Also consider setting `nodeAssociatePublicIpAddress: true` for fully private workers.
+	// Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.
 	PrivateSubnetIds pulumi.StringArrayInput
 	// The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.
 	//
@@ -587,7 +587,7 @@ func (i *Cluster) ToClusterOutputWithContext(ctx context.Context) ClusterOutput 
 // ClusterArrayInput is an input type that accepts ClusterArray and ClusterArrayOutput values.
 // You can construct a concrete instance of `ClusterArrayInput` via:
 //
-//          ClusterArray{ ClusterArgs{...} }
+//	ClusterArray{ ClusterArgs{...} }
 type ClusterArrayInput interface {
 	pulumi.Input
 
@@ -612,7 +612,7 @@ func (i ClusterArray) ToClusterArrayOutputWithContext(ctx context.Context) Clust
 // ClusterMapInput is an input type that accepts ClusterMap and ClusterMapOutput values.
 // You can construct a concrete instance of `ClusterMapInput` via:
 //
-//          ClusterMap{ "key": ClusterArgs{...} }
+//	ClusterMap{ "key": ClusterArgs{...} }
 type ClusterMapInput interface {
 	pulumi.Input
 

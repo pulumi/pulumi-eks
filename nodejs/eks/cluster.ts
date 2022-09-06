@@ -935,7 +935,7 @@ export interface ClusterOptions {
      * and/or `privateSubnetIds` is mutually exclusive. The use of
      * `publicSubnetIds` and `privateSubnetIds` is encouraged.
      *
-     * Also consider setting `nodeAssociatePublicIpAddress: true` for
+     * Also consider setting `nodeAssociatePublicIpAddress: false` for
      * fully private workers.
      */
     privateSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;

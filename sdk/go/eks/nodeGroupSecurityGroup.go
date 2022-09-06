@@ -96,7 +96,7 @@ func (i *NodeGroupSecurityGroup) ToNodeGroupSecurityGroupOutputWithContext(ctx c
 // NodeGroupSecurityGroupArrayInput is an input type that accepts NodeGroupSecurityGroupArray and NodeGroupSecurityGroupArrayOutput values.
 // You can construct a concrete instance of `NodeGroupSecurityGroupArrayInput` via:
 //
-//          NodeGroupSecurityGroupArray{ NodeGroupSecurityGroupArgs{...} }
+//	NodeGroupSecurityGroupArray{ NodeGroupSecurityGroupArgs{...} }
 type NodeGroupSecurityGroupArrayInput interface {
 	pulumi.Input
 
@@ -121,7 +121,7 @@ func (i NodeGroupSecurityGroupArray) ToNodeGroupSecurityGroupArrayOutputWithCont
 // NodeGroupSecurityGroupMapInput is an input type that accepts NodeGroupSecurityGroupMap and NodeGroupSecurityGroupMapOutput values.
 // You can construct a concrete instance of `NodeGroupSecurityGroupMapInput` via:
 //
-//          NodeGroupSecurityGroupMap{ "key": NodeGroupSecurityGroupArgs{...} }
+//	NodeGroupSecurityGroupMap{ "key": NodeGroupSecurityGroupArgs{...} }
 type NodeGroupSecurityGroupMapInput interface {
 	pulumi.Input
 
