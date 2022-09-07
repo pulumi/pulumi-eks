@@ -897,7 +897,7 @@ ${customUserData}
     }
 
     const marketOptions = args.spotPrice ? {
-        marketType: args.spotPrice ? "spot" : undefined,
+        marketType: "spot",
         spotOptions: {
             maxPrice: args.spotPrice,
         },
