@@ -39,6 +39,16 @@ cluster1.createNodeGroup("example-ng-simple-ondemand", {
     instanceProfile: instanceProfile0,
 });
 
+const ng = new eks.NodeGroupV2("example-ng2-simple-ondemand", {
+    cluster: cluster1,
+    instanceType: "t2.medium",
+    desiredCapacity: 1,
+    minSize: 1,
+    maxSize: 2,
+    labels: {"ondemand": "true"},
+    instanceProfile: instanceProfile0,
+});
+
 // Create the second node group with spot t2.medium instance
 const spot = new eks.NodeGroup("example-ng-simple-spot", {
     cluster: cluster1,
@@ -71,14 +81,16 @@ export const kubeconfig1 = cluster1.kubeconfig;
 
 const role1 = iam.createRole("example-role1");
 const role2 = iam.createRole("example-role2");
+const role3 = iam.createRole("example-role3");
 const instanceProfile1 = new aws.iam.InstanceProfile("example-instanceProfile1", {role: role1});
 const instanceProfile2 = new aws.iam.InstanceProfile("example-instanceProfile2", {role: role2});
+const instanceProfile3 = new aws.iam.InstanceProfile("example-instanceProfile3", {role: role3});
 
 // Create an EKS cluster with many IAM roles to register with the cluster auth.
 const cluster2 = new eks.Cluster("example-nodegroup-iam-advanced", {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
-    instanceRoles: [role1, role2],
+    instanceRoles: [role1, role2, role3],
 });
 
 // Create node groups using a different `instanceProfile` tied to one of the many
@@ -90,6 +102,16 @@ cluster2.createNodeGroup("example-ng-advanced-ondemand", {
     maxSize: 2,
     labels: {"ondemand": "true"},
     instanceProfile: instanceProfile1,
+});
+
+const ng2 = new eks.NodeGroupV2("example-ng-advanced-ondemand", {
+    cluster: cluster2,
+    instanceType: "t2.medium",
+    desiredCapacity: 1,
+    minSize: 1,
+    maxSize: 2,
+    labels: {"ondemand": "true"},
+    instanceProfile: instanceProfile2,
 });
 
 const spot2 = new eks.NodeGroup("example-ng-advanced-spot", {
@@ -106,10 +128,12 @@ const spot2 = new eks.NodeGroup("example-ng-advanced-spot", {
             effect: "NoSchedule",
         },
     },
-    instanceProfile: instanceProfile2,
+    instanceProfile: instanceProfile3,
 }, {
     providers: { kubernetes: cluster2.provider},
 });
+
+
 
 // Export the cluster's kubeconfig.
 export const kubeconfig2 = cluster2.kubeconfig;

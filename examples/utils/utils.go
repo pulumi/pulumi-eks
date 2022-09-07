@@ -526,6 +526,11 @@ type cloudFormationTemplateBody struct {
 // respective total desired worker Node count for *all* NodeGroups.
 type clusterNodeCountMap map[string]int
 
+type nodeGroupTags struct {
+	k string `yaml:"key"`
+	v string `yaml:"value"`
+}
+
 // mapClusterToNodeCount iterates through all Pulumi stack resources
 // looking for CloudFormation template bodies to extract, and aggregate
 // the total desired worker Node count per cluster in the Pulumi stack resources.
@@ -537,8 +542,9 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 	clusterToNodeCount := make(clusterNodeCountMap)
 
 	// Map cluster to its NodeGroups.
-	cfnPrefix := "arn:aws:cloudformation"     // self-managed CF-based node gruops
-	ngPrefix := "aws:eks/nodeGroup:NodeGroup" // AWS managed node groups
+	cfnPrefix := "arn:aws:cloudformation"      // self-managed CF-based node groups
+	ngPrefix := "aws:eks/nodeGroup:NodeGroup"  // AWS managed node groups
+	ng2Prefix := "aws:autoscaling/group:Group" // self-managed ASG-based node groups
 
 	for _, res := range resources {
 		if strings.HasPrefix(res.ID.String(), cfnPrefix) {
@@ -572,6 +578,26 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 			scalingConfig := nodegroup["scalingConfig"].(map[string]interface{})
 			desiredSize := int(scalingConfig["desiredSize"].(float64))
 
+			// Update map of cluster name to total desired Node count.
+			clusterToNodeCount[clusterName] =
+				clusterToNodeCount[clusterName] + desiredSize
+		} else if res.Type.String() == ng2Prefix {
+			asg := res.Inputs
+			tagList := asg["tags"].(string)
+			var tags []nodeGroupTags
+			err := yaml.Unmarshal([]byte(tagList), &tags)
+			if err != nil {
+				return nil, err
+			}
+			nameTag := ""
+			for _, tag := range tags {
+				if tag.k == "Name" {
+					nameTag = tag.v
+				}
+			}
+			clusterName := strings.Split(nameTag, "-worker")[0]
+
+			desiredSize := int(asg["desiredCapacity"].(int))
 			// Update map of cluster name to total desired Node count.
 			clusterToNodeCount[clusterName] =
 				clusterToNodeCount[clusterName] + desiredSize
