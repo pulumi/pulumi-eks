@@ -3,6 +3,7 @@
 
 package com.pulumi.eks;
 
+import com.pulumi.aws.autoscaling.Group;
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
@@ -10,7 +11,6 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.NodeGroupV2Args;
 import com.pulumi.eks.Utilities;
-import java.lang.String;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -21,18 +21,18 @@ import javax.annotation.Nullable;
 @ResourceType(type="eks:index:NodeGroupV2")
 public class NodeGroupV2 extends com.pulumi.resources.ComponentResource {
     /**
-     * The AutoScalingGroup name for the Node group.
+     * The AutoScalingGroup for the Node group.
      * 
      */
-    @Export(name="autoScalingGroupName", type=String.class, parameters={})
-    private Output<String> autoScalingGroupName;
+    @Export(name="autoScalingGroup", type=Group.class, parameters={})
+    private Output<Group> autoScalingGroup;
 
     /**
-     * @return The AutoScalingGroup name for the Node group.
+     * @return The AutoScalingGroup for the Node group.
      * 
      */
-    public Output<String> autoScalingGroupName() {
-        return this.autoScalingGroupName;
+    public Output<Group> autoScalingGroup() {
+        return this.autoScalingGroup;
     }
     /**
      * The additional security groups for the node group that captures user-specific rules.

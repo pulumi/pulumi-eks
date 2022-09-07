@@ -1233,9 +1233,9 @@
         "eks:index:NodeGroupV2": {
             "description": "NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.",
             "properties": {
-                "autoScalingGroupName": {
-                    "type": "string",
-                    "description": "The AutoScalingGroup name for the Node group."
+                "autoScalingGroup": {
+                    "$ref": "/aws/v5.4.0/schema.json#/resources/aws:autoscaling%2Fgroup:Group",
+                    "description": "The AutoScalingGroup for the Node group."
                 },
                 "extraNodeSecurityGroups": {
                     "type": "array",
@@ -1252,7 +1252,7 @@
             "required": [
                 "nodeSecurityGroup",
                 "extraNodeSecurityGroups",
-                "autoScalingGroupName"
+                "autoScalingGroup"
             ],
             "inputProperties": {
                 "amiId": {
@@ -1334,6 +1334,10 @@
                 "maxSize": {
                     "type": "integer",
                     "description": "The maximum number of worker nodes running in the cluster. Defaults to 2."
+                },
+                "minRefreshPercentage": {
+                    "type": "integer",
+                    "description": "The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50."
                 },
                 "minSize": {
                     "type": "integer",

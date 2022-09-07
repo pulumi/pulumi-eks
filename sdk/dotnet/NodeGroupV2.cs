@@ -16,10 +16,10 @@ namespace Pulumi.Eks
     public partial class NodeGroupV2 : Pulumi.ComponentResource
     {
         /// <summary>
-        /// The AutoScalingGroup name for the Node group.
+        /// The AutoScalingGroup for the Node group.
         /// </summary>
-        [Output("autoScalingGroupName")]
-        public Output<string> AutoScalingGroupName { get; private set; } = null!;
+        [Output("autoScalingGroup")]
+        public Output<Pulumi.Aws.AutoScaling.Group> AutoScalingGroup { get; private set; } = null!;
 
         /// <summary>
         /// The additional security groups for the node group that captures user-specific rules.
@@ -213,6 +213,12 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("maxSize")]
         public Input<int>? MaxSize { get; set; }
+
+        /// <summary>
+        /// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+        /// </summary>
+        [Input("minRefreshPercentage")]
+        public Input<int>? MinRefreshPercentage { get; set; }
 
         /// <summary>
         /// The minimum number of worker nodes running in the cluster. Defaults to 1.

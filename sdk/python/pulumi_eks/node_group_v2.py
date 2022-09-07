@@ -34,6 +34,7 @@ class NodeGroupV2Args:
                  kubelet_extra_args: Optional[pulumi.Input[str]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
+                 min_refresh_percentage: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
                  node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
@@ -91,6 +92,7 @@ class NodeGroupV2Args:
         :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
+        :param pulumi.Input[int] min_refresh_percentage: The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
         :param pulumi.Input[bool] node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
@@ -149,6 +151,8 @@ class NodeGroupV2Args:
             pulumi.set(__self__, "labels", labels)
         if max_size is not None:
             pulumi.set(__self__, "max_size", max_size)
+        if min_refresh_percentage is not None:
+            pulumi.set(__self__, "min_refresh_percentage", min_refresh_percentage)
         if min_size is not None:
             pulumi.set(__self__, "min_size", min_size)
         if node_associate_public_ip_address is not None:
@@ -404,6 +408,18 @@ class NodeGroupV2Args:
         pulumi.set(self, "max_size", value)
 
     @property
+    @pulumi.getter(name="minRefreshPercentage")
+    def min_refresh_percentage(self) -> Optional[pulumi.Input[int]]:
+        """
+        The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+        """
+        return pulumi.get(self, "min_refresh_percentage")
+
+    @min_refresh_percentage.setter
+    def min_refresh_percentage(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "min_refresh_percentage", value)
+
+    @property
     @pulumi.getter(name="minSize")
     def min_size(self) -> Optional[pulumi.Input[int]]:
         """
@@ -571,6 +587,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  kubelet_extra_args: Optional[pulumi.Input[str]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
+                 min_refresh_percentage: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
                  node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
@@ -632,6 +649,7 @@ class NodeGroupV2(pulumi.ComponentResource):
         :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
+        :param pulumi.Input[int] min_refresh_percentage: The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
         :param pulumi.Input[bool] node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
@@ -698,6 +716,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  kubelet_extra_args: Optional[pulumi.Input[str]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
+                 min_refresh_percentage: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
                  node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
@@ -742,6 +761,7 @@ class NodeGroupV2(pulumi.ComponentResource):
             __props__.__dict__["kubelet_extra_args"] = kubelet_extra_args
             __props__.__dict__["labels"] = labels
             __props__.__dict__["max_size"] = max_size
+            __props__.__dict__["min_refresh_percentage"] = min_refresh_percentage
             __props__.__dict__["min_size"] = min_size
             __props__.__dict__["node_associate_public_ip_address"] = node_associate_public_ip_address
             __props__.__dict__["node_public_key"] = node_public_key
@@ -753,7 +773,7 @@ class NodeGroupV2(pulumi.ComponentResource):
             __props__.__dict__["spot_price"] = spot_price
             __props__.__dict__["taints"] = taints
             __props__.__dict__["version"] = version
-            __props__.__dict__["auto_scaling_group_name"] = None
+            __props__.__dict__["auto_scaling_group"] = None
         super(NodeGroupV2, __self__).__init__(
             'eks:index:NodeGroupV2',
             resource_name,
@@ -762,12 +782,12 @@ class NodeGroupV2(pulumi.ComponentResource):
             remote=True)
 
     @property
-    @pulumi.getter(name="autoScalingGroupName")
-    def auto_scaling_group_name(self) -> pulumi.Output[str]:
+    @pulumi.getter(name="autoScalingGroup")
+    def auto_scaling_group(self) -> pulumi.Output['pulumi_aws.autoscaling.Group']:
         """
-        The AutoScalingGroup name for the Node group.
+        The AutoScalingGroup for the Node group.
         """
-        return pulumi.get(self, "auto_scaling_group_name")
+        return pulumi.get(self, "auto_scaling_group")
 
     @property
     @pulumi.getter(name="extraNodeSecurityGroups")

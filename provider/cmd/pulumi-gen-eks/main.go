@@ -814,7 +814,7 @@ func generateSchema() schema.PackageSpec {
 						"autoScalingGroupName",
 					},
 				},
-				InputProperties: nodeGroupProperties(true /*cluster*/),
+				InputProperties: nodeGroupProperties(true /*cluster*/, false /*NodeGroupV2*/),
 				RequiredInputs:  []string{"cluster"},
 			},
 			"eks:index:NodeGroupV2": {
@@ -834,18 +834,18 @@ func generateSchema() schema.PackageSpec {
 							},
 							Description: "The additional security groups for the node group that captures user-specific rules.",
 						},
-						"autoScalingGroupName": {
-							TypeSpec:    schema.TypeSpec{Type: "string"},
-							Description: "The AutoScalingGroup name for the Node group.",
+						"autoScalingGroup": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:autoscaling%2Fgroup:Group")},
+							Description: "The AutoScalingGroup for the Node group.",
 						},
 					},
 					Required: []string{
 						"nodeSecurityGroup",
 						"extraNodeSecurityGroups",
-						"autoScalingGroupName",
+						"autoScalingGroup",
 					},
 				},
-				InputProperties: nodeGroupProperties(true /*cluster*/),
+				InputProperties: nodeGroupProperties(true /*cluster*/, true /*NodeGroupV2*/),
 				RequiredInputs:  []string{"cluster"},
 			},
 			"eks:index:NodeGroupSecurityGroup": {
@@ -1300,7 +1300,7 @@ func generateSchema() schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "object",
 					Description: "Describes the configuration options accepted by a cluster to create its own node groups.",
-					Properties:  nodeGroupProperties(false /*cluster*/),
+					Properties:  nodeGroupProperties(false /*cluster*/, false /*NodeGroupV2*/),
 				},
 			},
 
@@ -1354,7 +1354,7 @@ func generateSchema() schema.PackageSpec {
 	}
 }
 
-func nodeGroupProperties(cluster bool) map[string]schema.PropertySpec {
+func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 	props := map[string]schema.PropertySpec{
 		"nodeSubnetIds": {
 			TypeSpec: schema.TypeSpec{
@@ -1539,6 +1539,13 @@ func nodeGroupProperties(cluster bool) map[string]schema.PropertySpec {
 			// TODO: this is typed as `Cluster | CoreData` in the TS API.
 			TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
 			Description: "The target EKS cluster.",
+		}
+	}
+
+	if v2 {
+		props["minRefreshPercentage"] = schema.PropertySpec{
+			TypeSpec:    schema.TypeSpec{Type: "integer"},
+			Description: "The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.",
 		}
 	}
 

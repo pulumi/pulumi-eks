@@ -334,6 +334,21 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+     * 
+     */
+    @Import(name="minRefreshPercentage")
+    private @Nullable Output<Integer> minRefreshPercentage;
+
+    /**
+     * @return The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+     * 
+     */
+    public Optional<Output<Integer>> minRefreshPercentage() {
+        return Optional.ofNullable(this.minRefreshPercentage);
+    }
+
+    /**
      * The minimum number of worker nodes running in the cluster. Defaults to 1.
      * 
      */
@@ -544,6 +559,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
         this.kubeletExtraArgs = $.kubeletExtraArgs;
         this.labels = $.labels;
         this.maxSize = $.maxSize;
+        this.minRefreshPercentage = $.minRefreshPercentage;
         this.minSize = $.minSize;
         this.nodeAssociatePublicIpAddress = $.nodeAssociatePublicIpAddress;
         this.nodePublicKey = $.nodePublicKey;
@@ -996,6 +1012,27 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          */
         public Builder maxSize(Integer maxSize) {
             return maxSize(Output.of(maxSize));
+        }
+
+        /**
+         * @param minRefreshPercentage The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder minRefreshPercentage(@Nullable Output<Integer> minRefreshPercentage) {
+            $.minRefreshPercentage = minRefreshPercentage;
+            return this;
+        }
+
+        /**
+         * @param minRefreshPercentage The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder minRefreshPercentage(Integer minRefreshPercentage) {
+            return minRefreshPercentage(Output.of(minRefreshPercentage));
         }
 
         /**
