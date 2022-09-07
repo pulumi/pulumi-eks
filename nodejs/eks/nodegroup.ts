@@ -301,11 +301,14 @@ export interface NodeGroupOptions extends NodeGroupBaseOptions {
     cluster: Cluster | CoreData;
 }
 
+/**
+ * NodeGroupV2Options describes the configuration options accepted by a NodeGroupV2 component.
+ */
 export interface NodeGroupV2Options extends NodeGroupOptions {
     /**
      * The minimum amount of instances that should remain available during an instance refresh,
      * expressed as a percentage.
-     * 
+     *
      * Defaults to 50.
      */
      minRefreshPercentage?: number;
@@ -322,11 +325,26 @@ export interface NodeGroupData {
     /**
      * The CloudFormation Stack which defines the node group's AutoScalingGroup.
      */
-    cfnStack?: aws.cloudformation.Stack;
+    cfnStack: aws.cloudformation.Stack;
     /**
      * The AutoScalingGroup name for the node group.
      */
     autoScalingGroupName: pulumi.Output<string>;
+    /**
+     * The additional security groups for the node group that captures user-specific rules.
+     */
+    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
+}
+
+export interface NodeGroupV2Data {
+    /**
+     * The security group for the node group to communicate with the cluster.
+     */
+    nodeSecurityGroup: aws.ec2.SecurityGroup;
+    /**
+     * The AutoScalingGroup name for the node group.
+     */
+    autoScalingGroup: aws.autoscaling.Group;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
@@ -349,7 +367,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     /**
      * The CloudFormation Stack which defines the Node AutoScalingGroup.
      */
-    cfnStack?: aws.cloudformation.Stack;
+    cfnStack: aws.cloudformation.Stack;
 
     /**
      * The AutoScalingGroup name for the Node group.
@@ -375,7 +393,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     }
 }
 
-export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupData {
+export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2Data {
     /**
      * The security group for the node group to communicate with the cluster.
      */
@@ -388,7 +406,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupDa
     /**
      * The AutoScalingGroup name for the Node group.
      */
-    autoScalingGroupName: pulumi.Output<string>;
+    autoScalingGroup: aws.autoscaling.Group;
 
     /**
      * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
@@ -403,7 +421,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupDa
 
         const group = createNodeGroupV2(name, args, this, opts?.provider);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
-        this.autoScalingGroupName = group.autoScalingGroupName;
+        this.autoScalingGroup = group.autoScalingGroup;
         this.registerOutputs(undefined);
     }
 }
@@ -709,7 +727,7 @@ ${customUserData}
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
  */
-export function createNodeGroupV2(name: string, args: NodeGroupV2Options, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
+export function createNodeGroupV2(name: string, args: NodeGroupV2Options, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupV2Data {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
 
     if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
@@ -933,8 +951,8 @@ ${customUserData}
     }
 
     const asgTags = pulumi.all([eksCluster.name, args.autoScalingGroupTags]).apply(([clusterName, tags]) => inputTagsToASGTags(clusterName, tags));
-    
-    const launchTemplateVersion = nodeLaunchTemplate.latestVersion.apply(v => v.toString())
+
+    const launchTemplateVersion = nodeLaunchTemplate.latestVersion.apply(v => v.toString());
 
     const asGroup = new aws.autoscaling.Group(name, {
         name: name,
@@ -957,7 +975,7 @@ ${customUserData}
 
     return {
         nodeSecurityGroup: nodeSecurityGroup,
-        autoScalingGroupName: asGroup.name,
+        autoScalingGroup: asGroup,
         extraNodeSecurityGroups: args.extraNodeSecurityGroups,
     };
 }

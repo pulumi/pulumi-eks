@@ -8,6 +8,7 @@ import (
 	"reflect"
 
 	"github.com/pkg/errors"
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/autoscaling"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -17,8 +18,8 @@ import (
 type NodeGroupV2 struct {
 	pulumi.ResourceState
 
-	// The AutoScalingGroup name for the Node group.
-	AutoScalingGroupName pulumi.StringOutput `pulumi:"autoScalingGroupName"`
+	// The AutoScalingGroup for the Node group.
+	AutoScalingGroup autoscaling.GroupOutput `pulumi:"autoScalingGroup"`
 	// The additional security groups for the node group that captures user-specific rules.
 	ExtraNodeSecurityGroups ec2.SecurityGroupArrayOutput `pulumi:"extraNodeSecurityGroups"`
 	// The security group for the node group to communicate with the cluster.
@@ -105,6 +106,8 @@ type nodeGroupV2Args struct {
 	Labels map[string]string `pulumi:"labels"`
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize *int `pulumi:"maxSize"`
+	// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+	MinRefreshPercentage *int `pulumi:"minRefreshPercentage"`
 	// The minimum number of worker nodes running in the cluster. Defaults to 1.
 	MinSize *int `pulumi:"minSize"`
 	// Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
@@ -205,6 +208,8 @@ type NodeGroupV2Args struct {
 	Labels pulumi.StringMapInput
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize pulumi.IntPtrInput
+	// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+	MinRefreshPercentage pulumi.IntPtrInput
 	// The minimum number of worker nodes running in the cluster. Defaults to 1.
 	MinSize pulumi.IntPtrInput
 	// Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
@@ -329,9 +334,9 @@ func (o NodeGroupV2Output) ToNodeGroupV2OutputWithContext(ctx context.Context) N
 	return o
 }
 
-// The AutoScalingGroup name for the Node group.
-func (o NodeGroupV2Output) AutoScalingGroupName() pulumi.StringOutput {
-	return o.ApplyT(func(v *NodeGroupV2) pulumi.StringOutput { return v.AutoScalingGroupName }).(pulumi.StringOutput)
+// The AutoScalingGroup for the Node group.
+func (o NodeGroupV2Output) AutoScalingGroup() autoscaling.GroupOutput {
+	return o.ApplyT(func(v *NodeGroupV2) autoscaling.GroupOutput { return v.AutoScalingGroup }).(autoscaling.GroupOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.
