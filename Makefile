@@ -1,60 +1,84 @@
-PROJECT_NAME := Pulumi Amazon Web Services (AWS) EKS Components
+PROJECT_NAME	:= Pulumi Amazon Web Services (AWS) EKS Components
 
-VERSION         := $(shell pulumictl get version)
-TESTPARALLELISM := 12
+VERSION			:= $(shell pulumictl get version)
+TESTPARALLELISM	:= 12
 
-PACK            := eks
-PROVIDER        := pulumi-resource-${PACK}
-CODEGEN         := pulumi-gen-${PACK}
+PACK			:= eks
+PROVIDER		:= pulumi-resource-${PACK}
 GZIP_PREFIX		:= pulumi-resource-${PACK}-v${VERSION}
 
-WORKING_DIR     := $(shell pwd)
+WORKING_DIR		:= $(shell pwd)
 
-JAVA_GEN 		 := pulumi-java-gen
+JAVA_GEN		:= pulumi-java-gen
 JAVA_GEN_VERSION := v0.5.2
 
-EKS_SRC 		:= $(wildcard nodejs/eks/*.*) $(wildcard nodejs/eks/*/*.ts) $(wildcard nodejs/eks/*/*/*.ts)
+EKS_SRC			:= $(wildcard nodejs/eks/*.*) $(wildcard nodejs/eks/*/*.ts) $(wildcard nodejs/eks/*/*/*.ts)
+NODE_VERSION	:= node18
 
 LOCAL_PLAT		?= ""
 
-PKG_ARGS 		:= --no-bytecode --public-packages "*" --public
+PKG_ARGS		:= --no-bytecode --public-packages "*" --public
 
-build:: schema provider build_nodejs build_python build_go build_dotnet build_java
+build: schema provider build_nodejs build_python build_go build_dotnet build_java
 
-schema::
-	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER))
+build_dotnet: sdk/dotnet
+build_go: sdk/go
+build_java: sdk/java
+build_nodejs: sdk/nodejs
+build_python: sdk/python
 
-provider:: bin/${PROVIDER}
+generate_schema: nodejs/eks/schema.json
+schema: nodejs/eks/schema.json
 
-build_nodejs:: VERSION := $(shell pulumictl get version --language javascript)
-build_nodejs::
-	rm -rf nodejs/eks/bin/*
-	cd nodejs/eks && \
-		yarn install && \
-		yarn run tsc && \
-		yarn run tsc --version && \
-		sed -e 's/\$${VERSION}/$(VERSION)/g' < package.json > bin/package.json && \
-		cp ../../README.md ../../LICENSE bin/ && \
-		cp -R dashboard bin/ && \
-		cp -R cni bin/ && \
-		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
+dev: lint build_nodejs
 
-bin/pulumi-java-gen::
-	mkdir -p bin/
+test: lint test_nodejs
+
+clean:
+	rm -rf bin dist nodejs/eks/bin nodejs/eks/node_modules sdk/dotnet sdk/go sdk/java sdk/nodejs sdk/python
+
+bin/schemagen: schemagen/*
+	cd schemagen && go build -o $(WORKING_DIR)/bin/schemagen .
+
+nodejs/eks/schema.json: bin/schemagen
+	./bin/schemagen schema nodejs/eks
+
+provider: bin/${PROVIDER}
+
+bin/pulumi-java-gen:
+	@mkdir -p bin/
 	pulumictl download-binary -n pulumi-language-java -v $(JAVA_GEN_VERSION) -r pulumi/pulumi-java
 
-build_java:: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
-build_java:: bin/pulumi-java-gen schema
-	rm -rf sdk/java
-	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema provider/cmd/$(PROVIDER)/schema.json --out sdk/java --build gradle-nexus
+sdk/nodejs: nodejs/eks/schema.json bin/schemagen
+	rm -rf sdk/nodejs/*
+	./bin/schemagen nodejs sdk/nodejs nodejs/eks/schema.json $(VERSION)
+	@touch sdk/nodejs
+
+sdk/nodejs/bin: NODE_VERSION := $(shell pulumictl get version --language javascript)
+sdk/nodejs/bin: sdk/nodejs sdk/nodejs/node_modules
+	cd sdk/nodejs && \
+		yarn run tsc --version && \
+		yarn run tsc && \
+		sed -e 's/\$${VERSION}/$(NODE_VERSION)/g' < ../../nodejs/eks/package.json > package.json && \
+		cp ../../README.md ../../LICENSE .
+
+sdk/nodejs/node_modules: sdk/nodejs sdk/nodejs/package.json
+	cd sdk/nodejs && \
+		yarn install --no-progress
+
+sdk/java: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
+sdk/java: bin/pulumi-java-gen nodejs/eks/schema.json
+	rm -rf sdk/java/*
+	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema nodejs/eks/schema.json --out sdk/java --build gradle-nexus
 	cd sdk/java && \
 		echo "module fake_java_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		gradle --console=plain build
+	@touch sdk/java
 
-build_python:: PYPI_VERSION := $(shell pulumictl get version --language python)
-build_python:: schema
-	rm -rf sdk/python
-	cd provider/cmd/$(CODEGEN) && go run main.go python ../../../sdk/python ../$(PROVIDER)/schema.json $(VERSION)
+sdk/python: PYPI_VERSION := $(shell pulumictl get version --language python)
+sdk/python: nodejs/eks/schema.json bin/schemagen
+	rm -rf sdk/python/*
+	./bin/schemagen python sdk/python nodejs/eks/schema.json $(VERSION)
 	cd sdk/python/ && \
 		echo "module fake_python_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		cp ../../README.md . && \
@@ -63,19 +87,26 @@ build_python:: schema
 		sed -i.bak -e 's/^VERSION = .*/VERSION = "$(PYPI_VERSION)"/g' -e 's/^PLUGIN_VERSION = .*/PLUGIN_VERSION = "$(VERSION)"/g' ./bin/setup.py && \
 		rm ./bin/setup.py.bak && \
 		cd ./bin && python3 setup.py build sdist
+	@touch sdk/python
 
-build_go:: VERSION := $(shell pulumictl get version --language generic)
-build_go:: schema
-	rm -rf sdk/go
-	cd provider/cmd/$(CODEGEN) && go run main.go go ../../../sdk/go ../$(PROVIDER)/schema.json $(VERSION)
+sdk/go: VERSION := $(shell pulumictl get version --language generic)
+sdk/go: nodejs/eks/schema.json bin/schemagen
+	rm -rf sdk/go/*
+	./bin/schemagen go sdk/go nodejs/eks/schema.json $(VERSION)
+	@touch sdk/go
 
-build_dotnet:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
-build_dotnet:: schema
-	rm -rf sdk/dotnet
-	cd provider/cmd/$(CODEGEN) && go run main.go dotnet ../../../sdk/dotnet ../$(PROVIDER)/schema.json $(VERSION)
+sdk/dotnet: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
+sdk/dotnet: nodejs/eks/schema.json bin/schemagen
+	rm -rf sdk/dotnet/*
+	bin/schemagen dotnet sdk/dotnet nodejs/eks/schema.json $(VERSION)
 	cd sdk/dotnet/ && \
 		echo "module fake_dotnet_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
-		echo "${DOTNET_VERSION}" >version.txt && \
+		echo "${DOTNET_VERSION}" >version.txt
+	@touch sdk/dotnet
+
+sdk/dotnet/bin:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
+sdk/dotnet/bin:: nodejs/eks/schema.json
+	cd sdk/dotnet/ && \
 		dotnet build /p:Version=${DOTNET_VERSION}
 
 lint:
@@ -83,11 +114,8 @@ lint:
 		yarn install && \
 		yarn run tslint -c ../tslint.json -p tsconfig.json
 
-lint_provider::
-	cd provider && golangci-lint run -c ../.golangci.yml
-
-install_provider:: PROVIDER_VERSION := latest
-install_provider:: provider install_nodejs_sdk
+install_provider: PROVIDER_VERSION := latest
+install_provider: provider install_nodejs_sdk
 	cd provider/cmd/$(PROVIDER)	&& \
 		rm -rf ../provider.bin/ && \
 			cp -R . ../provider.bin && mv ../provider.bin ./bin && \
@@ -97,93 +125,93 @@ install_provider:: provider install_nodejs_sdk
 			yarn install && \
 			yarn link @pulumi/eks
 
-generate_schema:: schema
+install_nodejs_sdk: sdk/nodejs/bin
+	yarn link --cwd $(WORKING_DIR)/sdk/nodejs/bin
 
-install_nodejs_sdk:: build_nodejs
-	yarn link --cwd $(WORKING_DIR)/nodejs/eks/bin
-
-install_dotnet_sdk:: build_dotnet
+install_dotnet_sdk:: sdk/dotnet/bin
 	mkdir -p $(WORKING_DIR)/nuget
-	find . -name '*.nupkg' -print -exec cp -p {} ${WORKING_DIR}/nuget \;
+	find sdk/dotnet/bin -name '*.nupkg' -print -exec cp -p {} ${WORKING_DIR}/nuget \;
+	@if ! dotnet nuget list source | grep ${WORKING_DIR}; then \
+		dotnet nuget add source ${WORKING_DIR}/nuget --name ${WORKING_DIR} \
+	; fi\
 
-install_go_sdk::
+install_go_sdk:
 	#Intentionally empty for CI / CD templating
 
-install_python_sdk::
+install_python_sdk:
 	#Intentionally empty for CI / CD templating
 
-install_java_sdk::
+install_java_sdk:
 	#Intentionally empty for CI / CD templating
 
 nodejs/eks/node_modules: nodejs/eks/package.json nodejs/eks/yarn.lock
 	yarn install --cwd nodejs/eks --no-progress
 	@touch nodejs/eks/node_modules
 
-nodejs/eks/bin: nodejs/eks/node_modules ${EKS_SRC}
-	@cd nodejs/eks && \
+nodejs/eks/bin: nodejs/eks/node_modules nodejs/eks/schema.json ${EKS_SRC}
+	rm -rf nodejs/eks/bin
+	cd nodejs/eks && \
 		yarn tsc && \
-		sed -e 's/\$${VERSION}/$(VERSION)/g' < package.json > bin/package.json && \
+		sed -e 's/\$${VERSION}/$(shell pulumictl get version --language javascript)/g' < package.json > bin/package.json && \
 		cp -R dashboard bin/ && \
 		cp -R cni bin/ && \
-		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
-	@touch nodejs/eks/bin
+		cp schema.json bin/cmd/provider/
 
 # Re-use the local platform if provided (e.g. `make provider LOCAL_PLAT=linux-amd64`)
 ifneq ($(LOCAL_PLAT),"")
-bin/${PROVIDER}:: bin/provider/$(LOCAL_PLAT)/${PROVIDER}
+bin/${PROVIDER}: bin/provider/$(LOCAL_PLAT)/${PROVIDER}
 	cp bin/provider/$(LOCAL_PLAT)/${PROVIDER} bin/${PROVIDER}
 else 
 bin/${PROVIDER}: nodejs/eks/bin nodejs/eks/node_modules
-	cd nodejs/eks && yarn run pkg . ${PKG_ARGS} --target node18 --output $(WORKING_DIR)/bin/${PROVIDER}
+	cd nodejs/eks && yarn run pkg . ${PKG_ARGS} --target ${NODE_VERSION} --output $(WORKING_DIR)/bin/${PROVIDER}
 endif
 
-bin/provider/linux-amd64/${PROVIDER}:: TARGET := node18-linuxstatic-x64
-bin/provider/linux-arm64/${PROVIDER}:: TARGET := node18-linuxstatic-arm64
-bin/provider/darwin-amd64/${PROVIDER}:: TARGET := node18-macos-x64
-bin/provider/darwin-arm64/${PROVIDER}:: TARGET := node18-macos-arm64
-bin/provider/windows-amd64/${PROVIDER}.exe:: TARGET := node18-win-x64
-bin/provider/%:: nodejs/eks/bin nodejs/eks/node_modules
+bin/provider/linux-amd64/${PROVIDER}: TARGET := ${NODE_VERSION}-linuxstatic-x64
+bin/provider/linux-arm64/${PROVIDER}: TARGET := ${NODE_VERSION}-linuxstatic-arm64
+bin/provider/darwin-amd64/${PROVIDER}: TARGET := ${NODE_VERSION}-macos-x64
+bin/provider/darwin-arm64/${PROVIDER}: TARGET := ${NODE_VERSION}-macos-arm64
+bin/provider/windows-amd64/${PROVIDER}.exe: TARGET := ${NODE_VERSION}-win-x64
+bin/provider/%: nodejs/eks/bin nodejs/eks/node_modules
 	test ${TARGET}
 	cd nodejs/eks && \
 		yarn run pkg . ${PKG_ARGS} --target ${TARGET} --output ${WORKING_DIR}/$@
 
-dist/${GZIP_PREFIX}-linux-amd64.tar.gz:: bin/provider/linux-amd64/${PROVIDER}
-dist/${GZIP_PREFIX}-linux-arm64.tar.gz:: bin/provider/linux-arm64/${PROVIDER}
-dist/${GZIP_PREFIX}-darwin-amd64.tar.gz:: bin/provider/darwin-amd64/${PROVIDER}
-dist/${GZIP_PREFIX}-darwin-arm64.tar.gz:: bin/provider/darwin-arm64/${PROVIDER}
-dist/${GZIP_PREFIX}-windows-amd64.tar.gz:: bin/provider/windows-amd64/${PROVIDER}.exe
+dist/${GZIP_PREFIX}-linux-amd64.tar.gz: bin/provider/linux-amd64/${PROVIDER}
+dist/${GZIP_PREFIX}-linux-arm64.tar.gz: bin/provider/linux-arm64/${PROVIDER}
+dist/${GZIP_PREFIX}-darwin-amd64.tar.gz: bin/provider/darwin-amd64/${PROVIDER}
+dist/${GZIP_PREFIX}-darwin-arm64.tar.gz: bin/provider/darwin-arm64/${PROVIDER}
+dist/${GZIP_PREFIX}-windows-amd64.tar.gz: bin/provider/windows-amd64/${PROVIDER}.exe
 
-dist/${GZIP_PREFIX}-%.tar.gz:: 
+dist/${GZIP_PREFIX}-%.tar.gz: 
 	@mkdir -p dist
 	@# $< is the last dependency (the binary path from above)
 	tar --gzip -cf $@ README.md LICENSE -C $$(dirname $<) .
 
-dist:: dist/${GZIP_PREFIX}-linux-amd64.tar.gz
-dist:: dist/${GZIP_PREFIX}-linux-arm64.tar.gz
-dist:: dist/${GZIP_PREFIX}-darwin-amd64.tar.gz
-dist:: dist/${GZIP_PREFIX}-darwin-arm64.tar.gz
-dist:: dist/${GZIP_PREFIX}-windows-amd64.tar.gz
+dist: dist/${GZIP_PREFIX}-linux-amd64.tar.gz
+dist: dist/${GZIP_PREFIX}-linux-arm64.tar.gz
+dist: dist/${GZIP_PREFIX}-darwin-amd64.tar.gz
+dist: dist/${GZIP_PREFIX}-darwin-arm64.tar.gz
+dist: dist/${GZIP_PREFIX}-windows-amd64.tar.gz
 
-test_build::
+test_build:
 	cd examples/utils/testvpc && yarn install && yarn run tsc
 
-test_nodejs:: install_nodejs_sdk
+test_nodejs: install_nodejs_sdk
 	cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
-test_python:: install_provider test_build
+test_python: install_provider test_build
 	cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
-test_dotnet:: install_provider
+test_dotnet: install_provider
 	cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
-test_java:: install_provider
+test_java: install_provider
 	cd examples && go test -tags=java -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
-specific_test:: install_nodejs_sdk test_build
+specific_test: install_nodejs_sdk test_build
 	cd examples && go test -tags=$(LanguageTags) -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName) 2>&1 | tee /tmp/gotest.log | gotestfmt
 
-specific_test_local:: install_nodejs_sdk test_build
+specific_test_local: install_nodejs_sdk test_build
 	cd examples && go test -tags=$(LanguageTags) -v -count=1 -cover -timeout 3h . --run=TestAcc$(TestName)
 
-dev:: lint build_nodejs
-test:: test_nodejs
+
