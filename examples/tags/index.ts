@@ -37,9 +37,10 @@ const cluster2 = new eks.Cluster("example-tags-cluster2", {
     clusterTags: { "myClusterTag1": "true" },
 });
 
-// There are two approaches that can be used to add additional NodeGroups.
+// There are three approaches that can be used to add additional NodeGroups.
 // 1. A `createNodeGroup` API on `eks.Cluster`
 // 2. A `NodeGroup` resource which accepts an `eks.Cluster` as input
+// 3. A `NodeGroupV2` resource which accepts an `eks.Cluster` as input
 
 // Create the node group using an on-demand instance and resource tags.
 cluster2.createNodeGroup("example-ng-tags-ondemand", {
@@ -77,6 +78,27 @@ const spot = new eks.NodeGroup("example-ng-tags-spot", {
 }, {
     providers: { kubernetes: cluster2.provider},
 });
+
+const ng2 = new eks.NodeGroupV2("example-ng-tags-ng2", {
+    cluster: cluster2,
+    instanceType: "t2.medium",
+    desiredCapacity: 1,
+    minSize: 1,
+    maxSize: 2,
+    instanceProfile: instanceProfile0,
+    labels: {"preemptible": "true"},
+    taints: {
+        "special": {
+            value: "true",
+            effect: "NoSchedule",
+        },
+    },
+    autoScalingGroupTags: cluster2.core.cluster.name.apply(clusterName => ({
+        "myAutoScalingGroupTag3": "true",
+        "k8s.io/cluster-autoscaler/enabled": "true",
+        [`k8s.io/cluster-autoscaler/${clusterName}`]: "true",
+    }))
+})
 
 // Export the cluster's kubeconfig.
 export const kubeconfig2 = cluster2.kubeconfig;
