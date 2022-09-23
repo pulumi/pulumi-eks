@@ -1459,7 +1459,9 @@ export class Cluster extends pulumi.ComponentResource {
                 cluster: core,
                 ...core.nodeGroupOptions,
             }, this);
-            configDeps.push(this.defaultNodeGroup.cfnStack.id);
+            if (this.defaultNodeGroup.cfnStack) {
+                configDeps.push(this.defaultNodeGroup.cfnStack.id);
+            }
         }
 
         // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
