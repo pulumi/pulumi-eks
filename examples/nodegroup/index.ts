@@ -7,7 +7,7 @@ import * as iam from "./iam";
  */
 
 // Create example IAM roles and profiles to show to use them with NodeGroups.
-// Note, all roles for the instance profiles are requried to at least have
+// Note, all roles for the instance profiles are required to at least have
 // the following EKS Managed Policies attached to successfully auth and join the
 // cluster:
 //   - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
