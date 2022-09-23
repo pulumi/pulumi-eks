@@ -21,7 +21,7 @@ import (
 
 // Each resource request will be fetched from the Kubernetes API Server at a
 // max of 20 retries, with 15 seconds in between each attempt.
-// This creates a max wait time of upto 5 minutes that a resource request
+// This creates a max wait time of up to 5 minutes that a resource request
 // must successfully return within, before moving on.
 
 // MaxRetries is the maximum number of retries that a resource will be
@@ -537,8 +537,9 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 	clusterToNodeCount := make(clusterNodeCountMap)
 
 	// Map cluster to its NodeGroups.
-	cfnPrefix := "arn:aws:cloudformation"     // self-managed CF-based node gruops
-	ngPrefix := "aws:eks/nodeGroup:NodeGroup" // AWS managed node groups
+	cfnPrefix := "arn:aws:cloudformation"      // self-managed CF-based node groups
+	ngPrefix := "aws:eks/nodeGroup:NodeGroup"  // AWS managed node groups
+	ng2Prefix := "aws:autoscaling/group:Group" // self-managed ASG-based node groups
 
 	for _, res := range resources {
 		if strings.HasPrefix(res.ID.String(), cfnPrefix) {
@@ -567,11 +568,27 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 			// Extract the cluster name.
 			nodegroup := res.Inputs
 			clusterName := nodegroup["clusterName"].(string)
-
 			// Extract the desired size.
 			scalingConfig := nodegroup["scalingConfig"].(map[string]interface{})
 			desiredSize := int(scalingConfig["desiredSize"].(float64))
+			// Update map of cluster name to total desired Node count.
+			clusterToNodeCount[clusterName] =
+				clusterToNodeCount[clusterName] + desiredSize
+		} else if res.Type.String() == ng2Prefix {
+			asg := res.Outputs
+			nameTag := ""
+			// Find the correct Name tag within the returned array.
+			for _, t := range asg["tags"].([]interface{}) {
+				m := t.(map[string]interface{})
+				key := m["key"]
+				if key == "Name" {
+					nameTag = m["value"].(string)
+				}
+			}
 
+			// Extract the cluster name.
+			clusterName := strings.Split(nameTag, "-worker")[0]
+			desiredSize := int(asg["desiredCapacity"].(float64))
 			// Update map of cluster name to total desired Node count.
 			clusterToNodeCount[clusterName] =
 				clusterToNodeCount[clusterName] + desiredSize
