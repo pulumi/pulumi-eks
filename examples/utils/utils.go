@@ -21,7 +21,7 @@ import (
 
 // Each resource request will be fetched from the Kubernetes API Server at a
 // max of 20 retries, with 15 seconds in between each attempt.
-// This creates a max wait time of upto 5 minutes that a resource request
+// This creates a max wait time of up to 5 minutes that a resource request
 // must successfully return within, before moving on.
 
 // MaxRetries is the maximum number of retries that a resource will be
@@ -526,11 +526,6 @@ type cloudFormationTemplateBody struct {
 // respective total desired worker Node count for *all* NodeGroups.
 type clusterNodeCountMap map[string]int
 
-type nodeGroupTags struct {
-	k string `yaml:"key"`
-	v string `yaml:"value"`
-}
-
 // mapClusterToNodeCount iterates through all Pulumi stack resources
 // looking for CloudFormation template bodies to extract, and aggregate
 // the total desired worker Node count per cluster in the Pulumi stack resources.
@@ -573,31 +568,27 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 			// Extract the cluster name.
 			nodegroup := res.Inputs
 			clusterName := nodegroup["clusterName"].(string)
-
 			// Extract the desired size.
 			scalingConfig := nodegroup["scalingConfig"].(map[string]interface{})
 			desiredSize := int(scalingConfig["desiredSize"].(float64))
-
 			// Update map of cluster name to total desired Node count.
 			clusterToNodeCount[clusterName] =
 				clusterToNodeCount[clusterName] + desiredSize
 		} else if res.Type.String() == ng2Prefix {
-			asg := res.Inputs
-			tagList := asg["tags"].(string)
-			var tags []nodeGroupTags
-			err := yaml.Unmarshal([]byte(tagList), &tags)
-			if err != nil {
-				return nil, err
-			}
+			asg := res.Outputs
 			nameTag := ""
-			for _, tag := range tags {
-				if tag.k == "Name" {
-					nameTag = tag.v
+			// Find the correct Name tag within the returned array.
+			for _, t := range asg["tags"].([]interface{}) {
+				m := t.(map[string]interface{})
+				key := m["key"]
+				if key == "Name" {
+					nameTag = m["value"].(string)
 				}
 			}
-			clusterName := strings.Split(nameTag, "-worker")[0]
 
-			desiredSize := int(asg["desiredCapacity"].(int))
+			// Extract the cluster name.
+			clusterName := strings.Split(nameTag, "-worker")[0]
+			desiredSize := int(asg["desiredCapacity"].(float64))
 			// Update map of cluster name to total desired Node count.
 			clusterToNodeCount[clusterName] =
 				clusterToNodeCount[clusterName] + desiredSize
