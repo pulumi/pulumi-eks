@@ -1,4 +1,4 @@
-## Unreleased
+## 0.42.0 (Released Sep 23, 2022)
 - BREAKING CHANGE: Due to https://github.com/pulumi/pulumi/issues/7012 including the provider in the generated SDK never really worked. This is removed now. Note - existing uses in Nodejs should not be affected.
   [#746](https://github.com/pulumi/pulumi-eks/pull/746)
 - Fix issue with duplicated AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER env var on aws-node daemonset. 
