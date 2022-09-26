@@ -242,12 +242,6 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Setup Python
         uses: actions/setup-python@v2
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          cache: gradle
-          distribution: temurin
-          java-version: 11
       - name: Download NodeJS SDK
         uses: actions/download-artifact@v2
         with:
@@ -271,6 +265,51 @@ jobs:
           path: ${{ github.workspace}}/sdk/
       - name: Uncompress DotNet SDK folder
         run: tar -zxf ${{ github.workspace}}/sdk/dotnet.tar.gz -C ${{github.workspace}}/sdk/dotnet
+      - env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        name: Publish SDK
+        run: ./scripts/publish_packages.sh
+  publish_java_sdk:
+    continue-on-error: true
+    name: publish_java_sdk
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Set PACKAGE_VERSION to Env
+        run: echo "PACKAGE_VERSION=$(pulumictl get version --language generic)" >>
+          $GITHUB_ENV
+      - name: Checkout Scripts Repo
+        uses: actions/checkout@v2
+        with:
+          path: ci-scripts
+          repository: pulumi/scripts
+      - name: Unshallow clone for tags
+        run: git fetch --prune --unshallow --tags
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19.x
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        with:
+          repo: pulumi/pulumictl
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@v1.0.1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          always-auth: true
+          registry-url: https://registry.npmjs.org
+      - name: Setup Python
+        uses: actions/setup-python@v2
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          cache: gradle
+          distribution: temurin
+          java-version: 11
       - name: Download Java SDK
         uses: actions/download-artifact@v2
         with:
@@ -278,10 +317,6 @@ jobs:
           path: ${{ github.workspace}}/sdk/
       - name: Uncompress Java SDK folder
         run: tar -zxf ${{ github.workspace}}/sdk/java.tar.gz -C ${{github.workspace}}/sdk/java
-      - env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        name: Publish SDK
-        run: ./scripts/publish_packages.sh
       - name: Publish Java SDK
         uses: gradle/gradle-build-action@9b814496b50909128c6a52622b416c5ffa04db49
         with:
@@ -637,6 +672,20 @@ jobs:
           - 14.x
         test-name:
           - ClusterCs
+  tag_sdk:
+    name: tag_sdk
+    needs: publish_sdk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@v1.5.0
+        with:
+          repo: pulumi/pulumictl
+      - name: Add SDK version tag
+        run: git tag sdk/v$(pulumictl get version --language generic) && git push origin
+          sdk/v$(pulumictl get version --language generic)
 name: release
 "on":
   push:
