@@ -275,6 +275,10 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource implem
     }
 }
 
+const getPartition = async() => {
+    return await (await aws.getPartition()).partition
+}
+
 /**
  * getRoleProvider creates a role provider that can be passed to `new eks.Cluster("test", {
  * creationRoleProvider: ... })`.  This can be used to provide a specific role to use for the
@@ -294,7 +298,7 @@ export function getRoleProvider(
                 {
                 "Effect": "Allow",
                 "Principal": {
-                    "AWS": "arn:aws:iam::${id.accountId}:root"
+                    "AWS": "arn:${getPartition()}:iam::${id.accountId}:root"
                 },
                 "Action": "sts:AssumeRole"
                 }
@@ -434,7 +438,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             service: "eks.amazonaws.com",
             description: "Allows EKS to manage clusters on your behalf.",
             managedPolicyArns: [
-                "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+                `arn:${getPartition()}:iam::aws:policy/AmazonEKSClusterPolicy`,
             ],
         }, { parent, provider })).role;
     }
@@ -634,9 +638,9 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         const instanceRole = (new ServiceRole(`${name}-instanceRole`, {
             service: "ec2.amazonaws.com",
             managedPolicyArns: [
-                "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-                "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-                "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                `arn:${getPartition()}:iam::aws:policy/AmazonEKSWorkerNodePolicy`,
+                `arn:${getPartition()}:iam::aws:policy/AmazonEKS_CNI_Policy`,
+                `arn:${getPartition()}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly`,
             ],
         }, { parent, provider })).role;
 
@@ -708,7 +712,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             const podExecutionRoleArn = fargate.podExecutionRoleArn || (new ServiceRole(`${name}-podExecutionRole`, {
                 service: "eks-fargate-pods.amazonaws.com",
                 managedPolicyArns: [
-                    "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
+                    `arn:${getPartition()}:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy`,
                 ],
             }, { parent, provider })).role.apply(r => r.arn);
             const selectors = fargate.selectors || [
@@ -1304,7 +1308,7 @@ export interface ClusterOptions {
 export interface FargateProfile {
     /**
      * Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role
-     * with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
+     * with the `arn:${getPartition()}:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
      */
     podExecutionRoleArn?: pulumi.Input<string>;
     /**
