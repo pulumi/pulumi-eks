@@ -281,15 +281,15 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource implem
  * @returns partition
  */
 const getPartition = (
-    provider?: pulumi.ProviderResource
+    provider?: pulumi.ProviderResource,
 ): string => {
     let partition = "aws";
     aws.getPartition({provider, async: true}).then(partitionResult => {
         partition = partitionResult.partition;
-    })
+    });
     return partition;
-}
-//Grab the PARTITION once and use throughout
+};
+// Grab the PARTITION once and use throughout
 const PARTITION = getPartition();
 
 /**
