@@ -1,3 +1,6 @@
+## Unreleased
+- [Add support for non-default AWS partitions #788](https://github.com/pulumi/pulumi-eks/pull/788)
+
 ## 0.42.1 (Released Sep 26, 2022)
 - Updates to Java SDK.
   [#782](https://github.com/pulumi/pulumi-eks/pull/782)
