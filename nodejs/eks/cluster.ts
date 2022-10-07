@@ -280,17 +280,6 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource implem
  * @param provider Optional explicit provider
  * @returns partition
  */
-const getPartition = (
-    provider?: pulumi.ProviderResource,
-): string => {
-    let partition = "aws";
-    aws.getPartition({provider, async: true}).then(partitionResult => {
-        partition = partitionResult.partition;
-    });
-    return partition;
-};
-// Grab the PARTITION once and use throughout
-const PARTITION = getPartition();
 
 /**
  * getRoleProvider creates a role provider that can be passed to `new eks.Cluster("test", {
@@ -416,6 +405,8 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         version: args.version,
     };
 
+    const partition = pulumi.output(aws.getPartition({ provider })).partition;
+
     // Configure default networking architecture.
     let vpcId: pulumi.Input<string> = args.vpcId!;
     let clusterSubnetIds: pulumi.Input<pulumi.Input<string>[]> = [];
@@ -451,7 +442,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             service: "eks.amazonaws.com",
             description: "Allows EKS to manage clusters on your behalf.",
             managedPolicyArns: [
-                `arn:${PARTITION}:iam::aws:policy/AmazonEKSClusterPolicy`,
+                pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSClusterPolicy`,
             ],
         }, { parent, provider })).role;
     }
@@ -651,9 +642,9 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         const instanceRole = (new ServiceRole(`${name}-instanceRole`, {
             service: "ec2.amazonaws.com",
             managedPolicyArns: [
-                `arn:${PARTITION}:iam::aws:policy/AmazonEKSWorkerNodePolicy`,
-                `arn:${PARTITION}:iam::aws:policy/AmazonEKS_CNI_Policy`,
-                `arn:${PARTITION}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly`,
+                pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy`,
+                pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKS_CNI_Policy`,
+                pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly`,
             ],
         }, { parent, provider })).role;
 

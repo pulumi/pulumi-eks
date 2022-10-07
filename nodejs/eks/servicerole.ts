@@ -39,7 +39,7 @@ export interface ServiceRoleArgs {
     /**
      * One or more managed policy ARNs to attach to this role.
      */
-    readonly managedPolicyArns?: string[];
+    readonly managedPolicyArns?: pulumi.Input<string>[];
 }
 
 /**
