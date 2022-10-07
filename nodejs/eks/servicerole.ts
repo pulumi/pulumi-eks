@@ -39,7 +39,7 @@ export interface ServiceRoleArgs {
     /**
      * One or more managed policy ARNs to attach to this role.
      */
-    readonly managedPolicyArns?: string[];
+    readonly managedPolicyArns?: { id: string, arn: pulumi.Input<string> }[];
 }
 
 /**
@@ -76,10 +76,11 @@ export class ServiceRole extends pulumi.ComponentResource {
             description: args.description,
             assumeRolePolicy: assumeRolePolicy,
         }, { parent: this });
-        const rolePolicyAttachments = [];
+
+        const rolePolicyAttachments: aws.iam.RolePolicyAttachment[] = [];
         for (const policy of (args.managedPolicyArns || [])) {
-            rolePolicyAttachments.push(new aws.iam.RolePolicyAttachment(`${name}-${sha1hash(policy)}`, {
-                policyArn: policy,
+            rolePolicyAttachments.push(new aws.iam.RolePolicyAttachment(`${name}-${sha1hash(policy.id)}`, {
+                policyArn: policy.arn,
                 role: role,
             }, { parent: this }));
         }
