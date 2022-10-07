@@ -442,7 +442,10 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             service: "eks.amazonaws.com",
             description: "Allows EKS to manage clusters on your behalf.",
             managedPolicyArns: [
-                pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSClusterPolicy`,
+                {
+                    id: "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+                    arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSClusterPolicy`,
+                },
             ],
         }, { parent, provider })).role;
     }
@@ -642,9 +645,18 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         const instanceRole = (new ServiceRole(`${name}-instanceRole`, {
             service: "ec2.amazonaws.com",
             managedPolicyArns: [
-                pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy`,
-                pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKS_CNI_Policy`,
-                pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly`,
+                {
+                    id: "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+                    arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy`,
+                },
+                {
+                    id: "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+                    arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKS_CNI_Policy`,
+                },
+                {
+                    id: "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly`,
+                },
             ],
         }, { parent, provider })).role;
 
@@ -716,7 +728,10 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
             const podExecutionRoleArn = fargate.podExecutionRoleArn || (new ServiceRole(`${name}-podExecutionRole`, {
                 service: "eks-fargate-pods.amazonaws.com",
                 managedPolicyArns: [
-                    `arn:${PARTIT}:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy`,
+                    {
+                        id: "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
+                        arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy`,
+                    },
                 ],
             }, { parent, provider })).role.apply(r => r.arn);
             const selectors = fargate.selectors || [
