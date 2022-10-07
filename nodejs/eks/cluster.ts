@@ -276,12 +276,6 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource implem
 }
 
 /**
- * getPartition gets the partition from the pulumi run.
- * @param provider Optional explicit provider
- * @returns partition
- */
-
-/**
  * getRoleProvider creates a role provider that can be passed to `new eks.Cluster("test", {
  * creationRoleProvider: ... })`.  This can be used to provide a specific role to use for the
  * creation of the EKS cluster different from the role being used to run the Pulumi deployment.
@@ -293,20 +287,21 @@ export function getRoleProvider(
     parent?: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): CreationRoleProvider {
+    const partition = pulumi.output(aws.getPartition({ provider })).partition;
+    const accountId = pulumi.output(aws.getCallerIdentity({ parent })).accountId;
     const iamRole = new aws.iam.Role(`${name}-eksClusterCreatorRole`, {
-        assumeRolePolicy: aws.getCallerIdentity({ parent, async: true }).then(id => `{
+        assumeRolePolicy: pulumi.interpolate`{
             "Version": "2012-10-17",
             "Statement": [
                 {
                 "Effect": "Allow",
                 "Principal": {
-                    "AWS": "arn:aws:iam::${id.accountId}:root"
+                    "AWS": "arn:${partition}:iam::${accountId}:root"
                 },
                 "Action": "sts:AssumeRole"
                 }
             ]
-            }`,
-        ),
+        }`,
         description: `Admin access to eks-${name}`,
     }, { parent, provider });
 
