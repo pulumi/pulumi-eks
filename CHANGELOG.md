@@ -1,6 +1,10 @@
 ## Unreleased
 - [Add support for non-default AWS partitions #788](https://github.com/pulumi/pulumi-eks/pull/788)
 
+## 0.42.2 (Released Oct 12, 2022)
+- Fix internal registration of NodeGroupV2 resource.
+  [#790](https://github.com/pulumi/pulumi-eks/pull/790)
+
 ## 0.42.1 (Released Sep 26, 2022)
 - Updates to Java SDK.
   [#782](https://github.com/pulumi/pulumi-eks/pull/782)
