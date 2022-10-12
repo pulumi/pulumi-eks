@@ -286,9 +286,10 @@ jobs:
       - name: Install dependencies
         run: make install_${{ matrix.language}}_sdk
       - name: Install gotestfmt
-        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        uses: GoTestTools/gotestfmt-action@v2
         with:
-          repo: haveyoudebuggedit/gotestfmt
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.4.0
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -406,9 +407,10 @@ jobs:
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
       - name: Install gotestfmt
-        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        uses: GoTestTools/gotestfmt-action@v2
         with:
-          repo: haveyoudebuggedit/gotestfmt
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.4.0
       - name: Download Python SDK
         uses: actions/download-artifact@v2
         with:
@@ -518,9 +520,10 @@ jobs:
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
       - name: Install gotestfmt
-        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        uses: GoTestTools/gotestfmt-action@v2
         with:
-          repo: haveyoudebuggedit/gotestfmt
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.4.0
       - name: Download DotNet SDK
         uses: actions/download-artifact@v2
         with:
@@ -628,9 +631,10 @@ jobs:
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
       - name: Install gotestfmt
-        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        uses: GoTestTools/gotestfmt-action@v2
         with:
-          repo: haveyoudebuggedit/gotestfmt
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.4.0
       - name: Download Go SDK
         uses: actions/download-artifact@v2
         with:
