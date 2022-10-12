@@ -396,9 +396,10 @@ jobs:
       - name: Install dependencies
         run: make install_${{ matrix.language}}_sdk
       - name: Install gotestfmt
-        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        uses: GoTestTools/gotestfmt-action@v2
         with:
-          repo: haveyoudebuggedit/gotestfmt
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.4.0
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -528,9 +529,10 @@ jobs:
       - name: Install dependencies
         run: make install_python_sdk
       - name: Install gotestfmt
-        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        uses: GoTestTools/gotestfmt-action@v2
         with:
-          repo: haveyoudebuggedit/gotestfmt
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.4.0
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -636,9 +638,10 @@ jobs:
       - name: Install dependencies
         run: make install_dotnet_sdk
       - name: Install gotestfmt
-        uses: jaxxstorm/action-install-gh-release@v1.2.0
+        uses: GoTestTools/gotestfmt-action@v2
         with:
-          repo: haveyoudebuggedit/gotestfmt
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.4.0
       - run: dotnet nuget add source ${{ github.workspace }}/nuget
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
