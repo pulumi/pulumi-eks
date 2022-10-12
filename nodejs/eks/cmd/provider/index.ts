@@ -18,7 +18,7 @@ import { Cluster } from "../../cluster";
 import { VpcCni } from "../../cni";
 import { clusterCreationRoleProviderProviderFactory, clusterProviderFactory } from "./cluster";
 import { vpcCniProviderFactory } from "./cni";
-import { managedNodeGroupProviderFactory, nodeGroupProviderFactory } from "./nodegroup";
+import { managedNodeGroupProviderFactory, nodeGroupProviderFactory, nodeGroupV2ProviderFactory } from "./nodegroup";
 import { randomSuffixProviderFactory } from "./randomSuffix";
 import { nodeGroupSecurityGroupProviderFactory } from "./securitygroup";
 
@@ -30,6 +30,7 @@ class Provider implements pulumi.provider.Provider {
         "eks:index:ClusterCreationRoleProvider": clusterCreationRoleProviderProviderFactory,
         "eks:index:ManagedNodeGroup": managedNodeGroupProviderFactory,
         "eks:index:NodeGroup": nodeGroupProviderFactory,
+        "eks:index:NodeGroupV2": nodeGroupV2ProviderFactory,
         "eks:index:NodeGroupSecurityGroup": nodeGroupSecurityGroupProviderFactory,
         "eks:index:RandomSuffix": randomSuffixProviderFactory,
         "eks:index:VpcCni": vpcCniProviderFactory,
