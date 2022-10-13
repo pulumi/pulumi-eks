@@ -288,9 +288,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Set PACKAGE_VERSION to Env
-        run: echo "PACKAGE_VERSION=$(pulumictl get version --language generic)" >>
-          $GITHUB_ENV
       - name: Checkout Scripts Repo
         uses: actions/checkout@v2
         with:
@@ -321,6 +318,9 @@ jobs:
           cache: gradle
           distribution: temurin
           java-version: 11
+      - name: Set PACKAGE_VERSION to Env
+        run: echo "PACKAGE_VERSION=$(pulumictl get version --language generic)" >>
+          $GITHUB_ENV
       - name: Download Java SDK
         uses: actions/download-artifact@v2
         with:
