@@ -273,7 +273,7 @@ const genResourceAbstractType = (
               ),
               ts.factory.createToken(ts.SyntaxKind.QuestionToken),
               ts.factory.createObjectLiteralExpression(
-                Object.keys(resource.properties as any).map((prop) =>
+                Object.keys((resource.properties ?? {}) as any).map((prop) =>
                   ts.factory.createPropertyAssignment(
                     ts.factory.createIdentifier(prop),
                     ts.factory.createIdentifier("undefined")
