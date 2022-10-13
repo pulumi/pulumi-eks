@@ -84,5 +84,5 @@ const nodeGroupV2Provider: pulumi.provider.Provider = {
 
 /** @internal */
 export function nodeGroupV2ProviderFactory(): pulumi.provider.Provider {
-    return nodeGroupProvider;
+    return nodeGroupV2Provider;
 }
