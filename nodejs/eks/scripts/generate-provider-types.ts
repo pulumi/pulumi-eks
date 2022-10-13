@@ -21,18 +21,27 @@ type Direction = "Input" | "Output";
 
 const externalRefs = (() => {
   const packageJson = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+  const pulumiPackagePrefix = "@pulumi/";
 
   const externalRefs: Record<string, ExternalRef> = {};
   const addRef = (name: string) => {
-    const importName = "@pulumi/" + name;
-    const version = packageJson.dependencies[importName];
+    const importName = pulumiPackagePrefix + name;
+    const versionRange: string = packageJson.dependencies[importName];
+    const versionMatch = versionRange.match(/\d+\.\d+\.\d+/);
+    const version = versionMatch?.[0] ?? versionRange;
     externalRefs[`/${name}/v${version}/schema.json`] = {
       import: importName,
       name,
     };
   };
-  addRef("aws");
-  addRef("docker");
+  for (const dependency of Object.keys(packageJson.dependencies)) {
+    if (
+      dependency !== "@pulumi/pulumi" &&
+      dependency.startsWith(pulumiPackagePrefix)
+    ) {
+      addRef(dependency.substring(pulumiPackagePrefix.length));
+    }
+  }
   return externalRefs;
 })();
 
