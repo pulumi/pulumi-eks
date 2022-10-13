@@ -82,7 +82,7 @@ const resolveRef = (ref: unknown, direction: Direction): ts.TypeNode => {
           externalRef.name,
           "types",
           direction.toLowerCase(),
-          ...path.slice(0, -1),
+          ...pathWithoutResourceName(path, resourceName),
           resourceName,
         ].join(".")
       );
@@ -92,15 +92,36 @@ const resolveRef = (ref: unknown, direction: Direction): ts.TypeNode => {
       const typeParts = typeName.split(":");
       const resourceName = typeParts[2];
       const path = decodeURIComponent(typeParts[1]).split("/");
-      path.pop(); // Last section is same as the resource name
       return ts.factory.createTypeReferenceNode(
-        [externalRef.name, ...path, resourceName].join(".")
+        [
+          externalRef.name,
+          ...pathWithoutResourceName(path, resourceName),
+          resourceName,
+        ].join(".")
       );
     }
   }
 
   console.warn("Unresolvable ref:", ref);
   return ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+};
+
+// A few heuristics to try and match the generated types:
+// 1. If the last section is the same as the resource name, we ignore it.
+// 2. If a path section has dots, strip everything after the first dot,
+//    this is to mimic how the k8s provider maps its tokens to SDK names.
+// The proper fix here is the load the actual schema and use the language-specific overrides.
+const pathWithoutResourceName = (path: string[], resourceName: string) => {
+  const pathCopy = [...path];
+  const lastPathSection = path[path.length - 1];
+  if (
+    lastPathSection.localeCompare(resourceName, undefined, {
+      sensitivity: "base",
+    }) == 0
+  ) {
+    pathCopy.pop();
+  }
+  return pathCopy.map((segment) => segment.replace(/\..+$/, ""));
 };
 
 const getPlainType = (
