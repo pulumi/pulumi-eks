@@ -729,7 +729,7 @@ ${customUserData}
  */
 export function createNodeGroupV2(name: string, args: NodeGroupV2Options, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupV2Data {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
-    
+
     if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
         throw new Error(`an instanceProfile is required`);
     }
