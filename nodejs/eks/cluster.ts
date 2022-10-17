@@ -401,6 +401,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     };
 
     const partition = pulumi.output(aws.getPartition({ provider })).partition;
+    const dnsSuffix = pulumi.output(aws.getPartition({ provider })).dnsSuffix;
 
     // Configure default networking architecture.
     let vpcId: pulumi.Input<string> = args.vpcId!;
@@ -638,7 +639,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         instanceRoles = pulumi.output([args.instanceRole]);
     } else {
         const instanceRole = (new ServiceRole(`${name}-instanceRole`, {
-            service: "ec2.amazonaws.com",
+            service: `ec2.${dnsSuffix}`,
             managedPolicyArns: [
                 {
                     id: "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
@@ -787,7 +788,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     if (args.createOidcProvider) {
         // Retrieve the OIDC provider URL's intermediate root CA fingerprint.
         const awsRegionName = pulumi.output(aws.getRegion({}, { parent, async: true })).name;
-        const eksOidcProviderUrl = pulumi.interpolate`https://oidc.eks.${awsRegionName}.amazonaws.com`;
+        const eksOidcProviderUrl = pulumi.interpolate`https://oidc.eks.${awsRegionName}.${dnsSuffix}`;
         const agent = createHttpAgent(args.proxy);
         const fingerprint = getIssuerCAThumbprint(eksOidcProviderUrl, agent);
 
