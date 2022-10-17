@@ -729,7 +729,7 @@ ${customUserData}
  */
 export function createNodeGroupV2(name: string, args: NodeGroupV2Options, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupV2Data {
     const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
-
+    
     if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
         throw new Error(`an instanceProfile is required`);
     }
@@ -836,8 +836,11 @@ export function createNodeGroupV2(name: string, args: NodeGroupV2Options, parent
         bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
     }
 
-    const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, name, userDataArg])
-        .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
+    const userdata = pulumi.all([awsRegion, eksCluster.name, eksCluster.endpoint, eksCluster.certificateAuthority, name, userDataArg, args.nodeUserDataOverride])
+        .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData, nodeUserDataOverride]) => {
+            if (nodeUserDataOverride !== undefined && nodeUserDataOverride !== "") {
+                return nodeUserDataOverride;
+            }
             if (customUserData !== "") {
                 customUserData = `cat >/opt/user-data <<${stackName}-user-data
 ${customUserData}
