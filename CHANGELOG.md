@@ -1,4 +1,5 @@
 ## Unreleased
+- [IAM principal may have different dns suffix #801](https://github.com/pulumi/pulumi-eks/pull/801)
 - [Add support for non-default AWS partitions #788](https://github.com/pulumi/pulumi-eks/pull/788)
 
 ## 0.42.2 (Released Oct 12, 2022)
