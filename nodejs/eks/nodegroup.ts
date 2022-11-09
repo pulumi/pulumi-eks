@@ -312,6 +312,8 @@ export interface NodeGroupV2Options extends NodeGroupOptions {
      * Defaults to 50.
      */
      minRefreshPercentage?: number;
+
+    launchTemplateTagSpecifications?: awsInputs.ec2.LaunchTemplateTagSpecification[];
 }
 
 /**
@@ -938,6 +940,7 @@ ${customUserData}
             securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         }],
         userData: userdata,
+        tagSpecifications: args.launchTemplateTagSpecifications,
     }, { parent, provider});
 
     // Compute the worker node group subnets to use from the various approaches.
