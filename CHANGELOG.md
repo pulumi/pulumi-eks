@@ -1,4 +1,5 @@
 ## Unreleased
+- Add `kubeletExtraArgs` and `bootstrapExtraArgs` to `ManagedNodeGroupOptions` [#809](https://github.com/pulumi/pulumi-eks/pull/809)
 - [Add support for non-default AWS partitions #788](https://github.com/pulumi/pulumi-eks/pull/788)
 
 ## 0.42.2 (Released Oct 12, 2022)
