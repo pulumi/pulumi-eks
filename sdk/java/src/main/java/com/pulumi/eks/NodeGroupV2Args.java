@@ -5,6 +5,7 @@ package com.pulumi.eks;
 
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.aws.ec2.SecurityGroupRule;
+import com.pulumi.aws.ec2.inputs.LaunchTemplateTagSpecificationArgs;
 import com.pulumi.aws.iam.InstanceProfile;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
@@ -319,6 +320,21 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * The tag specifications to apply to the launch template.
+     * 
+     */
+    @Import(name="launchTemplateTagSpecifications")
+    private @Nullable Output<List<LaunchTemplateTagSpecificationArgs>> launchTemplateTagSpecifications;
+
+    /**
+     * @return The tag specifications to apply to the launch template.
+     * 
+     */
+    public Optional<Output<List<LaunchTemplateTagSpecificationArgs>>> launchTemplateTagSpecifications() {
+        return Optional.ofNullable(this.launchTemplateTagSpecifications);
+    }
+
+    /**
      * The maximum number of worker nodes running in the cluster. Defaults to 2.
      * 
      */
@@ -558,6 +574,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
         this.keyName = $.keyName;
         this.kubeletExtraArgs = $.kubeletExtraArgs;
         this.labels = $.labels;
+        this.launchTemplateTagSpecifications = $.launchTemplateTagSpecifications;
         this.maxSize = $.maxSize;
         this.minRefreshPercentage = $.minRefreshPercentage;
         this.minSize = $.minSize;
@@ -991,6 +1008,37 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          */
         public Builder labels(Map<String,String> labels) {
             return labels(Output.of(labels));
+        }
+
+        /**
+         * @param launchTemplateTagSpecifications The tag specifications to apply to the launch template.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder launchTemplateTagSpecifications(@Nullable Output<List<LaunchTemplateTagSpecificationArgs>> launchTemplateTagSpecifications) {
+            $.launchTemplateTagSpecifications = launchTemplateTagSpecifications;
+            return this;
+        }
+
+        /**
+         * @param launchTemplateTagSpecifications The tag specifications to apply to the launch template.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder launchTemplateTagSpecifications(List<LaunchTemplateTagSpecificationArgs> launchTemplateTagSpecifications) {
+            return launchTemplateTagSpecifications(Output.of(launchTemplateTagSpecifications));
+        }
+
+        /**
+         * @param launchTemplateTagSpecifications The tag specifications to apply to the launch template.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder launchTemplateTagSpecifications(LaunchTemplateTagSpecificationArgs... launchTemplateTagSpecifications) {
+            return launchTemplateTagSpecifications(List.of(launchTemplateTagSpecifications));
         }
 
         /**

@@ -1326,6 +1326,13 @@
                     },
                     "description": "Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument."
                 },
+                "launchTemplateTagSpecifications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "/aws/v5.4.0/schema.json#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification"
+                    },
+                    "description": "The tag specifications to apply to the launch template."
+                },
                 "maxSize": {
                     "type": "integer",
                     "description": "The maximum number of worker nodes running in the cluster. Defaults to 2."
