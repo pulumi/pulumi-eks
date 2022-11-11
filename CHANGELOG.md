@@ -1,5 +1,6 @@
 ## Unreleased
 - [Add support for non-default AWS partitions #788](https://github.com/pulumi/pulumi-eks/pull/788)
+- [Add support for launchTemplateTagSpecifications within NodeGroupV2 #810](https://github.com/pulumi/pulumi-eks/pull/810)
 
 ## 0.42.2 (Released Oct 12, 2022)
 - Fix internal registration of NodeGroupV2 resource.

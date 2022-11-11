@@ -104,6 +104,8 @@ type nodeGroupV2Args struct {
 	KubeletExtraArgs *string `pulumi:"kubeletExtraArgs"`
 	// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
 	Labels map[string]string `pulumi:"labels"`
+	// The tag specifications to apply to the launch template.
+	LaunchTemplateTagSpecifications []ec2.LaunchTemplateTagSpecification `pulumi:"launchTemplateTagSpecifications"`
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize *int `pulumi:"maxSize"`
 	// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
@@ -206,6 +208,8 @@ type NodeGroupV2Args struct {
 	KubeletExtraArgs pulumi.StringPtrInput
 	// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
 	Labels pulumi.StringMapInput
+	// The tag specifications to apply to the launch template.
+	LaunchTemplateTagSpecifications ec2.LaunchTemplateTagSpecificationArrayInput
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize pulumi.IntPtrInput
 	// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.

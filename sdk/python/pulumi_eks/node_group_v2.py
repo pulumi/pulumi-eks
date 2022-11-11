@@ -33,6 +33,7 @@ class NodeGroupV2Args:
                  key_name: Optional[pulumi.Input[str]] = None,
                  kubelet_extra_args: Optional[pulumi.Input[str]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 launch_template_tag_specifications: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_refresh_percentage: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
@@ -91,6 +92,7 @@ class NodeGroupV2Args:
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
         :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]] launch_template_tag_specifications: The tag specifications to apply to the launch template.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
         :param pulumi.Input[int] min_refresh_percentage: The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
@@ -149,6 +151,8 @@ class NodeGroupV2Args:
             pulumi.set(__self__, "kubelet_extra_args", kubelet_extra_args)
         if labels is not None:
             pulumi.set(__self__, "labels", labels)
+        if launch_template_tag_specifications is not None:
+            pulumi.set(__self__, "launch_template_tag_specifications", launch_template_tag_specifications)
         if max_size is not None:
             pulumi.set(__self__, "max_size", max_size)
         if min_refresh_percentage is not None:
@@ -396,6 +400,18 @@ class NodeGroupV2Args:
         pulumi.set(self, "labels", value)
 
     @property
+    @pulumi.getter(name="launchTemplateTagSpecifications")
+    def launch_template_tag_specifications(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]]:
+        """
+        The tag specifications to apply to the launch template.
+        """
+        return pulumi.get(self, "launch_template_tag_specifications")
+
+    @launch_template_tag_specifications.setter
+    def launch_template_tag_specifications(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]]):
+        pulumi.set(self, "launch_template_tag_specifications", value)
+
+    @property
     @pulumi.getter(name="maxSize")
     def max_size(self) -> Optional[pulumi.Input[int]]:
         """
@@ -586,6 +602,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  key_name: Optional[pulumi.Input[str]] = None,
                  kubelet_extra_args: Optional[pulumi.Input[str]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 launch_template_tag_specifications: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_refresh_percentage: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
@@ -648,6 +665,7 @@ class NodeGroupV2(pulumi.ComponentResource):
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
         :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]] launch_template_tag_specifications: The tag specifications to apply to the launch template.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
         :param pulumi.Input[int] min_refresh_percentage: The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
@@ -715,6 +733,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  key_name: Optional[pulumi.Input[str]] = None,
                  kubelet_extra_args: Optional[pulumi.Input[str]] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 launch_template_tag_specifications: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_refresh_percentage: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
@@ -760,6 +779,7 @@ class NodeGroupV2(pulumi.ComponentResource):
             __props__.__dict__["key_name"] = key_name
             __props__.__dict__["kubelet_extra_args"] = kubelet_extra_args
             __props__.__dict__["labels"] = labels
+            __props__.__dict__["launch_template_tag_specifications"] = launch_template_tag_specifications
             __props__.__dict__["max_size"] = max_size
             __props__.__dict__["min_refresh_percentage"] = min_refresh_percentage
             __props__.__dict__["min_size"] = min_size

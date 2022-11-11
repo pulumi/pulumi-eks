@@ -1540,6 +1540,14 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			TypeSpec:    schema.TypeSpec{Type: "integer"},
 			Description: "The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.",
 		}
+
+		props["launchTemplateTagSpecifications"] = schema.PropertySpec{
+			TypeSpec: schema.TypeSpec{
+				Type:  "array",
+				Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification")},
+			},
+			Description: "The tag specifications to apply to the launch template.",
+		}
 	}
 
 	return props
