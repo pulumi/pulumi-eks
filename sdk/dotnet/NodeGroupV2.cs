@@ -208,6 +208,18 @@ namespace Pulumi.Eks
             set => _labels = value;
         }
 
+        [Input("launchTemplateTagSpecifications")]
+        private InputList<Pulumi.Aws.Ec2.Inputs.LaunchTemplateTagSpecificationArgs>? _launchTemplateTagSpecifications;
+
+        /// <summary>
+        /// The tag specifications to apply to the launch template.
+        /// </summary>
+        public InputList<Pulumi.Aws.Ec2.Inputs.LaunchTemplateTagSpecificationArgs> LaunchTemplateTagSpecifications
+        {
+            get => _launchTemplateTagSpecifications ?? (_launchTemplateTagSpecifications = new InputList<Pulumi.Aws.Ec2.Inputs.LaunchTemplateTagSpecificationArgs>());
+            set => _launchTemplateTagSpecifications = value;
+        }
+
         /// <summary>
         /// The maximum number of worker nodes running in the cluster. Defaults to 2.
         /// </summary>

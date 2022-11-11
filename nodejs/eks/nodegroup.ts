@@ -311,7 +311,9 @@ export interface NodeGroupV2Options extends NodeGroupOptions {
      *
      * Defaults to 50.
      */
-     minRefreshPercentage?: number;
+    minRefreshPercentage?: number;
+
+    launchTemplateTagSpecifications?: awsInputs.ec2.LaunchTemplateTagSpecification[];
 }
 
 /**
@@ -416,7 +418,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2
      * @param args The arguments for this cluster.
      * @param opts A bag of options that control this component's behavior.
      */
-    constructor(name: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
+    constructor(name: string, args: NodeGroupV2Options, opts?: pulumi.ComponentResourceOptions) {
         super("eks:index:NodeGroupV2", name, args, opts);
 
         const group = createNodeGroupV2(name, args, this, opts?.provider);
@@ -938,6 +940,7 @@ ${customUserData}
             securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         }],
         userData: userdata,
+        tagSpecifications: args.launchTemplateTagSpecifications,
     }, { parent, provider});
 
     // Compute the worker node group subnets to use from the various approaches.
