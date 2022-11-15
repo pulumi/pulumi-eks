@@ -22,10 +22,10 @@ export interface DashboardOptions {}
 export function createDashboard(name: string, args: DashboardOptions, parent: pulumi.ComponentResource, k8sProvider: k8s.Provider) {
     // Deploy the latest version of the k8s dashboard.
     const dashboardYaml = [
-        path.join(__dirname, "dashboard", "kubernetes-dashboard.yaml"),
-        path.join(__dirname, "dashboard", "heapster.yaml"),
-        path.join(__dirname, "dashboard", "influxdb.yaml"),
-        path.join(__dirname, "dashboard", "heapster-rbac.yaml"),
+        path.join(__dirname, "dashboard/kubernetes-dashboard.yaml"),
+        path.join(__dirname, "dashboard/heapster.yaml"),
+        path.join(__dirname, "dashboard/influxdb.yaml"),
+        path.join(__dirname, "dashboard/heapster-rbac.yaml"),
     ].map(filePath => fs.readFileSync(filePath).toString());
     const dashboard = new k8s.yaml.ConfigGroup(`${name}-dashboard`, {
         yaml: dashboardYaml,
