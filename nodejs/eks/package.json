@@ -35,8 +35,5 @@
     },
     "pulumi": {
         "resource": true
-    },
-    "pkg": {
-        "assets": ["../cni/**"]
     }
 }

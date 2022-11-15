@@ -167,7 +167,7 @@ function applyVpcCniYaml(args: VpcCniInputs) {
     // Check to ensure that a compatible kubectl is installed, as we'll need it in order to deploy k8s resources below.
     assertCompatibleKubectlVersionExists();
 
-    const yamlPath = path.join(__dirname, "..", "..", "cni", "aws-k8s-cni.yaml");
+    const yamlPath = path.join(__dirname, "../../cni/aws-k8s-cni.yaml");
     const cniYamlText = fs.readFileSync(yamlPath).toString();
 
     const kubeconfig: string = typeof args.kubeconfig === "string"
