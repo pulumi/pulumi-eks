@@ -24,9 +24,7 @@ build:: schema provider build_nodejs build_python build_go build_dotnet build_ja
 schema::
 	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER))
 
-provider::
-	rm -rf provider/cmd/$(PROVIDER)/bin
-	cd provider/cmd/$(PROVIDER) && go build -o $(WORKING_DIR)/bin/$(PROVIDER) main.go
+provider:: bin/${PROVIDER}
 
 build_nodejs:: VERSION := $(shell pulumictl get version --language javascript)
 build_nodejs::
