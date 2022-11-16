@@ -215,7 +215,7 @@ jobs:
         javaversion:
           - 11
         nodeversion:
-          - 14.x
+          - 18.x
         pythonversion:
           - 3.8
   test-nodejs:
@@ -319,7 +319,7 @@ jobs:
         language:
           - nodejs
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
           - AwsProfile
           - Cluster
@@ -449,7 +449,7 @@ jobs:
         pythonversion:
           - 3.8
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
           - AwsProfilePy
           - AwsProfileRolePy
@@ -563,7 +563,7 @@ jobs:
         dotnetversion:
           - 3.1
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
           - ClusterCs
   test-go:
@@ -671,6 +671,6 @@ jobs:
         pythonversion:
           - 3.8
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
           - ClusterGo

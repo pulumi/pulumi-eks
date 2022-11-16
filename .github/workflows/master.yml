@@ -175,7 +175,7 @@ jobs:
         javaversion:
           - 11
         nodeversion:
-          - 14.x
+          - 18.x
         pythonversion:
           - 3.8
   publish:
@@ -202,24 +202,19 @@ jobs:
           role-external-id: upload-pulumi-release
           role-session-name: ${{ env.PROVIDER}}@githubActions
           role-to-assume: ${{ secrets.AWS_UPLOAD_ROLE_ARN }}
-      - name: Setup Go
-        uses: actions/setup-go@v2
+      - uses: MOZGIII/install-ldid-action@v1
         with:
-          go-version: 1.19.x
+          tag: v2.1.5-procursus2
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.1.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
-      - name: Set PreRelease Version
-        run: echo "GORELEASER_CURRENT_TAG=v$(pulumictl get version --language generic)"
-          >> $GITHUB_ENV
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          args: -p 3 -f .goreleaser.prerelease.yml --rm-dist --skip-validate
-          version: latest
+      - name: Create Provider Binaries
+        run: make dist
+      - name: Upload Provider Binaries
+        run: aws s3 cp dist s3://get.pulumi.com/releases/plugins/ --recursive
   publish_sdk:
     name: publish_sdk
     needs: publish
@@ -427,7 +422,7 @@ jobs:
         language:
           - nodejs
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
           - AwsProfile
           - Cluster
@@ -560,7 +555,7 @@ jobs:
         pythonversion:
           - 3.8
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
           - ClusterPy
   test-dotnet:
@@ -670,7 +665,7 @@ jobs:
         dotnetversion:
           - 3.1
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
           - ClusterCs
 name: master
@@ -685,3 +680,4 @@ name: master
       - v*
       - sdk/*
       - '**'
+  workflow_dispatch: {}
