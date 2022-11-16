@@ -2564,7 +2564,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         public ClusterArgs build() {
             $.nodeRootVolumeDeleteOnTermination = Codegen.booleanProp("nodeRootVolumeDeleteOnTermination").output().arg($.nodeRootVolumeDeleteOnTermination).def(true).getNullable();
             $.nodeRootVolumeEncrypted = Codegen.booleanProp("nodeRootVolumeEncrypted").output().arg($.nodeRootVolumeEncrypted).def(false).getNullable();
-            $.nodeRootVolumeSize = Codegen.integerProp("nodeRootVolumeSize").output().arg($.nodeRootVolumeSize).def(20).getNullable();
             $.nodeRootVolumeType = Codegen.stringProp("nodeRootVolumeType").output().arg($.nodeRootVolumeType).def("gp2").getNullable();
             return $;
         }

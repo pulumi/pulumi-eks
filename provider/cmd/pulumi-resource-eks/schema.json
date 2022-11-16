@@ -748,8 +748,7 @@
                 },
                 "nodeRootVolumeSize": {
                     "type": "integer",
-                    "description": "The size in GiB of a cluster node's root volume. Defaults to 20.",
-                    "default": 20
+                    "description": "The size in GiB of a cluster node's root volume. Defaults to 20."
                 },
                 "nodeRootVolumeThroughput": {
                     "type": "integer",

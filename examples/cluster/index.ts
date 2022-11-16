@@ -29,7 +29,7 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
     },
 });
 
-const cluster3 = new eks.Cluster(`${projectName}-2`, {
+const cluster3 = new eks.Cluster(`${projectName}-3`, {
     vpcId: vpc.id,
     publicSubnetIds: vpc.publicSubnetIds,
     nodeGroupOptions: {

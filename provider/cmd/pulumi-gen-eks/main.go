@@ -396,7 +396,6 @@ func generateSchema() schema.PackageSpec {
 					"nodeRootVolumeSize": {
 						TypeSpec:    schema.TypeSpec{Type: "integer"},
 						Description: "The size in GiB of a cluster node's root volume. Defaults to 20.",
-						Default:     20,
 					},
 					"nodeRootVolumeDeleteOnTermination": {
 						TypeSpec:    schema.TypeSpec{Type: "boolean"},

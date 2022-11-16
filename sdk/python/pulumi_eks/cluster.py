@@ -295,8 +295,6 @@ class ClusterArgs:
             pulumi.set(__self__, "node_root_volume_encrypted", node_root_volume_encrypted)
         if node_root_volume_iops is not None:
             pulumi.set(__self__, "node_root_volume_iops", node_root_volume_iops)
-        if node_root_volume_size is None:
-            node_root_volume_size = 20
         if node_root_volume_size is not None:
             pulumi.set(__self__, "node_root_volume_size", node_root_volume_size)
         if node_root_volume_throughput is not None:
@@ -1413,8 +1411,6 @@ class Cluster(pulumi.ComponentResource):
                 node_root_volume_encrypted = False
             __props__.__dict__["node_root_volume_encrypted"] = node_root_volume_encrypted
             __props__.__dict__["node_root_volume_iops"] = node_root_volume_iops
-            if node_root_volume_size is None:
-                node_root_volume_size = 20
             __props__.__dict__["node_root_volume_size"] = node_root_volume_size
             __props__.__dict__["node_root_volume_throughput"] = node_root_volume_throughput
             if node_root_volume_type is None:

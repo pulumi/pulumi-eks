@@ -51,9 +51,6 @@ func NewCluster(ctx *pulumi.Context,
 	if isZero(args.NodeRootVolumeEncrypted) {
 		args.NodeRootVolumeEncrypted = pulumi.BoolPtr(false)
 	}
-	if isZero(args.NodeRootVolumeSize) {
-		args.NodeRootVolumeSize = pulumi.IntPtr(20)
-	}
 	if isZero(args.NodeRootVolumeType) {
 		args.NodeRootVolumeType = pulumi.StringPtr("gp2")
 	}
