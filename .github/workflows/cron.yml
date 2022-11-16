@@ -517,7 +517,7 @@ jobs:
           - 18.x
         test-name:
           - ClusterCs
-name: master
+name: cron
 "on":
   schedule:
     # Run every day at 06:00AM UTC
