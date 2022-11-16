@@ -29,9 +29,21 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
     },
 });
 
+const cluster3 = new eks.Cluster(`${projectName}-2`, {
+    vpcId: vpc.id,
+    publicSubnetIds: vpc.publicSubnetIds,
+    nodeGroupOptions: {
+        desiredCapacity: 1,
+        minSize: 1,
+        maxSize: 1,
+        instanceType: "t2.small",
+    }
+})
+
 // Export the clusters' kubeconfig.
 export const kubeconfig1 = cluster1.kubeconfig;
 export const kubeconfig2 = cluster2.kubeconfig;
+export const kubeconfig3 = cluster3.kubeconfig;
 
 // export the IAM Role ARN of the cluster
 export const iamRoleArn = cluster1.core.clusterIamRole.arn;
