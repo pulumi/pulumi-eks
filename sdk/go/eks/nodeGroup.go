@@ -75,7 +75,7 @@ type nodeGroupArgs struct {
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
 	CloudFormationTags map[string]string `pulumi:"cloudFormationTags"`
 	// The target EKS cluster.
-	Cluster CoreData `pulumi:"cluster"`
+	Cluster *Cluster `pulumi:"cluster"`
 	// The ingress rule that gives node group access.
 	ClusterIngressRule *ec2.SecurityGroupRule `pulumi:"clusterIngressRule"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
@@ -175,7 +175,7 @@ type NodeGroupArgs struct {
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
 	CloudFormationTags pulumi.StringMapInput
 	// The target EKS cluster.
-	Cluster CoreDataInput
+	Cluster *Cluster
 	// The ingress rule that gives node group access.
 	ClusterIngressRule ec2.SecurityGroupRuleInput
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.

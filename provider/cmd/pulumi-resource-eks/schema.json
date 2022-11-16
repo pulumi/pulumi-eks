@@ -920,7 +920,8 @@
                     "description": "Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided."
                 },
                 "cluster": {
-                    "$ref": "#/types/eks:index:CoreData",
+                    "$ref": "#/resources/eks:index:Cluster",
+                    "plain": true,
                     "description": "The target EKS cluster."
                 },
                 "clusterName": {
@@ -1068,7 +1069,8 @@
                     "description": "The tags to apply to the CloudFormation Stack of the Worker NodeGroup.\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
                 },
                 "cluster": {
-                    "$ref": "#/types/eks:index:CoreData",
+                    "$ref": "#/resources/eks:index:Cluster",
+                    "plain": true,
                     "description": "The target EKS cluster."
                 },
                 "clusterIngressRule": {
@@ -1273,7 +1275,8 @@
                     "description": "The tags to apply to the CloudFormation Stack of the Worker NodeGroup.\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
                 },
                 "cluster": {
-                    "$ref": "#/types/eks:index:CoreData",
+                    "$ref": "#/resources/eks:index:Cluster",
+                    "plain": true,
                     "description": "The target EKS cluster."
                 },
                 "clusterIngressRule": {

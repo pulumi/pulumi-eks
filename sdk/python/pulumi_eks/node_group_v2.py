@@ -8,16 +8,15 @@ import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 from ._inputs import *
-from .vpc_cni import VpcCni
+from .cluster import Cluster
 import pulumi_aws
-import pulumi_kubernetes
 
 __all__ = ['NodeGroupV2Args', 'NodeGroupV2']
 
 @pulumi.input_type
 class NodeGroupV2Args:
     def __init__(__self__, *,
-                 cluster: pulumi.Input['CoreDataArgs'],
+                 cluster: 'Cluster',
                  ami_id: Optional[pulumi.Input[str]] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -49,7 +48,7 @@ class NodeGroupV2Args:
                  version: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a NodeGroupV2 resource.
-        :param pulumi.Input['CoreDataArgs'] cluster: The target EKS cluster.
+        :param 'Cluster' cluster: The target EKS cluster.
         :param pulumi.Input[str] ami_id: The AMI ID to use for the worker nodes.
                
                Defaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.
@@ -182,14 +181,14 @@ class NodeGroupV2Args:
 
     @property
     @pulumi.getter
-    def cluster(self) -> pulumi.Input['CoreDataArgs']:
+    def cluster(self) -> 'Cluster':
         """
         The target EKS cluster.
         """
         return pulumi.get(self, "cluster")
 
     @cluster.setter
-    def cluster(self, value: pulumi.Input['CoreDataArgs']):
+    def cluster(self, value: 'Cluster'):
         pulumi.set(self, "cluster", value)
 
     @property
@@ -591,7 +590,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  bootstrap_extra_args: Optional[pulumi.Input[str]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 cluster: Optional[pulumi.Input[pulumi.InputType['CoreDataArgs']]] = None,
+                 cluster: Optional['Cluster'] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
@@ -644,7 +643,7 @@ class NodeGroupV2(pulumi.ComponentResource):
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cloud_formation_tags: The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
-        :param pulumi.Input[pulumi.InputType['CoreDataArgs']] cluster: The target EKS cluster.
+        :param 'Cluster' cluster: The target EKS cluster.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroupRule'] cluster_ingress_rule: The ingress rule that gives node group access.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
@@ -722,7 +721,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  bootstrap_extra_args: Optional[pulumi.Input[str]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 cluster: Optional[pulumi.Input[pulumi.InputType['CoreDataArgs']]] = None,
+                 cluster: Optional['Cluster'] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,

@@ -639,7 +639,10 @@ func generateSchema() schema.PackageSpec {
 					"cluster": {
 						// Note: this is typed as `Cluster | CoreData` in the TS API. Ideally, the Cluster could be
 						// passed directly.
-						TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+						TypeSpec: schema.TypeSpec{
+							Ref:   "#/resources/eks:index:Cluster",
+							Plain: true,
+						},
 						Description: "The target EKS cluster.",
 					},
 					// The following inputs are based on `aws.eks.NodeGroupArgs`, with the following properties made
@@ -1525,8 +1528,10 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 
 	if cluster {
 		props["cluster"] = schema.PropertySpec{
-			// TODO: this is typed as `Cluster | CoreData` in the TS API.
-			TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+			TypeSpec: schema.TypeSpec{
+				Ref:   "#/resources/eks:index:Cluster",
+				Plain: true,
+			},
 			Description: "The target EKS cluster.",
 		}
 	}

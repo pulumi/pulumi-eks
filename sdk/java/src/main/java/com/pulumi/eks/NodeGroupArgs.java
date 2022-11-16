@@ -8,7 +8,7 @@ import com.pulumi.aws.ec2.SecurityGroupRule;
 import com.pulumi.aws.iam.InstanceProfile;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.eks.inputs.CoreDataArgs;
+import com.pulumi.eks.Cluster;
 import com.pulumi.eks.inputs.TaintArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -138,13 +138,13 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="cluster", required=true)
-    private Output<CoreDataArgs> cluster;
+    private Cluster cluster;
 
     /**
      * @return The target EKS cluster.
      * 
      */
-    public Output<CoreDataArgs> cluster() {
+    public Cluster cluster() {
         return this.cluster;
     }
 
@@ -720,19 +720,9 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder cluster(Output<CoreDataArgs> cluster) {
+        public Builder cluster(Cluster cluster) {
             $.cluster = cluster;
             return this;
-        }
-
-        /**
-         * @param cluster The target EKS cluster.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder cluster(CoreDataArgs cluster) {
-            return cluster(Output.of(cluster));
         }
 
         /**
