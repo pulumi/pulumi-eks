@@ -1,4 +1,4 @@
-// Copyright 2016-2020, Pulumi Corporation.
+// Copyright 2016-2022, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { ManagedNodeGroup, NodeGroup, NodeGroupV2 } from "../../nodegroup";
+import { ManagedNodeGroup, NodeGroup, NodeGroupV2Internal } from "../../nodegroup";
 
 const nodeGroupProvider: pulumi.provider.Provider = {
     construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
@@ -66,7 +66,7 @@ export function managedNodeGroupProviderFactory(): pulumi.provider.Provider {
 const nodeGroupV2Provider: pulumi.provider.Provider = {
     construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
         try {
-            const nodegroup = new NodeGroupV2(name, <any>inputs, options);
+            const nodegroup = new NodeGroupV2Internal(name, <any>inputs, options);
             return Promise.resolve({
                 urn: nodegroup.urn,
                 state: {

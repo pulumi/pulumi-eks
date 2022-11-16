@@ -455,6 +455,8 @@ jobs:
           - AwsProfileRolePy
           - ClusterPy
           - FargatePy
+          - NodeGroupPy
+          - ManagedNodeGroupPy
   test-dotnet:
     name: Run DotNet Tests
     needs: build_sdk

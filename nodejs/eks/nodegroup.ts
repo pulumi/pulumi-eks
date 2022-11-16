@@ -1,4 +1,4 @@
-// Copyright 2016-2019, Pulumi Corporation.
+// Copyright 2016-2022, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 import * as netmask from "netmask";
 
-import { Cluster, CoreData } from "./cluster";
+import { Cluster, ClusterInternal, CoreData } from "./cluster";
 import randomSuffix from "./randomSuffix";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { InputTags } from "./utils";
@@ -311,9 +311,9 @@ export interface NodeGroupV2Options extends NodeGroupOptions {
      *
      * Defaults to 50.
      */
-    minRefreshPercentage?: number;
+    minRefreshPercentage?: pulumi.Input<number>;
 
-    launchTemplateTagSpecifications?: awsInputs.ec2.LaunchTemplateTagSpecification[];
+    launchTemplateTagSpecifications?: pulumi.Input<pulumi.Input<awsInputs.ec2.LaunchTemplateTagSpecification>[]>;
 }
 
 /**
@@ -428,11 +428,47 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2
     }
 }
 
-type NodeGroupOptionsCluster = CoreData | Cluster;
+/**
+ * This is a variant of `NodeGroupV2` that is used for the MLC `NodeGroupV2`. We don't just use `NodeGroupV2`,
+ * because we need to accept `ClusterInternal` as the `cluster` arg, so we can correctly pull out `cluster.core`
+ * for use in creating the `NodeGroupV2`.
+ *
+ * @internal
+ */
+export class NodeGroupV2Internal extends pulumi.ComponentResource {
+    public readonly autoScalingGroup!: pulumi.Output<aws.autoscaling.Group>;
+    public readonly extraNodeSecurityGroups!: pulumi.Output<aws.ec2.SecurityGroup[]>;
+    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
 
-function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
-    return (arg as CoreData).cluster !== undefined;
+    constructor(name: string, args: NodeGroupV2InternalArgs, opts?: pulumi.ComponentResourceOptions) {
+        const type = "eks:index:NodeGroupV2";
+
+        if (opts?.urn) {
+            const props = {
+                autoScalingGroup: undefined,
+                extraNodeSecurityGroups: undefined,
+                nodeSecurityGroup: undefined,
+            };
+            super(type, name, props, opts);
+            return;
+        }
+
+        super(type, name, args, opts);
+
+        const group = createNodeGroupV2Internal(name, args, args.cluster.core, this, opts?.provider);
+        this.autoScalingGroup = pulumi.output(group.autoScalingGroup);
+        this.extraNodeSecurityGroups = pulumi.output(group.extraNodeSecurityGroups ?? []);
+        this.nodeSecurityGroup = pulumi.output(group.nodeSecurityGroup);
+        this.registerOutputs({
+            autoScalingGroup: this.autoScalingGroup,
+            extraNodeSecurityGroups: this.extraNodeSecurityGroups,
+            nodeSecurityGroup: this.nodeSecurityGroup,
+        });
+    }
 }
+
+/** @internal */
+export type NodeGroupV2InternalArgs = Omit<NodeGroupV2Options, "cluster"> & { cluster: ClusterInternal };
 
 /**
  * Create a self-managed node group using CloudFormation and an ASG.
@@ -441,7 +477,7 @@ function isCoreData(arg: NodeGroupOptionsCluster): arg is CoreData {
  * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
  */
 export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
-    const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
+    const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
 
     if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
         throw new Error(`an instanceProfile is required`);
@@ -730,18 +766,32 @@ ${customUserData}
  * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
  */
 export function createNodeGroupV2(name: string, args: NodeGroupV2Options, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupV2Data {
-    const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
+    const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
+    return createNodeGroupV2Internal(name, args, pulumi.output(core), parent, provider);
+}
 
-    if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
-        throw new Error(`an instanceProfile is required`);
-    }
-
-    if (core.nodeGroupOptions.nodeSecurityGroup && args.nodeSecurityGroup) {
-        if (core.nodeSecurityGroupTags &&
-            core.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
-            throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`);
+function createNodeGroupV2Internal(
+    name: string,
+    args: Omit<NodeGroupV2Options, "cluster">,
+    core: pulumi.Output<pulumi.Unwrap<CoreData>>,
+    parent: pulumi.ComponentResource,
+    provider?: pulumi.ProviderResource,
+): NodeGroupV2Data {
+    const instanceProfileArn = core.apply(c => {
+        if (!args.instanceProfile && !c.nodeGroupOptions.instanceProfile) {
+            throw new Error(`an instanceProfile is required`);
         }
-    }
+        return args.instanceProfile?.arn ?? c.nodeGroupOptions.instanceProfile!.arn;
+    });
+
+    core.apply(c => {
+        if (c.nodeGroupOptions.nodeSecurityGroup && args.nodeSecurityGroup) {
+            if (c.nodeSecurityGroupTags &&
+                c.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
+                throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`);
+            }
+        }
+    });
 
     if (args.nodePublicKey && args.keyName) {
         throw new Error("nodePublicKey and keyName are mutually exclusive. Choose a single approach");
@@ -756,15 +806,18 @@ export function createNodeGroupV2(name: string, args: NodeGroupV2Options, parent
     }
 
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
-    const nodeGroupDeps: Array<pulumi.Resource> = [];
-
     const eksCluster = core.cluster;
-    if (core.vpcCni !== undefined) {
-        nodeGroupDeps.push(core.vpcCni);
-    }
-    if (core.eksNodeAccess !== undefined) {
-        nodeGroupDeps.push(core.eksNodeAccess);
-    }
+
+    const nodeGroupDeps = core.apply(c => {
+        const result: pulumi.Resource[] = [];
+        if (c.vpcCni !== undefined) {
+            result.push(c.vpcCni);
+        }
+        if (c.eksNodeAccess !== undefined) {
+            result.push(c.eksNodeAccess);
+        }
+        return result;
+    });
 
     let eksClusterIngressRule: aws.ec2.SecurityGroupRule = args.clusterIngressRule!;
     if (args.nodeSecurityGroup) {
@@ -777,12 +830,9 @@ export function createNodeGroupV2(name: string, args: NodeGroupV2Options, parent
             vpcId: core.vpcId,
             clusterSecurityGroup: core.clusterSecurityGroup,
             eksCluster: eksCluster,
-            tags: pulumi.all([
-                core.tags,
-                core.nodeSecurityGroupTags,
-            ]).apply(([tags, nodeSecurityGroupTags]) => (<aws.Tags>{
-                ...nodeSecurityGroupTags,
-                ...tags,
+            tags: core.apply(c => (<aws.Tags>{
+                ...c.nodeSecurityGroupTags,
+                ...c.tags,
             })),
         }, parent);
     }
@@ -921,7 +971,7 @@ ${customUserData}
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(`${name}-launchTemplate`, {
         imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
-        iamInstanceProfile: { arn: args.instanceProfile?.arn || core.nodeGroupOptions.instanceProfile?.arn },
+        iamInstanceProfile: { arn: instanceProfileArn },
         keyName: keyName,
         instanceMarketOptions: marketOptions,
         blockDeviceMappings: [{
@@ -947,13 +997,17 @@ ${customUserData}
     let workerSubnetIds: pulumi.Output<string[]>;
     if (args.nodeSubnetIds !== undefined) { // Use the specified override subnetIds.
         workerSubnetIds = pulumi.output(args.nodeSubnetIds);
-    } else if (core.privateSubnetIds !== undefined) { // Use the specified private subnetIds.
-        workerSubnetIds = core.privateSubnetIds;
-    } else if (core.publicSubnetIds !== undefined) { // Use the specified public subnetIds.
-        workerSubnetIds = core.publicSubnetIds;
     } else {
-        // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
-        workerSubnetIds = pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+        workerSubnetIds = core.apply(c => {
+            if (c.privateSubnetIds !== undefined) { // Use the specified private subnetIds.
+                return Promise.resolve(c.privateSubnetIds);
+            } else if (c.publicSubnetIds !== undefined) { // Use the specified public subnetIds.
+                return Promise.resolve(c.publicSubnetIds);
+            } else {
+                // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
+                return computeWorkerSubnets(parent, c.subnetIds);
+            }
+        });
     }
 
     const asgTags = pulumi.all([eksCluster.name, args.autoScalingGroupTags]).apply(([clusterName, tags]) => inputTagsToASGTags(clusterName, tags));
@@ -1190,8 +1244,8 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
  * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
  */
 export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent?: pulumi.ComponentResource, provider?: pulumi.ProviderResource): aws.eks.NodeGroup {
-    const core = isCoreData(args.cluster) ? args.cluster : args.cluster.core;
-    const eksCluster = isCoreData(args.cluster) ? args.cluster.cluster : args.cluster;
+    const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
+    const eksCluster = args.cluster instanceof Cluster ? args.cluster.core.cluster : args.cluster.cluster;
 
     // Compute the nodegroup role.
     if (!args.nodeRole && !args.nodeRoleArn) {
