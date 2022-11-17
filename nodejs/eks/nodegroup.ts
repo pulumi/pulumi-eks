@@ -1238,6 +1238,40 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
 }
 
 /**
+ * This is a variant of `ManagedNodeGroup` that is used for the MLC `ManagedNodeGroup`. We don't just use
+ * `ManagedNodeGroup`, because we need to accept `ClusterInternal` as the `cluster` arg, so we can correctly
+ * pull out `cluster.core` for use in creating the `NodeGroupV2`.
+ *
+ * @internal
+ */
+export class ManagedNodeGroupInternal extends pulumi.ComponentResource {
+    public readonly nodeGroup!: pulumi.Output<aws.eks.NodeGroup>;
+
+    constructor(name: string, args: ManagedNodeGroupInternalArgs, opts?: pulumi.ComponentResourceOptions) {
+        const type = "eks:index:ManagedNodeGroup";
+
+        if (opts?.urn) {
+            const props = {
+                nodeGroup: undefined,
+            };
+            super(type, name, props, opts);
+            return;
+        }
+
+        super(type, name, args, opts);
+
+        const group = createManagedNodeGroupInternal(name, args, args.cluster.core, this, opts?.provider);
+        this.nodeGroup = pulumi.output(group);
+        this.registerOutputs({
+            nodeGroup: this.nodeGroup,
+        });
+    }
+}
+
+/** @internal */
+export type ManagedNodeGroupInternalArgs = Omit<ManagedNodeGroupOptions, "cluster"> & { cluster: ClusterInternal };
+
+/**
  * Create an AWS managed node group.
  *
  * See for more details:
@@ -1245,8 +1279,16 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
  */
 export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent?: pulumi.ComponentResource, provider?: pulumi.ProviderResource): aws.eks.NodeGroup {
     const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
-    const eksCluster = args.cluster instanceof Cluster ? args.cluster.core.cluster : args.cluster.cluster;
+    return createManagedNodeGroupInternal(name, args, pulumi.output(core), parent ?? core.cluster, provider);
+}
 
+function createManagedNodeGroupInternal(
+    name: string,
+    args: Omit<ManagedNodeGroupOptions, "cluster">,
+    core: pulumi.Output<pulumi.Unwrap<CoreData>>,
+    parent: pulumi.Resource,
+    provider?: pulumi.ProviderResource,
+): aws.eks.NodeGroup {
     // Compute the nodegroup role.
     if (!args.nodeRole && !args.nodeRoleArn) {
         throw new Error(`An IAM role, or role ARN must be provided to create a managed node group`);
@@ -1291,25 +1333,31 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
     });
 
     // Compute the node group subnets to use.
-    let subnetIds: pulumi.Output<string[]> = pulumi.output([]);
+    let subnetIds: pulumi.Output<string[]>;
     if (args.subnetIds !== undefined) {
         subnetIds = pulumi.output(args.subnetIds);
-    } else if (core.subnetIds !== undefined) {
-        subnetIds = core.subnetIds;
-    } else if (core.privateSubnetIds !== undefined) {
-        subnetIds = core.privateSubnetIds;
-    } else if (core.publicSubnetIds !== undefined) {
-        subnetIds = core.publicSubnetIds;
+    } else {
+        subnetIds = core.apply(c => {
+            if (c.subnetIds !== undefined) {
+                return c.subnetIds;
+            } else if (c.privateSubnetIds !== undefined) {
+                return c.privateSubnetIds;
+            } else if (c.publicSubnetIds !== undefined) {
+                return c.publicSubnetIds;
+            } else {
+                return [];
+            }
+        });
     }
 
-    // Omit the cluster from the args using rest spread, and store in nodeGroupArgs.
-    const { cluster, ...nodeGroupArgs } = args;
+    // Omit the cluster from the args.
+    const nodeGroupArgs = Object.assign({}, args);
+    if ("cluster" in nodeGroupArgs) {
+        delete (<any>nodeGroupArgs).cluster;
+    }
 
     // Make the aws-auth configmap a dependency of the node group.
-    const ngDeps: Array<pulumi.Resource> = [];
-    if (core.eksNodeAccess !== undefined) {
-        ngDeps.push(core.eksNodeAccess);
-    }
+    const ngDeps = core.apply(c => c.eksNodeAccess !== undefined ? [c.eksNodeAccess] : []);
     // Create the managed node group.
     const nodeGroup = new aws.eks.NodeGroup(name, {
         ...nodeGroupArgs,
@@ -1328,7 +1376,7 @@ export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptio
             };
         }),
         subnetIds: subnetIds,
-    }, { parent: parent ?? eksCluster, dependsOn: ngDeps, provider });
+    }, { parent: parent, dependsOn: ngDeps, provider });
 
     return nodeGroup;
 }

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { ManagedNodeGroup, NodeGroup, NodeGroupV2Internal } from "../../nodegroup";
+import { ManagedNodeGroupInternal, NodeGroup, NodeGroupV2Internal } from "../../nodegroup";
 
 const nodeGroupProvider: pulumi.provider.Provider = {
     construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
@@ -43,7 +43,7 @@ export function nodeGroupProviderFactory(): pulumi.provider.Provider {
 const managedNodeGroupProvider: pulumi.provider.Provider = {
     construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
         try {
-            const nodegroup = new ManagedNodeGroup(name, <any>inputs, options);
+            const nodegroup = new ManagedNodeGroupInternal(name, <any>inputs, options);
             return Promise.resolve({
                 urn: nodegroup.urn,
                 state: {
