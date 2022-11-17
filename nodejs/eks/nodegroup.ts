@@ -395,6 +395,52 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     }
 }
 
+/**
+ * This is a variant of `NodeGroup` that is used for the MLC `NodeGroup`. We don't just use `NodeGroup`,
+ * because we need to accept `ClusterInternal` as the `cluster` arg, so we can correctly pull out `cluster.core`
+ * for use in creating the `NodeGroup`.
+ *
+ * @internal
+ */
+export class NodeGroupInternal extends pulumi.ComponentResource {
+    public readonly autoScalingGroupName!: pulumi.Output<string>;
+    public readonly cfnStack!: pulumi.Output<aws.cloudformation.Stack>;
+    public readonly extraNodeSecurityGroups!: pulumi.Output<aws.ec2.SecurityGroup[]>;
+    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
+
+    constructor(name: string, args: NodeGroupInternalArgs, opts?: pulumi.ComponentResourceOptions) {
+        const type = "eks:index:NodeGroup";
+
+        if (opts?.urn) {
+            const props = {
+                autoScalingGroupName: undefined,
+                cfnStack: undefined,
+                extraNodeSecurityGroups: undefined,
+                nodeSecurityGroup: undefined,
+            };
+            super(type, name, props, opts);
+            return;
+        }
+
+        super(type, name, args, opts);
+
+        const group = createNodeGroupInternal(name, args, args.cluster.core, this, opts?.provider);
+        this.autoScalingGroupName = group.autoScalingGroupName;
+        this.cfnStack = pulumi.output(group.cfnStack);
+        this.extraNodeSecurityGroups = pulumi.output(group.extraNodeSecurityGroups ?? []);
+        this.nodeSecurityGroup = pulumi.output(group.nodeSecurityGroup);
+        this.registerOutputs({
+            autoScalingGroupName: this.autoScalingGroupName,
+            cfnStack: this.cfnStack,
+            extraNodeSecurityGroups: this.extraNodeSecurityGroups,
+            nodeSecurityGroup: this.nodeSecurityGroup,
+        });
+    }
+}
+
+/** @internal */
+export type NodeGroupInternalArgs = Omit<NodeGroupOptions, "cluster"> & { cluster: ClusterInternal };
+
 export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2Data {
     /**
      * The security group for the node group to communicate with the cluster.
@@ -478,17 +524,31 @@ export type NodeGroupV2InternalArgs = Omit<NodeGroupV2Options, "cluster"> & { cl
  */
 export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): NodeGroupData {
     const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
+    return createNodeGroupInternal(name, args, pulumi.output(core), parent, provider);
+}
 
-    if (!args.instanceProfile && !core.nodeGroupOptions.instanceProfile) {
-        throw new Error(`an instanceProfile is required`);
-    }
-
-    if (core.nodeGroupOptions.nodeSecurityGroup && args.nodeSecurityGroup) {
-        if (core.nodeSecurityGroupTags &&
-            core.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
-            throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`);
+function createNodeGroupInternal(
+    name: string,
+    args: Omit<NodeGroupOptions, "cluster">,
+    core: pulumi.Output<pulumi.Unwrap<CoreData>>,
+    parent: pulumi.ComponentResource,
+    provider?: pulumi.ProviderResource,
+): NodeGroupData {
+    const instanceProfile = core.apply(c => {
+        if (!args.instanceProfile && !c.nodeGroupOptions.instanceProfile) {
+            throw new Error(`an instanceProfile is required`);
         }
-    }
+        return args.instanceProfile ?? c.nodeGroupOptions.instanceProfile!;
+    });
+
+    core.apply(c => {
+        if (c.nodeGroupOptions.nodeSecurityGroup && args.nodeSecurityGroup) {
+            if (c.nodeSecurityGroupTags &&
+                c.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id) {
+                throw new Error(`The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`);
+            }
+        }
+    });
 
     if (args.nodePublicKey && args.keyName) {
         throw new Error("nodePublicKey and keyName are mutually exclusive. Choose a single approach");
@@ -503,15 +563,18 @@ export function createNodeGroup(name: string, args: NodeGroupOptions, parent: pu
     }
 
     let nodeSecurityGroup: aws.ec2.SecurityGroup;
-    const cfnStackDeps: Array<pulumi.Resource> = [];
-
     const eksCluster = core.cluster;
-    if (core.vpcCni !== undefined) {
-        cfnStackDeps.push(core.vpcCni);
-    }
-    if (core.eksNodeAccess !== undefined) {
-        cfnStackDeps.push(core.eksNodeAccess);
-    }
+
+    const cfnStackDeps = core.apply(c => {
+        const result: pulumi.Resource[] = [];
+        if (c.vpcCni !== undefined) {
+            result.push(c.vpcCni);
+        }
+        if (c.eksNodeAccess !== undefined) {
+            result.push(c.eksNodeAccess);
+        }
+        return result;
+    });
 
     let eksClusterIngressRule: aws.ec2.SecurityGroupRule = args.clusterIngressRule!;
     if (args.nodeSecurityGroup) {
@@ -651,7 +714,7 @@ ${customUserData}
         associatePublicIpAddress: nodeAssociatePublicIpAddress,
         imageId: amiId,
         instanceType: args.instanceType || "t2.medium",
-        iamInstanceProfile: args.instanceProfile || core.nodeGroupOptions.instanceProfile,
+        iamInstanceProfile: instanceProfile,
         keyName: keyName,
         securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         spotPrice: args.spotPrice,
@@ -670,13 +733,17 @@ ${customUserData}
     let workerSubnetIds: pulumi.Output<string[]>;
     if (args.nodeSubnetIds !== undefined) { // Use the specified override subnetIds.
         workerSubnetIds = pulumi.output(args.nodeSubnetIds);
-    } else if (core.privateSubnetIds !== undefined) { // Use the specified private subnetIds.
-        workerSubnetIds = core.privateSubnetIds;
-    } else if (core.publicSubnetIds !== undefined) { // Use the specified public subnetIds.
-        workerSubnetIds = core.publicSubnetIds;
     } else {
-        // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
-        workerSubnetIds = pulumi.output(core.subnetIds).apply(ids => computeWorkerSubnets(parent, ids));
+        workerSubnetIds = core.apply(c => {
+            if (c.privateSubnetIds !== undefined) { // Use the specified private subnetIds.
+                return Promise.resolve(c.privateSubnetIds);
+            } else if (c.publicSubnetIds !== undefined) { // Use the specified public subnetIds.
+                return Promise.resolve(c.publicSubnetIds);
+            } else {
+                // Use subnetIds from the cluster. Compute / auto-discover the private worker subnetIds from this set.
+                return computeWorkerSubnets(parent, c.subnetIds);
+            }
+        });
     }
 
     // Configure the settings for the autoscaling group.
