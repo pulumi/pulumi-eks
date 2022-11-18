@@ -291,24 +291,16 @@ class ClusterArgs:
             pulumi.set(__self__, "node_group_options", node_group_options)
         if node_public_key is not None:
             pulumi.set(__self__, "node_public_key", node_public_key)
-        if node_root_volume_delete_on_termination is None:
-            node_root_volume_delete_on_termination = True
         if node_root_volume_delete_on_termination is not None:
             pulumi.set(__self__, "node_root_volume_delete_on_termination", node_root_volume_delete_on_termination)
-        if node_root_volume_encrypted is None:
-            node_root_volume_encrypted = False
         if node_root_volume_encrypted is not None:
             pulumi.set(__self__, "node_root_volume_encrypted", node_root_volume_encrypted)
         if node_root_volume_iops is not None:
             pulumi.set(__self__, "node_root_volume_iops", node_root_volume_iops)
-        if node_root_volume_size is None:
-            node_root_volume_size = 20
         if node_root_volume_size is not None:
             pulumi.set(__self__, "node_root_volume_size", node_root_volume_size)
         if node_root_volume_throughput is not None:
             pulumi.set(__self__, "node_root_volume_throughput", node_root_volume_throughput)
-        if node_root_volume_type is None:
-            node_root_volume_type = 'gp2'
         if node_root_volume_type is not None:
             pulumi.set(__self__, "node_root_volume_type", node_root_volume_type)
         if node_security_group_tags is not None:
@@ -1432,19 +1424,11 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["node_associate_public_ip_address"] = node_associate_public_ip_address
             __props__.__dict__["node_group_options"] = node_group_options
             __props__.__dict__["node_public_key"] = node_public_key
-            if node_root_volume_delete_on_termination is None:
-                node_root_volume_delete_on_termination = True
             __props__.__dict__["node_root_volume_delete_on_termination"] = node_root_volume_delete_on_termination
-            if node_root_volume_encrypted is None:
-                node_root_volume_encrypted = False
             __props__.__dict__["node_root_volume_encrypted"] = node_root_volume_encrypted
             __props__.__dict__["node_root_volume_iops"] = node_root_volume_iops
-            if node_root_volume_size is None:
-                node_root_volume_size = 20
             __props__.__dict__["node_root_volume_size"] = node_root_volume_size
             __props__.__dict__["node_root_volume_throughput"] = node_root_volume_throughput
-            if node_root_volume_type is None:
-                node_root_volume_type = 'gp2'
             __props__.__dict__["node_root_volume_type"] = node_root_volume_type
             __props__.__dict__["node_security_group_tags"] = node_security_group_tags
             __props__.__dict__["node_subnet_ids"] = node_subnet_ids

@@ -620,10 +620,6 @@ namespace Pulumi.Eks
 
         public ClusterArgs()
         {
-            NodeRootVolumeDeleteOnTermination = true;
-            NodeRootVolumeEncrypted = false;
-            NodeRootVolumeSize = 20;
-            NodeRootVolumeType = "gp2";
         }
     }
 

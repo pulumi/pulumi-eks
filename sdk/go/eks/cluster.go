@@ -45,18 +45,6 @@ func NewCluster(ctx *pulumi.Context,
 		args = &ClusterArgs{}
 	}
 
-	if isZero(args.NodeRootVolumeDeleteOnTermination) {
-		args.NodeRootVolumeDeleteOnTermination = pulumi.BoolPtr(true)
-	}
-	if isZero(args.NodeRootVolumeEncrypted) {
-		args.NodeRootVolumeEncrypted = pulumi.BoolPtr(false)
-	}
-	if isZero(args.NodeRootVolumeSize) {
-		args.NodeRootVolumeSize = pulumi.IntPtr(20)
-	}
-	if isZero(args.NodeRootVolumeType) {
-		args.NodeRootVolumeType = pulumi.StringPtr("gp2")
-	}
 	var resource Cluster
 	err := ctx.RegisterRemoteComponentResource("eks:index:Cluster", name, args, &resource, opts...)
 	if err != nil {
