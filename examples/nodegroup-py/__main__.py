@@ -28,7 +28,10 @@ eks.NodeGroupV2(
     instance_profile=instance_profile0,
 )
 
-clusterK8sProvider = k8s.Provider("clusterK8sProvider", kubeconfig=cluster.kubeconfig.apply(lambda k: json.dumps(k)))
+clusterK8sProvider = k8s.Provider(
+    "clusterK8sProvider",
+    kubeconfig=cluster.kubeconfig.apply(lambda k: json.dumps(k, sort_keys=True)),
+)
 
 # Create the second node group with spot t2.medium instance
 eks.NodeGroup(
@@ -44,5 +47,5 @@ eks.NodeGroup(
     kubelet_extra_args="--alsologtostderr",
     bootstrap_extra_args="--aws-api-retry-attempts 10",
     instance_profile=instance_profile0,
-    opts=pulumi.ResourceOptions(providers={"kubernetes": clusterK8sProvider})
+    opts=pulumi.ResourceOptions(providers={"kubernetes": clusterK8sProvider}),
 )
