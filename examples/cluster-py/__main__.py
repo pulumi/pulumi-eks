@@ -30,7 +30,20 @@ cluster2 = eks.Cluster('eks-cluster',
                               "authenticator",
                           ],)
 
+cluster3 = eks.Cluster(f"{project_name}-3",
+                            vpc_id=vpc.vpc_id,
+                            public_subnet_ids=vpc.public_subnet_ids,
+                            node_group_options=eks.ClusterNodeGroupOptionsArgs(
+                                desired_capacity=1,
+                                min_size=1,
+                                max_size=1,
+                                instance_type="t2.small"
+                            )
+)
+
+
 
 # Export the clusters' kubeconfig.
 pulumi.export("kubeconfig1", cluster1.kubeconfig)
 pulumi.export("kubeconfig2", cluster2.kubeconfig)
+pulumi.export("kubeconfig3", cluster3.kubeconfig)
