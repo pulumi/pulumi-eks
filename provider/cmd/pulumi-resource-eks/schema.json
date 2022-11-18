@@ -734,13 +734,11 @@
                 },
                 "nodeRootVolumeDeleteOnTermination": {
                     "type": "boolean",
-                    "description": "Whether to delete a cluster node's root volume on termination. Defaults to true.",
-                    "default": true
+                    "description": "Whether to delete a cluster node's root volume on termination. Defaults to true."
                 },
                 "nodeRootVolumeEncrypted": {
                     "type": "boolean",
-                    "description": "Whether to encrypt a cluster node's root volume. Defaults to false.",
-                    "default": false
+                    "description": "Whether to encrypt a cluster node's root volume. Defaults to false."
                 },
                 "nodeRootVolumeIops": {
                     "type": "integer",
@@ -748,8 +746,7 @@
                 },
                 "nodeRootVolumeSize": {
                     "type": "integer",
-                    "description": "The size in GiB of a cluster node's root volume. Defaults to 20.",
-                    "default": 20
+                    "description": "The size in GiB of a cluster node's root volume. Defaults to 20."
                 },
                 "nodeRootVolumeThroughput": {
                     "type": "integer",
@@ -757,8 +754,7 @@
                 },
                 "nodeRootVolumeType": {
                     "type": "string",
-                    "description": "Configured EBS type for a cluster node's root volume. Default is gp2.",
-                    "default": "gp2"
+                    "description": "Configured EBS type for a cluster node's root volume. Default is gp2."
                 },
                 "nodeSecurityGroupTags": {
                     "type": "object",

@@ -8,7 +8,6 @@ import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Either;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
 import com.pulumi.eks.inputs.CreationRoleProviderArgs;
 import com.pulumi.eks.inputs.FargateProfileArgs;
@@ -2562,10 +2561,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public ClusterArgs build() {
-            $.nodeRootVolumeDeleteOnTermination = Codegen.booleanProp("nodeRootVolumeDeleteOnTermination").output().arg($.nodeRootVolumeDeleteOnTermination).def(true).getNullable();
-            $.nodeRootVolumeEncrypted = Codegen.booleanProp("nodeRootVolumeEncrypted").output().arg($.nodeRootVolumeEncrypted).def(false).getNullable();
-            $.nodeRootVolumeSize = Codegen.integerProp("nodeRootVolumeSize").output().arg($.nodeRootVolumeSize).def(20).getNullable();
-            $.nodeRootVolumeType = Codegen.stringProp("nodeRootVolumeType").output().arg($.nodeRootVolumeType).def("gp2").getNullable();
             return $;
         }
     }
