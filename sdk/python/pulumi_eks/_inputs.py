@@ -7,11 +7,13 @@ import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
+from .vpc_cni import VpcCni
 import pulumi_aws
 import pulumi_kubernetes
 
 __all__ = [
     'ClusterNodeGroupOptionsArgs',
+    'CoreDataArgs',
     'CreationRoleProviderArgs',
     'FargateProfileArgs',
     'KubeconfigOptionsArgs',
@@ -540,6 +542,261 @@ class ClusterNodeGroupOptionsArgs:
     @version.setter
     def version(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "version", value)
+
+
+@pulumi.input_type
+class CoreDataArgs:
+    def __init__(__self__, *,
+                 cluster: pulumi.Input['pulumi_aws.eks.Cluster'],
+                 cluster_iam_role: pulumi.Input['pulumi_aws.iam.Role'],
+                 cluster_security_group: pulumi.Input['pulumi_aws.ec2.SecurityGroup'],
+                 endpoint: pulumi.Input[str],
+                 instance_roles: pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]],
+                 node_group_options: pulumi.Input['ClusterNodeGroupOptionsArgs'],
+                 provider: pulumi.Input['pulumi_kubernetes.Provider'],
+                 subnet_ids: pulumi.Input[Sequence[pulumi.Input[str]]],
+                 vpc_id: pulumi.Input[str],
+                 aws_provider: Optional[pulumi.Input['pulumi_aws.Provider']] = None,
+                 eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']] = None,
+                 encryption_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']] = None,
+                 fargate_profile: Optional[pulumi.Input['pulumi_aws.eks.FargateProfile']] = None,
+                 kubeconfig: Optional[Any] = None,
+                 node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 oidc_provider: Optional[pulumi.Input['pulumi_aws.iam.OpenIdConnectProvider']] = None,
+                 private_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 public_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 storage_classes: Optional[pulumi.Input[Mapping[str, pulumi.Input['pulumi_kubernetes.storage.v1.StorageClass']]]] = None,
+                 tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 vpc_cni: Optional[pulumi.Input['VpcCni']] = None):
+        """
+        Defines the core set of data associated with an EKS cluster, including the network in which it runs.
+        :param pulumi.Input['pulumi_aws.iam.Role'] cluster_iam_role: The IAM Role attached to the EKS Cluster
+        """
+        pulumi.set(__self__, "cluster", cluster)
+        pulumi.set(__self__, "cluster_iam_role", cluster_iam_role)
+        pulumi.set(__self__, "cluster_security_group", cluster_security_group)
+        pulumi.set(__self__, "endpoint", endpoint)
+        pulumi.set(__self__, "instance_roles", instance_roles)
+        pulumi.set(__self__, "node_group_options", node_group_options)
+        pulumi.set(__self__, "provider", provider)
+        pulumi.set(__self__, "subnet_ids", subnet_ids)
+        pulumi.set(__self__, "vpc_id", vpc_id)
+        if aws_provider is not None:
+            pulumi.set(__self__, "aws_provider", aws_provider)
+        if eks_node_access is not None:
+            pulumi.set(__self__, "eks_node_access", eks_node_access)
+        if encryption_config is not None:
+            pulumi.set(__self__, "encryption_config", encryption_config)
+        if fargate_profile is not None:
+            pulumi.set(__self__, "fargate_profile", fargate_profile)
+        if kubeconfig is not None:
+            pulumi.set(__self__, "kubeconfig", kubeconfig)
+        if node_security_group_tags is not None:
+            pulumi.set(__self__, "node_security_group_tags", node_security_group_tags)
+        if oidc_provider is not None:
+            pulumi.set(__self__, "oidc_provider", oidc_provider)
+        if private_subnet_ids is not None:
+            pulumi.set(__self__, "private_subnet_ids", private_subnet_ids)
+        if public_subnet_ids is not None:
+            pulumi.set(__self__, "public_subnet_ids", public_subnet_ids)
+        if storage_classes is not None:
+            pulumi.set(__self__, "storage_classes", storage_classes)
+        if tags is not None:
+            pulumi.set(__self__, "tags", tags)
+        if vpc_cni is not None:
+            pulumi.set(__self__, "vpc_cni", vpc_cni)
+
+    @property
+    @pulumi.getter
+    def cluster(self) -> pulumi.Input['pulumi_aws.eks.Cluster']:
+        return pulumi.get(self, "cluster")
+
+    @cluster.setter
+    def cluster(self, value: pulumi.Input['pulumi_aws.eks.Cluster']):
+        pulumi.set(self, "cluster", value)
+
+    @property
+    @pulumi.getter(name="clusterIamRole")
+    def cluster_iam_role(self) -> pulumi.Input['pulumi_aws.iam.Role']:
+        """
+        The IAM Role attached to the EKS Cluster
+        """
+        return pulumi.get(self, "cluster_iam_role")
+
+    @cluster_iam_role.setter
+    def cluster_iam_role(self, value: pulumi.Input['pulumi_aws.iam.Role']):
+        pulumi.set(self, "cluster_iam_role", value)
+
+    @property
+    @pulumi.getter(name="clusterSecurityGroup")
+    def cluster_security_group(self) -> pulumi.Input['pulumi_aws.ec2.SecurityGroup']:
+        return pulumi.get(self, "cluster_security_group")
+
+    @cluster_security_group.setter
+    def cluster_security_group(self, value: pulumi.Input['pulumi_aws.ec2.SecurityGroup']):
+        pulumi.set(self, "cluster_security_group", value)
+
+    @property
+    @pulumi.getter
+    def endpoint(self) -> pulumi.Input[str]:
+        return pulumi.get(self, "endpoint")
+
+    @endpoint.setter
+    def endpoint(self, value: pulumi.Input[str]):
+        pulumi.set(self, "endpoint", value)
+
+    @property
+    @pulumi.getter(name="instanceRoles")
+    def instance_roles(self) -> pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]:
+        return pulumi.get(self, "instance_roles")
+
+    @instance_roles.setter
+    def instance_roles(self, value: pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]):
+        pulumi.set(self, "instance_roles", value)
+
+    @property
+    @pulumi.getter(name="nodeGroupOptions")
+    def node_group_options(self) -> pulumi.Input['ClusterNodeGroupOptionsArgs']:
+        return pulumi.get(self, "node_group_options")
+
+    @node_group_options.setter
+    def node_group_options(self, value: pulumi.Input['ClusterNodeGroupOptionsArgs']):
+        pulumi.set(self, "node_group_options", value)
+
+    @property
+    @pulumi.getter
+    def provider(self) -> pulumi.Input['pulumi_kubernetes.Provider']:
+        return pulumi.get(self, "provider")
+
+    @provider.setter
+    def provider(self, value: pulumi.Input['pulumi_kubernetes.Provider']):
+        pulumi.set(self, "provider", value)
+
+    @property
+    @pulumi.getter(name="subnetIds")
+    def subnet_ids(self) -> pulumi.Input[Sequence[pulumi.Input[str]]]:
+        return pulumi.get(self, "subnet_ids")
+
+    @subnet_ids.setter
+    def subnet_ids(self, value: pulumi.Input[Sequence[pulumi.Input[str]]]):
+        pulumi.set(self, "subnet_ids", value)
+
+    @property
+    @pulumi.getter(name="vpcId")
+    def vpc_id(self) -> pulumi.Input[str]:
+        return pulumi.get(self, "vpc_id")
+
+    @vpc_id.setter
+    def vpc_id(self, value: pulumi.Input[str]):
+        pulumi.set(self, "vpc_id", value)
+
+    @property
+    @pulumi.getter(name="awsProvider")
+    def aws_provider(self) -> Optional[pulumi.Input['pulumi_aws.Provider']]:
+        return pulumi.get(self, "aws_provider")
+
+    @aws_provider.setter
+    def aws_provider(self, value: Optional[pulumi.Input['pulumi_aws.Provider']]):
+        pulumi.set(self, "aws_provider", value)
+
+    @property
+    @pulumi.getter(name="eksNodeAccess")
+    def eks_node_access(self) -> Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']]:
+        return pulumi.get(self, "eks_node_access")
+
+    @eks_node_access.setter
+    def eks_node_access(self, value: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']]):
+        pulumi.set(self, "eks_node_access", value)
+
+    @property
+    @pulumi.getter(name="encryptionConfig")
+    def encryption_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']]:
+        return pulumi.get(self, "encryption_config")
+
+    @encryption_config.setter
+    def encryption_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']]):
+        pulumi.set(self, "encryption_config", value)
+
+    @property
+    @pulumi.getter(name="fargateProfile")
+    def fargate_profile(self) -> Optional[pulumi.Input['pulumi_aws.eks.FargateProfile']]:
+        return pulumi.get(self, "fargate_profile")
+
+    @fargate_profile.setter
+    def fargate_profile(self, value: Optional[pulumi.Input['pulumi_aws.eks.FargateProfile']]):
+        pulumi.set(self, "fargate_profile", value)
+
+    @property
+    @pulumi.getter
+    def kubeconfig(self) -> Optional[Any]:
+        return pulumi.get(self, "kubeconfig")
+
+    @kubeconfig.setter
+    def kubeconfig(self, value: Optional[Any]):
+        pulumi.set(self, "kubeconfig", value)
+
+    @property
+    @pulumi.getter(name="nodeSecurityGroupTags")
+    def node_security_group_tags(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
+        return pulumi.get(self, "node_security_group_tags")
+
+    @node_security_group_tags.setter
+    def node_security_group_tags(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]):
+        pulumi.set(self, "node_security_group_tags", value)
+
+    @property
+    @pulumi.getter(name="oidcProvider")
+    def oidc_provider(self) -> Optional[pulumi.Input['pulumi_aws.iam.OpenIdConnectProvider']]:
+        return pulumi.get(self, "oidc_provider")
+
+    @oidc_provider.setter
+    def oidc_provider(self, value: Optional[pulumi.Input['pulumi_aws.iam.OpenIdConnectProvider']]):
+        pulumi.set(self, "oidc_provider", value)
+
+    @property
+    @pulumi.getter(name="privateSubnetIds")
+    def private_subnet_ids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
+        return pulumi.get(self, "private_subnet_ids")
+
+    @private_subnet_ids.setter
+    def private_subnet_ids(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
+        pulumi.set(self, "private_subnet_ids", value)
+
+    @property
+    @pulumi.getter(name="publicSubnetIds")
+    def public_subnet_ids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
+        return pulumi.get(self, "public_subnet_ids")
+
+    @public_subnet_ids.setter
+    def public_subnet_ids(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
+        pulumi.set(self, "public_subnet_ids", value)
+
+    @property
+    @pulumi.getter(name="storageClasses")
+    def storage_classes(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input['pulumi_kubernetes.storage.v1.StorageClass']]]]:
+        return pulumi.get(self, "storage_classes")
+
+    @storage_classes.setter
+    def storage_classes(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input['pulumi_kubernetes.storage.v1.StorageClass']]]]):
+        pulumi.set(self, "storage_classes", value)
+
+    @property
+    @pulumi.getter
+    def tags(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
+        return pulumi.get(self, "tags")
+
+    @tags.setter
+    def tags(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]):
+        pulumi.set(self, "tags", value)
+
+    @property
+    @pulumi.getter(name="vpcCni")
+    def vpc_cni(self) -> Optional[pulumi.Input['VpcCni']]:
+        return pulumi.get(self, "vpc_cni")
+
+    @vpc_cni.setter
+    def vpc_cni(self, value: Optional[pulumi.Input['VpcCni']]):
+        pulumi.set(self, "vpc_cni", value)
 
 
 @pulumi.input_type

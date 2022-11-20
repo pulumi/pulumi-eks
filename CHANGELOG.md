@@ -3,7 +3,7 @@
 - [Add support for launchTemplateTagSpecifications within NodeGroupV2 #810](https://github.com/pulumi/pulumi-eks/pull/810)
 - [Use pkg for packaging provider binary #776](https://github.com/pulumi/pulumi-eks/pull/776)
 - [Remove default for NodeRootVolumeSize that conflicted with NodeGroupOptions #813](https://github.com/pulumi/pulumi-eks/pull/813)
-- [BREAKING CHANGE: For non-Node.js languages: NodeGroup/NodeGroupV2/ManagedNodeGroup now accept Cluster rather than CoreData #815](https://github.com/pulumi/pulumi-eks/pull/815)
+- [Add support for passing Cluster to NodeGroup/NodeGroupV2/ManagedNodeGroup in all languages #815](https://github.com/pulumi/pulumi-eks/pull/815)
 
 ## 0.42.2 (Released Oct 12, 2022)
 - Fix internal registration of NodeGroupV2 resource.

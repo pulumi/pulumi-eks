@@ -68,7 +68,7 @@ namespace Pulumi.Eks
         /// The target EKS cluster.
         /// </summary>
         [Input("cluster", required: true)]
-        public Pulumi.Eks.Cluster Cluster { get; set; } = null!;
+        public InputUnion<Pulumi.Eks.Cluster, Inputs.CoreDataArgs> Cluster { get; set; } = null!;
 
         /// <summary>
         /// Name of the EKS Cluster.

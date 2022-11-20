@@ -8,9 +8,11 @@ import com.pulumi.aws.eks.inputs.NodeGroupRemoteAccessArgs;
 import com.pulumi.aws.eks.inputs.NodeGroupScalingConfigArgs;
 import com.pulumi.aws.eks.inputs.NodeGroupTaintArgs;
 import com.pulumi.aws.iam.Role;
+import com.pulumi.core.Either;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.Cluster;
+import com.pulumi.eks.inputs.CoreDataArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
@@ -60,13 +62,13 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
      * 
      */
     @Import(name="cluster", required=true)
-    private Cluster cluster;
+    private Output<Either<Cluster,CoreDataArgs>> cluster;
 
     /**
      * @return The target EKS cluster.
      * 
      */
-    public Cluster cluster() {
+    public Output<Either<Cluster,CoreDataArgs>> cluster() {
         return this.cluster;
     }
 
@@ -440,9 +442,39 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          * @return builder
          * 
          */
-        public Builder cluster(Cluster cluster) {
+        public Builder cluster(Output<Either<Cluster,CoreDataArgs>> cluster) {
             $.cluster = cluster;
             return this;
+        }
+
+        /**
+         * @param cluster The target EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder cluster(Either<Cluster,CoreDataArgs> cluster) {
+            return cluster(Output.of(cluster));
+        }
+
+        /**
+         * @param cluster The target EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder cluster(Cluster cluster) {
+            return cluster(Either.ofLeft(cluster));
+        }
+
+        /**
+         * @param cluster The target EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder cluster(CoreDataArgs cluster) {
+            return cluster(Either.ofRight(cluster));
         }
 
         /**

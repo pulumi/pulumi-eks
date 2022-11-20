@@ -424,7 +424,10 @@ export class NodeGroupInternal extends pulumi.ComponentResource {
 
         super(type, name, args, opts);
 
-        const group = createNodeGroupInternal(name, args, args.cluster.core, this, opts?.provider);
+        const core = pulumi.output(args.cluster)
+            .apply(c => c instanceof ClusterInternal ? c.core : c) as pulumi.Output<pulumi.Unwrap<CoreData>>;
+
+        const group = createNodeGroupInternal(name, args, core, this, opts?.provider);
         this.autoScalingGroupName = group.autoScalingGroupName;
         this.cfnStack = pulumi.output(group.cfnStack);
         this.extraNodeSecurityGroups = pulumi.output(group.extraNodeSecurityGroups ?? []);
@@ -439,7 +442,9 @@ export class NodeGroupInternal extends pulumi.ComponentResource {
 }
 
 /** @internal */
-export type NodeGroupInternalArgs = Omit<NodeGroupOptions, "cluster"> & { cluster: ClusterInternal };
+export type NodeGroupInternalArgs = Omit<NodeGroupOptions, "cluster"> & {
+    cluster: pulumi.Input<ClusterInternal | pulumi.Unwrap<CoreData>>;
+};
 
 export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2Data {
     /**
@@ -501,7 +506,10 @@ export class NodeGroupV2Internal extends pulumi.ComponentResource {
 
         super(type, name, args, opts);
 
-        const group = createNodeGroupV2Internal(name, args, args.cluster.core, this, opts?.provider);
+        const core = pulumi.output(args.cluster)
+            .apply(c => c instanceof ClusterInternal ? c.core : c) as pulumi.Output<pulumi.Unwrap<CoreData>>;
+
+        const group = createNodeGroupV2Internal(name, args, core, this, opts?.provider);
         this.autoScalingGroup = pulumi.output(group.autoScalingGroup);
         this.extraNodeSecurityGroups = pulumi.output(group.extraNodeSecurityGroups ?? []);
         this.nodeSecurityGroup = pulumi.output(group.nodeSecurityGroup);
@@ -514,7 +522,9 @@ export class NodeGroupV2Internal extends pulumi.ComponentResource {
 }
 
 /** @internal */
-export type NodeGroupV2InternalArgs = Omit<NodeGroupV2Options, "cluster"> & { cluster: ClusterInternal };
+export type NodeGroupV2InternalArgs = Omit<NodeGroupV2Options, "cluster"> & {
+    cluster: pulumi.Input<ClusterInternal | pulumi.Unwrap<CoreData>>;
+};
 
 /**
  * Create a self-managed node group using CloudFormation and an ASG.
@@ -1327,7 +1337,10 @@ export class ManagedNodeGroupInternal extends pulumi.ComponentResource {
 
         super(type, name, args, opts);
 
-        const group = createManagedNodeGroupInternal(name, args, args.cluster.core, this, opts?.provider);
+        const core = pulumi.output(args.cluster)
+            .apply(c => c instanceof ClusterInternal ? c.core : c) as pulumi.Output<pulumi.Unwrap<CoreData>>;
+
+        const group = createManagedNodeGroupInternal(name, args, core, this, opts?.provider);
         this.nodeGroup = pulumi.output(group);
         this.registerOutputs({
             nodeGroup: this.nodeGroup,
@@ -1336,7 +1349,9 @@ export class ManagedNodeGroupInternal extends pulumi.ComponentResource {
 }
 
 /** @internal */
-export type ManagedNodeGroupInternalArgs = Omit<ManagedNodeGroupOptions, "cluster"> & { cluster: ClusterInternal };
+export type ManagedNodeGroupInternalArgs = Omit<ManagedNodeGroupOptions, "cluster"> & {
+    cluster: pulumi.Input<ClusterInternal | pulumi.Unwrap<CoreData>>;
+};
 
 /**
  * Create an AWS managed node group.
