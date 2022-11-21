@@ -17,7 +17,6 @@
 package example
 
 import (
-	"path"
 	"path/filepath"
 	"testing"
 
@@ -28,7 +27,7 @@ func TestAccAwsProfilePy(t *testing.T) {
 	t.Skip("Temp Skip")
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "aws-profile-py"),
+			Dir: filepath.Join(getCwd(t), "aws-profile-py"),
 			// TODO: Temporarily skip the extra runtime validation due to test failure.
 			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 			// 	utils.RunEKSSmokeTest(t,
@@ -45,7 +44,7 @@ func TestAccAwsProfileRolePy(t *testing.T) {
 	t.Skip("Temp Skip")
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "aws-profile-role-py"),
+			Dir: filepath.Join(getCwd(t), "aws-profile-role-py"),
 			// TODO: [pulumi/pulumi-eks#629] Temporarily skip the extra runtime validation due to test failure.
 			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 			// 	utils.RunEKSSmokeTest(t,
@@ -98,6 +97,16 @@ func TestAccFargatePy(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccNodeGroupPy(t *testing.T) {
+	test := getPythonBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			RunUpdateTest: false,
+			Dir:           filepath.Join(getCwd(t), "nodegroup-py"),
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccManagedNodeGroupPy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -119,7 +128,6 @@ func getPythonBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	region := getEnvRegion(t)
 	base := getBaseOptions(t)
 	pythonBase := base.With(integration.ProgramTestOptions{
-		Env: []string{"PULUMI_EXPERIMENTAL_RESOURCE_REFERENCES=1"},
 		Config: map[string]string{
 			"aws:region": region,
 		},

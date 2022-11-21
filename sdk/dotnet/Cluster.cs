@@ -64,6 +64,12 @@ namespace Pulumi.Eks
         public Output<object> Kubeconfig { get; private set; } = null!;
 
         /// <summary>
+        /// A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
+        /// </summary>
+        [Output("kubeconfigJson")]
+        public Output<string> KubeconfigJson { get; private set; } = null!;
+
+        /// <summary>
         /// The security group for the cluster's nodes.
         /// </summary>
         [Output("nodeSecurityGroup")]

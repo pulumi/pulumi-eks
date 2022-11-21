@@ -839,55 +839,6 @@ type CoreData struct {
 	VpcId                 string                             `pulumi:"vpcId"`
 }
 
-// CoreDataInput is an input type that accepts CoreDataArgs and CoreDataOutput values.
-// You can construct a concrete instance of `CoreDataInput` via:
-//
-//	CoreDataArgs{...}
-type CoreDataInput interface {
-	pulumi.Input
-
-	ToCoreDataOutput() CoreDataOutput
-	ToCoreDataOutputWithContext(context.Context) CoreDataOutput
-}
-
-// Defines the core set of data associated with an EKS cluster, including the network in which it runs.
-type CoreDataArgs struct {
-	AwsProvider aws.ProviderInput `pulumi:"awsProvider"`
-	Cluster     eks.ClusterInput  `pulumi:"cluster"`
-	// The IAM Role attached to the EKS Cluster
-	ClusterIamRole        iam.RoleInput                       `pulumi:"clusterIamRole"`
-	ClusterSecurityGroup  ec2.SecurityGroupInput              `pulumi:"clusterSecurityGroup"`
-	EksNodeAccess         corev1.ConfigMapInput               `pulumi:"eksNodeAccess"`
-	EncryptionConfig      eks.ClusterEncryptionConfigPtrInput `pulumi:"encryptionConfig"`
-	Endpoint              pulumi.StringInput                  `pulumi:"endpoint"`
-	FargateProfile        eks.FargateProfileInput             `pulumi:"fargateProfile"`
-	InstanceRoles         iam.RoleArrayInput                  `pulumi:"instanceRoles"`
-	Kubeconfig            pulumi.Input                        `pulumi:"kubeconfig"`
-	NodeGroupOptions      ClusterNodeGroupOptionsInput        `pulumi:"nodeGroupOptions"`
-	NodeSecurityGroupTags pulumi.StringMapInput               `pulumi:"nodeSecurityGroupTags"`
-	OidcProvider          iam.OpenIdConnectProviderInput      `pulumi:"oidcProvider"`
-	PrivateSubnetIds      pulumi.StringArrayInput             `pulumi:"privateSubnetIds"`
-	Provider              kubernetes.ProviderInput            `pulumi:"provider"`
-	PublicSubnetIds       pulumi.StringArrayInput             `pulumi:"publicSubnetIds"`
-	StorageClasses        storagev1.StorageClassMapInput      `pulumi:"storageClasses"`
-	SubnetIds             pulumi.StringArrayInput             `pulumi:"subnetIds"`
-	Tags                  pulumi.StringMapInput               `pulumi:"tags"`
-	VpcCni                VpcCniInput                         `pulumi:"vpcCni"`
-	VpcId                 pulumi.StringInput                  `pulumi:"vpcId"`
-}
-
-func (CoreDataArgs) ElementType() reflect.Type {
-	return reflect.TypeOf((*CoreData)(nil)).Elem()
-}
-
-func (i CoreDataArgs) ToCoreDataOutput() CoreDataOutput {
-	return i.ToCoreDataOutputWithContext(context.Background())
-}
-
-func (i CoreDataArgs) ToCoreDataOutputWithContext(ctx context.Context) CoreDataOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(CoreDataOutput)
-}
-
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreDataOutput struct{ *pulumi.OutputState }
 
@@ -2482,7 +2433,6 @@ func (o VpcCniOptionsPtrOutput) WarmPrefixTarget() pulumi.IntPtrOutput {
 func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsPtrInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
-	pulumi.RegisterInputType(reflect.TypeOf((*CoreDataInput)(nil)).Elem(), CoreDataArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CreationRoleProviderInput)(nil)).Elem(), CreationRoleProviderArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CreationRoleProviderPtrInput)(nil)).Elem(), CreationRoleProviderArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*KubeconfigOptionsInput)(nil)).Elem(), KubeconfigOptionsArgs{})

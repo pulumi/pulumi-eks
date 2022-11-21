@@ -34,6 +34,8 @@ type Cluster struct {
 	InstanceRoles iam.RoleArrayOutput `pulumi:"instanceRoles"`
 	// A kubeconfig that can be used to connect to the EKS cluster.
 	Kubeconfig pulumi.AnyOutput `pulumi:"kubeconfig"`
+	// A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
+	KubeconfigJson pulumi.StringOutput `pulumi:"kubeconfigJson"`
 	// The security group for the cluster's nodes.
 	NodeSecurityGroup ec2.SecurityGroupOutput `pulumi:"nodeSecurityGroup"`
 }
@@ -674,6 +676,11 @@ func (o ClusterOutput) InstanceRoles() iam.RoleArrayOutput {
 // A kubeconfig that can be used to connect to the EKS cluster.
 func (o ClusterOutput) Kubeconfig() pulumi.AnyOutput {
 	return o.ApplyT(func(v *Cluster) pulumi.AnyOutput { return v.Kubeconfig }).(pulumi.AnyOutput)
+}
+
+// A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
+func (o ClusterOutput) KubeconfigJson() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.KubeconfigJson }).(pulumi.StringOutput)
 }
 
 // The security group for the cluster's nodes.

@@ -157,6 +157,10 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
 							Description: "A kubeconfig that can be used to connect to the EKS cluster.",
 						},
+						"kubeconfigJson": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "A kubeconfig that can be used to connect to the EKS cluster as a JSON string.",
+						},
 						"awsProvider": {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/provider")},
 							Description: "The AWS resource provider.",
@@ -200,6 +204,7 @@ func generateSchema() schema.PackageSpec {
 					},
 					Required: []string{
 						"kubeconfig",
+						"kubeconfigJson",
 						"awsProvider",
 						// "provider",
 						"clusterSecurityGroup",
@@ -644,9 +649,12 @@ func generateSchema() schema.PackageSpec {
 				},
 				InputProperties: map[string]schema.PropertySpec{
 					"cluster": {
-						// Note: this is typed as `Cluster | CoreData` in the TS API. Ideally, the Cluster could be
-						// passed directly.
-						TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+						TypeSpec: schema.TypeSpec{
+							OneOf: []schema.TypeSpec{
+								{Ref: "#/resources/eks:index:Cluster"},
+								{Ref: "#/types/eks:index:CoreData"},
+							},
+						},
 						Description: "The target EKS cluster.",
 					},
 					// The following inputs are based on `aws.eks.NodeGroupArgs`, with the following properties made
@@ -1532,8 +1540,12 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 
 	if cluster {
 		props["cluster"] = schema.PropertySpec{
-			// TODO: this is typed as `Cluster | CoreData` in the TS API.
-			TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+			TypeSpec: schema.TypeSpec{
+				OneOf: []schema.TypeSpec{
+					{Ref: "#/resources/eks:index:Cluster"},
+					{Ref: "#/types/eks:index:CoreData"},
+				},
+			},
 			Description: "The target EKS cluster.",
 		}
 	}

@@ -1,4 +1,4 @@
-// Copyright 2016-2020, Pulumi Corporation.
+// Copyright 2016-2022, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 import * as pulumi from "@pulumi/pulumi";
 import { readFileSync } from "fs";
-import { Cluster } from "../../cluster";
+import { ClusterInternal } from "../../cluster";
 import { VpcCni } from "../../cni";
 import { clusterCreationRoleProviderProviderFactory, clusterProviderFactory } from "./cluster";
 import { vpcCniProviderFactory } from "./cni";
@@ -43,7 +43,7 @@ class Provider implements pulumi.provider.Provider {
             construct: (name, type, urn) => {
                 switch (type) {
                     case "eks:index:Cluster":
-                        return new Cluster(name, undefined, { urn });
+                        return new ClusterInternal(name, undefined, { urn });
                     case "eks:index:VpcCni":
                         return new VpcCni(name, undefined, undefined, { urn });
                     default:
@@ -56,7 +56,7 @@ class Provider implements pulumi.provider.Provider {
     async call(token: string, inputs: pulumi.Inputs): Promise<pulumi.provider.InvokeResult> {
         switch (token) {
             case "eks:index:Cluster/getKubeconfig":
-                const self: Cluster = inputs.__self__;
+                const self: ClusterInternal = inputs.__self__;
                 const result = self.getKubeconfig({
                     profileName: inputs.profileName,
                     roleArn: inputs.roleArn,

@@ -11,6 +11,8 @@ package-lock.json
 **/version.txt
 **/dist
 .DS_Store
+__pycache__
+
 
 ci-scripts/
 *.tar.gz

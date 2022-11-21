@@ -1455,6 +1455,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["eks_cluster"] = None
             __props__.__dict__["eks_cluster_ingress_rule"] = None
             __props__.__dict__["kubeconfig"] = None
+            __props__.__dict__["kubeconfig_json"] = None
             __props__.__dict__["node_security_group"] = None
         super(Cluster, __self__).__init__(
             'eks:index:Cluster',
@@ -1526,6 +1527,14 @@ class Cluster(pulumi.ComponentResource):
         A kubeconfig that can be used to connect to the EKS cluster.
         """
         return pulumi.get(self, "kubeconfig")
+
+    @property
+    @pulumi.getter(name="kubeconfigJson")
+    def kubeconfig_json(self) -> pulumi.Output[str]:
+        """
+        A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
+        """
+        return pulumi.get(self, "kubeconfig_json")
 
     @property
     @pulumi.getter(name="nodeSecurityGroup")

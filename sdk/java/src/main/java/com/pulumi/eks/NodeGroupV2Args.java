@@ -7,8 +7,10 @@ import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.aws.ec2.SecurityGroupRule;
 import com.pulumi.aws.ec2.inputs.LaunchTemplateTagSpecificationArgs;
 import com.pulumi.aws.iam.InstanceProfile;
+import com.pulumi.core.Either;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.eks.Cluster;
 import com.pulumi.eks.inputs.CoreDataArgs;
 import com.pulumi.eks.inputs.TaintArgs;
 import java.lang.Boolean;
@@ -139,13 +141,13 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="cluster", required=true)
-    private Output<CoreDataArgs> cluster;
+    private Output<Either<Cluster,CoreDataArgs>> cluster;
 
     /**
      * @return The target EKS cluster.
      * 
      */
-    public Output<CoreDataArgs> cluster() {
+    public Output<Either<Cluster,CoreDataArgs>> cluster() {
         return this.cluster;
     }
 
@@ -753,7 +755,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder cluster(Output<CoreDataArgs> cluster) {
+        public Builder cluster(Output<Either<Cluster,CoreDataArgs>> cluster) {
             $.cluster = cluster;
             return this;
         }
@@ -764,8 +766,28 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder cluster(CoreDataArgs cluster) {
+        public Builder cluster(Either<Cluster,CoreDataArgs> cluster) {
             return cluster(Output.of(cluster));
+        }
+
+        /**
+         * @param cluster The target EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder cluster(Cluster cluster) {
+            return cluster(Either.ofLeft(cluster));
+        }
+
+        /**
+         * @param cluster The target EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder cluster(CoreDataArgs cluster) {
+            return cluster(Either.ofRight(cluster));
         }
 
         /**

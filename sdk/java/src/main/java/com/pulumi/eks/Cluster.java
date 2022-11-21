@@ -16,6 +16,7 @@ import com.pulumi.eks.Utilities;
 import com.pulumi.eks.outputs.CoreData;
 import com.pulumi.eks.outputs.NodeGroupData;
 import java.lang.Object;
+import java.lang.String;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -137,6 +138,20 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<Object> kubeconfig() {
         return this.kubeconfig;
+    }
+    /**
+     * A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
+     * 
+     */
+    @Export(name="kubeconfigJson", type=String.class, parameters={})
+    private Output<String> kubeconfigJson;
+
+    /**
+     * @return A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
+     * 
+     */
+    public Output<String> kubeconfigJson() {
+        return this.kubeconfigJson;
     }
     /**
      * The security group for the cluster&#39;s nodes.

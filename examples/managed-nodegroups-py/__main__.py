@@ -20,13 +20,13 @@ pulumi.export("kubeconfig", cluster.kubeconfig)
 # Create a simple AWS managed node group using a cluster as input and the
 # refactored API.
 managed_node_group0 = eks.ManagedNodeGroup("example-managed-ng0",
-                                           cluster=cluster.core, # TODO[pulumi/pulumi-eks#483]: Pass cluster directly.
+                                           cluster=cluster,
                                            node_role=role0)
 
 # Create a simple AWS managed node group using a cluster as input and the
 # initial API.
 managed_node_group1 = eks.ManagedNodeGroup("example-managed-ng1",
-                                           cluster=cluster.core, # TODO[pulumi/pulumi-eks#483]: Pass cluster directly.
+                                           cluster=cluster,
                                            node_group_name="aws-managed-ng1",
                                            node_role_arn=role1.arn,
                                            opts=pulumi.ResourceOptions(parent=cluster))
@@ -34,7 +34,7 @@ managed_node_group1 = eks.ManagedNodeGroup("example-managed-ng1",
 # Create an explicit AWS managed node group using a cluster as input and the
 # initial API.
 managed_node_group2 = eks.ManagedNodeGroup("example-managed-ng2",
-                                           cluster=cluster.core, # TODO[pulumi/pulumi-eks#483]: Pass cluster directly.
+                                           cluster=cluster,
                                            node_group_name="aws-managed-ng2",
                                            node_role_arn=role2.arn,
                                            scaling_config=aws.eks.NodeGroupScalingConfigArgs(
