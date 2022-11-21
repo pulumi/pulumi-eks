@@ -23,6 +23,7 @@ const clusterProvider: pulumi.provider.Provider = {
                 urn: cluster.urn,
                 state: {
                     kubeconfig: cluster.kubeconfig,
+                    kubeconfigJson: cluster.kubeconfigJson,
                     clusterSecurityGroup: cluster.clusterSecurityGroup,
                     instanceRoles: cluster.instanceRoles,
                     nodeSecurityGroup: cluster.nodeSecurityGroup,

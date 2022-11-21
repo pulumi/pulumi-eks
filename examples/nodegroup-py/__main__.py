@@ -30,7 +30,7 @@ eks.NodeGroupV2(
 
 clusterK8sProvider = k8s.Provider(
     "clusterK8sProvider",
-    kubeconfig=cluster.kubeconfig.apply(lambda k: json.dumps(k, sort_keys=True)),
+    kubeconfig=cluster.kubeconfig_json,
 )
 
 # Create the second node group with spot t2.medium instance

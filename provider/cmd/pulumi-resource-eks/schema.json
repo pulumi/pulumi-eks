@@ -590,6 +590,10 @@
                     "$ref": "pulumi.json#/Any",
                     "description": "A kubeconfig that can be used to connect to the EKS cluster."
                 },
+                "kubeconfigJson": {
+                    "type": "string",
+                    "description": "A kubeconfig that can be used to connect to the EKS cluster as a JSON string."
+                },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the cluster's nodes."
@@ -597,6 +601,7 @@
             },
             "required": [
                 "kubeconfig",
+                "kubeconfigJson",
                 "awsProvider",
                 "clusterSecurityGroup",
                 "instanceRoles",

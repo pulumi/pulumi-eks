@@ -157,6 +157,10 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
 							Description: "A kubeconfig that can be used to connect to the EKS cluster.",
 						},
+						"kubeconfigJson": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "A kubeconfig that can be used to connect to the EKS cluster as a JSON string.",
+						},
 						"awsProvider": {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/provider")},
 							Description: "The AWS resource provider.",
@@ -200,6 +204,7 @@ func generateSchema() schema.PackageSpec {
 					},
 					Required: []string{
 						"kubeconfig",
+						"kubeconfigJson",
 						"awsProvider",
 						// "provider",
 						"clusterSecurityGroup",

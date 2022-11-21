@@ -1354,6 +1354,11 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly kubeconfig: pulumi.Output<any>;
 
     /**
+     * A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
+     */
+    public readonly kubeconfigJson: pulumi.Output<string>;
+
+    /**
      * The AWS resource provider.
      */
     public readonly awsProvider: pulumi.ProviderResource;
@@ -1427,6 +1432,7 @@ export class Cluster extends pulumi.ComponentResource {
 
         const cluster = createCluster(name, this, args, opts);
         this.kubeconfig = cluster.kubeconfig;
+        this.kubeconfigJson = cluster.kubeconfigJson;
         this.provider = cluster.provider;
         this.clusterSecurityGroup = cluster.clusterSecurityGroup;
         this.instanceRoles = cluster.instanceRoles;
@@ -1491,6 +1497,7 @@ export class Cluster extends pulumi.ComponentResource {
 /** @internal */
 export interface ClusterResult {
     kubeconfig: pulumi.Output<any>;
+    kubeconfigJson: pulumi.Output<string>;
     awsProvider?: pulumi.ProviderResource;
     provider: k8s.Provider;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
@@ -1567,11 +1574,12 @@ export function createCluster(
     // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
     // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
     const kubeconfig = pulumi.all(configDeps).apply(([kc]) => kc);
+    const kubeconfigJson = kubeconfig.apply(JSON.stringify);
 
     // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
     // in order to help ensure that worker nodes are available before the provider can be used.
     const provider = new k8s.Provider(`${name}-provider`, {
-        kubeconfig: kubeconfig.apply(JSON.stringify),
+        kubeconfig: kubeconfigJson,
     }, { parent: self });
 
     // If we need to deploy the Kubernetes dashboard, do so now.
@@ -1590,6 +1598,7 @@ export function createCluster(
         eksClusterIngressRule,
         defaultNodeGroup,
         kubeconfig,
+        kubeconfigJson,
         provider,
     };
 }
@@ -1613,6 +1622,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
     public readonly eksClusterIngressRule!: pulumi.Output<aws.ec2.SecurityGroupRule>;
     public readonly instanceRoles!: pulumi.Output<aws.iam.Role[]>;
     public readonly kubeconfig!: pulumi.Output<any>;
+    public readonly kubeconfigJson!: pulumi.Output<string>;
     public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
 
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
@@ -1627,6 +1637,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
                 eksClusterIngressRule: undefined,
                 instanceRoles: undefined,
                 kubeconfig: undefined,
+                kubeconfigJson: undefined,
                 nodeSecurityGroup: undefined,
             };
             super(type, name, props, opts);
@@ -1637,6 +1648,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
 
         const cluster = createCluster(name, this, args, opts);
         this.kubeconfig = cluster.kubeconfig;
+        this.kubeconfigJson = cluster.kubeconfigJson;
         this.clusterSecurityGroup = pulumi.output(cluster.clusterSecurityGroup);
         this.instanceRoles = cluster.instanceRoles;
         this.nodeSecurityGroup = pulumi.output(cluster.nodeSecurityGroup);
@@ -1653,6 +1665,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
             eksClusterIngressRule: this.eksClusterIngressRule,
             instanceRoles: this.instanceRoles,
             kubeconfig: this.kubeconfig,
+            kubeconfigJson: this.kubeconfigJson,
             nodeSecurityGroup: this.nodeSecurityGroup,
         });
     }
