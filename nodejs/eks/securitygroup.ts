@@ -1,4 +1,4 @@
-// Copyright 2016-2019, Pulumi Corporation.
+// Copyright 2016-2022, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ export interface NodeGroupSecurityGroupOptions {
     /**
      * The security group associated with the EKS cluster.
      */
-    clusterSecurityGroup: aws.ec2.SecurityGroup;
+    clusterSecurityGroup: pulumi.Input<aws.ec2.SecurityGroup>;
 
     /*
      * Key-value mapping of tags to apply to this security group.
@@ -40,7 +40,7 @@ export interface NodeGroupSecurityGroupOptions {
     /**
      * The EKS cluster associated with the worker node group.
      */
-    eksCluster: aws.eks.Cluster;
+    eksCluster: pulumi.Input<aws.eks.Cluster>;
 }
 
 /**
@@ -82,12 +82,15 @@ export class NodeGroupSecurityGroup extends pulumi.ComponentResource {
  * cluster security group.
  */
 export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecurityGroupOptions, parent: pulumi.ComponentResource, provider?: pulumi.ProviderResource): [aws.ec2.SecurityGroup, aws.ec2.SecurityGroupRule] {
+    const eksCluster = pulumi.output(args.eksCluster);
+    const clusterSecurityGroup = pulumi.output(args.clusterSecurityGroup);
+
     const nodeSecurityGroup = new aws.ec2.SecurityGroup(`${name}-nodeSecurityGroup`, {
         vpcId: args.vpcId,
         revokeRulesOnDelete: true,
         tags: pulumi.all([
             args.tags,
-            args.eksCluster.name,
+            eksCluster.name,
         ]).apply(([tags, clusterName]) => (<aws.Tags>{
             "Name": `${name}-nodeSecurityGroup`,
             [`kubernetes.io/cluster/${clusterName}`]: "owned",
@@ -112,7 +115,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         toPort: 65535,
         protocol: "tcp",
         securityGroupId: nodeSecurityGroup.id,
-        sourceSecurityGroupId: args.clusterSecurityGroup.id,
+        sourceSecurityGroupId: clusterSecurityGroup.id,
     }, { parent, provider });
 
     const extApiServerClusterIngressRule = new aws.ec2.SecurityGroupRule(`${name}-eksExtApiServerClusterIngressRule`, {
@@ -122,7 +125,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         toPort: 443,
         protocol: "tcp",
         securityGroupId: nodeSecurityGroup.id,
-        sourceSecurityGroupId: args.clusterSecurityGroup.id,
+        sourceSecurityGroupId: clusterSecurityGroup.id,
     }, { parent, provider });
 
     const nodeInternetEgressRule = new aws.ec2.SecurityGroupRule(`${name}-eksNodeInternetEgressRule`, {
@@ -141,7 +144,7 @@ export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecuri
         fromPort: 443,
         toPort: 443,
         protocol: "tcp",
-        securityGroupId: args.clusterSecurityGroup.id,
+        securityGroupId: clusterSecurityGroup.id,
         sourceSecurityGroupId: nodeSecurityGroup.id,
     }, { parent, provider });
 

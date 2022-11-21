@@ -95,7 +95,7 @@ func main() {
 		_, err = eks.NewManagedNodeGroup(ctx,
 			"aws-managed-ng0",
 			&eks.ManagedNodeGroupArgs{
-				Cluster:  cluster.Core,
+				Cluster:  cluster,
 				NodeRole: role0,
 			})
 		if err != nil {
@@ -107,7 +107,7 @@ func main() {
 		_, err = eks.NewManagedNodeGroup(ctx,
 			"example-managed-ng1",
 			&eks.ManagedNodeGroupArgs{
-				Cluster:       cluster.Core,
+				Cluster:       cluster,
 				NodeGroupName: pulumi.String("aws-managed-ng1"),
 				NodeRoleArn:   role1.Arn,
 			})
@@ -118,7 +118,7 @@ func main() {
 		_, err = eks.NewManagedNodeGroup(ctx,
 			"example-managed-ng2",
 			&eks.ManagedNodeGroupArgs{
-				Cluster:       cluster.Core,
+				Cluster:       cluster,
 				NodeGroupName: pulumi.String("aws-managed-ng2"),
 				NodeRoleArn:   role2.Arn,
 				DiskSize:      pulumi.Int(20),

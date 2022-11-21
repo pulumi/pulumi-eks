@@ -124,7 +124,7 @@ namespace Pulumi.Eks
         /// The target EKS cluster.
         /// </summary>
         [Input("cluster", required: true)]
-        public Input<Inputs.CoreDataArgs> Cluster { get; set; } = null!;
+        public InputUnion<Pulumi.Eks.Cluster, Inputs.CoreDataArgs> Cluster { get; set; } = null!;
 
         /// <summary>
         /// The ingress rule that gives node group access.
