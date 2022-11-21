@@ -590,6 +590,10 @@
                     "$ref": "pulumi.json#/Any",
                     "description": "A kubeconfig that can be used to connect to the EKS cluster."
                 },
+                "kubeconfigJson": {
+                    "type": "string",
+                    "description": "A kubeconfig that can be used to connect to the EKS cluster as a JSON string."
+                },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the cluster's nodes."
@@ -597,6 +601,7 @@
             },
             "required": [
                 "kubeconfig",
+                "kubeconfigJson",
                 "awsProvider",
                 "clusterSecurityGroup",
                 "instanceRoles",
@@ -920,7 +925,14 @@
                     "description": "Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided."
                 },
                 "cluster": {
-                    "$ref": "#/types/eks:index:CoreData",
+                    "oneOf": [
+                        {
+                            "$ref": "#/resources/eks:index:Cluster"
+                        },
+                        {
+                            "$ref": "#/types/eks:index:CoreData"
+                        }
+                    ],
                     "description": "The target EKS cluster."
                 },
                 "clusterName": {
@@ -1068,7 +1080,14 @@
                     "description": "The tags to apply to the CloudFormation Stack of the Worker NodeGroup.\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
                 },
                 "cluster": {
-                    "$ref": "#/types/eks:index:CoreData",
+                    "oneOf": [
+                        {
+                            "$ref": "#/resources/eks:index:Cluster"
+                        },
+                        {
+                            "$ref": "#/types/eks:index:CoreData"
+                        }
+                    ],
                     "description": "The target EKS cluster."
                 },
                 "clusterIngressRule": {
@@ -1273,7 +1292,14 @@
                     "description": "The tags to apply to the CloudFormation Stack of the Worker NodeGroup.\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
                 },
                 "cluster": {
-                    "$ref": "#/types/eks:index:CoreData",
+                    "oneOf": [
+                        {
+                            "$ref": "#/resources/eks:index:Cluster"
+                        },
+                        {
+                            "$ref": "#/types/eks:index:CoreData"
+                        }
+                    ],
                     "description": "The target EKS cluster."
                 },
                 "clusterIngressRule": {
