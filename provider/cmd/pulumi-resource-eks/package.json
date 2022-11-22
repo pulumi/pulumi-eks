@@ -1,6 +1,0 @@
-{
-    "name": "pulumi-resource-eks",
-    "dependencies": {
-        "@pulumi/eks": "${VERSION}"
-    }
-}
