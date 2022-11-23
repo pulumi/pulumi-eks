@@ -757,29 +757,9 @@
                     "type": "string",
                     "description": "Public key material for SSH access to worker nodes. See allowed formats at:\nhttps://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html\nIf not provided, no SSH access is enabled on VMs."
                 },
-                "nodeRootVolumeDeleteOnTermination": {
-                    "type": "boolean",
-                    "description": "Whether to delete a cluster node's root volume on termination. Defaults to true."
-                },
-                "nodeRootVolumeEncrypted": {
-                    "type": "boolean",
-                    "description": "Whether to encrypt a cluster node's root volume. Defaults to false."
-                },
-                "nodeRootVolumeIops": {
-                    "type": "integer",
-                    "description": "Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes."
-                },
                 "nodeRootVolumeSize": {
                     "type": "integer",
                     "description": "The size in GiB of a cluster node's root volume. Defaults to 20."
-                },
-                "nodeRootVolumeThroughput": {
-                    "type": "integer",
-                    "description": "Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes."
-                },
-                "nodeRootVolumeType": {
-                    "type": "string",
-                    "description": "Configured EBS type for a cluster node's root volume. Default is gp2."
                 },
                 "nodeSecurityGroupTags": {
                     "type": "object",
