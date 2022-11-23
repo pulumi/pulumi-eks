@@ -5,7 +5,6 @@ package com.pulumi.eks.inputs;
 
 import com.pulumi.aws.Provider;
 import com.pulumi.aws.iam.Role;
-import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import java.util.Objects;
 
@@ -19,16 +18,16 @@ public final class CreationRoleProviderArgs extends com.pulumi.resources.Resourc
     public static final CreationRoleProviderArgs Empty = new CreationRoleProviderArgs();
 
     @Import(name="provider", required=true)
-    private Output<Provider> provider;
+    private Provider provider;
 
-    public Output<Provider> provider() {
+    public Provider provider() {
         return this.provider;
     }
 
     @Import(name="role", required=true)
-    private Output<Role> role;
+    private Role role;
 
-    public Output<Role> role() {
+    public Role role() {
         return this.role;
     }
 
@@ -57,22 +56,14 @@ public final class CreationRoleProviderArgs extends com.pulumi.resources.Resourc
             $ = new CreationRoleProviderArgs(Objects.requireNonNull(defaults));
         }
 
-        public Builder provider(Output<Provider> provider) {
+        public Builder provider(Provider provider) {
             $.provider = provider;
             return this;
         }
 
-        public Builder provider(Provider provider) {
-            return provider(Output.of(provider));
-        }
-
-        public Builder role(Output<Role> role) {
+        public Builder role(Role role) {
             $.role = role;
             return this;
-        }
-
-        public Builder role(Role role) {
-            return role(Output.of(role));
         }
 
         public CreationRoleProviderArgs build() {

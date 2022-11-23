@@ -120,7 +120,7 @@ namespace Pulumi.Eks
         /// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
         /// </summary>
         [Input("clusterSecurityGroup")]
-        public Input<Pulumi.Aws.Ec2.SecurityGroup>? ClusterSecurityGroup { get; set; }
+        public Pulumi.Aws.Ec2.SecurityGroup? ClusterSecurityGroup { get; set; }
 
         [Input("clusterSecurityGroupTags")]
         private InputMap<string>? _clusterSecurityGroupTags;
@@ -164,7 +164,7 @@ namespace Pulumi.Eks
         /// The IAM Role Provider used to create &amp; authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
         /// </summary>
         [Input("creationRoleProvider")]
-        public Input<Inputs.CreationRoleProviderArgs>? CreationRoleProvider { get; set; }
+        public Inputs.CreationRoleProviderArgs? CreationRoleProvider { get; set; }
 
         [Input("defaultAddonsToRemove")]
         private InputList<string>? _defaultAddonsToRemove;
@@ -332,13 +332,13 @@ namespace Pulumi.Eks
         /// Whether or not to auto-assign the EKS worker nodes public IP addresses. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         /// </summary>
         [Input("nodeAssociatePublicIpAddress")]
-        public Input<bool>? NodeAssociatePublicIpAddress { get; set; }
+        public bool? NodeAssociatePublicIpAddress { get; set; }
 
         /// <summary>
         /// The common configuration settings for NodeGroups.
         /// </summary>
         [Input("nodeGroupOptions")]
-        public Input<Inputs.ClusterNodeGroupOptionsArgs>? NodeGroupOptions { get; set; }
+        public Inputs.ClusterNodeGroupOptionsArgs? NodeGroupOptions { get; set; }
 
         /// <summary>
         /// Public key material for SSH access to worker nodes. See allowed formats at:
@@ -478,7 +478,7 @@ namespace Pulumi.Eks
         ///   - "http://username:password@proxy.example.com:3128"
         /// </summary>
         [Input("proxy")]
-        public Input<string>? Proxy { get; set; }
+        public string? Proxy { get; set; }
 
         [Input("publicAccessCidrs")]
         private InputList<string>? _publicAccessCidrs;
@@ -538,7 +538,7 @@ namespace Pulumi.Eks
         /// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
         /// </summary>
         [Input("skipDefaultNodeGroup")]
-        public Input<bool>? SkipDefaultNodeGroup { get; set; }
+        public bool? SkipDefaultNodeGroup { get; set; }
 
         /// <summary>
         /// An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
@@ -546,7 +546,7 @@ namespace Pulumi.Eks
         /// Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
         /// </summary>
         [Input("storageClasses")]
-        public InputUnion<string, ImmutableDictionary<string, Inputs.StorageClassArgs>>? StorageClasses { get; set; }
+        public Union<string, ImmutableDictionary<string, Inputs.StorageClassArgs>>? StorageClasses { get; set; }
 
         [Input("subnetIds")]
         private InputList<string>? _subnetIds;
@@ -584,7 +584,7 @@ namespace Pulumi.Eks
         /// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
         /// </summary>
         [Input("useDefaultVpcCni")]
-        public Input<bool>? UseDefaultVpcCni { get; set; }
+        public bool? UseDefaultVpcCni { get; set; }
 
         [Input("userMappings")]
         private InputList<Inputs.UserMappingArgs>? _userMappings;
@@ -608,7 +608,7 @@ namespace Pulumi.Eks
         /// The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
         /// </summary>
         [Input("vpcCniOptions")]
-        public Input<Inputs.VpcCniOptionsArgs>? VpcCniOptions { get; set; }
+        public Inputs.VpcCniOptionsArgs? VpcCniOptions { get; set; }
 
         /// <summary>
         /// The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the default VPC.
