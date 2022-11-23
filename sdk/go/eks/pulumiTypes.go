@@ -152,13 +152,13 @@ type ClusterNodeGroupOptionsArgs struct {
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
 	AutoScalingGroupTags pulumi.StringMapInput `pulumi:"autoScalingGroupTags"`
 	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
-	BootstrapExtraArgs pulumi.StringPtrInput `pulumi:"bootstrapExtraArgs"`
+	BootstrapExtraArgs *string `pulumi:"bootstrapExtraArgs"`
 	// The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
 	//
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
 	CloudFormationTags pulumi.StringMapInput `pulumi:"cloudFormationTags"`
 	// The ingress rule that gives node group access.
-	ClusterIngressRule ec2.SecurityGroupRuleInput `pulumi:"clusterIngressRule"`
+	ClusterIngressRule *ec2.SecurityGroupRule `pulumi:"clusterIngressRule"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput `pulumi:"desiredCapacity"`
 	// Encrypt the root block device of the nodes in the node group.
@@ -166,7 +166,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// Extra security groups to attach on all nodes in this worker node group.
 	//
 	// This additional set of security groups captures any user application rules that will be needed for the nodes.
-	ExtraNodeSecurityGroups ec2.SecurityGroupArrayInput `pulumi:"extraNodeSecurityGroups"`
+	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
 	// Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 	//
 	// Defaults to false.
@@ -178,21 +178,21 @@ type ClusterNodeGroupOptionsArgs struct {
 	// - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
 	Gpu pulumi.BoolPtrInput `pulumi:"gpu"`
 	// The ingress rule that gives node group access.
-	InstanceProfile iam.InstanceProfileInput `pulumi:"instanceProfile"`
+	InstanceProfile *iam.InstanceProfile `pulumi:"instanceProfile"`
 	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
 	InstanceType pulumi.StringPtrInput `pulumi:"instanceType"`
 	// Name of the key pair to use for SSH access to worker nodes.
 	KeyName pulumi.StringPtrInput `pulumi:"keyName"`
 	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
-	KubeletExtraArgs pulumi.StringPtrInput `pulumi:"kubeletExtraArgs"`
+	KubeletExtraArgs *string `pulumi:"kubeletExtraArgs"`
 	// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
-	Labels pulumi.StringMapInput `pulumi:"labels"`
+	Labels map[string]string `pulumi:"labels"`
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize pulumi.IntPtrInput `pulumi:"maxSize"`
 	// The minimum number of worker nodes running in the cluster. Defaults to 1.
 	MinSize pulumi.IntPtrInput `pulumi:"minSize"`
 	// Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
-	NodeAssociatePublicIpAddress pulumi.BoolPtrInput `pulumi:"nodeAssociatePublicIpAddress"`
+	NodeAssociatePublicIpAddress *bool `pulumi:"nodeAssociatePublicIpAddress"`
 	// Public key material for SSH access to worker nodes. See allowed formats at:
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
@@ -207,7 +207,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
 	//
 	// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
-	NodeSecurityGroup ec2.SecurityGroupInput `pulumi:"nodeSecurityGroup"`
+	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
 	// The set of subnets to override and use for the worker node group.
 	//
 	// Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -221,7 +221,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice pulumi.StringPtrInput `pulumi:"spotPrice"`
 	// Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
-	Taints TaintMapInput `pulumi:"taints"`
+	Taints map[string]TaintArgs `pulumi:"taints"`
 	// Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
 	Version pulumi.StringPtrInput `pulumi:"version"`
 }
@@ -958,8 +958,8 @@ type CreationRoleProviderInput interface {
 
 // Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
 type CreationRoleProviderArgs struct {
-	Provider aws.ProviderInput `pulumi:"provider"`
-	Role     iam.RoleInput     `pulumi:"role"`
+	Provider *aws.Provider `pulumi:"provider"`
+	Role     *iam.Role     `pulumi:"role"`
 }
 
 func (CreationRoleProviderArgs) ElementType() reflect.Type {
@@ -1601,9 +1601,9 @@ type TaintInput interface {
 // Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
 type TaintArgs struct {
 	// The effect of the taint.
-	Effect pulumi.StringInput `pulumi:"effect"`
+	Effect string `pulumi:"effect"`
 	// The value of the taint.
-	Value pulumi.StringInput `pulumi:"value"`
+	Value string `pulumi:"value"`
 }
 
 func (TaintArgs) ElementType() reflect.Type {
