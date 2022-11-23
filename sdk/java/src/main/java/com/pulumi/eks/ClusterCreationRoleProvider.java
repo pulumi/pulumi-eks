@@ -3,7 +3,6 @@
 
 package com.pulumi.eks;
 
-import com.pulumi.aws.Provider;
 import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
@@ -19,12 +18,6 @@ import javax.annotation.Nullable;
  */
 @ResourceType(type="eks:index:ClusterCreationRoleProvider")
 public class ClusterCreationRoleProvider extends com.pulumi.resources.ComponentResource {
-    @Export(name="provider", type=Provider.class, parameters={})
-    private Output<Provider> provider;
-
-    public Output<Provider> provider() {
-        return this.provider;
-    }
     @Export(name="role", type=Role.class, parameters={})
     private Output<Role> role;
 

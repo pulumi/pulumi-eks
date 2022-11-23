@@ -6,6 +6,7 @@
 - [Add support for passing Cluster to NodeGroup/NodeGroupV2/ManagedNodeGroup in all languages #815](https://github.com/pulumi/pulumi-eks/pull/815)
 - [Add kubeconfigJson output property to Cluster #815](https://github.com/pulumi/pulumi-eks/pull/815)
 - [Adopt plain types in the schema to match the implementation #819](https://github.com/pulumi/pulumi-eks/pull/819)
+- [Remove unusable `provider` output from `ClusterCreationRoleProvider` #823](https://github.com/pulumi/pulumi-eks/pull/823)
 
 ## 0.42.2 (Released Oct 12, 2022)
 - Fix internal registration of NodeGroupV2 resource.

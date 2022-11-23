@@ -15,9 +15,6 @@ namespace Pulumi.Eks
     [EksResourceType("eks:index:ClusterCreationRoleProvider")]
     public partial class ClusterCreationRoleProvider : Pulumi.ComponentResource
     {
-        [Output("provider")]
-        public Output<Pulumi.Aws.Provider> Provider { get; private set; } = null!;
-
         [Output("role")]
         public Output<Pulumi.Aws.Iam.Role> Role { get; private set; } = null!;
 
