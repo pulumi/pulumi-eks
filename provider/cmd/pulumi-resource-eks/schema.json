@@ -911,16 +911,12 @@
         "eks:index:ClusterCreationRoleProvider": {
             "description": "ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a specific role to use for the creation of the EKS cluster different from the role being used to run the Pulumi deployment.",
             "properties": {
-                "provider": {
-                    "$ref": "/aws/v5.4.0/schema.json#/provider"
-                },
                 "role": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:iam%2Frole:Role"
                 }
             },
             "required": [
-                "role",
-                "provider"
+                "role"
             ],
             "inputProperties": {
                 "profile": {
