@@ -7,7 +7,6 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -16,8 +15,7 @@ import (
 type ClusterCreationRoleProvider struct {
 	pulumi.ResourceState
 
-	Provider aws.ProviderOutput `pulumi:"provider"`
-	Role     iam.RoleOutput     `pulumi:"role"`
+	Role iam.RoleOutput `pulumi:"role"`
 }
 
 // NewClusterCreationRoleProvider registers a new resource with the given unique name, arguments, and options.
@@ -131,10 +129,6 @@ func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderOutput()
 
 func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderOutputWithContext(ctx context.Context) ClusterCreationRoleProviderOutput {
 	return o
-}
-
-func (o ClusterCreationRoleProviderOutput) Provider() aws.ProviderOutput {
-	return o.ApplyT(func(v *ClusterCreationRoleProvider) aws.ProviderOutput { return v.Provider }).(aws.ProviderOutput)
 }
 
 func (o ClusterCreationRoleProviderOutput) Role() iam.RoleOutput {
