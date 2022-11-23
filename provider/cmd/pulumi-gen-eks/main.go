@@ -648,13 +648,15 @@ func generateSchema() schema.PackageSpec {
 						"role": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
 						},
-						"provider": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
-						},
+						// Temporarily excluding the provider output since `Output<ProviderResource>`` is currently
+						// unusable from multi-lang because `ResourceOptions` requires a plain `ProviderResource`.
+						// "provider": {
+						// 	TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
+						// },
 					},
 					Required: []string{
 						"role",
-						"provider",
+						// "provider",
 					},
 				},
 				InputProperties: map[string]schema.PropertySpec{
