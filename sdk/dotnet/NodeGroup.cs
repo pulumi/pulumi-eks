@@ -110,7 +110,7 @@ namespace Pulumi.Eks
         /// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         /// </summary>
         [Input("bootstrapExtraArgs")]
-        public Input<string>? BootstrapExtraArgs { get; set; }
+        public string? BootstrapExtraArgs { get; set; }
 
         [Input("cloudFormationTags")]
         private InputMap<string>? _cloudFormationTags;
@@ -136,7 +136,7 @@ namespace Pulumi.Eks
         /// The ingress rule that gives node group access.
         /// </summary>
         [Input("clusterIngressRule")]
-        public Input<Pulumi.Aws.Ec2.SecurityGroupRule>? ClusterIngressRule { get; set; }
+        public Pulumi.Aws.Ec2.SecurityGroupRule? ClusterIngressRule { get; set; }
 
         /// <summary>
         /// The number of worker nodes that should be running in the cluster. Defaults to 2.
@@ -151,16 +151,16 @@ namespace Pulumi.Eks
         public Input<bool>? EncryptRootBlockDevice { get; set; }
 
         [Input("extraNodeSecurityGroups")]
-        private InputList<Pulumi.Aws.Ec2.SecurityGroup>? _extraNodeSecurityGroups;
+        private List<Pulumi.Aws.Ec2.SecurityGroup>? _extraNodeSecurityGroups;
 
         /// <summary>
         /// Extra security groups to attach on all nodes in this worker node group.
         /// 
         /// This additional set of security groups captures any user application rules that will be needed for the nodes.
         /// </summary>
-        public InputList<Pulumi.Aws.Ec2.SecurityGroup> ExtraNodeSecurityGroups
+        public List<Pulumi.Aws.Ec2.SecurityGroup> ExtraNodeSecurityGroups
         {
-            get => _extraNodeSecurityGroups ?? (_extraNodeSecurityGroups = new InputList<Pulumi.Aws.Ec2.SecurityGroup>());
+            get => _extraNodeSecurityGroups ?? (_extraNodeSecurityGroups = new List<Pulumi.Aws.Ec2.SecurityGroup>());
             set => _extraNodeSecurityGroups = value;
         }
 
@@ -182,7 +182,7 @@ namespace Pulumi.Eks
         /// The ingress rule that gives node group access.
         /// </summary>
         [Input("instanceProfile")]
-        public Input<Pulumi.Aws.Iam.InstanceProfile>? InstanceProfile { get; set; }
+        public Pulumi.Aws.Iam.InstanceProfile? InstanceProfile { get; set; }
 
         /// <summary>
         /// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -200,17 +200,17 @@ namespace Pulumi.Eks
         /// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         /// </summary>
         [Input("kubeletExtraArgs")]
-        public Input<string>? KubeletExtraArgs { get; set; }
+        public string? KubeletExtraArgs { get; set; }
 
         [Input("labels")]
-        private InputMap<string>? _labels;
+        private Dictionary<string, string>? _labels;
 
         /// <summary>
         /// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         /// </summary>
-        public InputMap<string> Labels
+        public Dictionary<string, string> Labels
         {
-            get => _labels ?? (_labels = new InputMap<string>());
+            get => _labels ?? (_labels = new Dictionary<string, string>());
             set => _labels = value;
         }
 
@@ -230,7 +230,7 @@ namespace Pulumi.Eks
         /// Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         /// </summary>
         [Input("nodeAssociatePublicIpAddress")]
-        public Input<bool>? NodeAssociatePublicIpAddress { get; set; }
+        public bool? NodeAssociatePublicIpAddress { get; set; }
 
         /// <summary>
         /// Public key material for SSH access to worker nodes. See allowed formats at:
@@ -257,7 +257,7 @@ namespace Pulumi.Eks
         /// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
         /// </summary>
         [Input("nodeSecurityGroup")]
-        public Input<Pulumi.Aws.Ec2.SecurityGroup>? NodeSecurityGroup { get; set; }
+        public Pulumi.Aws.Ec2.SecurityGroup? NodeSecurityGroup { get; set; }
 
         [Input("nodeSubnetIds")]
         private InputList<string>? _nodeSubnetIds;
@@ -294,14 +294,14 @@ namespace Pulumi.Eks
         public Input<string>? SpotPrice { get; set; }
 
         [Input("taints")]
-        private InputMap<Inputs.TaintArgs>? _taints;
+        private Dictionary<string, Inputs.TaintArgs>? _taints;
 
         /// <summary>
         /// Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         /// </summary>
-        public InputMap<Inputs.TaintArgs> Taints
+        public Dictionary<string, Inputs.TaintArgs> Taints
         {
-            get => _taints ?? (_taints = new InputMap<Inputs.TaintArgs>());
+            get => _taints ?? (_taints = new Dictionary<string, Inputs.TaintArgs>());
             set => _taints = value;
         }
 

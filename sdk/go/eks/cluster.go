@@ -277,7 +277,7 @@ type clusterArgs struct {
 // The set of arguments for constructing a Cluster resource.
 type ClusterArgs struct {
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
-	ClusterSecurityGroup ec2.SecurityGroupInput
+	ClusterSecurityGroup *ec2.SecurityGroup
 	// The tags to apply to the cluster security group.
 	ClusterSecurityGroupTags pulumi.StringMapInput
 	// The tags to apply to the EKS cluster.
@@ -293,7 +293,7 @@ type ClusterArgs struct {
 	//  - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
 	CreateOidcProvider pulumi.BoolPtrInput
 	// The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
-	CreationRoleProvider CreationRoleProviderPtrInput
+	CreationRoleProvider *CreationRoleProviderArgs
 	// List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
 	DefaultAddonsToRemove pulumi.StringArrayInput
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
@@ -371,9 +371,9 @@ type ClusterArgs struct {
 	// - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
 	NodeAmiId pulumi.StringPtrInput
 	// Whether or not to auto-assign the EKS worker nodes public IP addresses. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
-	NodeAssociatePublicIpAddress pulumi.BoolPtrInput
+	NodeAssociatePublicIpAddress *bool
 	// The common configuration settings for NodeGroups.
-	NodeGroupOptions ClusterNodeGroupOptionsPtrInput
+	NodeGroupOptions *ClusterNodeGroupOptionsArgs
 	// Public key material for SSH access to worker nodes. See allowed formats at:
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
@@ -443,7 +443,7 @@ type ClusterArgs struct {
 	//   - "http://proxy.example.com:3128"
 	//   - "https://proxy.example.com"
 	//   - "http://username:password@proxy.example.com:3128"
-	Proxy pulumi.StringPtrInput
+	Proxy *string
 	// Indicates which CIDR blocks can access the Amazon EKS public API server endpoint.
 	PublicAccessCidrs pulumi.StringArrayInput
 	// The set of public subnets to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
@@ -465,11 +465,11 @@ type ClusterArgs struct {
 	// IAM Service Role for EKS to use to manage the cluster.
 	ServiceRole iam.RoleInput
 	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-	SkipDefaultNodeGroup pulumi.BoolPtrInput
+	SkipDefaultNodeGroup *bool
 	// An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
 	//
 	// Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
-	StorageClasses pulumi.Input
+	StorageClasses interface{}
 	// The set of all subnets, public and private, to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
 	//
 	// If `vpcId` is not set, the cluster will use the AWS account's default VPC subnets.
@@ -483,13 +483,13 @@ type ClusterArgs struct {
 	// Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
 	Tags pulumi.StringMapInput
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
-	UseDefaultVpcCni pulumi.BoolPtrInput
+	UseDefaultVpcCni *bool
 	// Optional mappings from AWS IAM users to Kubernetes users and groups.
 	UserMappings UserMappingArrayInput
 	// Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
 	Version pulumi.StringPtrInput
 	// The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
-	VpcCniOptions VpcCniOptionsPtrInput
+	VpcCniOptions *VpcCniOptionsArgs
 	// The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the default VPC.
 	VpcId pulumi.StringPtrInput
 }

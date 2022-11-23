@@ -31,6 +31,7 @@
                 },
                 "bootstrapExtraArgs": {
                     "type": "string",
+                    "plain": true,
                     "description": "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters."
                 },
                 "cloudFormationTags": {
@@ -42,6 +43,7 @@
                 },
                 "clusterIngressRule": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "plain": true,
                     "description": "The ingress rule that gives node group access."
                 },
                 "desiredCapacity": {
@@ -55,8 +57,10 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                        "plain": true
                     },
+                    "plain": true,
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
                 "gpu": {
@@ -65,6 +69,7 @@
                 },
                 "instanceProfile": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                    "plain": true,
                     "description": "The ingress rule that gives node group access."
                 },
                 "instanceType": {
@@ -77,13 +82,16 @@
                 },
                 "kubeletExtraArgs": {
                     "type": "string",
+                    "plain": true,
                     "description": "Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`."
                 },
                 "labels": {
                     "type": "object",
                     "additionalProperties": {
-                        "type": "string"
+                        "type": "string",
+                        "plain": true
                     },
+                    "plain": true,
                     "description": "Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument."
                 },
                 "maxSize": {
@@ -96,6 +104,7 @@
                 },
                 "nodeAssociatePublicIpAddress": {
                     "type": "boolean",
+                    "plain": true,
                     "description": "Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs."
                 },
                 "nodePublicKey": {
@@ -108,6 +117,7 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
@@ -132,8 +142,10 @@
                 "taints": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/types/eks:index:Taint"
+                        "$ref": "#/types/eks:index:Taint",
+                        "plain": true
                     },
+                    "plain": true,
                     "description": "Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument"
                 },
                 "version": {
@@ -249,10 +261,12 @@
             "description": "Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html",
             "properties": {
                 "provider": {
-                    "$ref": "/aws/v5.4.0/schema.json#/provider"
+                    "$ref": "/aws/v5.4.0/schema.json#/provider",
+                    "plain": true
                 },
                 "role": {
-                    "$ref": "/aws/v5.4.0/schema.json#/resources/aws:iam%2Frole:Role"
+                    "$ref": "/aws/v5.4.0/schema.json#/resources/aws:iam%2Frole:Role",
+                    "plain": true
                 }
             },
             "type": "object",
@@ -420,10 +434,12 @@
             "properties": {
                 "effect": {
                     "type": "string",
+                    "plain": true,
                     "description": "The effect of the taint."
                 },
                 "value": {
                     "type": "string",
+                    "plain": true,
                     "description": "The value of the taint."
                 }
             },
@@ -613,6 +629,7 @@
             "inputProperties": {
                 "clusterSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups."
                 },
                 "clusterSecurityGroupTags": {
@@ -635,6 +652,7 @@
                 },
                 "creationRoleProvider": {
                     "$ref": "#/types/eks:index:CreationRoleProvider",
+                    "plain": true,
                     "description": "The IAM Role Provider used to create \u0026 authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html"
                 },
                 "defaultAddonsToRemove": {
@@ -732,10 +750,12 @@
                 },
                 "nodeAssociatePublicIpAddress": {
                     "type": "boolean",
+                    "plain": true,
                     "description": "Whether or not to auto-assign the EKS worker nodes public IP addresses. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs."
                 },
                 "nodeGroupOptions": {
                     "$ref": "#/types/eks:index:ClusterNodeGroupOptions",
+                    "plain": true,
                     "description": "The common configuration settings for NodeGroups."
                 },
                 "nodePublicKey": {
@@ -797,6 +817,7 @@
                 },
                 "proxy": {
                     "type": "string",
+                    "plain": true,
                     "description": "The HTTP(S) proxy to use within a proxied environment.\n\n The proxy is used during cluster creation, and OIDC configuration.\n\nThis is an alternative option to setting the proxy environment variables: HTTP(S)_PROXY and/or http(s)_proxy.\n\nThis option is required iff the proxy environment variables are not set.\n\nFormat:      \u003cprotocol\u003e://\u003chost\u003e:\u003cport\u003e\nAuth Format: \u003cprotocol\u003e://\u003cusername\u003e:\u003cpassword\u003e@\u003chost\u003e:\u003cport\u003e\n\nEx:\n  - \"http://proxy.example.com:3128\"\n  - \"https://proxy.example.com\"\n  - \"http://username:password@proxy.example.com:3128\""
                 },
                 "publicAccessCidrs": {
@@ -826,20 +847,25 @@
                 },
                 "skipDefaultNodeGroup": {
                     "type": "boolean",
+                    "plain": true,
                     "description": "If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided."
                 },
                 "storageClasses": {
                     "oneOf": [
                         {
-                            "type": "string"
+                            "type": "string",
+                            "plain": true
                         },
                         {
                             "type": "object",
                             "additionalProperties": {
-                                "$ref": "#/types/eks:index:StorageClass"
-                            }
+                                "$ref": "#/types/eks:index:StorageClass",
+                                "plain": true
+                            },
+                            "plain": true
                         }
                     ],
+                    "plain": true,
                     "description": "An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.\n\nNote: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html"
                 },
                 "subnetIds": {
@@ -858,6 +884,7 @@
                 },
                 "useDefaultVpcCni": {
                     "type": "boolean",
+                    "plain": true,
                     "description": "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`."
                 },
                 "userMappings": {
@@ -873,6 +900,7 @@
                 },
                 "vpcCniOptions": {
                     "$ref": "#/types/eks:index:VpcCniOptions",
+                    "plain": true,
                     "description": "The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type."
                 },
                 "vpcId": {
@@ -1075,6 +1103,7 @@
                 },
                 "bootstrapExtraArgs": {
                     "type": "string",
+                    "plain": true,
                     "description": "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters."
                 },
                 "cloudFormationTags": {
@@ -1097,6 +1126,7 @@
                 },
                 "clusterIngressRule": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "plain": true,
                     "description": "The ingress rule that gives node group access."
                 },
                 "desiredCapacity": {
@@ -1110,8 +1140,10 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                        "plain": true
                     },
+                    "plain": true,
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
                 "gpu": {
@@ -1120,6 +1152,7 @@
                 },
                 "instanceProfile": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                    "plain": true,
                     "description": "The ingress rule that gives node group access."
                 },
                 "instanceType": {
@@ -1132,13 +1165,16 @@
                 },
                 "kubeletExtraArgs": {
                     "type": "string",
+                    "plain": true,
                     "description": "Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`."
                 },
                 "labels": {
                     "type": "object",
                     "additionalProperties": {
-                        "type": "string"
+                        "type": "string",
+                        "plain": true
                     },
+                    "plain": true,
                     "description": "Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument."
                 },
                 "maxSize": {
@@ -1151,6 +1187,7 @@
                 },
                 "nodeAssociatePublicIpAddress": {
                     "type": "boolean",
+                    "plain": true,
                     "description": "Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs."
                 },
                 "nodePublicKey": {
@@ -1163,6 +1200,7 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
@@ -1187,8 +1225,10 @@
                 "taints": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/types/eks:index:Taint"
+                        "$ref": "#/types/eks:index:Taint",
+                        "plain": true
                     },
+                    "plain": true,
                     "description": "Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument"
                 },
                 "version": {
@@ -1287,6 +1327,7 @@
                 },
                 "bootstrapExtraArgs": {
                     "type": "string",
+                    "plain": true,
                     "description": "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters."
                 },
                 "cloudFormationTags": {
@@ -1309,6 +1350,7 @@
                 },
                 "clusterIngressRule": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "plain": true,
                     "description": "The ingress rule that gives node group access."
                 },
                 "desiredCapacity": {
@@ -1322,8 +1364,10 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                        "plain": true
                     },
+                    "plain": true,
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
                 "gpu": {
@@ -1332,6 +1376,7 @@
                 },
                 "instanceProfile": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                    "plain": true,
                     "description": "The ingress rule that gives node group access."
                 },
                 "instanceType": {
@@ -1344,13 +1389,16 @@
                 },
                 "kubeletExtraArgs": {
                     "type": "string",
+                    "plain": true,
                     "description": "Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`."
                 },
                 "labels": {
                     "type": "object",
                     "additionalProperties": {
-                        "type": "string"
+                        "type": "string",
+                        "plain": true
                     },
+                    "plain": true,
                     "description": "Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument."
                 },
                 "launchTemplateTagSpecifications": {
@@ -1374,6 +1422,7 @@
                 },
                 "nodeAssociatePublicIpAddress": {
                     "type": "boolean",
+                    "plain": true,
                     "description": "Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs."
                 },
                 "nodePublicKey": {
@@ -1386,6 +1435,7 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
@@ -1410,8 +1460,10 @@
                 "taints": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/types/eks:index:Taint"
+                        "$ref": "#/types/eks:index:Taint",
+                        "plain": true
                     },
+                    "plain": true,
                     "description": "Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument"
                 },
                 "version": {

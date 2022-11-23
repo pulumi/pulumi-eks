@@ -16,10 +16,10 @@ namespace Pulumi.Eks.Inputs
     public sealed class CreationRoleProviderArgs : Pulumi.ResourceArgs
     {
         [Input("provider", required: true)]
-        public Input<Pulumi.Aws.Provider> Provider { get; set; } = null!;
+        public Pulumi.Aws.Provider Provider { get; set; } = null!;
 
         [Input("role", required: true)]
-        public Input<Pulumi.Aws.Iam.Role> Role { get; set; } = null!;
+        public Pulumi.Aws.Iam.Role Role { get; set; } = null!;
 
         public CreationRoleProviderArgs()
         {

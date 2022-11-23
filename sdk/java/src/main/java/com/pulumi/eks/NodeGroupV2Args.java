@@ -107,13 +107,13 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="bootstrapExtraArgs")
-    private @Nullable Output<String> bootstrapExtraArgs;
+    private @Nullable String bootstrapExtraArgs;
 
     /**
      * @return Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
      * 
      */
-    public Optional<Output<String>> bootstrapExtraArgs() {
+    public Optional<String> bootstrapExtraArgs() {
         return Optional.ofNullable(this.bootstrapExtraArgs);
     }
 
@@ -156,13 +156,13 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="clusterIngressRule")
-    private @Nullable Output<SecurityGroupRule> clusterIngressRule;
+    private @Nullable SecurityGroupRule clusterIngressRule;
 
     /**
      * @return The ingress rule that gives node group access.
      * 
      */
-    public Optional<Output<SecurityGroupRule>> clusterIngressRule() {
+    public Optional<SecurityGroupRule> clusterIngressRule() {
         return Optional.ofNullable(this.clusterIngressRule);
     }
 
@@ -203,7 +203,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="extraNodeSecurityGroups")
-    private @Nullable Output<List<SecurityGroup>> extraNodeSecurityGroups;
+    private @Nullable List<SecurityGroup> extraNodeSecurityGroups;
 
     /**
      * @return Extra security groups to attach on all nodes in this worker node group.
@@ -211,7 +211,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * This additional set of security groups captures any user application rules that will be needed for the nodes.
      * 
      */
-    public Optional<Output<List<SecurityGroup>>> extraNodeSecurityGroups() {
+    public Optional<List<SecurityGroup>> extraNodeSecurityGroups() {
         return Optional.ofNullable(this.extraNodeSecurityGroups);
     }
 
@@ -251,13 +251,13 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="instanceProfile")
-    private @Nullable Output<InstanceProfile> instanceProfile;
+    private @Nullable InstanceProfile instanceProfile;
 
     /**
      * @return The ingress rule that gives node group access.
      * 
      */
-    public Optional<Output<InstanceProfile>> instanceProfile() {
+    public Optional<InstanceProfile> instanceProfile() {
         return Optional.ofNullable(this.instanceProfile);
     }
 
@@ -296,13 +296,13 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="kubeletExtraArgs")
-    private @Nullable Output<String> kubeletExtraArgs;
+    private @Nullable String kubeletExtraArgs;
 
     /**
      * @return Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
      * 
      */
-    public Optional<Output<String>> kubeletExtraArgs() {
+    public Optional<String> kubeletExtraArgs() {
         return Optional.ofNullable(this.kubeletExtraArgs);
     }
 
@@ -311,13 +311,13 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="labels")
-    private @Nullable Output<Map<String,String>> labels;
+    private @Nullable Map<String,String> labels;
 
     /**
      * @return Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
      * 
      */
-    public Optional<Output<Map<String,String>>> labels() {
+    public Optional<Map<String,String>> labels() {
         return Optional.ofNullable(this.labels);
     }
 
@@ -386,13 +386,13 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="nodeAssociatePublicIpAddress")
-    private @Nullable Output<Boolean> nodeAssociatePublicIpAddress;
+    private @Nullable Boolean nodeAssociatePublicIpAddress;
 
     /**
      * @return Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
      * 
      */
-    public Optional<Output<Boolean>> nodeAssociatePublicIpAddress() {
+    public Optional<Boolean> nodeAssociatePublicIpAddress() {
         return Optional.ofNullable(this.nodeAssociatePublicIpAddress);
     }
 
@@ -442,7 +442,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="nodeSecurityGroup")
-    private @Nullable Output<SecurityGroup> nodeSecurityGroup;
+    private @Nullable SecurityGroup nodeSecurityGroup;
 
     /**
      * @return The security group for the worker node group to communicate with the cluster.
@@ -455,7 +455,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
      * 
      */
-    public Optional<Output<SecurityGroup>> nodeSecurityGroup() {
+    public Optional<SecurityGroup> nodeSecurityGroup() {
         return Optional.ofNullable(this.nodeSecurityGroup);
     }
 
@@ -532,13 +532,13 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="taints")
-    private @Nullable Output<Map<String,TaintArgs>> taints;
+    private @Nullable Map<String,TaintArgs> taints;
 
     /**
      * @return Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
      * 
      */
-    public Optional<Output<Map<String,TaintArgs>>> taints() {
+    public Optional<Map<String,TaintArgs>> taints() {
         return Optional.ofNullable(this.taints);
     }
 
@@ -709,19 +709,9 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder bootstrapExtraArgs(@Nullable Output<String> bootstrapExtraArgs) {
+        public Builder bootstrapExtraArgs(@Nullable String bootstrapExtraArgs) {
             $.bootstrapExtraArgs = bootstrapExtraArgs;
             return this;
-        }
-
-        /**
-         * @param bootstrapExtraArgs Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrapExtraArgs(String bootstrapExtraArgs) {
-            return bootstrapExtraArgs(Output.of(bootstrapExtraArgs));
         }
 
         /**
@@ -796,19 +786,9 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder clusterIngressRule(@Nullable Output<SecurityGroupRule> clusterIngressRule) {
+        public Builder clusterIngressRule(@Nullable SecurityGroupRule clusterIngressRule) {
             $.clusterIngressRule = clusterIngressRule;
             return this;
-        }
-
-        /**
-         * @param clusterIngressRule The ingress rule that gives node group access.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder clusterIngressRule(SecurityGroupRule clusterIngressRule) {
-            return clusterIngressRule(Output.of(clusterIngressRule));
         }
 
         /**
@@ -861,21 +841,9 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder extraNodeSecurityGroups(@Nullable Output<List<SecurityGroup>> extraNodeSecurityGroups) {
+        public Builder extraNodeSecurityGroups(@Nullable List<SecurityGroup> extraNodeSecurityGroups) {
             $.extraNodeSecurityGroups = extraNodeSecurityGroups;
             return this;
-        }
-
-        /**
-         * @param extraNodeSecurityGroups Extra security groups to attach on all nodes in this worker node group.
-         * 
-         * This additional set of security groups captures any user application rules that will be needed for the nodes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder extraNodeSecurityGroups(List<SecurityGroup> extraNodeSecurityGroups) {
-            return extraNodeSecurityGroups(Output.of(extraNodeSecurityGroups));
         }
 
         /**
@@ -933,19 +901,9 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder instanceProfile(@Nullable Output<InstanceProfile> instanceProfile) {
+        public Builder instanceProfile(@Nullable InstanceProfile instanceProfile) {
             $.instanceProfile = instanceProfile;
             return this;
-        }
-
-        /**
-         * @param instanceProfile The ingress rule that gives node group access.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder instanceProfile(InstanceProfile instanceProfile) {
-            return instanceProfile(Output.of(instanceProfile));
         }
 
         /**
@@ -996,40 +954,20 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder kubeletExtraArgs(@Nullable Output<String> kubeletExtraArgs) {
+        public Builder kubeletExtraArgs(@Nullable String kubeletExtraArgs) {
             $.kubeletExtraArgs = kubeletExtraArgs;
             return this;
         }
 
         /**
-         * @param kubeletExtraArgs Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder kubeletExtraArgs(String kubeletExtraArgs) {
-            return kubeletExtraArgs(Output.of(kubeletExtraArgs));
-        }
-
-        /**
          * @param labels Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
          * 
          * @return builder
          * 
          */
-        public Builder labels(@Nullable Output<Map<String,String>> labels) {
+        public Builder labels(@Nullable Map<String,String> labels) {
             $.labels = labels;
             return this;
-        }
-
-        /**
-         * @param labels Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder labels(Map<String,String> labels) {
-            return labels(Output.of(labels));
         }
 
         /**
@@ -1132,19 +1070,9 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder nodeAssociatePublicIpAddress(@Nullable Output<Boolean> nodeAssociatePublicIpAddress) {
+        public Builder nodeAssociatePublicIpAddress(@Nullable Boolean nodeAssociatePublicIpAddress) {
             $.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
             return this;
-        }
-
-        /**
-         * @param nodeAssociatePublicIpAddress Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeAssociatePublicIpAddress(Boolean nodeAssociatePublicIpAddress) {
-            return nodeAssociatePublicIpAddress(Output.of(nodeAssociatePublicIpAddress));
         }
 
         /**
@@ -1206,26 +1134,9 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder nodeSecurityGroup(@Nullable Output<SecurityGroup> nodeSecurityGroup) {
+        public Builder nodeSecurityGroup(@Nullable SecurityGroup nodeSecurityGroup) {
             $.nodeSecurityGroup = nodeSecurityGroup;
             return this;
-        }
-
-        /**
-         * @param nodeSecurityGroup The security group for the worker node group to communicate with the cluster.
-         * 
-         * This security group requires specific inbound and outbound rules.
-         * 
-         * See for more details:
-         * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
-         * 
-         * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeSecurityGroup(SecurityGroup nodeSecurityGroup) {
-            return nodeSecurityGroup(Output.of(nodeSecurityGroup));
         }
 
         /**
@@ -1338,19 +1249,9 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder taints(@Nullable Output<Map<String,TaintArgs>> taints) {
+        public Builder taints(@Nullable Map<String,TaintArgs> taints) {
             $.taints = taints;
             return this;
-        }
-
-        /**
-         * @param taints Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
-         * 
-         * @return builder
-         * 
-         */
-        public Builder taints(Map<String,TaintArgs> taints) {
-            return taints(Output.of(taints));
         }
 
         /**
