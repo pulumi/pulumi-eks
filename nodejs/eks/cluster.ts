@@ -242,8 +242,8 @@ export function generateKubeconfig(
 }
 
 export interface ClusterCreationRoleProviderOptions {
-    region?: aws.Region;
-    profile?: string;
+    region?: pulumi.Input<aws.Region>;
+    profile?: pulumi.Input<string>;
 }
 
 /**
@@ -282,8 +282,8 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource implem
  */
 export function getRoleProvider(
     name: string,
-    region?: aws.Region,
-    profile?: string,
+    region?: pulumi.Input<aws.Region>,
+    profile?: pulumi.Input<string>,
     parent?: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): CreationRoleProvider {

@@ -3,7 +3,6 @@
 
 package com.pulumi.eks.inputs;
 
-import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import java.lang.String;
 import java.util.Objects;
@@ -22,13 +21,13 @@ public final class TaintArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="effect", required=true)
-    private Output<String> effect;
+    private String effect;
 
     /**
      * @return The effect of the taint.
      * 
      */
-    public Output<String> effect() {
+    public String effect() {
         return this.effect;
     }
 
@@ -37,13 +36,13 @@ public final class TaintArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="value", required=true)
-    private Output<String> value;
+    private String value;
 
     /**
      * @return The value of the taint.
      * 
      */
-    public Output<String> value() {
+    public String value() {
         return this.value;
     }
 
@@ -78,29 +77,8 @@ public final class TaintArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder effect(Output<String> effect) {
-            $.effect = effect;
-            return this;
-        }
-
-        /**
-         * @param effect The effect of the taint.
-         * 
-         * @return builder
-         * 
-         */
         public Builder effect(String effect) {
-            return effect(Output.of(effect));
-        }
-
-        /**
-         * @param value The value of the taint.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder value(Output<String> value) {
-            $.value = value;
+            $.effect = effect;
             return this;
         }
 
@@ -111,7 +89,8 @@ public final class TaintArgs extends com.pulumi.resources.ResourceArgs {
          * 
          */
         public Builder value(String value) {
-            return value(Output.of(value));
+            $.value = value;
+            return this;
         }
 
         public TaintArgs build() {
