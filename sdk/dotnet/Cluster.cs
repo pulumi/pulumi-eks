@@ -349,40 +349,10 @@ namespace Pulumi.Eks
         public Input<string>? NodePublicKey { get; set; }
 
         /// <summary>
-        /// Whether to delete a cluster node's root volume on termination. Defaults to true.
-        /// </summary>
-        [Input("nodeRootVolumeDeleteOnTermination")]
-        public Input<bool>? NodeRootVolumeDeleteOnTermination { get; set; }
-
-        /// <summary>
-        /// Whether to encrypt a cluster node's root volume. Defaults to false.
-        /// </summary>
-        [Input("nodeRootVolumeEncrypted")]
-        public Input<bool>? NodeRootVolumeEncrypted { get; set; }
-
-        /// <summary>
-        /// Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
-        /// </summary>
-        [Input("nodeRootVolumeIops")]
-        public Input<int>? NodeRootVolumeIops { get; set; }
-
-        /// <summary>
         /// The size in GiB of a cluster node's root volume. Defaults to 20.
         /// </summary>
         [Input("nodeRootVolumeSize")]
         public Input<int>? NodeRootVolumeSize { get; set; }
-
-        /// <summary>
-        /// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
-        /// </summary>
-        [Input("nodeRootVolumeThroughput")]
-        public Input<int>? NodeRootVolumeThroughput { get; set; }
-
-        /// <summary>
-        /// Configured EBS type for a cluster node's root volume. Default is gp2.
-        /// </summary>
-        [Input("nodeRootVolumeType")]
-        public Input<string>? NodeRootVolumeType { get; set; }
 
         [Input("nodeSecurityGroupTags")]
         private InputMap<string>? _nodeSecurityGroupTags;

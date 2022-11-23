@@ -1,4 +1,5 @@
 ## Unreleased
+- [Remove input properties on Cluster that are not implemented #821](https://github.com/pulumi/pulumi-eks/pull/821)
 - [Add support for non-default AWS partitions #788](https://github.com/pulumi/pulumi-eks/pull/788)
 - [Add support for launchTemplateTagSpecifications within NodeGroupV2 #810](https://github.com/pulumi/pulumi-eks/pull/810)
 - [Use pkg for packaging provider binary #776](https://github.com/pulumi/pulumi-eks/pull/776)

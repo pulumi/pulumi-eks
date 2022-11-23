@@ -402,26 +402,6 @@ func generateSchema() schema.PackageSpec {
 						TypeSpec:    schema.TypeSpec{Type: "integer"},
 						Description: "The size in GiB of a cluster node's root volume. Defaults to 20.",
 					},
-					"nodeRootVolumeDeleteOnTermination": {
-						TypeSpec:    schema.TypeSpec{Type: "boolean"},
-						Description: "Whether to delete a cluster node's root volume on termination. Defaults to true.",
-					},
-					"nodeRootVolumeEncrypted": {
-						TypeSpec:    schema.TypeSpec{Type: "boolean"},
-						Description: "Whether to encrypt a cluster node's root volume. Defaults to false.",
-					},
-					"nodeRootVolumeIops": {
-						TypeSpec:    schema.TypeSpec{Type: "integer"},
-						Description: "Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.",
-					},
-					"nodeRootVolumeThroughput": {
-						TypeSpec:    schema.TypeSpec{Type: "integer"},
-						Description: "Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.",
-					},
-					"nodeRootVolumeType": {
-						TypeSpec:    schema.TypeSpec{Type: "string"},
-						Description: "Configured EBS type for a cluster node's root volume. Default is gp2.",
-					},
 					"nodeUserData": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "Extra code to run on node startup. This code will run after the AWS EKS " +

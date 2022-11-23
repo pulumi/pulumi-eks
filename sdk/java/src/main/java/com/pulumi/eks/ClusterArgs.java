@@ -513,51 +513,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Whether to delete a cluster node&#39;s root volume on termination. Defaults to true.
-     * 
-     */
-    @Import(name="nodeRootVolumeDeleteOnTermination")
-    private @Nullable Output<Boolean> nodeRootVolumeDeleteOnTermination;
-
-    /**
-     * @return Whether to delete a cluster node&#39;s root volume on termination. Defaults to true.
-     * 
-     */
-    public Optional<Output<Boolean>> nodeRootVolumeDeleteOnTermination() {
-        return Optional.ofNullable(this.nodeRootVolumeDeleteOnTermination);
-    }
-
-    /**
-     * Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
-     * 
-     */
-    @Import(name="nodeRootVolumeEncrypted")
-    private @Nullable Output<Boolean> nodeRootVolumeEncrypted;
-
-    /**
-     * @return Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
-     * 
-     */
-    public Optional<Output<Boolean>> nodeRootVolumeEncrypted() {
-        return Optional.ofNullable(this.nodeRootVolumeEncrypted);
-    }
-
-    /**
-     * Provisioned IOPS for a cluster node&#39;s root volume. Only valid for io1 volumes.
-     * 
-     */
-    @Import(name="nodeRootVolumeIops")
-    private @Nullable Output<Integer> nodeRootVolumeIops;
-
-    /**
-     * @return Provisioned IOPS for a cluster node&#39;s root volume. Only valid for io1 volumes.
-     * 
-     */
-    public Optional<Output<Integer>> nodeRootVolumeIops() {
-        return Optional.ofNullable(this.nodeRootVolumeIops);
-    }
-
-    /**
      * The size in GiB of a cluster node&#39;s root volume. Defaults to 20.
      * 
      */
@@ -570,36 +525,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<Integer>> nodeRootVolumeSize() {
         return Optional.ofNullable(this.nodeRootVolumeSize);
-    }
-
-    /**
-     * Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. Only valid for gp3 volumes.
-     * 
-     */
-    @Import(name="nodeRootVolumeThroughput")
-    private @Nullable Output<Integer> nodeRootVolumeThroughput;
-
-    /**
-     * @return Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. Only valid for gp3 volumes.
-     * 
-     */
-    public Optional<Output<Integer>> nodeRootVolumeThroughput() {
-        return Optional.ofNullable(this.nodeRootVolumeThroughput);
-    }
-
-    /**
-     * Configured EBS type for a cluster node&#39;s root volume. Default is gp2.
-     * 
-     */
-    @Import(name="nodeRootVolumeType")
-    private @Nullable Output<String> nodeRootVolumeType;
-
-    /**
-     * @return Configured EBS type for a cluster node&#39;s root volume. Default is gp2.
-     * 
-     */
-    public Optional<Output<String>> nodeRootVolumeType() {
-        return Optional.ofNullable(this.nodeRootVolumeType);
     }
 
     /**
@@ -1044,12 +969,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.nodeAssociatePublicIpAddress = $.nodeAssociatePublicIpAddress;
         this.nodeGroupOptions = $.nodeGroupOptions;
         this.nodePublicKey = $.nodePublicKey;
-        this.nodeRootVolumeDeleteOnTermination = $.nodeRootVolumeDeleteOnTermination;
-        this.nodeRootVolumeEncrypted = $.nodeRootVolumeEncrypted;
-        this.nodeRootVolumeIops = $.nodeRootVolumeIops;
         this.nodeRootVolumeSize = $.nodeRootVolumeSize;
-        this.nodeRootVolumeThroughput = $.nodeRootVolumeThroughput;
-        this.nodeRootVolumeType = $.nodeRootVolumeType;
         this.nodeSecurityGroupTags = $.nodeSecurityGroupTags;
         this.nodeSubnetIds = $.nodeSubnetIds;
         this.nodeUserData = $.nodeUserData;
@@ -1780,69 +1700,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param nodeRootVolumeDeleteOnTermination Whether to delete a cluster node&#39;s root volume on termination. Defaults to true.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeDeleteOnTermination(@Nullable Output<Boolean> nodeRootVolumeDeleteOnTermination) {
-            $.nodeRootVolumeDeleteOnTermination = nodeRootVolumeDeleteOnTermination;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeDeleteOnTermination Whether to delete a cluster node&#39;s root volume on termination. Defaults to true.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeDeleteOnTermination(Boolean nodeRootVolumeDeleteOnTermination) {
-            return nodeRootVolumeDeleteOnTermination(Output.of(nodeRootVolumeDeleteOnTermination));
-        }
-
-        /**
-         * @param nodeRootVolumeEncrypted Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeEncrypted(@Nullable Output<Boolean> nodeRootVolumeEncrypted) {
-            $.nodeRootVolumeEncrypted = nodeRootVolumeEncrypted;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeEncrypted Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeEncrypted(Boolean nodeRootVolumeEncrypted) {
-            return nodeRootVolumeEncrypted(Output.of(nodeRootVolumeEncrypted));
-        }
-
-        /**
-         * @param nodeRootVolumeIops Provisioned IOPS for a cluster node&#39;s root volume. Only valid for io1 volumes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeIops(@Nullable Output<Integer> nodeRootVolumeIops) {
-            $.nodeRootVolumeIops = nodeRootVolumeIops;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeIops Provisioned IOPS for a cluster node&#39;s root volume. Only valid for io1 volumes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeIops(Integer nodeRootVolumeIops) {
-            return nodeRootVolumeIops(Output.of(nodeRootVolumeIops));
-        }
-
-        /**
          * @param nodeRootVolumeSize The size in GiB of a cluster node&#39;s root volume. Defaults to 20.
          * 
          * @return builder
@@ -1861,48 +1718,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder nodeRootVolumeSize(Integer nodeRootVolumeSize) {
             return nodeRootVolumeSize(Output.of(nodeRootVolumeSize));
-        }
-
-        /**
-         * @param nodeRootVolumeThroughput Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. Only valid for gp3 volumes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeThroughput(@Nullable Output<Integer> nodeRootVolumeThroughput) {
-            $.nodeRootVolumeThroughput = nodeRootVolumeThroughput;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeThroughput Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. Only valid for gp3 volumes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeThroughput(Integer nodeRootVolumeThroughput) {
-            return nodeRootVolumeThroughput(Output.of(nodeRootVolumeThroughput));
-        }
-
-        /**
-         * @param nodeRootVolumeType Configured EBS type for a cluster node&#39;s root volume. Default is gp2.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeType(@Nullable Output<String> nodeRootVolumeType) {
-            $.nodeRootVolumeType = nodeRootVolumeType;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeType Configured EBS type for a cluster node&#39;s root volume. Default is gp2.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeType(String nodeRootVolumeType) {
-            return nodeRootVolumeType(Output.of(nodeRootVolumeType));
         }
 
         /**
