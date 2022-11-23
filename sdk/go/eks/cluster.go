@@ -158,18 +158,8 @@ type clusterArgs struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey *string `pulumi:"nodePublicKey"`
-	// Whether to delete a cluster node's root volume on termination. Defaults to true.
-	NodeRootVolumeDeleteOnTermination *bool `pulumi:"nodeRootVolumeDeleteOnTermination"`
-	// Whether to encrypt a cluster node's root volume. Defaults to false.
-	NodeRootVolumeEncrypted *bool `pulumi:"nodeRootVolumeEncrypted"`
-	// Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
-	NodeRootVolumeIops *int `pulumi:"nodeRootVolumeIops"`
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize *int `pulumi:"nodeRootVolumeSize"`
-	// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
-	NodeRootVolumeThroughput *int `pulumi:"nodeRootVolumeThroughput"`
-	// Configured EBS type for a cluster node's root volume. Default is gp2.
-	NodeRootVolumeType *string `pulumi:"nodeRootVolumeType"`
 	// The tags to apply to the default `nodeSecurityGroup` created by the cluster.
 	//
 	// Note: The `nodeSecurityGroupTags` option and the node group option `nodeSecurityGroup` are mutually exclusive.
@@ -378,18 +368,8 @@ type ClusterArgs struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey pulumi.StringPtrInput
-	// Whether to delete a cluster node's root volume on termination. Defaults to true.
-	NodeRootVolumeDeleteOnTermination pulumi.BoolPtrInput
-	// Whether to encrypt a cluster node's root volume. Defaults to false.
-	NodeRootVolumeEncrypted pulumi.BoolPtrInput
-	// Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
-	NodeRootVolumeIops pulumi.IntPtrInput
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize pulumi.IntPtrInput
-	// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
-	NodeRootVolumeThroughput pulumi.IntPtrInput
-	// Configured EBS type for a cluster node's root volume. Default is gp2.
-	NodeRootVolumeType pulumi.StringPtrInput
 	// The tags to apply to the default `nodeSecurityGroup` created by the cluster.
 	//
 	// Note: The `nodeSecurityGroupTags` option and the node group option `nodeSecurityGroup` are mutually exclusive.
