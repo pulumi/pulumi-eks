@@ -400,8 +400,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         version: args.version,
     };
 
-    const partition = pulumi.output(aws.getPartition({ provider })).partition;
-    const dnsSuffix = pulumi.output(aws.getPartition({ provider })).dnsSuffix;
+    const { partition, dnsSuffix } = pulumi.output(aws.getPartition({ provider }));
 
     // Configure default networking architecture.
     let vpcId: pulumi.Input<string> = args.vpcId!;
