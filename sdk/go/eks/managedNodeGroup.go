@@ -48,7 +48,7 @@ type managedNodeGroupArgs struct {
 	// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
 	CapacityType *string `pulumi:"capacityType"`
 	// The target EKS cluster.
-	Cluster CoreData `pulumi:"cluster"`
+	Cluster interface{} `pulumi:"cluster"`
 	// Name of the EKS Cluster.
 	ClusterName *string `pulumi:"clusterName"`
 	// Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
@@ -107,7 +107,7 @@ type ManagedNodeGroupArgs struct {
 	// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
 	CapacityType pulumi.StringPtrInput
 	// The target EKS cluster.
-	Cluster CoreDataInput
+	Cluster pulumi.Input
 	// Name of the EKS Cluster.
 	ClusterName pulumi.StringPtrInput
 	// Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.

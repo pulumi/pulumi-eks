@@ -1,4 +1,4 @@
-// Copyright 2016-2019, Pulumi Corporation.
+// Copyright 2016-2022, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import * as jsyaml from "js-yaml";
 import * as process from "process";
 import * as tmp from "tmp";
 import * as url from "url";
-import * as which from "which";
 
 import { getIssuerCAThumbprint } from "./cert-thumprint";
 import { VpcCni, VpcCniOptions } from "./cni";
@@ -183,7 +182,8 @@ interface ExecEnvVar {
     value: pulumi.Input<string>;
 }
 
-function generateKubeconfig(
+/** @internal */
+export function generateKubeconfig(
     clusterName: pulumi.Input<string>,
     clusterEndpoint: pulumi.Input<string>,
     certData: pulumi.Input<string>,
@@ -242,8 +242,8 @@ function generateKubeconfig(
 }
 
 export interface ClusterCreationRoleProviderOptions {
-    region?: aws.Region;
-    profile?: string;
+    region?: pulumi.Input<aws.Region>;
+    profile?: pulumi.Input<string>;
 }
 
 /**
@@ -282,8 +282,8 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource implem
  */
 export function getRoleProvider(
     name: string,
-    region?: aws.Region,
-    profile?: string,
+    region?: pulumi.Input<aws.Region>,
+    profile?: pulumi.Input<string>,
     parent?: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): CreationRoleProvider {
@@ -1354,6 +1354,11 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly kubeconfig: pulumi.Output<any>;
 
     /**
+     * A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
+     */
+    public readonly kubeconfigJson: pulumi.Output<string>;
+
+    /**
      * The AWS resource provider.
      */
     public readonly awsProvider: pulumi.ProviderResource;
@@ -1425,78 +1430,17 @@ export class Cluster extends pulumi.ComponentResource {
 
         super(type, name, args, opts);
 
-        args = args || {};
-
-        // Check that AWS provider credential options are set for the kubeconfig
-        // to use with the given auth method.
-        if (opts?.provider && !args.providerCredentialOpts) {
-            throw new Error("It looks like you're using an explicit AWS provider. Please specify this provider in providerCredentialOpts.");
-        }
-        if (process.env.AWS_PROFILE && !args.providerCredentialOpts) {
-            args.providerCredentialOpts = {
-                profileName: process.env.AWS_PROFILE,
-            };
-        }
-        const awsConfig = new pulumi.Config("aws");
-        const awsProfile = awsConfig.get("profile");
-        if (awsProfile && !args.providerCredentialOpts) {
-            args.providerCredentialOpts = {
-                profileName: awsProfile,
-            };
-        }
-
-        // Create the core resources required by the cluster.
-        const core = createCore(name, args, this, opts?.provider);
-        this.core = core;
-        this.clusterSecurityGroup = core.clusterSecurityGroup;
-        this.eksCluster = core.cluster;
-        this.instanceRoles = core.instanceRoles;
-
-        // Create default node group security group and cluster ingress rule.
-        [this.nodeSecurityGroup, this.eksClusterIngressRule] = createNodeGroupSecurityGroup(name, {
-            vpcId: core.vpcId,
-            clusterSecurityGroup: core.clusterSecurityGroup,
-            eksCluster: core.cluster,
-            tags: pulumi.all([
-                args.tags,
-                args.nodeSecurityGroupTags,
-            ]).apply(([tags, nodeSecurityGroupTags]) => (<aws.Tags>{
-                ...nodeSecurityGroupTags,
-                ...tags,
-            })),
-        }, this);
-        core.nodeGroupOptions.nodeSecurityGroup = this.nodeSecurityGroup;
-        core.nodeGroupOptions.clusterIngressRule = this.eksClusterIngressRule;
-
-        const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
-
-        // Create the default worker node group and grant the workers access to the API server.
-        const configDeps = [core.kubeconfig];
-        if (!skipDefaultNodeGroup) {
-            this.defaultNodeGroup = createNodeGroup(name, {
-                cluster: core,
-                ...core.nodeGroupOptions,
-            }, this);
-            if (this.defaultNodeGroup.cfnStack) {
-                configDeps.push(this.defaultNodeGroup.cfnStack.id);
-            }
-        }
-
-        // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
-        // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
-        this.kubeconfig = pulumi.all(configDeps).apply(([kubeconfig]) => kubeconfig);
-
-        // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
-        // in order to help ensure that worker nodes are available before the provider can be used.
-        this.provider = new k8s.Provider(`${name}-provider`, {
-            kubeconfig: this.kubeconfig.apply(JSON.stringify),
-        }, { parent: this });
-
-        // If we need to deploy the Kubernetes dashboard, do so now.
-        if (args.deployDashboard) {
-            pulumi.log.warn("Option `deployDashboard` has been deprecated. Please consider using the Helm chart, or writing the dashboard directly in Pulumi.", this.eksCluster);
-            createDashboard(name, {}, this, this.provider);
-        }
+        const cluster = createCluster(name, this, args, opts);
+        this.kubeconfig = cluster.kubeconfig;
+        this.kubeconfigJson = cluster.kubeconfigJson;
+        this.provider = cluster.provider;
+        this.clusterSecurityGroup = cluster.clusterSecurityGroup;
+        this.instanceRoles = cluster.instanceRoles;
+        this.nodeSecurityGroup = cluster.nodeSecurityGroup;
+        this.eksClusterIngressRule = cluster.eksClusterIngressRule;
+        this.defaultNodeGroup = cluster.defaultNodeGroup;
+        this.eksCluster = cluster.eksCluster;
+        this.core = cluster.core;
 
         this.registerOutputs({
             kubeconfig: this.kubeconfig,
@@ -1539,6 +1483,193 @@ export class Cluster extends pulumi.ComponentResource {
      * - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
      * - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
      */
+    getKubeconfig(args: KubeconfigOptions): pulumi.Output<string> {
+        const kc = generateKubeconfig(
+            this.eksCluster.name,
+            this.eksCluster.endpoint,
+            this.eksCluster.certificateAuthority.data,
+            args,
+        );
+        return pulumi.output(kc).apply(JSON.stringify);
+    }
+}
+
+/** @internal */
+export interface ClusterResult {
+    kubeconfig: pulumi.Output<any>;
+    kubeconfigJson: pulumi.Output<string>;
+    awsProvider?: pulumi.ProviderResource;
+    provider: k8s.Provider;
+    clusterSecurityGroup: aws.ec2.SecurityGroup;
+    instanceRoles: pulumi.Output<aws.iam.Role[]>;
+    nodeSecurityGroup: aws.ec2.SecurityGroup;
+    eksClusterIngressRule: aws.ec2.SecurityGroupRule;
+    defaultNodeGroup: NodeGroupData | undefined;
+    eksCluster: aws.eks.Cluster;
+    core: CoreData;
+}
+
+/** @internal */
+export function createCluster(
+    name: string,
+    self: pulumi.ComponentResource,
+    args?: ClusterOptions,
+    opts?: pulumi.ComponentResourceOptions,
+): ClusterResult {
+
+    args = args || {};
+
+    // Check that AWS provider credential options are set for the kubeconfig
+    // to use with the given auth method.
+    if (opts?.provider && !args.providerCredentialOpts) {
+        throw new Error("It looks like you're using an explicit AWS provider. Please specify this provider in providerCredentialOpts.");
+    }
+    if (process.env.AWS_PROFILE && !args.providerCredentialOpts) {
+        args.providerCredentialOpts = {
+            profileName: process.env.AWS_PROFILE,
+        };
+    }
+    const awsConfig = new pulumi.Config("aws");
+    const awsProfile = awsConfig.get("profile");
+    if (awsProfile && !args.providerCredentialOpts) {
+        args.providerCredentialOpts = {
+            profileName: awsProfile,
+        };
+    }
+
+    // Create the core resources required by the cluster.
+    const core = createCore(name, args, self, opts?.provider);
+
+    // Create default node group security group and cluster ingress rule.
+    const [nodeSecurityGroup, eksClusterIngressRule] = createNodeGroupSecurityGroup(name, {
+        vpcId: core.vpcId,
+        clusterSecurityGroup: core.clusterSecurityGroup,
+        eksCluster: core.cluster,
+        tags: pulumi.all([
+            args.tags,
+            args.nodeSecurityGroupTags,
+        ]).apply(([tags, nodeSecurityGroupTags]) => (<aws.Tags>{
+            ...nodeSecurityGroupTags,
+            ...tags,
+        })),
+    }, self);
+    core.nodeGroupOptions.nodeSecurityGroup = nodeSecurityGroup;
+    core.nodeGroupOptions.clusterIngressRule = eksClusterIngressRule;
+
+    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
+
+    // Create the default worker node group and grant the workers access to the API server.
+    const configDeps = [core.kubeconfig];
+    let defaultNodeGroup: NodeGroupData | undefined = undefined;
+    if (!skipDefaultNodeGroup) {
+        defaultNodeGroup = createNodeGroup(name, {
+            cluster: core,
+            ...core.nodeGroupOptions,
+        }, self);
+        if (defaultNodeGroup.cfnStack) {
+            configDeps.push(defaultNodeGroup.cfnStack.id);
+        }
+    }
+
+    // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
+    // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
+    const kubeconfig = pulumi.all(configDeps).apply(([kc]) => kc);
+    const kubeconfigJson = kubeconfig.apply(JSON.stringify);
+
+    // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
+    // in order to help ensure that worker nodes are available before the provider can be used.
+    const provider = new k8s.Provider(`${name}-provider`, {
+        kubeconfig: kubeconfigJson,
+    }, { parent: self });
+
+    // If we need to deploy the Kubernetes dashboard, do so now.
+    if (args.deployDashboard) {
+        pulumi.log.warn("Option `deployDashboard` has been deprecated. Please consider using the Helm chart, or writing the dashboard directly in Pulumi.", core.cluster);
+        createDashboard(name, {}, self, provider);
+    }
+
+    return {
+        core,
+        clusterSecurityGroup: core.clusterSecurityGroup,
+        eksCluster: core.cluster,
+        instanceRoles: core.instanceRoles,
+        awsProvider: core.awsProvider,
+        nodeSecurityGroup,
+        eksClusterIngressRule,
+        defaultNodeGroup,
+        kubeconfig,
+        kubeconfigJson,
+        provider,
+    };
+}
+
+/**
+ * This is a variant of `Cluster` that is used for the MLC `Cluster`. We don't just use `Cluster`,
+ * because not all of its output properties are typed as `Output<T>`, which prevents it from being
+ * able to be correctly "rehydrated" from a resource reference. So we use this copy instead rather
+ * than modifying the public surface area of the existing `Cluster` class, which is still being
+ * used directly by users using the Node.js SDK. Once we move Node.js over to the generated MLC SDK,
+ * we can clean all this up. Internally, this leverages the same `createCluster` helper method that
+ * `Cluster` uses.
+ *
+ * @internal
+ */
+export class ClusterInternal extends pulumi.ComponentResource {
+    public readonly clusterSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
+    public readonly core!: pulumi.Output<pulumi.Unwrap<CoreData>>;
+    public readonly defaultNodeGroup!: pulumi.Output<pulumi.Unwrap<NodeGroupData> | undefined>;
+    public readonly eksCluster!: pulumi.Output<aws.eks.Cluster>;
+    public readonly eksClusterIngressRule!: pulumi.Output<aws.ec2.SecurityGroupRule>;
+    public readonly instanceRoles!: pulumi.Output<aws.iam.Role[]>;
+    public readonly kubeconfig!: pulumi.Output<any>;
+    public readonly kubeconfigJson!: pulumi.Output<string>;
+    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
+
+    constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
+        const type = "eks:index:Cluster";
+
+        if (opts?.urn) {
+            const props = {
+                clusterSecurityGroup: undefined,
+                core: undefined,
+                defaultNodeGroup: undefined,
+                eksCluster: undefined,
+                eksClusterIngressRule: undefined,
+                instanceRoles: undefined,
+                kubeconfig: undefined,
+                kubeconfigJson: undefined,
+                nodeSecurityGroup: undefined,
+            };
+            super(type, name, props, opts);
+            return;
+        }
+
+        super(type, name, args, opts);
+
+        const cluster = createCluster(name, this, args, opts);
+        this.kubeconfig = cluster.kubeconfig;
+        this.kubeconfigJson = cluster.kubeconfigJson;
+        this.clusterSecurityGroup = pulumi.output(cluster.clusterSecurityGroup);
+        this.instanceRoles = cluster.instanceRoles;
+        this.nodeSecurityGroup = pulumi.output(cluster.nodeSecurityGroup);
+        this.eksClusterIngressRule = pulumi.output(cluster.eksClusterIngressRule);
+        this.defaultNodeGroup = pulumi.output(cluster.defaultNodeGroup);
+        this.eksCluster = pulumi.output(cluster.eksCluster);
+        this.core = pulumi.output(cluster.core);
+
+        this.registerOutputs({
+            clusterSecurityGroup: this.clusterSecurityGroup,
+            core: this.core,
+            defaultNodeGroup: this.defaultNodeGroup,
+            eksCluster: this.eksCluster,
+            eksClusterIngressRule: this.eksClusterIngressRule,
+            instanceRoles: this.instanceRoles,
+            kubeconfig: this.kubeconfig,
+            kubeconfigJson: this.kubeconfigJson,
+            nodeSecurityGroup: this.nodeSecurityGroup,
+        });
+    }
+
     getKubeconfig(args: KubeconfigOptions): pulumi.Output<string> {
         const kc = generateKubeconfig(
             this.eksCluster.name,

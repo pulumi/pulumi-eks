@@ -8,7 +8,6 @@ import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Either;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
 import com.pulumi.eks.inputs.CreationRoleProviderArgs;
 import com.pulumi.eks.inputs.FargateProfileArgs;
@@ -36,13 +35,13 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="clusterSecurityGroup")
-    private @Nullable Output<SecurityGroup> clusterSecurityGroup;
+    private @Nullable SecurityGroup clusterSecurityGroup;
 
     /**
      * @return The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      * 
      */
-    public Optional<Output<SecurityGroup>> clusterSecurityGroup() {
+    public Optional<SecurityGroup> clusterSecurityGroup() {
         return Optional.ofNullable(this.clusterSecurityGroup);
     }
 
@@ -112,13 +111,13 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="creationRoleProvider")
-    private @Nullable Output<CreationRoleProviderArgs> creationRoleProvider;
+    private @Nullable CreationRoleProviderArgs creationRoleProvider;
 
     /**
      * @return The IAM Role Provider used to create &amp; authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
      * 
      */
-    public Optional<Output<CreationRoleProviderArgs>> creationRoleProvider() {
+    public Optional<CreationRoleProviderArgs> creationRoleProvider() {
         return Optional.ofNullable(this.creationRoleProvider);
     }
 
@@ -469,13 +468,13 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="nodeAssociatePublicIpAddress")
-    private @Nullable Output<Boolean> nodeAssociatePublicIpAddress;
+    private @Nullable Boolean nodeAssociatePublicIpAddress;
 
     /**
      * @return Whether or not to auto-assign the EKS worker nodes public IP addresses. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
      * 
      */
-    public Optional<Output<Boolean>> nodeAssociatePublicIpAddress() {
+    public Optional<Boolean> nodeAssociatePublicIpAddress() {
         return Optional.ofNullable(this.nodeAssociatePublicIpAddress);
     }
 
@@ -484,13 +483,13 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="nodeGroupOptions")
-    private @Nullable Output<ClusterNodeGroupOptionsArgs> nodeGroupOptions;
+    private @Nullable ClusterNodeGroupOptionsArgs nodeGroupOptions;
 
     /**
      * @return The common configuration settings for NodeGroups.
      * 
      */
-    public Optional<Output<ClusterNodeGroupOptionsArgs>> nodeGroupOptions() {
+    public Optional<ClusterNodeGroupOptionsArgs> nodeGroupOptions() {
         return Optional.ofNullable(this.nodeGroupOptions);
     }
 
@@ -514,51 +513,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Whether to delete a cluster node&#39;s root volume on termination. Defaults to true.
-     * 
-     */
-    @Import(name="nodeRootVolumeDeleteOnTermination")
-    private @Nullable Output<Boolean> nodeRootVolumeDeleteOnTermination;
-
-    /**
-     * @return Whether to delete a cluster node&#39;s root volume on termination. Defaults to true.
-     * 
-     */
-    public Optional<Output<Boolean>> nodeRootVolumeDeleteOnTermination() {
-        return Optional.ofNullable(this.nodeRootVolumeDeleteOnTermination);
-    }
-
-    /**
-     * Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
-     * 
-     */
-    @Import(name="nodeRootVolumeEncrypted")
-    private @Nullable Output<Boolean> nodeRootVolumeEncrypted;
-
-    /**
-     * @return Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
-     * 
-     */
-    public Optional<Output<Boolean>> nodeRootVolumeEncrypted() {
-        return Optional.ofNullable(this.nodeRootVolumeEncrypted);
-    }
-
-    /**
-     * Provisioned IOPS for a cluster node&#39;s root volume. Only valid for io1 volumes.
-     * 
-     */
-    @Import(name="nodeRootVolumeIops")
-    private @Nullable Output<Integer> nodeRootVolumeIops;
-
-    /**
-     * @return Provisioned IOPS for a cluster node&#39;s root volume. Only valid for io1 volumes.
-     * 
-     */
-    public Optional<Output<Integer>> nodeRootVolumeIops() {
-        return Optional.ofNullable(this.nodeRootVolumeIops);
-    }
-
-    /**
      * The size in GiB of a cluster node&#39;s root volume. Defaults to 20.
      * 
      */
@@ -571,36 +525,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<Integer>> nodeRootVolumeSize() {
         return Optional.ofNullable(this.nodeRootVolumeSize);
-    }
-
-    /**
-     * Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. Only valid for gp3 volumes.
-     * 
-     */
-    @Import(name="nodeRootVolumeThroughput")
-    private @Nullable Output<Integer> nodeRootVolumeThroughput;
-
-    /**
-     * @return Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. Only valid for gp3 volumes.
-     * 
-     */
-    public Optional<Output<Integer>> nodeRootVolumeThroughput() {
-        return Optional.ofNullable(this.nodeRootVolumeThroughput);
-    }
-
-    /**
-     * Configured EBS type for a cluster node&#39;s root volume. Default is gp2.
-     * 
-     */
-    @Import(name="nodeRootVolumeType")
-    private @Nullable Output<String> nodeRootVolumeType;
-
-    /**
-     * @return Configured EBS type for a cluster node&#39;s root volume. Default is gp2.
-     * 
-     */
-    public Optional<Output<String>> nodeRootVolumeType() {
-        return Optional.ofNullable(this.nodeRootVolumeType);
     }
 
     /**
@@ -753,7 +677,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="proxy")
-    private @Nullable Output<String> proxy;
+    private @Nullable String proxy;
 
     /**
      * @return The HTTP(S) proxy to use within a proxied environment.
@@ -773,7 +697,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      *   - &#34;http://username:password@proxy.example.com:3128&#34;
      * 
      */
-    public Optional<Output<String>> proxy() {
+    public Optional<String> proxy() {
         return Optional.ofNullable(this.proxy);
     }
 
@@ -866,13 +790,13 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="skipDefaultNodeGroup")
-    private @Nullable Output<Boolean> skipDefaultNodeGroup;
+    private @Nullable Boolean skipDefaultNodeGroup;
 
     /**
      * @return If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
      * 
      */
-    public Optional<Output<Boolean>> skipDefaultNodeGroup() {
+    public Optional<Boolean> skipDefaultNodeGroup() {
         return Optional.ofNullable(this.skipDefaultNodeGroup);
     }
 
@@ -883,7 +807,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="storageClasses")
-    private @Nullable Output<Either<String,Map<String,StorageClassArgs>>> storageClasses;
+    private @Nullable Either<String,Map<String,StorageClassArgs>> storageClasses;
 
     /**
      * @return An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
@@ -891,7 +815,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
      * 
      */
-    public Optional<Output<Either<String,Map<String,StorageClassArgs>>>> storageClasses() {
+    public Optional<Either<String,Map<String,StorageClassArgs>>> storageClasses() {
         return Optional.ofNullable(this.storageClasses);
     }
 
@@ -946,13 +870,13 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="useDefaultVpcCni")
-    private @Nullable Output<Boolean> useDefaultVpcCni;
+    private @Nullable Boolean useDefaultVpcCni;
 
     /**
      * @return Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
      * 
      */
-    public Optional<Output<Boolean>> useDefaultVpcCni() {
+    public Optional<Boolean> useDefaultVpcCni() {
         return Optional.ofNullable(this.useDefaultVpcCni);
     }
 
@@ -991,13 +915,13 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="vpcCniOptions")
-    private @Nullable Output<VpcCniOptionsArgs> vpcCniOptions;
+    private @Nullable VpcCniOptionsArgs vpcCniOptions;
 
     /**
      * @return The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
      * 
      */
-    public Optional<Output<VpcCniOptionsArgs>> vpcCniOptions() {
+    public Optional<VpcCniOptionsArgs> vpcCniOptions() {
         return Optional.ofNullable(this.vpcCniOptions);
     }
 
@@ -1045,12 +969,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.nodeAssociatePublicIpAddress = $.nodeAssociatePublicIpAddress;
         this.nodeGroupOptions = $.nodeGroupOptions;
         this.nodePublicKey = $.nodePublicKey;
-        this.nodeRootVolumeDeleteOnTermination = $.nodeRootVolumeDeleteOnTermination;
-        this.nodeRootVolumeEncrypted = $.nodeRootVolumeEncrypted;
-        this.nodeRootVolumeIops = $.nodeRootVolumeIops;
         this.nodeRootVolumeSize = $.nodeRootVolumeSize;
-        this.nodeRootVolumeThroughput = $.nodeRootVolumeThroughput;
-        this.nodeRootVolumeType = $.nodeRootVolumeType;
         this.nodeSecurityGroupTags = $.nodeSecurityGroupTags;
         this.nodeSubnetIds = $.nodeSubnetIds;
         this.nodeUserData = $.nodeUserData;
@@ -1096,19 +1015,9 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder clusterSecurityGroup(@Nullable Output<SecurityGroup> clusterSecurityGroup) {
+        public Builder clusterSecurityGroup(@Nullable SecurityGroup clusterSecurityGroup) {
             $.clusterSecurityGroup = clusterSecurityGroup;
             return this;
-        }
-
-        /**
-         * @param clusterSecurityGroup The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder clusterSecurityGroup(SecurityGroup clusterSecurityGroup) {
-            return clusterSecurityGroup(Output.of(clusterSecurityGroup));
         }
 
         /**
@@ -1196,19 +1105,9 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder creationRoleProvider(@Nullable Output<CreationRoleProviderArgs> creationRoleProvider) {
+        public Builder creationRoleProvider(@Nullable CreationRoleProviderArgs creationRoleProvider) {
             $.creationRoleProvider = creationRoleProvider;
             return this;
-        }
-
-        /**
-         * @param creationRoleProvider The IAM Role Provider used to create &amp; authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
-         * 
-         * @return builder
-         * 
-         */
-        public Builder creationRoleProvider(CreationRoleProviderArgs creationRoleProvider) {
-            return creationRoleProvider(Output.of(creationRoleProvider));
         }
 
         /**
@@ -1719,40 +1618,20 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder nodeAssociatePublicIpAddress(@Nullable Output<Boolean> nodeAssociatePublicIpAddress) {
+        public Builder nodeAssociatePublicIpAddress(@Nullable Boolean nodeAssociatePublicIpAddress) {
             $.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
             return this;
         }
 
         /**
-         * @param nodeAssociatePublicIpAddress Whether or not to auto-assign the EKS worker nodes public IP addresses. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeAssociatePublicIpAddress(Boolean nodeAssociatePublicIpAddress) {
-            return nodeAssociatePublicIpAddress(Output.of(nodeAssociatePublicIpAddress));
-        }
-
-        /**
          * @param nodeGroupOptions The common configuration settings for NodeGroups.
          * 
          * @return builder
          * 
          */
-        public Builder nodeGroupOptions(@Nullable Output<ClusterNodeGroupOptionsArgs> nodeGroupOptions) {
+        public Builder nodeGroupOptions(@Nullable ClusterNodeGroupOptionsArgs nodeGroupOptions) {
             $.nodeGroupOptions = nodeGroupOptions;
             return this;
-        }
-
-        /**
-         * @param nodeGroupOptions The common configuration settings for NodeGroups.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeGroupOptions(ClusterNodeGroupOptionsArgs nodeGroupOptions) {
-            return nodeGroupOptions(Output.of(nodeGroupOptions));
         }
 
         /**
@@ -1781,69 +1660,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param nodeRootVolumeDeleteOnTermination Whether to delete a cluster node&#39;s root volume on termination. Defaults to true.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeDeleteOnTermination(@Nullable Output<Boolean> nodeRootVolumeDeleteOnTermination) {
-            $.nodeRootVolumeDeleteOnTermination = nodeRootVolumeDeleteOnTermination;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeDeleteOnTermination Whether to delete a cluster node&#39;s root volume on termination. Defaults to true.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeDeleteOnTermination(Boolean nodeRootVolumeDeleteOnTermination) {
-            return nodeRootVolumeDeleteOnTermination(Output.of(nodeRootVolumeDeleteOnTermination));
-        }
-
-        /**
-         * @param nodeRootVolumeEncrypted Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeEncrypted(@Nullable Output<Boolean> nodeRootVolumeEncrypted) {
-            $.nodeRootVolumeEncrypted = nodeRootVolumeEncrypted;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeEncrypted Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeEncrypted(Boolean nodeRootVolumeEncrypted) {
-            return nodeRootVolumeEncrypted(Output.of(nodeRootVolumeEncrypted));
-        }
-
-        /**
-         * @param nodeRootVolumeIops Provisioned IOPS for a cluster node&#39;s root volume. Only valid for io1 volumes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeIops(@Nullable Output<Integer> nodeRootVolumeIops) {
-            $.nodeRootVolumeIops = nodeRootVolumeIops;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeIops Provisioned IOPS for a cluster node&#39;s root volume. Only valid for io1 volumes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeIops(Integer nodeRootVolumeIops) {
-            return nodeRootVolumeIops(Output.of(nodeRootVolumeIops));
-        }
-
-        /**
          * @param nodeRootVolumeSize The size in GiB of a cluster node&#39;s root volume. Defaults to 20.
          * 
          * @return builder
@@ -1862,48 +1678,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder nodeRootVolumeSize(Integer nodeRootVolumeSize) {
             return nodeRootVolumeSize(Output.of(nodeRootVolumeSize));
-        }
-
-        /**
-         * @param nodeRootVolumeThroughput Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. Only valid for gp3 volumes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeThroughput(@Nullable Output<Integer> nodeRootVolumeThroughput) {
-            $.nodeRootVolumeThroughput = nodeRootVolumeThroughput;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeThroughput Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. Only valid for gp3 volumes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeThroughput(Integer nodeRootVolumeThroughput) {
-            return nodeRootVolumeThroughput(Output.of(nodeRootVolumeThroughput));
-        }
-
-        /**
-         * @param nodeRootVolumeType Configured EBS type for a cluster node&#39;s root volume. Default is gp2.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeType(@Nullable Output<String> nodeRootVolumeType) {
-            $.nodeRootVolumeType = nodeRootVolumeType;
-            return this;
-        }
-
-        /**
-         * @param nodeRootVolumeType Configured EBS type for a cluster node&#39;s root volume. Default is gp2.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeRootVolumeType(String nodeRootVolumeType) {
-            return nodeRootVolumeType(Output.of(nodeRootVolumeType));
         }
 
         /**
@@ -2121,33 +1895,9 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder proxy(@Nullable Output<String> proxy) {
+        public Builder proxy(@Nullable String proxy) {
             $.proxy = proxy;
             return this;
-        }
-
-        /**
-         * @param proxy The HTTP(S) proxy to use within a proxied environment.
-         * 
-         *  The proxy is used during cluster creation, and OIDC configuration.
-         * 
-         * This is an alternative option to setting the proxy environment variables: HTTP(S)_PROXY and/or http(s)_proxy.
-         * 
-         * This option is required iff the proxy environment variables are not set.
-         * 
-         * Format:      &lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;
-         * Auth Format: &lt;protocol&gt;://&lt;username&gt;:&lt;password&gt;@&lt;host&gt;:&lt;port&gt;
-         * 
-         * Ex:
-         *   - &#34;http://proxy.example.com:3128&#34;
-         *   - &#34;https://proxy.example.com&#34;
-         *   - &#34;http://username:password@proxy.example.com:3128&#34;
-         * 
-         * @return builder
-         * 
-         */
-        public Builder proxy(String proxy) {
-            return proxy(Output.of(proxy));
         }
 
         /**
@@ -2306,22 +2056,12 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder skipDefaultNodeGroup(@Nullable Output<Boolean> skipDefaultNodeGroup) {
+        public Builder skipDefaultNodeGroup(@Nullable Boolean skipDefaultNodeGroup) {
             $.skipDefaultNodeGroup = skipDefaultNodeGroup;
             return this;
         }
 
         /**
-         * @param skipDefaultNodeGroup If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder skipDefaultNodeGroup(Boolean skipDefaultNodeGroup) {
-            return skipDefaultNodeGroup(Output.of(skipDefaultNodeGroup));
-        }
-
-        /**
          * @param storageClasses An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
          * 
          * Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
@@ -2329,21 +2069,9 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder storageClasses(@Nullable Output<Either<String,Map<String,StorageClassArgs>>> storageClasses) {
+        public Builder storageClasses(@Nullable Either<String,Map<String,StorageClassArgs>> storageClasses) {
             $.storageClasses = storageClasses;
             return this;
-        }
-
-        /**
-         * @param storageClasses An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
-         * 
-         * Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
-         * 
-         * @return builder
-         * 
-         */
-        public Builder storageClasses(Either<String,Map<String,StorageClassArgs>> storageClasses) {
-            return storageClasses(Output.of(storageClasses));
         }
 
         /**
@@ -2452,19 +2180,9 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder useDefaultVpcCni(@Nullable Output<Boolean> useDefaultVpcCni) {
+        public Builder useDefaultVpcCni(@Nullable Boolean useDefaultVpcCni) {
             $.useDefaultVpcCni = useDefaultVpcCni;
             return this;
-        }
-
-        /**
-         * @param useDefaultVpcCni Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder useDefaultVpcCni(Boolean useDefaultVpcCni) {
-            return useDefaultVpcCni(Output.of(useDefaultVpcCni));
         }
 
         /**
@@ -2525,19 +2243,9 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder vpcCniOptions(@Nullable Output<VpcCniOptionsArgs> vpcCniOptions) {
+        public Builder vpcCniOptions(@Nullable VpcCniOptionsArgs vpcCniOptions) {
             $.vpcCniOptions = vpcCniOptions;
             return this;
-        }
-
-        /**
-         * @param vpcCniOptions The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder vpcCniOptions(VpcCniOptionsArgs vpcCniOptions) {
-            return vpcCniOptions(Output.of(vpcCniOptions));
         }
 
         /**
@@ -2562,10 +2270,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public ClusterArgs build() {
-            $.nodeRootVolumeDeleteOnTermination = Codegen.booleanProp("nodeRootVolumeDeleteOnTermination").output().arg($.nodeRootVolumeDeleteOnTermination).def(true).getNullable();
-            $.nodeRootVolumeEncrypted = Codegen.booleanProp("nodeRootVolumeEncrypted").output().arg($.nodeRootVolumeEncrypted).def(false).getNullable();
-            $.nodeRootVolumeSize = Codegen.integerProp("nodeRootVolumeSize").output().arg($.nodeRootVolumeSize).def(20).getNullable();
-            $.nodeRootVolumeType = Codegen.stringProp("nodeRootVolumeType").output().arg($.nodeRootVolumeType).def("gp2").getNullable();
             return $;
         }
     }

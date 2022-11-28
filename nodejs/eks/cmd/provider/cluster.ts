@@ -1,4 +1,4 @@
-// Copyright 2016-2020, Pulumi Corporation.
+// Copyright 2016-2022, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,18 +13,17 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { Cluster, ClusterCreationRoleProvider } from "../../cluster";
+import { ClusterCreationRoleProvider, ClusterInternal } from "../../cluster";
 
 const clusterProvider: pulumi.provider.Provider = {
     construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
         try {
-            const cluster = new Cluster(name, inputs, options);
+            const cluster = new ClusterInternal(name, inputs, options);
             return Promise.resolve({
                 urn: cluster.urn,
                 state: {
                     kubeconfig: cluster.kubeconfig,
-                    awsProvider: cluster.awsProvider,
-                    provider: cluster.provider,
+                    kubeconfigJson: cluster.kubeconfigJson,
                     clusterSecurityGroup: cluster.clusterSecurityGroup,
                     instanceRoles: cluster.instanceRoles,
                     nodeSecurityGroup: cluster.nodeSecurityGroup,

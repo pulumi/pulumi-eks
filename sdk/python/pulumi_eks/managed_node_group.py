@@ -8,6 +8,7 @@ import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 from ._inputs import *
+from .cluster import Cluster
 from .vpc_cni import VpcCni
 import pulumi_aws
 import pulumi_kubernetes
@@ -17,7 +18,7 @@ __all__ = ['ManagedNodeGroupArgs', 'ManagedNodeGroup']
 @pulumi.input_type
 class ManagedNodeGroupArgs:
     def __init__(__self__, *,
-                 cluster: pulumi.Input['CoreDataArgs'],
+                 cluster: pulumi.Input[Union['Cluster', 'CoreDataArgs']],
                  ami_type: Optional[pulumi.Input[str]] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
@@ -39,7 +40,7 @@ class ManagedNodeGroupArgs:
                  version: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a ManagedNodeGroup resource.
-        :param pulumi.Input['CoreDataArgs'] cluster: The target EKS cluster.
+        :param pulumi.Input[Union['Cluster', 'CoreDataArgs']] cluster: The target EKS cluster.
         :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
@@ -117,14 +118,14 @@ class ManagedNodeGroupArgs:
 
     @property
     @pulumi.getter
-    def cluster(self) -> pulumi.Input['CoreDataArgs']:
+    def cluster(self) -> pulumi.Input[Union['Cluster', 'CoreDataArgs']]:
         """
         The target EKS cluster.
         """
         return pulumi.get(self, "cluster")
 
     @cluster.setter
-    def cluster(self, value: pulumi.Input['CoreDataArgs']):
+    def cluster(self, value: pulumi.Input[Union['Cluster', 'CoreDataArgs']]):
         pulumi.set(self, "cluster", value)
 
     @property
@@ -376,7 +377,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
-                 cluster: Optional[pulumi.Input[pulumi.InputType['CoreDataArgs']]] = None,
+                 cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
@@ -405,7 +406,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
-        :param pulumi.Input[pulumi.InputType['CoreDataArgs']] cluster: The target EKS cluster.
+        :param pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]] cluster: The target EKS cluster.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
@@ -468,7 +469,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
-                 cluster: Optional[pulumi.Input[pulumi.InputType['CoreDataArgs']]] = None,
+                 cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,

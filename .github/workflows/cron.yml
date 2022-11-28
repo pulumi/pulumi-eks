@@ -175,7 +175,7 @@ jobs:
         javaversion:
           - 11
         nodeversion:
-          - 14.x
+          - 18.x
         pythonversion:
           - 3.8
   test-nodejs:
@@ -271,7 +271,7 @@ jobs:
         language:
           - nodejs
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
           - AwsProfile
           - Cluster
@@ -404,9 +404,14 @@ jobs:
         pythonversion:
           - 3.8
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
+          - AwsProfilePy
+          - AwsProfileRolePy
           - ClusterPy
+          - FargatePy
+          - NodeGroupPy
+          - ManagedNodeGroupPy
   test-dotnet:
     name: Run DotNet Tests
     needs: build_sdk
@@ -514,10 +519,10 @@ jobs:
         dotnetversion:
           - 3.1
         nodeversion:
-          - 14.x
+          - 18.x
         test-name:
           - ClusterCs
-name: master
+name: cron
 "on":
   schedule:
     # Run every day at 06:00AM UTC

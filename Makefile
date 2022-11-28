@@ -6,20 +6,25 @@ TESTPARALLELISM := 12
 PACK            := eks
 PROVIDER        := pulumi-resource-${PACK}
 CODEGEN         := pulumi-gen-${PACK}
+GZIP_PREFIX		:= pulumi-resource-${PACK}-v${VERSION}
 
 WORKING_DIR     := $(shell pwd)
 
 JAVA_GEN 		 := pulumi-java-gen
 JAVA_GEN_VERSION := v0.5.2
 
+EKS_SRC 		:= $(wildcard nodejs/eks/*.*) $(wildcard nodejs/eks/*/*.ts) $(wildcard nodejs/eks/*/*/*.ts)
+
+LOCAL_PLAT		?= ""
+
+PKG_ARGS 		:= --no-bytecode --public-packages "*" --public
+
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
 schema::
 	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER))
 
-provider::
-	rm -rf provider/cmd/$(PROVIDER)/bin
-	cd provider/cmd/$(PROVIDER) && go build -o $(WORKING_DIR)/bin/$(PROVIDER) main.go
+provider:: bin/${PROVIDER}
 
 build_nodejs:: VERSION := $(shell pulumictl get version --language javascript)
 build_nodejs::
@@ -105,10 +110,59 @@ install_go_sdk::
 	#Intentionally empty for CI / CD templating
 
 install_python_sdk::
-	#Intentionall empty for CI / CD templating
+	#Intentionally empty for CI / CD templating
 
 install_java_sdk::
-	#Intentionall empty for CI / CD templating
+	#Intentionally empty for CI / CD templating
+
+nodejs/eks/node_modules: nodejs/eks/package.json nodejs/eks/yarn.lock
+	yarn install --cwd nodejs/eks --no-progress
+	@touch nodejs/eks/node_modules
+
+nodejs/eks/bin: nodejs/eks/node_modules ${EKS_SRC}
+	@cd nodejs/eks && \
+		yarn tsc && \
+		sed -e 's/\$${VERSION}/$(VERSION)/g' < package.json > bin/package.json && \
+		cp -R dashboard bin/ && \
+		cp -R cni bin/ && \
+		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
+	@touch nodejs/eks/bin
+
+# Re-use the local platform if provided (e.g. `make provider LOCAL_PLAT=linux-amd64`)
+ifneq ($(LOCAL_PLAT),"")
+bin/${PROVIDER}:: bin/provider/$(LOCAL_PLAT)/${PROVIDER}
+	cp bin/provider/$(LOCAL_PLAT)/${PROVIDER} bin/${PROVIDER}
+else 
+bin/${PROVIDER}: nodejs/eks/bin nodejs/eks/node_modules
+	cd nodejs/eks && yarn run pkg . ${PKG_ARGS} --target node18 --output $(WORKING_DIR)/bin/${PROVIDER}
+endif
+
+bin/provider/linux-amd64/${PROVIDER}:: TARGET := node18-linuxstatic-x64
+bin/provider/linux-arm64/${PROVIDER}:: TARGET := node18-linuxstatic-arm64
+bin/provider/darwin-amd64/${PROVIDER}:: TARGET := node18-macos-x64
+bin/provider/darwin-arm64/${PROVIDER}:: TARGET := node18-macos-arm64
+bin/provider/windows-amd64/${PROVIDER}.exe:: TARGET := node18-win-x64
+bin/provider/%:: nodejs/eks/bin nodejs/eks/node_modules
+	test ${TARGET}
+	cd nodejs/eks && \
+		yarn run pkg . ${PKG_ARGS} --target ${TARGET} --output ${WORKING_DIR}/$@
+
+dist/${GZIP_PREFIX}-linux-amd64.tar.gz:: bin/provider/linux-amd64/${PROVIDER}
+dist/${GZIP_PREFIX}-linux-arm64.tar.gz:: bin/provider/linux-arm64/${PROVIDER}
+dist/${GZIP_PREFIX}-darwin-amd64.tar.gz:: bin/provider/darwin-amd64/${PROVIDER}
+dist/${GZIP_PREFIX}-darwin-arm64.tar.gz:: bin/provider/darwin-arm64/${PROVIDER}
+dist/${GZIP_PREFIX}-windows-amd64.tar.gz:: bin/provider/windows-amd64/${PROVIDER}.exe
+
+dist/${GZIP_PREFIX}-%.tar.gz:: 
+	@mkdir -p dist
+	@# $< is the last dependency (the binary path from above)
+	tar --gzip -cf $@ README.md LICENSE -C $$(dirname $<) .
+
+dist:: dist/${GZIP_PREFIX}-linux-amd64.tar.gz
+dist:: dist/${GZIP_PREFIX}-linux-arm64.tar.gz
+dist:: dist/${GZIP_PREFIX}-darwin-amd64.tar.gz
+dist:: dist/${GZIP_PREFIX}-darwin-arm64.tar.gz
+dist:: dist/${GZIP_PREFIX}-windows-amd64.tar.gz
 
 test_build::
 	cd examples/utils/testvpc && yarn install && yarn run tsc

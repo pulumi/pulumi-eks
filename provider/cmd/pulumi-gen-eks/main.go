@@ -157,6 +157,10 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
 							Description: "A kubeconfig that can be used to connect to the EKS cluster.",
 						},
+						"kubeconfigJson": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "A kubeconfig that can be used to connect to the EKS cluster as a JSON string.",
+						},
 						"awsProvider": {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/provider")},
 							Description: "The AWS resource provider.",
@@ -200,6 +204,7 @@ func generateSchema() schema.PackageSpec {
 					},
 					Required: []string{
 						"kubeconfig",
+						"kubeconfigJson",
 						"awsProvider",
 						// "provider",
 						"clusterSecurityGroup",
@@ -271,11 +276,17 @@ func generateSchema() schema.PackageSpec {
 							"Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.",
 					},
 					"nodeGroupOptions": {
-						TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:ClusterNodeGroupOptions"},
+						TypeSpec: schema.TypeSpec{
+							Ref:   "#/types/eks:index:ClusterNodeGroupOptions",
+							Plain: true,
+						},
 						Description: "The common configuration settings for NodeGroups.",
 					},
 					"nodeAssociatePublicIpAddress": {
-						TypeSpec: schema.TypeSpec{Type: "boolean"},
+						TypeSpec: schema.TypeSpec{
+							Type:  "boolean",
+							Plain: true,
+						},
 						Description: "Whether or not to auto-assign the EKS worker nodes public IP addresses. If " +
 							"this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, " +
 							"they will not be auto-assigned public IPs.",
@@ -295,12 +306,18 @@ func generateSchema() schema.PackageSpec {
 						Description: "Optional mappings from AWS IAM users to Kubernetes users and groups.",
 					},
 					"vpcCniOptions": {
-						TypeSpec: schema.TypeSpec{Ref: "#/types/eks:index:VpcCniOptions"},
+						TypeSpec: schema.TypeSpec{
+							Ref:   "#/types/eks:index:VpcCniOptions",
+							Plain: true,
+						},
 						Description: "The configuration of the Amazon VPC CNI plugin for this instance. Defaults are " +
 							"described in the documentation for the VpcCniOptions type.",
 					},
 					"useDefaultVpcCni": {
-						TypeSpec:    schema.TypeSpec{Type: "boolean"},
+						TypeSpec: schema.TypeSpec{
+							Type:  "boolean",
+							Plain: true,
+						},
 						Description: "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.",
 					},
 					"instanceType": {
@@ -325,7 +342,10 @@ func generateSchema() schema.PackageSpec {
 					},
 					"creationRoleProvider": {
 						// Note: It'd be nice if we could pass the ClusterCreationRoleProvider component here.
-						TypeSpec: schema.TypeSpec{Ref: "#/types/eks:index:CreationRoleProvider"},
+						TypeSpec: schema.TypeSpec{
+							Ref:   "#/types/eks:index:CreationRoleProvider",
+							Plain: true,
+						},
 						Description: "The IAM Role Provider used to create & authenticate against the EKS cluster. " +
 							"This role is given `[system:masters]` permission in K8S, See: " +
 							"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html",
@@ -369,7 +389,10 @@ func generateSchema() schema.PackageSpec {
 						Description: "The subnets to use for worker nodes. Defaults to the value of subnetIds.",
 					},
 					"clusterSecurityGroup": {
-						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+						TypeSpec: schema.TypeSpec{
+							Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
+							Plain: true,
+						},
 						Description: "The security group to use for the cluster API endpoint. If not provided, a new " +
 							"security group will be created with full internet egress and ingress from node groups.",
 					},
@@ -396,30 +419,6 @@ func generateSchema() schema.PackageSpec {
 					"nodeRootVolumeSize": {
 						TypeSpec:    schema.TypeSpec{Type: "integer"},
 						Description: "The size in GiB of a cluster node's root volume. Defaults to 20.",
-						Default:     20,
-					},
-					"nodeRootVolumeDeleteOnTermination": {
-						TypeSpec:    schema.TypeSpec{Type: "boolean"},
-						Description: "Whether to delete a cluster node's root volume on termination. Defaults to true.",
-						Default:     true,
-					},
-					"nodeRootVolumeEncrypted": {
-						TypeSpec:    schema.TypeSpec{Type: "boolean"},
-						Description: "Whether to encrypt a cluster node's root volume. Defaults to false.",
-						Default:     false,
-					},
-					"nodeRootVolumeIops": {
-						TypeSpec:    schema.TypeSpec{Type: "integer"},
-						Description: "Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.",
-					},
-					"nodeRootVolumeThroughput": {
-						TypeSpec:    schema.TypeSpec{Type: "integer"},
-						Description: "Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.",
-					},
-					"nodeRootVolumeType": {
-						TypeSpec:    schema.TypeSpec{Type: "string"},
-						Description: "Configured EBS type for a cluster node's root volume. Default is gp2.",
-						Default:     "gp2",
 					},
 					"nodeUserData": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -443,9 +442,20 @@ func generateSchema() schema.PackageSpec {
 					"storageClasses": {
 						TypeSpec: schema.TypeSpec{
 							OneOf: []schema.TypeSpec{
-								{Type: "string"}, // TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1"
-								{Type: "object", AdditionalProperties: &schema.TypeSpec{Ref: "#/types/eks:index:StorageClass"}},
+								{
+									Type:  "string", // TODO: EBSVolumeType enum "io1" | "gp2" | "sc1" | "st1"
+									Plain: true,
+								},
+								{
+									Type: "object",
+									AdditionalProperties: &schema.TypeSpec{
+										Ref:   "#/types/eks:index:StorageClass",
+										Plain: true,
+									},
+									Plain: true,
+								},
 							},
+							Plain: true,
 						},
 						Description: "An optional set of StorageClasses to enable for the cluster. If this is a " +
 							"single volume type rather than a map, a single StorageClass will be created for that " +
@@ -455,7 +465,10 @@ func generateSchema() schema.PackageSpec {
 							"https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html",
 					},
 					"skipDefaultNodeGroup": {
-						TypeSpec: schema.TypeSpec{Type: "boolean"},
+						TypeSpec: schema.TypeSpec{
+							Type:  "boolean",
+							Plain: true,
+						},
 						Description: "If this toggle is set to true, the EKS cluster will be created without node " +
 							"group attached. Defaults to false, unless `fargate` input is provided.",
 					},
@@ -543,7 +556,10 @@ func generateSchema() schema.PackageSpec {
 							"https://www.pulumi.com/docs/intro/concepts/programming-model/#autonaming",
 					},
 					"proxy": {
-						TypeSpec: schema.TypeSpec{Type: "string"},
+						TypeSpec: schema.TypeSpec{
+							Type:  "string",
+							Plain: true,
+						},
 						Description: "The HTTP(S) proxy to use within a proxied environment.\n\n The proxy is used " +
 							"during cluster creation, and OIDC configuration.\n\nThis is an alternative option to " +
 							"setting the proxy environment variables: HTTP(S)_PROXY and/or http(s)_proxy.\n\nThis " +
@@ -605,13 +621,15 @@ func generateSchema() schema.PackageSpec {
 						"role": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
 						},
-						"provider": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
-						},
+						// Temporarily excluding the provider output since `Output<ProviderResource>`` is currently
+						// unusable from multi-lang because `ResourceOptions` requires a plain `ProviderResource`.
+						// "provider": {
+						// 	TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
+						// },
 					},
 					Required: []string{
 						"role",
-						"provider",
+						// "provider",
 					},
 				},
 				InputProperties: map[string]schema.PropertySpec{
@@ -641,9 +659,12 @@ func generateSchema() schema.PackageSpec {
 				},
 				InputProperties: map[string]schema.PropertySpec{
 					"cluster": {
-						// Note: this is typed as `Cluster | CoreData` in the TS API. Ideally, the Cluster could be
-						// passed directly.
-						TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+						TypeSpec: schema.TypeSpec{
+							OneOf: []schema.TypeSpec{
+								{Ref: "#/resources/eks:index:Cluster"},
+								{Ref: "#/types/eks:index:CoreData"},
+							},
+						},
 						Description: "The target EKS cluster.",
 					},
 					// The following inputs are based on `aws.eks.NodeGroupArgs`, with the following properties made
@@ -1017,10 +1038,16 @@ func generateSchema() schema.PackageSpec {
 						"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html",
 					Properties: map[string]schema.PropertySpec{
 						"role": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+							TypeSpec: schema.TypeSpec{
+								Ref:   awsRef("#/resources/aws:iam%2Frole:Role"),
+								Plain: true,
+							},
 						},
 						"provider": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
+							TypeSpec: schema.TypeSpec{
+								Ref:   awsRef("#/provider"),
+								Plain: true,
+							},
 						},
 					},
 					Required: []string{
@@ -1239,11 +1266,17 @@ func generateSchema() schema.PackageSpec {
 						"See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.",
 					Properties: map[string]schema.PropertySpec{
 						"value": {
-							TypeSpec:    schema.TypeSpec{Type: "string"},
+							TypeSpec: schema.TypeSpec{
+								Type:  "string",
+								Plain: true,
+							},
 							Description: "The value of the taint.",
 						},
 						"effect": {
-							TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO strict string enum: "NoSchedule" | "NoExecute" | "PreferNoSchedule".
+							TypeSpec: schema.TypeSpec{
+								Type:  "string", // TODO strict string enum: "NoSchedule" | "NoExecute" | "PreferNoSchedule".
+								Plain: true,
+							},
 							Description: "The effect of the taint.",
 						},
 					},
@@ -1368,7 +1401,10 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				"worker node.",
 		},
 		"nodeSecurityGroup": {
-			TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+			TypeSpec: schema.TypeSpec{
+				Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
+				Plain: true,
+			},
 			Description: "The security group for the worker node group to communicate with the cluster.\n\n" +
 				"This security group requires specific inbound and outbound rules.\n\n" +
 				"See for more details:\n" +
@@ -1377,13 +1413,20 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				"mutually exclusive.",
 		},
 		"clusterIngressRule": {
-			TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule")},
+			TypeSpec: schema.TypeSpec{
+				Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule"),
+				Plain: true,
+			},
 			Description: "The ingress rule that gives node group access.",
 		},
 		"extraNodeSecurityGroups": {
 			TypeSpec: schema.TypeSpec{
-				Type:  "array",
-				Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+				Type: "array",
+				Items: &schema.TypeSpec{
+					Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
+					Plain: true,
+				},
+				Plain: true,
 			},
 			Description: "Extra security groups to attach on all nodes in this worker node group.\n\n" +
 				"This additional set of security groups captures any user application rules that will be " +
@@ -1456,22 +1499,33 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"labels": {
 			TypeSpec: schema.TypeSpec{
-				Type:                 "object",
-				AdditionalProperties: &schema.TypeSpec{Type: "string"},
+				Type: "object",
+				AdditionalProperties: &schema.TypeSpec{
+					Type:  "string",
+					Plain: true,
+				},
+				Plain: true,
 			},
 			Description: "Custom k8s node labels to be attached to each worker node. Adds the given " +
 				"key/value pairs to the `--node-labels` kubelet argument.",
 		},
 		"taints": {
 			TypeSpec: schema.TypeSpec{
-				Type:                 "object",
-				AdditionalProperties: &schema.TypeSpec{Ref: "#/types/eks:index:Taint"},
+				Type: "object",
+				AdditionalProperties: &schema.TypeSpec{
+					Ref:   "#/types/eks:index:Taint",
+					Plain: true,
+				},
+				Plain: true,
 			},
 			Description: "Custom k8s node taints to be attached to each worker node. Adds the given " +
 				"taints to the `--register-with-taints` kubelet argument",
 		},
 		"kubeletExtraArgs": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
+			TypeSpec: schema.TypeSpec{
+				Type:  "string",
+				Plain: true,
+			},
 			Description: "Extra args to pass to the Kubelet. Corresponds to the options passed in the " +
 				"`--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, " +
 				"'--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will " +
@@ -1479,7 +1533,10 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				"respectively) after to the explicit `kubeletExtraArgs`.",
 		},
 		"bootstrapExtraArgs": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
+			TypeSpec: schema.TypeSpec{
+				Type:  "string",
+				Plain: true,
+			},
 			Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on " +
 				"available options, see: " +
 				"https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. " +
@@ -1487,7 +1544,10 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				"flags are included automatically based on other configuration parameters.",
 		},
 		"nodeAssociatePublicIpAddress": {
-			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			TypeSpec: schema.TypeSpec{
+				Type:  "boolean",
+				Plain: true,
+			},
 			Description: "Whether or not to auto-assign public IP addresses on the EKS worker nodes. If " +
 				"this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, " +
 				"they will not be auto-assigned public IPs.",
@@ -1498,7 +1558,10 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				"value, the latest available version is used.",
 		},
 		"instanceProfile": {
-			TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2FinstanceProfile:InstanceProfile")},
+			TypeSpec: schema.TypeSpec{
+				Ref:   awsRef("#/resources/aws:iam%2FinstanceProfile:InstanceProfile"),
+				Plain: true,
+			},
 			Description: "The ingress rule that gives node group access.",
 		},
 		"autoScalingGroupTags": {
@@ -1529,8 +1592,12 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 
 	if cluster {
 		props["cluster"] = schema.PropertySpec{
-			// TODO: this is typed as `Cluster | CoreData` in the TS API.
-			TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+			TypeSpec: schema.TypeSpec{
+				OneOf: []schema.TypeSpec{
+					{Ref: "#/resources/eks:index:Cluster"},
+					{Ref: "#/types/eks:index:CoreData"},
+				},
+			},
 			Description: "The target EKS cluster.",
 		}
 	}
@@ -1539,6 +1606,14 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		props["minRefreshPercentage"] = schema.PropertySpec{
 			TypeSpec:    schema.TypeSpec{Type: "integer"},
 			Description: "The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.",
+		}
+
+		props["launchTemplateTagSpecifications"] = schema.PropertySpec{
+			TypeSpec: schema.TypeSpec{
+				Type:  "array",
+				Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification")},
+			},
+			Description: "The tag specifications to apply to the launch template.",
 		}
 	}
 

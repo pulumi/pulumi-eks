@@ -1,44 +1,53 @@
 using Pulumi;
-using Pulumi.Eks;
+using Eks = Pulumi.Eks;
+using Awsx = Pulumi.Awsx;
 
 class MyStack : Stack
 {
     [Output("kubeconfig1")]
     public Output<object> Kubeconfig1 { get; set; }
 
-    // TODO
-    // [Output("kubeconfig2")]
-    // public Output<object> Kubeconfig2 { get; set; }
+    [Output("kubeconfig2")]
+    public Output<object> Kubeconfig2 { get; set; }
+
+    [Output("kubeconfig3")]
+    public Output<object> Kubeconfig3 { get; set; }
 
     public MyStack()
     {
         string projectName = Deployment.Instance.ProjectName;
 
-        var cluster1 = new Cluster($"{projectName}-1");
+        var cluster1 = new Eks.Cluster($"{projectName}-1");
 
-        // # TODO
-        // # // Create an EKS cluster with a non-default configuration.
-        // # const vpc = new awsx.ec2.Vpc(`${projectName}-2`, {
-        // #     tags: { "Name": `${projectName}-2` },
-        // # });
+        var vpc = new Awsx.Ec2.Vpc($"{projectName}-2");
 
-        // # const cluster2 = new eks.Cluster(`${projectName}-2`, {
-        // #     vpcId: vpc.id,
-        // #     publicSubnetIds: vpc.publicSubnetIds,
-        // #     desiredCapacity: 2,
-        // #     minSize: 2,
-        // #     maxSize: 2,
-        // #     deployDashboard: false,
-        // #     enabledClusterLogTypes: [
-        // #         "api",
-        // #         "audit",
-        // #         "authenticator",
-        // #     ],
-        // # });
+        var cluster2 = new Eks.Cluster($"{projectName}-2", new Eks.ClusterArgs {
+            VpcId = vpc.VpcId,
+            PublicSubnetIds = vpc.PublicSubnetIds,
+            DesiredCapacity = 2,
+            MinSize = 2,
+            MaxSize = 2,
+            EnabledClusterLogTypes = {
+                "api",
+                "audit",
+                "authenticator",
+            }
+        });
+
+        var cluster3 = new Eks.Cluster($"{projectName}-3", new Eks.ClusterArgs {
+            VpcId = vpc.VpcId,
+            PublicSubnetIds = vpc.PublicSubnetIds,
+            NodeGroupOptions = new Eks.Inputs.ClusterNodeGroupOptionsArgs {
+                DesiredCapacity = 1,
+                MinSize = 1,
+                MaxSize = 1,
+                InstanceType = "t2.small",
+            },
+        });
 
         // Export the clusters' kubeconfig.
         Kubeconfig1 = cluster1.Kubeconfig;
-        // TODO
-        // Kubeconfig2 = cluster2.kubeconfig;
+        Kubeconfig2 = cluster2.Kubeconfig;
+        Kubeconfig3 = cluster3.Kubeconfig;
     }
 }

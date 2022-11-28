@@ -99,7 +99,6 @@ class ClusterCreationRoleProvider(pulumi.ComponentResource):
 
             __props__.__dict__["profile"] = profile
             __props__.__dict__["region"] = region
-            __props__.__dict__["provider"] = None
             __props__.__dict__["role"] = None
         super(ClusterCreationRoleProvider, __self__).__init__(
             'eks:index:ClusterCreationRoleProvider',
@@ -107,11 +106,6 @@ class ClusterCreationRoleProvider(pulumi.ComponentResource):
             __props__,
             opts,
             remote=True)
-
-    @property
-    @pulumi.getter
-    def provider(self) -> pulumi.Output['pulumi_aws.Provider']:
-        return pulumi.get(self, "provider")
 
     @property
     @pulumi.getter

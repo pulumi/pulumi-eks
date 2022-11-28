@@ -1,6 +1,13 @@
-## Unreleased
-- [IAM principal may have different dns suffix #801](https://github.com/pulumi/pulumi-eks/pull/801)
+## 1.0.0 (Released Nov 23, 2022)
+- [Remove input properties on Cluster that are not implemented #821](https://github.com/pulumi/pulumi-eks/pull/821)
 - [Add support for non-default AWS partitions #788](https://github.com/pulumi/pulumi-eks/pull/788)
+- [Add support for launchTemplateTagSpecifications within NodeGroupV2 #810](https://github.com/pulumi/pulumi-eks/pull/810)
+- [Use pkg for packaging provider binary #776](https://github.com/pulumi/pulumi-eks/pull/776)
+- [Remove default for NodeRootVolumeSize that conflicted with NodeGroupOptions #813](https://github.com/pulumi/pulumi-eks/pull/813)
+- [Add support for passing Cluster to NodeGroup/NodeGroupV2/ManagedNodeGroup in all languages #815](https://github.com/pulumi/pulumi-eks/pull/815)
+- [Add kubeconfigJson output property to Cluster #815](https://github.com/pulumi/pulumi-eks/pull/815)
+- [Adopt plain types in the schema to match the implementation #819](https://github.com/pulumi/pulumi-eks/pull/819)
+- [Remove unusable `provider` output from `ClusterCreationRoleProvider` #823](https://github.com/pulumi/pulumi-eks/pull/823)
 
 ## 0.42.2 (Released Oct 12, 2022)
 - Fix internal registration of NodeGroupV2 resource.

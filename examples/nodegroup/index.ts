@@ -71,6 +71,30 @@ const spot = new eks.NodeGroup("example-ng-simple-spot", {
     providers: { kubernetes: cluster1.provider},
 });
 
+const withLaunchTemplateTagSpecifications = new eks.NodeGroupV2("example-ng2-launchtemplate-tags", {
+    cluster: cluster1,
+    instanceType: "t2.medium",
+    desiredCapacity: 1,
+    minSize: 1,
+    maxSize: 2,
+    labels: { "ondemand": "true" },
+    instanceProfile: instanceProfile0,
+    launchTemplateTagSpecifications: [
+        {
+            resourceType: "instance",
+            tags: {
+                "foo": "bar",
+            },
+        },
+        {
+            resourceType: "volume",
+            tags: {
+                "foo2": "bar2",
+            },
+        },
+    ],
+});
+
 // Export the cluster's kubeconfig.
 export const kubeconfig1 = cluster1.kubeconfig;
 
