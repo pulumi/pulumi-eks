@@ -12,7 +12,7 @@ WORKING_DIR		:= $(shell pwd)
 JAVA_GEN		:= pulumi-java-gen
 JAVA_GEN_VERSION := v0.5.2
 
-EKS_SRC			:= $(wildcard nodejs/eks/*.*) $(wildcard nodejs/eks/*/*.ts) $(wildcard nodejs/eks/*/*/*.ts)
+EKS_SRC			:= $(wildcard eks/*.*) $(wildcard eks/*/*.ts) $(wildcard eks/*/*/*.ts)
 NODE_VERSION	:= node18
 
 LOCAL_PLAT		?= ""
@@ -27,21 +27,21 @@ build_java: sdk/java
 build_nodejs: sdk/nodejs
 build_python: sdk/python
 
-generate_schema: nodejs/eks/schema.json
-schema: nodejs/eks/schema.json
+generate_schema: eks/schema.json
+schema: eks/schema.json
 
 dev: lint build_nodejs
 
 test: lint test_nodejs
 
 clean:
-	rm -rf bin dist nodejs/eks/bin nodejs/eks/node_modules sdk/dotnet sdk/go sdk/java sdk/nodejs sdk/python
+	rm -rf bin dist eks/bin eks/node_modules sdk/dotnet sdk/go sdk/java sdk/nodejs sdk/python
 
 bin/schemagen: schemagen/*
 	cd schemagen && go build -o $(WORKING_DIR)/bin/schemagen .
 
-nodejs/eks/schema.json: bin/schemagen
-	./bin/schemagen schema nodejs/eks
+eks/schema.json: bin/schemagen
+	./bin/schemagen schema eks
 
 provider: bin/${PROVIDER}
 
@@ -49,9 +49,9 @@ bin/pulumi-java-gen:
 	@mkdir -p bin/
 	pulumictl download-binary -n pulumi-language-java -v $(JAVA_GEN_VERSION) -r pulumi/pulumi-java
 
-sdk/nodejs: nodejs/eks/schema.json bin/schemagen
+sdk/nodejs: eks/schema.json bin/schemagen
 	rm -rf sdk/nodejs/*
-	./bin/schemagen nodejs sdk/nodejs nodejs/eks/schema.json $(VERSION)
+	./bin/schemagen nodejs sdk/nodejs eks/schema.json $(VERSION)
 	@touch sdk/nodejs
 
 sdk/nodejs/bin: NODE_VERSION := $(shell pulumictl get version --language javascript)
@@ -59,7 +59,7 @@ sdk/nodejs/bin: sdk/nodejs sdk/nodejs/node_modules
 	cd sdk/nodejs && \
 		yarn run tsc --version && \
 		yarn run tsc && \
-		sed -e 's/\$${VERSION}/$(NODE_VERSION)/g' < ../../nodejs/eks/package.json > package.json && \
+		sed -e 's/\$${VERSION}/$(NODE_VERSION)/g' < ../../eks/package.json > package.json && \
 		cp ../../README.md ../../LICENSE .
 
 sdk/nodejs/node_modules: sdk/nodejs sdk/nodejs/package.json
@@ -67,18 +67,18 @@ sdk/nodejs/node_modules: sdk/nodejs sdk/nodejs/package.json
 		yarn install --no-progress
 
 sdk/java: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
-sdk/java: bin/pulumi-java-gen nodejs/eks/schema.json
+sdk/java: bin/pulumi-java-gen eks/schema.json
 	rm -rf sdk/java/*
-	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema nodejs/eks/schema.json --out sdk/java --build gradle-nexus
+	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema eks/schema.json --out sdk/java --build gradle-nexus
 	cd sdk/java && \
 		echo "module fake_java_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		gradle --console=plain build
 	@touch sdk/java
 
 sdk/python: PYPI_VERSION := $(shell pulumictl get version --language python)
-sdk/python: nodejs/eks/schema.json bin/schemagen
+sdk/python: eks/schema.json bin/schemagen
 	rm -rf sdk/python/*
-	./bin/schemagen python sdk/python nodejs/eks/schema.json $(VERSION)
+	./bin/schemagen python sdk/python eks/schema.json $(VERSION)
 	cd sdk/python/ && \
 		echo "module fake_python_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		cp ../../README.md . && \
@@ -90,29 +90,29 @@ sdk/python: nodejs/eks/schema.json bin/schemagen
 	@touch sdk/python
 
 sdk/go: VERSION := $(shell pulumictl get version --language generic)
-sdk/go: nodejs/eks/schema.json bin/schemagen
+sdk/go: eks/schema.json bin/schemagen
 	rm -rf sdk/go/*
-	./bin/schemagen go sdk/go nodejs/eks/schema.json $(VERSION)
+	./bin/schemagen go sdk/go eks/schema.json $(VERSION)
 	@touch sdk/go
 
 sdk/dotnet: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
-sdk/dotnet: nodejs/eks/schema.json bin/schemagen
+sdk/dotnet: eks/schema.json bin/schemagen
 	rm -rf sdk/dotnet/*
-	bin/schemagen dotnet sdk/dotnet nodejs/eks/schema.json $(VERSION)
+	bin/schemagen dotnet sdk/dotnet eks/schema.json $(VERSION)
 	cd sdk/dotnet/ && \
 		echo "module fake_dotnet_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		echo "${DOTNET_VERSION}" >version.txt
 	@touch sdk/dotnet
 
 sdk/dotnet/bin:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
-sdk/dotnet/bin:: nodejs/eks/schema.json
+sdk/dotnet/bin:: eks/schema.json
 	cd sdk/dotnet/ && \
 		dotnet build /p:Version=${DOTNET_VERSION}
 
 lint:
-	cd nodejs/eks && \
+	cd eks && \
 		yarn install && \
-		yarn run tslint -c ../tslint.json -p tsconfig.json
+		yarn run tslint -c ./tslint.json -p tsconfig.json
 
 install_provider: PROVIDER_VERSION := latest
 install_provider: provider install_nodejs_sdk
@@ -144,13 +144,13 @@ install_python_sdk:
 install_java_sdk:
 	#Intentionally empty for CI / CD templating
 
-nodejs/eks/node_modules: nodejs/eks/package.json nodejs/eks/yarn.lock
-	yarn install --cwd nodejs/eks --no-progress
-	@touch nodejs/eks/node_modules
+eks/node_modules: eks/package.json eks/yarn.lock
+	yarn install --cwd eks --no-progress
+	@touch eks/node_modules
 
-nodejs/eks/bin: nodejs/eks/node_modules nodejs/eks/schema.json ${EKS_SRC}
-	rm -rf nodejs/eks/bin
-	cd nodejs/eks && \
+eks/bin: eks/node_modules eks/schema.json ${EKS_SRC}
+	rm -rf eks/bin
+	cd eks && \
 		yarn tsc && \
 		sed -e 's/\$${VERSION}/$(shell pulumictl get version --language javascript)/g' < package.json > bin/package.json && \
 		cp -R dashboard bin/ && \
@@ -162,8 +162,8 @@ ifneq ($(LOCAL_PLAT),"")
 bin/${PROVIDER}: bin/provider/$(LOCAL_PLAT)/${PROVIDER}
 	cp bin/provider/$(LOCAL_PLAT)/${PROVIDER} bin/${PROVIDER}
 else 
-bin/${PROVIDER}: nodejs/eks/bin nodejs/eks/node_modules
-	cd nodejs/eks && yarn run pkg . ${PKG_ARGS} --target ${NODE_VERSION} --output $(WORKING_DIR)/bin/${PROVIDER}
+bin/${PROVIDER}: eks/bin eks/node_modules
+	cd eks && yarn run pkg . ${PKG_ARGS} --target ${NODE_VERSION} --output $(WORKING_DIR)/bin/${PROVIDER}
 endif
 
 bin/provider/linux-amd64/${PROVIDER}: TARGET := ${NODE_VERSION}-linuxstatic-x64
@@ -171,9 +171,9 @@ bin/provider/linux-arm64/${PROVIDER}: TARGET := ${NODE_VERSION}-linuxstatic-arm6
 bin/provider/darwin-amd64/${PROVIDER}: TARGET := ${NODE_VERSION}-macos-x64
 bin/provider/darwin-arm64/${PROVIDER}: TARGET := ${NODE_VERSION}-macos-arm64
 bin/provider/windows-amd64/${PROVIDER}.exe: TARGET := ${NODE_VERSION}-win-x64
-bin/provider/%: nodejs/eks/bin nodejs/eks/node_modules
+bin/provider/%: eks/bin eks/node_modules
 	test ${TARGET}
-	cd nodejs/eks && \
+	cd eks && \
 		yarn run pkg . ${PKG_ARGS} --target ${TARGET} --output ${WORKING_DIR}/$@
 
 dist/${GZIP_PREFIX}-linux-amd64.tar.gz: bin/provider/linux-amd64/${PROVIDER}
