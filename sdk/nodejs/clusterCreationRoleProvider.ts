@@ -24,7 +24,6 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource {
         return obj['__pulumiType'] === ClusterCreationRoleProvider.__pulumiType;
     }
 
-    public /*out*/ readonly provider!: pulumi.Output<pulumiAws.Provider>;
     public /*out*/ readonly role!: pulumi.Output<pulumiAws.iam.Role>;
 
     /**
@@ -40,10 +39,8 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource {
         if (!opts.id) {
             resourceInputs["profile"] = args ? args.profile : undefined;
             resourceInputs["region"] = args ? args.region : undefined;
-            resourceInputs["provider"] = undefined /*out*/;
             resourceInputs["role"] = undefined /*out*/;
         } else {
-            resourceInputs["provider"] = undefined /*out*/;
             resourceInputs["role"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);

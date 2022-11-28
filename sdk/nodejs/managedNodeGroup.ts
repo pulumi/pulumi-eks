@@ -8,7 +8,7 @@ import * as utilities from "./utilities";
 import * as pulumiAws from "@pulumi/aws";
 import * as pulumiKubernetes from "@pulumi/kubernetes";
 
-import {VpcCni} from "./index";
+import {Cluster, VpcCni} from "./index";
 
 /**
  * ManagedNodeGroup is a component that wraps creating an AWS managed node group.
@@ -94,7 +94,7 @@ export interface ManagedNodeGroupArgs {
     /**
      * The target EKS cluster.
      */
-    cluster: pulumi.Input<inputs.CoreDataArgs>;
+    cluster: pulumi.Input<Cluster | inputs.CoreDataArgs>;
     /**
      * Name of the EKS Cluster.
      */

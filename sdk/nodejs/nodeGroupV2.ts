@@ -13,29 +13,25 @@ import {Cluster, VpcCni} from "./index";
 /**
  * NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
  */
-export class NodeGroup extends pulumi.ComponentResource {
+export class NodeGroupV2 extends pulumi.ComponentResource {
     /** @internal */
-    public static readonly __pulumiType = 'eks:index:NodeGroup';
+    public static readonly __pulumiType = 'eks:index:NodeGroupV2';
 
     /**
-     * Returns true if the given object is an instance of NodeGroup.  This is designed to work even
+     * Returns true if the given object is an instance of NodeGroupV2.  This is designed to work even
      * when multiple copies of the Pulumi SDK have been loaded into the same process.
      */
-    public static isInstance(obj: any): obj is NodeGroup {
+    public static isInstance(obj: any): obj is NodeGroupV2 {
         if (obj === undefined || obj === null) {
             return false;
         }
-        return obj['__pulumiType'] === NodeGroup.__pulumiType;
+        return obj['__pulumiType'] === NodeGroupV2.__pulumiType;
     }
 
     /**
-     * The AutoScalingGroup name for the Node group.
+     * The AutoScalingGroup for the Node group.
      */
-    public /*out*/ readonly autoScalingGroupName!: pulumi.Output<string>;
-    /**
-     * The CloudFormation Stack which defines the Node AutoScalingGroup.
-     */
-    public /*out*/ readonly cfnStack!: pulumi.Output<pulumiAws.cloudformation.Stack>;
+    public /*out*/ readonly autoScalingGroup!: pulumi.Output<pulumiAws.autoscaling.Group>;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
@@ -46,13 +42,13 @@ export class NodeGroup extends pulumi.ComponentResource {
     public readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup>;
 
     /**
-     * Create a NodeGroup resource with the given unique name, arguments, and options.
+     * Create a NodeGroupV2 resource with the given unique name, arguments, and options.
      *
      * @param name The _unique_ name of the resource.
      * @param args The arguments to use to populate this resource's properties.
      * @param opts A bag of options that control this resource's behavior.
      */
-    constructor(name: string, args: NodeGroupArgs, opts?: pulumi.ComponentResourceOptions) {
+    constructor(name: string, args: NodeGroupV2Args, opts?: pulumi.ComponentResourceOptions) {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
@@ -75,7 +71,9 @@ export class NodeGroup extends pulumi.ComponentResource {
             resourceInputs["keyName"] = args ? args.keyName : undefined;
             resourceInputs["kubeletExtraArgs"] = args ? args.kubeletExtraArgs : undefined;
             resourceInputs["labels"] = args ? args.labels : undefined;
+            resourceInputs["launchTemplateTagSpecifications"] = args ? args.launchTemplateTagSpecifications : undefined;
             resourceInputs["maxSize"] = args ? args.maxSize : undefined;
+            resourceInputs["minRefreshPercentage"] = args ? args.minRefreshPercentage : undefined;
             resourceInputs["minSize"] = args ? args.minSize : undefined;
             resourceInputs["nodeAssociatePublicIpAddress"] = args ? args.nodeAssociatePublicIpAddress : undefined;
             resourceInputs["nodePublicKey"] = args ? args.nodePublicKey : undefined;
@@ -87,23 +85,21 @@ export class NodeGroup extends pulumi.ComponentResource {
             resourceInputs["spotPrice"] = args ? args.spotPrice : undefined;
             resourceInputs["taints"] = args ? args.taints : undefined;
             resourceInputs["version"] = args ? args.version : undefined;
-            resourceInputs["autoScalingGroupName"] = undefined /*out*/;
-            resourceInputs["cfnStack"] = undefined /*out*/;
+            resourceInputs["autoScalingGroup"] = undefined /*out*/;
         } else {
-            resourceInputs["autoScalingGroupName"] = undefined /*out*/;
-            resourceInputs["cfnStack"] = undefined /*out*/;
+            resourceInputs["autoScalingGroup"] = undefined /*out*/;
             resourceInputs["extraNodeSecurityGroups"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
-        super(NodeGroup.__pulumiType, name, resourceInputs, opts, true /*remote*/);
+        super(NodeGroupV2.__pulumiType, name, resourceInputs, opts, true /*remote*/);
     }
 }
 
 /**
- * The set of arguments for constructing a NodeGroup resource.
+ * The set of arguments for constructing a NodeGroupV2 resource.
  */
-export interface NodeGroupArgs {
+export interface NodeGroupV2Args {
     /**
      * The AMI ID to use for the worker nodes.
      *
@@ -196,9 +192,17 @@ export interface NodeGroupArgs {
      */
     labels?: {[key: string]: string};
     /**
+     * The tag specifications to apply to the launch template.
+     */
+    launchTemplateTagSpecifications?: pulumi.Input<pulumi.Input<pulumiAws.types.input.ec2.LaunchTemplateTagSpecification>[]>;
+    /**
      * The maximum number of worker nodes running in the cluster. Defaults to 2.
      */
     maxSize?: pulumi.Input<number>;
+    /**
+     * The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+     */
+    minRefreshPercentage?: pulumi.Input<number>;
     /**
      * The minimum number of worker nodes running in the cluster. Defaults to 1.
      */

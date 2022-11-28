@@ -10,6 +10,7 @@ export * from "./clusterCreationRoleProvider";
 export * from "./managedNodeGroup";
 export * from "./nodeGroup";
 export * from "./nodeGroupSecurityGroup";
+export * from "./nodeGroupV2";
 export * from "./provider";
 export * from "./vpcCni";
 
@@ -26,6 +27,7 @@ import { ClusterCreationRoleProvider } from "./clusterCreationRoleProvider";
 import { ManagedNodeGroup } from "./managedNodeGroup";
 import { NodeGroup } from "./nodeGroup";
 import { NodeGroupSecurityGroup } from "./nodeGroupSecurityGroup";
+import { NodeGroupV2 } from "./nodeGroupV2";
 import { VpcCni } from "./vpcCni";
 
 const _module = {
@@ -42,6 +44,8 @@ const _module = {
                 return new NodeGroup(name, <any>undefined, { urn })
             case "eks:index:NodeGroupSecurityGroup":
                 return new NodeGroupSecurityGroup(name, <any>undefined, { urn })
+            case "eks:index:NodeGroupV2":
+                return new NodeGroupV2(name, <any>undefined, { urn })
             case "eks:index:VpcCni":
                 return new VpcCni(name, <any>undefined, { urn })
             default:

@@ -19,6 +19,7 @@
         "managedNodeGroup.ts",
         "nodeGroup.ts",
         "nodeGroupSecurityGroup.ts",
+        "nodeGroupV2.ts",
         "provider.ts",
         "types/index.ts",
         "types/input.ts",

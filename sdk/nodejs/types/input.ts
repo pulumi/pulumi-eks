@@ -43,7 +43,7 @@ export interface ClusterNodeGroupOptionsArgs {
     /**
      * Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
      */
-    bootstrapExtraArgs?: pulumi.Input<string>;
+    bootstrapExtraArgs?: string;
     /**
      * The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
      *
@@ -53,7 +53,7 @@ export interface ClusterNodeGroupOptionsArgs {
     /**
      * The ingress rule that gives node group access.
      */
-    clusterIngressRule?: pulumi.Input<pulumiAws.ec2.SecurityGroupRule>;
+    clusterIngressRule?: pulumiAws.ec2.SecurityGroupRule;
     /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      */
@@ -67,7 +67,7 @@ export interface ClusterNodeGroupOptionsArgs {
      *
      * This additional set of security groups captures any user application rules that will be needed for the nodes.
      */
-    extraNodeSecurityGroups?: pulumi.Input<pulumi.Input<pulumiAws.ec2.SecurityGroup>[]>;
+    extraNodeSecurityGroups?: pulumiAws.ec2.SecurityGroup[];
     /**
      * Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
      *
@@ -83,7 +83,7 @@ export interface ClusterNodeGroupOptionsArgs {
     /**
      * The ingress rule that gives node group access.
      */
-    instanceProfile?: pulumi.Input<pulumiAws.iam.InstanceProfile>;
+    instanceProfile?: pulumiAws.iam.InstanceProfile;
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
      */
@@ -95,11 +95,11 @@ export interface ClusterNodeGroupOptionsArgs {
     /**
      * Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
      */
-    kubeletExtraArgs?: pulumi.Input<string>;
+    kubeletExtraArgs?: string;
     /**
      * Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
      */
-    labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    labels?: {[key: string]: string};
     /**
      * The maximum number of worker nodes running in the cluster. Defaults to 2.
      */
@@ -111,7 +111,7 @@ export interface ClusterNodeGroupOptionsArgs {
     /**
      * Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
      */
-    nodeAssociatePublicIpAddress?: pulumi.Input<boolean>;
+    nodeAssociatePublicIpAddress?: boolean;
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
@@ -132,7 +132,7 @@ export interface ClusterNodeGroupOptionsArgs {
      *
      * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
      */
-    nodeSecurityGroup?: pulumi.Input<pulumiAws.ec2.SecurityGroup>;
+    nodeSecurityGroup?: pulumiAws.ec2.SecurityGroup;
     /**
      * The set of subnets to override and use for the worker node group.
      *
@@ -156,7 +156,7 @@ export interface ClusterNodeGroupOptionsArgs {
     /**
      * Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
      */
-    taints?: pulumi.Input<{[key: string]: pulumi.Input<inputs.TaintArgs>}>;
+    taints?: {[key: string]: inputs.TaintArgs};
     /**
      * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
      */
@@ -197,8 +197,8 @@ export interface CoreDataArgs {
  * Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
  */
 export interface CreationRoleProviderArgs {
-    provider: pulumi.Input<pulumiAws.Provider>;
-    role: pulumi.Input<pulumiAws.iam.Role>;
+    provider: pulumiAws.Provider;
+    role: pulumiAws.iam.Role;
 }
 
 /**
@@ -331,11 +331,11 @@ export interface TaintArgs {
     /**
      * The effect of the taint.
      */
-    effect: pulumi.Input<string>;
+    effect: string;
     /**
      * The value of the taint.
      */
-    value: pulumi.Input<string>;
+    value: string;
 }
 
 /**

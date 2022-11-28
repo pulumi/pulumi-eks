@@ -61,6 +61,10 @@ export class Cluster extends pulumi.ComponentResource {
      */
     public /*out*/ readonly kubeconfig!: pulumi.Output<any>;
     /**
+     * A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
+     */
+    public /*out*/ readonly kubeconfigJson!: pulumi.Output<string>;
+    /**
      * The security group for the cluster's nodes.
      */
     public /*out*/ readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup>;
@@ -102,12 +106,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["nodeAssociatePublicIpAddress"] = args ? args.nodeAssociatePublicIpAddress : undefined;
             resourceInputs["nodeGroupOptions"] = args ? args.nodeGroupOptions : undefined;
             resourceInputs["nodePublicKey"] = args ? args.nodePublicKey : undefined;
-            resourceInputs["nodeRootVolumeDeleteOnTermination"] = (args ? args.nodeRootVolumeDeleteOnTermination : undefined) ?? true;
-            resourceInputs["nodeRootVolumeEncrypted"] = (args ? args.nodeRootVolumeEncrypted : undefined) ?? false;
-            resourceInputs["nodeRootVolumeIops"] = args ? args.nodeRootVolumeIops : undefined;
-            resourceInputs["nodeRootVolumeSize"] = (args ? args.nodeRootVolumeSize : undefined) ?? 20;
-            resourceInputs["nodeRootVolumeThroughput"] = args ? args.nodeRootVolumeThroughput : undefined;
-            resourceInputs["nodeRootVolumeType"] = (args ? args.nodeRootVolumeType : undefined) ?? "gp2";
+            resourceInputs["nodeRootVolumeSize"] = args ? args.nodeRootVolumeSize : undefined;
             resourceInputs["nodeSecurityGroupTags"] = args ? args.nodeSecurityGroupTags : undefined;
             resourceInputs["nodeSubnetIds"] = args ? args.nodeSubnetIds : undefined;
             resourceInputs["nodeUserData"] = args ? args.nodeUserData : undefined;
@@ -133,6 +132,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["eksCluster"] = undefined /*out*/;
             resourceInputs["eksClusterIngressRule"] = undefined /*out*/;
             resourceInputs["kubeconfig"] = undefined /*out*/;
+            resourceInputs["kubeconfigJson"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
         } else {
             resourceInputs["awsProvider"] = undefined /*out*/;
@@ -143,6 +143,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["eksClusterIngressRule"] = undefined /*out*/;
             resourceInputs["instanceRoles"] = undefined /*out*/;
             resourceInputs["kubeconfig"] = undefined /*out*/;
+            resourceInputs["kubeconfigJson"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
@@ -176,7 +177,7 @@ export interface ClusterArgs {
     /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      */
-    clusterSecurityGroup?: pulumi.Input<pulumiAws.ec2.SecurityGroup>;
+    clusterSecurityGroup?: pulumiAws.ec2.SecurityGroup;
     /**
      * The tags to apply to the cluster security group.
      */
@@ -200,7 +201,7 @@ export interface ClusterArgs {
     /**
      * The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
      */
-    creationRoleProvider?: pulumi.Input<inputs.CreationRoleProviderArgs>;
+    creationRoleProvider?: inputs.CreationRoleProviderArgs;
     /**
      * List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
      */
@@ -312,11 +313,11 @@ export interface ClusterArgs {
     /**
      * Whether or not to auto-assign the EKS worker nodes public IP addresses. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
      */
-    nodeAssociatePublicIpAddress?: pulumi.Input<boolean>;
+    nodeAssociatePublicIpAddress?: boolean;
     /**
      * The common configuration settings for NodeGroups.
      */
-    nodeGroupOptions?: pulumi.Input<inputs.ClusterNodeGroupOptionsArgs>;
+    nodeGroupOptions?: inputs.ClusterNodeGroupOptionsArgs;
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
@@ -324,29 +325,9 @@ export interface ClusterArgs {
      */
     nodePublicKey?: pulumi.Input<string>;
     /**
-     * Whether to delete a cluster node's root volume on termination. Defaults to true.
-     */
-    nodeRootVolumeDeleteOnTermination?: pulumi.Input<boolean>;
-    /**
-     * Whether to encrypt a cluster node's root volume. Defaults to false.
-     */
-    nodeRootVolumeEncrypted?: pulumi.Input<boolean>;
-    /**
-     * Provisioned IOPS for a cluster node's root volume. Only valid for io1 volumes.
-     */
-    nodeRootVolumeIops?: pulumi.Input<number>;
-    /**
      * The size in GiB of a cluster node's root volume. Defaults to 20.
      */
     nodeRootVolumeSize?: pulumi.Input<number>;
-    /**
-     * Provisioned throughput performance in integer MiB/s for a cluster node's root volume. Only valid for gp3 volumes.
-     */
-    nodeRootVolumeThroughput?: pulumi.Input<number>;
-    /**
-     * Configured EBS type for a cluster node's root volume. Default is gp2.
-     */
-    nodeRootVolumeType?: pulumi.Input<string>;
     /**
      * The tags to apply to the default `nodeSecurityGroup` created by the cluster.
      *
@@ -412,7 +393,7 @@ export interface ClusterArgs {
      *   - "https://proxy.example.com"
      *   - "http://username:password@proxy.example.com:3128"
      */
-    proxy?: pulumi.Input<string>;
+    proxy?: string;
     /**
      * Indicates which CIDR blocks can access the Amazon EKS public API server endpoint.
      */
@@ -444,13 +425,13 @@ export interface ClusterArgs {
     /**
      * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
      */
-    skipDefaultNodeGroup?: pulumi.Input<boolean>;
+    skipDefaultNodeGroup?: boolean;
     /**
      * An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
      *
      * Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
      */
-    storageClasses?: pulumi.Input<string | {[key: string]: pulumi.Input<inputs.StorageClassArgs>}>;
+    storageClasses?: string | {[key: string]: inputs.StorageClassArgs};
     /**
      * The set of all subnets, public and private, to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
      *
@@ -470,7 +451,7 @@ export interface ClusterArgs {
     /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
      */
-    useDefaultVpcCni?: pulumi.Input<boolean>;
+    useDefaultVpcCni?: boolean;
     /**
      * Optional mappings from AWS IAM users to Kubernetes users and groups.
      */
@@ -482,7 +463,7 @@ export interface ClusterArgs {
     /**
      * The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
      */
-    vpcCniOptions?: pulumi.Input<inputs.VpcCniOptionsArgs>;
+    vpcCniOptions?: inputs.VpcCniOptionsArgs;
     /**
      * The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the default VPC.
      */
