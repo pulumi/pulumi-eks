@@ -3,11 +3,11 @@
     "main": "index.js",
     "devDependencies": {
         "typescript": "^3.0.0",
-        "@types/node": "latest"
+        "@types/node": "18.11.9"
     },
     "dependencies": {
-        "@pulumi/pulumi": "latest",
-        "@pulumi/aws": "latest",
-        "@pulumi/awsx": "latest"
+        "@pulumi/pulumi": "^3.48.0",
+        "@pulumi/aws": "^5.21.1",
+        "@pulumi/awsx": "^1.0.0"
     }
 }

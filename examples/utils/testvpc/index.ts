@@ -14,7 +14,7 @@ class Provider implements pulumi.provider.Provider {
         return Promise.resolve({
             urn: vpc.urn,
             state: {
-                vpcId: vpc.id,
+                vpcId: vpc.vpcId,
                 publicSubnetIds: vpc.publicSubnetIds,
                 privateSubnetIds: vpc.privateSubnetIds
             },
