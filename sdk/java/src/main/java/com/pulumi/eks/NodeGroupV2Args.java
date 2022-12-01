@@ -442,7 +442,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="nodeSecurityGroup")
-    private @Nullable SecurityGroup nodeSecurityGroup;
+    private @Nullable Output<SecurityGroup> nodeSecurityGroup;
 
     /**
      * @return The security group for the worker node group to communicate with the cluster.
@@ -455,7 +455,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
      * 
      */
-    public Optional<SecurityGroup> nodeSecurityGroup() {
+    public Optional<Output<SecurityGroup>> nodeSecurityGroup() {
         return Optional.ofNullable(this.nodeSecurityGroup);
     }
 
@@ -1134,9 +1134,26 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder nodeSecurityGroup(@Nullable SecurityGroup nodeSecurityGroup) {
+        public Builder nodeSecurityGroup(@Nullable Output<SecurityGroup> nodeSecurityGroup) {
             $.nodeSecurityGroup = nodeSecurityGroup;
             return this;
+        }
+
+        /**
+         * @param nodeSecurityGroup The security group for the worker node group to communicate with the cluster.
+         * 
+         * This security group requires specific inbound and outbound rules.
+         * 
+         * See for more details:
+         * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+         * 
+         * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeSecurityGroup(SecurityGroup nodeSecurityGroup) {
+            return nodeSecurityGroup(Output.of(nodeSecurityGroup));
         }
 
         /**

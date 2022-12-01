@@ -57,8 +57,7 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                        "plain": true
+                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "plain": true,
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
@@ -117,7 +116,6 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                    "plain": true,
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
@@ -629,7 +627,6 @@
             "inputProperties": {
                 "clusterSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                    "plain": true,
                     "description": "The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups."
                 },
                 "clusterSecurityGroupTags": {
@@ -1111,8 +1108,7 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                        "plain": true
+                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "plain": true,
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
@@ -1171,7 +1167,6 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                    "plain": true,
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
@@ -1335,8 +1330,7 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                        "plain": true
+                        "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "plain": true,
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
@@ -1406,7 +1400,6 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                    "plain": true,
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {

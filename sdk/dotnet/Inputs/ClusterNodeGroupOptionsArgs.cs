@@ -93,16 +93,16 @@ namespace Pulumi.Eks.Inputs
         public Input<bool>? EncryptRootBlockDevice { get; set; }
 
         [Input("extraNodeSecurityGroups")]
-        private List<Pulumi.Aws.Ec2.SecurityGroup>? _extraNodeSecurityGroups;
+        private List<Input<Pulumi.Aws.Ec2.SecurityGroup>>? _extraNodeSecurityGroups;
 
         /// <summary>
         /// Extra security groups to attach on all nodes in this worker node group.
         /// 
         /// This additional set of security groups captures any user application rules that will be needed for the nodes.
         /// </summary>
-        public List<Pulumi.Aws.Ec2.SecurityGroup> ExtraNodeSecurityGroups
+        public List<Input<Pulumi.Aws.Ec2.SecurityGroup>> ExtraNodeSecurityGroups
         {
-            get => _extraNodeSecurityGroups ?? (_extraNodeSecurityGroups = new List<Pulumi.Aws.Ec2.SecurityGroup>());
+            get => _extraNodeSecurityGroups ?? (_extraNodeSecurityGroups = new List<Input<Pulumi.Aws.Ec2.SecurityGroup>>());
             set => _extraNodeSecurityGroups = value;
         }
 
@@ -199,7 +199,7 @@ namespace Pulumi.Eks.Inputs
         /// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
         /// </summary>
         [Input("nodeSecurityGroup")]
-        public Pulumi.Aws.Ec2.SecurityGroup? NodeSecurityGroup { get; set; }
+        public Input<Pulumi.Aws.Ec2.SecurityGroup>? NodeSecurityGroup { get; set; }
 
         [Input("nodeSubnetIds")]
         private InputList<string>? _nodeSubnetIds;

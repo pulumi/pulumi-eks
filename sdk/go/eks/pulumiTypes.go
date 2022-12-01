@@ -166,7 +166,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// Extra security groups to attach on all nodes in this worker node group.
 	//
 	// This additional set of security groups captures any user application rules that will be needed for the nodes.
-	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
+	ExtraNodeSecurityGroups []ec2.SecurityGroupInput `pulumi:"extraNodeSecurityGroups"`
 	// Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 	//
 	// Defaults to false.
@@ -207,7 +207,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
 	//
 	// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
-	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
+	NodeSecurityGroup ec2.SecurityGroupInput `pulumi:"nodeSecurityGroup"`
 	// The set of subnets to override and use for the worker node group.
 	//
 	// Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
