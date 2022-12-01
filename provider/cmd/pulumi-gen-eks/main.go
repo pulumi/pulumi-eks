@@ -1423,7 +1423,6 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				Items: &schema.TypeSpec{
 					Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
 				},
-				Plain: true,
 			},
 			Description: "Extra security groups to attach on all nodes in this worker node group.\n\n" +
 				"This additional set of security groups captures any user application rules that will be " +

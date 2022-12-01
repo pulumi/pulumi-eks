@@ -188,7 +188,7 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
      * 
      */
     @Import(name="extraNodeSecurityGroups")
-    private @Nullable List<SecurityGroup> extraNodeSecurityGroups;
+    private @Nullable Output<List<SecurityGroup>> extraNodeSecurityGroups;
 
     /**
      * @return Extra security groups to attach on all nodes in this worker node group.
@@ -196,7 +196,7 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
      * This additional set of security groups captures any user application rules that will be needed for the nodes.
      * 
      */
-    public Optional<List<SecurityGroup>> extraNodeSecurityGroups() {
+    public Optional<Output<List<SecurityGroup>>> extraNodeSecurityGroups() {
         return Optional.ofNullable(this.extraNodeSecurityGroups);
     }
 
@@ -752,9 +752,21 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          * @return builder
          * 
          */
-        public Builder extraNodeSecurityGroups(@Nullable List<SecurityGroup> extraNodeSecurityGroups) {
+        public Builder extraNodeSecurityGroups(@Nullable Output<List<SecurityGroup>> extraNodeSecurityGroups) {
             $.extraNodeSecurityGroups = extraNodeSecurityGroups;
             return this;
+        }
+
+        /**
+         * @param extraNodeSecurityGroups Extra security groups to attach on all nodes in this worker node group.
+         * 
+         * This additional set of security groups captures any user application rules that will be needed for the nodes.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder extraNodeSecurityGroups(List<SecurityGroup> extraNodeSecurityGroups) {
+            return extraNodeSecurityGroups(Output.of(extraNodeSecurityGroups));
         }
 
         /**

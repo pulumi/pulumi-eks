@@ -187,7 +187,7 @@ type NodeGroupV2Args struct {
 	// Extra security groups to attach on all nodes in this worker node group.
 	//
 	// This additional set of security groups captures any user application rules that will be needed for the nodes.
-	ExtraNodeSecurityGroups []ec2.SecurityGroupInput
+	ExtraNodeSecurityGroups ec2.SecurityGroupArrayInput
 	// Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 	//
 	// Defaults to false.

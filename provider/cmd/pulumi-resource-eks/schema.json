@@ -59,7 +59,6 @@
                     "items": {
                         "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
-                    "plain": true,
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
                 "gpu": {
@@ -1110,7 +1109,6 @@
                     "items": {
                         "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
-                    "plain": true,
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
                 "gpu": {
@@ -1332,7 +1330,6 @@
                     "items": {
                         "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
-                    "plain": true,
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
                 "gpu": {

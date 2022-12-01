@@ -35,7 +35,7 @@ class ClusterNodeGroupOptionsArgs:
                  cluster_ingress_rule: Optional['pulumi_aws.ec2.SecurityGroupRule'] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
-                 extra_node_security_groups: Optional[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]] = None,
+                 extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
@@ -81,7 +81,7 @@ class ClusterNodeGroupOptionsArgs:
         :param 'pulumi_aws.ec2.SecurityGroupRule' cluster_ingress_rule: The ingress rule that gives node group access.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
-        :param Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] extra_node_security_groups: Extra security groups to attach on all nodes in this worker node group.
+        :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]] extra_node_security_groups: Extra security groups to attach on all nodes in this worker node group.
                
                This additional set of security groups captures any user application rules that will be needed for the nodes.
         :param pulumi.Input[bool] gpu: Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
@@ -294,7 +294,7 @@ class ClusterNodeGroupOptionsArgs:
 
     @property
     @pulumi.getter(name="extraNodeSecurityGroups")
-    def extra_node_security_groups(self) -> Optional[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]:
+    def extra_node_security_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]]:
         """
         Extra security groups to attach on all nodes in this worker node group.
 
@@ -303,7 +303,7 @@ class ClusterNodeGroupOptionsArgs:
         return pulumi.get(self, "extra_node_security_groups")
 
     @extra_node_security_groups.setter
-    def extra_node_security_groups(self, value: Optional[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]):
+    def extra_node_security_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]]):
         pulumi.set(self, "extra_node_security_groups", value)
 
     @property
