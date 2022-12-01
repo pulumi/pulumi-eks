@@ -71,7 +71,7 @@ If you are interested in contributing, please see the [contributing docs][contri
 
 ## Code of Conduct
 
-You can read the code of conduct [here][code-of-conduct].
+Please follow the [code of conduct][code-of-conduct].
 
 [contributing]: CONTRIBUTING.md
 [code-of-conduct]: CODE-OF-CONDUCT.md
