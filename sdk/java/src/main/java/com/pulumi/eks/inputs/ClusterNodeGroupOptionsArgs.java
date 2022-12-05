@@ -141,13 +141,13 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
      * 
      */
     @Import(name="clusterIngressRule")
-    private @Nullable SecurityGroupRule clusterIngressRule;
+    private @Nullable Output<SecurityGroupRule> clusterIngressRule;
 
     /**
      * @return The ingress rule that gives node group access.
      * 
      */
-    public Optional<SecurityGroupRule> clusterIngressRule() {
+    public Optional<Output<SecurityGroupRule>> clusterIngressRule() {
         return Optional.ofNullable(this.clusterIngressRule);
     }
 
@@ -697,9 +697,19 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          * @return builder
          * 
          */
-        public Builder clusterIngressRule(@Nullable SecurityGroupRule clusterIngressRule) {
+        public Builder clusterIngressRule(@Nullable Output<SecurityGroupRule> clusterIngressRule) {
             $.clusterIngressRule = clusterIngressRule;
             return this;
+        }
+
+        /**
+         * @param clusterIngressRule The ingress rule that gives node group access.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterIngressRule(SecurityGroupRule clusterIngressRule) {
+            return clusterIngressRule(Output.of(clusterIngressRule));
         }
 
         /**

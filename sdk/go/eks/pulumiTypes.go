@@ -158,7 +158,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
 	CloudFormationTags pulumi.StringMapInput `pulumi:"cloudFormationTags"`
 	// The ingress rule that gives node group access.
-	ClusterIngressRule *ec2.SecurityGroupRule `pulumi:"clusterIngressRule"`
+	ClusterIngressRule ec2.SecurityGroupRuleInput `pulumi:"clusterIngressRule"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput `pulumi:"desiredCapacity"`
 	// Encrypt the root block device of the nodes in the node group.

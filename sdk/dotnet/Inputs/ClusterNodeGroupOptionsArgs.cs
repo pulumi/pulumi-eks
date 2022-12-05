@@ -78,7 +78,7 @@ namespace Pulumi.Eks.Inputs
         /// The ingress rule that gives node group access.
         /// </summary>
         [Input("clusterIngressRule")]
-        public Pulumi.Aws.Ec2.SecurityGroupRule? ClusterIngressRule { get; set; }
+        public Input<Pulumi.Aws.Ec2.SecurityGroupRule>? ClusterIngressRule { get; set; }
 
         /// <summary>
         /// The number of worker nodes that should be running in the cluster. Defaults to 2.

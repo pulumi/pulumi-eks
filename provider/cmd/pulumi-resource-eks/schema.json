@@ -43,7 +43,6 @@
                 },
                 "clusterIngressRule": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
-                    "plain": true,
                     "description": "The ingress rule that gives node group access."
                 },
                 "desiredCapacity": {
@@ -1093,7 +1092,6 @@
                 },
                 "clusterIngressRule": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
-                    "plain": true,
                     "description": "The ingress rule that gives node group access."
                 },
                 "desiredCapacity": {
@@ -1314,7 +1312,6 @@
                 },
                 "clusterIngressRule": {
                     "$ref": "/aws/v5.4.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
-                    "plain": true,
                     "description": "The ingress rule that gives node group access."
                 },
                 "desiredCapacity": {

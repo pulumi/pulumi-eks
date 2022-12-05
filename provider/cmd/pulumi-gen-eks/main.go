@@ -1412,8 +1412,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"clusterIngressRule": {
 			TypeSpec: schema.TypeSpec{
-				Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule"),
-				Plain: true,
+				Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule"),
 			},
 			Description: "The ingress rule that gives node group access.",
 		},

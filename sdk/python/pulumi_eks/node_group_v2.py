@@ -24,7 +24,7 @@ class NodeGroupV2Args:
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  bootstrap_extra_args: Optional[str] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 cluster_ingress_rule: Optional['pulumi_aws.ec2.SecurityGroupRule'] = None,
+                 cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
@@ -73,7 +73,7 @@ class NodeGroupV2Args:
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cloud_formation_tags: The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
-        :param 'pulumi_aws.ec2.SecurityGroupRule' cluster_ingress_rule: The ingress rule that gives node group access.
+        :param pulumi.Input['pulumi_aws.ec2.SecurityGroupRule'] cluster_ingress_rule: The ingress rule that gives node group access.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]] extra_node_security_groups: Extra security groups to attach on all nodes in this worker node group.
@@ -272,14 +272,14 @@ class NodeGroupV2Args:
 
     @property
     @pulumi.getter(name="clusterIngressRule")
-    def cluster_ingress_rule(self) -> Optional['pulumi_aws.ec2.SecurityGroupRule']:
+    def cluster_ingress_rule(self) -> Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']]:
         """
         The ingress rule that gives node group access.
         """
         return pulumi.get(self, "cluster_ingress_rule")
 
     @cluster_ingress_rule.setter
-    def cluster_ingress_rule(self, value: Optional['pulumi_aws.ec2.SecurityGroupRule']):
+    def cluster_ingress_rule(self, value: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']]):
         pulumi.set(self, "cluster_ingress_rule", value)
 
     @property
@@ -593,7 +593,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  bootstrap_extra_args: Optional[str] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
-                 cluster_ingress_rule: Optional['pulumi_aws.ec2.SecurityGroupRule'] = None,
+                 cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
@@ -646,7 +646,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
         :param pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]] cluster: The target EKS cluster.
-        :param 'pulumi_aws.ec2.SecurityGroupRule' cluster_ingress_rule: The ingress rule that gives node group access.
+        :param pulumi.Input['pulumi_aws.ec2.SecurityGroupRule'] cluster_ingress_rule: The ingress rule that gives node group access.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]] extra_node_security_groups: Extra security groups to attach on all nodes in this worker node group.
@@ -724,7 +724,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  bootstrap_extra_args: Optional[str] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
-                 cluster_ingress_rule: Optional['pulumi_aws.ec2.SecurityGroupRule'] = None,
+                 cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,

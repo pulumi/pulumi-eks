@@ -177,7 +177,7 @@ type NodeGroupArgs struct {
 	// The target EKS cluster.
 	Cluster pulumi.Input
 	// The ingress rule that gives node group access.
-	ClusterIngressRule *ec2.SecurityGroupRule
+	ClusterIngressRule ec2.SecurityGroupRuleInput
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput
 	// Encrypt the root block device of the nodes in the node group.
