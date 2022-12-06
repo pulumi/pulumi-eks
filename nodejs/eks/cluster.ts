@@ -400,7 +400,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         version: args.version,
     };
 
-    const partition = pulumi.output(aws.getPartition({ provider })).partition;
+    const { partition, dnsSuffix } = pulumi.output(aws.getPartition({ provider }));
 
     // Configure default networking architecture.
     let vpcId: pulumi.Input<string> = args.vpcId!;
@@ -641,7 +641,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         instanceRoles = pulumi.output([args.instanceRole]);
     } else {
         const instanceRole = (new ServiceRole(`${name}-instanceRole`, {
-            service: "ec2.amazonaws.com",
+            service: pulumi.interpolate`ec2.${dnsSuffix}`,
             managedPolicyArns: [
                 {
                     id: "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
