@@ -91,7 +91,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.19.x
+          go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.1.0
         with:
@@ -240,10 +240,10 @@ jobs:
           curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
           chmod +x ./kubectl
           sudo mv kubectl /usr/local/bin
-      - name: Install python
+      - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.7"
+          python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
         run: |
           python -m pip install --upgrade pip
@@ -470,10 +470,10 @@ jobs:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
-      - name: Install python
+      - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.7"
+          python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
         run: |
           python -m pip install --upgrade pip
@@ -582,10 +582,10 @@ jobs:
         with:
           node-version: ${{ env.NODEVERSION }}
           registry-url: https://registry.npmjs.org
-      - name: Install python
+      - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.7"
+          python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
         run: |
           python -m pip install --upgrade pip
