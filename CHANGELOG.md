@@ -1,3 +1,6 @@
+## Unreleased
+- [Allow EKS clusters to define metadata options for EC2 groups](https://github.com/pulumi/pulumi-eks/pull/836)
+
 ## 1.0.0 (Released Nov 23, 2022)
 - [Remove input properties on Cluster that are not implemented #821](https://github.com/pulumi/pulumi-eks/pull/821)
 - [Add support for non-default AWS partitions #788](https://github.com/pulumi/pulumi-eks/pull/788)

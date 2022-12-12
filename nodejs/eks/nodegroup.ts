@@ -314,6 +314,8 @@ export interface NodeGroupV2Options extends NodeGroupOptions {
     minRefreshPercentage?: pulumi.Input<number>;
 
     launchTemplateTagSpecifications?: pulumi.Input<pulumi.Input<awsInputs.ec2.LaunchTemplateTagSpecification>[]>;
+
+    metadataOptions?: pulumi.Input<awsInputs.ec2.InstanceMetadataOptions>;
 }
 
 /**
@@ -1066,6 +1068,7 @@ ${customUserData}
             associatePublicIpAddress: String(nodeAssociatePublicIpAddress),
             securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
         }],
+        metadataOptions: args.metadataOptions,
         userData: userdata,
         tagSpecifications: args.launchTemplateTagSpecifications,
     }, { parent, provider});
