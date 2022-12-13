@@ -90,7 +90,7 @@ async function getThumbprint(
                 .on("socket", socket => {
                     if (!(socket instanceof tls.TLSSocket)) {
                         req.emit("error", new Error("socket is not of type TLSSocket"));
-                        return
+                        return;
                     }
                     socket.on("secureConnect", () => {
                         const certificate: tls.DetailedPeerCertificate = socket.getPeerCertificate(true);
