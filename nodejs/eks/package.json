@@ -3,7 +3,6 @@
     "version": "${VERSION}",
     "description": "Pulumi Amazon Web Services (AWS) EKS Components.",
     "license": "Apache-2.0",
-    "bin": "bin/cmd/provider/index.js",
     "keywords": [
         "pulumi",
         "aws",
