@@ -88,13 +88,18 @@ async function getThumbprint(
                 .get(options)
                 .on("error", reject)
                 .on("socket", socket => {
+                    if (!(socket instanceof tls.TLSSocket)) {
+                        req.emit("error", new Error("socket is not of type TLSSocket"));
+                        return
+                    }
                     socket.on("secureConnect", () => {
                         const certificate: tls.DetailedPeerCertificate = socket.getPeerCertificate(true);
                         const fingerprint = findIntRootCACertificate(certificate).fingerprint;
                         // Check if certificate is valid
                         if (socket.authorized === false) {
-                            req.emit("error", new Error(socket.authorizationError));
-                            return req.abort();
+                            req.emit("error", socket.authorizationError);
+                            req.destroy();
+                            return;
                         }
                         resolve( // Ref: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
                             fingerprint
