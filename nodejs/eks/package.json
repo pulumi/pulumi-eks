@@ -8,6 +8,9 @@
         "aws",
         "eks"
     ],
+    "scripts": {
+        "format": "prettier --list-different --write ."
+    },
     "homepage": "https://pulumi.com",
     "repository": {
         "type": "git",
@@ -37,5 +40,9 @@
     },
     "pulumi": {
         "resource": true
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "printWidth": 100
     }
 }
