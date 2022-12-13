@@ -24,7 +24,7 @@ public class NodeGroupV2 extends com.pulumi.resources.ComponentResource {
      * The AutoScalingGroup for the Node group.
      * 
      */
-    @Export(name="autoScalingGroup", type=Group.class, parameters={})
+    @Export(name="autoScalingGroup", refs={Group.class}, tree="[0]")
     private Output<Group> autoScalingGroup;
 
     /**
@@ -38,7 +38,7 @@ public class NodeGroupV2 extends com.pulumi.resources.ComponentResource {
      * The additional security groups for the node group that captures user-specific rules.
      * 
      */
-    @Export(name="extraNodeSecurityGroups", type=List.class, parameters={SecurityGroup.class})
+    @Export(name="extraNodeSecurityGroups", refs={List.class,SecurityGroup.class}, tree="[0,1]")
     private Output<List<SecurityGroup>> extraNodeSecurityGroups;
 
     /**
@@ -52,7 +52,7 @@ public class NodeGroupV2 extends com.pulumi.resources.ComponentResource {
      * The security group for the node group to communicate with the cluster.
      * 
      */
-    @Export(name="nodeSecurityGroup", type=SecurityGroup.class, parameters={})
+    @Export(name="nodeSecurityGroup", refs={SecurityGroup.class}, tree="[0]")
     private Output<SecurityGroup> nodeSecurityGroup;
 
     /**

@@ -23,7 +23,7 @@ public class NodeGroupSecurityGroup extends com.pulumi.resources.ComponentResour
      * The security group for node groups with the default ingress &amp; egress rules required to connect and work with the EKS cluster security group.
      * 
      */
-    @Export(name="securityGroup", type=SecurityGroup.class, parameters={})
+    @Export(name="securityGroup", refs={SecurityGroup.class}, tree="[0]")
     private Output<SecurityGroup> securityGroup;
 
     /**
@@ -37,7 +37,7 @@ public class NodeGroupSecurityGroup extends com.pulumi.resources.ComponentResour
      * The EKS cluster ingress rule.
      * 
      */
-    @Export(name="securityGroupRule", type=SecurityGroupRule.class, parameters={})
+    @Export(name="securityGroupRule", refs={SecurityGroupRule.class}, tree="[0]")
     private Output<SecurityGroupRule> securityGroupRule;
 
     /**
