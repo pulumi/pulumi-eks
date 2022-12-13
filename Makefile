@@ -11,7 +11,7 @@ GZIP_PREFIX		:= pulumi-resource-${PACK}-v${VERSION}
 WORKING_DIR     := $(shell pwd)
 
 JAVA_GEN 		 := pulumi-java-gen
-JAVA_GEN_VERSION := v0.5.2
+JAVA_GEN_VERSION := v0.6.0
 
 EKS_SRC 		:= $(wildcard nodejs/eks/*.*) $(wildcard nodejs/eks/*/*.ts) $(wildcard nodejs/eks/*/*/*.ts)
 
