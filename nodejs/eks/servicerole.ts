@@ -39,7 +39,7 @@ export interface ServiceRoleArgs {
     /**
      * One or more managed policy ARNs to attach to this role.
      */
-    readonly managedPolicyArns?: { id: string, arn: pulumi.Input<string> }[];
+    readonly managedPolicyArns?: { id: string; arn: pulumi.Input<string> }[];
 }
 
 /**
@@ -60,31 +60,45 @@ export class ServiceRole extends pulumi.ComponentResource {
     constructor(name: string, args: ServiceRoleArgs, opts?: pulumi.ResourceOptions) {
         super("eks:index:ServiceRole", name, args, opts);
 
-        const assumeRolePolicy = pulumi.output(args.service).apply(service => JSON.stringify({
-            Version: "2012-10-17",
-            Statement: [{
-                Action: [
-                    "sts:AssumeRole",
+        const assumeRolePolicy = pulumi.output(args.service).apply((service) =>
+            JSON.stringify({
+                Version: "2012-10-17",
+                Statement: [
+                    {
+                        Action: ["sts:AssumeRole"],
+                        Effect: "Allow",
+                        Principal: {
+                            Service: [service],
+                        },
+                    },
                 ],
-                Effect: "Allow",
-                Principal: {
-                    Service: [ service ],
-                },
-            }],
-        }));
-        const role = new aws.iam.Role(`${name}-role`, {
-            description: args.description,
-            assumeRolePolicy: assumeRolePolicy,
-        }, { parent: this });
+            })
+        );
+        const role = new aws.iam.Role(
+            `${name}-role`,
+            {
+                description: args.description,
+                assumeRolePolicy: assumeRolePolicy,
+            },
+            { parent: this }
+        );
 
         const rolePolicyAttachments: aws.iam.RolePolicyAttachment[] = [];
-        for (const policy of (args.managedPolicyArns || [])) {
-            rolePolicyAttachments.push(new aws.iam.RolePolicyAttachment(`${name}-${sha1hash(policy.id)}`, {
-                policyArn: policy.arn,
-                role: role,
-            }, { parent: this }));
+        for (const policy of args.managedPolicyArns || []) {
+            rolePolicyAttachments.push(
+                new aws.iam.RolePolicyAttachment(
+                    `${name}-${sha1hash(policy.id)}`,
+                    {
+                        policyArn: policy.arn,
+                        role: role,
+                    },
+                    { parent: this }
+                )
+            );
         }
-        this.role = pulumi.all([role.arn, ...rolePolicyAttachments.map(r => r.id)]).apply(() => role);
+        this.role = pulumi
+            .all([role.arn, ...rolePolicyAttachments.map((r) => r.id)])
+            .apply(() => role);
 
         this.registerOutputs({ role: this.role });
     }

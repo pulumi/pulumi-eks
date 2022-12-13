@@ -22,27 +22,27 @@ const THUMBPRINT_MAX_RETRIES: number = 12;
 const THUMBPRINT_SLEEP_MILLISECOND_INTERVAL: number = 5000;
 
 /**
-* Get the certificate thumprint of the issuing CA for the TLS enabled URL.
-*
-* This is used for OIDC provider configuration.
-*
-* See for more details:
-* - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
-* - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
-* - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-* - https://medium.com/@marcincuber/amazon-eks-with-oidc-provider-iam-roles-for-kubernetes-services-accounts-59015d15cb0c
-* - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
-*/
+ * Get the certificate thumprint of the issuing CA for the TLS enabled URL.
+ *
+ * This is used for OIDC provider configuration.
+ *
+ * See for more details:
+ * - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
+ * - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
+ * - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
+ * - https://medium.com/@marcincuber/amazon-eks-with-oidc-provider-iam-roles-for-kubernetes-services-accounts-59015d15cb0c
+ * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+ */
 export function getIssuerCAThumbprint(
     issuerUrl: pulumi.Input<string>,
-    agent: http.Agent,
+    agent: http.Agent
 ): pulumi.Output<string> {
-    return pulumi.output(issuerUrl).apply(issUrl => {
+    return pulumi.output(issuerUrl).apply((issUrl) => {
         return getThumbprint(
             issUrl,
             THUMBPRINT_MAX_RETRIES,
             THUMBPRINT_SLEEP_MILLISECOND_INTERVAL,
-            agent,
+            agent
         );
     });
 }
@@ -53,13 +53,15 @@ export function getIssuerCAThumbprint(
 // chain starting from the end user cert, and moving up to it's issuer.
 //
 // See for more details: https://knowledge.digicert.com/solution/SO4261.html
-function findIntRootCACertificate(certificate: tls.DetailedPeerCertificate): tls.DetailedPeerCertificate {
+function findIntRootCACertificate(
+    certificate: tls.DetailedPeerCertificate
+): tls.DetailedPeerCertificate {
     let cert = certificate;
     let prevCert = cert?.issuerCertificate;
 
     // The trusted root cert is the last cert in the chain, and it repeats itself as the issuer.
     // The intermediate root CA cert is the second to last cert in the chain.
-    while (cert?.fingerprint !== cert?.issuerCertificate?.fingerprint ) {
+    while (cert?.fingerprint !== cert?.issuerCertificate?.fingerprint) {
         prevCert = cert;
         cert = cert.issuerCertificate;
     }
@@ -75,7 +77,7 @@ async function getThumbprint(
     issuerUrl: string,
     retriesLeft: number,
     interval: number,
-    agent: http.Agent,
+    agent: http.Agent
 ): Promise<string> {
     // For up to 60 seconds (12 retries @ 5000 ms), try to contact the issuer URL.
     try {
@@ -93,7 +95,8 @@ async function getThumbprint(
                         return;
                     }
                     socket.on("secureConnect", () => {
-                        const certificate: tls.DetailedPeerCertificate = socket.getPeerCertificate(true);
+                        const certificate: tls.DetailedPeerCertificate =
+                            socket.getPeerCertificate(true);
                         const fingerprint = findIntRootCACertificate(certificate).fingerprint;
                         // Check if certificate is valid
                         if (socket.authorized === false) {
@@ -101,11 +104,9 @@ async function getThumbprint(
                             req.destroy();
                             return;
                         }
-                        resolve( // Ref: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
-                            fingerprint
-                            .split(":")
-                            .join("")
-                            .toLowerCase(), // Ref: https://github.com/terraform-providers/terraform-provider-aws/issues/10104#issuecomment-551079323
+                        resolve(
+                            // Ref: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
+                            fingerprint.split(":").join("").toLowerCase() // Ref: https://github.com/terraform-providers/terraform-provider-aws/issues/10104#issuecomment-551079323
                         );
                     });
                 });
@@ -113,8 +114,13 @@ async function getThumbprint(
         });
     } catch (e) {
         if (retriesLeft) {
-            pulumi.log.info(`Waiting for cert issuer URL(${THUMBPRINT_MAX_RETRIES - retriesLeft})`, undefined, undefined, true);
-            await new Promise(resolve => setTimeout(resolve, interval));
+            pulumi.log.info(
+                `Waiting for cert issuer URL(${THUMBPRINT_MAX_RETRIES - retriesLeft})`,
+                undefined,
+                undefined,
+                true
+            );
+            await new Promise((resolve) => setTimeout(resolve, interval));
             return getThumbprint(issuerUrl, retriesLeft - 1, interval, agent);
         }
     }

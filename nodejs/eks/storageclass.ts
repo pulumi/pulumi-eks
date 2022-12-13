@@ -72,75 +72,86 @@ export interface StorageClass {
     default?: pulumi.Input<boolean>;
 
     /**
-    * AllowVolumeExpansion shows whether the storage class allow volume expand
-    */
+     * AllowVolumeExpansion shows whether the storage class allow volume expand
+     */
     allowVolumeExpansion?: pulumi.Input<boolean>;
 
     /**
-    * Standard object's metadata. More info:
-    * https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
-    */
+     * Standard object's metadata. More info:
+     * https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+     */
     metadata?: pulumi.Input<k8sInputs.meta.v1.ObjectMeta>;
 
     /**
-    * Dynamically provisioned PersistentVolumes of this storage class are created with these
-    * mountOptions, e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one
-    * is invalid.
-    */
+     * Dynamically provisioned PersistentVolumes of this storage class are created with these
+     * mountOptions, e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one
+     * is invalid.
+     */
     mountOptions?: pulumi.Input<string[]>;
 
     /**
-    * Dynamically provisioned PersistentVolumes of this storage class are created with this
-    * reclaimPolicy. Defaults to Delete.
-    */
+     * Dynamically provisioned PersistentVolumes of this storage class are created with this
+     * reclaimPolicy. Defaults to Delete.
+     */
     reclaimPolicy?: pulumi.Input<string>;
 
     /**
-    * VolumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound.
-    * When unset, VolumeBindingImmediate is used. This field is alpha-level and is only honored
-    * by servers that enable the VolumeScheduling feature.
-    */
+     * VolumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound.
+     * When unset, VolumeBindingImmediate is used. This field is alpha-level and is only honored
+     * by servers that enable the VolumeScheduling feature.
+     */
     volumeBindingMode?: pulumi.Input<string>;
 }
 
 /**
  * Creates a single Kubernetes StorageClass from the given inputs.
  */
-export function createStorageClass(name: string, storageClass: StorageClass, opts: pulumi.CustomResourceOptions): k8s.storage.v1.StorageClass {
+export function createStorageClass(
+    name: string,
+    storageClass: StorageClass,
+    opts: pulumi.CustomResourceOptions
+): k8s.storage.v1.StorageClass {
     // Compute the storage class's metadata, including its name and default storage class annotation.
-    const metadata = pulumi.all([storageClass.metadata || {}, storageClass.default])
+    const metadata = pulumi
+        .all([storageClass.metadata || {}, storageClass.default])
         .apply(([m, isDefault]) => {
             if (isDefault) {
-                m.annotations = { ...m.annotations || {}, "storageclass.kubernetes.io/is-default-class": "true" };
+                m.annotations = {
+                    ...(m.annotations || {}),
+                    "storageclass.kubernetes.io/is-default-class": "true",
+                };
             }
             return m;
         });
 
     // Figure out the parameters for the storage class.
     const parameters: { [key: string]: pulumi.Input<string> } = {
-        "type": storageClass.type,
+        type: storageClass.type,
     };
     if (storageClass.zones) {
-        parameters["zones"] = pulumi.output(storageClass.zones).apply(v => v.join(", "));
+        parameters["zones"] = pulumi.output(storageClass.zones).apply((v) => v.join(", "));
     }
     if (storageClass.iopsPerGb) {
-        parameters["iopsPerGb"] = pulumi.output(storageClass.iopsPerGb).apply(v => `${v}`);
+        parameters["iopsPerGb"] = pulumi.output(storageClass.iopsPerGb).apply((v) => `${v}`);
     }
     if (storageClass.encrypted) {
-        parameters["encrypted"] = pulumi.output(storageClass.encrypted).apply(v => `${v}`);
+        parameters["encrypted"] = pulumi.output(storageClass.encrypted).apply((v) => `${v}`);
     }
     if (storageClass.kmsKeyId) {
         parameters["kmsKeyId"] = storageClass.kmsKeyId;
     }
 
-    return new k8s.storage.v1.StorageClass(name, {
-        metadata: metadata,
-        provisioner: "kubernetes.io/aws-ebs",
-        parameters: parameters,
-        allowVolumeExpansion: storageClass.allowVolumeExpansion,
-        mountOptions: storageClass.mountOptions,
-        reclaimPolicy: storageClass.reclaimPolicy,
-        volumeBindingMode: storageClass.volumeBindingMode,
-    }, opts);
+    return new k8s.storage.v1.StorageClass(
+        name,
+        {
+            metadata: metadata,
+            provisioner: "kubernetes.io/aws-ebs",
+            parameters: parameters,
+            allowVolumeExpansion: storageClass.allowVolumeExpansion,
+            mountOptions: storageClass.mountOptions,
+            reclaimPolicy: storageClass.reclaimPolicy,
+            volumeBindingMode: storageClass.volumeBindingMode,
+        },
+        opts
+    );
 }
-

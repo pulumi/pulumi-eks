@@ -67,7 +67,7 @@ export interface VpcCniOptions {
      * IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
      * Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
      */
-     enablePrefixDelegation?: pulumi.Input<boolean>;
+    enablePrefixDelegation?: pulumi.Input<boolean>;
 
     /**
      * VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode.
@@ -217,33 +217,45 @@ export interface VpcCniOptions {
  * able to programatically manage existing infrastructure, we can replace this with a real k8s resource.
  */
 export class VpcCni extends pulumi.CustomResource {
-    constructor(name: string, kubeconfig: pulumi.Input<any>, args?: VpcCniOptions, opts?: pulumi.CustomResourceOptions) {
+    constructor(
+        name: string,
+        kubeconfig: pulumi.Input<any>,
+        args?: VpcCniOptions,
+        opts?: pulumi.CustomResourceOptions
+    ) {
         // This was previously implemented as a dynamic provider, so alias the old type.
-        const aliasOpts = { aliases: [{ type: "pulumi-nodejs:dynamic:Resource" }] };
+        const aliasOpts = {
+            aliases: [{ type: "pulumi-nodejs:dynamic:Resource" }],
+        };
         opts = pulumi.mergeOptions(opts, aliasOpts);
-        super("eks:index:VpcCni", name, {
-            kubeconfig: kubeconfig,
-            nodePortSupport: args?.nodePortSupport,
-            customNetworkConfig: args?.customNetworkConfig,
-            externalSnat: args?.externalSnat,
-            warmEniTarget: args?.warmEniTarget,
-            warmIpTarget: args?.warmIpTarget,
-            enablePrefixDelegation: args?.enablePrefixDelegation,
-            enableIpv6: args?.enableIpv6,
-            warmPrefixTarget: args?.warmPrefixTarget,
-            logLevel: args?.logLevel,
-            logFile: args?.logFile,
-            image: args?.image,
-            initImage: args?.initImage,
-            eniConfigLabelDef: args?.eniConfigLabelDef,
-            pluginLogLevel: args?.pluginLogLevel,
-            pluginLogFile: args?.pluginLogFile,
-            enablePodEni: args?.enablePodEni,
-            disableTcpEarlyDemux: args?.disableTcpEarlyDemux,
-            cniConfigureRpfilter: args?.cniConfigureRpfilter,
-            cniCustomNetworkCfg: args?.cniCustomNetworkCfg,
-            cniExternalSnat: args?.cniExternalSnat,
-            securityContextPrivileged: args?.securityContextPrivileged,
-        }, opts);
+        super(
+            "eks:index:VpcCni",
+            name,
+            {
+                kubeconfig: kubeconfig,
+                nodePortSupport: args?.nodePortSupport,
+                customNetworkConfig: args?.customNetworkConfig,
+                externalSnat: args?.externalSnat,
+                warmEniTarget: args?.warmEniTarget,
+                warmIpTarget: args?.warmIpTarget,
+                enablePrefixDelegation: args?.enablePrefixDelegation,
+                enableIpv6: args?.enableIpv6,
+                warmPrefixTarget: args?.warmPrefixTarget,
+                logLevel: args?.logLevel,
+                logFile: args?.logFile,
+                image: args?.image,
+                initImage: args?.initImage,
+                eniConfigLabelDef: args?.eniConfigLabelDef,
+                pluginLogLevel: args?.pluginLogLevel,
+                pluginLogFile: args?.pluginLogFile,
+                enablePodEni: args?.enablePodEni,
+                disableTcpEarlyDemux: args?.disableTcpEarlyDemux,
+                cniConfigureRpfilter: args?.cniConfigureRpfilter,
+                cniCustomNetworkCfg: args?.cniCustomNetworkCfg,
+                cniExternalSnat: args?.cniExternalSnat,
+                securityContextPrivileged: args?.securityContextPrivileged,
+            },
+            opts
+        );
     }
 }

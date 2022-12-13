@@ -16,7 +16,12 @@ import * as pulumi from "@pulumi/pulumi";
 import { NodeGroupSecurityGroup } from "../../securitygroup";
 
 const nodeGroupSecurityGroupProvider: pulumi.provider.Provider = {
-    construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
+    construct: (
+        name: string,
+        type: string,
+        inputs: pulumi.Inputs,
+        options: pulumi.ComponentResourceOptions
+    ) => {
         try {
             const nodeGroupSecurityGroup = new NodeGroupSecurityGroup(name, <any>inputs, options);
             return Promise.resolve({

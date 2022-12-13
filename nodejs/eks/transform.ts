@@ -25,14 +25,16 @@ class Transform<T, U> extends dynamic.Resource {
         const provider = {
             check: (olds: any, news: any) => Promise.resolve({ inputs: news, failedChecks: [] }),
             diff: (id: pulumi.ID, olds: any, news: any) => Promise.resolve({}),
-            create: (inputs: any) => Promise.resolve({
-                id: name,
-                outs: { output: func(inputs.input as T) },
-            }),
-            update: (id: pulumi.ID, olds: any, news: any) => Promise.resolve({
-                outs: { output: func(news.input as T) },
-            }),
-            read: (id: pulumi.ID, state: any) => Promise.resolve({id: id, props: state}),
+            create: (inputs: any) =>
+                Promise.resolve({
+                    id: name,
+                    outs: { output: func(inputs.input as T) },
+                }),
+            update: (id: pulumi.ID, olds: any, news: any) =>
+                Promise.resolve({
+                    outs: { output: func(news.input as T) },
+                }),
+            read: (id: pulumi.ID, state: any) => Promise.resolve({ id: id, props: state }),
             delete: (id: pulumi.ID, props: any) => Promise.resolve(),
         };
 
@@ -46,6 +48,11 @@ class Transform<T, U> extends dynamic.Resource {
  *
  * @deprecated This is no longer used and will be removed in the future.
  */
-export default function transform<T, U>(name: string, input: T, func: (v: T) => U, opts?: pulumi.CustomResourceOptions): pulumi.Output<U> {
-    return (new Transform(name, input, func, opts)).output;
+export default function transform<T, U>(
+    name: string,
+    input: T,
+    func: (v: T) => U,
+    opts?: pulumi.CustomResourceOptions
+): pulumi.Output<U> {
+    return new Transform(name, input, func, opts).output;
 }

@@ -18,7 +18,11 @@ import { ClusterInternal } from "../../cluster";
 import { VpcCni } from "../../cni";
 import { clusterCreationRoleProviderProviderFactory, clusterProviderFactory } from "./cluster";
 import { vpcCniProviderFactory } from "./cni";
-import { managedNodeGroupProviderFactory, nodeGroupProviderFactory, nodeGroupV2ProviderFactory } from "./nodegroup";
+import {
+    managedNodeGroupProviderFactory,
+    nodeGroupProviderFactory,
+    nodeGroupV2ProviderFactory,
+} from "./nodegroup";
 import { randomSuffixProviderFactory } from "./randomSuffix";
 import { nodeGroupSecurityGroupProviderFactory } from "./securitygroup";
 
@@ -62,7 +66,7 @@ class Provider implements pulumi.provider.Provider {
                     roleArn: inputs.roleArn,
                 });
                 return {
-                    outputs: {result},
+                    outputs: { result },
                 };
 
             default:
@@ -72,18 +76,25 @@ class Provider implements pulumi.provider.Provider {
 
     check(urn: pulumi.URN, olds: any, news: any): Promise<pulumi.provider.CheckResult> {
         const provider = this.getProviderForURN(urn);
-        if (!provider) { return unknownResourceRejectedPromise(urn); }
+        if (!provider) {
+            return unknownResourceRejectedPromise(urn);
+        }
         return provider.check
             ? provider.check(urn, olds, news)
             : Promise.resolve({ inputs: news, failures: [] });
     }
 
-    diff(id: pulumi.ID, urn: pulumi.URN, olds: any, news: any): Promise<pulumi.provider.DiffResult> {
+    diff(
+        id: pulumi.ID,
+        urn: pulumi.URN,
+        olds: any,
+        news: any
+    ): Promise<pulumi.provider.DiffResult> {
         const provider = this.getProviderForURN(urn);
-        if (!provider) { return unknownResourceRejectedPromise(urn); }
-        return provider.diff
-            ? provider.diff(id, urn, olds, news)
-            : Promise.resolve({});
+        if (!provider) {
+            return unknownResourceRejectedPromise(urn);
+        }
+        return provider.diff ? provider.diff(id, urn, olds, news) : Promise.resolve({});
     }
 
     create(urn: pulumi.URN, inputs: any): Promise<pulumi.provider.CreateResult> {
@@ -95,15 +106,22 @@ class Provider implements pulumi.provider.Provider {
 
     read(id: pulumi.ID, urn: pulumi.URN, props?: any): Promise<pulumi.provider.ReadResult> {
         const provider = this.getProviderForURN(urn);
-        if (!provider) { return unknownResourceRejectedPromise(urn); }
-        return provider.read
-            ? provider.read(id, urn, props)
-            : Promise.resolve({ id, props });
+        if (!provider) {
+            return unknownResourceRejectedPromise(urn);
+        }
+        return provider.read ? provider.read(id, urn, props) : Promise.resolve({ id, props });
     }
 
-    update(id: pulumi.ID, urn: pulumi.URN, olds: any, news: any): Promise<pulumi.provider.UpdateResult> {
+    update(
+        id: pulumi.ID,
+        urn: pulumi.URN,
+        olds: any,
+        news: any
+    ): Promise<pulumi.provider.UpdateResult> {
         const provider = this.getProviderForURN(urn);
-        if (!provider) { return unknownResourceRejectedPromise(urn); }
+        if (!provider) {
+            return unknownResourceRejectedPromise(urn);
+        }
         return provider.update
             ? provider.update(id, urn, olds, news)
             : Promise.resolve({ outs: news });
@@ -111,14 +129,18 @@ class Provider implements pulumi.provider.Provider {
 
     delete(id: pulumi.ID, urn: pulumi.URN, props: any): Promise<void> {
         const provider = this.getProviderForURN(urn);
-        if (!provider) { return unknownResourceRejectedPromise(urn); }
-        return provider.delete
-            ? provider.delete(id, urn, props)
-            : Promise.resolve();
+        if (!provider) {
+            return unknownResourceRejectedPromise(urn);
+        }
+        return provider.delete ? provider.delete(id, urn, props) : Promise.resolve();
     }
 
-    construct(name: string, type: string, inputs: pulumi.Inputs,
-              options: pulumi.ComponentResourceOptions): Promise<pulumi.provider.ConstructResult> {
+    construct(
+        name: string,
+        type: string,
+        inputs: pulumi.Inputs,
+        options: pulumi.ComponentResourceOptions
+    ): Promise<pulumi.provider.ConstructResult> {
         const provider = this.getProviderForType(type);
         return provider?.construct
             ? provider.construct(name, type, inputs, options)
@@ -155,7 +177,9 @@ function getType(urn: pulumi.URN): string {
 
 /** @internal */
 export function main(args: string[]) {
-    const schema: string = readFileSync(require.resolve("./schema.json"), {encoding: "utf-8"});
+    const schema: string = readFileSync(require.resolve("./schema.json"), {
+        encoding: "utf-8",
+    });
     let version: string = require("../../package.json").version;
     // Node allows for the version to be prefixed by a "v",
     // while semver doesn't. If there is a v, strip it off.
