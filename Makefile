@@ -18,6 +18,7 @@ EKS_SRC 		:= $(wildcard nodejs/eks/*.*) $(wildcard nodejs/eks/*/*.ts) $(wildcard
 LOCAL_PLAT		?= ""
 
 PKG_ARGS 		:= --no-bytecode --public-packages "*" --public
+PKG_TARGET		:= ./bin/cmd/provider/index.js
 
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
@@ -134,7 +135,7 @@ bin/${PROVIDER}:: bin/provider/$(LOCAL_PLAT)/${PROVIDER}
 	cp bin/provider/$(LOCAL_PLAT)/${PROVIDER} bin/${PROVIDER}
 else 
 bin/${PROVIDER}: nodejs/eks/bin nodejs/eks/node_modules
-	cd nodejs/eks && yarn run pkg . ${PKG_ARGS} --target node18 --output $(WORKING_DIR)/bin/${PROVIDER}
+	cd nodejs/eks && yarn run pkg ${PKG_TARGET} ${PKG_ARGS} --target node18 --output $(WORKING_DIR)/bin/${PROVIDER}
 endif
 
 bin/provider/linux-amd64/${PROVIDER}:: TARGET := node18-linuxstatic-x64
@@ -145,7 +146,7 @@ bin/provider/windows-amd64/${PROVIDER}.exe:: TARGET := node18-win-x64
 bin/provider/%:: nodejs/eks/bin nodejs/eks/node_modules
 	test ${TARGET}
 	cd nodejs/eks && \
-		yarn run pkg . ${PKG_ARGS} --target ${TARGET} --output ${WORKING_DIR}/$@
+		yarn run pkg ${PKG_TARGET} ${PKG_ARGS} --target ${TARGET} --output ${WORKING_DIR}/$@
 
 dist/${GZIP_PREFIX}-linux-amd64.tar.gz:: bin/provider/linux-amd64/${PROVIDER}
 dist/${GZIP_PREFIX}-linux-arm64.tar.gz:: bin/provider/linux-arm64/${PROVIDER}
