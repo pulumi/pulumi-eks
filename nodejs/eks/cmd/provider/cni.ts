@@ -22,7 +22,6 @@ import * as jsyaml from "js-yaml";
 import * as path from "path";
 import * as process from "process";
 import * as tmp from "tmp";
-import which = require("which");
 
 interface VpcCniInputs {
     kubeconfig: any;
@@ -52,7 +51,7 @@ interface VpcCniInputs {
 }
 
 function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
-    const cniYaml = jsyaml.safeLoadAll(cniYamlText);
+    const cniYaml: any[] = jsyaml.loadAll(cniYamlText);
 
     // Rewrite the envvars for the CNI daemon set as per the inputs.
     const daemonSet = cniYaml.filter(o => o.kind === "DaemonSet")[0];
@@ -160,7 +159,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         securityContext.privileged = args.securityContextPrivileged;
     }
     // Return the computed YAML.
-    return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
+    return cniYaml.map(o => `---\n${jsyaml.dump(o)}`).join("");
 }
 
 function applyVpcCniYaml(args: VpcCniInputs) {
