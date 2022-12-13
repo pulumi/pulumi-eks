@@ -682,7 +682,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         .apply(([mappings, instanceMappings]) => {
             let mappingYaml = "";
             try {
-                mappingYaml = jsyaml.safeDump([...mappings, ...instanceMappings].map(m => ({
+                mappingYaml = jsyaml.dump([...mappings, ...instanceMappings].map(m => ({
                     rolearn: m.roleArn,
                     username: m.username,
                     groups: m.groups,
@@ -699,7 +699,7 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
         nodeAccessData.mapUsers = pulumi.output(args.userMappings).apply(mappings => {
             let mappingYaml = "";
             try {
-                mappingYaml = jsyaml.safeDump(mappings.map(m => ({
+                mappingYaml = jsyaml.dump(mappings.map(m => ({
                     userarn: m.userArn,
                     username: m.username,
                     groups: m.groups,

@@ -25,7 +25,7 @@ public class NodeGroup extends com.pulumi.resources.ComponentResource {
      * The AutoScalingGroup name for the Node group.
      * 
      */
-    @Export(name="autoScalingGroupName", type=String.class, parameters={})
+    @Export(name="autoScalingGroupName", refs={String.class}, tree="[0]")
     private Output<String> autoScalingGroupName;
 
     /**
@@ -39,7 +39,7 @@ public class NodeGroup extends com.pulumi.resources.ComponentResource {
      * The CloudFormation Stack which defines the Node AutoScalingGroup.
      * 
      */
-    @Export(name="cfnStack", type=Stack.class, parameters={})
+    @Export(name="cfnStack", refs={Stack.class}, tree="[0]")
     private Output<Stack> cfnStack;
 
     /**
@@ -53,7 +53,7 @@ public class NodeGroup extends com.pulumi.resources.ComponentResource {
      * The additional security groups for the node group that captures user-specific rules.
      * 
      */
-    @Export(name="extraNodeSecurityGroups", type=List.class, parameters={SecurityGroup.class})
+    @Export(name="extraNodeSecurityGroups", refs={List.class,SecurityGroup.class}, tree="[0,1]")
     private Output<List<SecurityGroup>> extraNodeSecurityGroups;
 
     /**
@@ -67,7 +67,7 @@ public class NodeGroup extends com.pulumi.resources.ComponentResource {
      * The security group for the node group to communicate with the cluster.
      * 
      */
-    @Export(name="nodeSecurityGroup", type=SecurityGroup.class, parameters={})
+    @Export(name="nodeSecurityGroup", refs={SecurityGroup.class}, tree="[0]")
     private Output<SecurityGroup> nodeSecurityGroup;
 
     /**

@@ -31,7 +31,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * The AWS resource provider.
      * 
      */
-    @Export(name="awsProvider", type=Provider.class, parameters={})
+    @Export(name="awsProvider", refs={Provider.class}, tree="[0]")
     private Output<Provider> awsProvider;
 
     /**
@@ -45,7 +45,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * The security group for the EKS cluster.
      * 
      */
-    @Export(name="clusterSecurityGroup", type=SecurityGroup.class, parameters={})
+    @Export(name="clusterSecurityGroup", refs={SecurityGroup.class}, tree="[0]")
     private Output<SecurityGroup> clusterSecurityGroup;
 
     /**
@@ -59,7 +59,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * The EKS cluster and its dependencies.
      * 
      */
-    @Export(name="core", type=CoreData.class, parameters={})
+    @Export(name="core", refs={CoreData.class}, tree="[0]")
     private Output<CoreData> core;
 
     /**
@@ -73,7 +73,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
      * 
      */
-    @Export(name="defaultNodeGroup", type=NodeGroupData.class, parameters={})
+    @Export(name="defaultNodeGroup", refs={NodeGroupData.class}, tree="[0]")
     private Output</* @Nullable */ NodeGroupData> defaultNodeGroup;
 
     /**
@@ -87,7 +87,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * The EKS cluster.
      * 
      */
-    @Export(name="eksCluster", type=com.pulumi.aws.eks.Cluster.class, parameters={})
+    @Export(name="eksCluster", refs={com.pulumi.aws.eks.Cluster.class}, tree="[0]")
     private Output<com.pulumi.aws.eks.Cluster> eksCluster;
 
     /**
@@ -101,7 +101,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * The ingress rule that gives node group access to cluster API server.
      * 
      */
-    @Export(name="eksClusterIngressRule", type=SecurityGroupRule.class, parameters={})
+    @Export(name="eksClusterIngressRule", refs={SecurityGroupRule.class}, tree="[0]")
     private Output<SecurityGroupRule> eksClusterIngressRule;
 
     /**
@@ -115,7 +115,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * The service roles used by the EKS cluster.
      * 
      */
-    @Export(name="instanceRoles", type=List.class, parameters={Role.class})
+    @Export(name="instanceRoles", refs={List.class,Role.class}, tree="[0,1]")
     private Output<List<Role>> instanceRoles;
 
     /**
@@ -129,7 +129,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * A kubeconfig that can be used to connect to the EKS cluster.
      * 
      */
-    @Export(name="kubeconfig", type=Object.class, parameters={})
+    @Export(name="kubeconfig", refs={Object.class}, tree="[0]")
     private Output<Object> kubeconfig;
 
     /**
@@ -143,7 +143,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
      * 
      */
-    @Export(name="kubeconfigJson", type=String.class, parameters={})
+    @Export(name="kubeconfigJson", refs={String.class}, tree="[0]")
     private Output<String> kubeconfigJson;
 
     /**
@@ -157,7 +157,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * The security group for the cluster&#39;s nodes.
      * 
      */
-    @Export(name="nodeSecurityGroup", type=SecurityGroup.class, parameters={})
+    @Export(name="nodeSecurityGroup", refs={SecurityGroup.class}, tree="[0]")
     private Output<SecurityGroup> nodeSecurityGroup;
 
     /**

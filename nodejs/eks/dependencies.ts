@@ -49,7 +49,7 @@ export function assertCompatibleKubectlVersionExists() {
     } catch (err) {
         throw new Error(`Failed to parse kubectl version JSON output. Received: ${kubectlVersionJson}`);
     }
-    const kcVersion = semver.clean(kctlVersion.clientVersion.gitVersion, { loose: true, includePrerelease: true });
+    const kcVersion = semver.clean(kctlVersion.clientVersion.gitVersion, { loose: true });
     if (semver.lt(kcVersion!, minKubectlVersion)) {
         throw new Error(`At least v${minKubectlVersion} of kubectl is required.`
         + ` Current version is: ${kcVersion}. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for instructions on installing the latest.`);
@@ -65,7 +65,7 @@ export function assertCompatibleAWSCLIExists() {
 
     const awscli = childProcess.execSync(`aws --version`, { stdio: ["pipe", "pipe", "ignore"], encoding: "utf8" });
     const version = awscli.split(" ")[0].replace("aws-cli/", "");
-    const semverCleaned = semver.clean(version, { loose: true, includePrerelease: true });
+    const semverCleaned = semver.clean(version, { loose: true });
     switch (semver.major(semverCleaned!)) {
         case 1:
             if (semver.lt(semverCleaned!, minAWSCLIV1Version)) {
