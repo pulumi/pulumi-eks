@@ -19,40 +19,59 @@ import * as path from "path";
 
 export interface DashboardOptions {}
 
-export function createDashboard(name: string, args: DashboardOptions, parent: pulumi.ComponentResource, k8sProvider: k8s.Provider) {
+export function createDashboard(
+    name: string,
+    args: DashboardOptions,
+    parent: pulumi.ComponentResource,
+    k8sProvider: k8s.Provider,
+) {
     // Deploy the latest version of the k8s dashboard.
     const dashboardYaml = [
         path.join(__dirname, "dashboard/kubernetes-dashboard.yaml"),
         path.join(__dirname, "dashboard/heapster.yaml"),
         path.join(__dirname, "dashboard/influxdb.yaml"),
         path.join(__dirname, "dashboard/heapster-rbac.yaml"),
-    ].map(filePath => fs.readFileSync(filePath).toString());
-    const dashboard = new k8s.yaml.ConfigGroup(`${name}-dashboard`, {
-        yaml: dashboardYaml,
-    }, { parent: parent, providers: { kubernetes: k8sProvider } });
+    ].map((filePath) => fs.readFileSync(filePath).toString());
+    const dashboard = new k8s.yaml.ConfigGroup(
+        `${name}-dashboard`,
+        {
+            yaml: dashboardYaml,
+        },
+        { parent: parent, providers: { kubernetes: k8sProvider } },
+    );
 
     // Create a service account for admin access.
-    const adminAccount = new k8s.core.v1.ServiceAccount(`${name}-eks-admin`, {
-        metadata: {
-            name: "eks-admin",
-            namespace: "kube-system",
+    const adminAccount = new k8s.core.v1.ServiceAccount(
+        `${name}-eks-admin`,
+        {
+            metadata: {
+                name: "eks-admin",
+                namespace: "kube-system",
+            },
         },
-    }, { parent: parent, provider: k8sProvider });
+        { parent: parent, provider: k8sProvider },
+    );
 
     // Create a role binding for the admin account.
-    const adminRoleBinding = new k8s.rbac.v1.ClusterRoleBinding(`${name}-eks-admin`, {
-        metadata: {
-            name: "eks-admin",
+    const adminRoleBinding = new k8s.rbac.v1.ClusterRoleBinding(
+        `${name}-eks-admin`,
+        {
+            metadata: {
+                name: "eks-admin",
+            },
+            roleRef: {
+                apiGroup: "rbac.authorization.k8s.io",
+                kind: "ClusterRole",
+                name: "cluster-admin",
+            },
+            subjects: [
+                {
+                    kind: "ServiceAccount",
+                    name: "eks-admin",
+                    namespace: "kube-system",
+                },
+            ],
         },
-        roleRef: {
-            apiGroup: "rbac.authorization.k8s.io",
-            kind: "ClusterRole",
-            name: "cluster-admin",
-        },
-        subjects: [{
-            kind: "ServiceAccount",
-            name: "eks-admin",
-            namespace: "kube-system",
-        }],
-    }, { parent: parent, provider: k8sProvider });
+        { parent: parent, provider: k8sProvider },
+    );
 }

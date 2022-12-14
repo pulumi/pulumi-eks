@@ -38,7 +38,9 @@ export function randomSuffixProviderFactory(): pulumi.provider.Provider {
             });
         },
         update: (id: pulumi.ID, urn: pulumi.URN, olds: any, news: any) => {
-            return Promise.resolve({ outs: { output: appendRandom(news.input) } });
+            return Promise.resolve({
+                outs: { output: appendRandom(news.input) },
+            });
         },
         version: "", // ignored
     };
