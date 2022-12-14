@@ -109,7 +109,7 @@ export interface StorageClass {
 export function createStorageClass(
     name: string,
     storageClass: StorageClass,
-    opts: pulumi.CustomResourceOptions
+    opts: pulumi.CustomResourceOptions,
 ): k8s.storage.v1.StorageClass {
     // Compute the storage class's metadata, including its name and default storage class annotation.
     const metadata = pulumi
@@ -152,6 +152,6 @@ export function createStorageClass(
             reclaimPolicy: storageClass.reclaimPolicy,
             volumeBindingMode: storageClass.volumeBindingMode,
         },
-        opts
+        opts,
     );
 }

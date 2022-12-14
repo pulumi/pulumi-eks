@@ -88,7 +88,7 @@ class Provider implements pulumi.provider.Provider {
         id: pulumi.ID,
         urn: pulumi.URN,
         olds: any,
-        news: any
+        news: any,
     ): Promise<pulumi.provider.DiffResult> {
         const provider = this.getProviderForURN(urn);
         if (!provider) {
@@ -116,7 +116,7 @@ class Provider implements pulumi.provider.Provider {
         id: pulumi.ID,
         urn: pulumi.URN,
         olds: any,
-        news: any
+        news: any,
     ): Promise<pulumi.provider.UpdateResult> {
         const provider = this.getProviderForURN(urn);
         if (!provider) {
@@ -139,7 +139,7 @@ class Provider implements pulumi.provider.Provider {
         name: string,
         type: string,
         inputs: pulumi.Inputs,
-        options: pulumi.ComponentResourceOptions
+        options: pulumi.ComponentResourceOptions,
     ): Promise<pulumi.provider.ConstructResult> {
         const provider = this.getProviderForType(type);
         return provider?.construct

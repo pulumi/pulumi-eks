@@ -33,7 +33,7 @@ export function assertCompatibleKubectlVersionExists() {
         which.sync("kubectl");
     } catch (err) {
         throw new Error(
-            "kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions."
+            "kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.",
         );
     }
 
@@ -53,17 +53,16 @@ export function assertCompatibleKubectlVersionExists() {
         kctlVersion = JSON.parse(kubectlVersionJson);
     } catch (err) {
         throw new Error(
-            `Failed to parse kubectl version JSON output. Received: ${kubectlVersionJson}`
+            `Failed to parse kubectl version JSON output. Received: ${kubectlVersionJson}`,
         );
     }
     const kcVersion = semver.clean(kctlVersion.clientVersion.gitVersion, {
         loose: true,
-        includePrerelease: true,
     });
     if (semver.lt(kcVersion!, minKubectlVersion)) {
         throw new Error(
             `At least v${minKubectlVersion} of kubectl is required.` +
-                ` Current version is: ${kcVersion}. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for instructions on installing the latest.`
+                ` Current version is: ${kcVersion}. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for instructions on installing the latest.`,
         );
     }
 }
@@ -73,7 +72,7 @@ export function assertCompatibleAWSCLIExists() {
         which.sync("aws");
     } catch (err) {
         throw new Error(
-            "Could not find aws CLI for EKS. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html for installation instructions."
+            "Could not find aws CLI for EKS. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html for installation instructions.",
         );
     }
 
@@ -84,14 +83,13 @@ export function assertCompatibleAWSCLIExists() {
     const version = awscli.split(" ")[0].replace("aws-cli/", "");
     const semverCleaned = semver.clean(version, {
         loose: true,
-        includePrerelease: true,
     });
     switch (semver.major(semverCleaned!)) {
         case 1:
             if (semver.lt(semverCleaned!, minAWSCLIV1Version)) {
                 throw new Error(
                     `At least v${minAWSCLIV1Version} of aws-cli is required.` +
-                        ` Current version is: ${semverCleaned}. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html for installation instructions.`
+                        ` Current version is: ${semverCleaned}. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html for installation instructions.`,
                 );
             }
             break;
@@ -99,7 +97,7 @@ export function assertCompatibleAWSCLIExists() {
             if (semver.lt(semverCleaned!, minAWSCLIV2Version)) {
                 throw new Error(
                     `At least v${minAWSCLIV2Version} of aws-cli is required.` +
-                        ` Current version is: ${semverCleaned}. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html for installation instructions.`
+                        ` Current version is: ${semverCleaned}. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html for installation instructions.`,
                 );
             }
             break;

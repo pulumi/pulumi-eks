@@ -70,7 +70,7 @@ export class NodeGroupSecurityGroup extends pulumi.ComponentResource {
     constructor(
         name: string,
         args: NodeGroupSecurityGroupOptions,
-        opts?: pulumi.ComponentResourceOptions
+        opts?: pulumi.ComponentResourceOptions,
     ) {
         super("eks:index:NodeGroupSecurityGroup", name, args, opts);
 
@@ -78,7 +78,7 @@ export class NodeGroupSecurityGroup extends pulumi.ComponentResource {
             name,
             args,
             this,
-            opts?.provider
+            opts?.provider,
         );
         this.registerOutputs(undefined);
     }
@@ -93,7 +93,7 @@ export function createNodeGroupSecurityGroup(
     name: string,
     args: NodeGroupSecurityGroupOptions,
     parent: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource
+    provider?: pulumi.ProviderResource,
 ): [aws.ec2.SecurityGroup, aws.ec2.SecurityGroupRule] {
     const eksCluster = pulumi.output(args.eksCluster);
     const clusterSecurityGroup = pulumi.output(args.clusterSecurityGroup);
@@ -109,10 +109,10 @@ export function createNodeGroupSecurityGroup(
                         Name: `${name}-nodeSecurityGroup`,
                         [`kubernetes.io/cluster/${clusterName}`]: "owned",
                         ...tags,
-                    }
+                    },
             ),
         },
-        { parent, provider }
+        { parent, provider },
     );
 
     const nodeIngressRule = new aws.ec2.SecurityGroupRule(
@@ -126,7 +126,7 @@ export function createNodeGroupSecurityGroup(
             securityGroupId: nodeSecurityGroup.id,
             self: true,
         },
-        { parent, provider }
+        { parent, provider },
     );
 
     const nodeClusterIngressRule = new aws.ec2.SecurityGroupRule(
@@ -141,7 +141,7 @@ export function createNodeGroupSecurityGroup(
             securityGroupId: nodeSecurityGroup.id,
             sourceSecurityGroupId: clusterSecurityGroup.id,
         },
-        { parent, provider }
+        { parent, provider },
     );
 
     const extApiServerClusterIngressRule = new aws.ec2.SecurityGroupRule(
@@ -156,7 +156,7 @@ export function createNodeGroupSecurityGroup(
             securityGroupId: nodeSecurityGroup.id,
             sourceSecurityGroupId: clusterSecurityGroup.id,
         },
-        { parent, provider }
+        { parent, provider },
     );
 
     const nodeInternetEgressRule = new aws.ec2.SecurityGroupRule(
@@ -170,7 +170,7 @@ export function createNodeGroupSecurityGroup(
             cidrBlocks: ["0.0.0.0/0"],
             securityGroupId: nodeSecurityGroup.id,
         },
-        { parent, provider }
+        { parent, provider },
     );
 
     const eksClusterIngressRule = new aws.ec2.SecurityGroupRule(
@@ -184,7 +184,7 @@ export function createNodeGroupSecurityGroup(
             securityGroupId: clusterSecurityGroup.id,
             sourceSecurityGroupId: nodeSecurityGroup.id,
         },
-        { parent, provider }
+        { parent, provider },
     );
 
     return [nodeSecurityGroup, eksClusterIngressRule];

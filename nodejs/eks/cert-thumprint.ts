@@ -35,14 +35,14 @@ const THUMBPRINT_SLEEP_MILLISECOND_INTERVAL: number = 5000;
  */
 export function getIssuerCAThumbprint(
     issuerUrl: pulumi.Input<string>,
-    agent: http.Agent
+    agent: http.Agent,
 ): pulumi.Output<string> {
     return pulumi.output(issuerUrl).apply((issUrl) => {
         return getThumbprint(
             issUrl,
             THUMBPRINT_MAX_RETRIES,
             THUMBPRINT_SLEEP_MILLISECOND_INTERVAL,
-            agent
+            agent,
         );
     });
 }
@@ -54,7 +54,7 @@ export function getIssuerCAThumbprint(
 //
 // See for more details: https://knowledge.digicert.com/solution/SO4261.html
 function findIntRootCACertificate(
-    certificate: tls.DetailedPeerCertificate
+    certificate: tls.DetailedPeerCertificate,
 ): tls.DetailedPeerCertificate {
     let cert = certificate;
     let prevCert = cert?.issuerCertificate;
@@ -77,7 +77,7 @@ async function getThumbprint(
     issuerUrl: string,
     retriesLeft: number,
     interval: number,
-    agent: http.Agent
+    agent: http.Agent,
 ): Promise<string> {
     // For up to 60 seconds (12 retries @ 5000 ms), try to contact the issuer URL.
     try {
@@ -89,7 +89,7 @@ async function getThumbprint(
             const req = https
                 .get(options)
                 .on("error", reject)
-                .on("socket", socket => {
+                .on("socket", (socket) => {
                     if (!(socket instanceof tls.TLSSocket)) {
                         req.emit("error", new Error("socket is not of type TLSSocket"));
                         return;
@@ -106,7 +106,7 @@ async function getThumbprint(
                         }
                         resolve(
                             // Ref: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
-                            fingerprint.split(":").join("").toLowerCase() // Ref: https://github.com/terraform-providers/terraform-provider-aws/issues/10104#issuecomment-551079323
+                            fingerprint.split(":").join("").toLowerCase(), // Ref: https://github.com/terraform-providers/terraform-provider-aws/issues/10104#issuecomment-551079323
                         );
                     });
                 });
@@ -118,7 +118,7 @@ async function getThumbprint(
                 `Waiting for cert issuer URL(${THUMBPRINT_MAX_RETRIES - retriesLeft})`,
                 undefined,
                 undefined,
-                true
+                true,
             );
             await new Promise((resolve) => setTimeout(resolve, interval));
             return getThumbprint(issuerUrl, retriesLeft - 1, interval, agent);

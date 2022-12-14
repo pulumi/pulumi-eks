@@ -52,7 +52,7 @@ export default function transform<T, U>(
     name: string,
     input: T,
     func: (v: T) => U,
-    opts?: pulumi.CustomResourceOptions
+    opts?: pulumi.CustomResourceOptions,
 ): pulumi.Output<U> {
     return new Transform(name, input, func, opts).output;
 }

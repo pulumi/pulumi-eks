@@ -23,7 +23,7 @@ export function createDashboard(
     name: string,
     args: DashboardOptions,
     parent: pulumi.ComponentResource,
-    k8sProvider: k8s.Provider
+    k8sProvider: k8s.Provider,
 ) {
     // Deploy the latest version of the k8s dashboard.
     const dashboardYaml = [
@@ -37,7 +37,7 @@ export function createDashboard(
         {
             yaml: dashboardYaml,
         },
-        { parent: parent, providers: { kubernetes: k8sProvider } }
+        { parent: parent, providers: { kubernetes: k8sProvider } },
     );
 
     // Create a service account for admin access.
@@ -49,7 +49,7 @@ export function createDashboard(
                 namespace: "kube-system",
             },
         },
-        { parent: parent, provider: k8sProvider }
+        { parent: parent, provider: k8sProvider },
     );
 
     // Create a role binding for the admin account.
@@ -72,6 +72,6 @@ export function createDashboard(
                 },
             ],
         },
-        { parent: parent, provider: k8sProvider }
+        { parent: parent, provider: k8sProvider },
     );
 }

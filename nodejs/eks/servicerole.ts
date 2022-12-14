@@ -72,7 +72,7 @@ export class ServiceRole extends pulumi.ComponentResource {
                         },
                     },
                 ],
-            })
+            }),
         );
         const role = new aws.iam.Role(
             `${name}-role`,
@@ -80,7 +80,7 @@ export class ServiceRole extends pulumi.ComponentResource {
                 description: args.description,
                 assumeRolePolicy: assumeRolePolicy,
             },
-            { parent: this }
+            { parent: this },
         );
 
         const rolePolicyAttachments: aws.iam.RolePolicyAttachment[] = [];
@@ -92,8 +92,8 @@ export class ServiceRole extends pulumi.ComponentResource {
                         policyArn: policy.arn,
                         role: role,
                     },
-                    { parent: this }
-                )
+                    { parent: this },
+                ),
             );
         }
         this.role = pulumi

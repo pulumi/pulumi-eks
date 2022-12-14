@@ -41,7 +41,7 @@ class RandomSuffix extends pulumi.CustomResource {
                 input: input,
                 output: undefined,
             },
-            opts
+            opts,
         );
     }
 }
@@ -54,7 +54,7 @@ class RandomSuffix extends pulumi.CustomResource {
 export default function randomSuffix(
     name: string,
     input: string,
-    opts?: pulumi.CustomResourceOptions
+    opts?: pulumi.CustomResourceOptions,
 ): pulumi.Output<string> {
     return new RandomSuffix(name, input, opts).output;
 }

@@ -20,7 +20,7 @@ const nodeGroupProvider: pulumi.provider.Provider = {
         name: string,
         type: string,
         inputs: pulumi.Inputs,
-        options: pulumi.ComponentResourceOptions
+        options: pulumi.ComponentResourceOptions,
     ) => {
         try {
             const nodegroup = new NodeGroupInternal(name, <any>inputs, options);
@@ -50,7 +50,7 @@ const managedNodeGroupProvider: pulumi.provider.Provider = {
         name: string,
         type: string,
         inputs: pulumi.Inputs,
-        options: pulumi.ComponentResourceOptions
+        options: pulumi.ComponentResourceOptions,
     ) => {
         try {
             const nodegroup = new ManagedNodeGroupInternal(name, <any>inputs, options);
@@ -77,7 +77,7 @@ const nodeGroupV2Provider: pulumi.provider.Provider = {
         name: string,
         type: string,
         inputs: pulumi.Inputs,
-        options: pulumi.ComponentResourceOptions
+        options: pulumi.ComponentResourceOptions,
     ) => {
         try {
             const nodegroup = new NodeGroupV2Internal(name, <any>inputs, options);

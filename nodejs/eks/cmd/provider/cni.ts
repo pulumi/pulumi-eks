@@ -210,7 +210,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     // A user would usually specify externalSnat or cniExternalSnat NOT both
     if (args.cniExternalSnat && args.externalSnat) {
         throw new Error(
-            "Please specify one of `cniExternalSnat` or `externalSnat` in your VpcCniOptions"
+            "Please specify one of `cniExternalSnat` or `externalSnat` in your VpcCniOptions",
         );
     }
     if (args.externalSnat) {
@@ -230,7 +230,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         securityContext.privileged = args.securityContextPrivileged;
     }
     // Return the computed YAML.
-    return cniYaml.map((o) => `---\n${jsyaml.safeDump(o)}`).join("");
+    return cniYaml.map((o) => `---\n${jsyaml.dump(o)}`).join("");
 }
 
 function applyVpcCniYaml(args: VpcCniInputs) {

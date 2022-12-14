@@ -20,7 +20,7 @@ const nodeGroupSecurityGroupProvider: pulumi.provider.Provider = {
         name: string,
         type: string,
         inputs: pulumi.Inputs,
-        options: pulumi.ComponentResourceOptions
+        options: pulumi.ComponentResourceOptions,
     ) => {
         try {
             const nodeGroupSecurityGroup = new NodeGroupSecurityGroup(name, <any>inputs, options);

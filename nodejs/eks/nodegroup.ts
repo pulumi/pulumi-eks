@@ -496,7 +496,7 @@ export class NodeGroupV2Internal extends pulumi.ComponentResource {
     constructor(
         name: string,
         args: NodeGroupV2InternalArgs,
-        opts?: pulumi.ComponentResourceOptions
+        opts?: pulumi.ComponentResourceOptions,
     ) {
         const type = "eks:index:NodeGroupV2";
 
@@ -545,7 +545,7 @@ export function createNodeGroup(
     name: string,
     args: NodeGroupOptions,
     parent: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource
+    provider?: pulumi.ProviderResource,
 ): NodeGroupData {
     const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
     return createNodeGroupInternal(name, args, pulumi.output(core), parent, provider);
@@ -556,7 +556,7 @@ function createNodeGroupInternal(
     args: Omit<NodeGroupOptions, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
     parent: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource
+    provider?: pulumi.ProviderResource,
 ): NodeGroupData {
     const instanceProfile = core.apply((c) => {
         if (!args.instanceProfile && !c.nodeGroupOptions.instanceProfile) {
@@ -572,7 +572,7 @@ function createNodeGroupInternal(
                 c.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id
             ) {
                 throw new Error(
-                    `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`
+                    `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
                 );
             }
         }
@@ -580,7 +580,7 @@ function createNodeGroupInternal(
 
     if (args.nodePublicKey && args.keyName) {
         throw new Error(
-            "nodePublicKey and keyName are mutually exclusive. Choose a single approach"
+            "nodePublicKey and keyName are mutually exclusive. Choose a single approach",
         );
     }
 
@@ -597,7 +597,7 @@ function createNodeGroupInternal(
             args.bootstrapExtraArgs)
     ) {
         throw new Error(
-            "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive."
+            "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.",
         );
     }
 
@@ -620,7 +620,7 @@ function createNodeGroupInternal(
         nodeSecurityGroup = args.nodeSecurityGroup;
         if (eksClusterIngressRule === undefined) {
             throw new Error(
-                `invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`
+                `invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`,
             );
         }
     } else {
@@ -635,10 +635,10 @@ function createNodeGroupInternal(
                         <aws.Tags>{
                             ...nodeSecurityGroupTags,
                             ...tags,
-                        }
+                        },
                 ),
             },
-            parent
+            parent,
         );
     }
 
@@ -663,7 +663,7 @@ function createNodeGroupInternal(
             {
                 publicKey: args.nodePublicKey,
             },
-            { parent, provider }
+            { parent, provider },
         );
         keyName = key.keyName;
     }
@@ -737,7 +737,7 @@ ${customUserData}
         amiId = version.apply((v) => {
             const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
             return pulumi.output(
-                aws.ssm.getParameter({ name: parameterName }, { parent, async: true })
+                aws.ssm.getParameter({ name: parameterName }, { parent, async: true }),
             ).value;
         });
     }
@@ -754,28 +754,28 @@ ${customUserData}
 
     if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
         throw new Error(
-            "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops)."
+            "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
         );
     }
 
     if (args.nodeRootVolumeType === "io1" && args.nodeRootVolumeIops) {
         if (!numeric.test(args.nodeRootVolumeIops?.toString())) {
             throw new Error(
-                "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value."
+                "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
             );
         }
     }
 
     if (args.nodeRootVolumeThroughput && args.nodeRootVolumeType !== "gp3") {
         throw new Error(
-            "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput)."
+            "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
         );
     }
 
     if (args.nodeRootVolumeType === "gp3" && args.nodeRootVolumeThroughput) {
         if (!numeric.test(args.nodeRootVolumeThroughput?.toString())) {
             throw new Error(
-                "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value."
+                "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
             );
         }
     }
@@ -804,7 +804,7 @@ ${customUserData}
             },
             userData: args.nodeUserDataOverride || userdata,
         },
-        { parent, provider }
+        { parent, provider },
     );
 
     // Compute the worker node group subnets to use from the various approaches.
@@ -849,7 +849,7 @@ ${customUserData}
                     Name: `${clusterName}-worker`,
                     [`kubernetes.io/cluster/${clusterName}`]: "owned",
                     ...asgTags,
-                }
+                },
         );
 
     const cfnTemplateBody = pulumi
@@ -882,7 +882,7 @@ ${customUserData}
                           AutoScalingRollingUpdate:
                             MinInstancesInService: '${minInstancesInService}'
                             MaxBatchSize: '1'
-                `
+                `,
         );
 
     const cfnStack = new aws.cloudformation.Stack(
@@ -896,16 +896,16 @@ ${customUserData}
                         Name: `${name}-nodes`,
                         ...cloudFormationTags,
                         ...tags,
-                    }
+                    },
             ),
         },
-        { parent, dependsOn: cfnStackDeps, provider }
+        { parent, dependsOn: cfnStackDeps, provider },
     );
 
     const autoScalingGroupName = cfnStack.outputs.apply((outputs) => {
         if (!("NodeGroup" in outputs)) {
             throw new Error(
-                "CloudFormation stack is not ready. Stack output key 'NodeGroup' does not exist."
+                "CloudFormation stack is not ready. Stack output key 'NodeGroup' does not exist.",
             );
         }
         return outputs["NodeGroup"];
@@ -929,7 +929,7 @@ export function createNodeGroupV2(
     name: string,
     args: NodeGroupV2Options,
     parent: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource
+    provider?: pulumi.ProviderResource,
 ): NodeGroupV2Data {
     const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
     return createNodeGroupV2Internal(name, args, pulumi.output(core), parent, provider);
@@ -940,7 +940,7 @@ function createNodeGroupV2Internal(
     args: Omit<NodeGroupV2Options, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
     parent: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource
+    provider?: pulumi.ProviderResource,
 ): NodeGroupV2Data {
     const instanceProfileArn = core.apply((c) => {
         if (!args.instanceProfile && !c.nodeGroupOptions.instanceProfile) {
@@ -956,7 +956,7 @@ function createNodeGroupV2Internal(
                 c.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id
             ) {
                 throw new Error(
-                    `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`
+                    `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
                 );
             }
         }
@@ -964,7 +964,7 @@ function createNodeGroupV2Internal(
 
     if (args.nodePublicKey && args.keyName) {
         throw new Error(
-            "nodePublicKey and keyName are mutually exclusive. Choose a single approach"
+            "nodePublicKey and keyName are mutually exclusive. Choose a single approach",
         );
     }
 
@@ -981,7 +981,7 @@ function createNodeGroupV2Internal(
             args.bootstrapExtraArgs)
     ) {
         throw new Error(
-            "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive."
+            "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.",
         );
     }
 
@@ -1004,7 +1004,7 @@ function createNodeGroupV2Internal(
         nodeSecurityGroup = args.nodeSecurityGroup;
         if (eksClusterIngressRule === undefined) {
             throw new Error(
-                `invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`
+                `invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`,
             );
         }
     } else {
@@ -1019,10 +1019,10 @@ function createNodeGroupV2Internal(
                         <aws.Tags>{
                             ...c.nodeSecurityGroupTags,
                             ...c.tags,
-                        }
+                        },
                 ),
             },
-            parent
+            parent,
         );
     }
 
@@ -1050,7 +1050,7 @@ function createNodeGroupV2Internal(
             {
                 publicKey: args.nodePublicKey,
             },
-            { parent, provider }
+            { parent, provider },
         );
         keyName = key.keyName;
     }
@@ -1123,7 +1123,7 @@ chmod +x /opt/user-data
 /etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"${bootstrapExtraArgs}
 ${customUserData}
 `;
-            }
+            },
         )
         .apply((x) => Buffer.from(x, "utf-8").toString("base64")); // Launch Templates require user data to be passed as base64.
 
@@ -1136,7 +1136,7 @@ ${customUserData}
         amiId = version.apply((v) => {
             const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
             return pulumi.output(
-                aws.ssm.getParameter({ name: parameterName }, { parent, async: true })
+                aws.ssm.getParameter({ name: parameterName }, { parent, async: true }),
             ).value;
         });
     }
@@ -1153,28 +1153,28 @@ ${customUserData}
 
     if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
         throw new Error(
-            "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops)."
+            "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
         );
     }
 
     if (args.nodeRootVolumeType === "io1" && args.nodeRootVolumeIops) {
         if (!numeric.test(args.nodeRootVolumeIops?.toString())) {
             throw new Error(
-                "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value."
+                "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
             );
         }
     }
 
     if (args.nodeRootVolumeThroughput && args.nodeRootVolumeType !== "gp3") {
         throw new Error(
-            "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput)."
+            "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
         );
     }
 
     if (args.nodeRootVolumeType === "gp3" && args.nodeRootVolumeThroughput) {
         if (!numeric.test(args.nodeRootVolumeThroughput?.toString())) {
             throw new Error(
-                "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value."
+                "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
             );
         }
     }
@@ -1197,7 +1197,7 @@ ${customUserData}
                     values: [id],
                 },
             ],
-        })
+        }),
     ).blockDeviceMappings[0].deviceName;
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
@@ -1231,7 +1231,7 @@ ${customUserData}
             userData: userdata,
             tagSpecifications: args.launchTemplateTagSpecifications,
         },
-        { parent, provider }
+        { parent, provider },
     );
 
     // Compute the worker node group subnets to use from the various approaches.
@@ -1280,7 +1280,7 @@ ${customUserData}
             },
             tags: asgTags,
         },
-        { parent, dependsOn: nodeGroupDeps, provider }
+        { parent, dependsOn: nodeGroupDeps, provider },
     );
 
     return {
@@ -1292,7 +1292,7 @@ ${customUserData}
 
 function inputTagsToASGTags(
     clusterName: string,
-    tags: InputTags | undefined
+    tags: InputTags | undefined,
 ): awsInputs.autoscaling.GroupTag[] {
     const asgTags = Object.entries(tags ?? {}).map(
         ([key, value]) =>
@@ -1300,7 +1300,7 @@ function inputTagsToASGTags(
                 key,
                 value,
                 propagateAtLaunch: true,
-            }
+            },
     );
 
     asgTags.push(
@@ -1313,7 +1313,7 @@ function inputTagsToASGTags(
             key: "Name",
             value: clusterName + "-worker",
             propagateAtLaunch: true,
-        }
+        },
     );
 
     return asgTags;
@@ -1332,7 +1332,7 @@ function inputTagsToASGTags(
  */
 export async function computeWorkerSubnets(
     parent: pulumi.Resource,
-    subnetIds: string[]
+    subnetIds: string[],
 ): Promise<string[]> {
     const publicSubnets: string[] = [];
 
@@ -1375,7 +1375,7 @@ async function getRouteTableAsync(parent: pulumi.Resource, subnetId: string) {
                     },
                 ],
             },
-            invokeOpts
+            invokeOpts,
         );
         return await aws.ec2.getRouteTable({ routeTableId: mainRouteTableInfo.ids[0] }, invokeOpts);
     }
@@ -1503,7 +1503,7 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
     constructor(
         name: string,
         args: ManagedNodeGroupOptions,
-        opts?: pulumi.ComponentResourceOptions
+        opts?: pulumi.ComponentResourceOptions,
     ) {
         super("eks:index:ManagedNodeGroup", name, args, opts);
 
@@ -1525,7 +1525,7 @@ export class ManagedNodeGroupInternal extends pulumi.ComponentResource {
     constructor(
         name: string,
         args: ManagedNodeGroupInternalArgs,
-        opts?: pulumi.ComponentResourceOptions
+        opts?: pulumi.ComponentResourceOptions,
     ) {
         const type = "eks:index:ManagedNodeGroup";
 
@@ -1568,7 +1568,7 @@ export function createManagedNodeGroup(
     name: string,
     args: ManagedNodeGroupOptions,
     parent?: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource
+    provider?: pulumi.ProviderResource,
 ): aws.eks.NodeGroup {
     const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
     return createManagedNodeGroupInternal(
@@ -1576,7 +1576,7 @@ export function createManagedNodeGroup(
         args,
         pulumi.output(core),
         parent ?? core.cluster,
-        provider
+        provider,
     );
 }
 
@@ -1585,7 +1585,7 @@ function createManagedNodeGroupInternal(
     args: Omit<ManagedNodeGroupOptions, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
     parent: pulumi.Resource,
-    provider?: pulumi.ProviderResource
+    provider?: pulumi.ProviderResource,
 ): aws.eks.NodeGroup {
     // Compute the nodegroup role.
     if (!args.nodeRole && !args.nodeRoleArn) {
@@ -1594,7 +1594,7 @@ function createManagedNodeGroupInternal(
 
     if (args.nodeRole && args.nodeRoleArn) {
         throw new Error(
-            "nodeRole and nodeRoleArn are mutually exclusive to create a managed node group"
+            "nodeRole and nodeRoleArn are mutually exclusive to create a managed node group",
         );
     }
 
@@ -1623,7 +1623,7 @@ function createManagedNodeGroupInternal(
     nodegroupRole.apply((role) => {
         if (!role) {
             throw new Error(
-                `A managed node group cannot be created without first setting its role in the cluster's instanceRoles`
+                `A managed node group cannot be created without first setting its role in the cluster's instanceRoles`,
             );
         }
     });
@@ -1673,7 +1673,7 @@ function createManagedNodeGroupInternal(
             }),
             subnetIds: subnetIds,
         },
-        { parent: parent, dependsOn: ngDeps, provider }
+        { parent: parent, dependsOn: ngDeps, provider },
     );
 
     return nodeGroup;

@@ -221,7 +221,7 @@ export class VpcCni extends pulumi.CustomResource {
         name: string,
         kubeconfig: pulumi.Input<any>,
         args?: VpcCniOptions,
-        opts?: pulumi.CustomResourceOptions
+        opts?: pulumi.CustomResourceOptions,
     ) {
         // This was previously implemented as a dynamic provider, so alias the old type.
         const aliasOpts = {
@@ -255,7 +255,7 @@ export class VpcCni extends pulumi.CustomResource {
                 cniExternalSnat: args?.cniExternalSnat,
                 securityContextPrivileged: args?.securityContextPrivileged,
             },
-            opts
+            opts,
         );
     }
 }
