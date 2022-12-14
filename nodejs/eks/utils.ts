@@ -32,4 +32,6 @@ export type InputTags = pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
  * always be created automatically for the cluster by the EKS service. See
  * https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
  */
-export type UserStorageClasses = pulumi.Output<{ [key: string]: k8s.storage.v1.StorageClass }>;
+export type UserStorageClasses = pulumi.Output<{
+    [key: string]: k8s.storage.v1.StorageClass;
+}>;

@@ -16,7 +16,12 @@ import * as pulumi from "@pulumi/pulumi";
 import { ManagedNodeGroupInternal, NodeGroupInternal, NodeGroupV2Internal } from "../../nodegroup";
 
 const nodeGroupProvider: pulumi.provider.Provider = {
-    construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
+    construct: (
+        name: string,
+        type: string,
+        inputs: pulumi.Inputs,
+        options: pulumi.ComponentResourceOptions,
+    ) => {
         try {
             const nodegroup = new NodeGroupInternal(name, <any>inputs, options);
             return Promise.resolve({
@@ -41,7 +46,12 @@ export function nodeGroupProviderFactory(): pulumi.provider.Provider {
 }
 
 const managedNodeGroupProvider: pulumi.provider.Provider = {
-    construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
+    construct: (
+        name: string,
+        type: string,
+        inputs: pulumi.Inputs,
+        options: pulumi.ComponentResourceOptions,
+    ) => {
         try {
             const nodegroup = new ManagedNodeGroupInternal(name, <any>inputs, options);
             return Promise.resolve({
@@ -62,9 +72,13 @@ export function managedNodeGroupProviderFactory(): pulumi.provider.Provider {
     return managedNodeGroupProvider;
 }
 
-
 const nodeGroupV2Provider: pulumi.provider.Provider = {
-    construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
+    construct: (
+        name: string,
+        type: string,
+        inputs: pulumi.Inputs,
+        options: pulumi.ComponentResourceOptions,
+    ) => {
         try {
             const nodegroup = new NodeGroupV2Internal(name, <any>inputs, options);
             return Promise.resolve({
