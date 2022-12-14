@@ -82,6 +82,7 @@ build_dotnet:: schema
 lint:
 	cd nodejs/eks && \
 		yarn install && \
+		yarn format && \
 		yarn run tslint -c ../tslint.json -p tsconfig.json
 
 lint_provider::

@@ -15,7 +15,7 @@
         "eofline": true,
         "file-header": [
             true,
-            "Copyright \\d{4}-\\d{4}, Pulumi Corporation."
+            "Copyright 2016-\\d{4}, Pulumi Corporation."
         ],
         "forin": true,
         "indent": [
@@ -26,11 +26,7 @@
         "jsdoc-format": false,
         "label-position": true,
         "member-access": false,
-        "member-ordering": [
-            true,
-            "static-before-instance",
-            "variables-before-functions"
-        ],
+        "member-ordering": false,
         "no-any": false,
         "no-arg": true,
         "no-bitwise": false,
@@ -53,7 +49,6 @@
         "no-internal-module": true,
         "no-parameter-properties": false,
         "no-require-imports": false,
-        "no-shadowed-variable": true,
         "no-string-literal": false,
         "no-switch-case-fall-through": true,
         "no-trailing-whitespace": true,
@@ -64,10 +59,9 @@
         "object-literal-sort-keys": false,
         "one-line": [
             true,
-            "check-open-brace",
             "check-whitespace"
         ],
-        "ordered-imports": true,
+        "ordered-imports": false,
         "prefer-const": true,
         "quotemark": [
             true,
@@ -120,5 +114,8 @@
             "check-separator",
             "check-type"
         ]
-    }
+    },
+    "extends": [
+        "tslint-config-prettier"
+    ]
 }
