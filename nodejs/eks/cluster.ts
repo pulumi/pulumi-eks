@@ -963,7 +963,7 @@ export function createCore(
     if (args.createOidcProvider) {
         // Retrieve the OIDC provider URL's intermediate root CA fingerprint.
         const awsRegionName = pulumi.output(aws.getRegion({}, { parent, async: true })).name;
-        const eksOidcProviderUrl = pulumi.interpolate`https://oidc.eks.${awsRegionName}.amazonaws.com`;
+        const eksOidcProviderUrl = pulumi.interpolate`https://oidc.eks.${awsRegionName}.${dnsSuffix}`;
         const agent = createHttpAgent(args.proxy);
         const fingerprint = getIssuerCAThumbprint(eksOidcProviderUrl, agent);
 
