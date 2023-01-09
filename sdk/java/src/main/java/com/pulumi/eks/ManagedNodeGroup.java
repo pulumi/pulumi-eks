@@ -25,7 +25,7 @@ public class ManagedNodeGroup extends com.pulumi.resources.ComponentResource {
      * The AWS managed node group.
      * 
      */
-    @Export(name="nodeGroup", type=NodeGroup.class, parameters={})
+    @Export(name="nodeGroup", refs={NodeGroup.class}, tree="[0]")
     private Output<NodeGroup> nodeGroup;
 
     /**

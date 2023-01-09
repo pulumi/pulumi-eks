@@ -16,7 +16,12 @@ import * as pulumi from "@pulumi/pulumi";
 import { ClusterCreationRoleProvider, ClusterInternal } from "../../cluster";
 
 const clusterProvider: pulumi.provider.Provider = {
-    construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
+    construct: (
+        name: string,
+        type: string,
+        inputs: pulumi.Inputs,
+        options: pulumi.ComponentResourceOptions,
+    ) => {
         try {
             const cluster = new ClusterInternal(name, inputs, options);
             return Promise.resolve({
@@ -46,7 +51,12 @@ export function clusterProviderFactory(): pulumi.provider.Provider {
 }
 
 const clusterCreationRoleProviderProvider: pulumi.provider.Provider = {
-    construct: (name: string, type: string, inputs: pulumi.Inputs, options: pulumi.ComponentResourceOptions) => {
+    construct: (
+        name: string,
+        type: string,
+        inputs: pulumi.Inputs,
+        options: pulumi.ComponentResourceOptions,
+    ) => {
         try {
             const roleProvider = new ClusterCreationRoleProvider(name, inputs, options);
             return Promise.resolve({

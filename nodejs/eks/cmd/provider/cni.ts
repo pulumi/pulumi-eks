@@ -22,7 +22,6 @@ import * as jsyaml from "js-yaml";
 import * as path from "path";
 import * as process from "process";
 import * as tmp from "tmp";
-import which = require("which");
 
 interface VpcCniInputs {
     kubeconfig: any;
@@ -52,33 +51,54 @@ interface VpcCniInputs {
 }
 
 function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
-    const cniYaml = jsyaml.safeLoadAll(cniYamlText);
+    const cniYaml: any[] = jsyaml.loadAll(cniYamlText);
 
     // Rewrite the envvars for the CNI daemon set as per the inputs.
-    const daemonSet = cniYaml.filter(o => o.kind === "DaemonSet")[0];
+    const daemonSet = cniYaml.filter((o) => o.kind === "DaemonSet")[0];
     const env = daemonSet.spec.template.spec.containers[0].env;
     const initEnv = daemonSet.spec.template.spec.initContainers[0].env;
     const securityContext = daemonSet.spec.template.spec.containers[0].securityContext;
     if (args.nodePortSupport) {
-        env.push({ name: "AWS_VPC_CNI_NODE_PORT_SUPPORT", value: args.nodePortSupport ? "true" : "false" });
+        env.push({
+            name: "AWS_VPC_CNI_NODE_PORT_SUPPORT",
+            value: args.nodePortSupport ? "true" : "false",
+        });
     }
     if (args.customNetworkConfig) {
-        env.push({ name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: args.customNetworkConfig ? "true" : "false" });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG",
+            value: args.customNetworkConfig ? "true" : "false",
+        });
     }
     if (args.warmEniTarget) {
-        env.push({ name: "WARM_ENI_TARGET", value: args.warmEniTarget.toString() });
+        env.push({
+            name: "WARM_ENI_TARGET",
+            value: args.warmEniTarget.toString(),
+        });
     } else {
         env.push({ name: "WARM_ENI_TARGET", value: "1" });
     }
     if (args.warmIpTarget) {
-        env.push({ name: "WARM_IP_TARGET", value: args.warmIpTarget.toString() });
+        env.push({
+            name: "WARM_IP_TARGET",
+            value: args.warmIpTarget.toString(),
+        });
     }
     if (args.warmPrefixTarget) {
-        env.push({ name: "WARM_PREFIX_TARGET", value: args.warmPrefixTarget.toString() });
+        env.push({
+            name: "WARM_PREFIX_TARGET",
+            value: args.warmPrefixTarget.toString(),
+        });
     }
     if (args.enableIpv6) {
-        env.push({ name: "ENABLE_IPv6", value: args.enableIpv6 ? "true" : "false" });
-        initEnv.push({ name: "ENABLE_IPv6", value: args.enableIpv6 ? "true" : "false" });
+        env.push({
+            name: "ENABLE_IPv6",
+            value: args.enableIpv6 ? "true" : "false",
+        });
+        initEnv.push({
+            name: "ENABLE_IPv6",
+            value: args.enableIpv6 ? "true" : "false",
+        });
     } else {
         env.push({ name: "ENABLE_IPv6", value: "false" });
         initEnv.push({ name: "ENABLE_IPv6", value: "false" });
@@ -86,20 +106,35 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         initEnv.push({ name: "ENABLE_IPv4", value: "true" });
     }
     if (args.enablePrefixDelegation) {
-        env.push({ name: "ENABLE_PREFIX_DELEGATION", value: args.enablePrefixDelegation ? "true" : "false" });
+        env.push({
+            name: "ENABLE_PREFIX_DELEGATION",
+            value: args.enablePrefixDelegation ? "true" : "false",
+        });
     }
     if (args.logLevel) {
-        env.push({ name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: args.logLevel.toString() });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_LOGLEVEL",
+            value: args.logLevel.toString(),
+        });
     } else {
         env.push({ name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: "DEBUG" });
     }
     if (args.logFile) {
-        env.push({ name: "AWS_VPC_K8S_CNI_LOG_FILE", value: args.logFile.toString() });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_LOG_FILE",
+            value: args.logFile.toString(),
+        });
     } else {
-        env.push({ name: "AWS_VPC_K8S_CNI_LOG_FILE", value: "/host/var/log/aws-routed-eni/ipamd.log" });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_LOG_FILE",
+            value: "/host/var/log/aws-routed-eni/ipamd.log",
+        });
     }
     if (args.vethPrefix) {
-        env.push({ name: "AWS_VPC_K8S_CNI_VETHPREFIX", value: args.vethPrefix.toString() });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_VETHPREFIX",
+            value: args.vethPrefix.toString(),
+        });
     } else {
         env.push({ name: "AWS_VPC_K8S_CNI_VETHPREFIX", value: "eni" });
     }
@@ -115,44 +150,79 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         daemonSet.spec.template.spec.initContainers[0].image = args.initImage.toString();
     }
     if (args.eniConfigLabelDef) {
-        env.push({ name: "ENI_CONFIG_LABEL_DEF", value: args.eniConfigLabelDef.toString() });
+        env.push({
+            name: "ENI_CONFIG_LABEL_DEF",
+            value: args.eniConfigLabelDef.toString(),
+        });
     }
     if (args.pluginLogLevel) {
-        env.push({ name: "AWS_VPC_K8S_PLUGIN_LOG_LEVEL", value: args.pluginLogLevel.toString() });
+        env.push({
+            name: "AWS_VPC_K8S_PLUGIN_LOG_LEVEL",
+            value: args.pluginLogLevel.toString(),
+        });
     } else {
         env.push({ name: "AWS_VPC_K8S_PLUGIN_LOG_LEVEL", value: "DEBUG" });
     }
     if (args.pluginLogFile) {
-        env.push({ name: "AWS_VPC_K8S_PLUGIN_LOG_FILE", value: args.pluginLogFile.toString() });
+        env.push({
+            name: "AWS_VPC_K8S_PLUGIN_LOG_FILE",
+            value: args.pluginLogFile.toString(),
+        });
     } else {
-        env.push({ name: "AWS_VPC_K8S_PLUGIN_LOG_FILE", value: "/var/log/aws-routed-eni/plugin.log" });
+        env.push({
+            name: "AWS_VPC_K8S_PLUGIN_LOG_FILE",
+            value: "/var/log/aws-routed-eni/plugin.log",
+        });
     }
     if (args.enablePodEni) {
-        env.push({ name: "ENABLE_POD_ENI", value: args.enablePodEni ? "true" : "false" });
+        env.push({
+            name: "ENABLE_POD_ENI",
+            value: args.enablePodEni ? "true" : "false",
+        });
     } else {
         env.push({ name: "ENABLE_POD_ENI", value: "false" });
     }
     if (args.disableTcpEarlyDemux) {
-        initEnv.push({ name: "DISABLE_TCP_EARLY_DEMUX", value: args.disableTcpEarlyDemux ? "true" : "false" });
+        initEnv.push({
+            name: "DISABLE_TCP_EARLY_DEMUX",
+            value: args.disableTcpEarlyDemux ? "true" : "false",
+        });
     } else {
         initEnv.push({ name: "DISABLE_TCP_EARLY_DEMUX", value: "false" });
     }
     if (args.cniConfigureRpfilter) {
-        env.push({ name: "AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER", value: args.cniConfigureRpfilter ? "true" : "false" });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER",
+            value: args.cniConfigureRpfilter ? "true" : "false",
+        });
     }
     if (args.cniCustomNetworkCfg) {
-        env.push({ name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: args.cniCustomNetworkCfg ? "true" : "false" });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG",
+            value: args.cniCustomNetworkCfg ? "true" : "false",
+        });
     } else {
-        env.push({ name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG", value: "false" });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG",
+            value: "false",
+        });
     }
     // A user would usually specify externalSnat or cniExternalSnat NOT both
     if (args.cniExternalSnat && args.externalSnat) {
-        throw new Error("Please specify one of `cniExternalSnat` or `externalSnat` in your VpcCniOptions");
+        throw new Error(
+            "Please specify one of `cniExternalSnat` or `externalSnat` in your VpcCniOptions",
+        );
     }
     if (args.externalSnat) {
-        env.push({ name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.externalSnat ? "true" : "false" });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_EXTERNALSNAT",
+            value: args.externalSnat ? "true" : "false",
+        });
     } else if (args.cniExternalSnat) {
-        env.push({ name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: args.cniExternalSnat ? "true" : "false" });
+        env.push({
+            name: "AWS_VPC_K8S_CNI_EXTERNALSNAT",
+            value: args.cniExternalSnat ? "true" : "false",
+        });
     } else {
         env.push({ name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: "false" });
     }
@@ -160,7 +230,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         securityContext.privileged = args.securityContextPrivileged;
     }
     // Return the computed YAML.
-    return cniYaml.map(o => `---\n${jsyaml.safeDump(o)}`).join("");
+    return cniYaml.map((o) => `---\n${jsyaml.dump(o)}`).join("");
 }
 
 function applyVpcCniYaml(args: VpcCniInputs) {
@@ -170,9 +240,8 @@ function applyVpcCniYaml(args: VpcCniInputs) {
     const yamlPath = path.join(__dirname, "../../cni/aws-k8s-cni.yaml");
     const cniYamlText = fs.readFileSync(yamlPath).toString();
 
-    const kubeconfig: string = typeof args.kubeconfig === "string"
-        ? args.kubeconfig
-        : JSON.stringify(args);
+    const kubeconfig: string =
+        typeof args.kubeconfig === "string" ? args.kubeconfig : JSON.stringify(args);
 
     // Dump the kubeconfig to a file.
     const tmpKubeconfig = tmp.fileSync();
@@ -184,7 +253,7 @@ function applyVpcCniYaml(args: VpcCniInputs) {
 
     // Call kubectl to apply the YAML.
     childProcess.execSync(`kubectl apply -f ${tmpYaml.name}`, {
-        env: { ...process.env, "KUBECONFIG": tmpKubeconfig.name },
+        env: { ...process.env, KUBECONFIG: tmpKubeconfig.name },
     });
 }
 
@@ -210,7 +279,10 @@ export function vpcCniProviderFactory(): pulumi.provider.Provider {
             } catch (e) {
                 return Promise.reject(e);
             }
-            return Promise.resolve({ id: crypto.randomBytes(8).toString("hex"), outs: {} });
+            return Promise.resolve({
+                id: crypto.randomBytes(8).toString("hex"),
+                outs: {},
+            });
         },
         update: (id: pulumi.ID, urn: pulumi.URN, olds: any, news: any) => {
             try {

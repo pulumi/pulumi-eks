@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  */
 @ResourceType(type="eks:index:ClusterCreationRoleProvider")
 public class ClusterCreationRoleProvider extends com.pulumi.resources.ComponentResource {
-    @Export(name="role", type=Role.class, parameters={})
+    @Export(name="role", refs={Role.class}, tree="[0]")
     private Output<Role> role;
 
     public Output<Role> role() {

@@ -1,5 +1,8 @@
-## Unreleased
-- [Allow EKS clusters to define metadata options for EC2 groups](https://github.com/pulumi/pulumi-eks/pull/836)
+## Notice (2022-12-14)
+
+As of this notice, using CHANGELOG.md is DEPRECATED. We will be using [GitHub Releases](https://github.com/pulumi/pulumi-eks/releases) for this repository
+
+---
 
 ## 1.0.0 (Released Nov 23, 2022)
 - [Remove input properties on Cluster that are not implemented #821](https://github.com/pulumi/pulumi-eks/pull/821)

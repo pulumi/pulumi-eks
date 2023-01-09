@@ -3,37 +3,48 @@
     "version": "${VERSION}",
     "description": "Pulumi Amazon Web Services (AWS) EKS Components.",
     "license": "Apache-2.0",
-    "bin": "bin/cmd/provider/index.js",
     "keywords": [
         "pulumi",
         "aws",
         "eks"
     ],
+    "scripts": {
+        "format": "prettier --list-different --write ."
+    },
     "homepage": "https://pulumi.com",
-    "repository": "https://github.com/pulumi/pulumi-eks",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pulumi/pulumi-eks.git"
+    },
+    "bugs": "https://github.com/pulumi/pulumi-eks/issues",
     "dependencies": {
-        "@pulumi/aws": "5.10.0",
-        "@pulumi/kubernetes": "3.20.2",
+        "@pulumi/aws": "5.16.2",
+        "@pulumi/kubernetes": "^3.20.2",
         "@pulumi/pulumi": "^3.47.0",
-        "axios": "0.27.2",
-        "netmask": "2.0.2",
-        "js-yaml": "3.14.1",
-        "which": "1.3.1",
-        "https-proxy-agent": "5.0.1",
-        "semver": "7.3.7"
+        "https-proxy-agent": "^5.0.1",
+        "js-yaml": "^4.1.0",
+        "netmask": "^2.0.2",
+        "semver": "^7.3.7",
+        "which": "^1.3.1"
     },
     "devDependencies": {
-        "@types/axios": "^0.14.0",
-        "@types/js-yaml": "^3.12.0",
+        "@types/js-yaml": "^4.0.5",
         "@types/netmask": "^1.0.30",
-        "@types/node": "^8.0.26",
-        "@types/semver": "7.3.10",
+        "@types/node": "^18.11.13",
+        "@types/semver": "^7.3.10",
         "@types/which": "^1.3.1",
         "pkg": "^5.8.0",
-        "tslint": "^5.7.0",
+        "prettier": "^2.8.1",
+        "tslint": "^6.1.3",
+        "tslint-config-prettier": "^1.18.0",
         "typescript": "^3.7.0"
     },
     "pulumi": {
         "resource": true
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "trailingComma": "all",
+        "printWidth": 100
     }
 }
