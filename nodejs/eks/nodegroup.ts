@@ -1197,7 +1197,7 @@ ${customUserData}
                     values: [id],
                 },
             ],
-        }),
+        }, { parent }),
     ).blockDeviceMappings[0].deviceName;
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
