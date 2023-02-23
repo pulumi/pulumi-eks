@@ -843,14 +843,17 @@ ${customUserData}
     }
     const autoScalingGroupTags: InputTags = pulumi
         .all([eksCluster.name, args.autoScalingGroupTags])
-        .apply(
-            ([clusterName, asgTags]) =>
-                <aws.Tags>{
-                    Name: `${clusterName}-worker`,
-                    [`kubernetes.io/cluster/${clusterName}`]: "owned",
-                    ...asgTags,
-                },
-        );
+        .apply(([clusterName, asgTags]): aws.Tags => {
+            if (!asgTags) { asgTags = {} }
+            // The kubernetes.io/cluster/<cluster-name> tag is required to be set to "owned"
+            // Users should not be able to override this tag.
+            asgTags[`kubernetes.io/cluster/${clusterName}`] = "owned";
+            // Only set the Name tag if it's not already set to allow users to override it.
+            if (!asgTags["Name"]) {
+                asgTags["Name"] = `${clusterName}-worker`;
+            }
+            return <aws.Tags>asgTags;
+        });
 
     const cfnTemplateBody = pulumi
         .all([
