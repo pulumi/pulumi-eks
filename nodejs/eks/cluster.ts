@@ -918,7 +918,7 @@ export function createCore(
                         selectors: selectors,
                         subnetIds: pulumi
                             .output(clusterSubnetIds)
-                            .apply((subnets) => computeWorkerSubnets(parent, subnets)),
+                            .apply((subnets) => computeWorkerSubnets(parent, fargate.subnetIds ?? subnets)),
                     },
                     { parent, dependsOn: [eksNodeAccess], provider },
                 );
