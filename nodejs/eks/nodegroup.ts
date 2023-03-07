@@ -313,6 +313,20 @@ export interface NodeGroupV2Options extends NodeGroupOptions {
     launchTemplateTagSpecifications?: pulumi.Input<
         pulumi.Input<awsInputs.ec2.LaunchTemplateTagSpecification>[]
     >;
+
+    /**
+     * Metadata options passed to EC2 instances
+     */
+    metadataOptions?: pulumi.Input<awsInputs.ec2.InstanceMetadataOptions>;
+
+    /**
+     * The instance warmup is the time period, in seconds, from when a new instance's state changes to InService to
+     * when it can receive traffic. During an instance refresh, Amazon EC2 Auto Scaling does not immediately move on
+     * to the next replacement after determining that a newly launched instance is healthy. It waits for the warm-up
+     * period that you specified before it moves on to replacing other instances. This can be helpful when your
+     * application takes time to initialize itself before it starts to serve traffic.
+     */
+    defaultInstanceWarmup?: pulumi.Input<number>;
 }
 
 /**
@@ -1228,6 +1242,7 @@ ${customUserData}
                     securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
                 },
             ],
+            metadataOptions: args.metadataOptions,
             userData: userdata,
             tagSpecifications: args.launchTemplateTagSpecifications,
         },
@@ -1279,6 +1294,7 @@ ${customUserData}
                 },
             },
             tags: asgTags,
+            defaultInstanceWarmup: args.defaultInstanceWarmup,
         },
         { parent, dependsOn: nodeGroupDeps, provider },
     );
