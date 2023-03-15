@@ -43,7 +43,7 @@ repositories {
 dependencies {
     implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("com.google.code.gson:gson:2.8.9")
-    implementation("com.pulumi:aws:5.4.0")
+    implementation("com.pulumi:aws:5.31.0")
     implementation("com.pulumi:kubernetes:3.19.1")
     implementation("com.pulumi:pulumi:0.6.0")
 }
