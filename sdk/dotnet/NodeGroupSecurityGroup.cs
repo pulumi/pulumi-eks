@@ -13,7 +13,7 @@ namespace Pulumi.Eks
     /// NodeGroupSecurityGroup is a component that wraps creating a security group for node groups with the default ingress &amp; egress rules required to connect and work with the EKS cluster security group.
     /// </summary>
     [EksResourceType("eks:index:NodeGroupSecurityGroup")]
-    public partial class NodeGroupSecurityGroup : Pulumi.ComponentResource
+    public partial class NodeGroupSecurityGroup : global::Pulumi.ComponentResource
     {
         /// <summary>
         /// The security group for node groups with the default ingress &amp; egress rules required to connect and work with the EKS cluster security group.
@@ -53,7 +53,7 @@ namespace Pulumi.Eks
         }
     }
 
-    public sealed class NodeGroupSecurityGroupArgs : Pulumi.ResourceArgs
+    public sealed class NodeGroupSecurityGroupArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// The security group associated with the EKS cluster.
@@ -88,5 +88,6 @@ namespace Pulumi.Eks
         public NodeGroupSecurityGroupArgs()
         {
         }
+        public static new NodeGroupSecurityGroupArgs Empty => new NodeGroupSecurityGroupArgs();
     }
 }

@@ -13,7 +13,7 @@ namespace Pulumi.Eks.Inputs
     /// <summary>
     /// Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
     /// </summary>
-    public sealed class VpcCniOptionsArgs : Pulumi.ResourceArgs
+    public sealed class VpcCniOptionsArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
@@ -170,5 +170,6 @@ namespace Pulumi.Eks.Inputs
         public VpcCniOptionsArgs()
         {
         }
+        public static new VpcCniOptionsArgs Empty => new VpcCniOptionsArgs();
     }
 }
