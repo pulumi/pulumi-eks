@@ -7,7 +7,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/autoscaling"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"

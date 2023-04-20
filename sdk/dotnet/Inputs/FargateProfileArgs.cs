@@ -13,7 +13,7 @@ namespace Pulumi.Eks.Inputs
     /// <summary>
     /// Defines how Kubernetes pods are executed in Fargate. See aws.eks.FargateProfileArgs for reference.
     /// </summary>
-    public sealed class FargateProfileArgs : Pulumi.ResourceArgs
+    public sealed class FargateProfileArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
@@ -48,5 +48,6 @@ namespace Pulumi.Eks.Inputs
         public FargateProfileArgs()
         {
         }
+        public static new FargateProfileArgs Empty => new FargateProfileArgs();
     }
 }
