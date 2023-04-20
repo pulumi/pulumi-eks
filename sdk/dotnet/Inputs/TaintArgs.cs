@@ -13,7 +13,7 @@ namespace Pulumi.Eks.Inputs
     /// <summary>
     /// Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
     /// </summary>
-    public sealed class TaintArgs : Pulumi.ResourceArgs
+    public sealed class TaintArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// The effect of the taint.
@@ -30,5 +30,6 @@ namespace Pulumi.Eks.Inputs
         public TaintArgs()
         {
         }
+        public static new TaintArgs Empty => new TaintArgs();
     }
 }

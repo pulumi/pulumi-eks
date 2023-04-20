@@ -13,7 +13,7 @@ namespace Pulumi.Eks.Inputs
     /// <summary>
     /// Defines the core set of data associated with an EKS cluster, including the network in which it runs.
     /// </summary>
-    public sealed class CoreDataArgs : Pulumi.ResourceArgs
+    public sealed class CoreDataArgs : global::Pulumi.ResourceArgs
     {
         [Input("awsProvider")]
         public Input<Pulumi.Aws.Provider>? AwsProvider { get; set; }
@@ -119,5 +119,6 @@ namespace Pulumi.Eks.Inputs
         public CoreDataArgs()
         {
         }
+        public static new CoreDataArgs Empty => new CoreDataArgs();
     }
 }

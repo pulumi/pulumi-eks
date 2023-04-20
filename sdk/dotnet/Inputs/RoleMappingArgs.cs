@@ -13,7 +13,7 @@ namespace Pulumi.Eks.Inputs
     /// <summary>
     /// Describes a mapping from an AWS IAM role to a Kubernetes user and groups.
     /// </summary>
-    public sealed class RoleMappingArgs : Pulumi.ResourceArgs
+    public sealed class RoleMappingArgs : global::Pulumi.ResourceArgs
     {
         [Input("groups", required: true)]
         private InputList<string>? _groups;
@@ -42,5 +42,6 @@ namespace Pulumi.Eks.Inputs
         public RoleMappingArgs()
         {
         }
+        public static new RoleMappingArgs Empty => new RoleMappingArgs();
     }
 }
