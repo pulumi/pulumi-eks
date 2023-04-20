@@ -9,6 +9,37 @@
     "homepage": "https://pulumi.com",
     "license": "Apache-2.0",
     "repository": "https://github.com/pulumi/pulumi-eks",
+    "language": {
+        "csharp": {
+            "liftSingleValueMethodReturns": true,
+            "packageReferences": {
+                "Pulumi": "3.*",
+                "Pulumi.Aws": "5.*",
+                "Pulumi.Kubernetes": "3.*"
+            }
+        },
+        "go": {
+            "generateResourceContainerTypes": true,
+            "importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks",
+            "liftSingleValueMethodReturns": true
+        },
+        "java": {
+            "dependencies": {
+                "com.pulumi:aws": "5.31.0",
+                "com.pulumi:kubernetes": "3.19.1"
+            }
+        },
+        "python": {
+            "liftSingleValueMethodReturns": true,
+            "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
+            "requires": {
+                "pulumi": "\u003e=3.0.0,\u003c4.0.0",
+                "pulumi-aws": "\u003e=5.0.0,\u003c6.0.0",
+                "pulumi-kubernetes": "\u003e=3.0.0,\u003c4.0.0"
+            },
+            "usesIOClasses": true
+        }
+    },
     "config": {},
     "types": {
         "eks:index:ClusterNodeGroupOptions": {
@@ -1575,37 +1606,6 @@
                     "result"
                 ]
             }
-        }
-    },
-    "language": {
-        "csharp": {
-            "liftSingleValueMethodReturns": true,
-            "packageReferences": {
-                "Pulumi": "3.*",
-                "Pulumi.Aws": "5.*",
-                "Pulumi.Kubernetes": "3.*"
-            }
-        },
-        "go": {
-            "generateResourceContainerTypes": true,
-            "importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks",
-            "liftSingleValueMethodReturns": true
-        },
-        "java": {
-            "dependencies": {
-                "com.pulumi:aws": "5.31.0",
-                "com.pulumi:kubernetes": "3.19.1"
-            }
-        },
-        "python": {
-            "liftSingleValueMethodReturns": true,
-            "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
-            "requires": {
-                "pulumi": "\u003e=3.0.0,\u003c4.0.0",
-                "pulumi-aws": "\u003e=5.0.0,\u003c6.0.0",
-                "pulumi-kubernetes": "\u003e=3.0.0,\u003c4.0.0"
-            },
-            "usesIOClasses": true
         }
     }
 }
