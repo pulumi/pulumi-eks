@@ -13,7 +13,7 @@ namespace Pulumi.Eks
     /// VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
     /// </summary>
     [EksResourceType("eks:index:VpcCni")]
-    public partial class VpcCni : Pulumi.CustomResource
+    public partial class VpcCni : global::Pulumi.CustomResource
     {
         /// <summary>
         /// Create a VpcCni resource with the given unique name, arguments, and options.
@@ -57,7 +57,7 @@ namespace Pulumi.Eks
         }
     }
 
-    public sealed class VpcCniArgs : Pulumi.ResourceArgs
+    public sealed class VpcCniArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
@@ -220,5 +220,6 @@ namespace Pulumi.Eks
         public VpcCniArgs()
         {
         }
+        public static new VpcCniArgs Empty => new VpcCniArgs();
     }
 }

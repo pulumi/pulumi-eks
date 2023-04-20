@@ -13,7 +13,7 @@ namespace Pulumi.Eks
     /// Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
     /// </summary>
     [EksResourceType("eks:index:Cluster")]
-    public partial class Cluster : Pulumi.ComponentResource
+    public partial class Cluster : global::Pulumi.ComponentResource
     {
         /// <summary>
         /// The AWS resource provider.
@@ -110,11 +110,11 @@ namespace Pulumi.Eks
         /// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
         /// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
         /// </summary>
-        public Pulumi.Output<string> GetKubeconfig(ClusterGetKubeconfigArgs? args = null)
-            => Pulumi.Deployment.Instance.Call<ClusterGetKubeconfigResult>("eks:index:Cluster/getKubeconfig", args ?? new ClusterGetKubeconfigArgs(), this).Apply(v => v.Result);
+        public global::Pulumi.Output<string> GetKubeconfig(ClusterGetKubeconfigArgs? args = null)
+            => global::Pulumi.Deployment.Instance.Call<ClusterGetKubeconfigResult>("eks:index:Cluster/getKubeconfig", args ?? new ClusterGetKubeconfigArgs(), this).Apply(v => v.Result);
     }
 
-    public sealed class ClusterArgs : Pulumi.ResourceArgs
+    public sealed class ClusterArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
@@ -589,12 +589,13 @@ namespace Pulumi.Eks
         public ClusterArgs()
         {
         }
+        public static new ClusterArgs Empty => new ClusterArgs();
     }
 
     /// <summary>
     /// The set of arguments for the <see cref="Cluster.GetKubeconfig"/> method.
     /// </summary>
-    public sealed class ClusterGetKubeconfigArgs : Pulumi.CallArgs
+    public sealed class ClusterGetKubeconfigArgs : global::Pulumi.CallArgs
     {
         /// <summary>
         /// AWS credential profile name to always use instead of the default AWS credential provider chain.
@@ -615,6 +616,7 @@ namespace Pulumi.Eks
         public ClusterGetKubeconfigArgs()
         {
         }
+        public static new ClusterGetKubeconfigArgs Empty => new ClusterGetKubeconfigArgs();
     }
 
     /// <summary>

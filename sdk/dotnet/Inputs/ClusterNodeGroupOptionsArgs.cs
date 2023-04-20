@@ -13,7 +13,7 @@ namespace Pulumi.Eks.Inputs
     /// <summary>
     /// Describes the configuration options accepted by a cluster to create its own node groups.
     /// </summary>
-    public sealed class ClusterNodeGroupOptionsArgs : Pulumi.ResourceArgs
+    public sealed class ClusterNodeGroupOptionsArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// The AMI ID to use for the worker nodes.
@@ -256,5 +256,6 @@ namespace Pulumi.Eks.Inputs
         public ClusterNodeGroupOptionsArgs()
         {
         }
+        public static new ClusterNodeGroupOptionsArgs Empty => new ClusterNodeGroupOptionsArgs();
     }
 }

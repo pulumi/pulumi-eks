@@ -13,7 +13,7 @@ namespace Pulumi.Eks.Inputs
     /// <summary>
     /// Describes a mapping from an AWS IAM user to a Kubernetes user and groups.
     /// </summary>
-    public sealed class UserMappingArgs : Pulumi.ResourceArgs
+    public sealed class UserMappingArgs : global::Pulumi.ResourceArgs
     {
         [Input("groups", required: true)]
         private InputList<string>? _groups;
@@ -42,5 +42,6 @@ namespace Pulumi.Eks.Inputs
         public UserMappingArgs()
         {
         }
+        public static new UserMappingArgs Empty => new UserMappingArgs();
     }
 }

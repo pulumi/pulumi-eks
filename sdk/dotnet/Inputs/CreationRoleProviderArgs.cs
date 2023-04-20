@@ -13,7 +13,7 @@ namespace Pulumi.Eks.Inputs
     /// <summary>
     /// Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
     /// </summary>
-    public sealed class CreationRoleProviderArgs : Pulumi.ResourceArgs
+    public sealed class CreationRoleProviderArgs : global::Pulumi.ResourceArgs
     {
         [Input("provider", required: true)]
         public Pulumi.Aws.Provider Provider { get; set; } = null!;
@@ -24,5 +24,6 @@ namespace Pulumi.Eks.Inputs
         public CreationRoleProviderArgs()
         {
         }
+        public static new CreationRoleProviderArgs Empty => new CreationRoleProviderArgs();
     }
 }

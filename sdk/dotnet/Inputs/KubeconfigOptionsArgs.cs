@@ -28,7 +28,7 @@ namespace Pulumi.Eks.Inputs
     /// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
     /// - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
     /// </summary>
-    public sealed class KubeconfigOptionsArgs : Pulumi.ResourceArgs
+    public sealed class KubeconfigOptionsArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// AWS credential profile name to always use instead of the default AWS credential provider chain.
@@ -49,5 +49,6 @@ namespace Pulumi.Eks.Inputs
         public KubeconfigOptionsArgs()
         {
         }
+        public static new KubeconfigOptionsArgs Empty => new KubeconfigOptionsArgs();
     }
 }
