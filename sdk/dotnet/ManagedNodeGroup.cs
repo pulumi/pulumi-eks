@@ -16,7 +16,7 @@ namespace Pulumi.Eks
     /// https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
     /// </summary>
     [EksResourceType("eks:index:ManagedNodeGroup")]
-    public partial class ManagedNodeGroup : Pulumi.ComponentResource
+    public partial class ManagedNodeGroup : global::Pulumi.ComponentResource
     {
         /// <summary>
         /// The AWS managed node group.
@@ -50,7 +50,7 @@ namespace Pulumi.Eks
         }
     }
 
-    public sealed class ManagedNodeGroupArgs : Pulumi.ResourceArgs
+    public sealed class ManagedNodeGroupArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
@@ -218,5 +218,6 @@ namespace Pulumi.Eks
         public ManagedNodeGroupArgs()
         {
         }
+        public static new ManagedNodeGroupArgs Empty => new ManagedNodeGroupArgs();
     }
 }

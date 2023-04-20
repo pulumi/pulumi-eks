@@ -13,7 +13,7 @@ namespace Pulumi.Eks.Inputs
     /// <summary>
     /// StorageClass describes the inputs to a single Kubernetes StorageClass provisioned by AWS. Any number of storage classes can be added to a cluster at creation time. One of these storage classes may be configured the default storage class for the cluster.
     /// </summary>
-    public sealed class StorageClassArgs : Pulumi.ResourceArgs
+    public sealed class StorageClassArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// AllowVolumeExpansion shows whether the storage class allow volume expand.
@@ -100,5 +100,6 @@ namespace Pulumi.Eks.Inputs
         public StorageClassArgs()
         {
         }
+        public static new StorageClassArgs Empty => new StorageClassArgs();
     }
 }

@@ -13,7 +13,7 @@ namespace Pulumi.Eks
     /// ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a specific role to use for the creation of the EKS cluster different from the role being used to run the Pulumi deployment.
     /// </summary>
     [EksResourceType("eks:index:ClusterCreationRoleProvider")]
-    public partial class ClusterCreationRoleProvider : Pulumi.ComponentResource
+    public partial class ClusterCreationRoleProvider : global::Pulumi.ComponentResource
     {
         [Output("role")]
         public Output<Pulumi.Aws.Iam.Role> Role { get; private set; } = null!;
@@ -44,7 +44,7 @@ namespace Pulumi.Eks
         }
     }
 
-    public sealed class ClusterCreationRoleProviderArgs : Pulumi.ResourceArgs
+    public sealed class ClusterCreationRoleProviderArgs : global::Pulumi.ResourceArgs
     {
         [Input("profile")]
         public Input<string>? Profile { get; set; }
@@ -55,5 +55,6 @@ namespace Pulumi.Eks
         public ClusterCreationRoleProviderArgs()
         {
         }
+        public static new ClusterCreationRoleProviderArgs Empty => new ClusterCreationRoleProviderArgs();
     }
 }
