@@ -70,14 +70,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
             value: args.customNetworkConfig ? "true" : "false",
         });
     }
-    if (args.warmEniTarget) {
-        env.push({
-            name: "WARM_ENI_TARGET",
-            value: args.warmEniTarget.toString(),
-        });
-    } else {
-        env.push({ name: "WARM_ENI_TARGET", value: "1" });
-    }
+    env.push({ name: "WARM_ENI_TARGET", value: `${args.warmEniTarget ?? 1}` });
     if (args.warmIpTarget) {
         env.push({
             name: "WARM_IP_TARGET",
