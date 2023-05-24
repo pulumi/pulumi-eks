@@ -485,7 +485,10 @@ export function createCore(name: string, args: ClusterOptions, parent: pulumi.Co
     let kubernetesNetworkConfig: pulumi.Output<aws.types.input.eks.ClusterKubernetesNetworkConfig> | undefined;
     if (args.kubernetesServiceIpAddressRange || args.kubernetesServiceIpFamily ) {
         kubernetesNetworkConfig = pulumi.all([args.kubernetesServiceIpAddressRange, args.kubernetesServiceIpFamily]).apply(
-            ([serviceIpv4Cidr, serviceIpFamily]) => ({ serviceIpv4Cidr: serviceIpv4Cidr, serviceIpFamily: serviceIpFamily }),
+            ([serviceIpv4Cidr, serviceIpFamily = "ipv4"]) => ({ 
+                serviceIpv4Cidr: serviceIpFamily === "ipv4" ? serviceIpv4Cidr : undefined, // only applicable for IPv4 IP family 
+                serviceIpFamily: serviceIpFamily 
+            }),
         );
     }
 
