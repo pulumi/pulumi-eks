@@ -563,11 +563,11 @@ export function createCore(
     let kubernetesNetworkConfig:
         | pulumi.Output<aws.types.input.eks.ClusterKubernetesNetworkConfig>
         | undefined;
-        if (args.kubernetesServiceIpAddressRange || args.kubernetesServiceIpFamily ) {
-            kubernetesNetworkConfig = pulumi.all([args.kubernetesServiceIpAddressRange, args.kubernetesServiceIpFamily]).apply(
-                ([serviceIpv4Cidr, serviceIpFamily = "ipv4"]) => ({ 
-                    serviceIpv4Cidr: serviceIpFamily === "ipv4" ? serviceIpv4Cidr : undefined, // only applicable for IPv4 IP family 
-                    serviceIpFamily: serviceIpFamily 
+        if (args.kubernetesServiceIpAddressRange || args.ipFamily ) {
+            kubernetesNetworkConfig = pulumi.all([args.kubernetesServiceIpAddressRange, args.ipFamily]).apply(
+                ([serviceIpv4Cidr, ipFamily = "ipv4"]) => ({ 
+                    serviceIpv4Cidr: ipFamily === "ipv4" ? serviceIpv4Cidr : undefined, // only applicable for IPv4 IP family 
+                    ipFamily: ipFamily 
                 }),
             );
         }
@@ -1505,7 +1505,7 @@ export interface ClusterOptions {
      * You can only specify an IP family when you create a cluster, changing this value will force
      * a new cluster to be created.
      */
-    kubernetesServiceIpFamily?: pulumi.Input<string>;
+    ipFamily?: pulumi.Input<string>;
 }
 
 /**
