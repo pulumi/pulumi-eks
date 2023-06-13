@@ -705,6 +705,21 @@ export function createCore(
         { parent: parent },
     );
 
+    // Add CSI Driver for Storage
+
+    const ebsCsiDriver = new k8s.helm.v3.Chart(
+        "aws-ebs-csi-driver",
+        {
+            namespace: "kube-system",
+            chart: "aws-ebs-csi-driver",
+            fetchOpts: {
+                repo: "https://kubernetes-sigs.github.io/aws-ebs-csi-driver",
+            },
+        },
+        {
+            provider: k8sProvider,
+        }
+    )
     // Add any requested StorageClasses.
     const storageClasses = args.storageClasses || {};
     const userStorageClasses = {} as UserStorageClasses;
@@ -779,6 +794,10 @@ export function createCore(
                     {
                         id: "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
                         arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly`,
+                    },
+                    {
+                        id: "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+                        arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy`,
                     },
                 ],
             },

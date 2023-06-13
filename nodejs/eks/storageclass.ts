@@ -20,7 +20,7 @@ import * as pulumi from "@pulumi/pulumi";
 /**
  * EBSVolumeType lists the set of volume types accepted by an EKS storage class.
  */
-export type EBSVolumeType = "io1" | "gp2" | "sc1" | "st1";
+export type EBSVolumeType = "io1" | "gp2" | "gp3" | "sc1" | "st1";
 
 /**
  * StorageClass describes the inputs to a single Kubernetes StorageClass provisioned by AWS. Any number of storage
