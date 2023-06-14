@@ -706,10 +706,17 @@ export function createCore(
     );
 
     // Add CSI Driver for Storage
-    const ebsCsiDriver = new aws.eks.Addon("aws-ebs-csi-driver", {
-        addonName: "aws-ebs-csi-driver",
-        clusterName: eksCluster.name,
-    });
+    const ebsCsiDriver = new aws.eks.Addon(
+        "ebs-csi-driver", 
+        {
+            addonName: "aws-ebs-csi-driver",
+            clusterName: eksCluster.name,
+        },
+        {
+            parent,
+            provider: args.creationRoleProvider ? args.creationRoleProvider.provider : provider,
+        },
+    );
 
     // Add any requested StorageClasses.
     const storageClasses = args.storageClasses || {};
