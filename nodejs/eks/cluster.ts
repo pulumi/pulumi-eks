@@ -1766,13 +1766,13 @@ export function createCluster(
         }
     }
 
-    if (defaultNodeGroup){
+    if (defaultNodeGroup) {
         // Add CSI Driver for Storage
         const ebsCsiDriver = new aws.eks.Addon(
-            `${name}-aws-ebs-csi-driver`, 
+            `${name}-aws-ebs-csi-driver`,
             {
                 addonName: "aws-ebs-csi-driver",
-                clusterName: core.cluster.name
+                clusterName: core.cluster.name,
             },
             {
                 parent: self,
