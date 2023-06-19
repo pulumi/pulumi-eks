@@ -313,7 +313,7 @@ export function getRoleProvider(
     parent?: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): CreationRoleProvider {
-    const partition = pulumi.output(aws.getPartition({ provider })).partition;
+    const partition = pulumi.output(aws.getPartition({ parent })).partition;
     const accountId = pulumi.output(aws.getCallerIdentity({ parent })).accountId;
     const iamRole = new aws.iam.Role(
         `${name}-eksClusterCreatorRole`,
@@ -449,7 +449,7 @@ export function createCore(
         version: args.version,
     };
 
-    const { partition, dnsSuffix } = pulumi.output(aws.getPartition({ provider }));
+    const { partition, dnsSuffix } = pulumi.output(aws.getPartition({ parent }));
 
     // Configure default networking architecture.
     let vpcId: pulumi.Input<string> = args.vpcId!;
@@ -918,7 +918,13 @@ export function createCore(
                         selectors: selectors,
                         subnetIds: pulumi
                             .output(clusterSubnetIds)
-                            .apply((subnets) => computeWorkerSubnets(parent, fargate.subnetIds ?? subnets)),
+                            .apply((subnets) => {
+                                if (fargate.subnetIds?.length && fargate.subnetIds.length > 0) {
+                                   return computeWorkerSubnets(parent, fargate.subnetIds)
+                                } else {
+                                    return computeWorkerSubnets(parent, subnets)
+                                }
+                            }),
                     },
                     { parent, dependsOn: [eksNodeAccess], provider },
                 );
