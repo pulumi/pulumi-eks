@@ -349,10 +349,27 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
+     * You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+     * 
+     */
+    @Import(name="ipFamily")
+    private @Nullable Output<String> ipFamily;
+
+    /**
+     * @return The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
+     * You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+     * 
+     */
+    public Optional<Output<String>> ipFamily() {
+        return Optional.ofNullable(this.ipFamily);
+    }
+
+    /**
      * The CIDR block to assign Kubernetes service IP addresses from. If you don&#39;t
      * specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
-     * 172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
-     * with resources in other networks that are peered or connected to your VPC. You can only specify
+     * 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
+     * that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
      * a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
      * 
      * The block must meet the following requirements:
@@ -367,8 +384,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     /**
      * @return The CIDR block to assign Kubernetes service IP addresses from. If you don&#39;t
      * specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
-     * 172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
-     * with resources in other networks that are peered or connected to your VPC. You can only specify
+     * 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
+     * that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
      * a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
      * 
      * The block must meet the following requirements:
@@ -961,6 +978,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.instanceRole = $.instanceRole;
         this.instanceRoles = $.instanceRoles;
         this.instanceType = $.instanceType;
+        this.ipFamily = $.ipFamily;
         this.kubernetesServiceIpAddressRange = $.kubernetesServiceIpAddressRange;
         this.maxSize = $.maxSize;
         this.minSize = $.minSize;
@@ -1468,10 +1486,33 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
+         * @param ipFamily The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
+         * You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder ipFamily(@Nullable Output<String> ipFamily) {
+            $.ipFamily = ipFamily;
+            return this;
+        }
+
+        /**
+         * @param ipFamily The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
+         * You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder ipFamily(String ipFamily) {
+            return ipFamily(Output.of(ipFamily));
+        }
+
+        /**
          * @param kubernetesServiceIpAddressRange The CIDR block to assign Kubernetes service IP addresses from. If you don&#39;t
          * specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
-         * 172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
-         * with resources in other networks that are peered or connected to your VPC. You can only specify
+         * 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
+         * that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
          * a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
          * 
          * The block must meet the following requirements:
@@ -1490,8 +1531,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         /**
          * @param kubernetesServiceIpAddressRange The CIDR block to assign Kubernetes service IP addresses from. If you don&#39;t
          * specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
-         * 172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
-         * with resources in other networks that are peered or connected to your VPC. You can only specify
+         * 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
+         * that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
          * a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
          * 
          * The block must meet the following requirements:
