@@ -591,12 +591,18 @@ func generateSchema() schema.PackageSpec {
 							"See for more details:\n" +
 							"- https://aws.amazon.com/about-aws/whats-new/2020/03/amazon-eks-adds-envelope-encryption-for-secrets-with-aws-kms/",
 					},
+					"ipFamily": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.\n" +
+							"You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.",
+						ReplaceOnChanges: true,
+					},
 					"kubernetesServiceIpAddressRange": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "The CIDR block to assign Kubernetes service IP addresses from. If you don't\n" +
 							"specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or\n" +
-							"172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap\n" +
-							"with resources in other networks that are peered or connected to your VPC. You can only specify\n" +
+							"172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block\n" +
+							"that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify\n" +
 							"a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.\n\n" +
 							"The block must meet the following requirements:\n" +
 							"- Within one of the following private IP address blocks: 10.0.0.0/8, 172.16.0.0.0/12, or 192.168.0.0/16.\n" +

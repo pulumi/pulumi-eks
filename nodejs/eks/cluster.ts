@@ -562,11 +562,14 @@ export function createCore(
     let kubernetesNetworkConfig:
         | pulumi.Output<aws.types.input.eks.ClusterKubernetesNetworkConfig>
         | undefined;
-    if (args.kubernetesServiceIpAddressRange) {
-        kubernetesNetworkConfig = pulumi
-            .output(args.kubernetesServiceIpAddressRange)
-            .apply((serviceIpv4Cidr) => ({ serviceIpv4Cidr }));
-    }
+        if (args.kubernetesServiceIpAddressRange || args.ipFamily ) {
+            kubernetesNetworkConfig = pulumi.all([args.kubernetesServiceIpAddressRange, args.ipFamily]).apply(
+                ([serviceIpv4Cidr, ipFamily = "ipv4"]) => ({ 
+                    serviceIpv4Cidr: ipFamily === "ipv4" ? serviceIpv4Cidr : undefined, // only applicable for IPv4 IP family 
+                    ipFamily: ipFamily 
+                }),
+            );
+        }
 
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(
@@ -1530,6 +1533,13 @@ export interface ClusterOptions {
      * - Between /24 and /12.
      */
     kubernetesServiceIpAddressRange?: pulumi.Input<string>;
+
+    /**
+     * The IP family used to assign Kubernetes pod and service addresses. Valid values are ipv4 (default) and ipv6.
+     * You can only specify an IP family when you create a cluster, changing this value will force
+     * a new cluster to be created.
+     */
+    ipFamily?: pulumi.Input<string>;
 }
 
 /**
