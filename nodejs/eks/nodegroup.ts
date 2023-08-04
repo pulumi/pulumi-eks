@@ -89,21 +89,6 @@ export interface NodeGroupBaseOptions {
     extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
 
     /**
-     * Encrypt the root block device of the nodes in the node group.
-     *
-     * @deprecated This option has been deprecated due to a misspelling.
-     * Use the correct nodeRootVolumeEncrypted option instead.
-     */
-    encryptRootBockDevice?: pulumi.Input<boolean>;
-
-    /**
-     * Encrypt the root block device of the nodes in the node group.
-     * @deprecated This option has been deprecated for parameter naming coherence.
-     * Use the nodeRootVolumeEncrypted option instead.
-     */
-    encryptRootBlockDevice?: pulumi.Input<boolean>;
-
-    /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
      * If not provided, no SSH access is enabled on VMs.
@@ -812,11 +797,7 @@ ${customUserData}
                 .apply(([sg, extraSG]) => [sg, ...extraSG]),
             spotPrice: args.spotPrice,
             rootBlockDevice: {
-                encrypted:
-                    args.encryptRootBlockDevice ??
-                    args.encryptRootBockDevice ??
-                    args.nodeRootVolumeEncrypted ??
-                    false,
+                encrypted: args.nodeRootVolumeEncrypted ?? false,
                 volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
                 volumeType: args.nodeRootVolumeType ?? "gp2",
                 iops: args.nodeRootVolumeIops,
@@ -1211,8 +1192,7 @@ ${customUserData}
         : {};
 
     const device = pulumi.output(amiId).apply((id) =>
-        aws.ec2.getAmi(
-            {
+        aws.ec2.getAmi({
                 owners: ["self", "amazon"],
                 filters: [
                     {
@@ -1220,9 +1200,7 @@ ${customUserData}
                         values: [id],
                     },
                 ],
-            },
-            { parent },
-        ),
+            }, { parent }),
     ).blockDeviceMappings[0].deviceName;
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(

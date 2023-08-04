@@ -7,11 +7,11 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws"
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/eks"
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
-	"github.com/pulumi/pulumi-eks/sdk/go/eks/internal"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
@@ -49,7 +49,7 @@ func NewCluster(ctx *pulumi.Context,
 		args = &ClusterArgs{}
 	}
 
-	opts = internal.PkgResourceDefaultOpts(opts)
+	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource Cluster
 	err := ctx.RegisterRemoteComponentResource("eks:index:Cluster", name, args, &resource, opts...)
 	if err != nil {
@@ -83,8 +83,6 @@ type clusterArgs struct {
 	DesiredCapacity *int `pulumi:"desiredCapacity"`
 	// Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
 	EnabledClusterLogTypes []string `pulumi:"enabledClusterLogTypes"`
-	// Encrypt the root block device of the nodes in the node group.
-	EncryptRootBlockDevice *bool `pulumi:"encryptRootBlockDevice"`
 	// KMS Key ARN to use with the encryption configuration for the cluster.
 	//
 	// Only available on Kubernetes 1.13+ clusters created after March 6, 2020.
@@ -157,6 +155,8 @@ type clusterArgs struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey *string `pulumi:"nodePublicKey"`
+	// Encrypt the root block device of the nodes in the node group.
+	NodeRootVolumeEncrypted *bool `pulumi:"nodeRootVolumeEncrypted"`
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize *int `pulumi:"nodeRootVolumeSize"`
 	// The tags to apply to the default `nodeSecurityGroup` created by the cluster.
@@ -289,8 +289,6 @@ type ClusterArgs struct {
 	DesiredCapacity pulumi.IntPtrInput
 	// Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
 	EnabledClusterLogTypes pulumi.StringArrayInput
-	// Encrypt the root block device of the nodes in the node group.
-	EncryptRootBlockDevice pulumi.BoolPtrInput
 	// KMS Key ARN to use with the encryption configuration for the cluster.
 	//
 	// Only available on Kubernetes 1.13+ clusters created after March 6, 2020.
@@ -363,6 +361,8 @@ type ClusterArgs struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey pulumi.StringPtrInput
+	// Encrypt the root block device of the nodes in the node group.
+	NodeRootVolumeEncrypted pulumi.BoolPtrInput
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize pulumi.IntPtrInput
 	// The tags to apply to the default `nodeSecurityGroup` created by the cluster.

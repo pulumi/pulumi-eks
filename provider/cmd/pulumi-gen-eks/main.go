@@ -80,8 +80,8 @@ func main() {
 }
 
 const (
-	awsVersion = "v5.31.0"
-	k8sVersion = "v3.0.0"
+	awsVersion = "v6.5.0"
+	k8sVersion = "v4.4.0"
 )
 
 func awsRef(ref string) string {
@@ -402,7 +402,7 @@ func generateSchema() schema.PackageSpec {
 						},
 						Description: "The tags to apply to the cluster security group.",
 					},
-					"encryptRootBlockDevice": {
+					"nodeRootVolumeEncrypted": {
 						TypeSpec:    schema.TypeSpec{Type: "boolean"},
 						Description: "Encrypt the root block device of the nodes in the node group.",
 					},
@@ -1348,16 +1348,16 @@ func generateSchema() schema.PackageSpec {
 			"csharp": rawMessage(map[string]interface{}{
 				"packageReferences": map[string]string{
 					"Pulumi":            "3.*",
-					"Pulumi.Aws":        "5.*",
-					"Pulumi.Kubernetes": "3.*",
+					"Pulumi.Aws":        "6.*",
+					"Pulumi.Kubernetes": "4.*",
 				},
 				"liftSingleValueMethodReturns": true,
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
 					"pulumi":            ">=3.0.0,<4.0.0",
-					"pulumi-aws":        ">=5.0.0,<6.0.0",
-					"pulumi-kubernetes": ">=3.0.0,<4.0.0",
+					"pulumi-aws":        ">=6.0.0,<7.0.0",
+					"pulumi-kubernetes": ">=4.0.0,<5.0.0",
 				},
 				"usesIOClasses": true,
 				// TODO: Embellish the readme
@@ -1366,13 +1366,14 @@ func generateSchema() schema.PackageSpec {
 			}),
 			"go": rawMessage(map[string]interface{}{
 				"generateResourceContainerTypes": true,
-				"importBasePath":                 "github.com/pulumi/pulumi-eks/sdk/go/eks",
+				"importBasePath":                 "github.com/pulumi/pulumi-eks/sdk/v2/go/eks",
 				"liftSingleValueMethodReturns":   true,
+				"internalModuleName":             "utilities",
 			}),
 			"java": rawMessage(map[string]interface{}{
 				"dependencies": map[string]string{
-					"com.pulumi:aws":        "5.31.0",
-					"com.pulumi:kubernetes": "3.19.1",
+					"com.pulumi:aws":        "6.5.0",
+					"com.pulumi:kubernetes": "4.4.0",
 				},
 			}),
 		},
@@ -1599,8 +1600,9 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 
 	if v2 {
 		props["minRefreshPercentage"] = schema.PropertySpec{
-			TypeSpec:    schema.TypeSpec{Type: "integer"},
-			Description: "The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.",
+			TypeSpec: schema.TypeSpec{Type: "integer"},
+			Description: "The minimum amount of instances that should remain available during an instance " +
+				"refresh, expressed as a percentage. Defaults to 50.",
 		}
 
 		props["launchTemplateTagSpecifications"] = schema.PropertySpec{
@@ -1660,8 +1662,10 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 			Description: "IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.",
 		},
 		"enableIpv6": {
-			TypeSpec:    schema.TypeSpec{Type: "boolean"},
-			Description: "VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.",
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it " +
+				"in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set " +
+				"to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.",
 		},
 		"logLevel": {
 			TypeSpec: schema.TypeSpec{Type: "string"}, // TODO consider typing this as an enum

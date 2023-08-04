@@ -1,14 +1,13 @@
 {
     "name": "example-aws-profile-role",
     "devDependencies": {
-        "typescript": "^3.0.0",
+        "typescript": "^4.0.0",
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "^3.0.0",
-        "@pulumi/aws": "^5.31.0",
-        "@pulumi/awsx": "^0.40.0",
-        "@pulumi/kubernetes": "^3.0.0",
+        "@pulumi/aws": "^6.0.0",
+        "@pulumi/awsx": "^2.0.2",
+        "@pulumi/kubernetes": "^4.0.0",
         "@pulumi/eks": "latest"
     }
 }

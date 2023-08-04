@@ -12,7 +12,7 @@ const vpc = new awsx.ec2.Vpc(`${projectName}`, {
 });
 
 // Create a new IAM role on the account caller to use as a cluster admin.
-const accountId = pulumi.output(aws.getCallerIdentity({async: true})).accountId;
+const accountId = pulumi.output(aws.getCallerIdentity({})).accountId;
 const assumeRolePolicy = accountId.apply(id => JSON.stringify(
     {
         Version: "2012-10-17",
@@ -43,7 +43,7 @@ const clusterAdminRole = new aws.iam.Role("clusterAdminRole", {
 // to the cluster yet to write the aws-auth configmap for its own permissions.
 // See example pod below to use the role once the cluster is ready.
 const cluster = new eks.Cluster(`${projectName}`, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     providerCredentialOpts: {
         profileName: aws.config.profile,

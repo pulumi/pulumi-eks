@@ -20,7 +20,7 @@ const popped = pulumi.output(publicSubnetIds).apply(subnets => {
 });
 
 const cluster = new eks.Cluster(`${projectName}`, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     publicSubnetIds: popped,
     deployDashboard: false,
 });
