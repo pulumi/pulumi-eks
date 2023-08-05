@@ -1357,7 +1357,7 @@ func generateSchema() schema.PackageSpec {
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
 					"pulumi":            ">=3.0.0,<4.0.0",
-					"pulumi-aws":        "==6.0.0a6",
+					"pulumi-aws":        "==6.0.0a7",
 					"pulumi-kubernetes": ">=3.0.0,<4.0.0",
 				},
 				"usesIOClasses": true,
