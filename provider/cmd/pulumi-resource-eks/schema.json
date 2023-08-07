@@ -34,7 +34,7 @@
             "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
             "requires": {
                 "pulumi": "\u003e=3.0.0,\u003c4.0.0",
-                "pulumi-aws": "\u003e=6.0.0a6",
+                "pulumi-aws": "\u003e=6.0.0a7",
                 "pulumi-kubernetes": "\u003e=3.0.0,\u003c4.0.0"
             },
             "usesIOClasses": true
