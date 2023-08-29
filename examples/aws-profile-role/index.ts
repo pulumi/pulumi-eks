@@ -12,7 +12,7 @@ const vpc = new awsx.ec2.Vpc(`${projectName}`, {
 });
 
 // Create a new IAM role on the account caller to use as a cluster admin.
-const accountId = pulumi.output(aws.getCallerIdentity({async: true})).accountId;
+const accountId = pulumi.output(aws.getCallerIdentity({})).accountId;
 const assumeRolePolicy = accountId.apply(id => JSON.stringify(
     {
         Version: "2012-10-17",
