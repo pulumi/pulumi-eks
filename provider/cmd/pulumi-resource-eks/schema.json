@@ -20,7 +20,7 @@
         },
         "go": {
             "generateResourceContainerTypes": true,
-            "importBasePath": "github.com/pulumi/pulumi-eks/sdk/go/eks",
+            "importBasePath": "github.com/pulumi/pulumi-eks/sdk/v2/go/eks",
             "liftSingleValueMethodReturns": true
         },
         "java": {

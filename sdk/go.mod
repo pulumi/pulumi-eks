@@ -1,4 +1,4 @@
-module github.com/pulumi/pulumi-eks/sdk
+module github.com/pulumi/pulumi-eks/sdk/v2
 
 go 1.20
 
