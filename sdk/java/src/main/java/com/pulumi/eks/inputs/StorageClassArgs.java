@@ -5,7 +5,7 @@ package com.pulumi.eks.inputs;
 
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.kubernetes.meta_v1.inputs.ObjectMetaArgs;
+import com.pulumi.kubernetes.meta.v1.inputs.ObjectMetaArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;

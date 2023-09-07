@@ -307,10 +307,10 @@
     read-package-tree "^5.2.1"
     resolve "^1.7.1"
 
-"@pulumi/kubernetes@^3.20.2":
-  version "3.30.2"
-  resolved "https://registry.yarnpkg.com/@pulumi/kubernetes/-/kubernetes-3.30.2.tgz#b70a804a287deb4b6c5056f5839f38e869055e9f"
-  integrity sha512-3877pq6eA8HAgULAtPUtihafG8glO8VKUNy6+/4sY9rE9xjnVcIFHE4ymuN+j0e40Wf49pupflhi7taZz1lSMQ==
+"@pulumi/kubernetes@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@pulumi/kubernetes/-/kubernetes-4.1.1.tgz#2948d814f34e593a669de7418be1af6a8caa0597"
+  integrity sha512-J+GFCJ7VLcWJcMRmOC2bM5qtfCOaoRl9c7tfB+D99TSncEUU59+clEhRes39R0zZQr/cdPMHvxOfHcdLVnxUHw==
   dependencies:
     "@pulumi/pulumi" "^3.25.0"
     "@types/glob" "^5.0.35"

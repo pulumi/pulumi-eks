@@ -44,8 +44,8 @@ dependencies {
     implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.pulumi:aws:6.0.4")
-    implementation("com.pulumi:kubernetes:3.19.1")
-    implementation("com.pulumi:pulumi:0.9.5")
+    implementation("com.pulumi:kubernetes:4.1.1")
+    implementation("com.pulumi:pulumi:0.9.7")
 }
 
 task sourcesJar(type: Jar) {
