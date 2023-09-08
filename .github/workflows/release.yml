@@ -24,6 +24,7 @@ env:
   PYTHONVERSION: "3.8"
   NODEVERSION: "18.x"
   JAVAVERSION: "11"
+  IS_PRERELEASE: ${{ contains(github.ref_name,'-') }}
 jobs:
   lint:
     name: lint
@@ -211,7 +212,7 @@ jobs:
         with:
           files: |
             dist/*.tar.gz
-          prerelease: ${{ contains(github.ref_name,'-') }}
+          prerelease: ${{ env.IS_PRERELEASE }}
         env:
           GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
   publish_sdk:
@@ -684,7 +685,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Unshallow clone for tags
+        run: git fetch --prune --unshallow --tags
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.5.0
         with:
