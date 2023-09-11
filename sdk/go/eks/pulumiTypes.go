@@ -12,12 +12,16 @@ import (
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes"
 	corev1 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/core/v1"
 	metav1 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/meta/v1"
 	storagev1 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/storage/v1"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
+
+var _ = utilities.GetEnvOrDefault
 
 // Describes the configuration options accepted by a cluster to create its own node groups.
 type ClusterNodeGroupOptions struct {
@@ -238,6 +242,12 @@ func (i ClusterNodeGroupOptionsArgs) ToClusterNodeGroupOptionsOutputWithContext(
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterNodeGroupOptionsOutput)
 }
 
+func (i ClusterNodeGroupOptionsArgs) ToOutput(ctx context.Context) pulumix.Output[ClusterNodeGroupOptions] {
+	return pulumix.Output[ClusterNodeGroupOptions]{
+		OutputState: i.ToClusterNodeGroupOptionsOutputWithContext(ctx).OutputState,
+	}
+}
+
 func (i ClusterNodeGroupOptionsArgs) ToClusterNodeGroupOptionsPtrOutput() ClusterNodeGroupOptionsPtrOutput {
 	return i.ToClusterNodeGroupOptionsPtrOutputWithContext(context.Background())
 }
@@ -279,6 +289,12 @@ func (i *clusterNodeGroupOptionsPtrType) ToClusterNodeGroupOptionsPtrOutputWithC
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterNodeGroupOptionsPtrOutput)
 }
 
+func (i *clusterNodeGroupOptionsPtrType) ToOutput(ctx context.Context) pulumix.Output[*ClusterNodeGroupOptions] {
+	return pulumix.Output[*ClusterNodeGroupOptions]{
+		OutputState: i.ToClusterNodeGroupOptionsPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
 // Describes the configuration options accepted by a cluster to create its own node groups.
 type ClusterNodeGroupOptionsOutput struct{ *pulumi.OutputState }
 
@@ -302,6 +318,12 @@ func (o ClusterNodeGroupOptionsOutput) ToClusterNodeGroupOptionsPtrOutputWithCon
 	return o.ApplyTWithContext(ctx, func(_ context.Context, v ClusterNodeGroupOptions) *ClusterNodeGroupOptions {
 		return &v
 	}).(ClusterNodeGroupOptionsPtrOutput)
+}
+
+func (o ClusterNodeGroupOptionsOutput) ToOutput(ctx context.Context) pulumix.Output[ClusterNodeGroupOptions] {
+	return pulumix.Output[ClusterNodeGroupOptions]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The AMI ID to use for the worker nodes.
@@ -491,6 +513,12 @@ func (o ClusterNodeGroupOptionsPtrOutput) ToClusterNodeGroupOptionsPtrOutput() C
 
 func (o ClusterNodeGroupOptionsPtrOutput) ToClusterNodeGroupOptionsPtrOutputWithContext(ctx context.Context) ClusterNodeGroupOptionsPtrOutput {
 	return o
+}
+
+func (o ClusterNodeGroupOptionsPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*ClusterNodeGroupOptions] {
+	return pulumix.Output[*ClusterNodeGroupOptions]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ClusterNodeGroupOptionsPtrOutput) Elem() ClusterNodeGroupOptionsOutput {
@@ -854,6 +882,12 @@ func (o CoreDataOutput) ToCoreDataOutputWithContext(ctx context.Context) CoreDat
 	return o
 }
 
+func (o CoreDataOutput) ToOutput(ctx context.Context) pulumix.Output[CoreData] {
+	return pulumix.Output[CoreData]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o CoreDataOutput) AwsProvider() aws.ProviderOutput {
 	return o.ApplyT(func(v CoreData) *aws.Provider { return v.AwsProvider }).(aws.ProviderOutput)
 }
@@ -974,6 +1008,12 @@ func (i CreationRoleProviderArgs) ToCreationRoleProviderOutputWithContext(ctx co
 	return pulumi.ToOutputWithContext(ctx, i).(CreationRoleProviderOutput)
 }
 
+func (i CreationRoleProviderArgs) ToOutput(ctx context.Context) pulumix.Output[CreationRoleProvider] {
+	return pulumix.Output[CreationRoleProvider]{
+		OutputState: i.ToCreationRoleProviderOutputWithContext(ctx).OutputState,
+	}
+}
+
 func (i CreationRoleProviderArgs) ToCreationRoleProviderPtrOutput() CreationRoleProviderPtrOutput {
 	return i.ToCreationRoleProviderPtrOutputWithContext(context.Background())
 }
@@ -1015,6 +1055,12 @@ func (i *creationRoleProviderPtrType) ToCreationRoleProviderPtrOutputWithContext
 	return pulumi.ToOutputWithContext(ctx, i).(CreationRoleProviderPtrOutput)
 }
 
+func (i *creationRoleProviderPtrType) ToOutput(ctx context.Context) pulumix.Output[*CreationRoleProvider] {
+	return pulumix.Output[*CreationRoleProvider]{
+		OutputState: i.ToCreationRoleProviderPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
 // Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
 type CreationRoleProviderOutput struct{ *pulumi.OutputState }
 
@@ -1040,6 +1086,12 @@ func (o CreationRoleProviderOutput) ToCreationRoleProviderPtrOutputWithContext(c
 	}).(CreationRoleProviderPtrOutput)
 }
 
+func (o CreationRoleProviderOutput) ToOutput(ctx context.Context) pulumix.Output[CreationRoleProvider] {
+	return pulumix.Output[CreationRoleProvider]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o CreationRoleProviderOutput) Provider() aws.ProviderOutput {
 	return o.ApplyT(func(v CreationRoleProvider) *aws.Provider { return v.Provider }).(aws.ProviderOutput)
 }
@@ -1060,6 +1112,12 @@ func (o CreationRoleProviderPtrOutput) ToCreationRoleProviderPtrOutput() Creatio
 
 func (o CreationRoleProviderPtrOutput) ToCreationRoleProviderPtrOutputWithContext(ctx context.Context) CreationRoleProviderPtrOutput {
 	return o
+}
+
+func (o CreationRoleProviderPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*CreationRoleProvider] {
+	return pulumix.Output[*CreationRoleProvider]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o CreationRoleProviderPtrOutput) Elem() CreationRoleProviderOutput {
@@ -1177,6 +1235,12 @@ func (i KubeconfigOptionsArgs) ToKubeconfigOptionsOutputWithContext(ctx context.
 	return pulumi.ToOutputWithContext(ctx, i).(KubeconfigOptionsOutput)
 }
 
+func (i KubeconfigOptionsArgs) ToOutput(ctx context.Context) pulumix.Output[KubeconfigOptions] {
+	return pulumix.Output[KubeconfigOptions]{
+		OutputState: i.ToKubeconfigOptionsOutputWithContext(ctx).OutputState,
+	}
+}
+
 func (i KubeconfigOptionsArgs) ToKubeconfigOptionsPtrOutput() KubeconfigOptionsPtrOutput {
 	return i.ToKubeconfigOptionsPtrOutputWithContext(context.Background())
 }
@@ -1216,6 +1280,12 @@ func (i *kubeconfigOptionsPtrType) ToKubeconfigOptionsPtrOutput() KubeconfigOpti
 
 func (i *kubeconfigOptionsPtrType) ToKubeconfigOptionsPtrOutputWithContext(ctx context.Context) KubeconfigOptionsPtrOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(KubeconfigOptionsPtrOutput)
+}
+
+func (i *kubeconfigOptionsPtrType) ToOutput(ctx context.Context) pulumix.Output[*KubeconfigOptions] {
+	return pulumix.Output[*KubeconfigOptions]{
+		OutputState: i.ToKubeconfigOptionsPtrOutputWithContext(ctx).OutputState,
+	}
 }
 
 // Represents the AWS credentials to scope a given kubeconfig when using a non-default credential chain.
@@ -1258,6 +1328,12 @@ func (o KubeconfigOptionsOutput) ToKubeconfigOptionsPtrOutputWithContext(ctx con
 	}).(KubeconfigOptionsPtrOutput)
 }
 
+func (o KubeconfigOptionsOutput) ToOutput(ctx context.Context) pulumix.Output[KubeconfigOptions] {
+	return pulumix.Output[KubeconfigOptions]{
+		OutputState: o.OutputState,
+	}
+}
+
 // AWS credential profile name to always use instead of the default AWS credential provider chain.
 //
 // The profile is passed to kubeconfig as an authentication environment setting.
@@ -1284,6 +1360,12 @@ func (o KubeconfigOptionsPtrOutput) ToKubeconfigOptionsPtrOutput() KubeconfigOpt
 
 func (o KubeconfigOptionsPtrOutput) ToKubeconfigOptionsPtrOutputWithContext(ctx context.Context) KubeconfigOptionsPtrOutput {
 	return o
+}
+
+func (o KubeconfigOptionsPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*KubeconfigOptions] {
+	return pulumix.Output[*KubeconfigOptions]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o KubeconfigOptionsPtrOutput) Elem() KubeconfigOptionsOutput {
@@ -1347,6 +1429,12 @@ func (o NodeGroupDataOutput) ToNodeGroupDataOutputWithContext(ctx context.Contex
 	return o
 }
 
+func (o NodeGroupDataOutput) ToOutput(ctx context.Context) pulumix.Output[NodeGroupData] {
+	return pulumix.Output[NodeGroupData]{
+		OutputState: o.OutputState,
+	}
+}
+
 // The AutoScalingGroup name for the node group.
 func (o NodeGroupDataOutput) AutoScalingGroupName() pulumi.StringOutput {
 	return o.ApplyT(func(v NodeGroupData) string { return v.AutoScalingGroupName }).(pulumi.StringOutput)
@@ -1379,6 +1467,12 @@ func (o NodeGroupDataPtrOutput) ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutpu
 
 func (o NodeGroupDataPtrOutput) ToNodeGroupDataPtrOutputWithContext(ctx context.Context) NodeGroupDataPtrOutput {
 	return o
+}
+
+func (o NodeGroupDataPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*NodeGroupData] {
+	return pulumix.Output[*NodeGroupData]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o NodeGroupDataPtrOutput) Elem() NodeGroupDataOutput {
@@ -1474,6 +1568,12 @@ func (i RoleMappingArgs) ToRoleMappingOutputWithContext(ctx context.Context) Rol
 	return pulumi.ToOutputWithContext(ctx, i).(RoleMappingOutput)
 }
 
+func (i RoleMappingArgs) ToOutput(ctx context.Context) pulumix.Output[RoleMapping] {
+	return pulumix.Output[RoleMapping]{
+		OutputState: i.ToRoleMappingOutputWithContext(ctx).OutputState,
+	}
+}
+
 // RoleMappingArrayInput is an input type that accepts RoleMappingArray and RoleMappingArrayOutput values.
 // You can construct a concrete instance of `RoleMappingArrayInput` via:
 //
@@ -1499,6 +1599,12 @@ func (i RoleMappingArray) ToRoleMappingArrayOutputWithContext(ctx context.Contex
 	return pulumi.ToOutputWithContext(ctx, i).(RoleMappingArrayOutput)
 }
 
+func (i RoleMappingArray) ToOutput(ctx context.Context) pulumix.Output[[]RoleMapping] {
+	return pulumix.Output[[]RoleMapping]{
+		OutputState: i.ToRoleMappingArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 // Describes a mapping from an AWS IAM role to a Kubernetes user and groups.
 type RoleMappingOutput struct{ *pulumi.OutputState }
 
@@ -1512,6 +1618,12 @@ func (o RoleMappingOutput) ToRoleMappingOutput() RoleMappingOutput {
 
 func (o RoleMappingOutput) ToRoleMappingOutputWithContext(ctx context.Context) RoleMappingOutput {
 	return o
+}
+
+func (o RoleMappingOutput) ToOutput(ctx context.Context) pulumix.Output[RoleMapping] {
+	return pulumix.Output[RoleMapping]{
+		OutputState: o.OutputState,
+	}
 }
 
 // A list of groups within Kubernetes to which the role is mapped.
@@ -1541,6 +1653,12 @@ func (o RoleMappingArrayOutput) ToRoleMappingArrayOutput() RoleMappingArrayOutpu
 
 func (o RoleMappingArrayOutput) ToRoleMappingArrayOutputWithContext(ctx context.Context) RoleMappingArrayOutput {
 	return o
+}
+
+func (o RoleMappingArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]RoleMapping] {
+	return pulumix.Output[[]RoleMapping]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o RoleMappingArrayOutput) Index(i pulumi.IntInput) RoleMappingOutput {
@@ -1618,6 +1736,12 @@ func (i TaintArgs) ToTaintOutputWithContext(ctx context.Context) TaintOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(TaintOutput)
 }
 
+func (i TaintArgs) ToOutput(ctx context.Context) pulumix.Output[Taint] {
+	return pulumix.Output[Taint]{
+		OutputState: i.ToTaintOutputWithContext(ctx).OutputState,
+	}
+}
+
 // TaintMapInput is an input type that accepts TaintMap and TaintMapOutput values.
 // You can construct a concrete instance of `TaintMapInput` via:
 //
@@ -1643,6 +1767,12 @@ func (i TaintMap) ToTaintMapOutputWithContext(ctx context.Context) TaintMapOutpu
 	return pulumi.ToOutputWithContext(ctx, i).(TaintMapOutput)
 }
 
+func (i TaintMap) ToOutput(ctx context.Context) pulumix.Output[map[string]Taint] {
+	return pulumix.Output[map[string]Taint]{
+		OutputState: i.ToTaintMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 // Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
 type TaintOutput struct{ *pulumi.OutputState }
 
@@ -1656,6 +1786,12 @@ func (o TaintOutput) ToTaintOutput() TaintOutput {
 
 func (o TaintOutput) ToTaintOutputWithContext(ctx context.Context) TaintOutput {
 	return o
+}
+
+func (o TaintOutput) ToOutput(ctx context.Context) pulumix.Output[Taint] {
+	return pulumix.Output[Taint]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The effect of the taint.
@@ -1680,6 +1816,12 @@ func (o TaintMapOutput) ToTaintMapOutput() TaintMapOutput {
 
 func (o TaintMapOutput) ToTaintMapOutputWithContext(ctx context.Context) TaintMapOutput {
 	return o
+}
+
+func (o TaintMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]Taint] {
+	return pulumix.Output[map[string]Taint]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o TaintMapOutput) MapIndex(k pulumi.StringInput) TaintOutput {
@@ -1731,6 +1873,12 @@ func (i UserMappingArgs) ToUserMappingOutputWithContext(ctx context.Context) Use
 	return pulumi.ToOutputWithContext(ctx, i).(UserMappingOutput)
 }
 
+func (i UserMappingArgs) ToOutput(ctx context.Context) pulumix.Output[UserMapping] {
+	return pulumix.Output[UserMapping]{
+		OutputState: i.ToUserMappingOutputWithContext(ctx).OutputState,
+	}
+}
+
 // UserMappingArrayInput is an input type that accepts UserMappingArray and UserMappingArrayOutput values.
 // You can construct a concrete instance of `UserMappingArrayInput` via:
 //
@@ -1756,6 +1904,12 @@ func (i UserMappingArray) ToUserMappingArrayOutputWithContext(ctx context.Contex
 	return pulumi.ToOutputWithContext(ctx, i).(UserMappingArrayOutput)
 }
 
+func (i UserMappingArray) ToOutput(ctx context.Context) pulumix.Output[[]UserMapping] {
+	return pulumix.Output[[]UserMapping]{
+		OutputState: i.ToUserMappingArrayOutputWithContext(ctx).OutputState,
+	}
+}
+
 // Describes a mapping from an AWS IAM user to a Kubernetes user and groups.
 type UserMappingOutput struct{ *pulumi.OutputState }
 
@@ -1769,6 +1923,12 @@ func (o UserMappingOutput) ToUserMappingOutput() UserMappingOutput {
 
 func (o UserMappingOutput) ToUserMappingOutputWithContext(ctx context.Context) UserMappingOutput {
 	return o
+}
+
+func (o UserMappingOutput) ToOutput(ctx context.Context) pulumix.Output[UserMapping] {
+	return pulumix.Output[UserMapping]{
+		OutputState: o.OutputState,
+	}
 }
 
 // A list of groups within Kubernetes to which the user is mapped to.
@@ -1798,6 +1958,12 @@ func (o UserMappingArrayOutput) ToUserMappingArrayOutput() UserMappingArrayOutpu
 
 func (o UserMappingArrayOutput) ToUserMappingArrayOutputWithContext(ctx context.Context) UserMappingArrayOutput {
 	return o
+}
+
+func (o UserMappingArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]UserMapping] {
+	return pulumix.Output[[]UserMapping]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o UserMappingArrayOutput) Index(i pulumi.IntInput) UserMappingOutput {
@@ -1973,6 +2139,12 @@ func (i VpcCniOptionsArgs) ToVpcCniOptionsOutputWithContext(ctx context.Context)
 	return pulumi.ToOutputWithContext(ctx, i).(VpcCniOptionsOutput)
 }
 
+func (i VpcCniOptionsArgs) ToOutput(ctx context.Context) pulumix.Output[VpcCniOptions] {
+	return pulumix.Output[VpcCniOptions]{
+		OutputState: i.ToVpcCniOptionsOutputWithContext(ctx).OutputState,
+	}
+}
+
 func (i VpcCniOptionsArgs) ToVpcCniOptionsPtrOutput() VpcCniOptionsPtrOutput {
 	return i.ToVpcCniOptionsPtrOutputWithContext(context.Background())
 }
@@ -2014,6 +2186,12 @@ func (i *vpcCniOptionsPtrType) ToVpcCniOptionsPtrOutputWithContext(ctx context.C
 	return pulumi.ToOutputWithContext(ctx, i).(VpcCniOptionsPtrOutput)
 }
 
+func (i *vpcCniOptionsPtrType) ToOutput(ctx context.Context) pulumix.Output[*VpcCniOptions] {
+	return pulumix.Output[*VpcCniOptions]{
+		OutputState: i.ToVpcCniOptionsPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
 // Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
 type VpcCniOptionsOutput struct{ *pulumi.OutputState }
 
@@ -2037,6 +2215,12 @@ func (o VpcCniOptionsOutput) ToVpcCniOptionsPtrOutputWithContext(ctx context.Con
 	return o.ApplyTWithContext(ctx, func(_ context.Context, v VpcCniOptions) *VpcCniOptions {
 		return &v
 	}).(VpcCniOptionsPtrOutput)
+}
+
+func (o VpcCniOptionsOutput) ToOutput(ctx context.Context) pulumix.Output[VpcCniOptions] {
+	return pulumix.Output[VpcCniOptions]{
+		OutputState: o.OutputState,
+	}
 }
 
 // Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
@@ -2182,6 +2366,12 @@ func (o VpcCniOptionsPtrOutput) ToVpcCniOptionsPtrOutput() VpcCniOptionsPtrOutpu
 
 func (o VpcCniOptionsPtrOutput) ToVpcCniOptionsPtrOutputWithContext(ctx context.Context) VpcCniOptionsPtrOutput {
 	return o
+}
+
+func (o VpcCniOptionsPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*VpcCniOptions] {
+	return pulumix.Output[*VpcCniOptions]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o VpcCniOptionsPtrOutput) Elem() VpcCniOptionsOutput {
