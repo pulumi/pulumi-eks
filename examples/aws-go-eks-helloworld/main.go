@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/pulumi/pulumi-eks/sdk/go/eks"
+
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks"
 	"github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes"
 	appsv1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/apps/v1"
 	corev1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/core/v1"
@@ -20,7 +21,7 @@ func main() {
 		// Export the kubeconfig for the cluster
 		ctx.Export("kubeconfig", cluster.Kubeconfig)
 
-		output := cluster.Provider.ApplyT(func(p *kubernetes.Provider) (string, error) {
+		output := cluster.AwsProvider.ApplyT(func(p *kubernetes.Provider) (string, error) {
 			// Create a Kubernetes Namespace
 			namespace, err := corev1.NewNamespace(ctx, "app-ns", &corev1.NamespaceArgs{
 				Metadata: &metav1.ObjectMetaArgs{
@@ -82,7 +83,7 @@ func main() {
 				return "", err
 			}
 
-			ctx.Export("url", service.Status.LoadBalancer().Ingress().Index(pulumi.Int(0)).ApplyString(func(ingress corev1.LoadBalancerIngress) string {
+			ctx.Export("url", service.Status.LoadBalancer().Ingress().Index(pulumi.Int(0)).ApplyT(func(ingress corev1.LoadBalancerIngress) string {
 				if ingress.Hostname != nil {
 					return *ingress.Hostname
 				}
