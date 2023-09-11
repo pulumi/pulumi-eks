@@ -1,14 +1,13 @@
 {
     "name": "test-migrate-nodegroups",
     "devDependencies": {
-        "@types/node": "latest",
-        "typescript": "^3.0.0"
+        "typescript": "^4.0.0",
+        "@types/node": "latest"
     },
     "dependencies": {
         "@pulumi/aws": "^6.0.0",
-        "@pulumi/awsx": "^0.40.0",
-        "@pulumi/eks": "latest",
-        "@pulumi/kubernetes": "^4.1.1",
-        "@pulumi/pulumi": "^3.0.0"
+        "@pulumi/awsx": "latest",
+        "@pulumi/kubernetes": "^3.0.0",
+        "@pulumi/eks": "latest"
     }
 }

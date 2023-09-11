@@ -1,8 +1,8 @@
 {
     "name": "example-storage-classes",
     "devDependencies": {
-        "@types/node": "latest",
-        "typescript": "^3.0.0"
+        "typescript": "^4.0.0",
+        "@types/node": "latest"
     },
     "dependencies": {
         "@pulumi/eks": "latest",
