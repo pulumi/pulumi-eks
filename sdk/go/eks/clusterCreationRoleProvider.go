@@ -8,7 +8,9 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a specific role to use for the creation of the EKS cluster different from the role being used to run the Pulumi deployment.
@@ -25,6 +27,7 @@ func NewClusterCreationRoleProvider(ctx *pulumi.Context,
 		args = &ClusterCreationRoleProviderArgs{}
 	}
 
+	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource ClusterCreationRoleProvider
 	err := ctx.RegisterRemoteComponentResource("eks:index:ClusterCreationRoleProvider", name, args, &resource, opts...)
 	if err != nil {
@@ -67,6 +70,12 @@ func (i *ClusterCreationRoleProvider) ToClusterCreationRoleProviderOutputWithCon
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterCreationRoleProviderOutput)
 }
 
+func (i *ClusterCreationRoleProvider) ToOutput(ctx context.Context) pulumix.Output[*ClusterCreationRoleProvider] {
+	return pulumix.Output[*ClusterCreationRoleProvider]{
+		OutputState: i.ToClusterCreationRoleProviderOutputWithContext(ctx).OutputState,
+	}
+}
+
 // ClusterCreationRoleProviderArrayInput is an input type that accepts ClusterCreationRoleProviderArray and ClusterCreationRoleProviderArrayOutput values.
 // You can construct a concrete instance of `ClusterCreationRoleProviderArrayInput` via:
 //
@@ -90,6 +99,12 @@ func (i ClusterCreationRoleProviderArray) ToClusterCreationRoleProviderArrayOutp
 
 func (i ClusterCreationRoleProviderArray) ToClusterCreationRoleProviderArrayOutputWithContext(ctx context.Context) ClusterCreationRoleProviderArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterCreationRoleProviderArrayOutput)
+}
+
+func (i ClusterCreationRoleProviderArray) ToOutput(ctx context.Context) pulumix.Output[[]*ClusterCreationRoleProvider] {
+	return pulumix.Output[[]*ClusterCreationRoleProvider]{
+		OutputState: i.ToClusterCreationRoleProviderArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // ClusterCreationRoleProviderMapInput is an input type that accepts ClusterCreationRoleProviderMap and ClusterCreationRoleProviderMapOutput values.
@@ -117,6 +132,12 @@ func (i ClusterCreationRoleProviderMap) ToClusterCreationRoleProviderMapOutputWi
 	return pulumi.ToOutputWithContext(ctx, i).(ClusterCreationRoleProviderMapOutput)
 }
 
+func (i ClusterCreationRoleProviderMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*ClusterCreationRoleProvider] {
+	return pulumix.Output[map[string]*ClusterCreationRoleProvider]{
+		OutputState: i.ToClusterCreationRoleProviderMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type ClusterCreationRoleProviderOutput struct{ *pulumi.OutputState }
 
 func (ClusterCreationRoleProviderOutput) ElementType() reflect.Type {
@@ -129,6 +150,12 @@ func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderOutput()
 
 func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderOutputWithContext(ctx context.Context) ClusterCreationRoleProviderOutput {
 	return o
+}
+
+func (o ClusterCreationRoleProviderOutput) ToOutput(ctx context.Context) pulumix.Output[*ClusterCreationRoleProvider] {
+	return pulumix.Output[*ClusterCreationRoleProvider]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ClusterCreationRoleProviderOutput) Role() iam.RoleOutput {
@@ -149,6 +176,12 @@ func (o ClusterCreationRoleProviderArrayOutput) ToClusterCreationRoleProviderArr
 	return o
 }
 
+func (o ClusterCreationRoleProviderArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*ClusterCreationRoleProvider] {
+	return pulumix.Output[[]*ClusterCreationRoleProvider]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o ClusterCreationRoleProviderArrayOutput) Index(i pulumi.IntInput) ClusterCreationRoleProviderOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *ClusterCreationRoleProvider {
 		return vs[0].([]*ClusterCreationRoleProvider)[vs[1].(int)]
@@ -167,6 +200,12 @@ func (o ClusterCreationRoleProviderMapOutput) ToClusterCreationRoleProviderMapOu
 
 func (o ClusterCreationRoleProviderMapOutput) ToClusterCreationRoleProviderMapOutputWithContext(ctx context.Context) ClusterCreationRoleProviderMapOutput {
 	return o
+}
+
+func (o ClusterCreationRoleProviderMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*ClusterCreationRoleProvider] {
+	return pulumix.Output[map[string]*ClusterCreationRoleProvider]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ClusterCreationRoleProviderMapOutput) MapIndex(k pulumi.StringInput) ClusterCreationRoleProviderOutput {

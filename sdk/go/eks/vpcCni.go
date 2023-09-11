@@ -8,7 +8,9 @@ import (
 	"reflect"
 
 	"errors"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
@@ -26,6 +28,7 @@ func NewVpcCni(ctx *pulumi.Context,
 	if args.Kubeconfig == nil {
 		return nil, errors.New("invalid value for required argument 'Kubeconfig'")
 	}
+	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource VpcCni
 	err := ctx.RegisterResource("eks:index:VpcCni", name, args, &resource, opts...)
 	if err != nil {
@@ -227,6 +230,12 @@ func (i *VpcCni) ToVpcCniOutputWithContext(ctx context.Context) VpcCniOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(VpcCniOutput)
 }
 
+func (i *VpcCni) ToOutput(ctx context.Context) pulumix.Output[*VpcCni] {
+	return pulumix.Output[*VpcCni]{
+		OutputState: i.ToVpcCniOutputWithContext(ctx).OutputState,
+	}
+}
+
 // VpcCniArrayInput is an input type that accepts VpcCniArray and VpcCniArrayOutput values.
 // You can construct a concrete instance of `VpcCniArrayInput` via:
 //
@@ -250,6 +259,12 @@ func (i VpcCniArray) ToVpcCniArrayOutput() VpcCniArrayOutput {
 
 func (i VpcCniArray) ToVpcCniArrayOutputWithContext(ctx context.Context) VpcCniArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(VpcCniArrayOutput)
+}
+
+func (i VpcCniArray) ToOutput(ctx context.Context) pulumix.Output[[]*VpcCni] {
+	return pulumix.Output[[]*VpcCni]{
+		OutputState: i.ToVpcCniArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // VpcCniMapInput is an input type that accepts VpcCniMap and VpcCniMapOutput values.
@@ -277,6 +292,12 @@ func (i VpcCniMap) ToVpcCniMapOutputWithContext(ctx context.Context) VpcCniMapOu
 	return pulumi.ToOutputWithContext(ctx, i).(VpcCniMapOutput)
 }
 
+func (i VpcCniMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*VpcCni] {
+	return pulumix.Output[map[string]*VpcCni]{
+		OutputState: i.ToVpcCniMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type VpcCniOutput struct{ *pulumi.OutputState }
 
 func (VpcCniOutput) ElementType() reflect.Type {
@@ -291,6 +312,12 @@ func (o VpcCniOutput) ToVpcCniOutputWithContext(ctx context.Context) VpcCniOutpu
 	return o
 }
 
+func (o VpcCniOutput) ToOutput(ctx context.Context) pulumix.Output[*VpcCni] {
+	return pulumix.Output[*VpcCni]{
+		OutputState: o.OutputState,
+	}
+}
+
 type VpcCniArrayOutput struct{ *pulumi.OutputState }
 
 func (VpcCniArrayOutput) ElementType() reflect.Type {
@@ -303,6 +330,12 @@ func (o VpcCniArrayOutput) ToVpcCniArrayOutput() VpcCniArrayOutput {
 
 func (o VpcCniArrayOutput) ToVpcCniArrayOutputWithContext(ctx context.Context) VpcCniArrayOutput {
 	return o
+}
+
+func (o VpcCniArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*VpcCni] {
+	return pulumix.Output[[]*VpcCni]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o VpcCniArrayOutput) Index(i pulumi.IntInput) VpcCniOutput {
@@ -323,6 +356,12 @@ func (o VpcCniMapOutput) ToVpcCniMapOutput() VpcCniMapOutput {
 
 func (o VpcCniMapOutput) ToVpcCniMapOutputWithContext(ctx context.Context) VpcCniMapOutput {
 	return o
+}
+
+func (o VpcCniMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*VpcCni] {
+	return pulumix.Output[map[string]*VpcCni]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o VpcCniMapOutput) MapIndex(k pulumi.StringInput) VpcCniOutput {

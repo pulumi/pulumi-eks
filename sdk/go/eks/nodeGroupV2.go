@@ -11,7 +11,9 @@ import (
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/autoscaling"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
@@ -36,6 +38,7 @@ func NewNodeGroupV2(ctx *pulumi.Context,
 	if args.Cluster == nil {
 		return nil, errors.New("invalid value for required argument 'Cluster'")
 	}
+	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource NodeGroupV2
 	err := ctx.RegisterRemoteComponentResource("eks:index:NodeGroupV2", name, args, &resource, opts...)
 	if err != nil {
@@ -274,6 +277,12 @@ func (i *NodeGroupV2) ToNodeGroupV2OutputWithContext(ctx context.Context) NodeGr
 	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupV2Output)
 }
 
+func (i *NodeGroupV2) ToOutput(ctx context.Context) pulumix.Output[*NodeGroupV2] {
+	return pulumix.Output[*NodeGroupV2]{
+		OutputState: i.ToNodeGroupV2OutputWithContext(ctx).OutputState,
+	}
+}
+
 // NodeGroupV2ArrayInput is an input type that accepts NodeGroupV2Array and NodeGroupV2ArrayOutput values.
 // You can construct a concrete instance of `NodeGroupV2ArrayInput` via:
 //
@@ -297,6 +306,12 @@ func (i NodeGroupV2Array) ToNodeGroupV2ArrayOutput() NodeGroupV2ArrayOutput {
 
 func (i NodeGroupV2Array) ToNodeGroupV2ArrayOutputWithContext(ctx context.Context) NodeGroupV2ArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupV2ArrayOutput)
+}
+
+func (i NodeGroupV2Array) ToOutput(ctx context.Context) pulumix.Output[[]*NodeGroupV2] {
+	return pulumix.Output[[]*NodeGroupV2]{
+		OutputState: i.ToNodeGroupV2ArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // NodeGroupV2MapInput is an input type that accepts NodeGroupV2Map and NodeGroupV2MapOutput values.
@@ -324,6 +339,12 @@ func (i NodeGroupV2Map) ToNodeGroupV2MapOutputWithContext(ctx context.Context) N
 	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupV2MapOutput)
 }
 
+func (i NodeGroupV2Map) ToOutput(ctx context.Context) pulumix.Output[map[string]*NodeGroupV2] {
+	return pulumix.Output[map[string]*NodeGroupV2]{
+		OutputState: i.ToNodeGroupV2MapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type NodeGroupV2Output struct{ *pulumi.OutputState }
 
 func (NodeGroupV2Output) ElementType() reflect.Type {
@@ -336,6 +357,12 @@ func (o NodeGroupV2Output) ToNodeGroupV2Output() NodeGroupV2Output {
 
 func (o NodeGroupV2Output) ToNodeGroupV2OutputWithContext(ctx context.Context) NodeGroupV2Output {
 	return o
+}
+
+func (o NodeGroupV2Output) ToOutput(ctx context.Context) pulumix.Output[*NodeGroupV2] {
+	return pulumix.Output[*NodeGroupV2]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The AutoScalingGroup for the Node group.
@@ -367,6 +394,12 @@ func (o NodeGroupV2ArrayOutput) ToNodeGroupV2ArrayOutputWithContext(ctx context.
 	return o
 }
 
+func (o NodeGroupV2ArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*NodeGroupV2] {
+	return pulumix.Output[[]*NodeGroupV2]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o NodeGroupV2ArrayOutput) Index(i pulumi.IntInput) NodeGroupV2Output {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *NodeGroupV2 {
 		return vs[0].([]*NodeGroupV2)[vs[1].(int)]
@@ -385,6 +418,12 @@ func (o NodeGroupV2MapOutput) ToNodeGroupV2MapOutput() NodeGroupV2MapOutput {
 
 func (o NodeGroupV2MapOutput) ToNodeGroupV2MapOutputWithContext(ctx context.Context) NodeGroupV2MapOutput {
 	return o
+}
+
+func (o NodeGroupV2MapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*NodeGroupV2] {
+	return pulumix.Output[map[string]*NodeGroupV2]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o NodeGroupV2MapOutput) MapIndex(k pulumi.StringInput) NodeGroupV2Output {

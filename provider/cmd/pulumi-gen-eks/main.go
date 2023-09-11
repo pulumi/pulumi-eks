@@ -1369,6 +1369,7 @@ func generateSchema() schema.PackageSpec {
 				"generateResourceContainerTypes": true,
 				"importBasePath":                 "github.com/pulumi/pulumi-eks/sdk/v2/go/eks",
 				"liftSingleValueMethodReturns":   true,
+				"internalModuleName":             "utilities",
 			}),
 			"java": rawMessage(map[string]interface{}{
 				"dependencies": map[string]string{

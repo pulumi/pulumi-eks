@@ -10,7 +10,9 @@ import (
 	"errors"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // NodeGroupSecurityGroup is a component that wraps creating a security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
@@ -39,6 +41,7 @@ func NewNodeGroupSecurityGroup(ctx *pulumi.Context,
 	if args.VpcId == nil {
 		return nil, errors.New("invalid value for required argument 'VpcId'")
 	}
+	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource NodeGroupSecurityGroup
 	err := ctx.RegisterRemoteComponentResource("eks:index:NodeGroupSecurityGroup", name, args, &resource, opts...)
 	if err != nil {
@@ -93,6 +96,12 @@ func (i *NodeGroupSecurityGroup) ToNodeGroupSecurityGroupOutputWithContext(ctx c
 	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupSecurityGroupOutput)
 }
 
+func (i *NodeGroupSecurityGroup) ToOutput(ctx context.Context) pulumix.Output[*NodeGroupSecurityGroup] {
+	return pulumix.Output[*NodeGroupSecurityGroup]{
+		OutputState: i.ToNodeGroupSecurityGroupOutputWithContext(ctx).OutputState,
+	}
+}
+
 // NodeGroupSecurityGroupArrayInput is an input type that accepts NodeGroupSecurityGroupArray and NodeGroupSecurityGroupArrayOutput values.
 // You can construct a concrete instance of `NodeGroupSecurityGroupArrayInput` via:
 //
@@ -116,6 +125,12 @@ func (i NodeGroupSecurityGroupArray) ToNodeGroupSecurityGroupArrayOutput() NodeG
 
 func (i NodeGroupSecurityGroupArray) ToNodeGroupSecurityGroupArrayOutputWithContext(ctx context.Context) NodeGroupSecurityGroupArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupSecurityGroupArrayOutput)
+}
+
+func (i NodeGroupSecurityGroupArray) ToOutput(ctx context.Context) pulumix.Output[[]*NodeGroupSecurityGroup] {
+	return pulumix.Output[[]*NodeGroupSecurityGroup]{
+		OutputState: i.ToNodeGroupSecurityGroupArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // NodeGroupSecurityGroupMapInput is an input type that accepts NodeGroupSecurityGroupMap and NodeGroupSecurityGroupMapOutput values.
@@ -143,6 +158,12 @@ func (i NodeGroupSecurityGroupMap) ToNodeGroupSecurityGroupMapOutputWithContext(
 	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupSecurityGroupMapOutput)
 }
 
+func (i NodeGroupSecurityGroupMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*NodeGroupSecurityGroup] {
+	return pulumix.Output[map[string]*NodeGroupSecurityGroup]{
+		OutputState: i.ToNodeGroupSecurityGroupMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type NodeGroupSecurityGroupOutput struct{ *pulumi.OutputState }
 
 func (NodeGroupSecurityGroupOutput) ElementType() reflect.Type {
@@ -155,6 +176,12 @@ func (o NodeGroupSecurityGroupOutput) ToNodeGroupSecurityGroupOutput() NodeGroup
 
 func (o NodeGroupSecurityGroupOutput) ToNodeGroupSecurityGroupOutputWithContext(ctx context.Context) NodeGroupSecurityGroupOutput {
 	return o
+}
+
+func (o NodeGroupSecurityGroupOutput) ToOutput(ctx context.Context) pulumix.Output[*NodeGroupSecurityGroup] {
+	return pulumix.Output[*NodeGroupSecurityGroup]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
@@ -181,6 +208,12 @@ func (o NodeGroupSecurityGroupArrayOutput) ToNodeGroupSecurityGroupArrayOutputWi
 	return o
 }
 
+func (o NodeGroupSecurityGroupArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*NodeGroupSecurityGroup] {
+	return pulumix.Output[[]*NodeGroupSecurityGroup]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o NodeGroupSecurityGroupArrayOutput) Index(i pulumi.IntInput) NodeGroupSecurityGroupOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *NodeGroupSecurityGroup {
 		return vs[0].([]*NodeGroupSecurityGroup)[vs[1].(int)]
@@ -199,6 +232,12 @@ func (o NodeGroupSecurityGroupMapOutput) ToNodeGroupSecurityGroupMapOutput() Nod
 
 func (o NodeGroupSecurityGroupMapOutput) ToNodeGroupSecurityGroupMapOutputWithContext(ctx context.Context) NodeGroupSecurityGroupMapOutput {
 	return o
+}
+
+func (o NodeGroupSecurityGroupMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*NodeGroupSecurityGroup] {
+	return pulumix.Output[map[string]*NodeGroupSecurityGroup]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o NodeGroupSecurityGroupMapOutput) MapIndex(k pulumi.StringInput) NodeGroupSecurityGroupOutput {
