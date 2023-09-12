@@ -43,7 +43,7 @@ const clusterAdminRole = new aws.iam.Role("clusterAdminRole", {
 // to the cluster yet to write the aws-auth configmap for its own permissions.
 // See example pod below to use the role once the cluster is ready.
 const cluster = new eks.Cluster(`${projectName}`, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     providerCredentialOpts: {
         profileName: aws.config.profile,

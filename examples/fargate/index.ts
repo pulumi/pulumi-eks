@@ -7,7 +7,7 @@ const projectName = pulumi.getProject();
 // Create an EKS cluster with the fargate configuration.
 const vpc = new awsx.ec2.Vpc(`${projectName}`, {});
 const cluster = new eks.Cluster(`${projectName}`, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     privateSubnetIds: vpc.privateSubnetIds,
     fargate: true,
     deployDashboard: false,
