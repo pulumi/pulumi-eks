@@ -40,7 +40,7 @@ const vpc = new awsx.ec2.Vpc("vpc",
 
 // Create a cluster using the VPC and subnets.
 const cluster = new eks.Cluster(`${projectName}`, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     privateSubnetIds: vpc.privateSubnetIds,
     tags,

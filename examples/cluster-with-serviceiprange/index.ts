@@ -11,7 +11,7 @@ const vpc = new awsx.ec2.Vpc(`${projectName}`, {
 });
 
 const cluster = new eks.Cluster(`${projectName}`, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     desiredCapacity: 2,
     minSize: 2,
