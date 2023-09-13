@@ -747,7 +747,7 @@ ${customUserData}
     // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
     let amiId: pulumi.Input<string> | undefined = args.amiId;
     if (!amiId) {
-        const amiType = args.amiType ?? args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
+        const amiType = args.amiType ?? (args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2");
         amiId = version.apply((v) => {
             const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
             return pulumi.output(
@@ -1146,7 +1146,7 @@ ${customUserData}
     // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
     let amiId: pulumi.Input<string> | undefined = args.amiId;
     if (!amiId) {
-        const amiType = args.amiType ?? args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2";
+        const amiType = args.amiType ?? (args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2");
         amiId = version.apply((v) => {
             const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
             return pulumi.output(
