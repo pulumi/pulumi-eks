@@ -6,8 +6,8 @@
     },
     "dependencies": {
         "@pulumi/aws": "^6.0.0",
-        "@pulumi/awsx": "latest",
-        "@pulumi/kubernetes": "^3.0.0",
+        "@pulumi/awsx": "2.0.0-beta.3",
+        "@pulumi/kubernetes": "^4.0.0",
         "@pulumi/eks": "latest"
     }
 }
