@@ -80,8 +80,8 @@ func main() {
 }
 
 const (
-	awsVersion = "v6.0.4"
-	k8sVersion = "v4.1.1"
+	awsVersion = "v6.2.0"
+	k8sVersion = "v4.2.0"
 )
 
 func awsRef(ref string) string {
@@ -1372,7 +1372,7 @@ func generateSchema() schema.PackageSpec {
 			}),
 			"java": rawMessage(map[string]interface{}{
 				"dependencies": map[string]string{
-					"com.pulumi:aws":        "6.0.4",
+					"com.pulumi:aws":        "6.2.0",
 					"com.pulumi:kubernetes": "4.1.1",
 				},
 			}),
