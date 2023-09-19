@@ -2,8 +2,6 @@ module github.com/pulumi/pulumi-eks/examples/aws-go-eks-helloworld
 
 go 1.21
 
-toolchain go1.21.1
-
 require (
 	github.com/pulumi/pulumi-eks/sdk/v2 v2.0.0-alpha.3
 	github.com/pulumi/pulumi-kubernetes/sdk/v3 v3.17.0

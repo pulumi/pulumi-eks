@@ -2,8 +2,6 @@ module github.com/pulumi/pulumi-eks/sdk/v2
 
 go 1.21
 
-toolchain go1.21.1
-
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.2.0
