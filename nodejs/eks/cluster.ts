@@ -199,7 +199,7 @@ interface ExecEnvVar {
 export function generateKubeconfig(
     clusterName: pulumi.Input<string>,
     clusterEndpoint: pulumi.Input<string>,
-    certData: pulumi.Input<string>,
+    certData?: pulumi.Input<string>,
     opts?: KubeconfigOptions,
 ) {
     let args = ["eks", "get-token", "--cluster-name", clusterName];
@@ -627,7 +627,7 @@ export function createCore(
                             timeout: reqTimeoutMilliseconds,
                         };
                         const req = https.request(options, (res) => {
-                            res.statusCode === 200 ? resolve() : reject(); // Verify healthz returns 200
+                            res.statusCode === 200 ? resolve(undefined) : reject(); // Verify healthz returns 200
                         });
                         req.on("timeout", reject);
                         req.on("error", reject);
@@ -675,7 +675,7 @@ export function createCore(
                         return generateKubeconfig(
                             clusterName,
                             clusterEndpoint,
-                            clusterCertificateAuthority.data,
+                            clusterCertificateAuthority?.data,
                             opts,
                         );
                     });
@@ -683,14 +683,14 @@ export function createCore(
                     config = generateKubeconfig(
                         clusterName,
                         clusterEndpoint,
-                        clusterCertificateAuthority.data,
+                        clusterCertificateAuthority?.data,
                         providerCredentialOpts,
                     );
                 } else {
                     config = generateKubeconfig(
                         clusterName,
                         clusterEndpoint,
-                        clusterCertificateAuthority.data,
+                        clusterCertificateAuthority?.data,
                     );
                 }
                 return config;
@@ -1679,7 +1679,7 @@ export class Cluster extends pulumi.ComponentResource {
         const kc = generateKubeconfig(
             this.eksCluster.name,
             this.eksCluster.endpoint,
-            this.eksCluster.certificateAuthority.data,
+            this.eksCluster.certificateAuthority?.data,
             args,
         );
         return pulumi.output(kc).apply(JSON.stringify);
@@ -1882,7 +1882,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
         const kc = generateKubeconfig(
             this.eksCluster.name,
             this.eksCluster.endpoint,
-            this.eksCluster.certificateAuthority.data,
+            this.eksCluster.certificateAuthority?.data,
             args,
         );
         return pulumi.output(kc).apply(JSON.stringify);

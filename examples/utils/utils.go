@@ -20,8 +20,8 @@ import (
 )
 
 // Each resource request will be fetched from the Kubernetes API Server at a
-// max of 20 retries, with 15 seconds in between each attempt.
-// This creates a max wait time of up to 5 minutes that a resource request
+// max of 40 retries, with 15 seconds in between each attempt.
+// This creates a max wait time of up to 10 minutes that a resource request
 // must successfully return within, before moving on.
 
 // MaxRetries is the maximum number of retries that a resource will be
