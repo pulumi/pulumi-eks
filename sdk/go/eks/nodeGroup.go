@@ -177,7 +177,7 @@ type NodeGroupArgs struct {
 	// The target EKS cluster.
 	Cluster pulumi.Input
 	// The ingress rule that gives node group access.
-	ClusterIngressRule *ec2.SecurityGroupRule
+	ClusterIngressRule ec2.SecurityGroupRuleInput
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput
 	// Encrypt the root block device of the nodes in the node group.
@@ -185,7 +185,7 @@ type NodeGroupArgs struct {
 	// Extra security groups to attach on all nodes in this worker node group.
 	//
 	// This additional set of security groups captures any user application rules that will be needed for the nodes.
-	ExtraNodeSecurityGroups []*ec2.SecurityGroup
+	ExtraNodeSecurityGroups ec2.SecurityGroupArrayInput
 	// Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 	//
 	// Defaults to false.
@@ -226,7 +226,7 @@ type NodeGroupArgs struct {
 	// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
 	//
 	// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
-	NodeSecurityGroup *ec2.SecurityGroup
+	NodeSecurityGroup ec2.SecurityGroupInput
 	// The set of subnets to override and use for the worker node group.
 	//
 	// Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
