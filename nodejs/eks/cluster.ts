@@ -1574,12 +1574,12 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The security group for the cluster's nodes.
      */
-    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
+    public readonly nodeSecurityGroup: pulumi.Output<aws.ec2.SecurityGroup>;
 
     /**
      * The ingress rule that gives node group access to cluster API server
      */
-    public readonly eksClusterIngressRule: aws.ec2.SecurityGroupRule;
+    public readonly eksClusterIngressRule: pulumi.Output<aws.ec2.SecurityGroupRule>;
 
     /**
      * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
@@ -1694,8 +1694,8 @@ export interface ClusterResult {
     provider: k8s.Provider;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
-    nodeSecurityGroup: aws.ec2.SecurityGroup;
-    eksClusterIngressRule: aws.ec2.SecurityGroupRule;
+    nodeSecurityGroup: pulumi.Output<aws.ec2.SecurityGroup>;
+    eksClusterIngressRule: pulumi.Output<aws.ec2.SecurityGroupRule>;
     defaultNodeGroup: NodeGroupData | undefined;
     eksCluster: aws.eks.Cluster;
     core: CoreData;
