@@ -390,8 +390,7 @@ func generateSchema() schema.PackageSpec {
 					},
 					"clusterSecurityGroup": {
 						TypeSpec: schema.TypeSpec{
-							Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
-							Plain: true,
+							Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
 						},
 						Description: "The security group to use for the cluster API endpoint. If not provided, a new " +
 							"security group will be created with full internet egress and ingress from node groups.",
@@ -1402,8 +1401,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"nodeSecurityGroup": {
 			TypeSpec: schema.TypeSpec{
-				Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
-				Plain: true,
+				Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
 			},
 			Description: "The security group for the worker node group to communicate with the cluster.\n\n" +
 				"This security group requires specific inbound and outbound rules.\n\n" +
@@ -1414,8 +1412,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"clusterIngressRule": {
 			TypeSpec: schema.TypeSpec{
-				Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule"),
-				Plain: true,
+				Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule"),
 			},
 			Description: "The ingress rule that gives node group access.",
 		},
@@ -1423,10 +1420,8 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			TypeSpec: schema.TypeSpec{
 				Type: "array",
 				Items: &schema.TypeSpec{
-					Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
-					Plain: true,
+					Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
 				},
-				Plain: true,
 			},
 			Description: "Extra security groups to attach on all nodes in this worker node group.\n\n" +
 				"This additional set of security groups captures any user application rules that will be " +
