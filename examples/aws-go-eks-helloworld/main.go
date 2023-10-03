@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks"
-	"github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes"
-	appsv1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/apps/v1"
-	corev1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/core/v1"
-	metav1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/meta/v1"
+	"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes"
+	appsv1 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/apps/v1"
+	corev1 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/core/v1"
+	metav1 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/meta/v1"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -38,7 +38,7 @@ func main() {
 
 			_, err = appsv1.NewDeployment(ctx, "app-dep", &appsv1.DeploymentArgs{
 				Metadata: &metav1.ObjectMetaArgs{
-					Namespace: namespace.Metadata.Elem().Name(),
+					Namespace: namespace.Metadata.Name(),
 				},
 				Spec: appsv1.DeploymentSpecArgs{
 					Selector: &metav1.LabelSelectorArgs{
@@ -65,7 +65,7 @@ func main() {
 
 			service, err := corev1.NewService(ctx, "app-service", &corev1.ServiceArgs{
 				Metadata: &metav1.ObjectMetaArgs{
-					Namespace: namespace.Metadata.Elem().Name(),
+					Namespace: namespace.Metadata.Name(),
 					Labels:    appLabels,
 				},
 				Spec: &corev1.ServiceSpecArgs{

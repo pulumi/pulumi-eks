@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/pulumi/pulumi-eks/sdk/v2 v2.0.0-alpha.3
-	github.com/pulumi/pulumi-kubernetes/sdk/v3 v3.17.0
+	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.3.0
 	github.com/pulumi/pulumi/sdk/v3 v3.81.0
 )
 
@@ -56,6 +56,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/term v1.1.0 // indirect
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.2.0 // indirect
+	github.com/pulumi/pulumi-kubernetes/sdk/v3 v3.30.2 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
