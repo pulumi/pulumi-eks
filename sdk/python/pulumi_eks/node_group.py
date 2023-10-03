@@ -6,7 +6,7 @@ import copy
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Callable, Mapping, Optional, Sequence, Union, overload
+from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 from ._inputs import *
 from .cluster import Cluster
@@ -118,124 +118,61 @@ class NodeGroupArgs:
         :param Mapping[str, 'TaintArgs'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         """
-        NodeGroupArgs._configure(
-            lambda key, value: pulumi.set(__self__, key, value),
-            cluster=cluster,
-            ami_id=ami_id,
-            ami_type=ami_type,
-            auto_scaling_group_tags=auto_scaling_group_tags,
-            bootstrap_extra_args=bootstrap_extra_args,
-            cloud_formation_tags=cloud_formation_tags,
-            cluster_ingress_rule=cluster_ingress_rule,
-            desired_capacity=desired_capacity,
-            encrypt_root_block_device=encrypt_root_block_device,
-            extra_node_security_groups=extra_node_security_groups,
-            gpu=gpu,
-            instance_profile=instance_profile,
-            instance_type=instance_type,
-            key_name=key_name,
-            kubelet_extra_args=kubelet_extra_args,
-            labels=labels,
-            max_size=max_size,
-            min_size=min_size,
-            node_associate_public_ip_address=node_associate_public_ip_address,
-            node_public_key=node_public_key,
-            node_root_volume_size=node_root_volume_size,
-            node_security_group=node_security_group,
-            node_subnet_ids=node_subnet_ids,
-            node_user_data=node_user_data,
-            node_user_data_override=node_user_data_override,
-            spot_price=spot_price,
-            taints=taints,
-            version=version,
-        )
-    @staticmethod
-    def _configure(
-             _setter: Callable[[Any, Any], None],
-             cluster: pulumi.Input[Union['Cluster', 'CoreDataArgs']],
-             ami_id: Optional[pulumi.Input[str]] = None,
-             ami_type: Optional[pulumi.Input[str]] = None,
-             auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-             bootstrap_extra_args: Optional[str] = None,
-             cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-             cluster_ingress_rule: Optional['pulumi_aws.ec2.SecurityGroupRule'] = None,
-             desired_capacity: Optional[pulumi.Input[int]] = None,
-             encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
-             extra_node_security_groups: Optional[Sequence['pulumi_aws.ec2.SecurityGroup']] = None,
-             gpu: Optional[pulumi.Input[bool]] = None,
-             instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
-             instance_type: Optional[pulumi.Input[str]] = None,
-             key_name: Optional[pulumi.Input[str]] = None,
-             kubelet_extra_args: Optional[str] = None,
-             labels: Optional[Mapping[str, str]] = None,
-             max_size: Optional[pulumi.Input[int]] = None,
-             min_size: Optional[pulumi.Input[int]] = None,
-             node_associate_public_ip_address: Optional[bool] = None,
-             node_public_key: Optional[pulumi.Input[str]] = None,
-             node_root_volume_size: Optional[pulumi.Input[int]] = None,
-             node_security_group: Optional['pulumi_aws.ec2.SecurityGroup'] = None,
-             node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-             node_user_data: Optional[pulumi.Input[str]] = None,
-             node_user_data_override: Optional[pulumi.Input[str]] = None,
-             spot_price: Optional[pulumi.Input[str]] = None,
-             taints: Optional[Mapping[str, 'TaintArgs']] = None,
-             version: Optional[pulumi.Input[str]] = None,
-             opts: Optional[pulumi.ResourceOptions]=None):
-        _setter("cluster", cluster)
+        pulumi.set(__self__, "cluster", cluster)
         if ami_id is not None:
-            _setter("ami_id", ami_id)
+            pulumi.set(__self__, "ami_id", ami_id)
         if ami_type is not None:
-            _setter("ami_type", ami_type)
+            pulumi.set(__self__, "ami_type", ami_type)
         if auto_scaling_group_tags is not None:
-            _setter("auto_scaling_group_tags", auto_scaling_group_tags)
+            pulumi.set(__self__, "auto_scaling_group_tags", auto_scaling_group_tags)
         if bootstrap_extra_args is not None:
-            _setter("bootstrap_extra_args", bootstrap_extra_args)
+            pulumi.set(__self__, "bootstrap_extra_args", bootstrap_extra_args)
         if cloud_formation_tags is not None:
-            _setter("cloud_formation_tags", cloud_formation_tags)
+            pulumi.set(__self__, "cloud_formation_tags", cloud_formation_tags)
         if cluster_ingress_rule is not None:
-            _setter("cluster_ingress_rule", cluster_ingress_rule)
+            pulumi.set(__self__, "cluster_ingress_rule", cluster_ingress_rule)
         if desired_capacity is not None:
-            _setter("desired_capacity", desired_capacity)
+            pulumi.set(__self__, "desired_capacity", desired_capacity)
         if encrypt_root_block_device is not None:
-            _setter("encrypt_root_block_device", encrypt_root_block_device)
+            pulumi.set(__self__, "encrypt_root_block_device", encrypt_root_block_device)
         if extra_node_security_groups is not None:
-            _setter("extra_node_security_groups", extra_node_security_groups)
+            pulumi.set(__self__, "extra_node_security_groups", extra_node_security_groups)
         if gpu is not None:
-            _setter("gpu", gpu)
+            pulumi.set(__self__, "gpu", gpu)
         if instance_profile is not None:
-            _setter("instance_profile", instance_profile)
+            pulumi.set(__self__, "instance_profile", instance_profile)
         if instance_type is not None:
-            _setter("instance_type", instance_type)
+            pulumi.set(__self__, "instance_type", instance_type)
         if key_name is not None:
-            _setter("key_name", key_name)
+            pulumi.set(__self__, "key_name", key_name)
         if kubelet_extra_args is not None:
-            _setter("kubelet_extra_args", kubelet_extra_args)
+            pulumi.set(__self__, "kubelet_extra_args", kubelet_extra_args)
         if labels is not None:
-            _setter("labels", labels)
+            pulumi.set(__self__, "labels", labels)
         if max_size is not None:
-            _setter("max_size", max_size)
+            pulumi.set(__self__, "max_size", max_size)
         if min_size is not None:
-            _setter("min_size", min_size)
+            pulumi.set(__self__, "min_size", min_size)
         if node_associate_public_ip_address is not None:
-            _setter("node_associate_public_ip_address", node_associate_public_ip_address)
+            pulumi.set(__self__, "node_associate_public_ip_address", node_associate_public_ip_address)
         if node_public_key is not None:
-            _setter("node_public_key", node_public_key)
+            pulumi.set(__self__, "node_public_key", node_public_key)
         if node_root_volume_size is not None:
-            _setter("node_root_volume_size", node_root_volume_size)
+            pulumi.set(__self__, "node_root_volume_size", node_root_volume_size)
         if node_security_group is not None:
-            _setter("node_security_group", node_security_group)
+            pulumi.set(__self__, "node_security_group", node_security_group)
         if node_subnet_ids is not None:
-            _setter("node_subnet_ids", node_subnet_ids)
+            pulumi.set(__self__, "node_subnet_ids", node_subnet_ids)
         if node_user_data is not None:
-            _setter("node_user_data", node_user_data)
+            pulumi.set(__self__, "node_user_data", node_user_data)
         if node_user_data_override is not None:
-            _setter("node_user_data_override", node_user_data_override)
+            pulumi.set(__self__, "node_user_data_override", node_user_data_override)
         if spot_price is not None:
-            _setter("spot_price", spot_price)
+            pulumi.set(__self__, "spot_price", spot_price)
         if taints is not None:
-            _setter("taints", taints)
+            pulumi.set(__self__, "taints", taints)
         if version is not None:
-            _setter("version", version)
+            pulumi.set(__self__, "version", version)
 
     @property
     @pulumi.getter
@@ -741,10 +678,6 @@ class NodeGroup(pulumi.ComponentResource):
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
-            kwargs = kwargs or {}
-            def _setter(key, value):
-                kwargs[key] = value
-            NodeGroupArgs._configure(_setter, **kwargs)
             __self__._internal_init(resource_name, *args, **kwargs)
 
     def _internal_init(__self__,

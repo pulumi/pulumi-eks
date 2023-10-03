@@ -6,7 +6,7 @@ import copy
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Callable, Mapping, Optional, Sequence, Union, overload
+from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 from ._inputs import *
 from .cluster import Cluster
@@ -77,92 +77,45 @@ class ManagedNodeGroupArgs:
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of resource tags.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.NodeGroupTaintArgs']]] taints: The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
         """
-        ManagedNodeGroupArgs._configure(
-            lambda key, value: pulumi.set(__self__, key, value),
-            cluster=cluster,
-            ami_type=ami_type,
-            capacity_type=capacity_type,
-            cluster_name=cluster_name,
-            disk_size=disk_size,
-            force_update_version=force_update_version,
-            instance_types=instance_types,
-            labels=labels,
-            launch_template=launch_template,
-            node_group_name=node_group_name,
-            node_group_name_prefix=node_group_name_prefix,
-            node_role=node_role,
-            node_role_arn=node_role_arn,
-            release_version=release_version,
-            remote_access=remote_access,
-            scaling_config=scaling_config,
-            subnet_ids=subnet_ids,
-            tags=tags,
-            taints=taints,
-            version=version,
-        )
-    @staticmethod
-    def _configure(
-             _setter: Callable[[Any, Any], None],
-             cluster: pulumi.Input[Union['Cluster', 'CoreDataArgs']],
-             ami_type: Optional[pulumi.Input[str]] = None,
-             capacity_type: Optional[pulumi.Input[str]] = None,
-             cluster_name: Optional[pulumi.Input[str]] = None,
-             disk_size: Optional[pulumi.Input[int]] = None,
-             force_update_version: Optional[pulumi.Input[bool]] = None,
-             instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-             labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-             launch_template: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']] = None,
-             node_group_name: Optional[pulumi.Input[str]] = None,
-             node_group_name_prefix: Optional[pulumi.Input[str]] = None,
-             node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
-             node_role_arn: Optional[pulumi.Input[str]] = None,
-             release_version: Optional[pulumi.Input[str]] = None,
-             remote_access: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs']] = None,
-             scaling_config: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs']] = None,
-             subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-             tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-             taints: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.NodeGroupTaintArgs']]]] = None,
-             version: Optional[pulumi.Input[str]] = None,
-             opts: Optional[pulumi.ResourceOptions]=None):
-        _setter("cluster", cluster)
+        pulumi.set(__self__, "cluster", cluster)
         if ami_type is not None:
-            _setter("ami_type", ami_type)
+            pulumi.set(__self__, "ami_type", ami_type)
         if capacity_type is not None:
-            _setter("capacity_type", capacity_type)
+            pulumi.set(__self__, "capacity_type", capacity_type)
         if cluster_name is not None:
-            _setter("cluster_name", cluster_name)
+            pulumi.set(__self__, "cluster_name", cluster_name)
         if disk_size is not None:
-            _setter("disk_size", disk_size)
+            pulumi.set(__self__, "disk_size", disk_size)
         if force_update_version is not None:
-            _setter("force_update_version", force_update_version)
+            pulumi.set(__self__, "force_update_version", force_update_version)
         if instance_types is not None:
-            _setter("instance_types", instance_types)
+            pulumi.set(__self__, "instance_types", instance_types)
         if labels is not None:
-            _setter("labels", labels)
+            pulumi.set(__self__, "labels", labels)
         if launch_template is not None:
-            _setter("launch_template", launch_template)
+            pulumi.set(__self__, "launch_template", launch_template)
         if node_group_name is not None:
-            _setter("node_group_name", node_group_name)
+            pulumi.set(__self__, "node_group_name", node_group_name)
         if node_group_name_prefix is not None:
-            _setter("node_group_name_prefix", node_group_name_prefix)
+            pulumi.set(__self__, "node_group_name_prefix", node_group_name_prefix)
         if node_role is not None:
-            _setter("node_role", node_role)
+            pulumi.set(__self__, "node_role", node_role)
         if node_role_arn is not None:
-            _setter("node_role_arn", node_role_arn)
+            pulumi.set(__self__, "node_role_arn", node_role_arn)
         if release_version is not None:
-            _setter("release_version", release_version)
+            pulumi.set(__self__, "release_version", release_version)
         if remote_access is not None:
-            _setter("remote_access", remote_access)
+            pulumi.set(__self__, "remote_access", remote_access)
         if scaling_config is not None:
-            _setter("scaling_config", scaling_config)
+            pulumi.set(__self__, "scaling_config", scaling_config)
         if subnet_ids is not None:
-            _setter("subnet_ids", subnet_ids)
+            pulumi.set(__self__, "subnet_ids", subnet_ids)
         if tags is not None:
-            _setter("tags", tags)
+            pulumi.set(__self__, "tags", tags)
         if taints is not None:
-            _setter("taints", taints)
+            pulumi.set(__self__, "taints", taints)
         if version is not None:
-            _setter("version", version)
+            pulumi.set(__self__, "version", version)
 
     @property
     @pulumi.getter
@@ -510,10 +463,6 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
-            kwargs = kwargs or {}
-            def _setter(key, value):
-                kwargs[key] = value
-            ManagedNodeGroupArgs._configure(_setter, **kwargs)
             __self__._internal_init(resource_name, *args, **kwargs)
 
     def _internal_init(__self__,
@@ -560,28 +509,13 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["force_update_version"] = force_update_version
             __props__.__dict__["instance_types"] = instance_types
             __props__.__dict__["labels"] = labels
-            if launch_template is not None and not isinstance(launch_template, pulumi_aws.eks.NodeGroupLaunchTemplateArgs):
-                launch_template = launch_template or {}
-                def _setter(key, value):
-                    launch_template[key] = value
-                pulumi_aws.eks.NodeGroupLaunchTemplateArgs._configure(_setter, **launch_template)
             __props__.__dict__["launch_template"] = launch_template
             __props__.__dict__["node_group_name"] = node_group_name
             __props__.__dict__["node_group_name_prefix"] = node_group_name_prefix
             __props__.__dict__["node_role"] = node_role
             __props__.__dict__["node_role_arn"] = node_role_arn
             __props__.__dict__["release_version"] = release_version
-            if remote_access is not None and not isinstance(remote_access, pulumi_aws.eks.NodeGroupRemoteAccessArgs):
-                remote_access = remote_access or {}
-                def _setter(key, value):
-                    remote_access[key] = value
-                pulumi_aws.eks.NodeGroupRemoteAccessArgs._configure(_setter, **remote_access)
             __props__.__dict__["remote_access"] = remote_access
-            if scaling_config is not None and not isinstance(scaling_config, pulumi_aws.eks.NodeGroupScalingConfigArgs):
-                scaling_config = scaling_config or {}
-                def _setter(key, value):
-                    scaling_config[key] = value
-                pulumi_aws.eks.NodeGroupScalingConfigArgs._configure(_setter, **scaling_config)
             __props__.__dict__["scaling_config"] = scaling_config
             __props__.__dict__["subnet_ids"] = subnet_ids
             __props__.__dict__["tags"] = tags

@@ -6,7 +6,7 @@ import copy
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Callable, Mapping, Optional, Sequence, Union, overload
+from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 from . import outputs
 from .vpc_cni import VpcCni
@@ -184,121 +184,60 @@ class ClusterNodeGroupOptions(dict):
         :param Mapping[str, 'Taint'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param str version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         """
-        ClusterNodeGroupOptions._configure(
-            lambda key, value: pulumi.set(__self__, key, value),
-            ami_id=ami_id,
-            ami_type=ami_type,
-            auto_scaling_group_tags=auto_scaling_group_tags,
-            bootstrap_extra_args=bootstrap_extra_args,
-            cloud_formation_tags=cloud_formation_tags,
-            cluster_ingress_rule=cluster_ingress_rule,
-            desired_capacity=desired_capacity,
-            encrypt_root_block_device=encrypt_root_block_device,
-            extra_node_security_groups=extra_node_security_groups,
-            gpu=gpu,
-            instance_profile=instance_profile,
-            instance_type=instance_type,
-            key_name=key_name,
-            kubelet_extra_args=kubelet_extra_args,
-            labels=labels,
-            max_size=max_size,
-            min_size=min_size,
-            node_associate_public_ip_address=node_associate_public_ip_address,
-            node_public_key=node_public_key,
-            node_root_volume_size=node_root_volume_size,
-            node_security_group=node_security_group,
-            node_subnet_ids=node_subnet_ids,
-            node_user_data=node_user_data,
-            node_user_data_override=node_user_data_override,
-            spot_price=spot_price,
-            taints=taints,
-            version=version,
-        )
-    @staticmethod
-    def _configure(
-             _setter: Callable[[Any, Any], None],
-             ami_id: Optional[str] = None,
-             ami_type: Optional[str] = None,
-             auto_scaling_group_tags: Optional[Mapping[str, str]] = None,
-             bootstrap_extra_args: Optional[str] = None,
-             cloud_formation_tags: Optional[Mapping[str, str]] = None,
-             cluster_ingress_rule: Optional['pulumi_aws.ec2.SecurityGroupRule'] = None,
-             desired_capacity: Optional[int] = None,
-             encrypt_root_block_device: Optional[bool] = None,
-             extra_node_security_groups: Optional[Sequence['pulumi_aws.ec2.SecurityGroup']] = None,
-             gpu: Optional[bool] = None,
-             instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
-             instance_type: Optional[str] = None,
-             key_name: Optional[str] = None,
-             kubelet_extra_args: Optional[str] = None,
-             labels: Optional[Mapping[str, str]] = None,
-             max_size: Optional[int] = None,
-             min_size: Optional[int] = None,
-             node_associate_public_ip_address: Optional[bool] = None,
-             node_public_key: Optional[str] = None,
-             node_root_volume_size: Optional[int] = None,
-             node_security_group: Optional['pulumi_aws.ec2.SecurityGroup'] = None,
-             node_subnet_ids: Optional[Sequence[str]] = None,
-             node_user_data: Optional[str] = None,
-             node_user_data_override: Optional[str] = None,
-             spot_price: Optional[str] = None,
-             taints: Optional[Mapping[str, 'outputs.Taint']] = None,
-             version: Optional[str] = None,
-             opts: Optional[pulumi.ResourceOptions]=None):
         if ami_id is not None:
-            _setter("ami_id", ami_id)
+            pulumi.set(__self__, "ami_id", ami_id)
         if ami_type is not None:
-            _setter("ami_type", ami_type)
+            pulumi.set(__self__, "ami_type", ami_type)
         if auto_scaling_group_tags is not None:
-            _setter("auto_scaling_group_tags", auto_scaling_group_tags)
+            pulumi.set(__self__, "auto_scaling_group_tags", auto_scaling_group_tags)
         if bootstrap_extra_args is not None:
-            _setter("bootstrap_extra_args", bootstrap_extra_args)
+            pulumi.set(__self__, "bootstrap_extra_args", bootstrap_extra_args)
         if cloud_formation_tags is not None:
-            _setter("cloud_formation_tags", cloud_formation_tags)
+            pulumi.set(__self__, "cloud_formation_tags", cloud_formation_tags)
         if cluster_ingress_rule is not None:
-            _setter("cluster_ingress_rule", cluster_ingress_rule)
+            pulumi.set(__self__, "cluster_ingress_rule", cluster_ingress_rule)
         if desired_capacity is not None:
-            _setter("desired_capacity", desired_capacity)
+            pulumi.set(__self__, "desired_capacity", desired_capacity)
         if encrypt_root_block_device is not None:
-            _setter("encrypt_root_block_device", encrypt_root_block_device)
+            pulumi.set(__self__, "encrypt_root_block_device", encrypt_root_block_device)
         if extra_node_security_groups is not None:
-            _setter("extra_node_security_groups", extra_node_security_groups)
+            pulumi.set(__self__, "extra_node_security_groups", extra_node_security_groups)
         if gpu is not None:
-            _setter("gpu", gpu)
+            pulumi.set(__self__, "gpu", gpu)
         if instance_profile is not None:
-            _setter("instance_profile", instance_profile)
+            pulumi.set(__self__, "instance_profile", instance_profile)
         if instance_type is not None:
-            _setter("instance_type", instance_type)
+            pulumi.set(__self__, "instance_type", instance_type)
         if key_name is not None:
-            _setter("key_name", key_name)
+            pulumi.set(__self__, "key_name", key_name)
         if kubelet_extra_args is not None:
-            _setter("kubelet_extra_args", kubelet_extra_args)
+            pulumi.set(__self__, "kubelet_extra_args", kubelet_extra_args)
         if labels is not None:
-            _setter("labels", labels)
+            pulumi.set(__self__, "labels", labels)
         if max_size is not None:
-            _setter("max_size", max_size)
+            pulumi.set(__self__, "max_size", max_size)
         if min_size is not None:
-            _setter("min_size", min_size)
+            pulumi.set(__self__, "min_size", min_size)
         if node_associate_public_ip_address is not None:
-            _setter("node_associate_public_ip_address", node_associate_public_ip_address)
+            pulumi.set(__self__, "node_associate_public_ip_address", node_associate_public_ip_address)
         if node_public_key is not None:
-            _setter("node_public_key", node_public_key)
+            pulumi.set(__self__, "node_public_key", node_public_key)
         if node_root_volume_size is not None:
-            _setter("node_root_volume_size", node_root_volume_size)
+            pulumi.set(__self__, "node_root_volume_size", node_root_volume_size)
         if node_security_group is not None:
-            _setter("node_security_group", node_security_group)
+            pulumi.set(__self__, "node_security_group", node_security_group)
         if node_subnet_ids is not None:
-            _setter("node_subnet_ids", node_subnet_ids)
+            pulumi.set(__self__, "node_subnet_ids", node_subnet_ids)
         if node_user_data is not None:
-            _setter("node_user_data", node_user_data)
+            pulumi.set(__self__, "node_user_data", node_user_data)
         if node_user_data_override is not None:
-            _setter("node_user_data_override", node_user_data_override)
+            pulumi.set(__self__, "node_user_data_override", node_user_data_override)
         if spot_price is not None:
-            _setter("spot_price", spot_price)
+            pulumi.set(__self__, "spot_price", spot_price)
         if taints is not None:
-            _setter("taints", taints)
+            pulumi.set(__self__, "taints", taints)
         if version is not None:
-            _setter("version", version)
+            pulumi.set(__self__, "version", version)
 
     @property
     @pulumi.getter(name="amiId")
@@ -635,88 +574,39 @@ class CoreData(dict):
         Defines the core set of data associated with an EKS cluster, including the network in which it runs.
         :param 'pulumi_aws.iam.Role' cluster_iam_role: The IAM Role attached to the EKS Cluster
         """
-        CoreData._configure(
-            lambda key, value: pulumi.set(__self__, key, value),
-            cluster=cluster,
-            cluster_iam_role=cluster_iam_role,
-            cluster_security_group=cluster_security_group,
-            endpoint=endpoint,
-            instance_roles=instance_roles,
-            node_group_options=node_group_options,
-            provider=provider,
-            subnet_ids=subnet_ids,
-            vpc_id=vpc_id,
-            aws_provider=aws_provider,
-            eks_node_access=eks_node_access,
-            encryption_config=encryption_config,
-            fargate_profile=fargate_profile,
-            kubeconfig=kubeconfig,
-            node_security_group_tags=node_security_group_tags,
-            oidc_provider=oidc_provider,
-            private_subnet_ids=private_subnet_ids,
-            public_subnet_ids=public_subnet_ids,
-            storage_classes=storage_classes,
-            tags=tags,
-            vpc_cni=vpc_cni,
-        )
-    @staticmethod
-    def _configure(
-             _setter: Callable[[Any, Any], None],
-             cluster: 'pulumi_aws.eks.Cluster',
-             cluster_iam_role: 'pulumi_aws.iam.Role',
-             cluster_security_group: 'pulumi_aws.ec2.SecurityGroup',
-             endpoint: str,
-             instance_roles: Sequence['pulumi_aws.iam.Role'],
-             node_group_options: 'outputs.ClusterNodeGroupOptions',
-             provider: 'pulumi_kubernetes.Provider',
-             subnet_ids: Sequence[str],
-             vpc_id: str,
-             aws_provider: Optional['pulumi_aws.Provider'] = None,
-             eks_node_access: Optional['pulumi_kubernetes.core.v1.ConfigMap'] = None,
-             encryption_config: Optional['pulumi_aws.eks.outputs.ClusterEncryptionConfig'] = None,
-             fargate_profile: Optional['pulumi_aws.eks.FargateProfile'] = None,
-             kubeconfig: Optional[Any] = None,
-             node_security_group_tags: Optional[Mapping[str, str]] = None,
-             oidc_provider: Optional['pulumi_aws.iam.OpenIdConnectProvider'] = None,
-             private_subnet_ids: Optional[Sequence[str]] = None,
-             public_subnet_ids: Optional[Sequence[str]] = None,
-             storage_classes: Optional[Mapping[str, 'pulumi_kubernetes.storage.v1.StorageClass']] = None,
-             tags: Optional[Mapping[str, str]] = None,
-             vpc_cni: Optional['VpcCni'] = None,
-             opts: Optional[pulumi.ResourceOptions]=None):
-        _setter("cluster", cluster)
-        _setter("cluster_iam_role", cluster_iam_role)
-        _setter("cluster_security_group", cluster_security_group)
-        _setter("endpoint", endpoint)
-        _setter("instance_roles", instance_roles)
-        _setter("node_group_options", node_group_options)
-        _setter("provider", provider)
-        _setter("subnet_ids", subnet_ids)
-        _setter("vpc_id", vpc_id)
+        pulumi.set(__self__, "cluster", cluster)
+        pulumi.set(__self__, "cluster_iam_role", cluster_iam_role)
+        pulumi.set(__self__, "cluster_security_group", cluster_security_group)
+        pulumi.set(__self__, "endpoint", endpoint)
+        pulumi.set(__self__, "instance_roles", instance_roles)
+        pulumi.set(__self__, "node_group_options", node_group_options)
+        pulumi.set(__self__, "provider", provider)
+        pulumi.set(__self__, "subnet_ids", subnet_ids)
+        pulumi.set(__self__, "vpc_id", vpc_id)
         if aws_provider is not None:
-            _setter("aws_provider", aws_provider)
+            pulumi.set(__self__, "aws_provider", aws_provider)
         if eks_node_access is not None:
-            _setter("eks_node_access", eks_node_access)
+            pulumi.set(__self__, "eks_node_access", eks_node_access)
         if encryption_config is not None:
-            _setter("encryption_config", encryption_config)
+            pulumi.set(__self__, "encryption_config", encryption_config)
         if fargate_profile is not None:
-            _setter("fargate_profile", fargate_profile)
+            pulumi.set(__self__, "fargate_profile", fargate_profile)
         if kubeconfig is not None:
-            _setter("kubeconfig", kubeconfig)
+            pulumi.set(__self__, "kubeconfig", kubeconfig)
         if node_security_group_tags is not None:
-            _setter("node_security_group_tags", node_security_group_tags)
+            pulumi.set(__self__, "node_security_group_tags", node_security_group_tags)
         if oidc_provider is not None:
-            _setter("oidc_provider", oidc_provider)
+            pulumi.set(__self__, "oidc_provider", oidc_provider)
         if private_subnet_ids is not None:
-            _setter("private_subnet_ids", private_subnet_ids)
+            pulumi.set(__self__, "private_subnet_ids", private_subnet_ids)
         if public_subnet_ids is not None:
-            _setter("public_subnet_ids", public_subnet_ids)
+            pulumi.set(__self__, "public_subnet_ids", public_subnet_ids)
         if storage_classes is not None:
-            _setter("storage_classes", storage_classes)
+            pulumi.set(__self__, "storage_classes", storage_classes)
         if tags is not None:
-            _setter("tags", tags)
+            pulumi.set(__self__, "tags", tags)
         if vpc_cni is not None:
-            _setter("vpc_cni", vpc_cni)
+            pulumi.set(__self__, "vpc_cni", vpc_cni)
 
     @property
     @pulumi.getter
@@ -867,25 +757,10 @@ class NodeGroupData(dict):
         :param Sequence['pulumi_aws.ec2.SecurityGroup'] extra_node_security_groups: The additional security groups for the node group that captures user-specific rules.
         :param 'pulumi_aws.ec2.SecurityGroup' node_security_group: The security group for the node group to communicate with the cluster.
         """
-        NodeGroupData._configure(
-            lambda key, value: pulumi.set(__self__, key, value),
-            auto_scaling_group_name=auto_scaling_group_name,
-            cfn_stack=cfn_stack,
-            extra_node_security_groups=extra_node_security_groups,
-            node_security_group=node_security_group,
-        )
-    @staticmethod
-    def _configure(
-             _setter: Callable[[Any, Any], None],
-             auto_scaling_group_name: str,
-             cfn_stack: 'pulumi_aws.cloudformation.Stack',
-             extra_node_security_groups: Sequence['pulumi_aws.ec2.SecurityGroup'],
-             node_security_group: 'pulumi_aws.ec2.SecurityGroup',
-             opts: Optional[pulumi.ResourceOptions]=None):
-        _setter("auto_scaling_group_name", auto_scaling_group_name)
-        _setter("cfn_stack", cfn_stack)
-        _setter("extra_node_security_groups", extra_node_security_groups)
-        _setter("node_security_group", node_security_group)
+        pulumi.set(__self__, "auto_scaling_group_name", auto_scaling_group_name)
+        pulumi.set(__self__, "cfn_stack", cfn_stack)
+        pulumi.set(__self__, "extra_node_security_groups", extra_node_security_groups)
+        pulumi.set(__self__, "node_security_group", node_security_group)
 
     @property
     @pulumi.getter(name="autoScalingGroupName")
@@ -933,19 +808,8 @@ class Taint(dict):
         :param str effect: The effect of the taint.
         :param str value: The value of the taint.
         """
-        Taint._configure(
-            lambda key, value: pulumi.set(__self__, key, value),
-            effect=effect,
-            value=value,
-        )
-    @staticmethod
-    def _configure(
-             _setter: Callable[[Any, Any], None],
-             effect: str,
-             value: str,
-             opts: Optional[pulumi.ResourceOptions]=None):
-        _setter("effect", effect)
-        _setter("value", value)
+        pulumi.set(__self__, "effect", effect)
+        pulumi.set(__self__, "value", value)
 
     @property
     @pulumi.getter
