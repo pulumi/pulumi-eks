@@ -145,6 +145,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pulumi/pulumi-aws/sdk/v6 v6.2.0 h1:Q3H+xHE1Yjeqymcs0nFhdi7BA45iziAKLQJo6/i4RTA=
 github.com/pulumi/pulumi-aws/sdk/v6 v6.2.0/go.mod h1:UeOesX8l9ntIiiKXdQue8/rQDAvSf7Spd5qf15qngcY=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.3.0 h1:p9yGMvzG7+Fb+0J0PHyV8WxWHPoLdq9p9QF661vwR4g=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.3.0/go.mod h1:UeOesX8l9ntIiiKXdQue8/rQDAvSf7Spd5qf15qngcY=
 github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.2.0 h1:1MWsrQyEsidp8MFnjZSYQHmuwWdNG6ap5Y+oqnIILC4=
 github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.2.0/go.mod h1:oufYFmFad22ALcYN1AW6pE41qpz4YsyCWNPevg1j9c4=
 github.com/pulumi/pulumi/sdk/v3 v3.81.0 h1:d711GUpjZK1beNpIKFReC1LBmHXYE684sYWntJWQ4Q0=

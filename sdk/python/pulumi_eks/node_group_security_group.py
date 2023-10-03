@@ -6,7 +6,7 @@ import copy
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Mapping, Optional, Sequence, Union, overload
+from typing import Any, Callable, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 import pulumi_aws
 
@@ -26,11 +26,26 @@ class NodeGroupSecurityGroupArgs:
         :param pulumi.Input[str] vpc_id: The VPC in which to create the worker node group.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags to apply to this security group.
         """
-        pulumi.set(__self__, "cluster_security_group", cluster_security_group)
-        pulumi.set(__self__, "eks_cluster", eks_cluster)
-        pulumi.set(__self__, "vpc_id", vpc_id)
+        NodeGroupSecurityGroupArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            cluster_security_group=cluster_security_group,
+            eks_cluster=eks_cluster,
+            vpc_id=vpc_id,
+            tags=tags,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             cluster_security_group: pulumi.Input['pulumi_aws.ec2.SecurityGroup'],
+             eks_cluster: pulumi.Input['pulumi_aws.eks.Cluster'],
+             vpc_id: pulumi.Input[str],
+             tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+             opts: Optional[pulumi.ResourceOptions]=None):
+        _setter("cluster_security_group", cluster_security_group)
+        _setter("eks_cluster", eks_cluster)
+        _setter("vpc_id", vpc_id)
         if tags is not None:
-            pulumi.set(__self__, "tags", tags)
+            _setter("tags", tags)
 
     @property
     @pulumi.getter(name="clusterSecurityGroup")
@@ -120,6 +135,10 @@ class NodeGroupSecurityGroup(pulumi.ComponentResource):
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
+            kwargs = kwargs or {}
+            def _setter(key, value):
+                kwargs[key] = value
+            NodeGroupSecurityGroupArgs._configure(_setter, **kwargs)
             __self__._internal_init(resource_name, *args, **kwargs)
 
     def _internal_init(__self__,

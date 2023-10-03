@@ -6,7 +6,7 @@ import copy
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Mapping, Optional, Sequence, Union, overload
+from typing import Any, Callable, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 from .vpc_cni import VpcCni
 import pulumi_aws
@@ -125,60 +125,121 @@ class ClusterNodeGroupOptionsArgs:
         :param Mapping[str, 'TaintArgs'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         """
+        ClusterNodeGroupOptionsArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            ami_id=ami_id,
+            ami_type=ami_type,
+            auto_scaling_group_tags=auto_scaling_group_tags,
+            bootstrap_extra_args=bootstrap_extra_args,
+            cloud_formation_tags=cloud_formation_tags,
+            cluster_ingress_rule=cluster_ingress_rule,
+            desired_capacity=desired_capacity,
+            encrypt_root_block_device=encrypt_root_block_device,
+            extra_node_security_groups=extra_node_security_groups,
+            gpu=gpu,
+            instance_profile=instance_profile,
+            instance_type=instance_type,
+            key_name=key_name,
+            kubelet_extra_args=kubelet_extra_args,
+            labels=labels,
+            max_size=max_size,
+            min_size=min_size,
+            node_associate_public_ip_address=node_associate_public_ip_address,
+            node_public_key=node_public_key,
+            node_root_volume_size=node_root_volume_size,
+            node_security_group=node_security_group,
+            node_subnet_ids=node_subnet_ids,
+            node_user_data=node_user_data,
+            node_user_data_override=node_user_data_override,
+            spot_price=spot_price,
+            taints=taints,
+            version=version,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             ami_id: Optional[pulumi.Input[str]] = None,
+             ami_type: Optional[pulumi.Input[str]] = None,
+             auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+             bootstrap_extra_args: Optional[str] = None,
+             cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+             cluster_ingress_rule: Optional['pulumi_aws.ec2.SecurityGroupRule'] = None,
+             desired_capacity: Optional[pulumi.Input[int]] = None,
+             encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
+             extra_node_security_groups: Optional[Sequence['pulumi_aws.ec2.SecurityGroup']] = None,
+             gpu: Optional[pulumi.Input[bool]] = None,
+             instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
+             instance_type: Optional[pulumi.Input[str]] = None,
+             key_name: Optional[pulumi.Input[str]] = None,
+             kubelet_extra_args: Optional[str] = None,
+             labels: Optional[Mapping[str, str]] = None,
+             max_size: Optional[pulumi.Input[int]] = None,
+             min_size: Optional[pulumi.Input[int]] = None,
+             node_associate_public_ip_address: Optional[bool] = None,
+             node_public_key: Optional[pulumi.Input[str]] = None,
+             node_root_volume_size: Optional[pulumi.Input[int]] = None,
+             node_security_group: Optional['pulumi_aws.ec2.SecurityGroup'] = None,
+             node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             node_user_data: Optional[pulumi.Input[str]] = None,
+             node_user_data_override: Optional[pulumi.Input[str]] = None,
+             spot_price: Optional[pulumi.Input[str]] = None,
+             taints: Optional[Mapping[str, 'TaintArgs']] = None,
+             version: Optional[pulumi.Input[str]] = None,
+             opts: Optional[pulumi.ResourceOptions]=None):
         if ami_id is not None:
-            pulumi.set(__self__, "ami_id", ami_id)
+            _setter("ami_id", ami_id)
         if ami_type is not None:
-            pulumi.set(__self__, "ami_type", ami_type)
+            _setter("ami_type", ami_type)
         if auto_scaling_group_tags is not None:
-            pulumi.set(__self__, "auto_scaling_group_tags", auto_scaling_group_tags)
+            _setter("auto_scaling_group_tags", auto_scaling_group_tags)
         if bootstrap_extra_args is not None:
-            pulumi.set(__self__, "bootstrap_extra_args", bootstrap_extra_args)
+            _setter("bootstrap_extra_args", bootstrap_extra_args)
         if cloud_formation_tags is not None:
-            pulumi.set(__self__, "cloud_formation_tags", cloud_formation_tags)
+            _setter("cloud_formation_tags", cloud_formation_tags)
         if cluster_ingress_rule is not None:
-            pulumi.set(__self__, "cluster_ingress_rule", cluster_ingress_rule)
+            _setter("cluster_ingress_rule", cluster_ingress_rule)
         if desired_capacity is not None:
-            pulumi.set(__self__, "desired_capacity", desired_capacity)
+            _setter("desired_capacity", desired_capacity)
         if encrypt_root_block_device is not None:
-            pulumi.set(__self__, "encrypt_root_block_device", encrypt_root_block_device)
+            _setter("encrypt_root_block_device", encrypt_root_block_device)
         if extra_node_security_groups is not None:
-            pulumi.set(__self__, "extra_node_security_groups", extra_node_security_groups)
+            _setter("extra_node_security_groups", extra_node_security_groups)
         if gpu is not None:
-            pulumi.set(__self__, "gpu", gpu)
+            _setter("gpu", gpu)
         if instance_profile is not None:
-            pulumi.set(__self__, "instance_profile", instance_profile)
+            _setter("instance_profile", instance_profile)
         if instance_type is not None:
-            pulumi.set(__self__, "instance_type", instance_type)
+            _setter("instance_type", instance_type)
         if key_name is not None:
-            pulumi.set(__self__, "key_name", key_name)
+            _setter("key_name", key_name)
         if kubelet_extra_args is not None:
-            pulumi.set(__self__, "kubelet_extra_args", kubelet_extra_args)
+            _setter("kubelet_extra_args", kubelet_extra_args)
         if labels is not None:
-            pulumi.set(__self__, "labels", labels)
+            _setter("labels", labels)
         if max_size is not None:
-            pulumi.set(__self__, "max_size", max_size)
+            _setter("max_size", max_size)
         if min_size is not None:
-            pulumi.set(__self__, "min_size", min_size)
+            _setter("min_size", min_size)
         if node_associate_public_ip_address is not None:
-            pulumi.set(__self__, "node_associate_public_ip_address", node_associate_public_ip_address)
+            _setter("node_associate_public_ip_address", node_associate_public_ip_address)
         if node_public_key is not None:
-            pulumi.set(__self__, "node_public_key", node_public_key)
+            _setter("node_public_key", node_public_key)
         if node_root_volume_size is not None:
-            pulumi.set(__self__, "node_root_volume_size", node_root_volume_size)
+            _setter("node_root_volume_size", node_root_volume_size)
         if node_security_group is not None:
-            pulumi.set(__self__, "node_security_group", node_security_group)
+            _setter("node_security_group", node_security_group)
         if node_subnet_ids is not None:
-            pulumi.set(__self__, "node_subnet_ids", node_subnet_ids)
+            _setter("node_subnet_ids", node_subnet_ids)
         if node_user_data is not None:
-            pulumi.set(__self__, "node_user_data", node_user_data)
+            _setter("node_user_data", node_user_data)
         if node_user_data_override is not None:
-            pulumi.set(__self__, "node_user_data_override", node_user_data_override)
+            _setter("node_user_data_override", node_user_data_override)
         if spot_price is not None:
-            pulumi.set(__self__, "spot_price", spot_price)
+            _setter("spot_price", spot_price)
         if taints is not None:
-            pulumi.set(__self__, "taints", taints)
+            _setter("taints", taints)
         if version is not None:
-            pulumi.set(__self__, "version", version)
+            _setter("version", version)
 
     @property
     @pulumi.getter(name="amiId")
@@ -573,39 +634,88 @@ class CoreDataArgs:
         Defines the core set of data associated with an EKS cluster, including the network in which it runs.
         :param pulumi.Input['pulumi_aws.iam.Role'] cluster_iam_role: The IAM Role attached to the EKS Cluster
         """
-        pulumi.set(__self__, "cluster", cluster)
-        pulumi.set(__self__, "cluster_iam_role", cluster_iam_role)
-        pulumi.set(__self__, "cluster_security_group", cluster_security_group)
-        pulumi.set(__self__, "endpoint", endpoint)
-        pulumi.set(__self__, "instance_roles", instance_roles)
-        pulumi.set(__self__, "node_group_options", node_group_options)
-        pulumi.set(__self__, "provider", provider)
-        pulumi.set(__self__, "subnet_ids", subnet_ids)
-        pulumi.set(__self__, "vpc_id", vpc_id)
+        CoreDataArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            cluster=cluster,
+            cluster_iam_role=cluster_iam_role,
+            cluster_security_group=cluster_security_group,
+            endpoint=endpoint,
+            instance_roles=instance_roles,
+            node_group_options=node_group_options,
+            provider=provider,
+            subnet_ids=subnet_ids,
+            vpc_id=vpc_id,
+            aws_provider=aws_provider,
+            eks_node_access=eks_node_access,
+            encryption_config=encryption_config,
+            fargate_profile=fargate_profile,
+            kubeconfig=kubeconfig,
+            node_security_group_tags=node_security_group_tags,
+            oidc_provider=oidc_provider,
+            private_subnet_ids=private_subnet_ids,
+            public_subnet_ids=public_subnet_ids,
+            storage_classes=storage_classes,
+            tags=tags,
+            vpc_cni=vpc_cni,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             cluster: pulumi.Input['pulumi_aws.eks.Cluster'],
+             cluster_iam_role: pulumi.Input['pulumi_aws.iam.Role'],
+             cluster_security_group: pulumi.Input['pulumi_aws.ec2.SecurityGroup'],
+             endpoint: pulumi.Input[str],
+             instance_roles: pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]],
+             node_group_options: pulumi.Input['ClusterNodeGroupOptionsArgs'],
+             provider: pulumi.Input['pulumi_kubernetes.Provider'],
+             subnet_ids: pulumi.Input[Sequence[pulumi.Input[str]]],
+             vpc_id: pulumi.Input[str],
+             aws_provider: Optional[pulumi.Input['pulumi_aws.Provider']] = None,
+             eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']] = None,
+             encryption_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']] = None,
+             fargate_profile: Optional[pulumi.Input['pulumi_aws.eks.FargateProfile']] = None,
+             kubeconfig: Optional[Any] = None,
+             node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+             oidc_provider: Optional[pulumi.Input['pulumi_aws.iam.OpenIdConnectProvider']] = None,
+             private_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             public_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             storage_classes: Optional[pulumi.Input[Mapping[str, pulumi.Input['pulumi_kubernetes.storage.v1.StorageClass']]]] = None,
+             tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+             vpc_cni: Optional[pulumi.Input['VpcCni']] = None,
+             opts: Optional[pulumi.ResourceOptions]=None):
+        _setter("cluster", cluster)
+        _setter("cluster_iam_role", cluster_iam_role)
+        _setter("cluster_security_group", cluster_security_group)
+        _setter("endpoint", endpoint)
+        _setter("instance_roles", instance_roles)
+        _setter("node_group_options", node_group_options)
+        _setter("provider", provider)
+        _setter("subnet_ids", subnet_ids)
+        _setter("vpc_id", vpc_id)
         if aws_provider is not None:
-            pulumi.set(__self__, "aws_provider", aws_provider)
+            _setter("aws_provider", aws_provider)
         if eks_node_access is not None:
-            pulumi.set(__self__, "eks_node_access", eks_node_access)
+            _setter("eks_node_access", eks_node_access)
         if encryption_config is not None:
-            pulumi.set(__self__, "encryption_config", encryption_config)
+            _setter("encryption_config", encryption_config)
         if fargate_profile is not None:
-            pulumi.set(__self__, "fargate_profile", fargate_profile)
+            _setter("fargate_profile", fargate_profile)
         if kubeconfig is not None:
-            pulumi.set(__self__, "kubeconfig", kubeconfig)
+            _setter("kubeconfig", kubeconfig)
         if node_security_group_tags is not None:
-            pulumi.set(__self__, "node_security_group_tags", node_security_group_tags)
+            _setter("node_security_group_tags", node_security_group_tags)
         if oidc_provider is not None:
-            pulumi.set(__self__, "oidc_provider", oidc_provider)
+            _setter("oidc_provider", oidc_provider)
         if private_subnet_ids is not None:
-            pulumi.set(__self__, "private_subnet_ids", private_subnet_ids)
+            _setter("private_subnet_ids", private_subnet_ids)
         if public_subnet_ids is not None:
-            pulumi.set(__self__, "public_subnet_ids", public_subnet_ids)
+            _setter("public_subnet_ids", public_subnet_ids)
         if storage_classes is not None:
-            pulumi.set(__self__, "storage_classes", storage_classes)
+            _setter("storage_classes", storage_classes)
         if tags is not None:
-            pulumi.set(__self__, "tags", tags)
+            _setter("tags", tags)
         if vpc_cni is not None:
-            pulumi.set(__self__, "vpc_cni", vpc_cni)
+            _setter("vpc_cni", vpc_cni)
 
     @property
     @pulumi.getter
@@ -808,8 +918,19 @@ class CreationRoleProviderArgs:
         """
         Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
         """
-        pulumi.set(__self__, "provider", provider)
-        pulumi.set(__self__, "role", role)
+        CreationRoleProviderArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            provider=provider,
+            role=role,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             provider: 'pulumi_aws.Provider',
+             role: 'pulumi_aws.iam.Role',
+             opts: Optional[pulumi.ResourceOptions]=None):
+        _setter("provider", provider)
+        _setter("role", role)
 
     @property
     @pulumi.getter
@@ -842,12 +963,25 @@ class FargateProfileArgs:
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]] selectors: Specify the namespace and label selectors to use for launching pods into Fargate.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
         """
+        FargateProfileArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            pod_execution_role_arn=pod_execution_role_arn,
+            selectors=selectors,
+            subnet_ids=subnet_ids,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             pod_execution_role_arn: Optional[pulumi.Input[str]] = None,
+             selectors: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]]] = None,
+             subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             opts: Optional[pulumi.ResourceOptions]=None):
         if pod_execution_role_arn is not None:
-            pulumi.set(__self__, "pod_execution_role_arn", pod_execution_role_arn)
+            _setter("pod_execution_role_arn", pod_execution_role_arn)
         if selectors is not None:
-            pulumi.set(__self__, "selectors", selectors)
+            _setter("selectors", selectors)
         if subnet_ids is not None:
-            pulumi.set(__self__, "subnet_ids", subnet_ids)
+            _setter("subnet_ids", subnet_ids)
 
     @property
     @pulumi.getter(name="podExecutionRoleArn")
@@ -915,10 +1049,21 @@ class KubeconfigOptionsArgs:
                
                The role is passed to kubeconfig as an authentication exec argument.
         """
+        KubeconfigOptionsArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            profile_name=profile_name,
+            role_arn=role_arn,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             profile_name: Optional[pulumi.Input[str]] = None,
+             role_arn: Optional[pulumi.Input[str]] = None,
+             opts: Optional[pulumi.ResourceOptions]=None):
         if profile_name is not None:
-            pulumi.set(__self__, "profile_name", profile_name)
+            _setter("profile_name", profile_name)
         if role_arn is not None:
-            pulumi.set(__self__, "role_arn", role_arn)
+            _setter("role_arn", role_arn)
 
     @property
     @pulumi.getter(name="profileName")
@@ -961,9 +1106,22 @@ class RoleMappingArgs:
         :param pulumi.Input[str] role_arn: The ARN of the IAM role to add.
         :param pulumi.Input[str] username: The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role.
         """
-        pulumi.set(__self__, "groups", groups)
-        pulumi.set(__self__, "role_arn", role_arn)
-        pulumi.set(__self__, "username", username)
+        RoleMappingArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            groups=groups,
+            role_arn=role_arn,
+            username=username,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             groups: pulumi.Input[Sequence[pulumi.Input[str]]],
+             role_arn: pulumi.Input[str],
+             username: pulumi.Input[str],
+             opts: Optional[pulumi.ResourceOptions]=None):
+        _setter("groups", groups)
+        _setter("role_arn", role_arn)
+        _setter("username", username)
 
     @property
     @pulumi.getter
@@ -1034,27 +1192,56 @@ class StorageClassArgs:
         :param pulumi.Input[str] volume_binding_mode: VolumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound. When unset, VolumeBindingImmediate is used. This field is alpha-level and is only honored by servers that enable the VolumeScheduling feature.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] zones: The AWS zone or zones for the EBS volume. If zones is not specified, volumes are generally round-robin-ed across all active zones where Kubernetes cluster has a node. zone and zones parameters must not be used at the same time.
         """
-        pulumi.set(__self__, "type", type)
+        StorageClassArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            type=type,
+            allow_volume_expansion=allow_volume_expansion,
+            default=default,
+            encrypted=encrypted,
+            iops_per_gb=iops_per_gb,
+            kms_key_id=kms_key_id,
+            metadata=metadata,
+            mount_options=mount_options,
+            reclaim_policy=reclaim_policy,
+            volume_binding_mode=volume_binding_mode,
+            zones=zones,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             type: pulumi.Input[str],
+             allow_volume_expansion: Optional[pulumi.Input[bool]] = None,
+             default: Optional[pulumi.Input[bool]] = None,
+             encrypted: Optional[pulumi.Input[bool]] = None,
+             iops_per_gb: Optional[pulumi.Input[int]] = None,
+             kms_key_id: Optional[pulumi.Input[str]] = None,
+             metadata: Optional[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']] = None,
+             mount_options: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             reclaim_policy: Optional[pulumi.Input[str]] = None,
+             volume_binding_mode: Optional[pulumi.Input[str]] = None,
+             zones: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             opts: Optional[pulumi.ResourceOptions]=None):
+        _setter("type", type)
         if allow_volume_expansion is not None:
-            pulumi.set(__self__, "allow_volume_expansion", allow_volume_expansion)
+            _setter("allow_volume_expansion", allow_volume_expansion)
         if default is not None:
-            pulumi.set(__self__, "default", default)
+            _setter("default", default)
         if encrypted is not None:
-            pulumi.set(__self__, "encrypted", encrypted)
+            _setter("encrypted", encrypted)
         if iops_per_gb is not None:
-            pulumi.set(__self__, "iops_per_gb", iops_per_gb)
+            _setter("iops_per_gb", iops_per_gb)
         if kms_key_id is not None:
-            pulumi.set(__self__, "kms_key_id", kms_key_id)
+            _setter("kms_key_id", kms_key_id)
         if metadata is not None:
-            pulumi.set(__self__, "metadata", metadata)
+            _setter("metadata", metadata)
         if mount_options is not None:
-            pulumi.set(__self__, "mount_options", mount_options)
+            _setter("mount_options", mount_options)
         if reclaim_policy is not None:
-            pulumi.set(__self__, "reclaim_policy", reclaim_policy)
+            _setter("reclaim_policy", reclaim_policy)
         if volume_binding_mode is not None:
-            pulumi.set(__self__, "volume_binding_mode", volume_binding_mode)
+            _setter("volume_binding_mode", volume_binding_mode)
         if zones is not None:
-            pulumi.set(__self__, "zones", zones)
+            _setter("zones", zones)
 
     @property
     @pulumi.getter
@@ -1203,8 +1390,19 @@ class TaintArgs:
         :param str effect: The effect of the taint.
         :param str value: The value of the taint.
         """
-        pulumi.set(__self__, "effect", effect)
-        pulumi.set(__self__, "value", value)
+        TaintArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            effect=effect,
+            value=value,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             effect: str,
+             value: str,
+             opts: Optional[pulumi.ResourceOptions]=None):
+        _setter("effect", effect)
+        _setter("value", value)
 
     @property
     @pulumi.getter
@@ -1243,9 +1441,22 @@ class UserMappingArgs:
         :param pulumi.Input[str] user_arn: The ARN of the IAM user to add.
         :param pulumi.Input[str] username: The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user.
         """
-        pulumi.set(__self__, "groups", groups)
-        pulumi.set(__self__, "user_arn", user_arn)
-        pulumi.set(__self__, "username", username)
+        UserMappingArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            groups=groups,
+            user_arn=user_arn,
+            username=username,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             groups: pulumi.Input[Sequence[pulumi.Input[str]]],
+             user_arn: pulumi.Input[str],
+             username: pulumi.Input[str],
+             opts: Optional[pulumi.ResourceOptions]=None):
+        _setter("groups", groups)
+        _setter("user_arn", user_arn)
+        _setter("username", username)
 
     @property
     @pulumi.getter
@@ -1358,48 +1569,97 @@ class VpcCniOptionsArgs:
         :param pulumi.Input[int] warm_ip_target: Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
         :param pulumi.Input[int] warm_prefix_target: WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
         """
+        VpcCniOptionsArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            cni_configure_rpfilter=cni_configure_rpfilter,
+            cni_custom_network_cfg=cni_custom_network_cfg,
+            cni_external_snat=cni_external_snat,
+            custom_network_config=custom_network_config,
+            disable_tcp_early_demux=disable_tcp_early_demux,
+            enable_ipv6=enable_ipv6,
+            enable_pod_eni=enable_pod_eni,
+            enable_prefix_delegation=enable_prefix_delegation,
+            eni_config_label_def=eni_config_label_def,
+            eni_mtu=eni_mtu,
+            external_snat=external_snat,
+            image=image,
+            init_image=init_image,
+            log_file=log_file,
+            log_level=log_level,
+            node_port_support=node_port_support,
+            security_context_privileged=security_context_privileged,
+            veth_prefix=veth_prefix,
+            warm_eni_target=warm_eni_target,
+            warm_ip_target=warm_ip_target,
+            warm_prefix_target=warm_prefix_target,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
+             cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
+             cni_external_snat: Optional[pulumi.Input[bool]] = None,
+             custom_network_config: Optional[pulumi.Input[bool]] = None,
+             disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
+             enable_ipv6: Optional[pulumi.Input[bool]] = None,
+             enable_pod_eni: Optional[pulumi.Input[bool]] = None,
+             enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
+             eni_config_label_def: Optional[pulumi.Input[str]] = None,
+             eni_mtu: Optional[pulumi.Input[int]] = None,
+             external_snat: Optional[pulumi.Input[bool]] = None,
+             image: Optional[pulumi.Input[str]] = None,
+             init_image: Optional[pulumi.Input[str]] = None,
+             log_file: Optional[pulumi.Input[str]] = None,
+             log_level: Optional[pulumi.Input[str]] = None,
+             node_port_support: Optional[pulumi.Input[bool]] = None,
+             security_context_privileged: Optional[pulumi.Input[bool]] = None,
+             veth_prefix: Optional[pulumi.Input[str]] = None,
+             warm_eni_target: Optional[pulumi.Input[int]] = None,
+             warm_ip_target: Optional[pulumi.Input[int]] = None,
+             warm_prefix_target: Optional[pulumi.Input[int]] = None,
+             opts: Optional[pulumi.ResourceOptions]=None):
         if cni_configure_rpfilter is not None:
-            pulumi.set(__self__, "cni_configure_rpfilter", cni_configure_rpfilter)
+            _setter("cni_configure_rpfilter", cni_configure_rpfilter)
         if cni_custom_network_cfg is not None:
-            pulumi.set(__self__, "cni_custom_network_cfg", cni_custom_network_cfg)
+            _setter("cni_custom_network_cfg", cni_custom_network_cfg)
         if cni_external_snat is not None:
-            pulumi.set(__self__, "cni_external_snat", cni_external_snat)
+            _setter("cni_external_snat", cni_external_snat)
         if custom_network_config is not None:
-            pulumi.set(__self__, "custom_network_config", custom_network_config)
+            _setter("custom_network_config", custom_network_config)
         if disable_tcp_early_demux is not None:
-            pulumi.set(__self__, "disable_tcp_early_demux", disable_tcp_early_demux)
+            _setter("disable_tcp_early_demux", disable_tcp_early_demux)
         if enable_ipv6 is not None:
-            pulumi.set(__self__, "enable_ipv6", enable_ipv6)
+            _setter("enable_ipv6", enable_ipv6)
         if enable_pod_eni is not None:
-            pulumi.set(__self__, "enable_pod_eni", enable_pod_eni)
+            _setter("enable_pod_eni", enable_pod_eni)
         if enable_prefix_delegation is not None:
-            pulumi.set(__self__, "enable_prefix_delegation", enable_prefix_delegation)
+            _setter("enable_prefix_delegation", enable_prefix_delegation)
         if eni_config_label_def is not None:
-            pulumi.set(__self__, "eni_config_label_def", eni_config_label_def)
+            _setter("eni_config_label_def", eni_config_label_def)
         if eni_mtu is not None:
-            pulumi.set(__self__, "eni_mtu", eni_mtu)
+            _setter("eni_mtu", eni_mtu)
         if external_snat is not None:
-            pulumi.set(__self__, "external_snat", external_snat)
+            _setter("external_snat", external_snat)
         if image is not None:
-            pulumi.set(__self__, "image", image)
+            _setter("image", image)
         if init_image is not None:
-            pulumi.set(__self__, "init_image", init_image)
+            _setter("init_image", init_image)
         if log_file is not None:
-            pulumi.set(__self__, "log_file", log_file)
+            _setter("log_file", log_file)
         if log_level is not None:
-            pulumi.set(__self__, "log_level", log_level)
+            _setter("log_level", log_level)
         if node_port_support is not None:
-            pulumi.set(__self__, "node_port_support", node_port_support)
+            _setter("node_port_support", node_port_support)
         if security_context_privileged is not None:
-            pulumi.set(__self__, "security_context_privileged", security_context_privileged)
+            _setter("security_context_privileged", security_context_privileged)
         if veth_prefix is not None:
-            pulumi.set(__self__, "veth_prefix", veth_prefix)
+            _setter("veth_prefix", veth_prefix)
         if warm_eni_target is not None:
-            pulumi.set(__self__, "warm_eni_target", warm_eni_target)
+            _setter("warm_eni_target", warm_eni_target)
         if warm_ip_target is not None:
-            pulumi.set(__self__, "warm_ip_target", warm_ip_target)
+            _setter("warm_ip_target", warm_ip_target)
         if warm_prefix_target is not None:
-            pulumi.set(__self__, "warm_prefix_target", warm_prefix_target)
+            _setter("warm_prefix_target", warm_prefix_target)
 
     @property
     @pulumi.getter(name="cniConfigureRpfilter")

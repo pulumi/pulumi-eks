@@ -6,7 +6,7 @@ import copy
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Mapping, Optional, Sequence, Union, overload
+from typing import Any, Callable, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 
 __all__ = ['VpcCniArgs', 'VpcCni']
@@ -87,49 +87,100 @@ class VpcCniArgs:
         :param pulumi.Input[int] warm_ip_target: Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
         :param pulumi.Input[int] warm_prefix_target: WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
         """
-        pulumi.set(__self__, "kubeconfig", kubeconfig)
+        VpcCniArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            kubeconfig=kubeconfig,
+            cni_configure_rpfilter=cni_configure_rpfilter,
+            cni_custom_network_cfg=cni_custom_network_cfg,
+            cni_external_snat=cni_external_snat,
+            custom_network_config=custom_network_config,
+            disable_tcp_early_demux=disable_tcp_early_demux,
+            enable_ipv6=enable_ipv6,
+            enable_pod_eni=enable_pod_eni,
+            enable_prefix_delegation=enable_prefix_delegation,
+            eni_config_label_def=eni_config_label_def,
+            eni_mtu=eni_mtu,
+            external_snat=external_snat,
+            image=image,
+            init_image=init_image,
+            log_file=log_file,
+            log_level=log_level,
+            node_port_support=node_port_support,
+            security_context_privileged=security_context_privileged,
+            veth_prefix=veth_prefix,
+            warm_eni_target=warm_eni_target,
+            warm_ip_target=warm_ip_target,
+            warm_prefix_target=warm_prefix_target,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             kubeconfig: Any,
+             cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
+             cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
+             cni_external_snat: Optional[pulumi.Input[bool]] = None,
+             custom_network_config: Optional[pulumi.Input[bool]] = None,
+             disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
+             enable_ipv6: Optional[pulumi.Input[bool]] = None,
+             enable_pod_eni: Optional[pulumi.Input[bool]] = None,
+             enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
+             eni_config_label_def: Optional[pulumi.Input[str]] = None,
+             eni_mtu: Optional[pulumi.Input[int]] = None,
+             external_snat: Optional[pulumi.Input[bool]] = None,
+             image: Optional[pulumi.Input[str]] = None,
+             init_image: Optional[pulumi.Input[str]] = None,
+             log_file: Optional[pulumi.Input[str]] = None,
+             log_level: Optional[pulumi.Input[str]] = None,
+             node_port_support: Optional[pulumi.Input[bool]] = None,
+             security_context_privileged: Optional[pulumi.Input[bool]] = None,
+             veth_prefix: Optional[pulumi.Input[str]] = None,
+             warm_eni_target: Optional[pulumi.Input[int]] = None,
+             warm_ip_target: Optional[pulumi.Input[int]] = None,
+             warm_prefix_target: Optional[pulumi.Input[int]] = None,
+             opts: Optional[pulumi.ResourceOptions]=None):
+        _setter("kubeconfig", kubeconfig)
         if cni_configure_rpfilter is not None:
-            pulumi.set(__self__, "cni_configure_rpfilter", cni_configure_rpfilter)
+            _setter("cni_configure_rpfilter", cni_configure_rpfilter)
         if cni_custom_network_cfg is not None:
-            pulumi.set(__self__, "cni_custom_network_cfg", cni_custom_network_cfg)
+            _setter("cni_custom_network_cfg", cni_custom_network_cfg)
         if cni_external_snat is not None:
-            pulumi.set(__self__, "cni_external_snat", cni_external_snat)
+            _setter("cni_external_snat", cni_external_snat)
         if custom_network_config is not None:
-            pulumi.set(__self__, "custom_network_config", custom_network_config)
+            _setter("custom_network_config", custom_network_config)
         if disable_tcp_early_demux is not None:
-            pulumi.set(__self__, "disable_tcp_early_demux", disable_tcp_early_demux)
+            _setter("disable_tcp_early_demux", disable_tcp_early_demux)
         if enable_ipv6 is not None:
-            pulumi.set(__self__, "enable_ipv6", enable_ipv6)
+            _setter("enable_ipv6", enable_ipv6)
         if enable_pod_eni is not None:
-            pulumi.set(__self__, "enable_pod_eni", enable_pod_eni)
+            _setter("enable_pod_eni", enable_pod_eni)
         if enable_prefix_delegation is not None:
-            pulumi.set(__self__, "enable_prefix_delegation", enable_prefix_delegation)
+            _setter("enable_prefix_delegation", enable_prefix_delegation)
         if eni_config_label_def is not None:
-            pulumi.set(__self__, "eni_config_label_def", eni_config_label_def)
+            _setter("eni_config_label_def", eni_config_label_def)
         if eni_mtu is not None:
-            pulumi.set(__self__, "eni_mtu", eni_mtu)
+            _setter("eni_mtu", eni_mtu)
         if external_snat is not None:
-            pulumi.set(__self__, "external_snat", external_snat)
+            _setter("external_snat", external_snat)
         if image is not None:
-            pulumi.set(__self__, "image", image)
+            _setter("image", image)
         if init_image is not None:
-            pulumi.set(__self__, "init_image", init_image)
+            _setter("init_image", init_image)
         if log_file is not None:
-            pulumi.set(__self__, "log_file", log_file)
+            _setter("log_file", log_file)
         if log_level is not None:
-            pulumi.set(__self__, "log_level", log_level)
+            _setter("log_level", log_level)
         if node_port_support is not None:
-            pulumi.set(__self__, "node_port_support", node_port_support)
+            _setter("node_port_support", node_port_support)
         if security_context_privileged is not None:
-            pulumi.set(__self__, "security_context_privileged", security_context_privileged)
+            _setter("security_context_privileged", security_context_privileged)
         if veth_prefix is not None:
-            pulumi.set(__self__, "veth_prefix", veth_prefix)
+            _setter("veth_prefix", veth_prefix)
         if warm_eni_target is not None:
-            pulumi.set(__self__, "warm_eni_target", warm_eni_target)
+            _setter("warm_eni_target", warm_eni_target)
         if warm_ip_target is not None:
-            pulumi.set(__self__, "warm_ip_target", warm_ip_target)
+            _setter("warm_ip_target", warm_ip_target)
         if warm_prefix_target is not None:
-            pulumi.set(__self__, "warm_prefix_target", warm_prefix_target)
+            _setter("warm_prefix_target", warm_prefix_target)
 
     @property
     @pulumi.getter
@@ -523,6 +574,10 @@ class VpcCni(pulumi.CustomResource):
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
+            kwargs = kwargs or {}
+            def _setter(key, value):
+                kwargs[key] = value
+            VpcCniArgs._configure(_setter, **kwargs)
             __self__._internal_init(resource_name, *args, **kwargs)
 
     def _internal_init(__self__,
