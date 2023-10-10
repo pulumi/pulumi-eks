@@ -73,12 +73,12 @@ export interface NodeGroupBaseOptions {
      * Note: The `nodeSecurityGroup` option and the cluster option
      * `nodeSecurityGroupTags` are mutually exclusive.
      */
-    nodeSecurityGroup?: pulumi.Input<aws.ec2.SecurityGroup>;
+    nodeSecurityGroup?: aws.ec2.SecurityGroup;
 
     /**
      * The ingress rule that gives node group access.
      */
-    clusterIngressRule?: pulumi.Input<aws.ec2.SecurityGroupRule>;
+    clusterIngressRule?: aws.ec2.SecurityGroupRule;
 
     /**
      * Extra security groups to attach on all nodes in this worker node group.
@@ -86,7 +86,7 @@ export interface NodeGroupBaseOptions {
      * This additional set of security groups captures any user application rules
      * that will be needed for the nodes.
      */
-    extraNodeSecurityGroups?: pulumi.Input<pulumi.Input<aws.ec2.SecurityGroup>[]>;
+    extraNodeSecurityGroups?: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
 
     /**
      * Encrypt the root block device of the nodes in the node group.
@@ -336,7 +336,7 @@ export interface NodeGroupData {
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    nodeSecurityGroup: pulumi.Input<aws.ec2.SecurityGroup>;
+    nodeSecurityGroup: aws.ec2.SecurityGroup;
     /**
      * The CloudFormation Stack which defines the node group's AutoScalingGroup.
      */
@@ -348,14 +348,14 @@ export interface NodeGroupData {
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    extraNodeSecurityGroups?: pulumi.Input<pulumi.Input<aws.ec2.SecurityGroup>[]>;
+    extraNodeSecurityGroups?: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
 }
 
 export interface NodeGroupV2Data {
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    nodeSecurityGroup: pulumi.Input<aws.ec2.SecurityGroup>;
+    nodeSecurityGroup: aws.ec2.SecurityGroup;
     /**
      * The AutoScalingGroup name for the node group.
      */
@@ -363,7 +363,7 @@ export interface NodeGroupV2Data {
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    extraNodeSecurityGroups?: pulumi.Input<pulumi.Input<aws.ec2.SecurityGroup>[]>;
+    extraNodeSecurityGroups?: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
 }
 
 /**
@@ -373,11 +373,11 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    public readonly nodeSecurityGroup: pulumi.Input<aws.ec2.SecurityGroup>;
+    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    public readonly extraNodeSecurityGroups: pulumi.Input<pulumi.Input<aws.ec2.SecurityGroup>[]>;
+    public readonly extraNodeSecurityGroups: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
 
     /**
      * The CloudFormation Stack which defines the Node AutoScalingGroup.
@@ -466,11 +466,11 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    public readonly nodeSecurityGroup: pulumi.Input<aws.ec2.SecurityGroup>;
+    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    public readonly extraNodeSecurityGroups: pulumi.Input<pulumi.Input<aws.ec2.SecurityGroup>[]>;
+    public readonly extraNodeSecurityGroups: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
 
     /**
      * The AutoScalingGroup name for the Node group.
@@ -665,9 +665,17 @@ function createNodeGroupInternal(
         .apply(([id]) => id);
 
     // Collect the IDs of any extra, user-specific security groups.
-    const extraNodeSecurityGroupIds = args.extraNodeSecurityGroups
-        ? args.extraNodeSecurityGroups.map((sg) => sg.id)
-        : [];
+    const extraNodeSecurityGroupIds = pulumi.all([args.extraNodeSecurityGroups]).apply(([sg]) => {
+        if (sg === undefined) {
+            return [];
+        }
+        // Map out the ARNs of all of the instanceRoles.
+        const sgIDs = sg.map((sg) => {
+            return sg.id;
+        });
+
+        return sgIDs;
+    });
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
     let keyName = args.keyName;
@@ -802,7 +810,15 @@ ${customUserData}
             instanceType: args.instanceType || "t2.medium",
             iamInstanceProfile: instanceProfile,
             keyName: keyName,
-            securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
+            securityGroups: pulumi
+                .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
+                .apply(([sg, extraSG]) => {
+                    const extras = [];
+                    extraSG.map((sg) => {
+                        extras.push(sg);
+                    });
+                    return [sg, ...extraSG];
+                }),
             spotPrice: args.spotPrice,
             rootBlockDevice: {
                 encrypted:
@@ -1049,12 +1065,17 @@ function createNodeGroupV2Internal(
         .apply(([id]) => id);
 
     // Collect the IDs of any extra, user-specific security groups.
-    const extraNodeSecurityGroupIds = args.extraNodeSecurityGroups
-        ? args.extraNodeSecurityGroups.map((sg) => sg.id)
-        : [];
-    const extraNodeSecurityGroupNames = args.extraNodeSecurityGroups
-        ? args.extraNodeSecurityGroups.map((sg) => sg.name)
-        : [];
+    const extraNodeSecurityGroupIds = pulumi.all([args.extraNodeSecurityGroups]).apply(([sg]) => {
+        if (sg === undefined) {
+            return [];
+        }
+        // Map out the ARNs of all of the instanceRoles.
+        const sgIDs = sg.map((sg) => {
+            return sg.id;
+        });
+
+        return sgIDs;
+    });
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
     let keyName = args.keyName;
@@ -1203,15 +1224,18 @@ ${customUserData}
         : {};
 
     const device = pulumi.output(amiId).apply((id) =>
-        aws.ec2.getAmi({
-            owners: ["self", "amazon"],
-            filters: [
-                {
-                    name: "image-id",
-                    values: [id],
-                },
-            ],
-        }, { parent }),
+        aws.ec2.getAmi(
+            {
+                owners: ["self", "amazon"],
+                filters: [
+                    {
+                        name: "image-id",
+                        values: [id],
+                    },
+                ],
+            },
+            { parent },
+        ),
     ).blockDeviceMappings[0].deviceName;
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
@@ -1239,7 +1263,15 @@ ${customUserData}
             networkInterfaces: [
                 {
                     associatePublicIpAddress: String(nodeAssociatePublicIpAddress),
-                    securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
+                    securityGroups: pulumi
+                        .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
+                        .apply(([sg, extraSG]) => {
+                            const extras = [];
+                            extraSG.map((sg) => {
+                                extras.push(sg);
+                            });
+                            return [sg, ...extraSG];
+                        }),
                 },
             ],
             metadataOptions: args.metadataOptions,

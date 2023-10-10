@@ -94,7 +94,7 @@ export function createNodeGroupSecurityGroup(
     args: NodeGroupSecurityGroupOptions,
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
-): [pulumi.Output<aws.ec2.SecurityGroup>, pulumi.Output<aws.ec2.SecurityGroupRule>] {
+): [aws.ec2.SecurityGroup, aws.ec2.SecurityGroupRule] {
     const eksCluster = pulumi.output(args.eksCluster);
     const clusterSecurityGroup = pulumi.output(args.clusterSecurityGroup);
 
