@@ -1211,8 +1211,7 @@ ${customUserData}
         : {};
 
     const device = pulumi.output(amiId).apply((id) =>
-        aws.ec2.getAmi(
-            {
+        aws.ec2.getAmi({
                 owners: ["self", "amazon"],
                 filters: [
                     {
@@ -1220,9 +1219,7 @@ ${customUserData}
                         values: [id],
                     },
                 ],
-            },
-            { parent },
-        ),
+            }, { parent }),
     ).blockDeviceMappings[0].deviceName;
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(

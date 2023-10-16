@@ -313,8 +313,8 @@ export function getRoleProvider(
     parent?: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): CreationRoleProvider {
-    const partition = pulumi.output(aws.getPartition({})).partition;
-    const accountId = pulumi.output(aws.getCallerIdentity({})).accountId;
+    const partition = aws.getPartitionOutput({}, { parent }).partition;
+    const accountId = pulumi.output(aws.getCallerIdentity({}, { parent })).accountId;
     const iamRole = new aws.iam.Role(
         `${name}-eksClusterCreatorRole`,
         {
@@ -449,7 +449,7 @@ export function createCore(
         version: args.version,
     };
 
-    const { partition, dnsSuffix } = pulumi.output(aws.getPartition({}));
+    const { partition, dnsSuffix } = aws.getPartitionOutput({}, { parent });
 
     // Configure default networking architecture.
     let vpcId: pulumi.Input<string> = args.vpcId!;
