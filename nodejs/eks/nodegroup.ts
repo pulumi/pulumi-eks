@@ -86,7 +86,7 @@ export interface NodeGroupBaseOptions {
      * This additional set of security groups captures any user application rules
      * that will be needed for the nodes.
      */
-    extraNodeSecurityGroups?: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
+    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
 
     /**
      * Encrypt the root block device of the nodes in the node group.
@@ -348,7 +348,7 @@ export interface NodeGroupData {
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    extraNodeSecurityGroups?: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
+    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
 }
 
 export interface NodeGroupV2Data {
@@ -363,7 +363,7 @@ export interface NodeGroupV2Data {
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    extraNodeSecurityGroups?: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
+    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
 }
 
 /**
@@ -377,7 +377,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    public readonly extraNodeSecurityGroups: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
+    public readonly extraNodeSecurityGroups: aws.ec2.SecurityGroup[];
 
     /**
      * The CloudFormation Stack which defines the Node AutoScalingGroup.
@@ -470,7 +470,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    public readonly extraNodeSecurityGroups: pulumi.Output<pulumi.Output<aws.ec2.SecurityGroup>[]>;
+    public readonly extraNodeSecurityGroups: aws.ec2.SecurityGroup[];
 
     /**
      * The AutoScalingGroup name for the Node group.
@@ -665,7 +665,8 @@ function createNodeGroupInternal(
         .apply(([id]) => id);
 
     // Collect the IDs of any extra, user-specific security groups.
-    const extraNodeSecurityGroupIds = pulumi.all([args.extraNodeSecurityGroups]).apply(([sg]) => {
+    const extraSGOutput = pulumi.output(args.extraNodeSecurityGroups);
+    const extraNodeSecurityGroupIds = pulumi.all([extraSGOutput]).apply(([sg]) => {
         if (sg === undefined) {
             return [];
         }
