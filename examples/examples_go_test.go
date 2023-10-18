@@ -42,6 +42,26 @@ func TestAccClusterGo(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+// TestAccClusterGoWithOidc tests that we can set extra node security groups on new node groups.
+// https://github.com/pulumi/pulumi-eks/issues/829
+func TestAccExtraSecurityGroupsGo(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getGoBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "extra-sg-go"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	region := getEnvRegion(t)
 	base := getBaseOptions(t)
