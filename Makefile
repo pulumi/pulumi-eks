@@ -134,7 +134,7 @@ nodejs/eks/bin: nodejs/eks/node_modules ${EKS_SRC}
 ifneq ($(LOCAL_PLAT),"")
 bin/${PROVIDER}:: bin/provider/$(LOCAL_PLAT)/${PROVIDER}
 	cp bin/provider/$(LOCAL_PLAT)/${PROVIDER} bin/${PROVIDER}
-else 
+else
 bin/${PROVIDER}: nodejs/eks/bin nodejs/eks/node_modules
 	cd nodejs/eks && yarn run pkg ${PKG_TARGET} ${PKG_ARGS} --target node18 --output $(WORKING_DIR)/bin/${PROVIDER}
 endif
@@ -155,7 +155,7 @@ dist/${GZIP_PREFIX}-darwin-amd64.tar.gz:: bin/provider/darwin-amd64/${PROVIDER}
 dist/${GZIP_PREFIX}-darwin-arm64.tar.gz:: bin/provider/darwin-arm64/${PROVIDER}
 dist/${GZIP_PREFIX}-windows-amd64.tar.gz:: bin/provider/windows-amd64/${PROVIDER}.exe
 
-dist/${GZIP_PREFIX}-%.tar.gz:: 
+dist/${GZIP_PREFIX}-%.tar.gz::
 	@mkdir -p dist
 	@# $< is the last dependency (the binary path from above)
 	tar --gzip -cf $@ README.md LICENSE -C $$(dirname $<) .
@@ -189,3 +189,9 @@ specific_test_local:: install_nodejs_sdk test_build
 
 dev:: lint build_nodejs
 test:: test_nodejs
+
+test_provider:
+	@echo ""
+	@echo "== test_provider ==================================================================="
+	@echo ""
+	cd provider && go test -v -short ./... -parallel $(TESTPARALLELISM)
