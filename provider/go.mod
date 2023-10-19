@@ -4,7 +4,7 @@ go 1.21.0
 
 require (
 	github.com/pkg/errors v0.9.1
-	github.com/pulumi/providertest v0.0.1
+	github.com/pulumi/providertest v0.0.2-0.20231019011658-3d1353c46771
 	github.com/pulumi/pulumi/pkg/v3 v3.86.0
 	github.com/pulumi/pulumi/sdk/v3 v3.86.0
 )
