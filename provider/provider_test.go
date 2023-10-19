@@ -17,9 +17,28 @@ func TestExamples(t *testing.T) {
 func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.ProviderTest {
 	opts = append(opts,
 		providertest.WithProviderName("eks"),
-		providertest.WithBaselineVersion("1.0.4"),
-		// providertest.WithConfig("gcp:project", "pulumi-development"),
-		// providertest.WithResourceProviderServer(providerServer(t)))
+
+		providertest.WithBaselineAmbientPlugins(
+			providertest.AmbientPlugin{
+				Provider: "eks",
+				Version:  "1.0.4",
+			},
+			providertest.AmbientPlugin{
+				Provider: "aws",
+				Version:  "5.42.0",
+			},
+		),
+
+		providertest.WithAmbientPlugins(
+			providertest.AmbientPlugin{
+				Provider:  "eks",
+				LocalPath: "../bin/pulumi-resource-eks",
+			},
+			providertest.AmbientPlugin{
+				Provider: "aws",
+				Version:  "6.0.2",
+			},
+		),
 	)
 	return providertest.NewProviderTest(dir, opts...)
 }
