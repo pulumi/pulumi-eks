@@ -12,11 +12,13 @@ func TestExamples(t *testing.T) {
 	})
 }
 
-// we can't support programs not written in yaml eh?
-
 func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.ProviderTest {
 	opts = append(opts,
 		providertest.WithProviderName("eks"),
+
+		providertest.WithSkippedUpgradeTestMode(
+			providertest.UpgradeTestMode_Quick,
+			"Quick mode is only supported for providers written in Go at the moment"),
 
 		providertest.WithBaselineAmbientPlugins(
 			providertest.AmbientPlugin{
