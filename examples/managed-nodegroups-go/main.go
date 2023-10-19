@@ -122,7 +122,7 @@ func main() {
 				NodeGroupName: pulumi.String("aws-managed-ng2"),
 				NodeRoleArn:   role2.Arn,
 				DiskSize:      pulumi.Int(20),
-				InstanceTypes: pulumi.StringArray{pulumi.String("t2.medium")},
+				InstanceTypes: pulumi.StringArray{pulumi.String("t3.medium")},
 				Labels:        pulumi.StringMap{"ondemand": pulumi.String("true")},
 				Tags:          pulumi.StringMap{"org": pulumi.String("pulumi")},
 			})

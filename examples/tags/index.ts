@@ -4,7 +4,7 @@ import * as iam from "./iam";
 
 // Create an EKS cluster with cluster and resource tags.
 const cluster1 = new eks.Cluster("example-tags-cluster1", {
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -44,7 +44,7 @@ const cluster2 = new eks.Cluster("example-tags-cluster2", {
 
 // Create the node group using an on-demand instance and resource tags.
 cluster2.createNodeGroup("example-ng-tags-ondemand", {
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -57,7 +57,7 @@ cluster2.createNodeGroup("example-ng-tags-ondemand", {
 // specialized resource tags such as the autoScalingGroupTags.
 const spot = new eks.NodeGroup("example-ng-tags-spot", {
     cluster: cluster2,
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -81,7 +81,7 @@ const spot = new eks.NodeGroup("example-ng-tags-spot", {
 
 const ng2 = new eks.NodeGroupV2("example-ng-tags-ng2", {
     cluster: cluster2,
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
