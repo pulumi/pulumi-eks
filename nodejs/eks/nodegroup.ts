@@ -665,9 +665,14 @@ function createNodeGroupInternal(
         .apply(([id]) => id);
 
     // Collect the IDs of any extra, user-specific security groups.
-    const extraNodeSecurityGroupIds = args.extraNodeSecurityGroups
-        ? args.extraNodeSecurityGroups.map((sg) => sg.id)
-        : [];
+    const extraSGOutput = pulumi.output(args.extraNodeSecurityGroups);
+    const extraNodeSecurityGroupIds = pulumi.all([extraSGOutput]).apply(([sg]) => {
+        if (sg === undefined) {
+            return [];
+        }
+        // Map out the ARNs of all of the instanceRoles.
+        return sg.map((sg) => sg.id);
+    });
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
     let keyName = args.keyName;
@@ -802,7 +807,9 @@ ${customUserData}
             instanceType: args.instanceType || "t2.medium",
             iamInstanceProfile: instanceProfile,
             keyName: keyName,
-            securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
+            securityGroups: pulumi
+                .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
+                .apply(([sg, extraSG]) => [sg, ...extraSG]),
             spotPrice: args.spotPrice,
             rootBlockDevice: {
                 encrypted:
@@ -1049,12 +1056,13 @@ function createNodeGroupV2Internal(
         .apply(([id]) => id);
 
     // Collect the IDs of any extra, user-specific security groups.
-    const extraNodeSecurityGroupIds = args.extraNodeSecurityGroups
-        ? args.extraNodeSecurityGroups.map((sg) => sg.id)
-        : [];
-    const extraNodeSecurityGroupNames = args.extraNodeSecurityGroups
-        ? args.extraNodeSecurityGroups.map((sg) => sg.name)
-        : [];
+    const extraNodeSecurityGroupIds = pulumi.all([args.extraNodeSecurityGroups]).apply(([sg]) => {
+        if (sg === undefined) {
+            return [];
+        }
+        // Map out the ARNs of all of the instanceRoles.
+        return sg.map((sg) => sg.id);
+    });
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
     let keyName = args.keyName;
@@ -1203,15 +1211,18 @@ ${customUserData}
         : {};
 
     const device = pulumi.output(amiId).apply((id) =>
-        aws.ec2.getAmi({
-            owners: ["self", "amazon"],
-            filters: [
-                {
-                    name: "image-id",
-                    values: [id],
-                },
-            ],
-        }, { parent }),
+        aws.ec2.getAmi(
+            {
+                owners: ["self", "amazon"],
+                filters: [
+                    {
+                        name: "image-id",
+                        values: [id],
+                    },
+                ],
+            },
+            { parent },
+        ),
     ).blockDeviceMappings[0].deviceName;
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
@@ -1239,7 +1250,9 @@ ${customUserData}
             networkInterfaces: [
                 {
                     associatePublicIpAddress: String(nodeAssociatePublicIpAddress),
-                    securityGroups: [nodeSecurityGroupId, ...extraNodeSecurityGroupIds],
+                    securityGroups: pulumi
+                        .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
+                        .apply(([sg, extraSG]) => [sg, ...extraSG]),
                 },
             ],
             metadataOptions: args.metadataOptions,
