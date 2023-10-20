@@ -35,13 +35,13 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="clusterSecurityGroup")
-    private @Nullable SecurityGroup clusterSecurityGroup;
+    private @Nullable Output<SecurityGroup> clusterSecurityGroup;
 
     /**
      * @return The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      * 
      */
-    public Optional<SecurityGroup> clusterSecurityGroup() {
+    public Optional<Output<SecurityGroup>> clusterSecurityGroup() {
         return Optional.ofNullable(this.clusterSecurityGroup);
     }
 
@@ -1015,9 +1015,19 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder clusterSecurityGroup(@Nullable SecurityGroup clusterSecurityGroup) {
+        public Builder clusterSecurityGroup(@Nullable Output<SecurityGroup> clusterSecurityGroup) {
             $.clusterSecurityGroup = clusterSecurityGroup;
             return this;
+        }
+
+        /**
+         * @param clusterSecurityGroup The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterSecurityGroup(SecurityGroup clusterSecurityGroup) {
+            return clusterSecurityGroup(Output.of(clusterSecurityGroup));
         }
 
         /**

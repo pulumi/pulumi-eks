@@ -52,12 +52,12 @@ export class NodeGroupSecurityGroup extends pulumi.ComponentResource {
      * The security group for node groups with the default ingress & egress rules required to connect
      * and work with the EKS cluster security group.
      */
-    public readonly securityGroup: aws.ec2.SecurityGroup;
+    public readonly securityGroup: pulumi.Input<aws.ec2.SecurityGroup>;
 
     /**
      * The EKS cluster ingress rule.
      */
-    public readonly securityGroupRule: aws.ec2.SecurityGroupRule;
+    public readonly securityGroupRule: pulumi.Input<aws.ec2.SecurityGroupRule>;
 
     /**
      * Creates a security group for node groups with the default ingress & egress

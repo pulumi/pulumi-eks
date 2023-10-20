@@ -156,13 +156,13 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="clusterIngressRule")
-    private @Nullable SecurityGroupRule clusterIngressRule;
+    private @Nullable Output<SecurityGroupRule> clusterIngressRule;
 
     /**
      * @return The ingress rule that gives node group access.
      * 
      */
-    public Optional<SecurityGroupRule> clusterIngressRule() {
+    public Optional<Output<SecurityGroupRule>> clusterIngressRule() {
         return Optional.ofNullable(this.clusterIngressRule);
     }
 
@@ -203,7 +203,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="extraNodeSecurityGroups")
-    private @Nullable List<SecurityGroup> extraNodeSecurityGroups;
+    private @Nullable Output<List<SecurityGroup>> extraNodeSecurityGroups;
 
     /**
      * @return Extra security groups to attach on all nodes in this worker node group.
@@ -211,7 +211,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * This additional set of security groups captures any user application rules that will be needed for the nodes.
      * 
      */
-    public Optional<List<SecurityGroup>> extraNodeSecurityGroups() {
+    public Optional<Output<List<SecurityGroup>>> extraNodeSecurityGroups() {
         return Optional.ofNullable(this.extraNodeSecurityGroups);
     }
 
@@ -442,7 +442,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="nodeSecurityGroup")
-    private @Nullable SecurityGroup nodeSecurityGroup;
+    private @Nullable Output<SecurityGroup> nodeSecurityGroup;
 
     /**
      * @return The security group for the worker node group to communicate with the cluster.
@@ -455,7 +455,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
      * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
      * 
      */
-    public Optional<SecurityGroup> nodeSecurityGroup() {
+    public Optional<Output<SecurityGroup>> nodeSecurityGroup() {
         return Optional.ofNullable(this.nodeSecurityGroup);
     }
 
@@ -786,9 +786,19 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder clusterIngressRule(@Nullable SecurityGroupRule clusterIngressRule) {
+        public Builder clusterIngressRule(@Nullable Output<SecurityGroupRule> clusterIngressRule) {
             $.clusterIngressRule = clusterIngressRule;
             return this;
+        }
+
+        /**
+         * @param clusterIngressRule The ingress rule that gives node group access.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterIngressRule(SecurityGroupRule clusterIngressRule) {
+            return clusterIngressRule(Output.of(clusterIngressRule));
         }
 
         /**
@@ -841,9 +851,21 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder extraNodeSecurityGroups(@Nullable List<SecurityGroup> extraNodeSecurityGroups) {
+        public Builder extraNodeSecurityGroups(@Nullable Output<List<SecurityGroup>> extraNodeSecurityGroups) {
             $.extraNodeSecurityGroups = extraNodeSecurityGroups;
             return this;
+        }
+
+        /**
+         * @param extraNodeSecurityGroups Extra security groups to attach on all nodes in this worker node group.
+         * 
+         * This additional set of security groups captures any user application rules that will be needed for the nodes.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder extraNodeSecurityGroups(List<SecurityGroup> extraNodeSecurityGroups) {
+            return extraNodeSecurityGroups(Output.of(extraNodeSecurityGroups));
         }
 
         /**
@@ -1134,9 +1156,26 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder nodeSecurityGroup(@Nullable SecurityGroup nodeSecurityGroup) {
+        public Builder nodeSecurityGroup(@Nullable Output<SecurityGroup> nodeSecurityGroup) {
             $.nodeSecurityGroup = nodeSecurityGroup;
             return this;
+        }
+
+        /**
+         * @param nodeSecurityGroup The security group for the worker node group to communicate with the cluster.
+         * 
+         * This security group requires specific inbound and outbound rules.
+         * 
+         * See for more details:
+         * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+         * 
+         * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeSecurityGroup(SecurityGroup nodeSecurityGroup) {
+            return nodeSecurityGroup(Output.of(nodeSecurityGroup));
         }
 
         /**
