@@ -916,15 +916,13 @@ export function createCore(
                         clusterName: eksCluster.name,
                         podExecutionRoleArn: podExecutionRoleArn,
                         selectors: selectors,
-                        subnetIds: pulumi
-                            .output(clusterSubnetIds)
-                            .apply((subnets) => {
-                                if (fargate.subnetIds?.length && fargate.subnetIds.length > 0) {
-                                   return computeWorkerSubnets(parent, fargate.subnetIds)
-                                } else {
-                                    return computeWorkerSubnets(parent, subnets)
-                                }
-                            }),
+                        subnetIds: pulumi.output(clusterSubnetIds).apply((subnets) => {
+                            if (fargate.subnetIds?.length && fargate.subnetIds.length > 0) {
+                                return computeWorkerSubnets(parent, fargate.subnetIds);
+                            } else {
+                                return computeWorkerSubnets(parent, subnets);
+                            }
+                        }),
                     },
                     { parent, dependsOn: [eksNodeAccess], provider },
                 );

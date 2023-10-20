@@ -671,11 +671,7 @@ function createNodeGroupInternal(
             return [];
         }
         // Map out the ARNs of all of the instanceRoles.
-        const sgIDs = sg.map((sg) => {
-            return sg.id;
-        });
-
-        return sgIDs;
+        return sg.map((sg) => sg.id);
     });
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
@@ -813,13 +809,7 @@ ${customUserData}
             keyName: keyName,
             securityGroups: pulumi
                 .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
-                .apply(([sg, extraSG]) => {
-                    const extras = [];
-                    extraSG.map((sg) => {
-                        extras.push(sg);
-                    });
-                    return [sg, ...extraSG];
-                }),
+                .apply(([sg, extraSG]) => [sg, ...extraSG]),
             spotPrice: args.spotPrice,
             rootBlockDevice: {
                 encrypted:
@@ -1071,11 +1061,7 @@ function createNodeGroupV2Internal(
             return [];
         }
         // Map out the ARNs of all of the instanceRoles.
-        const sgIDs = sg.map((sg) => {
-            return sg.id;
-        });
-
-        return sgIDs;
+        return sg.map((sg) => sg.id);
     });
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
@@ -1266,13 +1252,7 @@ ${customUserData}
                     associatePublicIpAddress: String(nodeAssociatePublicIpAddress),
                     securityGroups: pulumi
                         .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
-                        .apply(([sg, extraSG]) => {
-                            const extras = [];
-                            extraSG.map((sg) => {
-                                extras.push(sg);
-                            });
-                            return [sg, ...extraSG];
-                        }),
+                        .apply(([sg, extraSG]) => [sg, ...extraSG]),
                 },
             ],
             metadataOptions: args.metadataOptions,
