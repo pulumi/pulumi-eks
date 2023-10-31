@@ -31,13 +31,13 @@ func TestExamplesUpgrades(t *testing.T) {
 	// 	test(t, "../examples/cluster-with-serviceiprange").Run(t)
 	// })
 
-	// t.Run("extra-sg", func(t *testing.T) {
-	// 	test(t, "../examples/extra-sg").Run(t)
-	// })
+	t.Run("extra-sg", func(t *testing.T) {
+		test(t, "../examples/extra-sg").Run(t)
+	})
 
-	// t.Run("fargate", func(t *testing.T) {
-	// 	test(t, "../examples/fargate").Run(t)
-	// })
+	t.Run("fargate", func(t *testing.T) {
+		test(t, "../examples/fargate").Run(t)
+	})
 
 	// t.Run("managed-nodegroups", func(t *testing.T) {
 	// 	test(t, "../examples/managed-nodegroups").Run(t)
