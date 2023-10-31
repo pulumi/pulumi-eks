@@ -294,29 +294,29 @@ public final class CoreData {
             return this;
         }
         public CoreData build() {
-            final var o = new CoreData();
-            o.awsProvider = awsProvider;
-            o.cluster = cluster;
-            o.clusterIamRole = clusterIamRole;
-            o.clusterSecurityGroup = clusterSecurityGroup;
-            o.eksNodeAccess = eksNodeAccess;
-            o.encryptionConfig = encryptionConfig;
-            o.endpoint = endpoint;
-            o.fargateProfile = fargateProfile;
-            o.instanceRoles = instanceRoles;
-            o.kubeconfig = kubeconfig;
-            o.nodeGroupOptions = nodeGroupOptions;
-            o.nodeSecurityGroupTags = nodeSecurityGroupTags;
-            o.oidcProvider = oidcProvider;
-            o.privateSubnetIds = privateSubnetIds;
-            o.provider = provider;
-            o.publicSubnetIds = publicSubnetIds;
-            o.storageClasses = storageClasses;
-            o.subnetIds = subnetIds;
-            o.tags = tags;
-            o.vpcCni = vpcCni;
-            o.vpcId = vpcId;
-            return o;
+            final var _resultValue = new CoreData();
+            _resultValue.awsProvider = awsProvider;
+            _resultValue.cluster = cluster;
+            _resultValue.clusterIamRole = clusterIamRole;
+            _resultValue.clusterSecurityGroup = clusterSecurityGroup;
+            _resultValue.eksNodeAccess = eksNodeAccess;
+            _resultValue.encryptionConfig = encryptionConfig;
+            _resultValue.endpoint = endpoint;
+            _resultValue.fargateProfile = fargateProfile;
+            _resultValue.instanceRoles = instanceRoles;
+            _resultValue.kubeconfig = kubeconfig;
+            _resultValue.nodeGroupOptions = nodeGroupOptions;
+            _resultValue.nodeSecurityGroupTags = nodeSecurityGroupTags;
+            _resultValue.oidcProvider = oidcProvider;
+            _resultValue.privateSubnetIds = privateSubnetIds;
+            _resultValue.provider = provider;
+            _resultValue.publicSubnetIds = publicSubnetIds;
+            _resultValue.storageClasses = storageClasses;
+            _resultValue.subnetIds = subnetIds;
+            _resultValue.tags = tags;
+            _resultValue.vpcCni = vpcCni;
+            _resultValue.vpcId = vpcId;
+            return _resultValue;
         }
     }
 }

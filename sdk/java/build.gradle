@@ -29,7 +29,8 @@ java {
 
 compileJava {
     options.fork = true
-    options.forkOptions.jvmArgs.addAll(["-Xmx4g"])
+    options.forkOptions.jvmArgs.addAll(["-Xmx16g"])
+    options.encoding = "UTF-8"
 }
 
 repositories {
@@ -45,17 +46,18 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.pulumi:aws:5.31.0")
     implementation("com.pulumi:kubernetes:3.19.1")
-    implementation("com.pulumi:pulumi:0.6.0")
+    implementation("com.pulumi:pulumi:0.9.8")
 }
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
-    classifier = 'sources'
+    archiveClassifier.set('sources')
 }
 
 task javadocJar(type: Jar) {
     from javadoc
-    classifier = 'javadoc'
+    archiveClassifier.set('javadoc')
+    zip64 = true
 }
 
 def genPulumiResources = tasks.register('genPulumiResources') {
@@ -125,7 +127,11 @@ javadoc {
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
-    options.jFlags("-Xmx2g", "-Xms512m")
+    options.jFlags("-Xmx8g", "-Xms512m")
+}
+
+jar {
+    zip64 = true
 }
 
 if (publishRepoUsername) {
