@@ -20,12 +20,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	appsv1 "k8s.io/api/apps/v1"
 	"os"
 	"os/exec"
 	"path"
+	"reflect"
 	"testing"
 	"time"
+
+	appsv1 "k8s.io/api/apps/v1"
 
 	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
@@ -361,12 +363,24 @@ func TestAccReplaceSecGroup(t *testing.T) {
 }
 
 func TestAccReplaceClusterAddSubnets(t *testing.T) {
+	var pt *integration.ProgramTester
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "tests", "replace-cluster-add-subnets"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				t.Log("OUTPUTTING PACKAGE DETAILS ************")
+				tmpDir := reflect.ValueOf(pt).Elem().FieldByName("projdir").String()
+				t.Log("tmpDir: ", tmpDir)
+				yarnlock, err := ioutil.ReadFile(path.Join(tmpDir, "yarn.lock"))
+				assert.NoError(t, err, "expected yarn.lock to be read with no error: %v", err)
+				t.Log(string(yarnlock))
+				out, err := exec.Command("bash", "-c", fmt.Sprintf("cd %s && pulumi about", tmpDir)).Output()
+				assert.NoError(t, err, "expected pulumi about to be run with no error: %v", err)
+				t.Log(string(out))
+			},
 			EditDirs: []integration.EditDir{
 				{
 					Dir:      path.Join(getCwd(t), "tests", "replace-cluster-add-subnets", "step1"),
@@ -381,7 +395,9 @@ func TestAccReplaceClusterAddSubnets(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	pt = integration.ProgramTestManualLifeCycle(t, &test)
+	err := pt.TestLifeCycleInitAndDestroy()
+	assert.NoError(t, err, "expected pulumi up to be run with no error: %v", err)
 }
 
 func TestAccTagInputTypes(t *testing.T) {
