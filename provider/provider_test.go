@@ -19,17 +19,17 @@ func TestExamplesUpgrades(t *testing.T) {
 	// 	test(t, "../examples/aws-profile").Run(t)
 	// })
 
-	// t.Run("aws-profile-role", func(t *testing.T) {
-	// 	test(t, "../examples/aws-profile-role").Run(t)
-	// })
+	t.Run("aws-profile-role", func(t *testing.T) {
+		test(t, "../examples/aws-profile-role").Run(t)
+	})
 
 	t.Run("encryption-provider", func(t *testing.T) {
 		test(t, "../examples/encryption-provider").Run(t)
 	})
 
-	// t.Run("cluster-with-serviceiprange", func(t *testing.T) {
-	// 	test(t, "../examples/cluster-with-serviceiprange").Run(t)
-	// })
+	t.Run("cluster-with-serviceiprange", func(t *testing.T) {
+		test(t, "../examples/cluster-with-serviceiprange").Run(t)
+	})
 
 	t.Run("extra-sg", func(t *testing.T) {
 		test(t, "../examples/extra-sg").Run(t)
