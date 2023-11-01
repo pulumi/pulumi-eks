@@ -218,6 +218,101 @@ jobs:
           - dotnet
           - go
           - java
+  test-nodejs-upgrade:
+    name: Run NodeJS Upgrade Tests
+    needs: build_sdk
+    runs-on: ubuntu-latest
+    if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.PR_COMMIT_SHA }}
+      - name: Checkout Scripts Repo
+        uses: actions/checkout@v2
+        with:
+          path: ci-scripts
+          repository: pulumi/scripts
+      - name: Unshallow clone for tags
+        run: git fetch --prune --unshallow --tags
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GOVERSION }}
+      - name: Install Kubectl
+        run: |
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv kubectl /usr/local/bin
+      # - name: Setup Python
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: ${{ env.PYTHONVERSION }}
+      - name: Install awscli
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli --upgrade
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        with:
+          repo: pulumi/pulumictl
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@v1.0.1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODEVERSION }}
+          registry-url: https://registry.npmjs.org
+      - name: Download provider binary
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.PROVIDER }}-provider.tar.gz
+          path: ${{ github.workspace }}/bin
+      - name: Untar provider binaries
+        run:
+          tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace }}/bin
+      - name: Restore binary perms
+        run:
+          find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
+          -exec chmod +x {} \;
+      - name: Update path
+        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+      - name: Download SDK
+        uses: actions/download-artifact@v2
+        with:
+          name: nodejs-sdk.tar.gz
+          path: ${{ github.workspace}}
+      - name: Uncompress SDK folder
+        run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
+      - name: Install dependencies
+        run: make install_nodejs_sdk
+      - name: Install gotestfmt
+        uses: GoTestTools/gotestfmt-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.4.0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ env.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-duration-seconds: 7200
+          role-session-name: ${{ env.PROVIDER }}@githubActions
+          role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
+      - name: Configure AWS CLI
+        run: |
+          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
+          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
+      - name: Link nodejs binary for testing
+        run: |
+          cd ${{ github.workspace }}/bin
+          yarn install && yarn link @pulumi/eks
+      - name: Run upgrade tests
+        run: make test_nodejs_upgrade
+
   test-nodejs:
     name: Run NodeJS Tests
     needs: build_sdk
