@@ -169,8 +169,13 @@ dist:: dist/${GZIP_PREFIX}-windows-amd64.tar.gz
 test_build::
 	cd examples/utils/testvpc && yarn install && yarn run tsc
 
-test_nodejs:: install_nodejs_sdk
+test_nodejs:: PATH := $(WORKING_DIR)/bin:$(PATH)
+test_nodejs:: provider install_nodejs_sdk
 	cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
+
+test_nodejs_upgrade:: PATH := $(WORKING_DIR)/bin:$(PATH)
+test_nodejs_upgrade:: provider install_nodejs_sdk
+	cd provider && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_python:: install_provider test_build
 	cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
