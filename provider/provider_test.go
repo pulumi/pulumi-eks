@@ -83,6 +83,10 @@ func TestExamplesUpgrades(t *testing.T) {
 	// })
 }
 
+func TestReportUpgradeCoverage(t *testing.T) {
+	providertest.ReportUpgradeCoverage(t)
+}
+
 func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.ProviderTest {
 	opts = append(opts,
 		providertest.WithProviderName("eks"),
@@ -96,6 +100,9 @@ func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.P
 			"aws":        "5.42.0",
 			"kubernetes": "3.30.2",
 		}),
+
+		// This region needs to match the one configured in .github for the CI workflows.
+		providertest.WithConfig("aws:region", "us-west-2"),
 	)
 	return providertest.NewProviderTest(dir, opts...)
 }
