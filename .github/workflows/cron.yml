@@ -22,7 +22,7 @@ env:
   GOVERSION: "1.19.x"
   DOTNETVERSION: "6.x"
   PYTHONVERSION: "3.8"
-  NODEVERSION: "18.x"
+  NODEVERSION: "20.x"
   JAVAVERSION: "11"
 jobs:
   lint:
@@ -259,37 +259,13 @@ jobs:
           aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
           aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-      - name: Link nodejs binary for testing
-        run: |
-          cd ${{ github.workspace }}/bin
-          yarn install && yarn link @pulumi/eks
       - name: Run tests
         run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=nodejs
     strategy:
       fail-fast: false
       matrix:
         test-name:
-          - AwsProfile
-          - Cluster
-          - EncryptionProvider
-          - ExtraSecurityGroups
-          - Fargate
-          - ImportDefaultEksSecgroup
-          - KubernetesServiceIPv4RangeForCluster
-          - ManagedNodeGroup
-          - MigrateNodeGroups
-          - MNG_withMissingRole
-          - MNG_withAwsAuth
-          - NodeGroup
-          - NodegroupOptions
-          - OidcIam
           - ReplaceClusterAddSubnets
-          - ReplaceSecGroup
-          - ScopedKubeconfig
-          - StorageClasses
-          - Tags
-          - TagInputTypes
-          - VpcSubnetTags
   test-python:
     name: Run Python Tests
     needs: build_sdk
@@ -384,10 +360,6 @@ jobs:
           aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
           aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-      - name: Link nodejs binary for testing
-        run: |
-          cd ${{ github.workspace }}/bin
-          yarn install && yarn link @pulumi/eks
       - name: Run tests
         run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=python
     strategy:
@@ -395,11 +367,6 @@ jobs:
       matrix:
         test-name:
           - AwsProfilePy
-          - AwsProfileRolePy
-          - ClusterPy
-          - FargatePy
-          - NodeGroupPy
-          - ManagedNodeGroupPy
   test-dotnet:
     name: Run DotNet Tests
     needs: build_sdk
@@ -495,10 +462,6 @@ jobs:
           aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
           aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-      - name: Link nodejs binary for testing
-        run: |
-          cd ${{ github.workspace }}/bin
-          yarn install && yarn link @pulumi/eks
       - name: Run tests
         run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=dotnet
     strategy:
@@ -511,3 +474,9 @@ name: cron
   schedule:
     # Run every day at 06:00AM UTC
     - cron: "0 6 * * *"
+  push:
+    branches:
+      - rquitales/test-cron
+  pull_request:
+    branches:
+      - rquitales/test-cron
