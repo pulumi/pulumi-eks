@@ -71,10 +71,13 @@ func TestExamplesUpgrades(t *testing.T) {
 	// 	test(t, "../examples/storage-classes").Run(t)
 	// })
 
-	// t.Run("subnet-tags", func(t *testing.T) {
-	// 	test(t, "../examples/subnet-tags").Run(t)
-	// })
+	t.Run("subnet-tags", func(t *testing.T) {
+		test(t, "../examples/subnet-tags").Run(t)
+	})
 
+	// FAIL: Your requested instance type (t2.medium) is not supported in your requested
+	// Availability Zone (us-west-2d). Please retry your request by not specifying an
+	// Availability Zone or choosing us-west-2a, us-west-2b, us-west-2c.
 	// t.Run("tags", func(t *testing.T) {
 	// 	test(t, "../examples/tags").Run(t)
 	// })
