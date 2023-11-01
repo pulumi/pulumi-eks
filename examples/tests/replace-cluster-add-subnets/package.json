@@ -5,8 +5,14 @@
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "^3.0.0",
+        "@pulumi/pulumi": "3.89.0",
         "@pulumi/awsx": "^0.40.0",
         "@pulumi/eks": "latest"
+    },
+    "resolutions": {
+        "@pulumi/pulumi": "3.89.0"
+    },
+    "overrides": {
+        "@pulumi/pulumi": "3.89.0"
     }
 }
