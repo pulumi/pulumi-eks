@@ -4,7 +4,7 @@ on:
     types: [run-acceptance-tests-command]
   pull_request:
     branches:
-      - master
+      # - master
       - feature/1.x
 
 env:
