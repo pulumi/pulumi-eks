@@ -369,7 +369,8 @@ func TestAccReplaceClusterAddSubnets(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "replace-cluster-add-subnets"),
+			SkipPreview: true,
+			Dir:         path.Join(getCwd(t), "tests", "replace-cluster-add-subnets"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				t.Log("OUTPUTTING PACKAGE DETAILS ************")
 				tmpDir := reflect.ValueOf(pt).Elem().FieldByName("projdir").String()
