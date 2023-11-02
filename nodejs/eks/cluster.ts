@@ -702,7 +702,7 @@ export function createCore(
         {
             kubeconfig: kubeconfig.apply(JSON.stringify),
         },
-        { parent: parent },
+        { parent: parent, ignoreChanges: ["version"] },
     );
 
     // Add any requested StorageClasses.
@@ -1774,7 +1774,7 @@ export function createCluster(
         {
             kubeconfig: kubeconfigJson,
         },
-        { parent: self },
+        { parent: self, ignoreChanges: ["version"] },
     );
 
     // If we need to deploy the Kubernetes dashboard, do so now.
