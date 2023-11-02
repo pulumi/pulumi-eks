@@ -101,7 +101,9 @@ jobs:
         with:
           repo: mikhailshilkov/schema-tools
       - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
+        uses: pulumi/actions@v4
+        with:
+          pulumi-version: v3.89.0
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check Schema is Valid
@@ -157,7 +159,9 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
+        uses: pulumi/actions@v4
+        with:
+          pulumi-version: v3.89.0
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -257,7 +261,9 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
+        uses: pulumi/actions@v4
+        with:
+          pulumi-version: v3.89.0
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -362,7 +368,9 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
+        uses: pulumi/actions@v4
+        with:
+          pulumi-version: v3.89.0
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -473,7 +481,9 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
+        uses: pulumi/actions@v4
+        with:
+          pulumi-version: v3.89.0
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -580,7 +590,9 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
+        uses: pulumi/actions@v4
+        with:
+          pulumi-version: v3.89.0
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
