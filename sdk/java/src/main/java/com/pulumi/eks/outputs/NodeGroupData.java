@@ -109,12 +109,12 @@ public final class NodeGroupData {
             return this;
         }
         public NodeGroupData build() {
-            final var o = new NodeGroupData();
-            o.autoScalingGroupName = autoScalingGroupName;
-            o.cfnStack = cfnStack;
-            o.extraNodeSecurityGroups = extraNodeSecurityGroups;
-            o.nodeSecurityGroup = nodeSecurityGroup;
-            return o;
+            final var _resultValue = new NodeGroupData();
+            _resultValue.autoScalingGroupName = autoScalingGroupName;
+            _resultValue.cfnStack = cfnStack;
+            _resultValue.extraNodeSecurityGroups = extraNodeSecurityGroups;
+            _resultValue.nodeSecurityGroup = nodeSecurityGroup;
+            return _resultValue;
         }
     }
 }

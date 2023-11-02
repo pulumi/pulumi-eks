@@ -6,12 +6,12 @@ TESTPARALLELISM := 12
 PACK            := eks
 PROVIDER        := pulumi-resource-${PACK}
 CODEGEN         := pulumi-gen-${PACK}
-GZIP_PREFIX		:= pulumi-resource-${PACK}-v${VERSION}
+GZIP_PREFIX	:= pulumi-resource-${PACK}-v${VERSION}
 
 WORKING_DIR     := $(shell pwd)
 
 JAVA_GEN 		 := pulumi-java-gen
-JAVA_GEN_VERSION := v0.6.0
+JAVA_GEN_VERSION := v0.9.8
 
 EKS_SRC 		:= $(wildcard nodejs/eks/*.*) $(wildcard nodejs/eks/*/*.ts) $(wildcard nodejs/eks/*/*/*.ts)
 

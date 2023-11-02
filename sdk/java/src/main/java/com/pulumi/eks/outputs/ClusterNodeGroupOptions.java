@@ -636,35 +636,35 @@ public final class ClusterNodeGroupOptions {
             return this;
         }
         public ClusterNodeGroupOptions build() {
-            final var o = new ClusterNodeGroupOptions();
-            o.amiId = amiId;
-            o.amiType = amiType;
-            o.autoScalingGroupTags = autoScalingGroupTags;
-            o.bootstrapExtraArgs = bootstrapExtraArgs;
-            o.cloudFormationTags = cloudFormationTags;
-            o.clusterIngressRule = clusterIngressRule;
-            o.desiredCapacity = desiredCapacity;
-            o.encryptRootBlockDevice = encryptRootBlockDevice;
-            o.extraNodeSecurityGroups = extraNodeSecurityGroups;
-            o.gpu = gpu;
-            o.instanceProfile = instanceProfile;
-            o.instanceType = instanceType;
-            o.keyName = keyName;
-            o.kubeletExtraArgs = kubeletExtraArgs;
-            o.labels = labels;
-            o.maxSize = maxSize;
-            o.minSize = minSize;
-            o.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
-            o.nodePublicKey = nodePublicKey;
-            o.nodeRootVolumeSize = nodeRootVolumeSize;
-            o.nodeSecurityGroup = nodeSecurityGroup;
-            o.nodeSubnetIds = nodeSubnetIds;
-            o.nodeUserData = nodeUserData;
-            o.nodeUserDataOverride = nodeUserDataOverride;
-            o.spotPrice = spotPrice;
-            o.taints = taints;
-            o.version = version;
-            return o;
+            final var _resultValue = new ClusterNodeGroupOptions();
+            _resultValue.amiId = amiId;
+            _resultValue.amiType = amiType;
+            _resultValue.autoScalingGroupTags = autoScalingGroupTags;
+            _resultValue.bootstrapExtraArgs = bootstrapExtraArgs;
+            _resultValue.cloudFormationTags = cloudFormationTags;
+            _resultValue.clusterIngressRule = clusterIngressRule;
+            _resultValue.desiredCapacity = desiredCapacity;
+            _resultValue.encryptRootBlockDevice = encryptRootBlockDevice;
+            _resultValue.extraNodeSecurityGroups = extraNodeSecurityGroups;
+            _resultValue.gpu = gpu;
+            _resultValue.instanceProfile = instanceProfile;
+            _resultValue.instanceType = instanceType;
+            _resultValue.keyName = keyName;
+            _resultValue.kubeletExtraArgs = kubeletExtraArgs;
+            _resultValue.labels = labels;
+            _resultValue.maxSize = maxSize;
+            _resultValue.minSize = minSize;
+            _resultValue.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
+            _resultValue.nodePublicKey = nodePublicKey;
+            _resultValue.nodeRootVolumeSize = nodeRootVolumeSize;
+            _resultValue.nodeSecurityGroup = nodeSecurityGroup;
+            _resultValue.nodeSubnetIds = nodeSubnetIds;
+            _resultValue.nodeUserData = nodeUserData;
+            _resultValue.nodeUserDataOverride = nodeUserDataOverride;
+            _resultValue.spotPrice = spotPrice;
+            _resultValue.taints = taints;
+            _resultValue.version = version;
+            return _resultValue;
         }
     }
 }
