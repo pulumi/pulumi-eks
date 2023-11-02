@@ -1,0 +1,1489 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2023-11-02T20:04:31.070002865Z",
+            "magic": "acdeccf9e5003385dafbac764321868e2deb68a98202938780c079c3d99ec55a",
+            "version": "v3.91.1"
+        },
+        "secrets_providers": {
+            "type": "passphrase",
+            "state": {
+                "salt": "v1:GcTC2dRRYK0=:v1:bLydYZpMbb6uWBos:l23PJPc7KUxJqlcL11lNLof1XqpzaQ=="
+            }
+        },
+        "resources": [
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:pulumi:Stack::modify-default-eks-sg-p-it-runner-modify-def-22c4462c",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "kubeconfig": {
+                        "apiVersion": "v1",
+                        "clusters": [
+                            {
+                                "cluster": {
+                                    "certificate-authority-data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                                    "server": "https://341C898ED0F65BB2D3B4E2CFF53878F2.gr7.us-west-2.eks.amazonaws.com"
+                                },
+                                "name": "kubernetes"
+                            }
+                        ],
+                        "contexts": [
+                            {
+                                "context": {
+                                    "cluster": "kubernetes",
+                                    "user": "aws"
+                                },
+                                "name": "aws"
+                            }
+                        ],
+                        "current-context": "aws",
+                        "kind": "Config",
+                        "users": [
+                            {
+                                "name": "aws",
+                                "user": {
+                                    "exec": {
+                                        "apiVersion": "client.authentication.k8s.io/v1beta1",
+                                        "args": [
+                                            "eks",
+                                            "get-token",
+                                            "--cluster-name",
+                                            "modify-default-eks-sg-eksCluster-8d916ff"
+                                        ],
+                                        "command": "aws",
+                                        "env": [
+                                            {
+                                                "name": "KUBERNETES_EXEC_INFO",
+                                                "value": "{\"apiVersion\": \"client.authentication.k8s.io/v1beta1\"}"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "created": "2023-11-02T19:55:37.34057858Z",
+                "modified": "2023-11-02T19:55:37.34057858Z",
+                "sourcePosition": "project:///node_modules/@pulumi/runtime/stack.ts#36,23"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "custom": false,
+                "type": "eks:index:Cluster",
+                "outputs": {
+                    "eksCluster": {
+                        "4dabf18193072939515e22adb298388d": "5cf8f73096256a8f31e491e813e4eb8e",
+                        "id": "modify-default-eks-sg-eksCluster-8d916ff",
+                        "packageVersion": "",
+                        "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster"
+                    },
+                    "kubeconfig": {
+                        "apiVersion": "v1",
+                        "clusters": [
+                            {
+                                "cluster": {
+                                    "certificate-authority-data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                                    "server": "https://341C898ED0F65BB2D3B4E2CFF53878F2.gr7.us-west-2.eks.amazonaws.com"
+                                },
+                                "name": "kubernetes"
+                            }
+                        ],
+                        "contexts": [
+                            {
+                                "context": {
+                                    "cluster": "kubernetes",
+                                    "user": "aws"
+                                },
+                                "name": "aws"
+                            }
+                        ],
+                        "current-context": "aws",
+                        "kind": "Config",
+                        "users": [
+                            {
+                                "name": "aws",
+                                "user": {
+                                    "exec": {
+                                        "apiVersion": "client.authentication.k8s.io/v1beta1",
+                                        "args": [
+                                            "eks",
+                                            "get-token",
+                                            "--cluster-name",
+                                            "modify-default-eks-sg-eksCluster-8d916ff"
+                                        ],
+                                        "command": "aws",
+                                        "env": [
+                                            {
+                                                "name": "KUBERNETES_EXEC_INFO",
+                                                "value": "{\"apiVersion\": \"client.authentication.k8s.io/v1beta1\"}"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:pulumi:Stack::modify-default-eks-sg-p-it-runner-modify-def-22c4462c",
+                "created": "2023-11-02T19:55:38.181357493Z",
+                "modified": "2023-11-02T19:55:38.181357493Z",
+                "sourcePosition": "project:///index.ts#7,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0",
+                "custom": true,
+                "id": "3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "type": "pulumi:providers:aws",
+                "inputs": {
+                    "region": "us-west-2",
+                    "version": "5.42.0"
+                },
+                "outputs": {
+                    "region": "us-west-2",
+                    "version": "5.42.0"
+                },
+                "created": "2023-11-02T19:55:38.423003148Z",
+                "modified": "2023-11-02T19:55:38.423003148Z"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole::modify-default-eks-sg-eksRole",
+                "custom": false,
+                "type": "eks:index:ServiceRole",
+                "outputs": {
+                    "role": {
+                        "4dabf18193072939515e22adb298388d": "5cf8f73096256a8f31e491e813e4eb8e",
+                        "id": "modify-default-eks-sg-eksRole-role-f4053b2",
+                        "packageVersion": "",
+                        "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role"
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "created": "2023-11-02T19:55:38.423968221Z",
+                "modified": "2023-11-02T19:55:38.423968221Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#488,19"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole::modify-default-eks-sg-instanceRole",
+                "custom": false,
+                "type": "eks:index:ServiceRole",
+                "outputs": {
+                    "role": {
+                        "4dabf18193072939515e22adb298388d": "5cf8f73096256a8f31e491e813e4eb8e",
+                        "id": "modify-default-eks-sg-instanceRole-role-fb8c717",
+                        "packageVersion": "",
+                        "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role"
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "created": "2023-11-02T19:55:38.42509231Z",
+                "modified": "2023-11-02T19:55:38.42509231Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#766,30"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:eks::default",
+                "custom": true,
+                "id": "2350dbbb-ec6c-4994-b43a-b3dc6a2e6371",
+                "type": "pulumi:providers:eks",
+                "inputs": {
+                    "version": "1.0.4"
+                },
+                "outputs": {
+                    "version": "1.0.4"
+                },
+                "created": "2023-11-02T19:55:38.989699122Z",
+                "modified": "2023-11-02T19:55:38.989699122Z"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:RandomSuffix::modify-default-eks-sg-cfnStackName",
+                "custom": true,
+                "id": "modify-default-eks-sg-cfnStackName",
+                "type": "eks:index:RandomSuffix",
+                "inputs": {
+                    "input": "modify-default-eks-sg"
+                },
+                "outputs": {
+                    "output": "modify-default-eks-sg-74b6c2d6"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:eks::default::2350dbbb-ec6c-4994-b43a-b3dc6a2e6371",
+                "propertyDependencies": {
+                    "input": null
+                },
+                "created": "2023-11-02T19:55:38.998497887Z",
+                "modified": "2023-11-02T19:55:38.998497887Z",
+                "sourcePosition": "project:///node_modules/@pulumi/randomSuffix.ts#59,12"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                "custom": true,
+                "id": "modify-default-eks-sg-instanceRole-role-fb8c717",
+                "type": "aws:iam/role:Role",
+                "inputs": {
+                    "__defaults": [
+                        "forceDetachPolicies",
+                        "maxSessionDuration",
+                        "name",
+                        "path"
+                    ],
+                    "assumeRolePolicy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"ec2.amazonaws.com\"]}}]}",
+                    "forceDetachPolicies": false,
+                    "maxSessionDuration": 3600,
+                    "name": "modify-default-eks-sg-instanceRole-role-fb8c717",
+                    "path": "/"
+                },
+                "outputs": {
+                    "arn": "arn:aws:iam::894850187425:role/modify-default-eks-sg-instanceRole-role-fb8c717",
+                    "assumeRolePolicy": "{\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"ec2.amazonaws.com\"]}}],\"Version\":\"2012-10-17\"}",
+                    "createDate": "2023-11-02T19:55:39Z",
+                    "description": "",
+                    "forceDetachPolicies": false,
+                    "id": "modify-default-eks-sg-instanceRole-role-fb8c717",
+                    "inlinePolicies": [],
+                    "managedPolicyArns": [],
+                    "maxSessionDuration": 3600,
+                    "name": "modify-default-eks-sg-instanceRole-role-fb8c717",
+                    "namePrefix": "",
+                    "path": "/",
+                    "roleLastUseds": [
+                        {
+                            "lastUsedDate": "",
+                            "region": ""
+                        }
+                    ],
+                    "tags": {},
+                    "tagsAll": {},
+                    "uniqueId": "AROA5AWJ2ICQQGXQWJKMX"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole::modify-default-eks-sg-instanceRole",
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "assumeRolePolicy": null
+                },
+                "created": "2023-11-02T19:55:39.654166649Z",
+                "modified": "2023-11-02T19:55:39.654166649Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#77,22"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                "custom": true,
+                "id": "modify-default-eks-sg-eksRole-role-f4053b2",
+                "type": "aws:iam/role:Role",
+                "inputs": {
+                    "__defaults": [
+                        "forceDetachPolicies",
+                        "maxSessionDuration",
+                        "name",
+                        "path"
+                    ],
+                    "assumeRolePolicy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"eks.amazonaws.com\"]}}]}",
+                    "description": "Allows EKS to manage clusters on your behalf.",
+                    "forceDetachPolicies": false,
+                    "maxSessionDuration": 3600,
+                    "name": "modify-default-eks-sg-eksRole-role-f4053b2",
+                    "path": "/"
+                },
+                "outputs": {
+                    "arn": "arn:aws:iam::894850187425:role/modify-default-eks-sg-eksRole-role-f4053b2",
+                    "assumeRolePolicy": "{\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"eks.amazonaws.com\"]}}],\"Version\":\"2012-10-17\"}",
+                    "createDate": "2023-11-02T19:55:39Z",
+                    "description": "Allows EKS to manage clusters on your behalf.",
+                    "forceDetachPolicies": false,
+                    "id": "modify-default-eks-sg-eksRole-role-f4053b2",
+                    "inlinePolicies": [],
+                    "managedPolicyArns": [],
+                    "maxSessionDuration": 3600,
+                    "name": "modify-default-eks-sg-eksRole-role-f4053b2",
+                    "namePrefix": "",
+                    "path": "/",
+                    "roleLastUseds": [
+                        {
+                            "lastUsedDate": "",
+                            "region": ""
+                        }
+                    ],
+                    "tags": {},
+                    "tagsAll": {},
+                    "uniqueId": "AROA5AWJ2ICQU2WAWR2XU"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole::modify-default-eks-sg-eksRole",
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "assumeRolePolicy": null,
+                    "description": null
+                },
+                "created": "2023-11-02T19:55:39.657701662Z",
+                "modified": "2023-11-02T19:55:39.657701662Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#77,22"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                "custom": true,
+                "id": "modify-default-eks-sg-instanceRole-role-fb8c717-20231102195539782100000002",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+                    "role": "modify-default-eks-sg-instanceRole-role-fb8c717"
+                },
+                "outputs": {
+                    "id": "modify-default-eks-sg-instanceRole-role-fb8c717-20231102195539782100000002",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+                    "role": "modify-default-eks-sg-instanceRole-role-fb8c717"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole::modify-default-eks-sg-instanceRole",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "policyArn": null,
+                    "role": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role"
+                    ]
+                },
+                "created": "2023-11-02T19:55:39.995236276Z",
+                "modified": "2023-11-02T19:55:39.995236276Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#89,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                "custom": true,
+                "id": "modify-default-eks-sg-instanceRole-role-fb8c717-20231102195539779700000001",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+                    "role": "modify-default-eks-sg-instanceRole-role-fb8c717"
+                },
+                "outputs": {
+                    "id": "modify-default-eks-sg-instanceRole-role-fb8c717-20231102195539779700000001",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+                    "role": "modify-default-eks-sg-instanceRole-role-fb8c717"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole::modify-default-eks-sg-instanceRole",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "policyArn": null,
+                    "role": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role"
+                    ]
+                },
+                "created": "2023-11-02T19:55:39.996300964Z",
+                "modified": "2023-11-02T19:55:39.996300964Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#89,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823",
+                "custom": true,
+                "id": "modify-default-eks-sg-eksRole-role-f4053b2-20231102195539891300000004",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+                    "role": "modify-default-eks-sg-eksRole-role-f4053b2"
+                },
+                "outputs": {
+                    "id": "modify-default-eks-sg-eksRole-role-f4053b2-20231102195539891300000004",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+                    "role": "modify-default-eks-sg-eksRole-role-f4053b2"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole::modify-default-eks-sg-eksRole",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "policyArn": null,
+                    "role": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role"
+                    ]
+                },
+                "created": "2023-11-02T19:55:40.000618195Z",
+                "modified": "2023-11-02T19:55:40.000618195Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#89,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2",
+                "custom": true,
+                "id": "modify-default-eks-sg-instanceRole-role-fb8c717-20231102195539891100000003",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "modify-default-eks-sg-instanceRole-role-fb8c717"
+                },
+                "outputs": {
+                    "id": "modify-default-eks-sg-instanceRole-role-fb8c717-20231102195539891100000003",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "modify-default-eks-sg-instanceRole-role-fb8c717"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole::modify-default-eks-sg-instanceRole",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "policyArn": null,
+                    "role": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role"
+                    ]
+                },
+                "created": "2023-11-02T19:55:40.002930802Z",
+                "modified": "2023-11-02T19:55:40.002930802Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#89,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:iam/instanceProfile:InstanceProfile::modify-default-eks-sg-instanceProfile",
+                "custom": true,
+                "id": "modify-default-eks-sg-instanceProfile-9a36027",
+                "type": "aws:iam/instanceProfile:InstanceProfile",
+                "inputs": {
+                    "__defaults": [
+                        "name",
+                        "path"
+                    ],
+                    "name": "modify-default-eks-sg-instanceProfile-9a36027",
+                    "path": "/",
+                    "role": "modify-default-eks-sg-instanceRole-role-fb8c717"
+                },
+                "outputs": {
+                    "arn": "arn:aws:iam::894850187425:instance-profile/modify-default-eks-sg-instanceProfile-9a36027",
+                    "createDate": "2023-11-02T19:55:40Z",
+                    "id": "modify-default-eks-sg-instanceProfile-9a36027",
+                    "name": "modify-default-eks-sg-instanceProfile-9a36027",
+                    "namePrefix": "",
+                    "path": "/",
+                    "role": "modify-default-eks-sg-instanceRole-role-fb8c717",
+                    "tags": {},
+                    "tagsAll": {},
+                    "uniqueId": "AIPA5AWJ2ICQRN53ZNGY2"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "role": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2"
+                    ]
+                },
+                "created": "2023-11-02T19:55:40.559808931Z",
+                "modified": "2023-11-02T19:55:40.559808931Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#173,27"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup",
+                "custom": true,
+                "id": "sg-0784e9d95195f575c",
+                "type": "aws:ec2/securityGroup:SecurityGroup",
+                "inputs": {
+                    "__defaults": [
+                        "name"
+                    ],
+                    "description": "Managed by Pulumi",
+                    "name": "modify-default-eks-sg-eksClusterSecurityGroup-54e26dd",
+                    "revokeRulesOnDelete": true,
+                    "tags": {
+                        "Name": "modify-default-eks-sg-eksClusterSecurityGroup",
+                        "__defaults": []
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":900000000000},\"schema_version\":\"1\"}",
+                    "arn": "arn:aws:ec2:us-west-2:894850187425:security-group/sg-0784e9d95195f575c",
+                    "description": "Managed by Pulumi",
+                    "egress": [],
+                    "id": "sg-0784e9d95195f575c",
+                    "ingress": [],
+                    "name": "modify-default-eks-sg-eksClusterSecurityGroup-54e26dd",
+                    "namePrefix": "",
+                    "ownerId": "894850187425",
+                    "revokeRulesOnDelete": true,
+                    "tags": {
+                        "Name": "modify-default-eks-sg-eksClusterSecurityGroup"
+                    },
+                    "tagsAll": {
+                        "Name": "modify-default-eks-sg-eksClusterSecurityGroup"
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "description": null,
+                    "revokeRulesOnDelete": null,
+                    "tags": null,
+                    "vpcId": null
+                },
+                "created": "2023-11-02T19:55:41.057032389Z",
+                "modified": "2023-11-02T19:55:41.057032389Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#509,35"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::modify-default-eks-sg-eksClusterInternetEgressRule",
+                "custom": true,
+                "id": "sgrule-3448133012",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "cidrBlocks": [
+                        "0.0.0.0/0"
+                    ],
+                    "description": "Allow internet access.",
+                    "fromPort": 0,
+                    "protocol": "-1",
+                    "securityGroupId": "sg-0784e9d95195f575c",
+                    "toPort": 0,
+                    "type": "egress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "cidrBlocks": [
+                        "0.0.0.0/0"
+                    ],
+                    "description": "Allow internet access.",
+                    "fromPort": 0,
+                    "id": "sgrule-3448133012",
+                    "protocol": "-1",
+                    "securityGroupId": "sg-0784e9d95195f575c",
+                    "securityGroupRuleId": "sgr-0756bc9709be59891",
+                    "self": false,
+                    "toPort": 0,
+                    "type": "egress"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "cidrBlocks": null,
+                    "description": null,
+                    "fromPort": null,
+                    "protocol": null,
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup"
+                    ],
+                    "toPort": null,
+                    "type": null
+                },
+                "created": "2023-11-02T19:55:41.69268201Z",
+                "modified": "2023-11-02T19:55:41.69268201Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#526,46"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                "custom": true,
+                "id": "modify-default-eks-sg-eksCluster-8d916ff",
+                "type": "aws:eks/cluster:Cluster",
+                "inputs": {
+                    "__defaults": [
+                        "name"
+                    ],
+                    "name": "modify-default-eks-sg-eksCluster-8d916ff",
+                    "roleArn": "arn:aws:iam::894850187425:role/modify-default-eks-sg-eksRole-role-f4053b2",
+                    "tags": {
+                        "Name": "modify-default-eks-sg-eksCluster",
+                        "__defaults": []
+                    },
+                    "vpcConfig": {
+                        "__defaults": [
+                            "endpointPrivateAccess",
+                            "endpointPublicAccess"
+                        ],
+                        "endpointPrivateAccess": false,
+                        "endpointPublicAccess": true,
+                        "securityGroupIds": [
+                            "sg-0784e9d95195f575c"
+                        ],
+                        "subnetIds": [
+                            "subnet-03711d3b9b21b3a8e",
+                            "subnet-06e8296c053e2b952",
+                            "subnet-0fc2dc8f8ba906919",
+                            "subnet-037f366816336db85"
+                        ]
+                    }
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":1800000000000,\"delete\":900000000000,\"update\":3600000000000}}",
+                    "arn": "arn:aws:eks:us-west-2:894850187425:cluster/modify-default-eks-sg-eksCluster-8d916ff",
+                    "certificateAuthorities": [
+                        {
+                            "data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+                        }
+                    ],
+                    "certificateAuthority": {
+                        "data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+                    },
+                    "createdAt": "2023-11-02 19:55:42.683 +0000 UTC",
+                    "enabledClusterLogTypes": [],
+                    "encryptionConfig": null,
+                    "endpoint": "https://341C898ED0F65BB2D3B4E2CFF53878F2.gr7.us-west-2.eks.amazonaws.com",
+                    "id": "modify-default-eks-sg-eksCluster-8d916ff",
+                    "identities": [
+                        {
+                            "oidcs": [
+                                {
+                                    "issuer": "https://oidc.eks.us-west-2.amazonaws.com/id/341C898ED0F65BB2D3B4E2CFF53878F2"
+                                }
+                            ]
+                        }
+                    ],
+                    "kubernetesNetworkConfig": {
+                        "ipFamily": "ipv4",
+                        "serviceIpv4Cidr": "10.100.0.0/16",
+                        "serviceIpv6Cidr": ""
+                    },
+                    "name": "modify-default-eks-sg-eksCluster-8d916ff",
+                    "outpostConfig": null,
+                    "platformVersion": "eks.3",
+                    "roleArn": "arn:aws:iam::894850187425:role/modify-default-eks-sg-eksRole-role-f4053b2",
+                    "status": "ACTIVE",
+                    "tags": {
+                        "Name": "modify-default-eks-sg-eksCluster"
+                    },
+                    "tagsAll": {
+                        "Name": "modify-default-eks-sg-eksCluster"
+                    },
+                    "version": "1.28",
+                    "vpcConfig": {
+                        "clusterSecurityGroupId": "sg-04cc9b128a80bdbfa",
+                        "endpointPrivateAccess": false,
+                        "endpointPublicAccess": true,
+                        "publicAccessCidrs": [
+                            "0.0.0.0/0"
+                        ],
+                        "securityGroupIds": [
+                            "sg-0784e9d95195f575c"
+                        ],
+                        "subnetIds": [
+                            "subnet-0fc2dc8f8ba906919",
+                            "subnet-06e8296c053e2b952",
+                            "subnet-03711d3b9b21b3a8e",
+                            "subnet-037f366816336db85"
+                        ],
+                        "vpcId": "vpc-043be661de8760bec"
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "roleArn": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823"
+                    ],
+                    "tags": null,
+                    "vpcConfig": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup"
+                    ]
+                },
+                "created": "2023-11-02T20:02:41.249823122Z",
+                "modified": "2023-11-02T20:02:41.249823122Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#573,24"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$pulumi:providers:kubernetes::modify-default-eks-sg-eks-k8s",
+                "custom": true,
+                "id": "11a47247-3075-43e8-9440-a5a6ff4cc715",
+                "type": "pulumi:providers:kubernetes",
+                "inputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://341C898ED0F65BB2D3B4E2CFF53878F2.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"modify-default-eks-sg-eksCluster-8d916ff\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "version": "3.30.2"
+                },
+                "outputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://341C898ED0F65BB2D3B4E2CFF53878F2.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"modify-default-eks-sg-eksCluster-8d916ff\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "version": "3.30.2"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster"
+                ],
+                "propertyDependencies": {
+                    "kubeconfig": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster"
+                    ]
+                },
+                "created": "2023-11-02T20:02:41.450349917Z",
+                "modified": "2023-11-02T20:02:41.450349917Z",
+                "sourcePosition": "project:///node_modules/@pulumi/provider.ts#56,9"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$kubernetes:core/v1:ConfigMap::modify-default-eks-sg-nodeAccess",
+                "custom": true,
+                "id": "kube-system/aws-auth",
+                "type": "kubernetes:core/v1:ConfigMap",
+                "inputs": {
+                    "apiVersion": "v1",
+                    "data": {
+                        "mapRoles": "- rolearn: >-\n    arn:aws:iam::894850187425:role/modify-default-eks-sg-instanceRole-role-fb8c717\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                        "labels": {
+                            "app.kubernetes.io/managed-by": "pulumi"
+                        },
+                        "name": "aws-auth",
+                        "namespace": "kube-system"
+                    }
+                },
+                "outputs": {
+                    "__fieldManager": "pulumi-kubernetes",
+                    "__initialApiVersion": "v1",
+                    "__inputs": {
+                        "apiVersion": "v1",
+                        "data": {
+                            "mapRoles": "- rolearn: >-\n    arn:aws:iam::894850187425:role/modify-default-eks-sg-instanceRole-role-fb8c717\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
+                        },
+                        "kind": "ConfigMap",
+                        "metadata": {
+                            "labels": {
+                                "app.kubernetes.io/managed-by": "pulumi"
+                            },
+                            "name": "aws-auth",
+                            "namespace": "kube-system"
+                        }
+                    },
+                    "apiVersion": "v1",
+                    "data": {
+                        "mapRoles": "- rolearn: >-\n    arn:aws:iam::894850187425:role/modify-default-eks-sg-instanceRole-role-fb8c717\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                        "annotations": {
+                            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"data\":{\"mapRoles\":\"- rolearn: \\u003e-\\n    arn:aws:iam::894850187425:role/modify-default-eks-sg-instanceRole-role-fb8c717\\n  username: system:node:{{EC2PrivateDNSName}}\\n  groups:\\n    - system:bootstrappers\\n    - system:nodes\\n\"},\"kind\":\"ConfigMap\",\"metadata\":{\"labels\":{\"app.kubernetes.io/managed-by\":\"pulumi\"},\"name\":\"aws-auth\",\"namespace\":\"kube-system\"}}\n"
+                        },
+                        "creationTimestamp": "2023-11-02T20:02:42Z",
+                        "labels": {
+                            "app.kubernetes.io/managed-by": "pulumi"
+                        },
+                        "managedFields": [
+                            {
+                                "apiVersion": "v1",
+                                "fieldsType": "FieldsV1",
+                                "fieldsV1": {
+                                    "f:data": {
+                                        ".": {},
+                                        "f:mapRoles": {}
+                                    },
+                                    "f:metadata": {
+                                        "f:annotations": {
+                                            ".": {},
+                                            "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                                        },
+                                        "f:labels": {
+                                            ".": {},
+                                            "f:app.kubernetes.io/managed-by": {}
+                                        }
+                                    }
+                                },
+                                "manager": "pulumi-kubernetes",
+                                "operation": "Update",
+                                "time": "2023-11-02T20:02:42Z"
+                            }
+                        ],
+                        "name": "aws-auth",
+                        "namespace": "kube-system",
+                        "resourceVersion": "601",
+                        "uid": "f1b93051-d2b2-451e-9436-a214d65588d3"
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$pulumi:providers:kubernetes::modify-default-eks-sg-eks-k8s::11a47247-3075-43e8-9440-a5a6ff4cc715",
+                "propertyDependencies": {
+                    "apiVersion": null,
+                    "data": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2"
+                    ],
+                    "kind": null,
+                    "metadata": null
+                },
+                "created": "2023-11-02T20:02:42.39018482Z",
+                "modified": "2023-11-02T20:02:42.39018482Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#861,27"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::aws:ec2/securityGroup:SecurityGroup::default-eks-sg",
+                "custom": true,
+                "id": "sg-04cc9b128a80bdbfa",
+                "type": "aws:ec2/securityGroup:SecurityGroup",
+                "inputs": {
+                    "__defaults": [
+                        "revokeRulesOnDelete"
+                    ],
+                    "description": "EKS created security group applied to ENI that is attached to EKS Control Plane master nodes, as well as any managed workloads.",
+                    "egress": [
+                        {
+                            "__defaults": [
+                                "self"
+                            ],
+                            "cidrBlocks": [
+                                "0.0.0.0/0"
+                            ],
+                            "fromPort": 0,
+                            "protocol": "-1",
+                            "self": false,
+                            "toPort": 0
+                        }
+                    ],
+                    "ingress": [
+                        {
+                            "__defaults": [],
+                            "fromPort": 0,
+                            "protocol": "-1",
+                            "self": true,
+                            "toPort": 0
+                        }
+                    ],
+                    "name": "eks-cluster-sg-modify-default-eks-sg-eksCluster-8d916ff-175662452",
+                    "revokeRulesOnDelete": false,
+                    "tags": {
+                        "Name": "eks-cluster-sg-modify-default-eks-sg-eksCluster-8d916ff-175662452",
+                        "__defaults": [],
+                        "kubernetes.io/cluster/modify-default-eks-sg-eksCluster-8d916ff": "owned"
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":900000000000},\"schema_version\":\"1\"}",
+                    "arn": "arn:aws:ec2:us-west-2:894850187425:security-group/sg-04cc9b128a80bdbfa",
+                    "description": "EKS created security group applied to ENI that is attached to EKS Control Plane master nodes, as well as any managed workloads.",
+                    "egress": [
+                        {
+                            "cidrBlocks": [
+                                "0.0.0.0/0"
+                            ],
+                            "description": "",
+                            "fromPort": 0,
+                            "ipv6CidrBlocks": [],
+                            "prefixListIds": [],
+                            "protocol": "-1",
+                            "securityGroups": [],
+                            "self": false,
+                            "toPort": 0
+                        }
+                    ],
+                    "id": "sg-04cc9b128a80bdbfa",
+                    "ingress": [
+                        {
+                            "cidrBlocks": [],
+                            "description": "",
+                            "fromPort": 0,
+                            "ipv6CidrBlocks": [],
+                            "prefixListIds": [],
+                            "protocol": "-1",
+                            "securityGroups": [],
+                            "self": true,
+                            "toPort": 0
+                        }
+                    ],
+                    "name": "eks-cluster-sg-modify-default-eks-sg-eksCluster-8d916ff-175662452",
+                    "namePrefix": "",
+                    "ownerId": "894850187425",
+                    "tags": {
+                        "Name": "eks-cluster-sg-modify-default-eks-sg-eksCluster-8d916ff-175662452",
+                        "kubernetes.io/cluster/modify-default-eks-sg-eksCluster-8d916ff": "owned"
+                    },
+                    "tagsAll": {
+                        "Name": "eks-cluster-sg-modify-default-eks-sg-eksCluster-8d916ff-175662452",
+                        "kubernetes.io/cluster/modify-default-eks-sg-eksCluster-8d916ff": "owned"
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:pulumi:Stack::modify-default-eks-sg-p-it-runner-modify-def-22c4462c",
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "description": null,
+                    "egress": null,
+                    "ingress": null,
+                    "name": null,
+                    "tags": null,
+                    "vpcId": null
+                },
+                "importID": "sg-04cc9b128a80bdbfa",
+                "created": "2023-11-02T20:02:42.586649457Z",
+                "modified": "2023-11-02T20:02:42.586649457Z",
+                "sourcePosition": "project:///node_modules/@pulumi/ec2/securityGroup.ts#262,9"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:VpcCni::modify-default-eks-sg-vpc-cni",
+                "custom": true,
+                "id": "6e4c25b578b0fdd4",
+                "type": "eks:index:VpcCni",
+                "inputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://341C898ED0F65BB2D3B4E2CFF53878F2.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"modify-default-eks-sg-eksCluster-8d916ff\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:eks::default::2350dbbb-ec6c-4994-b43a-b3dc6a2e6371",
+                "propertyDependencies": {
+                    "kubeconfig": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster"
+                    ]
+                },
+                "created": "2023-11-02T20:02:42.823761913Z",
+                "modified": "2023-11-02T20:02:42.823761913Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#735,18"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup",
+                "custom": true,
+                "id": "sg-082399d96b62064a0",
+                "type": "aws:ec2/securityGroup:SecurityGroup",
+                "inputs": {
+                    "__defaults": [
+                        "name"
+                    ],
+                    "description": "Managed by Pulumi",
+                    "name": "modify-default-eks-sg-nodeSecurityGroup-a29b787",
+                    "revokeRulesOnDelete": true,
+                    "tags": {
+                        "Name": "modify-default-eks-sg-nodeSecurityGroup",
+                        "__defaults": [],
+                        "kubernetes.io/cluster/modify-default-eks-sg-eksCluster-8d916ff": "owned"
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":900000000000},\"schema_version\":\"1\"}",
+                    "arn": "arn:aws:ec2:us-west-2:894850187425:security-group/sg-082399d96b62064a0",
+                    "description": "Managed by Pulumi",
+                    "egress": [],
+                    "id": "sg-082399d96b62064a0",
+                    "ingress": [],
+                    "name": "modify-default-eks-sg-nodeSecurityGroup-a29b787",
+                    "namePrefix": "",
+                    "ownerId": "894850187425",
+                    "revokeRulesOnDelete": true,
+                    "tags": {
+                        "Name": "modify-default-eks-sg-nodeSecurityGroup",
+                        "kubernetes.io/cluster/modify-default-eks-sg-eksCluster-8d916ff": "owned"
+                    },
+                    "tagsAll": {
+                        "Name": "modify-default-eks-sg-nodeSecurityGroup",
+                        "kubernetes.io/cluster/modify-default-eks-sg-eksCluster-8d916ff": "owned"
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "description": null,
+                    "revokeRulesOnDelete": null,
+                    "tags": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster"
+                    ],
+                    "vpcId": null
+                },
+                "created": "2023-11-02T20:02:43.154084167Z",
+                "modified": "2023-11-02T20:02:43.154084167Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#101,31"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::modify-default-eks-sg-eksExtApiServerClusterIngressRule",
+                "custom": true,
+                "id": "sgrule-3198932621",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
+                    "fromPort": 443,
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-082399d96b62064a0",
+                    "sourceSecurityGroupId": "sg-0784e9d95195f575c",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
+                    "fromPort": 443,
+                    "id": "sgrule-3198932621",
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-082399d96b62064a0",
+                    "securityGroupRuleId": "sgr-04804194ee36ca9ec",
+                    "self": false,
+                    "sourceSecurityGroupId": "sg-0784e9d95195f575c",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "description": null,
+                    "fromPort": null,
+                    "protocol": null,
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup"
+                    ],
+                    "sourceSecurityGroupId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup"
+                    ],
+                    "toPort": null,
+                    "type": null
+                },
+                "created": "2023-11-02T20:02:43.839813482Z",
+                "modified": "2023-11-02T20:02:43.839813482Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#147,44"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::modify-default-eks-sg-eksClusterIngressRule",
+                "custom": true,
+                "id": "sgrule-3007977725",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow pods to communicate with the cluster API Server",
+                    "fromPort": 443,
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0784e9d95195f575c",
+                    "sourceSecurityGroupId": "sg-082399d96b62064a0",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow pods to communicate with the cluster API Server",
+                    "fromPort": 443,
+                    "id": "sgrule-3007977725",
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0784e9d95195f575c",
+                    "securityGroupRuleId": "sgr-09e17ce10d7155db1",
+                    "self": false,
+                    "sourceSecurityGroupId": "sg-082399d96b62064a0",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "description": null,
+                    "fromPort": null,
+                    "protocol": null,
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup"
+                    ],
+                    "sourceSecurityGroupId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup"
+                    ],
+                    "toPort": null,
+                    "type": null
+                },
+                "created": "2023-11-02T20:02:43.852205387Z",
+                "modified": "2023-11-02T20:02:43.852205387Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#176,35"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/launchConfiguration:LaunchConfiguration::modify-default-eks-sg-nodeLaunchConfiguration",
+                "custom": true,
+                "id": "modify-default-eks-sg-nodeLaunchConfiguration-57e94e7",
+                "type": "aws:ec2/launchConfiguration:LaunchConfiguration",
+                "inputs": {
+                    "__defaults": [
+                        "enableMonitoring",
+                        "name"
+                    ],
+                    "associatePublicIpAddress": true,
+                    "enableMonitoring": true,
+                    "iamInstanceProfile": "modify-default-eks-sg-instanceProfile-9a36027",
+                    "imageId": "ami-08452b8fed439a69a",
+                    "instanceType": "t2.medium",
+                    "name": "modify-default-eks-sg-nodeLaunchConfiguration-57e94e7",
+                    "rootBlockDevice": {
+                        "__defaults": [],
+                        "deleteOnTermination": true,
+                        "encrypted": false,
+                        "volumeSize": 20,
+                        "volumeType": "gp2"
+                    },
+                    "securityGroups": [
+                        "sg-082399d96b62064a0"
+                    ],
+                    "userData": "#!/bin/bash\n\n/etc/eks/bootstrap.sh --apiserver-endpoint \"https://341C898ED0F65BB2D3B4E2CFF53878F2.gr7.us-west-2.eks.amazonaws.com\" --b64-cluster-ca \"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\" \"modify-default-eks-sg-eksCluster-8d916ff\"\n\n/opt/aws/bin/cfn-signal --exit-code $? --stack modify-default-eks-sg-74b6c2d6 --resource NodeGroup --region us-west-2\n"
+                },
+                "outputs": {
+                    "arn": "arn:aws:autoscaling:us-west-2:894850187425:launchConfiguration:5cf103f7-9f4a-4c45-8597-40b55c2f56af:launchConfigurationName/modify-default-eks-sg-nodeLaunchConfiguration-57e94e7",
+                    "associatePublicIpAddress": true,
+                    "ebsBlockDevices": [],
+                    "ebsOptimized": false,
+                    "enableMonitoring": true,
+                    "ephemeralBlockDevices": [],
+                    "iamInstanceProfile": "modify-default-eks-sg-instanceProfile-9a36027",
+                    "id": "modify-default-eks-sg-nodeLaunchConfiguration-57e94e7",
+                    "imageId": "ami-08452b8fed439a69a",
+                    "instanceType": "t2.medium",
+                    "keyName": "",
+                    "metadataOptions": null,
+                    "name": "modify-default-eks-sg-nodeLaunchConfiguration-57e94e7",
+                    "namePrefix": "",
+                    "placementTenancy": "",
+                    "rootBlockDevice": {
+                        "deleteOnTermination": true,
+                        "encrypted": false,
+                        "iops": 0,
+                        "throughput": 0,
+                        "volumeSize": 20,
+                        "volumeType": "gp2"
+                    },
+                    "securityGroups": [
+                        "sg-082399d96b62064a0"
+                    ],
+                    "spotPrice": "",
+                    "userData": "14270bcd34b845cb404f78cf80860ce7781b8512",
+                    "vpcClassicLinkId": "",
+                    "vpcClassicLinkSecurityGroups": []
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:iam/instanceProfile:InstanceProfile::modify-default-eks-sg-instanceProfile",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::modify-default-eks-sg-eksClusterIngressRule",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:RandomSuffix::modify-default-eks-sg-cfnStackName"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "associatePublicIpAddress": null,
+                    "iamInstanceProfile": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:iam/instanceProfile:InstanceProfile::modify-default-eks-sg-instanceProfile"
+                    ],
+                    "imageId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823"
+                    ],
+                    "instanceType": null,
+                    "rootBlockDevice": null,
+                    "securityGroups": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::modify-default-eks-sg-eksClusterIngressRule"
+                    ],
+                    "userData": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:RandomSuffix::modify-default-eks-sg-cfnStackName"
+                    ]
+                },
+                "created": "2023-11-02T20:02:44.418498456Z",
+                "modified": "2023-11-02T20:02:44.418498456Z",
+                "sourcePosition": "project:///node_modules/@pulumi/nodegroup.ts#797,37"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::modify-default-eks-sg-eksNodeIngressRule",
+                "custom": true,
+                "id": "sgrule-1341312994",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow nodes to communicate with each other",
+                    "fromPort": 0,
+                    "protocol": "-1",
+                    "securityGroupId": "sg-082399d96b62064a0",
+                    "self": true,
+                    "toPort": 0,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow nodes to communicate with each other",
+                    "fromPort": 0,
+                    "id": "sgrule-1341312994",
+                    "protocol": "-1",
+                    "securityGroupId": "sg-082399d96b62064a0",
+                    "securityGroupRuleId": "sgr-020e7ffe79a2d0d6e",
+                    "self": true,
+                    "toPort": 0,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "description": null,
+                    "fromPort": null,
+                    "protocol": null,
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup"
+                    ],
+                    "self": null,
+                    "toPort": null,
+                    "type": null
+                },
+                "created": "2023-11-02T20:02:44.674150178Z",
+                "modified": "2023-11-02T20:02:44.674150178Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#118,29"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::modify-default-eks-sg-eksNodeClusterIngressRule",
+                "custom": true,
+                "id": "sgrule-2702740875",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow worker Kubelets and pods to receive communication from the cluster control plane",
+                    "fromPort": 1025,
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-082399d96b62064a0",
+                    "sourceSecurityGroupId": "sg-0784e9d95195f575c",
+                    "toPort": 65535,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow worker Kubelets and pods to receive communication from the cluster control plane",
+                    "fromPort": 1025,
+                    "id": "sgrule-2702740875",
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-082399d96b62064a0",
+                    "securityGroupRuleId": "sgr-06b62011427d1d2e2",
+                    "self": false,
+                    "sourceSecurityGroupId": "sg-0784e9d95195f575c",
+                    "toPort": 65535,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "description": null,
+                    "fromPort": null,
+                    "protocol": null,
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup"
+                    ],
+                    "sourceSecurityGroupId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-eksClusterSecurityGroup"
+                    ],
+                    "toPort": null,
+                    "type": null
+                },
+                "created": "2023-11-02T20:02:45.351391135Z",
+                "modified": "2023-11-02T20:02:45.351391135Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#132,36"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::modify-default-eks-sg-eksNodeInternetEgressRule",
+                "custom": true,
+                "id": "sgrule-3511481070",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "cidrBlocks": [
+                        "0.0.0.0/0"
+                    ],
+                    "description": "Allow internet access.",
+                    "fromPort": 0,
+                    "protocol": "-1",
+                    "securityGroupId": "sg-082399d96b62064a0",
+                    "toPort": 0,
+                    "type": "egress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "cidrBlocks": [
+                        "0.0.0.0/0"
+                    ],
+                    "description": "Allow internet access.",
+                    "fromPort": 0,
+                    "id": "sgrule-3511481070",
+                    "protocol": "-1",
+                    "securityGroupId": "sg-082399d96b62064a0",
+                    "securityGroupRuleId": "sgr-0bd9d814fa480dd7b",
+                    "self": false,
+                    "toPort": 0,
+                    "type": "egress"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "cidrBlocks": null,
+                    "description": null,
+                    "fromPort": null,
+                    "protocol": null,
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::modify-default-eks-sg-nodeSecurityGroup"
+                    ],
+                    "toPort": null,
+                    "type": null
+                },
+                "created": "2023-11-02T20:02:45.954463096Z",
+                "modified": "2023-11-02T20:02:45.954463096Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#162,36"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:cloudformation/stack:Stack::modify-default-eks-sg-nodes",
+                "custom": true,
+                "id": "arn:aws:cloudformation:us-west-2:894850187425:stack/modify-default-eks-sg-74b6c2d6/c9721940-79ba-11ee-9561-0616f6b2facd",
+                "type": "aws:cloudformation/stack:Stack",
+                "inputs": {
+                    "__defaults": [],
+                    "name": "modify-default-eks-sg-74b6c2d6",
+                    "tags": {
+                        "Name": "modify-default-eks-sg-nodes",
+                        "__defaults": []
+                    },
+                    "templateBody": "\n                AWSTemplateFormatVersion: '2010-09-09'\n                Outputs:\n                    NodeGroup:\n                        Value: !Ref NodeGroup\n                Resources:\n                    NodeGroup:\n                        Type: AWS::AutoScaling::AutoScalingGroup\n                        Properties:\n                          DesiredCapacity: 2\n                          LaunchConfigurationName: modify-default-eks-sg-nodeLaunchConfiguration-57e94e7\n                          MinSize: 1\n                          MaxSize: 2\n                          VPCZoneIdentifier: [\"subnet-03711d3b9b21b3a8e\",\"subnet-06e8296c053e2b952\",\"subnet-0fc2dc8f8ba906919\",\"subnet-037f366816336db85\"]\n                          Tags:\n                          \n                          - Key: Name\n                            Value: modify-default-eks-sg-eksCluster-8d916ff-worker\n                            PropagateAtLaunch: 'true'\n                          - Key: kubernetes.io/cluster/modify-default-eks-sg-eksCluster-8d916ff\n                            Value: owned\n                            PropagateAtLaunch: 'true'\n                        UpdatePolicy:\n                          AutoScalingRollingUpdate:\n                            MinInstancesInService: '1'\n                            MaxBatchSize: '1'\n                "
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":1800000000000,\"delete\":1800000000000,\"update\":1800000000000}}",
+                    "disableRollback": false,
+                    "iamRoleArn": "",
+                    "id": "arn:aws:cloudformation:us-west-2:894850187425:stack/modify-default-eks-sg-74b6c2d6/c9721940-79ba-11ee-9561-0616f6b2facd",
+                    "name": "modify-default-eks-sg-74b6c2d6",
+                    "outputs": {
+                        "NodeGroup": "modify-default-eks-sg-74b6c2d6-NodeGroup-nRLMGt1RM3fY"
+                    },
+                    "parameters": {},
+                    "tags": {
+                        "Name": "modify-default-eks-sg-nodes"
+                    },
+                    "tagsAll": {
+                        "Name": "modify-default-eks-sg-nodes"
+                    },
+                    "templateBody": "\n                AWSTemplateFormatVersion: '2010-09-09'\n                Outputs:\n                    NodeGroup:\n                        Value: !Ref NodeGroup\n                Resources:\n                    NodeGroup:\n                        Type: AWS::AutoScaling::AutoScalingGroup\n                        Properties:\n                          DesiredCapacity: 2\n                          LaunchConfigurationName: modify-default-eks-sg-nodeLaunchConfiguration-57e94e7\n                          MinSize: 1\n                          MaxSize: 2\n                          VPCZoneIdentifier: [\"subnet-03711d3b9b21b3a8e\",\"subnet-06e8296c053e2b952\",\"subnet-0fc2dc8f8ba906919\",\"subnet-037f366816336db85\"]\n                          Tags:\n                          \n                          - Key: Name\n                            Value: modify-default-eks-sg-eksCluster-8d916ff-worker\n                            PropagateAtLaunch: 'true'\n                          - Key: kubernetes.io/cluster/modify-default-eks-sg-eksCluster-8d916ff\n                            Value: owned\n                            PropagateAtLaunch: 'true'\n                        UpdatePolicy:\n                          AutoScalingRollingUpdate:\n                            MinInstancesInService: '1'\n                            MaxBatchSize: '1'\n                ",
+                    "timeoutInMinutes": 0
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:VpcCni::modify-default-eks-sg-vpc-cni",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$kubernetes:core/v1:ConfigMap::modify-default-eks-sg-nodeAccess",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:RandomSuffix::modify-default-eks-sg-cfnStackName",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/launchConfiguration:LaunchConfiguration::modify-default-eks-sg-nodeLaunchConfiguration"
+                ],
+                "provider": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::pulumi:providers:aws::default_5_42_0::3fb5625c-9c05-47b6-aee3-0ff9f2127244",
+                "propertyDependencies": {
+                    "name": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:RandomSuffix::modify-default-eks-sg-cfnStackName"
+                    ],
+                    "tags": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823"
+                    ],
+                    "templateBody": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:ec2/launchConfiguration:LaunchConfiguration::modify-default-eks-sg-nodeLaunchConfiguration",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-instanceRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-instanceRole-3eb088f2",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::modify-default-eks-sg-eksRole-role",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::modify-default-eks-sg-eksRole-4b490823"
+                    ]
+                },
+                "created": "2023-11-02T20:04:31.000471201Z",
+                "modified": "2023-11-02T20:04:31.000471201Z",
+                "sourcePosition": "project:///node_modules/@pulumi/nodegroup.ts#902,22"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$pulumi:providers:kubernetes::modify-default-eks-sg-provider",
+                "custom": true,
+                "id": "9460e3f6-bb1c-4cf2-934f-8e38f664bf34",
+                "type": "pulumi:providers:kubernetes",
+                "inputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://341C898ED0F65BB2D3B4E2CFF53878F2.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"modify-default-eks-sg-eksCluster-8d916ff\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "version": "3.30.2"
+                },
+                "outputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://341C898ED0F65BB2D3B4E2CFF53878F2.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSHd5VTR3UEp4MUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFeE1ESXhPVFUxTVRSYUZ3MHpNekV3TXpBeU1EQXdNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjY0tqTS9OZTNiR3hGUnhPdi9UbGF2MWZlR3NRaS9EVGYycVdLK0JqbEFyNTROOTFzSkVsU2dhZHEKTjNETWEzdWM2SnA4anpVYnQ4UnIxdU40S0Mzb0drR2pNS0VtSGM3KzFndGIzUVdrQUVwdlh4MHhhQ3lKdUdzSQpMcGNpbHFxTktDa2VNVFlkRFd5SERXSzdmc2VTa2ptWmQ1TmlENUhSbEFQSi9pNk1IYTBhbFU3bHg5K1RnVTdOCnpPM081NWl5UXE0ZkZocHE3bGJjWWc3ZmdORGd3cXNlMlhqTk4yVHhwTjB2azhOd1piRWVqb21iM3QzQWhUVWgKKzN0QjVvU1hrbll0WFFuMUZsNURBKytreDNCSGxDTkY2WnQrVTdKY202dXpOSU50THJ6TnhwUjZ0SHNDS2dOMwo2ZmdOY0FLR1M0bWR6dklFbDkxRnBkQnBWVEs1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUMWFwV3grMGF6ako5Vm4zY01hamthZVhxVlFEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQllHZXpZd2EvWgpWWFpVZjl3dktLWTV2eHVQOW1hZHgvUzRMRHJhWHNRUGhCaGJEQ3dCcURXSFZJTm9lUG9rd0V4UTVuVzJrT04xCjNDdmNZYUZOT3pkdzdIdVNPRnF0VVdVK0YzeWZOVzE4QTl2eWRWbnJ1dmN4RlZWZUEvbDdSdW5WY0ZGZW5XNFQKN01raXhVTjlSdWJMQjFTamI2RnFwT3ZwRGdYcmNvdFRabUFCdnZxWUdQT25zSjRGVHpONE9NQ1h1S0VxenU0KwphdXdMTnJiMWViMWJReTJsR2dGQk4xM3VTU2dla2d3MFNyWE9RTjMvL2gveEdjcCtubENCVmxjQzNsbXdyeWxQCkIybXJpWGtEamw1eXhGUytZY3hGekZNUFd2alA1cFBnOTZRMjJENTVJQVFPT1RScFVOdDYwK1Q5SFF5NWlhNUQKYkNQRE94cUZabXlWCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"modify-default-eks-sg-eksCluster-8d916ff\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "version": "3.30.2"
+                },
+                "parent": "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster::modify-default-eks-sg",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                    "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:cloudformation/stack:Stack::modify-default-eks-sg-nodes"
+                ],
+                "propertyDependencies": {
+                    "kubeconfig": [
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:eks/cluster:Cluster::modify-default-eks-sg-eksCluster",
+                        "urn:pulumi:p-it-runner-modify-def-22c4462c::modify-default-eks-sg::eks:index:Cluster$aws:cloudformation/stack:Stack::modify-default-eks-sg-nodes"
+                    ]
+                },
+                "created": "2023-11-02T20:04:31.057303346Z",
+                "modified": "2023-11-02T20:04:31.057303346Z",
+                "sourcePosition": "project:///node_modules/@pulumi/provider.ts#56,9"
+            }
+        ]
+    }
+}
