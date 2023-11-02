@@ -261,7 +261,7 @@ jobs:
 
           - name: Record provider test snapshots
             run: |
-              cd provider && go test -tags nodejs -run '${{ inputs.runTests }}' -provider-snapshot -v -json -count=1 -cover -timeout 2h -parallel 8 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+              cd provider && go test -tags nodejs -run '${{ inputs.runTests }}' -provider-snapshot -v -json -count=1 -cover -timeout 4h -parallel 20 . 2>&1 | tee /tmp/gotest.log | gotestfmt
           - name: Open a PR with newly recorded test snapshots
             id: create-pr
             uses: peter-evans/create-pull-request@v5
