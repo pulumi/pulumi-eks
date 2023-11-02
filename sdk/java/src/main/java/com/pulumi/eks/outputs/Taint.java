@@ -65,10 +65,10 @@ public final class Taint {
             return this;
         }
         public Taint build() {
-            final var o = new Taint();
-            o.effect = effect;
-            o.value = value;
-            return o;
+            final var _resultValue = new Taint();
+            _resultValue.effect = effect;
+            _resultValue.value = value;
+            return _resultValue;
         }
     }
 }
