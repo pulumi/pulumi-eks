@@ -2,10 +2,7 @@ name: Run Acceptance Tests from PR
 on:
   repository_dispatch:
     types: [run-acceptance-tests-command]
-  pull_request:
-    branches:
-      - master
-      - feature/1.x
+  pull_request: {}
 
 env:
   ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
