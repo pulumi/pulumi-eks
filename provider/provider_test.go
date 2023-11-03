@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pulumi/providertest"
@@ -11,7 +12,7 @@ func TestExamplesUpgrades(t *testing.T) {
 	// wouldn't be recognized as tests anymore.
 
 	t.Run("cluster", func(t *testing.T) {
-		test(t, "../examples/cluster").Run(t)
+		runExampleParallel(t, "cluster")
 	})
 
 	// ALT_AWS_PROFILE must be set
@@ -20,23 +21,23 @@ func TestExamplesUpgrades(t *testing.T) {
 	// })
 
 	t.Run("aws-profile-role", func(t *testing.T) {
-		test(t, "../examples/aws-profile-role").Run(t)
+		runExampleParallel(t, "aws-profile-role")
 	})
 
 	t.Run("encryption-provider", func(t *testing.T) {
-		test(t, "../examples/encryption-provider").Run(t)
+		runExampleParallel(t, "encryption-provider")
 	})
 
 	t.Run("cluster-with-serviceiprange", func(t *testing.T) {
-		test(t, "../examples/cluster-with-serviceiprange").Run(t)
+		runExampleParallel(t, "cluster-with-serviceiprange")
 	})
 
 	t.Run("extra-sg", func(t *testing.T) {
-		test(t, "../examples/extra-sg").Run(t)
+		runExampleParallel(t, "extra-sg")
 	})
 
 	t.Run("fargate", func(t *testing.T) {
-		test(t, "../examples/fargate").Run(t)
+		runExampleParallel(t, "fargate")
 	})
 
 	// FAIL: waiting for EKS Node Group to create: unexpected state 'CREATE_FAILED', wanted target 'ACTIVE'.
@@ -49,42 +50,47 @@ func TestExamplesUpgrades(t *testing.T) {
 	// })
 
 	t.Run("modify-default-eks-sg", func(t *testing.T) {
-		test(t, "../examples/modify-default-eks-sg").Run(t)
+		runExampleParallel(t, "modify-default-eks-sg")
 	})
 
 	// FAIL: Your requested instance type (t2.medium) is not supported in your requested
 	// Availability Zone (us-west-2d). Please retry your request by not specifying an
 	// Availability Zone or choosing us-west-2a, us-west-2b, us-west-2c.
-	// t.Run("nodegroup", func(t *testing.T) {
-	// 	test(t, "../examples/nodegroup").Run(t)
-	// })
+	t.Run("nodegroup", func(t *testing.T) {
+		runExampleParallel(t, "nodegroup")
+	})
 
 	t.Run("oidc-iam-sa", func(t *testing.T) {
-		test(t, "../examples/oidc-iam-sa").Run(t)
+		runExampleParallel(t, "oidc-iam-sa")
 	})
 
-	// t.Run("scoped-kubeconfigs", func(t *testing.T) {
-	// 	test(t, "../examples/scoped-kubeconfigs").Run(t)
-	// })
+	t.Run("scoped-kubeconfigs", func(t *testing.T) {
+		runExampleParallel(t, "scoped-kubeconfigs")
+	})
 
-	// t.Run("storage-classes", func(t *testing.T) {
-	// 	test(t, "../examples/storage-classes").Run(t)
-	// })
+	t.Run("storage-classes", func(t *testing.T) {
+		runExampleParallel(t, "storage-classes")
+	})
 
 	t.Run("subnet-tags", func(t *testing.T) {
-		test(t, "../examples/subnet-tags").Run(t)
+		runExampleParallel(t, "subnet-tags")
 	})
 
 	// FAIL: Your requested instance type (t2.medium) is not supported in your requested
 	// Availability Zone (us-west-2d). Please retry your request by not specifying an
 	// Availability Zone or choosing us-west-2a, us-west-2b, us-west-2c.
-	// t.Run("tags", func(t *testing.T) {
-	// 	test(t, "../examples/tags").Run(t)
-	// })
+	t.Run("tags", func(t *testing.T) {
+		runExampleParallel(t, "tags")
+	})
 }
 
 func TestReportUpgradeCoverage(t *testing.T) {
 	providertest.ReportUpgradeCoverage(t)
+}
+
+func runExampleParallel(t *testing.T, example string, opts ...providertest.Option) {
+	t.Parallel()
+	test(t, fmt.Sprintf("../examples/%s", example), opts...).Run(t)
 }
 
 func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.ProviderTest {
