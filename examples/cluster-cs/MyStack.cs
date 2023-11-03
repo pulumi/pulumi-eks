@@ -41,7 +41,7 @@ class MyStack : Stack
                 DesiredCapacity = 1,
                 MinSize = 1,
                 MaxSize = 1,
-                InstanceType = "t2.small",
+                InstanceType = "t3.small",
             },
         });
 
