@@ -15,10 +15,10 @@ func TestExamplesUpgrades(t *testing.T) {
 		runExampleParallel(t, "cluster")
 	})
 
-	// ALT_AWS_PROFILE must be set
-	// t.Run("aws-profile", func(t *testing.T) {
-	// 	test(t, "../examples/aws-profile").Run(t)
-	// })
+	t.Run("aws-profile", func(t *testing.T) {
+		t.Skip("Fails with 'ALT_AWS_PROFILE must be set'")
+		test(t, "../examples/aws-profile").Run(t)
+	})
 
 	t.Run("aws-profile-role", func(t *testing.T) {
 		runExampleParallel(t, "aws-profile-role")
@@ -40,11 +40,6 @@ func TestExamplesUpgrades(t *testing.T) {
 		runExampleParallel(t, "fargate")
 	})
 
-	// FAIL: waiting for EKS Node Group to create: unexpected state 'CREATE_FAILED', wanted target 'ACTIVE'.
-	// Ec2SubnetInvalidConfiguration: One or more Amazon EC2 Subnets of [subnet-0b4f9fb1df1543b07]
-	// for node group aws-managed-ng1 does not automatically assign public IP addresses to instances
-	// launched into it. If you want your instances to be assigned a public IP address, then you
-	// need to enable auto-assign public IP address for the subnet.
 	t.Run("managed-nodegroups", func(t *testing.T) {
 		test(t, "../examples/managed-nodegroups").Run(t)
 	})
@@ -53,9 +48,6 @@ func TestExamplesUpgrades(t *testing.T) {
 		runExampleParallel(t, "modify-default-eks-sg")
 	})
 
-	// FAIL: Your requested instance type (t2.medium) is not supported in your requested
-	// Availability Zone (us-west-2d). Please retry your request by not specifying an
-	// Availability Zone or choosing us-west-2a, us-west-2b, us-west-2c.
 	t.Run("nodegroup", func(t *testing.T) {
 		runExampleParallel(t, "nodegroup")
 	})
@@ -76,9 +68,6 @@ func TestExamplesUpgrades(t *testing.T) {
 		runExampleParallel(t, "subnet-tags")
 	})
 
-	// FAIL: Your requested instance type (t2.medium) is not supported in your requested
-	// Availability Zone (us-west-2d). Please retry your request by not specifying an
-	// Availability Zone or choosing us-west-2a, us-west-2b, us-west-2c.
 	t.Run("tags", func(t *testing.T) {
 		runExampleParallel(t, "tags")
 	})
