@@ -25,7 +25,7 @@ cluster1 = eks.Cluster(
 eks.NodeGroup(
     "example-ng-simple-ondemand-py",
     cluster=cluster1,
-    instance_type="t2.medium",
+    instance_type="t3.medium",
     desired_capacity=1,
     min_size=1,
     max_size=2,
@@ -36,7 +36,7 @@ eks.NodeGroup(
 eks.NodeGroupV2(
     "example-ng2-simple-ondemand-py",
     cluster=cluster1,
-    instance_type="t2.medium",
+    instance_type="t3.medium",
     desired_capacity=1,
     min_size=1,
     max_size=2,
@@ -49,11 +49,11 @@ cluster1_provider = k8s.Provider(
     kubeconfig=cluster1.kubeconfig_json,
 )
 
-# Create the second node group with spot t2.medium instance
+# Create the second node group with spot t3.medium instance
 eks.NodeGroup(
     "example-ng-simple-spot-py",
     cluster=cluster1,
-    instance_type="t2.medium",
+    instance_type="t3.medium",
     desired_capacity=1,
     min_size=1,
     max_size=2,
@@ -69,7 +69,7 @@ eks.NodeGroup(
 eks.NodeGroupV2(
     "example-ng2-launchtemplate-tags-py",
     cluster=cluster1,
-    instance_type="t2.medium",
+    instance_type="t3.medium",
     desired_capacity=1,
     min_size=1,
     max_size=2,
@@ -114,7 +114,7 @@ cluster2 = eks.Cluster(
 eks.NodeGroup(
     "example-ng-advanced-ondemand-py",
     cluster=cluster2,
-    instance_type="t2.medium",
+    instance_type="t3.medium",
     desired_capacity=1,
     min_size=1,
     max_size=2,
@@ -125,7 +125,7 @@ eks.NodeGroup(
 eks.NodeGroupV2(
     "example-ng2-advanced-ondemand-py",
     cluster=cluster2,
-    instance_type="t2.medium",
+    instance_type="t3.medium",
     desired_capacity=1,
     min_size=1,
     max_size=2,
@@ -141,7 +141,7 @@ cluster2_provider = k8s.Provider(
 eks.NodeGroup(
     "example-ng-advanced-spot-py",
     cluster=cluster2,
-    instance_type="t2.medium",
+    instance_type="t3.medium",
     desired_capacity=1,
     min_size=1,
     max_size=2,

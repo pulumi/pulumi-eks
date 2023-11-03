@@ -37,7 +37,7 @@ cluster3 = eks.Cluster(f"{project_name}-3",
                                 desired_capacity=1,
                                 min_size=1,
                                 max_size=1,
-                                instance_type="t2.small"
+                                instance_type="t3.small"
                             )
 )
 
