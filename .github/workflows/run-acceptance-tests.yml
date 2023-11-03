@@ -104,7 +104,7 @@ jobs:
       - name: Check Schema is Valid
         run: |
           echo 'SCHEMA_CHANGES<<EOF' >> $GITHUB_ENV
-          schema-tools compare ${{ env.PROVIDER }} master --local-path=provider/cmd/pulumi-resource-${{ env.PROVIDER }}/schema.json >> $GITHUB_ENV
+          schema-tools compare ${{ env.PROVIDER }} ${{ github.base_ref || 'master' }} --local-path=provider/cmd/pulumi-resource-${{ env.PROVIDER }}/schema.json >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
       - if: github.event_name == 'pull_request'
         name: Comment on PR with Details of Schema Check
