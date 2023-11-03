@@ -42,9 +42,9 @@ func TestExamples(t *testing.T) {
 	// for node group aws-managed-ng1 does not automatically assign public IP addresses to instances
 	// launched into it. If you want your instances to be assigned a public IP address, then you
 	// need to enable auto-assign public IP address for the subnet.
-	// t.Run("managed-nodegroups", func(t *testing.T) {
-	// 	test(t, "../examples/managed-nodegroups").Run(t)
-	// })
+	t.Run("managed-nodegroups", func(t *testing.T) {
+		test(t, "../examples/managed-nodegroups").Run(t)
+	})
 
 	t.Run("modify-default-eks-sg", func(t *testing.T) {
 		runExampleParallel(t, "modify-default-eks-sg")
