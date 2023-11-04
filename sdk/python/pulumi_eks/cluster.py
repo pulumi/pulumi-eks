@@ -37,6 +37,7 @@ class ClusterArgs:
                  instance_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
+                 ip_family: Optional[pulumi.Input[str]] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
@@ -109,10 +110,12 @@ class ClusterArgs:
                
                Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        :param pulumi.Input[str] ip_family: The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
+               You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
         :param pulumi.Input[str] kubernetes_service_ip_address_range: The CIDR block to assign Kubernetes service IP addresses from. If you don't
                specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
-               172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
-               with resources in other networks that are peered or connected to your VPC. You can only specify
+               172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
+               that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
                a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
                
                The block must meet the following requirements:
@@ -260,6 +263,8 @@ class ClusterArgs:
             pulumi.set(__self__, "instance_roles", instance_roles)
         if instance_type is not None:
             pulumi.set(__self__, "instance_type", instance_type)
+        if ip_family is not None:
+            pulumi.set(__self__, "ip_family", ip_family)
         if kubernetes_service_ip_address_range is not None:
             pulumi.set(__self__, "kubernetes_service_ip_address_range", kubernetes_service_ip_address_range)
         if max_size is not None:
@@ -558,13 +563,26 @@ class ClusterArgs:
         pulumi.set(self, "instance_type", value)
 
     @property
+    @pulumi.getter(name="ipFamily")
+    def ip_family(self) -> Optional[pulumi.Input[str]]:
+        """
+        The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
+        You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+        """
+        return pulumi.get(self, "ip_family")
+
+    @ip_family.setter
+    def ip_family(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "ip_family", value)
+
+    @property
     @pulumi.getter(name="kubernetesServiceIpAddressRange")
     def kubernetes_service_ip_address_range(self) -> Optional[pulumi.Input[str]]:
         """
         The CIDR block to assign Kubernetes service IP addresses from. If you don't
         specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
-        172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
-        with resources in other networks that are peered or connected to your VPC. You can only specify
+        172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
+        that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
         a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
 
         The block must meet the following requirements:
@@ -1003,6 +1021,7 @@ class Cluster(pulumi.ComponentResource):
                  instance_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
+                 ip_family: Optional[pulumi.Input[str]] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
@@ -1079,10 +1098,12 @@ class Cluster(pulumi.ComponentResource):
                
                Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        :param pulumi.Input[str] ip_family: The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
+               You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
         :param pulumi.Input[str] kubernetes_service_ip_address_range: The CIDR block to assign Kubernetes service IP addresses from. If you don't
                specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
-               172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
-               with resources in other networks that are peered or connected to your VPC. You can only specify
+               172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
+               that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
                a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
                
                The block must meet the following requirements:
@@ -1236,6 +1257,7 @@ class Cluster(pulumi.ComponentResource):
                  instance_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
+                 ip_family: Optional[pulumi.Input[str]] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
@@ -1293,6 +1315,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["instance_role"] = instance_role
             __props__.__dict__["instance_roles"] = instance_roles
             __props__.__dict__["instance_type"] = instance_type
+            __props__.__dict__["ip_family"] = ip_family
             __props__.__dict__["kubernetes_service_ip_address_range"] = kubernetes_service_ip_address_range
             __props__.__dict__["max_size"] = max_size
             __props__.__dict__["min_size"] = min_size
