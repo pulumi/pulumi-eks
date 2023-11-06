@@ -144,7 +144,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: "7.6"
+          gradle-version: "8.4"
       - name: Install Yarn
         run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
       - name: Update PATH for Yarn
@@ -344,8 +344,7 @@ jobs:
           path: ${{ github.workspace }}/bin
       - name: Untar provider binaries
         run:
-          tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
-          }}/bin
+          tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace }}/bin
       - name: Restore binary perms
         run:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
@@ -456,8 +455,7 @@ jobs:
           path: ${{ github.workspace }}/bin
       - name: Untar provider binaries
         run:
-          tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
-          }}/bin
+          tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace }}/bin
       - name: Restore binary perms
         run:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
