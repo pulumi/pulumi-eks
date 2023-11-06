@@ -45,6 +45,7 @@ func TestExamplesUpgrades(t *testing.T) {
 	})
 
 	t.Run("modify-default-eks-sg", func(t *testing.T) {
+		t.Skip("upgradetest doesn't understand invoke aws:ec2/getSecurityGroup:getSecurityGroup")
 		runExampleParallel(t, "modify-default-eks-sg")
 	})
 
