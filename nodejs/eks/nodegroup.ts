@@ -53,7 +53,7 @@ export interface NodeGroupBaseOptions {
     nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
-     * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+     * The instance type to use for the cluster's nodes. Defaults to "t3.medium".
      */
     instanceType?: pulumi.Input<string | aws.ec2.InstanceType>;
 
@@ -789,7 +789,7 @@ ${customUserData}
         {
             associatePublicIpAddress: nodeAssociatePublicIpAddress,
             imageId: amiId,
-            instanceType: args.instanceType || "t2.medium",
+            instanceType: args.instanceType || "t3.medium",
             iamInstanceProfile: instanceProfile,
             keyName: keyName,
             securityGroups: pulumi
@@ -1207,7 +1207,7 @@ ${customUserData}
         `${name}-launchTemplate`,
         {
             imageId: amiId,
-            instanceType: args.instanceType || "t2.medium",
+            instanceType: args.instanceType || "t3.medium",
             iamInstanceProfile: { arn: instanceProfileArn },
             keyName: keyName,
             instanceMarketOptions: marketOptions,
