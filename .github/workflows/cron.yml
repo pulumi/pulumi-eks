@@ -221,7 +221,7 @@ jobs:
           node-version: ${{ env.NODEVERSION }}
           registry-url: https://registry.npmjs.org
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -235,7 +235,7 @@ jobs:
       - name: Update path
         run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
       - name: Download SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -338,7 +338,7 @@ jobs:
           pip3 install virtualenv==20.0.23
           pip3 install pipenv
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -352,7 +352,7 @@ jobs:
       - name: Update path
         run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
       - name: Download NodeJS SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -361,7 +361,7 @@ jobs:
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
       - name: Download Python SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: python-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
@@ -449,7 +449,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNETVERSION }}
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -463,7 +463,7 @@ jobs:
       - name: Update path
         run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
       - name: Download NodeJS SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -472,7 +472,7 @@ jobs:
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
       - name: Download DotNet SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: dotnet-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
