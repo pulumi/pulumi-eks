@@ -1237,7 +1237,7 @@ ${customUserData}
             userData: userdata,
             tagSpecifications: args.launchTemplateTagSpecifications,
         },
-        { parent, provider },
+        { parent, provider, ignoreChanges: ["instanceType"] },
     );
 
     // Compute the worker node group subnets to use from the various approaches.
