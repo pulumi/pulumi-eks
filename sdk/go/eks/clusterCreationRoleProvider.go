@@ -7,8 +7,8 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
-	"github.com/pulumi/pulumi-eks/sdk/go/eks/internal"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
@@ -27,7 +27,7 @@ func NewClusterCreationRoleProvider(ctx *pulumi.Context,
 		args = &ClusterCreationRoleProviderArgs{}
 	}
 
-	opts = internal.PkgResourceDefaultOpts(opts)
+	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource ClusterCreationRoleProvider
 	err := ctx.RegisterRemoteComponentResource("eks:index:ClusterCreationRoleProvider", name, args, &resource, opts...)
 	if err != nil {

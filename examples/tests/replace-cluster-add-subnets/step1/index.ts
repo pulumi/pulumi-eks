@@ -14,7 +14,7 @@ const vpc = new awsx.ec2.Vpc(`${projectName}`, {
 const publicSubnetIds = vpc.publicSubnetIds;
 
 const cluster = new eks.Cluster(`${projectName}`, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     publicSubnetIds: publicSubnetIds,
     deployDashboard: false,
 });

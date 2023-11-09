@@ -1,12 +1,12 @@
 {
     "name": "example-managed-nodegroups",
     "devDependencies": {
-        "typescript": "^3.0.0",
-        "@types/node": "latest"
+        "@types/node": "latest",
+        "typescript": "^4.0.0"
     },
     "dependencies": {
-        "@pulumi/pulumi": "^3.0.0",
-        "@pulumi/aws": "^5.31.0",
-        "@pulumi/eks": "latest"
+        "@pulumi/aws": "^6.0.4",
+        "@pulumi/eks": "latest",
+        "@pulumi/pulumi": "^3.0.0"
     }
 }
