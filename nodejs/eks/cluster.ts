@@ -313,8 +313,8 @@ export function getRoleProvider(
     parent?: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): CreationRoleProvider {
-    const partition = pulumi.output(aws.getPartition({ parent })).partition;
-    const accountId = pulumi.output(aws.getCallerIdentity({ parent })).accountId;
+    const partition = aws.getPartitionOutput({}, { parent }).partition;
+    const accountId = pulumi.output(aws.getCallerIdentity({}, { parent })).accountId;
     const iamRole = new aws.iam.Role(
         `${name}-eksClusterCreatorRole`,
         {
@@ -438,7 +438,7 @@ export function createCore(
         nodeAssociatePublicIpAddress: args.nodeAssociatePublicIpAddress,
         instanceType: args.instanceType,
         nodePublicKey: args.nodePublicKey,
-        encryptRootBlockDevice: args.encryptRootBlockDevice || args.encryptRootBockDevice,
+        nodeRootVolumeEncrypted: args.nodeRootVolumeEncrypted,
         nodeRootVolumeSize: args.nodeRootVolumeSize,
         nodeUserData: args.nodeUserData,
         minSize: args.minSize,
@@ -449,7 +449,7 @@ export function createCore(
         version: args.version,
     };
 
-    const { partition, dnsSuffix } = pulumi.output(aws.getPartition({ parent }));
+    const { partition, dnsSuffix } = aws.getPartitionOutput({}, { parent });
 
     // Configure default networking architecture.
     let vpcId: pulumi.Input<string> = args.vpcId!;
@@ -619,7 +619,7 @@ export function createCore(
             const timeoutMilliseconds = 5000; // Retry timeout
             for (let i = 0; i < maxRetries; i++) {
                 try {
-                    await new Promise((resolve, reject) => {
+                    await new Promise<void>((resolve, reject) => {
                         const options = {
                             ...url.parse(healthz),
                             rejectUnauthorized: false, // EKS API server uses self-signed cert
@@ -1275,16 +1275,8 @@ export interface ClusterOptions {
 
     /**
      * Encrypt the root block device of the nodes in the node group.
-     *
-     * @deprecated This option has been deprecated due to a misspelling.
-     * Use the correct encryptRootBlockDevice option instead.
      */
-    encryptRootBockDevice?: pulumi.Input<boolean>;
-
-    /**
-     * Encrypt the root block device of the nodes in the node group.
-     */
-    encryptRootBlockDevice?: pulumi.Input<boolean>;
+    nodeRootVolumeEncrypted?: pulumi.Input<boolean>;
 
     /**
      * The tags to apply to the default `nodeSecurityGroup` created by the cluster.

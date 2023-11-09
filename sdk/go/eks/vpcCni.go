@@ -8,7 +8,7 @@ import (
 	"reflect"
 
 	"errors"
-	"github.com/pulumi/pulumi-eks/sdk/go/eks/internal"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
@@ -28,7 +28,7 @@ func NewVpcCni(ctx *pulumi.Context,
 	if args.Kubeconfig == nil {
 		return nil, errors.New("invalid value for required argument 'Kubeconfig'")
 	}
-	opts = internal.PkgResourceDefaultOpts(opts)
+	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource VpcCni
 	err := ctx.RegisterResource("eks:index:VpcCni", name, args, &resource, opts...)
 	if err != nil {

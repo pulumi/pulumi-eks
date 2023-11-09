@@ -1,6 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
+import { SubnetType } from "@pulumi/awsx/ec2";
 
 const projectName = pulumi.getProject();
 const tags = { "project": "subnets", "owner": "pulumi"};
@@ -9,15 +10,13 @@ const tags = { "project": "subnets", "owner": "pulumi"};
 const vpc = new awsx.ec2.Vpc("vpc",
     {
         tags: {"Name": `${projectName}`, ...tags},
-        subnets: [
-            // Tag subnets for specific load-balancer usage.
-            // Any non-null tag value is valid.
-            // See:
-            //  - https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html
-            //  - https://github.com/pulumi/pulumi-eks/issues/196
-            //  - https://github.com/pulumi/pulumi-eks/issues/415
-            {type: "public", tags: {"kubernetes.io/role/elb": "1", ...tags}},
-            {type: "private", tags: {"kubernetes.io/role/internal-elb": "1", ...tags}},
+        // Tag subnets for specific load-balancer usage.
+        // Any non-null tag value is valid.
+        // See:
+        //  - https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html
+        subnetSpecs: [
+            {type: SubnetType.Public, tags: {"kubernetes.io/role/elb": "1", ...tags}},
+            {type: SubnetType.Private, tags: {"kubernetes.io/role/internal-elb": "1", ...tags}},
         ],
     },
     {
@@ -40,7 +39,7 @@ const vpc = new awsx.ec2.Vpc("vpc",
 
 // Create a cluster using the VPC and subnets.
 const cluster = new eks.Cluster(`${projectName}`, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     privateSubnetIds: vpc.privateSubnetIds,
     tags,

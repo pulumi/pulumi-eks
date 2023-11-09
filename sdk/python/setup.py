@@ -39,8 +39,8 @@ setup(name='pulumi_eks',
       install_requires=[
           'parver>=0.2.1',
           'pulumi>=3.0.0,<4.0.0',
-          'pulumi-aws>=5.0.0,<6.0.0',
-          'pulumi-kubernetes>=3.0.0,<4.0.0',
+          'pulumi-aws>=6.0.0,<7.0.0',
+          'pulumi-kubernetes>=4.0.0,<5.0.0',
           'semver>=2.8.1'
       ],
       zip_safe=False)

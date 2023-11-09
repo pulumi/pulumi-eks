@@ -167,21 +167,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Encrypt the root block device of the nodes in the node group.
-     * 
-     */
-    @Import(name="encryptRootBlockDevice")
-    private @Nullable Output<Boolean> encryptRootBlockDevice;
-
-    /**
-     * @return Encrypt the root block device of the nodes in the node group.
-     * 
-     */
-    public Optional<Output<Boolean>> encryptRootBlockDevice() {
-        return Optional.ofNullable(this.encryptRootBlockDevice);
-    }
-
-    /**
      * KMS Key ARN to use with the encryption configuration for the cluster.
      * 
      * Only available on Kubernetes 1.13+ clusters created after March 6, 2020.
@@ -510,6 +495,21 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<String>> nodePublicKey() {
         return Optional.ofNullable(this.nodePublicKey);
+    }
+
+    /**
+     * Encrypt the root block device of the nodes in the node group.
+     * 
+     */
+    @Import(name="nodeRootVolumeEncrypted")
+    private @Nullable Output<Boolean> nodeRootVolumeEncrypted;
+
+    /**
+     * @return Encrypt the root block device of the nodes in the node group.
+     * 
+     */
+    public Optional<Output<Boolean>> nodeRootVolumeEncrypted() {
+        return Optional.ofNullable(this.nodeRootVolumeEncrypted);
     }
 
     /**
@@ -951,7 +951,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.defaultAddonsToRemove = $.defaultAddonsToRemove;
         this.desiredCapacity = $.desiredCapacity;
         this.enabledClusterLogTypes = $.enabledClusterLogTypes;
-        this.encryptRootBlockDevice = $.encryptRootBlockDevice;
         this.encryptionConfigKeyArn = $.encryptionConfigKeyArn;
         this.endpointPrivateAccess = $.endpointPrivateAccess;
         this.endpointPublicAccess = $.endpointPublicAccess;
@@ -969,6 +968,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.nodeAssociatePublicIpAddress = $.nodeAssociatePublicIpAddress;
         this.nodeGroupOptions = $.nodeGroupOptions;
         this.nodePublicKey = $.nodePublicKey;
+        this.nodeRootVolumeEncrypted = $.nodeRootVolumeEncrypted;
         this.nodeRootVolumeSize = $.nodeRootVolumeSize;
         this.nodeSecurityGroupTags = $.nodeSecurityGroupTags;
         this.nodeSubnetIds = $.nodeSubnetIds;
@@ -1201,27 +1201,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder enabledClusterLogTypes(String... enabledClusterLogTypes) {
             return enabledClusterLogTypes(List.of(enabledClusterLogTypes));
-        }
-
-        /**
-         * @param encryptRootBlockDevice Encrypt the root block device of the nodes in the node group.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder encryptRootBlockDevice(@Nullable Output<Boolean> encryptRootBlockDevice) {
-            $.encryptRootBlockDevice = encryptRootBlockDevice;
-            return this;
-        }
-
-        /**
-         * @param encryptRootBlockDevice Encrypt the root block device of the nodes in the node group.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder encryptRootBlockDevice(Boolean encryptRootBlockDevice) {
-            return encryptRootBlockDevice(Output.of(encryptRootBlockDevice));
         }
 
         /**
@@ -1667,6 +1646,27 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder nodePublicKey(String nodePublicKey) {
             return nodePublicKey(Output.of(nodePublicKey));
+        }
+
+        /**
+         * @param nodeRootVolumeEncrypted Encrypt the root block device of the nodes in the node group.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeRootVolumeEncrypted(@Nullable Output<Boolean> nodeRootVolumeEncrypted) {
+            $.nodeRootVolumeEncrypted = nodeRootVolumeEncrypted;
+            return this;
+        }
+
+        /**
+         * @param nodeRootVolumeEncrypted Encrypt the root block device of the nodes in the node group.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeRootVolumeEncrypted(Boolean nodeRootVolumeEncrypted) {
+            return nodeRootVolumeEncrypted(Output.of(nodeRootVolumeEncrypted));
         }
 
         /**

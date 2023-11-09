@@ -27,7 +27,6 @@ class ClusterArgs:
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
                  endpoint_private_access: Optional[pulumi.Input[bool]] = None,
                  endpoint_public_access: Optional[pulumi.Input[bool]] = None,
@@ -45,6 +44,7 @@ class ClusterArgs:
                  node_associate_public_ip_address: Optional[bool] = None,
                  node_group_options: Optional['ClusterNodeGroupOptionsArgs'] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
+                 node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
                  node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
@@ -83,7 +83,6 @@ class ClusterArgs:
         :param pulumi.Input[Sequence[pulumi.Input[str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] enabled_cluster_log_types: Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
-        :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
         :param pulumi.Input[str] encryption_config_key_arn: KMS Key ARN to use with the encryption configuration for the cluster.
                
                Only available on Kubernetes 1.13+ clusters created after March 6, 2020.
@@ -139,6 +138,7 @@ class ClusterArgs:
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
+        :param pulumi.Input[bool] node_root_volume_encrypted: Encrypt the root block device of the nodes in the node group.
         :param pulumi.Input[int] node_root_volume_size: The size in GiB of a cluster node's root volume. Defaults to 20.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] node_security_group_tags: The tags to apply to the default `nodeSecurityGroup` created by the cluster.
                
@@ -240,8 +240,6 @@ class ClusterArgs:
             pulumi.set(__self__, "desired_capacity", desired_capacity)
         if enabled_cluster_log_types is not None:
             pulumi.set(__self__, "enabled_cluster_log_types", enabled_cluster_log_types)
-        if encrypt_root_block_device is not None:
-            pulumi.set(__self__, "encrypt_root_block_device", encrypt_root_block_device)
         if encryption_config_key_arn is not None:
             pulumi.set(__self__, "encryption_config_key_arn", encryption_config_key_arn)
         if endpoint_private_access is not None:
@@ -276,6 +274,8 @@ class ClusterArgs:
             pulumi.set(__self__, "node_group_options", node_group_options)
         if node_public_key is not None:
             pulumi.set(__self__, "node_public_key", node_public_key)
+        if node_root_volume_encrypted is not None:
+            pulumi.set(__self__, "node_root_volume_encrypted", node_root_volume_encrypted)
         if node_root_volume_size is not None:
             pulumi.set(__self__, "node_root_volume_size", node_root_volume_size)
         if node_security_group_tags is not None:
@@ -420,18 +420,6 @@ class ClusterArgs:
     @enabled_cluster_log_types.setter
     def enabled_cluster_log_types(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
         pulumi.set(self, "enabled_cluster_log_types", value)
-
-    @property
-    @pulumi.getter(name="encryptRootBlockDevice")
-    def encrypt_root_block_device(self) -> Optional[pulumi.Input[bool]]:
-        """
-        Encrypt the root block device of the nodes in the node group.
-        """
-        return pulumi.get(self, "encrypt_root_block_device")
-
-    @encrypt_root_block_device.setter
-    def encrypt_root_block_device(self, value: Optional[pulumi.Input[bool]]):
-        pulumi.set(self, "encrypt_root_block_device", value)
 
     @property
     @pulumi.getter(name="encryptionConfigKeyArn")
@@ -674,6 +662,18 @@ class ClusterArgs:
     @node_public_key.setter
     def node_public_key(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "node_public_key", value)
+
+    @property
+    @pulumi.getter(name="nodeRootVolumeEncrypted")
+    def node_root_volume_encrypted(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Encrypt the root block device of the nodes in the node group.
+        """
+        return pulumi.get(self, "node_root_volume_encrypted")
+
+    @node_root_volume_encrypted.setter
+    def node_root_volume_encrypted(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "node_root_volume_encrypted", value)
 
     @property
     @pulumi.getter(name="nodeRootVolumeSize")
@@ -993,7 +993,6 @@ class Cluster(pulumi.ComponentResource):
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
                  endpoint_private_access: Optional[pulumi.Input[bool]] = None,
                  endpoint_public_access: Optional[pulumi.Input[bool]] = None,
@@ -1011,6 +1010,7 @@ class Cluster(pulumi.ComponentResource):
                  node_associate_public_ip_address: Optional[bool] = None,
                  node_group_options: Optional[pulumi.InputType['ClusterNodeGroupOptionsArgs']] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
+                 node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
                  node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
@@ -1053,7 +1053,6 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[Sequence[pulumi.Input[str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] enabled_cluster_log_types: Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
-        :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
         :param pulumi.Input[str] encryption_config_key_arn: KMS Key ARN to use with the encryption configuration for the cluster.
                
                Only available on Kubernetes 1.13+ clusters created after March 6, 2020.
@@ -1109,6 +1108,7 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
+        :param pulumi.Input[bool] node_root_volume_encrypted: Encrypt the root block device of the nodes in the node group.
         :param pulumi.Input[int] node_root_volume_size: The size in GiB of a cluster node's root volume. Defaults to 20.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] node_security_group_tags: The tags to apply to the default `nodeSecurityGroup` created by the cluster.
                
@@ -1226,7 +1226,6 @@ class Cluster(pulumi.ComponentResource):
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
                  endpoint_private_access: Optional[pulumi.Input[bool]] = None,
                  endpoint_public_access: Optional[pulumi.Input[bool]] = None,
@@ -1244,6 +1243,7 @@ class Cluster(pulumi.ComponentResource):
                  node_associate_public_ip_address: Optional[bool] = None,
                  node_group_options: Optional[pulumi.InputType['ClusterNodeGroupOptionsArgs']] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
+                 node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
                  node_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
@@ -1283,7 +1283,6 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["default_addons_to_remove"] = default_addons_to_remove
             __props__.__dict__["desired_capacity"] = desired_capacity
             __props__.__dict__["enabled_cluster_log_types"] = enabled_cluster_log_types
-            __props__.__dict__["encrypt_root_block_device"] = encrypt_root_block_device
             __props__.__dict__["encryption_config_key_arn"] = encryption_config_key_arn
             __props__.__dict__["endpoint_private_access"] = endpoint_private_access
             __props__.__dict__["endpoint_public_access"] = endpoint_public_access
@@ -1301,6 +1300,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["node_associate_public_ip_address"] = node_associate_public_ip_address
             __props__.__dict__["node_group_options"] = node_group_options
             __props__.__dict__["node_public_key"] = node_public_key
+            __props__.__dict__["node_root_volume_encrypted"] = node_root_volume_encrypted
             __props__.__dict__["node_root_volume_size"] = node_root_volume_size
             __props__.__dict__["node_security_group_tags"] = node_security_group_tags
             __props__.__dict__["node_subnet_ids"] = node_subnet_ids

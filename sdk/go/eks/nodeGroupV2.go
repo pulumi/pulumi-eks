@@ -8,10 +8,10 @@ import (
 	"reflect"
 
 	"errors"
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/autoscaling"
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
-	"github.com/pulumi/pulumi-eks/sdk/go/eks/internal"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/autoscaling"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
@@ -38,7 +38,7 @@ func NewNodeGroupV2(ctx *pulumi.Context,
 	if args.Cluster == nil {
 		return nil, errors.New("invalid value for required argument 'Cluster'")
 	}
-	opts = internal.PkgResourceDefaultOpts(opts)
+	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource NodeGroupV2
 	err := ctx.RegisterRemoteComponentResource("eks:index:NodeGroupV2", name, args, &resource, opts...)
 	if err != nil {

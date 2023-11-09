@@ -197,12 +197,6 @@ namespace Pulumi.Eks
         }
 
         /// <summary>
-        /// Encrypt the root block device of the nodes in the node group.
-        /// </summary>
-        [Input("encryptRootBlockDevice")]
-        public Input<bool>? EncryptRootBlockDevice { get; set; }
-
-        /// <summary>
         /// KMS Key ARN to use with the encryption configuration for the cluster.
         /// 
         /// Only available on Kubernetes 1.13+ clusters created after March 6, 2020.
@@ -347,6 +341,12 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("nodePublicKey")]
         public Input<string>? NodePublicKey { get; set; }
+
+        /// <summary>
+        /// Encrypt the root block device of the nodes in the node group.
+        /// </summary>
+        [Input("nodeRootVolumeEncrypted")]
+        public Input<bool>? NodeRootVolumeEncrypted { get; set; }
 
         /// <summary>
         /// The size in GiB of a cluster node's root volume. Defaults to 20.

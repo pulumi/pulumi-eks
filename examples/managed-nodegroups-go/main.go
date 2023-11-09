@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
-	"github.com/pulumi/pulumi-eks/sdk/go/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -76,7 +76,7 @@ func main() {
 		}
 
 		cluster, err := eks.NewCluster(ctx, "example-managed-nodegroups-go", &eks.ClusterArgs{
-			SkipDefaultNodeGroup: pulumi.BoolPtr(true),
+			SkipDefaultNodeGroup: pulumi.BoolRef(true),
 			InstanceRoles: iam.RoleArray{
 				role0,
 				role1,
