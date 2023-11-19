@@ -7,14 +7,14 @@ import (
 	"github.com/pulumi/providertest"
 )
 
-func TestExamples(t *testing.T) {
+func TestExamplesUpgrades(t *testing.T) {
 	t.Run("cluster", func(t *testing.T) {
 		runExampleParallel(t, "cluster")
 	})
 
 	t.Run("aws-profile", func(t *testing.T) {
 		t.Skip("Fails with 'ALT_AWS_PROFILE must be set'")
-		test(t, "../examples/aws-profile").Run(t)
+		runExampleParallel(t, "aws-profile")
 	})
 
 	t.Run("aws-profile-role", func(t *testing.T) {
@@ -38,7 +38,7 @@ func TestExamples(t *testing.T) {
 	})
 
 	t.Run("managed-nodegroups", func(t *testing.T) {
-		test(t, "../examples/managed-nodegroups").Run(t)
+		runExampleParallel(t, "managed-nodegroups")
 	})
 
 	t.Run("modify-default-eks-sg", func(t *testing.T) {
