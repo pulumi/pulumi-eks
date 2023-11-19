@@ -2,9 +2,12 @@ package provider
 
 import (
 	"fmt"
+	"log"
+	"strings"
 	"testing"
 
 	"github.com/pulumi/providertest"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestExamplesUpgrades(t *testing.T) {
@@ -82,6 +85,23 @@ func runExampleParallel(t *testing.T, example string, opts ...providertest.Optio
 }
 
 func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.ProviderTest {
+	eksDiffValidation := func(t *testing.T, diffs providertest.Diffs) {
+		for _, diff := range diffs {
+			if !diff.HasChanges {
+				continue
+			}
+
+			if strings.Contains(string(diff.URN), "pulumi:providers:kubernetes::") &&
+				len(diff.Diffs) == 1 &&
+				diff.Diffs[0] == "version" {
+				log.Println("Ignoring version change for kubernetes provider")
+				continue
+			}
+
+			assert.Falsef(t, diff.HasChanges, "Unexpected difference: %+v", diff)
+		}
+	}
+
 	opts = append(opts,
 		providertest.WithProviderName("eks"),
 
@@ -97,6 +117,8 @@ func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.P
 
 		// This region needs to match the one configured in .github for the CI workflows.
 		providertest.WithConfig("aws:region", "us-west-2"),
+
+		providertest.WithDiffValidation(eksDiffValidation),
 	)
 	return providertest.NewProviderTest(dir, opts...)
 }
