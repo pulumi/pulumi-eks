@@ -12,7 +12,6 @@ import (
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
 	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // ManagedNodeGroup is a component that wraps creating an AWS managed node group.
@@ -185,12 +184,6 @@ func (i *ManagedNodeGroup) ToManagedNodeGroupOutputWithContext(ctx context.Conte
 	return pulumi.ToOutputWithContext(ctx, i).(ManagedNodeGroupOutput)
 }
 
-func (i *ManagedNodeGroup) ToOutput(ctx context.Context) pulumix.Output[*ManagedNodeGroup] {
-	return pulumix.Output[*ManagedNodeGroup]{
-		OutputState: i.ToManagedNodeGroupOutputWithContext(ctx).OutputState,
-	}
-}
-
 // ManagedNodeGroupArrayInput is an input type that accepts ManagedNodeGroupArray and ManagedNodeGroupArrayOutput values.
 // You can construct a concrete instance of `ManagedNodeGroupArrayInput` via:
 //
@@ -214,12 +207,6 @@ func (i ManagedNodeGroupArray) ToManagedNodeGroupArrayOutput() ManagedNodeGroupA
 
 func (i ManagedNodeGroupArray) ToManagedNodeGroupArrayOutputWithContext(ctx context.Context) ManagedNodeGroupArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(ManagedNodeGroupArrayOutput)
-}
-
-func (i ManagedNodeGroupArray) ToOutput(ctx context.Context) pulumix.Output[[]*ManagedNodeGroup] {
-	return pulumix.Output[[]*ManagedNodeGroup]{
-		OutputState: i.ToManagedNodeGroupArrayOutputWithContext(ctx).OutputState,
-	}
 }
 
 // ManagedNodeGroupMapInput is an input type that accepts ManagedNodeGroupMap and ManagedNodeGroupMapOutput values.
@@ -247,12 +234,6 @@ func (i ManagedNodeGroupMap) ToManagedNodeGroupMapOutputWithContext(ctx context.
 	return pulumi.ToOutputWithContext(ctx, i).(ManagedNodeGroupMapOutput)
 }
 
-func (i ManagedNodeGroupMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*ManagedNodeGroup] {
-	return pulumix.Output[map[string]*ManagedNodeGroup]{
-		OutputState: i.ToManagedNodeGroupMapOutputWithContext(ctx).OutputState,
-	}
-}
-
 type ManagedNodeGroupOutput struct{ *pulumi.OutputState }
 
 func (ManagedNodeGroupOutput) ElementType() reflect.Type {
@@ -265,12 +246,6 @@ func (o ManagedNodeGroupOutput) ToManagedNodeGroupOutput() ManagedNodeGroupOutpu
 
 func (o ManagedNodeGroupOutput) ToManagedNodeGroupOutputWithContext(ctx context.Context) ManagedNodeGroupOutput {
 	return o
-}
-
-func (o ManagedNodeGroupOutput) ToOutput(ctx context.Context) pulumix.Output[*ManagedNodeGroup] {
-	return pulumix.Output[*ManagedNodeGroup]{
-		OutputState: o.OutputState,
-	}
 }
 
 // The AWS managed node group.
@@ -292,12 +267,6 @@ func (o ManagedNodeGroupArrayOutput) ToManagedNodeGroupArrayOutputWithContext(ct
 	return o
 }
 
-func (o ManagedNodeGroupArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*ManagedNodeGroup] {
-	return pulumix.Output[[]*ManagedNodeGroup]{
-		OutputState: o.OutputState,
-	}
-}
-
 func (o ManagedNodeGroupArrayOutput) Index(i pulumi.IntInput) ManagedNodeGroupOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *ManagedNodeGroup {
 		return vs[0].([]*ManagedNodeGroup)[vs[1].(int)]
@@ -316,12 +285,6 @@ func (o ManagedNodeGroupMapOutput) ToManagedNodeGroupMapOutput() ManagedNodeGrou
 
 func (o ManagedNodeGroupMapOutput) ToManagedNodeGroupMapOutputWithContext(ctx context.Context) ManagedNodeGroupMapOutput {
 	return o
-}
-
-func (o ManagedNodeGroupMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*ManagedNodeGroup] {
-	return pulumix.Output[map[string]*ManagedNodeGroup]{
-		OutputState: o.OutputState,
-	}
 }
 
 func (o ManagedNodeGroupMapOutput) MapIndex(k pulumi.StringInput) ManagedNodeGroupOutput {
