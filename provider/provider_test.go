@@ -42,6 +42,7 @@ func TestExamplesUpgrades(t *testing.T) {
 	})
 
 	t.Run("modify-default-eks-sg", func(t *testing.T) {
+		t.Skip("upgradetest doesn't understand invoke aws:ec2/getSecurityGroup:getSecurityGroup")
 		runExampleParallel(t, "modify-default-eks-sg")
 	})
 
@@ -54,6 +55,7 @@ func TestExamplesUpgrades(t *testing.T) {
 	})
 
 	t.Run("scoped-kubeconfigs", func(t *testing.T) {
+		t.Skip("Requires source change for args of GetCallerIdentityArgs")
 		runExampleParallel(t, "scoped-kubeconfigs")
 	})
 
