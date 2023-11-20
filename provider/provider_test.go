@@ -37,6 +37,7 @@ func TestExamplesUpgrades(t *testing.T) {
 	})
 
 	t.Run("fargate", func(t *testing.T) {
+		t.Skip("upgradetest doesn't understand invoke getSecurityGroup, tracked by providertest #31")
 		runExampleParallel(t, "fargate")
 	})
 
