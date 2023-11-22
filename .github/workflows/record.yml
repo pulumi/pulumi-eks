@@ -263,12 +263,13 @@ jobs:
             run: |
               cd provider && go test -tags nodejs -run '${{ inputs.runTests }}' -provider-snapshot -v -json -count=1 -cover -timeout 4h -parallel 20 . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
-            # TODO,tkappler Not sure what is happening here, but gotestfmt-action seems to download and unpack into our root folder.
+            # TODO,tkappler Not sure why this is happening, but gotestfmt-action seems to download and unpack into the repository's root folder.
             # https://github.com/GoTestTools/gotestfmt-action/blob/v2/index.js#L6
           - name: Clean up after gotestfmt
             continue-on-error: true
             run: |
               rm gotestfmt
+              rm LICENSE.md
               git restore README.md
           - name: Open a PR with newly recorded test snapshots
             id: create-pr
