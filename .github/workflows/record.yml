@@ -162,10 +162,7 @@ jobs:
             matrix:
               language:
                 - nodejs
-                # - python
-                # - dotnet
-                # - go
-                # - java
+                # We can add other languages here once pulumi/providertest#23 is implemented.
 
     record:
         name: record
@@ -282,4 +279,3 @@ jobs:
                 title: "Update Provider Test Snapshots"
                 token: ${{ secrets.PULUMI_BOT_TOKEN }}
                 base: ${{ inputs.targetBranch }}
-    
