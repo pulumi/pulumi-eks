@@ -39,9 +39,9 @@ const myCluster = new eks.Cluster(`${projectName}`, {
 export const kubeconfig = myCluster.kubeconfig;
 export const clusterName = myCluster.core.cluster.name;
 
-// Create a Standard node group of t2.medium workers.
+// Create a Standard node group of t3.medium workers.
 const ngStandard = utils.createNodeGroup(`${projectName}-ng-standard`, {
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 3,
     cluster: myCluster,
     instanceProfile: instanceProfiles[0],

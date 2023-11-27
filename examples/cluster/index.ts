@@ -36,7 +36,7 @@ const cluster3 = new eks.Cluster(`${projectName}-3`, {
         desiredCapacity: 1,
         minSize: 1,
         maxSize: 1,
-        instanceType: "t2.small",
+        instanceType: "t3.small",
     }
 })
 
