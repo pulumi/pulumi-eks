@@ -39,6 +39,9 @@ const ngInstanceProfile = new aws.iam.InstanceProfile(
 const cluster = new eks.Cluster(`${projectName}`, {
   skipDefaultNodeGroup: true,
   instanceRoles: [ngRole],
+  nodeGroupOptions: {
+    instanceType: "t3.small",
+  },
 });
 
 // Export the cluster kubeconfig.
@@ -91,6 +94,7 @@ const publicInternetEgressRule = new aws.ec2.SecurityGroupRule(
 cluster.createNodeGroup("example-ng", {
   instanceProfile: ngInstanceProfile,
   extraNodeSecurityGroups: [customSecurityGroup],
+  instanceType: "t3.small",
 });
 
 // Test with Node Group V2 that we can add a plain type SG and a SG from the cluster as a

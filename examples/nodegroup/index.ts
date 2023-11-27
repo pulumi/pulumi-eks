@@ -31,7 +31,7 @@ const cluster1 = new eks.Cluster("example-nodegroup-iam-simple", {
 // Create the node group using an `instanceProfile` tied to the shared, cluster
 // instance role registered with the cluster auth through `instanceRole`.
 cluster1.createNodeGroup("example-ng-simple-ondemand", {
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -41,7 +41,7 @@ cluster1.createNodeGroup("example-ng-simple-ondemand", {
 
 const ng = new eks.NodeGroupV2("example-ng2-simple-ondemand", {
     cluster: cluster1,
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -49,10 +49,10 @@ const ng = new eks.NodeGroupV2("example-ng2-simple-ondemand", {
     instanceProfile: instanceProfile0,
 });
 
-// Create the second node group with spot t2.medium instance
+// Create the second node group with spot t3.medium instance
 const spot = new eks.NodeGroup("example-ng-simple-spot", {
     cluster: cluster1,
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -72,7 +72,7 @@ const spot = new eks.NodeGroup("example-ng-simple-spot", {
 
 const withLaunchTemplateTagSpecifications = new eks.NodeGroupV2("example-ng2-launchtemplate-tags", {
     cluster: cluster1,
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -119,7 +119,7 @@ const cluster2 = new eks.Cluster("example-nodegroup-iam-advanced", {
 // Create node groups using a different `instanceProfile` tied to one of the many
 // instance roles registered with the cluster auth through `instanceRoles`.
 cluster2.createNodeGroup("example-ng-advanced-ondemand", {
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -129,7 +129,7 @@ cluster2.createNodeGroup("example-ng-advanced-ondemand", {
 
 const ng2 = new eks.NodeGroupV2("example-ng-advanced-ondemand", {
     cluster: cluster2,
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
@@ -139,7 +139,7 @@ const ng2 = new eks.NodeGroupV2("example-ng-advanced-ondemand", {
 
 const spot2 = new eks.NodeGroup("example-ng-advanced-spot", {
     cluster: cluster2,
-    instanceType: "t2.medium",
+    instanceType: "t3.medium",
     desiredCapacity: 1,
     spotPrice: "1",
     minSize: 1,
