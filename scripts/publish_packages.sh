@@ -67,7 +67,7 @@ publish() {
     pushd ${ROOT}/sdk/python/bin
     twine upload \
         -u "pulumi" -p "${PYPI_PASSWORD}" \
-        "dist/*.tar.gz" \
+        "dist/*" \
         --skip-existing \
         --verbose
     popd

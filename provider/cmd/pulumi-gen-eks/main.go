@@ -1363,6 +1363,9 @@ func generateSchema() schema.PackageSpec {
 				// TODO: Embellish the readme
 				"readme":                       "Pulumi Amazon Web Services (AWS) EKS Components.",
 				"liftSingleValueMethodReturns": true,
+				"pyproject": map[string]any{
+					"enabled": true,
+				},
 			}),
 			"go": rawMessage(map[string]interface{}{
 				"generateResourceContainerTypes": true,

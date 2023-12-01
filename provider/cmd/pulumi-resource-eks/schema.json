@@ -32,6 +32,9 @@
         },
         "python": {
             "liftSingleValueMethodReturns": true,
+            "pyproject": {
+                "enabled": true
+            },
             "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
             "requires": {
                 "pulumi": "\u003e=3.0.0,\u003c4.0.0",
