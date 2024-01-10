@@ -5,7 +5,6 @@
 [![NuGet version](https://badge.fury.io/nu/pulumi.eks.svg)](https://badge.fury.io/nu/pulumi.eks)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/pulumi/pulumi-eks/sdk/go/eks)](https://pkg.go.dev/github.com/pulumi/pulumi-eks/sdk/go/eks)
 
-
 # Pulumi Amazon Web Services (AWS) EKS Components
 
 The Pulumi EKS library provides a Pulumi component that creates and manages the resources necessary to run an EKS Kubernetes cluster in AWS. This component exposes the Crosswalk for AWS functionality documented in the [Pulumi Elastic Kubernetes Service guide](https://www.pulumi.com/docs/guides/crosswalk/aws/eks/) as a package available in all Pulumi languages.
