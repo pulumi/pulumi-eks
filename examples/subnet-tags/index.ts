@@ -4,7 +4,7 @@ import * as eks from "@pulumi/eks";
 import { SubnetType } from "@pulumi/awsx/ec2";
 
 const projectName = pulumi.getProject();
-const tags = { "project": "subnets", "owner": "pulumi"};
+const tags = { "project": "subnets", "account": "pulumi"};
 
 // Create a VPC with subnets that are tagged for load balancer usage.
 const vpc = new awsx.ec2.Vpc("vpc",
