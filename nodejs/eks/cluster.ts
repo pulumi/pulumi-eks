@@ -927,7 +927,7 @@ export function createCore(
                     { parent, dependsOn: [eksNodeAccess], provider },
                 );
 
-                // Once the FargateProfile has been created, try to patch CoreDNS if needed.  See
+                // Once the FargateProfile has been created, try to patch/remove the CoreDNS computeType annotation.  See
                 // https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-coredns.
                 pulumi.all([result.id, selectors, kubeconfig]).apply(([_, sels, kconfig]) => {
                     // Only patch CoreDNS if there is a selector in the FargateProfile which causes
@@ -939,11 +939,26 @@ export function createCore(
                             // deployment that AWS deployed already as part of cluster creation.
                             const tmpKubeconfig = tmp.fileSync();
                             fs.writeFileSync(tmpKubeconfig.fd, JSON.stringify(kconfig));
+
+                            // Determine if the CoreDNS deployment has a computeType annotation.
+                            const cmdGetAnnos = `kubectl get deployment coredns -n kube-system -o jsonpath='{.spec.template.metadata.annotations}'`;
+                            const getAnnosOutput = childProcess.execSync(cmdGetAnnos, {
+                                env: {
+                                    ...process.env,
+                                    KUBECONFIG: tmpKubeconfig.name,
+                                },
+                            });
+                            const getAnnosOutputStr = getAnnosOutput.toString();
+                            // See if getAnnosOutputStr contains the annotation we're looking for.
+                            if (!getAnnosOutputStr.includes("eks.amazonaws.com/compute-type") ) {
+                                // No need to patch, the annotation is not present.
+                                return;
+                            }
+
                             const patch = [
                                 {
-                                    op: "replace",
+                                    op: "remove",
                                     path: "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type",
-                                    value: "fargate",
                                 },
                             ];
                             const cmd = `kubectl patch deployment coredns -n kube-system --type json -p='${JSON.stringify(
