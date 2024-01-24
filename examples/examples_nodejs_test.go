@@ -20,12 +20,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	appsv1 "k8s.io/api/apps/v1"
 	"os"
 	"os/exec"
 	"path"
 	"testing"
 	"time"
+
+	appsv1 "k8s.io/api/apps/v1"
 
 	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
@@ -50,21 +51,38 @@ func TestAccCluster(t *testing.T) {
 				assert.NotEmpty(t, info.Outputs["iamRoleArn"])
 
 				assert.NoError(t, utils.ValidateDaemonSet(t, info.Outputs["kubeconfig2"], "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
+					// The exact image names/versions are obtained from the manifest in `nodejs/eks/cni/aws-k8s-cni.yaml`.
+
+					var initContainerFound bool
 					for _, ic := range ds.Spec.Template.Spec.InitContainers {
-						assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni-init:v1.11.0",
-							ic.Image)
+						if ic.Name != "aws-vpc-cni-init" {
+							continue
+						}
+
+						initContainerFound = true
+						assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni-init:v1.16.0", ic.Image)
+
 						var tcpEarly bool
 						for _, env := range ic.Env {
 							if env.Name == "DISABLE_TCP_EARLY_DEMUX" {
 								tcpEarly = env.Value == "true"
-								assert.Equal(t, env.Value, "true")
 							}
 						}
 						assert.True(t, tcpEarly)
 					}
+					assert.True(t, initContainerFound)
+
+					var awsNodeContainerFound bool
 					for _, c := range ds.Spec.Template.Spec.Containers {
-						assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.11.0", c.Image)
+						switch c.Name {
+						case "aws-node":
+							awsNodeContainerFound = true
+							assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.16.0", c.Image)
+						case "aws-eks-nodeagent":
+							assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon/aws-network-policy-agent:v1.0.7", c.Image)
+						}
 					}
+					assert.True(t, awsNodeContainerFound)
 				}))
 			},
 		})
