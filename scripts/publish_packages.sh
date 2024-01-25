@@ -66,7 +66,7 @@ publish() {
     echo "Publishing Pip package to pypi as pulumi:"
     pushd ${ROOT}/sdk/python/bin
     twine upload \
-        -u "pulumi" -p "${PYPI_PASSWORD}" \
+        -u ${PYPI_USERNAME} -p "${PYPI_PASSWORD}" \
         "dist/*" \
         --skip-existing \
         --verbose
