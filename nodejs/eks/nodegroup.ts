@@ -1691,23 +1691,33 @@ function getRecommendedAMI(
 }
 
 /**
+ * ec2InstanceRegex is a regular expression that can be used to parse an EC2
+ * instance type string into its component parts. The component parts are:
+ * - family: The instance family (e.g., "c5")
+ * - generation: The instance generation (e.g., "2")
+ * - processor: The processor type (e.g., "g")
+ * - additionalCapabilities: Additional capabilities (e.g., "n")
+ * - size: The instance size (e.g., "large")
+ * These parts result in a string of the form: `c52gn.large`
+ */
+const ec2InstanceRegex = /([a-z]+)([0-9]+)([a-z])?\-?([a-z]+)?\.([a-zA-Z0-9\-]+)/;
+
+/**
  * isGravitonInstance returns true if the instance type is a Graviton instance.
  * We determine this by checking if the third character of the instance type is
  * a "g".
  *
  * See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html.
  */
-function isGravitonInstance(instanceType: pulumi.Input<string> | undefined): boolean {
-    if (!instanceType) {
-        return false;
+export function isGravitonInstance(instanceType: string): boolean {
+    const match = instanceType.toString().match(ec2InstanceRegex);
+    if (!match) {
+        throw new Error(`Invalid EC2 instance type: ${instanceType}`);
     }
 
-    const instanceStr = instanceType.toString();
-    if (instanceStr.length < 3) {
-        throw new Error(`Invalid instance type provided: ${instanceType}`);
-    }
+    const processorFamily = match[3];
 
-    return instanceStr[2] === "g";
+    return processorFamily === "g";
 }
 
 /**
@@ -1729,7 +1739,7 @@ function getAMIType(
         return "amazon-linux-2-gpu";
     }
 
-    if (isGravitonInstance(instanceType)) {
+    if (instanceType && isGravitonInstance(instanceType.toString())) {
         // Return the Amazon Linux 2 ARM64 AMI type.
         return "amazon-linux-2-arm64";
     }
