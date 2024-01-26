@@ -116,14 +116,12 @@ func TestAccFargate(t *testing.T) {
 				// (specifically us-west-2).
 				"aws:region": "us-east-2",
 			},
-			// TODO[pulumi/pulumi-eks#286] Disabled until we address CNI daemonset issues which
-			// cause those daemonset pods not to get scheduled.
-			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-			// 	utils.RunEKSSmokeTest(t,
-			// 		info.Deployment.Resources,
-			// 		info.Outputs["kubeconfig"],
-			// 	)
-			// },
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
 		})
 
 	integration.ProgramTest(t, &test)
