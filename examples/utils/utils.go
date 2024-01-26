@@ -155,7 +155,7 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 	}
 
 	// Require that the readyCount matches the desiredNodeCount / total Nodes.
-	require.Equal(t, readyCount, len(nodes.Items),
+	require.Equal(t, len(nodes.Items), readyCount,
 		"%d out of %d Nodes are ready", readyCount, len(nodes.Items))
 
 	// Output the overall ready status.
@@ -230,8 +230,8 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 
 		// Validate that the readyCount is not 0, and matches the total Deployments
 		// returned.
-		require.NotEqual(t, readyCount, 0, "No Deployments are ready")
-		require.Equal(t, readyCount, listLength,
+		require.NotEqual(t, 0, readyCount, "No Deployments are ready")
+		require.Equal(t, listLength, readyCount,
 			"%d out of %d Deployments are ready", readyCount, listLength)
 
 		PrintAndLog(fmt.Sprintf("%d out of %d Deployments are ready\n", readyCount, listLength), t)
@@ -255,8 +255,8 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 
 		// Validate that the readyCount is not 0, and matches the total ReplicaSets
 		// returned.
-		require.NotEqual(t, readyCount, 0, "No ReplicaSets are ready")
-		require.Equal(t, readyCount, listLength,
+		require.NotEqual(t, 0, readyCount, "No ReplicaSets are ready")
+		require.Equal(t, listLength, readyCount,
 			"%d out of %d ReplicaSets are ready", readyCount, listLength)
 
 		PrintAndLog(fmt.Sprintf("%d out of %d ReplicaSets are ready\n", readyCount, listLength), t)
@@ -280,8 +280,8 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list i
 
 		// Validate that the readyCount is not 0, and matches the total Deployments
 		// returned.
-		require.NotEqual(t, readyCount, 0, "No Pods are ready")
-		require.Equal(t, readyCount, listLength,
+		require.NotEqual(t, 0, readyCount, "No Pods are ready")
+		require.Equal(t, listLength, readyCount,
 			"%d out of %d Pods are ready", readyCount, listLength)
 
 		PrintAndLog(fmt.Sprintf("%d out of %d Pods are ready\n", readyCount, listLength), t)
