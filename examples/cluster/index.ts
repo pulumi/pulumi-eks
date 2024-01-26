@@ -40,10 +40,19 @@ const cluster3 = new eks.Cluster(`${projectName}-3`, {
     }
 })
 
+// cluster4 is a graviton cluster to test the ARM64 architecture
+// can be successfully provisioned.
+const cluster4 = new eks.Cluster(`${projectName}-4`, {
+    vpcId: vpc.vpcId,
+    publicSubnetIds: vpc.publicSubnetIds,
+    instanceType: "t4g.small",
+})
+
 // Export the clusters' kubeconfig.
 export const kubeconfig1 = cluster1.kubeconfig;
 export const kubeconfig2 = cluster2.kubeconfig;
 export const kubeconfig3 = cluster3.kubeconfig;
+export const kubeconfig4 = cluster4.kubeconfig;
 
 // export the IAM Role ARN of the cluster
 export const iamRoleArn = cluster1.core.clusterIamRole.arn;

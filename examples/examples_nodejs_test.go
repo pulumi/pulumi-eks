@@ -45,6 +45,7 @@ func TestAccCluster(t *testing.T) {
 					info.Outputs["kubeconfig1"],
 					info.Outputs["kubeconfig2"],
 					info.Outputs["kubeconfig3"],
+					info.Outputs["kubeconfig4"],
 				)
 
 				// let's test there's a iamRoleArn specified for the cluster

@@ -734,17 +734,7 @@ ${customUserData}
 
     const version = pulumi.output(args.version || core.cluster.version);
 
-    // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
-    let amiId: pulumi.Input<string> | undefined = args.amiId;
-    if (!amiId) {
-        const amiType = args.amiType ?? (args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2");
-        amiId = version.apply((v) => {
-            const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
-            return pulumi.output(
-                aws.ssm.getParameter({ name: parameterName }, { parent, async: true }),
-            ).value;
-        });
-    }
+    const amiId: pulumi.Input<string> = args.amiId || getRecommendedAMI(args, version, parent);
 
     // Enable auto-assignment of public IP addresses on worker nodes for
     // backwards compatibility on existing EKS clusters launched with it
@@ -1132,17 +1122,7 @@ ${customUserData}
 
     const version = pulumi.output(args.version || core.cluster.version);
 
-    // https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
-    let amiId: pulumi.Input<string> | undefined = args.amiId;
-    if (!amiId) {
-        const amiType = args.amiType ?? (args.gpu ? "amazon-linux-2-gpu" : "amazon-linux-2");
-        amiId = version.apply((v) => {
-            const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
-            return pulumi.output(
-                aws.ssm.getParameter({ name: parameterName }, { parent, async: true }),
-            ).value;
-        });
-    }
+    const amiId: pulumi.Input<string> = args.amiId || getRecommendedAMI(args, version, parent);
 
     // Enable auto-assignment of public IP addresses on worker nodes for
     // backwards compatibility on existing EKS clusters launched with it
@@ -1192,7 +1172,8 @@ ${customUserData}
         : {};
 
     const device = pulumi.output(amiId).apply((id) =>
-        aws.ec2.getAmi({
+        aws.ec2.getAmi(
+            {
                 owners: ["self", "amazon"],
                 filters: [
                     {
@@ -1200,7 +1181,9 @@ ${customUserData}
                         values: [id],
                     },
                 ],
-            }, { parent }),
+            },
+            { parent },
+        ),
     ).blockDeviceMappings[0].deviceName;
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
@@ -1684,4 +1667,82 @@ function createManagedNodeGroupInternal(
     );
 
     return nodeGroup;
+}
+
+/**
+ * getRecommendedAMI returns the recommended AMI to use for a given configuration
+ * when none is provided by the user.
+ *
+ * See: https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+ */
+function getRecommendedAMI(
+    args: Omit<NodeGroupOptions, "cluster"> | Omit<NodeGroupV2Options, "cluster">,
+    k8sVersion: pulumi.Output<string>,
+    parent: pulumi.Resource | undefined,
+): pulumi.Input<string> {
+    const amiType = getAMIType(args.amiType, args.gpu, args.instanceType);
+    const amiID = k8sVersion.apply((v) => {
+        const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
+        return pulumi.output(aws.ssm.getParameter({ name: parameterName }, { parent, async: true }))
+            .value;
+    });
+
+    return amiID;
+}
+
+/**
+ * ec2InstanceRegex is a regular expression that can be used to parse an EC2
+ * instance type string into its component parts. The component parts are:
+ * - family: The instance family (e.g., "c5")
+ * - generation: The instance generation (e.g., "2")
+ * - processor: The processor type (e.g., "g")
+ * - additionalCapabilities: Additional capabilities (e.g., "n")
+ * - size: The instance size (e.g., "large")
+ * These parts result in a string of the form: `c52gn.large`
+ */
+const ec2InstanceRegex = /([a-z]+)([0-9]+)([a-z])?\-?([a-z]+)?\.([a-zA-Z0-9\-]+)/;
+
+/**
+ * isGravitonInstance returns true if the instance type is a Graviton instance.
+ * We determine this by checking if the third character of the instance type is
+ * a "g".
+ *
+ * See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html.
+ */
+export function isGravitonInstance(instanceType: string): boolean {
+    const match = instanceType.toString().match(ec2InstanceRegex);
+    if (!match) {
+        throw new Error(`Invalid EC2 instance type: ${instanceType}`);
+    }
+
+    const processorFamily = match[3];
+
+    return processorFamily === "g";
+}
+
+/**
+ * getAMIType returns the AMI type to use for the given configuration based on the
+ * architecutre of the instance type.
+ */
+function getAMIType(
+    amiType: pulumi.Input<string> | undefined,
+    gpu: pulumi.Input<boolean> | undefined,
+    instanceType: pulumi.Input<string> | undefined,
+): string {
+    if (amiType) {
+        // Return the user-specified AMI type.
+        return amiType.toString();
+    }
+
+    if (gpu) {
+        // Return the Amazon Linux 2 GPU AMI type.
+        return "amazon-linux-2-gpu";
+    }
+
+    if (instanceType && isGravitonInstance(instanceType.toString())) {
+        // Return the Amazon Linux 2 ARM64 AMI type.
+        return "amazon-linux-2-arm64";
+    }
+
+    return "amazon-linux-2";
 }
