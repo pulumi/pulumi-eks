@@ -45,13 +45,7 @@ const cluster3 = new eks.Cluster(`${projectName}-3`, {
 const cluster4 = new eks.Cluster(`${projectName}-4`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
-    instanceType: "t4g.nano",
-    nodeGroupOptions: {
-        desiredCapacity: 1,
-        minSize: 1,
-        maxSize: 1,
-        instanceType: "t4g.nano",
-    }
+    instanceType: "t4g.small",
 })
 
 // Export the clusters' kubeconfig.
