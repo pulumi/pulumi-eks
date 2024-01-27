@@ -345,16 +345,9 @@ func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod *corev1.Pod) 
 }
 
 func ValidateDaemonSet(t *testing.T, kubeconfig interface{}, namespace, name string, validateFn func(*appsv1.DaemonSet)) error {
-	clusterMap, err := mapClusterToKubeAccess(kubeconfig)
+	clientSet, err := clientSetFromKubeconfig(kubeconfig)
 	if err != nil {
 		return err
-	}
-	if len(clusterMap) == 0 {
-		return fmt.Errorf("missing cluster kubeconfig")
-	}
-	var clientSet *kubernetes.Clientset
-	for _, kubeAccess := range clusterMap {
-		clientSet = kubeAccess.Clientset
 	}
 
 	var ds *appsv1.DaemonSet
@@ -596,4 +589,37 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 	}
 
 	return clusterToNodeCount, nil
+}
+
+// ValidateNodes validates the nodes in a cluster contain the expected values.
+func ValidateNodes(t *testing.T, kubeconfig any, validateFn func(*corev1.NodeList)) error {
+	clientSet, err := clientSetFromKubeconfig(kubeconfig)
+	if err != nil {
+		return err
+	}
+
+	nodes, err := clientSet.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	validateFn(nodes)
+
+	return nil
+}
+
+func clientSetFromKubeconfig(kubeconfig any) (*kubernetes.Clientset, error) {
+	clusterMap, err := mapClusterToKubeAccess(kubeconfig)
+	if err != nil {
+		return nil, err
+	}
+	if len(clusterMap) == 0 {
+		return nil, fmt.Errorf("missing cluster kubeconfig")
+	}
+
+	var clientSet *kubernetes.Clientset
+	for _, kubeAccess := range clusterMap {
+		clientSet = kubeAccess.Clientset
+	}
+	return clientSet, nil
 }
