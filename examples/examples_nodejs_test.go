@@ -27,10 +27,12 @@ import (
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 
 	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccCluster(t *testing.T) {
@@ -84,6 +86,19 @@ func TestAccCluster(t *testing.T) {
 						}
 					}
 					assert.True(t, awsNodeContainerFound)
+				}))
+
+				// Ensure that cluster 4 only has ARM64 nodes.
+				assert.NoError(t, utils.ValidateNodes(t, info.Outputs["kubeconfig4"], func(nodes *corev1.NodeList) {
+					require.NotNil(t, nodes)
+					assert.NotEmpty(t, nodes.Items)
+
+					for _, node := range nodes.Items {
+						assert.Equal(t, "arm64", node.Status.NodeInfo.Architecture)
+						require.NotNil(t, node.ObjectMeta.Labels)
+						assert.Equal(t, "arm64", node.ObjectMeta.Labels["kubernetes.io/arch"])
+					}
+
 				}))
 			},
 		})
