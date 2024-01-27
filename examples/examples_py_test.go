@@ -20,38 +20,35 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 )
 
 func TestAccAwsProfilePy(t *testing.T) {
-	t.Skip("Temp Skip")
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), "aws-profile-py"),
-			// TODO: Temporarily skip the extra runtime validation due to test failure.
-			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-			// 	utils.RunEKSSmokeTest(t,
-			// 		info.Deployment.Resources,
-			// 		info.Outputs["kubeconfig"],
-			// 	)
-			// },
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
 		})
 
 	integration.ProgramTest(t, &test)
 }
 
 func TestAccAwsProfileRolePy(t *testing.T) {
-	t.Skip("Temp Skip")
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), "aws-profile-role-py"),
-			// TODO: [pulumi/pulumi-eks#629] Temporarily skip the extra runtime validation due to test failure.
-			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-			// 	utils.RunEKSSmokeTest(t,
-			// 		info.Deployment.Resources,
-			// 		info.Outputs["kubeconfig"],
-			// 	)
-			// },
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
 		})
 
 	integration.ProgramTest(t, &test)
@@ -61,15 +58,14 @@ func TestAccClusterPy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), "cluster-py"),
-			// TODO: Temporarily skip the extra runtime validation due to test failure.
-			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-			// 	utils.RunEKSSmokeTest(t,
-			// 		info.Deployment.Resources,
-			// 		info.Outputs["kubeconfig1"],
-			// 		info.Outputs["kubeconfig2"],
-			//		info.Outputs["kubeconfig3"],
-			// 	)
-			// },
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+					info.Outputs["kubeconfig3"],
+				)
+			},
 		})
 
 	integration.ProgramTest(t, &test)
@@ -84,14 +80,12 @@ func TestAccFargatePy(t *testing.T) {
 				// (specifically us-west-2).
 				"aws:region": "us-east-2",
 			},
-			// TODO[pulumi/pulumi-eks#286] Disabled until we address CNI daemonset issues which
-			// cause those daemonset pods not to get scheduled.
-			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-			// 	utils.RunEKSSmokeTest(t,
-			// 		info.Deployment.Resources,
-			// 		info.Outputs["kubeconfig"],
-			// 	)
-			// },
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
 		})
 
 	integration.ProgramTest(t, &test)
@@ -112,13 +106,12 @@ func TestAccManagedNodeGroupPy(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			// RunUpdateTest: true,
 			Dir: filepath.Join(getCwd(t), "managed-nodegroups-py"),
-			// TODO: Temporarily skip the extra runtime validation due to test failure.
-			// ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-			// 	utils.RunEKSSmokeTest(t,
-			// 		info.Deployment.Resources,
-			// 		info.Outputs["kubeconfig"],
-			// 	)
-			// },
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
 		})
 
 	integration.ProgramTest(t, &test)
