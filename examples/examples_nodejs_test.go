@@ -19,7 +19,6 @@ package example
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -558,7 +557,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 
 						// Write kubeconfig to temp file & export it for use
 						// with kubectl.
-						kubeconfigFile, err := ioutil.TempFile(os.TempDir(), "kubeconfig-*.json")
+						kubeconfigFile, err := os.CreateTemp(os.TempDir(), "kubeconfig-*.json")
 						assert.NoError(t, err, "expected tempfile to be created: %v", err)
 						defer os.Remove(kubeconfigFile.Name())
 						_, err = kubeconfigFile.Write(kubeconfig)
