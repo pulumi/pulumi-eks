@@ -68,7 +68,7 @@ role_kubeconfig = cluster.get_kubeconfig(
 pulumi.export("roleKubeconfig", role_kubeconfig)
 role_provider = k8s.Provider("provider",
     kubeconfig=role_kubeconfig,
-    opts=pulumi.ResourceOptions(depends_on=[cluster.provider])
+    opts=pulumi.ResourceOptions(depends_on=[cluster])
 )
 
 # Create a pod with the role-based kubeconfig.

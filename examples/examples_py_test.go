@@ -25,9 +25,12 @@ import (
 )
 
 func TestAccAwsProfilePy(t *testing.T) {
+	unsetAWSProfileEnv(t)
+
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "aws-profile-py"),
+			NoParallel: true,
+			Dir:        filepath.Join(getCwd(t), "aws-profile-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -75,11 +78,6 @@ func TestAccFargatePy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), "fargate-py"),
-			Config: map[string]string{
-				// Hard code to us-east-2 since Fargate support is not yet available in all regions
-				// (specifically us-west-2).
-				"aws:region": "us-east-2",
-			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,

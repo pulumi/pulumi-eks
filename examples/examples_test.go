@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
+	"github.com/stretchr/testify/assert"
 )
 
 func getEnvRegion(t *testing.T) string {
@@ -73,4 +74,20 @@ func providerPluginPathEnv() (string, error) {
 		pathSeparator = ";"
 	}
 	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir, nil
+}
+
+var envToUnset = [...]string{"AWS_SECRET_ACCESS_KEY", "AWS_ACCESS_KEY_ID", "AWS_SESSION_TOKEN"}
+
+// unsetAWSProfileEnv unsets the AWS_PROFILE and associated environment variables.
+// EKS token retrieval using the AWS_PROFILE seems to prefer the
+// the following variables over AWS_PROFILE so you end up with
+// authentication failures in the tests. So drop these environment
+// variables if set and reapply them after the test.
+func unsetAWSProfileEnv(t *testing.T) {
+	t.Helper()
+
+	for _, envVar := range envToUnset {
+		t.Setenv(envVar, "")
+		assert.NoError(t, os.Unsetenv(envVar)) // Explicitly unset the environment variable, as well.
+	}
 }
