@@ -951,7 +951,18 @@ export function createCore(
                             const getAnnosOutputStr = getAnnosOutput.toString();
                             // See if getAnnosOutputStr contains the annotation we're looking for.
                             if (!getAnnosOutputStr.includes("eks.amazonaws.com/compute-type") ) {
-                                // No need to patch, the annotation is not present.
+                                // No need to patch the deployment object since the annotation is not present. However, we need to re-create the CoreDNS pods since
+                                // the existing pods were created before the FargateProfile was created, and therefore will not have been scheduled by fargate-scheduler.
+                                // See: https://github.com/pulumi/pulumi-eks/issues/1030.
+                                const cmd = `kubectl rollout restart deployment coredns -n kube-system`;
+
+                                childProcess.execSync(cmd, {
+                                    env: {
+                                        ...process.env,
+                                        KUBECONFIG: tmpKubeconfig.name,
+                                    },
+                                });
+
                                 return;
                             }
 
