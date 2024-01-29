@@ -369,7 +369,7 @@ func ValidateDaemonSet(t *testing.T, kubeconfig interface{}, namespace, name str
 	}
 
 	if !ready {
-		fmt.Errorf("daemonset wasn't ready in time")
+		return fmt.Errorf("daemonset wasn't ready in time")
 	}
 
 	validateFn(ds)
