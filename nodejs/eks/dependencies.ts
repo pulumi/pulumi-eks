@@ -37,16 +37,10 @@ export function assertCompatibleKubectlVersionExists() {
         );
     }
 
-    let kubectlVersionJson: string;
-    try {
-        // Don't pipe stderr to avoid polluting CLI output.
-        kubectlVersionJson = childProcess.execSync(`kubectl version --output=json`, {
-            stdio: ["pipe", "pipe", "ignore"],
-            encoding: "utf8",
-        });
-    } catch (err) {
-        kubectlVersionJson = err.stdout; // Might see partial failure if the the remote cluster is inaccessible. Ignore.
-    }
+    const kubectlVersionJson = childProcess.execSync(`kubectl version --client=true --output=json`, {
+        stdio: ["pipe", "pipe", "ignore"],
+        encoding: "utf8",
+    });
 
     let kctlVersion: KubectlVersion;
     try {
