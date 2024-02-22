@@ -166,15 +166,28 @@ func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredN
 		nodeReady := false
 		// Attempt to check if a Node is ready, and output the resulting status.
 		for i := 0; i < MaxRetries; i++ {
-			if ready := IsNodeReady(t, clientset, &node); ready {
+			ready, nodePtr := IsNodeReady(t, clientset, &node)
+			if nodePtr != nil {
+				node = *nodePtr
+			}
+			if ready {
 				nodeReady = true
 				readyCount++
 				break
 			} else {
-				waitFor(t, fmt.Sprintf("Node %q", node.Name), "ready")
+				waitFor(t, fmt.Sprintf("Node %q", node.GetName()), "ready")
 			}
 		}
-		PrintAndLog(fmt.Sprintf("Node: %s | Ready Status: %t\n", node.Name, nodeReady), t)
+		if nodeReady {
+			PrintAndLog(fmt.Sprintf("Node: %s | Ready Status: %t\n", node.Name, nodeReady), t)
+		} else {
+			pretty, err := json.MarshalIndent(node, "", "  ")
+			if err != nil {
+				PrintAndLog("Error: failed to marshal Node object to json", t)
+			}
+			PrintAndLog(fmt.Sprintf("Node: %s | Ready Status: %t | Node Object: %s\n", node.Name, nodeReady, pretty), t)
+
+		}
 	}
 
 	// Require that the readyCount matches the desiredNodeCount / total Nodes.
@@ -255,15 +268,16 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list r
 
 			var ready bool
 			for i := 0; i < MaxRetries; i++ {
+				var liveObj runtime.Object
 				switch item := obj.(type) {
 				case *appsv1.Deployment:
-					ready = IsDeploymentReady(t, clientset, item)
+					ready, liveObj = IsDeploymentReady(t, clientset, item)
 					objType = "Deployment"
 				case *appsv1.ReplicaSet:
-					ready = IsReplicaSetReady(t, clientset, item)
+					ready, liveObj = IsReplicaSetReady(t, clientset, item)
 					objType = "ReplicaSet"
 				case *corev1.Pod:
-					ready = IsPodReady(t, clientset, item)
+					ready, liveObj = IsPodReady(t, clientset, item)
 					objType = "Pod"
 				}
 
@@ -271,11 +285,23 @@ func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list r
 					readyCount.Add(1)
 					break
 				}
+				if liveObj != nil {
+					obj = liveObj
+				}
 
 				waitFor(t, fmt.Sprintf("%s %q", objType, objName), "ready")
 			}
 
-			PrintAndLog(fmt.Sprintf("%s: %s | Ready Status: %t\n", objType, objName, ready), t)
+			if ready {
+				PrintAndLog(fmt.Sprintf("%s: %s | Ready Status: %t\n", objType, objName, ready), t)
+			} else {
+				pretty, err := json.MarshalIndent(obj, "", "  ")
+				if err != nil {
+					PrintAndLog("Error: failed to marshal Kubernetes object to json", t)
+				}
+				PrintAndLog(fmt.Sprintf("%s: %s | Ready Status: %t| k8s Object: %s\n", objType, objName, ready, pretty), t)
+
+			}
 		}()
 
 		return nil
@@ -305,30 +331,30 @@ func PrintAndLog(s string, t *testing.T) {
 }
 
 // IsNodeReady attempts to check if the Node status condition is ready.
-func IsNodeReady(t *testing.T, clientset *kubernetes.Clientset, node *corev1.Node) bool {
+func IsNodeReady(t *testing.T, clientset *kubernetes.Clientset, node *corev1.Node) (bool, *corev1.Node) {
 	// Attempt to retrieve Node.
 	o, err := clientset.CoreV1().Nodes().Get(context.TODO(), node.Name, metav1.GetOptions{})
 	if err != nil {
-		return false
+		return false, nil
 	}
 
 	// Check the returned Node's conditions for readiness.
 	for _, condition := range o.Status.Conditions {
 		if condition.Type == corev1.NodeReady {
 			t.Logf("Checking if Node %q is Ready | Condition.Status: %q | Condition: %v\n", node.Name, condition.Status, condition)
-			return condition.Status == corev1.ConditionTrue
+			return condition.Status == corev1.ConditionTrue, o
 		}
 	}
 
-	return false
+	return false, o
 }
 
 // IsPodReady attempts to check if the Pod's status & condition is ready.
-func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod metav1.Object) bool {
+func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod metav1.Object) (bool, runtime.Object) {
 	// Attempt to retrieve Pod.
 	o, err := clientset.CoreV1().Pods(pod.GetNamespace()).Get(context.TODO(), pod.GetName(), metav1.GetOptions{})
 	if err != nil {
-		return false
+		return false, nil
 	}
 
 	// Check the returned Pod's status & conditions for readiness.
@@ -337,14 +363,14 @@ func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod metav1.Object
 			if condition.Type == corev1.PodReady {
 				t.Logf("Checking if Pod %q is Ready | Condition.Status: %q | Condition.Reason: %q | Condition: %v\n", pod.GetName(), condition.Status, condition.Reason, condition)
 				if o.Status.Phase == corev1.PodSucceeded {
-					return true
+					return true, o
 				}
-				return condition.Status == corev1.ConditionTrue
+				return condition.Status == corev1.ConditionTrue, o
 			}
 		}
 	}
 
-	return false
+	return false, o
 }
 
 func ValidateDaemonSet(t *testing.T, kubeconfig interface{}, namespace, name string, validateFn func(*appsv1.DaemonSet)) error {
@@ -384,44 +410,44 @@ func IsDaemonSetReady(t *testing.T, clientset *kubernetes.Clientset, namespace, 
 
 // IsDeploymentReady attempts to check if the Deployments's status conditions
 // are ready.
-func IsDeploymentReady(t *testing.T, clientset *kubernetes.Clientset, deployment metav1.Object) bool {
+func IsDeploymentReady(t *testing.T, clientset *kubernetes.Clientset, deployment metav1.Object) (bool, runtime.Object) {
 	// Attempt to retrieve Deployment.
 	o, err := clientset.AppsV1().Deployments(deployment.GetNamespace()).Get(context.TODO(), deployment.GetName(), metav1.GetOptions{})
 	if err != nil {
-		return false
+		return false, nil
 	}
 
 	// Check the returned Deployment's status & conditions for readiness.
 	for _, condition := range o.Status.Conditions {
 		if condition.Type == appsv1.DeploymentAvailable {
 			t.Logf("Checking if Deployment %q is Available | Condition.Status: %q | Condition: %v\n", deployment.GetName(), condition.Status, condition)
-			return condition.Status == corev1.ConditionTrue
+			return condition.Status == corev1.ConditionTrue, o
 		}
 	}
 
-	return false
+	return false, o
 }
 
 // IsReplicaSetReady attempts to check if the ReplicaSets's status conditions
 // are ready.
-func IsReplicaSetReady(t *testing.T, clientset *kubernetes.Clientset, replicaSet metav1.Object) bool {
+func IsReplicaSetReady(t *testing.T, clientset *kubernetes.Clientset, replicaSet metav1.Object) (bool, runtime.Object) {
 	// Attempt to retrieve ReplicaSet.
 	o, err := clientset.AppsV1().ReplicaSets(replicaSet.GetNamespace()).Get(context.TODO(), replicaSet.GetName(), metav1.GetOptions{})
 	if err != nil {
-		return false
+		return false, nil
 	}
 
 	// Check the returned ReplicaSet's status conditions for readiness.
 	for _, condition := range o.Status.Conditions {
 		if condition.Type == appsv1.ReplicaSetReplicaFailure {
-			return false
+			return false, o
 		}
 	}
 	if o.Status.Replicas == o.Status.AvailableReplicas &&
 		o.Status.Replicas == o.Status.ReadyReplicas {
-		return true
+		return true, o
 	}
-	return false
+	return false, o
 }
 
 // IsKubeconfigValid checks that the kubeconfig provided is valid and error-free.
