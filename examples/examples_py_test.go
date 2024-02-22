@@ -75,6 +75,7 @@ func TestAccClusterPy(t *testing.T) {
 }
 
 func TestAccFargatePy(t *testing.T) {
+	t.Skip("https://github.com/pulumi/pulumi-eks/issues/1041")
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), "fargate-py"),

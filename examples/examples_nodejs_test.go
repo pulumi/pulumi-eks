@@ -122,6 +122,7 @@ func TestAccKubernetesServiceIPv4RangeForCluster(t *testing.T) {
 }
 
 func TestAccFargate(t *testing.T) {
+	t.Skip("https://github.com/pulumi/pulumi-eks/issues/1041")
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "./fargate"),
