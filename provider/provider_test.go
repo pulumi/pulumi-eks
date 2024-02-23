@@ -110,10 +110,12 @@ func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.P
 			providertest.UpgradeTestMode_Quick,
 			"Quick mode is only supported for providers written in Go at the moment"),
 
-		providertest.WithBaselineVersion("1.0.4"),
+		// The versions here should match those specified in pulumi-eks/nodejs/eks/yarn.lock to ensure that the
+		// baseline provider version uses the correct dependencies that the older provider version would have used.
+		providertest.WithBaselineVersion("2.2.1"),
 		providertest.WithExtraBaselineDependencies(map[string]string{
-			"aws":        "5.42.0",
-			"kubernetes": "3.30.2",
+			"aws":        "6.0.4",
+			"kubernetes": "4.1.1",
 		}),
 
 		// This region needs to match the one configured in .github for the CI workflows.
