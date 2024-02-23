@@ -110,10 +110,10 @@ func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.P
 			providertest.UpgradeTestMode_Quick,
 			"Quick mode is only supported for providers written in Go at the moment"),
 
-		providertest.WithBaselineVersion("1.0.4"),
+		providertest.WithBaselineVersion("2.2.1"),
 		providertest.WithExtraBaselineDependencies(map[string]string{
-			"aws":        "5.42.0",
-			"kubernetes": "3.30.2",
+			"aws":        "6.23.0",
+			"kubernetes": "4.8.0",
 		}),
 
 		// This region needs to match the one configured in .github for the CI workflows.
