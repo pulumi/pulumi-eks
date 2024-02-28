@@ -102,6 +102,7 @@ cluster.createNodeGroup("example-ng", {
 const ng = new eks.NodeGroupV2("example-mng", {
   cluster: cluster,
   instanceProfile: ngInstanceProfile,
+  instanceType: "t3.small",
   extraNodeSecurityGroups: [
     customSecurityGroup, // Plain type
     cluster.nodeSecurityGroup, // Input type

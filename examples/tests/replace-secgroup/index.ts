@@ -45,6 +45,7 @@ const ng = new eks.NodeGroup(`${projectName}-ng`, {
     nodeSecurityGroup: nodeSecurityGroup,
     clusterIngressRule: eksClusterIngressRule,
     instanceProfile: instanceProfile,
+    instanceType: "t3.small",
 }, {
     providers: { kubernetes: testCluster.provider},
 });
