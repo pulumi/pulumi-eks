@@ -82,20 +82,20 @@ func TestReportUpgradeCoverage(t *testing.T) {
 
 func runExampleParallel(t *testing.T, example string, opts ...providertest.Option) {
 	t.Parallel()
-	test(t, fmt.Sprintf("../examples/%s", example), opts...).Run(t)
+	test(fmt.Sprintf("../examples/%s", example), opts...).Run(t)
 }
 
-func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.ProviderTest {
+func test(dir string, opts ...providertest.Option) *providertest.ProviderTest {
 	eksDiffValidation := func(t *testing.T, diffs providertest.Diffs) {
 		for _, diff := range diffs {
 			if !diff.HasChanges {
 				continue
 			}
 
-			if strings.Contains(string(diff.URN), "pulumi:providers:kubernetes::") &&
+			if strings.Contains(string(diff.URN), "pulumi:providers:") &&
 				len(diff.Diffs) == 1 &&
 				diff.Diffs[0] == "version" {
-				log.Println("Ignoring version change for kubernetes provider")
+				log.Println("Ignoring version change for providers used in test programs")
 				continue
 			}
 
