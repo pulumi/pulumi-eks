@@ -213,12 +213,6 @@ export function generateKubeconfig(
     if (opts?.roleArn) {
         args = [...args, "--role", opts.roleArn];
     }
-    if (opts?.profileName) {
-        env.push({
-            name: "AWS_PROFILE",
-            value: opts.profileName,
-        });
-    }
 
     return pulumi.all([args, env]).apply(([tokenArgs, envvars]) => {
         return {
