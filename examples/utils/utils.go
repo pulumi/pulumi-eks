@@ -652,3 +652,20 @@ func clientSetFromKubeconfig(kubeconfig any) (*kubernetes.Clientset, error) {
 	}
 	return clientSet, nil
 }
+
+// EnsureKubeconfigFails ensures that the provided kubeconfig fails to authenticate.
+func EnsureKubeconfigFails(t *testing.T, kubeconfig any) {
+	kc, err := json.Marshal(kubeconfig)
+	if err != nil {
+		t.Errorf("unable to marshal provided kubeconfig: %s", err)
+	}
+	kubeAccess, err := KubeconfigToKubeAccess(kc)
+	if err != nil {
+		t.Errorf("unable to create KubeAccess from kubeconfig: %s", err)
+	}
+
+	_, err = kubeAccess.Clientset.Discovery().ServerVersion()
+	if err == nil {
+		t.Errorf("expected kubeconfig to fail, but it succeeded to return the server version")
+	}
+}

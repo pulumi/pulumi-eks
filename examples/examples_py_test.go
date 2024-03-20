@@ -17,6 +17,7 @@
 package example
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -32,6 +33,12 @@ func TestAccAwsProfilePy(t *testing.T) {
 			NoParallel: true,
 			Dir:        filepath.Join(getCwd(t), "aws-profile-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				// Manually set `AWS_PROFILE` to be the name of the profile used in the test, otherwise
+				// the test is expected to fail since we did not use the default profile. This is required
+				// to ensure multiple users with different profiles can use the Kubeconfig.
+				utils.EnsureKubeconfigFails(t, info.Outputs["kubeconfig"])
+				t.Setenv("AWS_PROFILE", os.Getenv("ALT_AWS_PROFILE"))
+
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig"],
