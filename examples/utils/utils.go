@@ -514,11 +514,19 @@ func mapClusterToKubeAccess(kubeconfigs ...interface{}) (clusterKubeAccessMap, e
 	// Map EKS cluster names to its KubeAccess.
 	clusterToKubeAccess := make(clusterKubeAccessMap)
 	for _, kubeconfig := range kubeconfigs {
-		// Convert kubconfig to KubeAccess
-		kc, err := json.Marshal(kubeconfig)
-		if err != nil {
-			return nil, err
+		// Convert kubeconfig to KubeAccess. We might need to work with either the raw
+		// or jsonified kubeconfig data.
+		var kc []byte
+		var err error
+		if kubeStr, ok := kubeconfig.(string); !ok {
+			kc, err = json.Marshal(kubeconfig)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			kc = []byte(kubeStr)
 		}
+
 		kubeAccess, err := KubeconfigToKubeAccess(kc)
 		if err != nil {
 			return nil, err
@@ -651,4 +659,21 @@ func clientSetFromKubeconfig(kubeconfig any) (*kubernetes.Clientset, error) {
 		clientSet = kubeAccess.Clientset
 	}
 	return clientSet, nil
+}
+
+// EnsureKubeconfigFails ensures that the provided kubeconfig fails to authenticate.
+func EnsureKubeconfigFails(t *testing.T, kubeconfig any) {
+	kc, err := json.Marshal(kubeconfig)
+	if err != nil {
+		t.Errorf("unable to marshal provided kubeconfig: %s", err)
+	}
+	kubeAccess, err := KubeconfigToKubeAccess(kc)
+	if err != nil {
+		t.Errorf("unable to create KubeAccess from kubeconfig: %s", err)
+	}
+
+	_, err = kubeAccess.Clientset.Discovery().ServerVersion()
+	if err == nil {
+		t.Errorf("expected kubeconfig to fail, but it succeeded to return the server version")
+	}
 }
