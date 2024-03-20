@@ -199,6 +199,7 @@ interface ExecEnvVar {
 export function generateKubeconfig(
     clusterName: pulumi.Input<string>,
     clusterEndpoint: pulumi.Input<string>,
+    includeProfile: boolean,
     certData?: pulumi.Input<string>,
     opts?: KubeconfigOptions,
 ) {
@@ -213,11 +214,9 @@ export function generateKubeconfig(
     if (opts?.roleArn) {
         args = [...args, "--role", opts.roleArn];
     }
-    if (opts?.profileName) {
-        env.push({
-            name: "AWS_PROFILE",
-            value: opts.profileName,
-        });
+
+    if (includeProfile && opts?.profileName) {
+        env.push({ name: "AWS_PROFILE", value: opts.profileName });
     }
 
     return pulumi.all([args, env]).apply(([tokenArgs, envvars]) => {
@@ -653,7 +652,8 @@ export function createCore(
     // Compute the required kubeconfig. Note that we do not export this value: we want the exported config to
     // depend on the autoscaling group we'll create later so that nothing attempts to use the EKS cluster before
     // its worker nodes have come up.
-    const kubeconfig = pulumi
+    const genKubeconfig = (useProfileName: boolean) => {
+        const kubeconfig = pulumi
         .all([
             eksCluster.name,
             endpoint,
@@ -675,6 +675,7 @@ export function createCore(
                         return generateKubeconfig(
                             clusterName,
                             clusterEndpoint,
+                            useProfileName,
                             clusterCertificateAuthority?.data,
                             opts,
                         );
@@ -683,6 +684,7 @@ export function createCore(
                     config = generateKubeconfig(
                         clusterName,
                         clusterEndpoint,
+                        useProfileName,
                         clusterCertificateAuthority?.data,
                         providerCredentialOpts,
                     );
@@ -690,12 +692,22 @@ export function createCore(
                     config = generateKubeconfig(
                         clusterName,
                         clusterEndpoint,
+                        useProfileName,
                         clusterCertificateAuthority?.data,
                     );
                 }
                 return config;
             },
         );
+        
+        return kubeconfig;
+    }
+
+    // We need 2 forms of kubeconfig, one with the profile name and one without. The one with the profile name
+    // is required to interact with the cluster by this provider. The one without is used by the user to interact
+    // with the cluster and enable multi-user access.
+    const kubeconfig = genKubeconfig(true);
+    const kubeconfigWithoutProfile = genKubeconfig(false);
 
     const k8sProvider = new k8s.Provider(
         `${name}-eks-k8s`,
@@ -950,7 +962,7 @@ export function createCore(
                             });
                             const getAnnosOutputStr = getAnnosOutput.toString();
                             // See if getAnnosOutputStr contains the annotation we're looking for.
-                            if (!getAnnosOutputStr.includes("eks.amazonaws.com/compute-type") ) {
+                            if (!getAnnosOutputStr.includes("eks.amazonaws.com/compute-type")) {
                                 // No need to patch the deployment object since the annotation is not present. However, we need to re-create the CoreDNS pods since
                                 // the existing pods were created before the FargateProfile was created, and therefore will not have been scheduled by fargate-scheduler.
                                 // See: https://github.com/pulumi/pulumi-eks/issues/1030.
@@ -1018,7 +1030,7 @@ export function createCore(
         cluster: eksCluster,
         endpoint: endpoint,
         nodeGroupOptions: nodeGroupOptions,
-        kubeconfig: kubeconfig,
+        kubeconfig: kubeconfigWithoutProfile,
         provider: k8sProvider,
         awsProvider: provider,
         vpcCni: vpcCni,
@@ -1695,6 +1707,7 @@ export class Cluster extends pulumi.ComponentResource {
         const kc = generateKubeconfig(
             this.eksCluster.name,
             this.eksCluster.endpoint,
+            true,
             this.eksCluster.certificateAuthority?.data,
             args,
         );
@@ -1898,6 +1911,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
         const kc = generateKubeconfig(
             this.eksCluster.name,
             this.eksCluster.endpoint,
+            true,
             this.eksCluster.certificateAuthority?.data,
             args,
         );
