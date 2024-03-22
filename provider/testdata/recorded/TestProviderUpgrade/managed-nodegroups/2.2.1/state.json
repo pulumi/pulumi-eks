@@ -2,19 +2,19 @@
     "version": 3,
     "deployment": {
         "manifest": {
-            "time": "2024-02-29T05:52:45.264218578Z",
-            "magic": "c35983579a1e8ebdd8352e7d1cdc7ec2371d9b52b660983e4274783ee6379cfa",
-            "version": "v3.107.0"
+            "time": "2024-03-21T21:48:25.079863677Z",
+            "magic": "0e109972342b6ebd571fa6d2cffefcb95394f9c4f7bdd855463082d16126072c",
+            "version": "v3.111.1"
         },
         "secrets_providers": {
             "type": "passphrase",
             "state": {
-                "salt": "v1:YgWIEVzt6zk=:v1:0CKaE9O9X74FZ/7u:PH1rMqzcL0HgPTne7d2OGU0Ki6dOeQ=="
+                "salt": "v1:EJRRgB7UPgA=:v1:AVLEbSQQBYionXwV:F4H9VPPZR1aMTeuP3GW3Hu1FY9riTw=="
             }
         },
         "resources": [
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
                 "custom": false,
                 "type": "pulumi:pulumi:Stack",
                 "outputs": {
@@ -23,8 +23,8 @@
                         "clusters": [
                             {
                                 "cluster": {
-                                    "certificate-authority-data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVzU2UDBXZGdZZ2d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qa3dOVFF5TWpaYUZ3MHpOREF5TWpZd05UUTNNalphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN5TGVWS1VjMXZMQWVjdWVKVjNQVFNhOUZoSzlxOXdKYzUyS2FEekYzTkdweit3TVBVS1o3N2M4N2sKTDJ0TVZleUZEemdsNE5NbDFYNTlveGlFNHB5ZGRwZGgwOWhUd21WNTRKRGQ3Nk96UGFEMkJwbFN3VWxYZzJsMgpHUEZ0T0pjTEV3anZxbVpTcVpEM0JUb1VRVzRQNE1VRlh3Qmc2OUg0RU9qRmRMMFNncXlRWHh3cjVZMjVOT251CmVrWWtTTnRvUWplYU11dDFFdlo4K1pBU1V2bDd1QVNsNGFVNHRYUjJCYVN1WVB1Q01MdlQxb1Zka3JadHhxZ2IKNkJBMDNmc0FDS0V4ZkdKSWswL1RYOUpRVU50L0VJYUc0RFVmSmFaTDdYMitYNW9XZUQrQllKZmowREY4R3RFUwpWV1hRZVMrRTB2azdhR3M5Q21sQVEveGRJMFo1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMHJaRldaS3hWWXM4U2hvU0l6R2k4SWZwY0N6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQW1kV1ZwOG5VcApxazBkajJNQWp0VG0xMXFOamNzVGdoaGJUaThlY2E4Y2xxbEd0a3NhY1o5dEpPeng2Uzlha1JWbCswbnY5elkwCjM3N1g4U0I2MTVJUVcvRUVTKytibUdGeEpDbmxjdkhXWC9jN084RUNOcFZPd1JVZkE0a252VFZ2Q0Q4Q2N6emQKTDA1SlBtSU5Qb0xlYjhUVm1yV0FuV2ZNTWxKVkduSk93TjYzODNhYWpyMkhCRFZBdzNiMUtQVmwreU1SMVZvbgozUERZN3NEb3Z5OVNuUmE1M1hZODR3d2dlM2JaWklucnR1MjhkU0tSU1JIcHlVeFRIc1ZSMlRWYm5JMTRJVmU4Cmd2emRDVjBmSTVOR29YM2RtMko2bWt4dkZBMjNObENPK1BmMk9wdzFWWDNwR1dFYUZodTk1WmFUTDFwZjBXYkoKbThFckwvRUkxcmtPCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
-                                    "server": "https://E8378A6FCD92A05448CFBB103D6D08FB.gr7.us-west-2.eks.amazonaws.com"
+                                    "certificate-authority-data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQit2VCtoN3hwUUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1qRXlNVE00TWpOYUZ3MHpOREF6TVRreU1UUXpNak5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMzUDduR0VJMFI2a3BuKzJKaUJxSFVsaUF1OTdmRk4xeHFER2NqcCttcFUvU05kNDFkM0dJMUVnKzYKWENYcVFKMkxNaEYyTUxQVmJwUXFCU0pPZXhnZ3RoSzR2NDNZaXVrNzlhalJxSGFiOWNsb3NESnNFU0NhVnNaWQpIbzIxcUlVQXVjNUpIWWRlTzRVNFlxL2g1ZFRXVjBQV04vSVZDSkp2cmJlVU5ocnVMK3R2cHN4VjNhZUFRbFpsCkdaZFB1ZENkb05RazlVcTV2SG1aeVNCaGE5YlpZRGozME5FZ0g4Nk42c0pFakx5VW1KeHpWeXp1eTNzT3czd1QKNUI3NWd0NFJpM2NyODA5dm5iMUhPSjhWM0Rrb1A0T1pTaXRxUTJoUVc0SDNKeFlYQStTa2hlR1pxblRvVE4xeQpybkRMOFNsK3dQN2ZJWUVkclJtcG0rU202WVVqQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUYkRwSEVlSVRmTUxCdWRONk5lbm1JVkJIS3FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWZBZ0twZUVpawp6VnBYNlhBZHEweFhxYWgwRXNMdnpzSW9sRC9JT0dnc1VPOFQ1TE5pWjNVYzFvaStadTNlKzZEa2x1S1JGWnlXCklPVnNwaXdPeXN6eFNmUHlRcTdPUDJmZmpGbG5wUFVpRkI2VmoreDVDNURPMDJNZ0E3KzhPTkZhZHlvWXpZc00KaUZpVnZMNEJsYTZCNG1EanBlWVdyR1pON0RMdmlzWEI2ZnNYTjdxZnpOdFR3bHdCSURidlBYUUd1NTlpcUY2RwphQ21TVHNFRHU1SUlaRUZ5ZEhrMHNBa1d3WXlOaXVaL3hFQjZwRHBFOWUvdVlCZW9NWWQ2dkxNdlduSldYbjJFCmpXdmNPVkxwVkZVcktGN2xxWVI2d2Q3Q2kra0RielVGSVJGTFUzY1YrQ2dsdGFUUEYxbXFmRXJQNjJTOHdrbjgKUWNlY1dHL29uRHdGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                                    "server": "https://047CF11A0133D9B0C0607307ABE9303C.gr7.us-west-2.eks.amazonaws.com"
                                 },
                                 "name": "kubernetes"
                             }
@@ -50,7 +50,7 @@
                                             "eks",
                                             "get-token",
                                             "--cluster-name",
-                                            "example-managed-nodegroups-eksCluster-e5de847"
+                                            "example-managed-nodegroups-eksCluster-00fc06d"
                                         ],
                                         "command": "aws",
                                         "env": [
@@ -65,28 +65,28 @@
                         ]
                     }
                 },
-                "created": "2024-02-29T05:42:28.816732814Z",
-                "modified": "2024-02-29T05:42:28.816732814Z",
+                "created": "2024-03-21T21:38:29.480945711Z",
+                "modified": "2024-03-21T21:38:29.480945711Z",
                 "sourcePosition": "project:///node_modules/@pulumi/runtime/stack.ts#36,23"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "custom": false,
                 "type": "eks:index:Cluster",
                 "outputs": {
                     "eksCluster": {
                         "4dabf18193072939515e22adb298388d": "5cf8f73096256a8f31e491e813e4eb8e",
-                        "id": "example-managed-nodegroups-eksCluster-e5de847",
+                        "id": "example-managed-nodegroups-eksCluster-00fc06d",
                         "packageVersion": "",
-                        "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
+                        "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
                     },
                     "kubeconfig": {
                         "apiVersion": "v1",
                         "clusters": [
                             {
                                 "cluster": {
-                                    "certificate-authority-data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVzU2UDBXZGdZZ2d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qa3dOVFF5TWpaYUZ3MHpOREF5TWpZd05UUTNNalphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN5TGVWS1VjMXZMQWVjdWVKVjNQVFNhOUZoSzlxOXdKYzUyS2FEekYzTkdweit3TVBVS1o3N2M4N2sKTDJ0TVZleUZEemdsNE5NbDFYNTlveGlFNHB5ZGRwZGgwOWhUd21WNTRKRGQ3Nk96UGFEMkJwbFN3VWxYZzJsMgpHUEZ0T0pjTEV3anZxbVpTcVpEM0JUb1VRVzRQNE1VRlh3Qmc2OUg0RU9qRmRMMFNncXlRWHh3cjVZMjVOT251CmVrWWtTTnRvUWplYU11dDFFdlo4K1pBU1V2bDd1QVNsNGFVNHRYUjJCYVN1WVB1Q01MdlQxb1Zka3JadHhxZ2IKNkJBMDNmc0FDS0V4ZkdKSWswL1RYOUpRVU50L0VJYUc0RFVmSmFaTDdYMitYNW9XZUQrQllKZmowREY4R3RFUwpWV1hRZVMrRTB2azdhR3M5Q21sQVEveGRJMFo1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMHJaRldaS3hWWXM4U2hvU0l6R2k4SWZwY0N6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQW1kV1ZwOG5VcApxazBkajJNQWp0VG0xMXFOamNzVGdoaGJUaThlY2E4Y2xxbEd0a3NhY1o5dEpPeng2Uzlha1JWbCswbnY5elkwCjM3N1g4U0I2MTVJUVcvRUVTKytibUdGeEpDbmxjdkhXWC9jN084RUNOcFZPd1JVZkE0a252VFZ2Q0Q4Q2N6emQKTDA1SlBtSU5Qb0xlYjhUVm1yV0FuV2ZNTWxKVkduSk93TjYzODNhYWpyMkhCRFZBdzNiMUtQVmwreU1SMVZvbgozUERZN3NEb3Z5OVNuUmE1M1hZODR3d2dlM2JaWklucnR1MjhkU0tSU1JIcHlVeFRIc1ZSMlRWYm5JMTRJVmU4Cmd2emRDVjBmSTVOR29YM2RtMko2bWt4dkZBMjNObENPK1BmMk9wdzFWWDNwR1dFYUZodTk1WmFUTDFwZjBXYkoKbThFckwvRUkxcmtPCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
-                                    "server": "https://E8378A6FCD92A05448CFBB103D6D08FB.gr7.us-west-2.eks.amazonaws.com"
+                                    "certificate-authority-data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQit2VCtoN3hwUUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1qRXlNVE00TWpOYUZ3MHpOREF6TVRreU1UUXpNak5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMzUDduR0VJMFI2a3BuKzJKaUJxSFVsaUF1OTdmRk4xeHFER2NqcCttcFUvU05kNDFkM0dJMUVnKzYKWENYcVFKMkxNaEYyTUxQVmJwUXFCU0pPZXhnZ3RoSzR2NDNZaXVrNzlhalJxSGFiOWNsb3NESnNFU0NhVnNaWQpIbzIxcUlVQXVjNUpIWWRlTzRVNFlxL2g1ZFRXVjBQV04vSVZDSkp2cmJlVU5ocnVMK3R2cHN4VjNhZUFRbFpsCkdaZFB1ZENkb05RazlVcTV2SG1aeVNCaGE5YlpZRGozME5FZ0g4Nk42c0pFakx5VW1KeHpWeXp1eTNzT3czd1QKNUI3NWd0NFJpM2NyODA5dm5iMUhPSjhWM0Rrb1A0T1pTaXRxUTJoUVc0SDNKeFlYQStTa2hlR1pxblRvVE4xeQpybkRMOFNsK3dQN2ZJWUVkclJtcG0rU202WVVqQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUYkRwSEVlSVRmTUxCdWRONk5lbm1JVkJIS3FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWZBZ0twZUVpawp6VnBYNlhBZHEweFhxYWgwRXNMdnpzSW9sRC9JT0dnc1VPOFQ1TE5pWjNVYzFvaStadTNlKzZEa2x1S1JGWnlXCklPVnNwaXdPeXN6eFNmUHlRcTdPUDJmZmpGbG5wUFVpRkI2VmoreDVDNURPMDJNZ0E3KzhPTkZhZHlvWXpZc00KaUZpVnZMNEJsYTZCNG1EanBlWVdyR1pON0RMdmlzWEI2ZnNYTjdxZnpOdFR3bHdCSURidlBYUUd1NTlpcUY2RwphQ21TVHNFRHU1SUlaRUZ5ZEhrMHNBa1d3WXlOaXVaL3hFQjZwRHBFOWUvdVlCZW9NWWQ2dkxNdlduSldYbjJFCmpXdmNPVkxwVkZVcktGN2xxWVI2d2Q3Q2kra0RielVGSVJGTFUzY1YrQ2dsdGFUUEYxbXFmRXJQNjJTOHdrbjgKUWNlY1dHL29uRHdGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                                    "server": "https://047CF11A0133D9B0C0607307ABE9303C.gr7.us-west-2.eks.amazonaws.com"
                                 },
                                 "name": "kubernetes"
                             }
@@ -112,7 +112,7 @@
                                             "eks",
                                             "get-token",
                                             "--cluster-name",
-                                            "example-managed-nodegroups-eksCluster-e5de847"
+                                            "example-managed-nodegroups-eksCluster-00fc06d"
                                         ],
                                         "command": "aws",
                                         "env": [
@@ -127,15 +127,32 @@
                         ]
                     }
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
-                "created": "2024-02-29T05:42:29.743050477Z",
-                "modified": "2024-02-29T05:42:29.743050477Z",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
+                "created": "2024-03-21T21:38:30.599156202Z",
+                "modified": "2024-03-21T21:38:30.599156202Z",
                 "sourcePosition": "project:///index.ts#11,17"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole::example-managed-nodegroups-eksRole",
+                "custom": false,
+                "type": "eks:index:ServiceRole",
+                "outputs": {
+                    "role": {
+                        "4dabf18193072939515e22adb298388d": "5cf8f73096256a8f31e491e813e4eb8e",
+                        "id": "example-managed-nodegroups-eksRole-role-ac9c5a4",
+                        "packageVersion": "",
+                        "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role"
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "created": "2024-03-21T21:38:32.271011471Z",
+                "modified": "2024-03-21T21:38:32.271011471Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#488,19"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4",
                 "custom": true,
-                "id": "a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "id": "31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "type": "pulumi:providers:aws",
                 "inputs": {
                     "region": "us-west-2",
@@ -151,30 +168,57 @@
                     "skipRegionValidation": "true",
                     "version": "6.0.4"
                 },
-                "created": "2024-02-29T05:42:31.441913289Z",
-                "modified": "2024-02-29T05:42:31.441913289Z"
+                "created": "2024-03-21T21:38:32.271775189Z",
+                "modified": "2024-03-21T21:38:32.271775189Z"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole::example-managed-nodegroups-eksRole",
-                "custom": false,
-                "type": "eks:index:ServiceRole",
-                "outputs": {
-                    "role": {
-                        "4dabf18193072939515e22adb298388d": "5cf8f73096256a8f31e491e813e4eb8e",
-                        "id": "example-managed-nodegroups-eksRole-role-25f569c",
-                        "packageVersion": "",
-                        "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role"
-                    }
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
-                "created": "2024-02-29T05:42:31.442793105Z",
-                "modified": "2024-02-29T05:42:31.442793105Z",
-                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#488,19"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0",
                 "custom": true,
-                "id": "example-managed-nodegroups-eksRole-role-25f569c",
+                "id": "example-role0-be9f8be",
+                "type": "aws:iam/role:Role",
+                "inputs": {
+                    "__defaults": [
+                        "forceDetachPolicies",
+                        "maxSessionDuration",
+                        "name",
+                        "path"
+                    ],
+                    "assumeRolePolicy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Sid\":\"AllowAssumeRole\"}],\"Version\":\"2012-10-17\"}",
+                    "forceDetachPolicies": false,
+                    "maxSessionDuration": 3600,
+                    "name": "example-role0-be9f8be",
+                    "path": "/"
+                },
+                "outputs": {
+                    "arn": "arn:aws:iam::894850187425:role/example-role0-be9f8be",
+                    "assumeRolePolicy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Sid\":\"AllowAssumeRole\"}],\"Version\":\"2012-10-17\"}",
+                    "createDate": "2024-03-21T21:38:32Z",
+                    "description": "",
+                    "forceDetachPolicies": false,
+                    "id": "example-role0-be9f8be",
+                    "inlinePolicies": [],
+                    "managedPolicyArns": [],
+                    "maxSessionDuration": 3600,
+                    "name": "example-role0-be9f8be",
+                    "namePrefix": "",
+                    "path": "/",
+                    "tags": {},
+                    "tagsAll": {},
+                    "uniqueId": "AROA5AWJ2ICQQYAKBRNMB"
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
+                "propertyDependencies": {
+                    "assumeRolePolicy": []
+                },
+                "created": "2024-03-21T21:38:32.901121442Z",
+                "modified": "2024-03-21T21:38:32.901121442Z",
+                "sourcePosition": "project:///iam.ts#12,18"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                "custom": true,
+                "id": "example-managed-nodegroups-eksRole-role-ac9c5a4",
                 "type": "aws:iam/role:Role",
                 "inputs": {
                     "__defaults": [
@@ -187,40 +231,40 @@
                     "description": "Allows EKS to manage clusters on your behalf.",
                     "forceDetachPolicies": false,
                     "maxSessionDuration": 3600,
-                    "name": "example-managed-nodegroups-eksRole-role-25f569c",
+                    "name": "example-managed-nodegroups-eksRole-role-ac9c5a4",
                     "path": "/"
                 },
                 "outputs": {
-                    "arn": "arn:aws:iam::894850187425:role/example-managed-nodegroups-eksRole-role-25f569c",
+                    "arn": "arn:aws:iam::894850187425:role/example-managed-nodegroups-eksRole-role-ac9c5a4",
                     "assumeRolePolicy": "{\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"eks.amazonaws.com\"]}}],\"Version\":\"2012-10-17\"}",
-                    "createDate": "2024-02-29T05:42:31Z",
+                    "createDate": "2024-03-21T21:38:32Z",
                     "description": "Allows EKS to manage clusters on your behalf.",
                     "forceDetachPolicies": false,
-                    "id": "example-managed-nodegroups-eksRole-role-25f569c",
+                    "id": "example-managed-nodegroups-eksRole-role-ac9c5a4",
                     "inlinePolicies": [],
                     "managedPolicyArns": [],
                     "maxSessionDuration": 3600,
-                    "name": "example-managed-nodegroups-eksRole-role-25f569c",
+                    "name": "example-managed-nodegroups-eksRole-role-ac9c5a4",
                     "namePrefix": "",
                     "path": "/",
                     "tags": {},
                     "tagsAll": {},
-                    "uniqueId": "AROA5AWJ2ICQSDHF47VHL"
+                    "uniqueId": "AROA5AWJ2ICQRUOWR5PXD"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole::example-managed-nodegroups-eksRole",
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole::example-managed-nodegroups-eksRole",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "assumeRolePolicy": null,
-                    "description": null
+                    "assumeRolePolicy": [],
+                    "description": []
                 },
-                "created": "2024-02-29T05:42:32.075111464Z",
-                "modified": "2024-02-29T05:42:32.075111464Z",
+                "created": "2024-03-21T21:38:32.915099233Z",
+                "modified": "2024-03-21T21:38:32.915099233Z",
                 "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#77,22"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2",
                 "custom": true,
-                "id": "example-role0-98bac22",
+                "id": "example-role2-4210053",
                 "type": "aws:iam/role:Role",
                 "inputs": {
                     "__defaults": [
@@ -232,39 +276,39 @@
                     "assumeRolePolicy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Sid\":\"AllowAssumeRole\"}],\"Version\":\"2012-10-17\"}",
                     "forceDetachPolicies": false,
                     "maxSessionDuration": 3600,
-                    "name": "example-role0-98bac22",
+                    "name": "example-role2-4210053",
                     "path": "/"
                 },
                 "outputs": {
-                    "arn": "arn:aws:iam::894850187425:role/example-role0-98bac22",
+                    "arn": "arn:aws:iam::894850187425:role/example-role2-4210053",
                     "assumeRolePolicy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Sid\":\"AllowAssumeRole\"}],\"Version\":\"2012-10-17\"}",
-                    "createDate": "2024-02-29T05:42:31Z",
+                    "createDate": "2024-03-21T21:38:32Z",
                     "description": "",
                     "forceDetachPolicies": false,
-                    "id": "example-role0-98bac22",
+                    "id": "example-role2-4210053",
                     "inlinePolicies": [],
                     "managedPolicyArns": [],
                     "maxSessionDuration": 3600,
-                    "name": "example-role0-98bac22",
+                    "name": "example-role2-4210053",
                     "namePrefix": "",
                     "path": "/",
                     "tags": {},
                     "tagsAll": {},
-                    "uniqueId": "AROA5AWJ2ICQ2PIVXB7IV"
+                    "uniqueId": "AROA5AWJ2ICQQ3UJZPBCG"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "assumeRolePolicy": null
+                    "assumeRolePolicy": []
                 },
-                "created": "2024-02-29T05:42:32.077624844Z",
-                "modified": "2024-02-29T05:42:32.077624844Z",
+                "created": "2024-03-21T21:38:32.932378859Z",
+                "modified": "2024-03-21T21:38:32.932378859Z",
                 "sourcePosition": "project:///iam.ts#12,18"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1",
                 "custom": true,
-                "id": "example-role2-aa67cd0",
+                "id": "example-role1-9961a28",
                 "type": "aws:iam/role:Role",
                 "inputs": {
                     "__defaults": [
@@ -276,390 +320,346 @@
                     "assumeRolePolicy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Sid\":\"AllowAssumeRole\"}],\"Version\":\"2012-10-17\"}",
                     "forceDetachPolicies": false,
                     "maxSessionDuration": 3600,
-                    "name": "example-role2-aa67cd0",
+                    "name": "example-role1-9961a28",
                     "path": "/"
                 },
                 "outputs": {
-                    "arn": "arn:aws:iam::894850187425:role/example-role2-aa67cd0",
+                    "arn": "arn:aws:iam::894850187425:role/example-role1-9961a28",
                     "assumeRolePolicy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Sid\":\"AllowAssumeRole\"}],\"Version\":\"2012-10-17\"}",
-                    "createDate": "2024-02-29T05:42:31Z",
+                    "createDate": "2024-03-21T21:38:32Z",
                     "description": "",
                     "forceDetachPolicies": false,
-                    "id": "example-role2-aa67cd0",
+                    "id": "example-role1-9961a28",
                     "inlinePolicies": [],
                     "managedPolicyArns": [],
                     "maxSessionDuration": 3600,
-                    "name": "example-role2-aa67cd0",
+                    "name": "example-role1-9961a28",
                     "namePrefix": "",
                     "path": "/",
                     "tags": {},
                     "tagsAll": {},
-                    "uniqueId": "AROA5AWJ2ICQVZPDMP5WT"
+                    "uniqueId": "AROA5AWJ2ICQ7OVZBLFIF"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "assumeRolePolicy": null
+                    "assumeRolePolicy": []
                 },
-                "created": "2024-02-29T05:42:32.080415006Z",
-                "modified": "2024-02-29T05:42:32.080415006Z",
+                "created": "2024-03-21T21:38:32.997671586Z",
+                "modified": "2024-03-21T21:38:32.997671586Z",
                 "sourcePosition": "project:///iam.ts#12,18"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role0-policy-0",
                 "custom": true,
-                "id": "example-role1-b88a3d4",
-                "type": "aws:iam/role:Role",
+                "id": "example-role0-be9f8be-20240321213832960200000001",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
                 "inputs": {
-                    "__defaults": [
-                        "forceDetachPolicies",
-                        "maxSessionDuration",
-                        "name",
-                        "path"
-                    ],
-                    "assumeRolePolicy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Sid\":\"AllowAssumeRole\"}],\"Version\":\"2012-10-17\"}",
-                    "forceDetachPolicies": false,
-                    "maxSessionDuration": 3600,
-                    "name": "example-role1-b88a3d4",
-                    "path": "/"
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+                    "role": "example-role0-be9f8be"
                 },
                 "outputs": {
-                    "arn": "arn:aws:iam::894850187425:role/example-role1-b88a3d4",
-                    "assumeRolePolicy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Sid\":\"AllowAssumeRole\"}],\"Version\":\"2012-10-17\"}",
-                    "createDate": "2024-02-29T05:42:31Z",
-                    "description": "",
-                    "forceDetachPolicies": false,
-                    "id": "example-role1-b88a3d4",
-                    "inlinePolicies": [],
-                    "managedPolicyArns": [],
-                    "maxSessionDuration": 3600,
-                    "name": "example-role1-b88a3d4",
-                    "namePrefix": "",
-                    "path": "/",
-                    "tags": {},
-                    "tagsAll": {},
-                    "uniqueId": "AROA5AWJ2ICQXOPT6GSCR"
+                    "id": "example-role0-be9f8be-20240321213832960200000001",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+                    "role": "example-role0-be9f8be"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                ],
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "assumeRolePolicy": null
+                    "policyArn": [],
+                    "role": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                    ]
                 },
-                "created": "2024-02-29T05:42:32.096549863Z",
-                "modified": "2024-02-29T05:42:32.096549863Z",
-                "sourcePosition": "project:///iam.ts#12,18"
+                "created": "2024-03-21T21:38:33.016516919Z",
+                "modified": "2024-03-21T21:38:33.016516919Z",
+                "sourcePosition": "project:///iam.ts#21,21"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role0-policy-2",
                 "custom": true,
-                "id": "example-managed-nodegroups-eksRole-role-25f569c-20240229054232170700000001",
+                "id": "example-role0-be9f8be-20240321213832973300000002",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "example-role0-be9f8be"
+                },
+                "outputs": {
+                    "id": "example-role0-be9f8be-20240321213832973300000002",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "example-role0-be9f8be"
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                ],
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
+                "propertyDependencies": {
+                    "policyArn": [],
+                    "role": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                    ]
+                },
+                "created": "2024-03-21T21:38:33.016633562Z",
+                "modified": "2024-03-21T21:38:33.016633562Z",
+                "sourcePosition": "project:///iam.ts#21,21"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role0-policy-1",
+                "custom": true,
+                "id": "example-role0-be9f8be-20240321213832983300000003",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+                    "role": "example-role0-be9f8be"
+                },
+                "outputs": {
+                    "id": "example-role0-be9f8be-20240321213832983300000003",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+                    "role": "example-role0-be9f8be"
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                ],
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
+                "propertyDependencies": {
+                    "policyArn": [],
+                    "role": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                    ]
+                },
+                "created": "2024-03-21T21:38:33.017066676Z",
+                "modified": "2024-03-21T21:38:33.017066676Z",
+                "sourcePosition": "project:///iam.ts#21,21"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role2-policy-2",
+                "custom": true,
+                "id": "example-role2-4210053-20240321213832994100000004",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "example-role2-4210053"
+                },
+                "outputs": {
+                    "id": "example-role2-4210053-20240321213832994100000004",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "example-role2-4210053"
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
+                ],
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
+                "propertyDependencies": {
+                    "policyArn": [],
+                    "role": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
+                    ]
+                },
+                "created": "2024-03-21T21:38:33.027802961Z",
+                "modified": "2024-03-21T21:38:33.027802961Z",
+                "sourcePosition": "project:///iam.ts#21,21"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
+                "custom": true,
+                "id": "example-managed-nodegroups-eksRole-role-ac9c5a4-20240321213833007800000005",
                 "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
                 "inputs": {
                     "__defaults": [],
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
-                    "role": "example-managed-nodegroups-eksRole-role-25f569c"
+                    "role": "example-managed-nodegroups-eksRole-role-ac9c5a4"
                 },
                 "outputs": {
-                    "id": "example-managed-nodegroups-eksRole-role-25f569c-20240229054232170700000001",
+                    "id": "example-managed-nodegroups-eksRole-role-ac9c5a4-20240321213833007800000005",
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
-                    "role": "example-managed-nodegroups-eksRole-role-25f569c"
+                    "role": "example-managed-nodegroups-eksRole-role-ac9c5a4"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole::example-managed-nodegroups-eksRole",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole::example-managed-nodegroups-eksRole",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "policyArn": null,
+                    "policyArn": [],
                     "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role"
                     ]
                 },
-                "created": "2024-02-29T05:42:32.214700819Z",
-                "modified": "2024-02-29T05:42:32.214700819Z",
+                "created": "2024-03-21T21:38:33.040860393Z",
+                "modified": "2024-03-21T21:38:33.040860393Z",
                 "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#89,17"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role0-policy-2",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role2-policy-1",
                 "custom": true,
-                "id": "example-role0-98bac22-20240229054232183500000002",
-                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
-                "inputs": {
-                    "__defaults": [],
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-                    "role": "example-role0-98bac22"
-                },
-                "outputs": {
-                    "id": "example-role0-98bac22-20240229054232183500000002",
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-                    "role": "example-role0-98bac22"
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
-                "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0"
-                ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
-                "propertyDependencies": {
-                    "policyArn": null,
-                    "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0"
-                    ]
-                },
-                "created": "2024-02-29T05:42:32.232839293Z",
-                "modified": "2024-02-29T05:42:32.232839293Z",
-                "sourcePosition": "project:///iam.ts#21,21"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role0-policy-0",
-                "custom": true,
-                "id": "example-role0-98bac22-20240229054232184500000003",
-                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
-                "inputs": {
-                    "__defaults": [],
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-                    "role": "example-role0-98bac22"
-                },
-                "outputs": {
-                    "id": "example-role0-98bac22-20240229054232184500000003",
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-                    "role": "example-role0-98bac22"
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
-                "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0"
-                ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
-                "propertyDependencies": {
-                    "policyArn": null,
-                    "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0"
-                    ]
-                },
-                "created": "2024-02-29T05:42:32.233319806Z",
-                "modified": "2024-02-29T05:42:32.233319806Z",
-                "sourcePosition": "project:///iam.ts#21,21"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role0-policy-1",
-                "custom": true,
-                "id": "example-role0-98bac22-20240229054232188900000004",
+                "id": "example-role2-4210053-20240321213833016100000007",
                 "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
                 "inputs": {
                     "__defaults": [],
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-                    "role": "example-role0-98bac22"
+                    "role": "example-role2-4210053"
                 },
                 "outputs": {
-                    "id": "example-role0-98bac22-20240229054232188900000004",
+                    "id": "example-role2-4210053-20240321213833016100000007",
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-                    "role": "example-role0-98bac22"
+                    "role": "example-role2-4210053"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "policyArn": null,
+                    "policyArn": [],
                     "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
                     ]
                 },
-                "created": "2024-02-29T05:42:32.237241547Z",
-                "modified": "2024-02-29T05:42:32.237241547Z",
+                "created": "2024-03-21T21:38:33.050551724Z",
+                "modified": "2024-03-21T21:38:33.050551724Z",
                 "sourcePosition": "project:///iam.ts#21,21"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role2-policy-2",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role2-policy-0",
                 "custom": true,
-                "id": "example-role2-aa67cd0-20240229054232210500000005",
-                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
-                "inputs": {
-                    "__defaults": [],
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-                    "role": "example-role2-aa67cd0"
-                },
-                "outputs": {
-                    "id": "example-role2-aa67cd0-20240229054232210500000005",
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-                    "role": "example-role2-aa67cd0"
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
-                "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
-                ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
-                "propertyDependencies": {
-                    "policyArn": null,
-                    "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
-                    ]
-                },
-                "created": "2024-02-29T05:42:32.256033815Z",
-                "modified": "2024-02-29T05:42:32.256033815Z",
-                "sourcePosition": "project:///iam.ts#21,21"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role1-policy-2",
-                "custom": true,
-                "id": "example-role1-b88a3d4-20240229054232216400000008",
-                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
-                "inputs": {
-                    "__defaults": [],
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-                    "role": "example-role1-b88a3d4"
-                },
-                "outputs": {
-                    "id": "example-role1-b88a3d4-20240229054232216400000008",
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-                    "role": "example-role1-b88a3d4"
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
-                "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1"
-                ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
-                "propertyDependencies": {
-                    "policyArn": null,
-                    "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1"
-                    ]
-                },
-                "created": "2024-02-29T05:42:32.262024286Z",
-                "modified": "2024-02-29T05:42:32.262024286Z",
-                "sourcePosition": "project:///iam.ts#21,21"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role2-policy-1",
-                "custom": true,
-                "id": "example-role2-aa67cd0-20240229054232216100000007",
-                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
-                "inputs": {
-                    "__defaults": [],
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-                    "role": "example-role2-aa67cd0"
-                },
-                "outputs": {
-                    "id": "example-role2-aa67cd0-20240229054232216100000007",
-                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-                    "role": "example-role2-aa67cd0"
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
-                "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
-                ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
-                "propertyDependencies": {
-                    "policyArn": null,
-                    "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
-                    ]
-                },
-                "created": "2024-02-29T05:42:32.264308087Z",
-                "modified": "2024-02-29T05:42:32.264308087Z",
-                "sourcePosition": "project:///iam.ts#21,21"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role2-policy-0",
-                "custom": true,
-                "id": "example-role2-aa67cd0-20240229054232214700000006",
+                "id": "example-role2-4210053-20240321213833008200000006",
                 "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
                 "inputs": {
                     "__defaults": [],
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-                    "role": "example-role2-aa67cd0"
+                    "role": "example-role2-4210053"
                 },
                 "outputs": {
-                    "id": "example-role2-aa67cd0-20240229054232214700000006",
+                    "id": "example-role2-4210053-20240321213833008200000006",
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-                    "role": "example-role2-aa67cd0"
+                    "role": "example-role2-4210053"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "policyArn": null,
+                    "policyArn": [],
                     "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
                     ]
                 },
-                "created": "2024-02-29T05:42:32.264461067Z",
-                "modified": "2024-02-29T05:42:32.264461067Z",
+                "created": "2024-03-21T21:38:33.052173993Z",
+                "modified": "2024-03-21T21:38:33.052173993Z",
                 "sourcePosition": "project:///iam.ts#21,21"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role1-policy-1",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role1-policy-1",
                 "custom": true,
-                "id": "example-role1-b88a3d4-20240229054232226100000009",
+                "id": "example-role1-9961a28-20240321213833074600000008",
                 "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
                 "inputs": {
                     "__defaults": [],
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-                    "role": "example-role1-b88a3d4"
+                    "role": "example-role1-9961a28"
                 },
                 "outputs": {
-                    "id": "example-role1-b88a3d4-20240229054232226100000009",
+                    "id": "example-role1-9961a28-20240321213833074600000008",
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-                    "role": "example-role1-b88a3d4"
+                    "role": "example-role1-9961a28"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "policyArn": null,
+                    "policyArn": [],
                     "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1"
                     ]
                 },
-                "created": "2024-02-29T05:42:32.272794309Z",
-                "modified": "2024-02-29T05:42:32.272794309Z",
+                "created": "2024-03-21T21:38:33.112677551Z",
+                "modified": "2024-03-21T21:38:33.112677551Z",
                 "sourcePosition": "project:///iam.ts#21,21"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role1-policy-0",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role1-policy-0",
                 "custom": true,
-                "id": "example-role1-b88a3d4-2024022905423224200000000a",
+                "id": "example-role1-9961a28-20240321213833099000000009",
                 "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
                 "inputs": {
                     "__defaults": [],
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-                    "role": "example-role1-b88a3d4"
+                    "role": "example-role1-9961a28"
                 },
                 "outputs": {
-                    "id": "example-role1-b88a3d4-2024022905423224200000000a",
+                    "id": "example-role1-9961a28-20240321213833099000000009",
                     "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-                    "role": "example-role1-b88a3d4"
+                    "role": "example-role1-9961a28"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-53b61cb9",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "policyArn": null,
+                    "policyArn": [],
                     "role": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1"
                     ]
                 },
-                "created": "2024-02-29T05:42:32.293692105Z",
-                "modified": "2024-02-29T05:42:32.293692105Z",
+                "created": "2024-03-21T21:38:33.135039811Z",
+                "modified": "2024-03-21T21:38:33.135039811Z",
                 "sourcePosition": "project:///iam.ts#21,21"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-role1-policy-2",
                 "custom": true,
-                "id": "sg-054584f8440522489",
+                "id": "example-role1-9961a28-2024032121383310970000000a",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "example-role1-9961a28"
+                },
+                "outputs": {
+                    "id": "example-role1-9961a28-2024032121383310970000000a",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "example-role1-9961a28"
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:pulumi:Stack::example-managed-nodegroups-p-it-runner-managed-no-dd1184a3",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1"
+                ],
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
+                "propertyDependencies": {
+                    "policyArn": [],
+                    "role": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1"
+                    ]
+                },
+                "created": "2024-03-21T21:38:33.163628433Z",
+                "modified": "2024-03-21T21:38:33.163628433Z",
+                "sourcePosition": "project:///iam.ts#21,21"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup",
+                "custom": true,
+                "id": "sg-0787b277008e3c68e",
                 "type": "aws:ec2/securityGroup:SecurityGroup",
                 "inputs": {
                     "__defaults": [
                         "name"
                     ],
                     "description": "Managed by Pulumi",
-                    "name": "example-managed-nodegroups-eksClusterSecurityGroup-b06a96c",
+                    "name": "example-managed-nodegroups-eksClusterSecurityGroup-523b997",
                     "revokeRulesOnDelete": true,
                     "tags": {
                         "Name": "example-managed-nodegroups-eksClusterSecurityGroup",
@@ -669,12 +669,12 @@
                 },
                 "outputs": {
                     "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":900000000000},\"schema_version\":\"1\"}",
-                    "arn": "arn:aws:ec2:us-west-2:894850187425:security-group/sg-054584f8440522489",
+                    "arn": "arn:aws:ec2:us-west-2:894850187425:security-group/sg-0787b277008e3c68e",
                     "description": "Managed by Pulumi",
                     "egress": [],
-                    "id": "sg-054584f8440522489",
+                    "id": "sg-0787b277008e3c68e",
                     "ingress": [],
-                    "name": "example-managed-nodegroups-eksClusterSecurityGroup-b06a96c",
+                    "name": "example-managed-nodegroups-eksClusterSecurityGroup-523b997",
                     "namePrefix": "",
                     "ownerId": "894850187425",
                     "revokeRulesOnDelete": true,
@@ -686,22 +686,22 @@
                     },
                     "vpcId": "vpc-043be661de8760bec"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "description": null,
-                    "revokeRulesOnDelete": null,
-                    "tags": null,
-                    "vpcId": null
+                    "description": [],
+                    "revokeRulesOnDelete": [],
+                    "tags": [],
+                    "vpcId": []
                 },
-                "created": "2024-02-29T05:42:34.991201135Z",
-                "modified": "2024-02-29T05:42:34.991201135Z",
+                "created": "2024-03-21T21:38:36.122057771Z",
+                "modified": "2024-03-21T21:38:36.122057771Z",
                 "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#509,35"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksClusterInternetEgressRule",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksClusterInternetEgressRule",
                 "custom": true,
-                "id": "sgrule-1685974498",
+                "id": "sgrule-1849730539",
                 "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
                 "inputs": {
                     "__defaults": [],
@@ -711,7 +711,7 @@
                     "description": "Allow internet access.",
                     "fromPort": 0,
                     "protocol": "-1",
-                    "securityGroupId": "sg-054584f8440522489",
+                    "securityGroupId": "sg-0787b277008e3c68e",
                     "toPort": 0,
                     "type": "egress"
                 },
@@ -722,45 +722,45 @@
                     ],
                     "description": "Allow internet access.",
                     "fromPort": 0,
-                    "id": "sgrule-1685974498",
+                    "id": "sgrule-1849730539",
                     "protocol": "-1",
-                    "securityGroupId": "sg-054584f8440522489",
-                    "securityGroupRuleId": "sgr-08779ba9ced7a9c20",
+                    "securityGroupId": "sg-0787b277008e3c68e",
+                    "securityGroupRuleId": "sgr-0b4abeacb59444afb",
                     "self": false,
                     "toPort": 0,
                     "type": "egress"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "cidrBlocks": null,
-                    "description": null,
-                    "fromPort": null,
-                    "protocol": null,
+                    "cidrBlocks": [],
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
                     "securityGroupId": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
                     ],
-                    "toPort": null,
-                    "type": null
+                    "toPort": [],
+                    "type": []
                 },
-                "created": "2024-02-29T05:42:35.772086286Z",
-                "modified": "2024-02-29T05:42:35.772086286Z",
+                "created": "2024-03-21T21:38:36.840104589Z",
+                "modified": "2024-03-21T21:38:36.840104589Z",
                 "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#526,46"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
                 "custom": true,
-                "id": "example-managed-nodegroups-eksCluster-e5de847",
+                "id": "example-managed-nodegroups-eksCluster-00fc06d",
                 "type": "aws:eks/cluster:Cluster",
                 "inputs": {
                     "__defaults": [
                         "name"
                     ],
-                    "name": "example-managed-nodegroups-eksCluster-e5de847",
-                    "roleArn": "arn:aws:iam::894850187425:role/example-managed-nodegroups-eksRole-role-25f569c",
+                    "name": "example-managed-nodegroups-eksCluster-00fc06d",
+                    "roleArn": "arn:aws:iam::894850187425:role/example-managed-nodegroups-eksRole-role-ac9c5a4",
                     "tags": {
                         "Name": "example-managed-nodegroups-eksCluster",
                         "__defaults": []
@@ -773,7 +773,7 @@
                         "endpointPrivateAccess": false,
                         "endpointPublicAccess": true,
                         "securityGroupIds": [
-                            "sg-054584f8440522489"
+                            "sg-0787b277008e3c68e"
                         ],
                         "subnetIds": [
                             "subnet-03711d3b9b21b3a8e",
@@ -785,25 +785,25 @@
                 },
                 "outputs": {
                     "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":1800000000000,\"delete\":900000000000,\"update\":3600000000000}}",
-                    "arn": "arn:aws:eks:us-west-2:894850187425:cluster/example-managed-nodegroups-eksCluster-e5de847",
+                    "arn": "arn:aws:eks:us-west-2:894850187425:cluster/example-managed-nodegroups-eksCluster-00fc06d",
                     "certificateAuthorities": [
                         {
-                            "data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVzU2UDBXZGdZZ2d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qa3dOVFF5TWpaYUZ3MHpOREF5TWpZd05UUTNNalphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN5TGVWS1VjMXZMQWVjdWVKVjNQVFNhOUZoSzlxOXdKYzUyS2FEekYzTkdweit3TVBVS1o3N2M4N2sKTDJ0TVZleUZEemdsNE5NbDFYNTlveGlFNHB5ZGRwZGgwOWhUd21WNTRKRGQ3Nk96UGFEMkJwbFN3VWxYZzJsMgpHUEZ0T0pjTEV3anZxbVpTcVpEM0JUb1VRVzRQNE1VRlh3Qmc2OUg0RU9qRmRMMFNncXlRWHh3cjVZMjVOT251CmVrWWtTTnRvUWplYU11dDFFdlo4K1pBU1V2bDd1QVNsNGFVNHRYUjJCYVN1WVB1Q01MdlQxb1Zka3JadHhxZ2IKNkJBMDNmc0FDS0V4ZkdKSWswL1RYOUpRVU50L0VJYUc0RFVmSmFaTDdYMitYNW9XZUQrQllKZmowREY4R3RFUwpWV1hRZVMrRTB2azdhR3M5Q21sQVEveGRJMFo1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMHJaRldaS3hWWXM4U2hvU0l6R2k4SWZwY0N6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQW1kV1ZwOG5VcApxazBkajJNQWp0VG0xMXFOamNzVGdoaGJUaThlY2E4Y2xxbEd0a3NhY1o5dEpPeng2Uzlha1JWbCswbnY5elkwCjM3N1g4U0I2MTVJUVcvRUVTKytibUdGeEpDbmxjdkhXWC9jN084RUNOcFZPd1JVZkE0a252VFZ2Q0Q4Q2N6emQKTDA1SlBtSU5Qb0xlYjhUVm1yV0FuV2ZNTWxKVkduSk93TjYzODNhYWpyMkhCRFZBdzNiMUtQVmwreU1SMVZvbgozUERZN3NEb3Z5OVNuUmE1M1hZODR3d2dlM2JaWklucnR1MjhkU0tSU1JIcHlVeFRIc1ZSMlRWYm5JMTRJVmU4Cmd2emRDVjBmSTVOR29YM2RtMko2bWt4dkZBMjNObENPK1BmMk9wdzFWWDNwR1dFYUZodTk1WmFUTDFwZjBXYkoKbThFckwvRUkxcmtPCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+                            "data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQit2VCtoN3hwUUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1qRXlNVE00TWpOYUZ3MHpOREF6TVRreU1UUXpNak5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMzUDduR0VJMFI2a3BuKzJKaUJxSFVsaUF1OTdmRk4xeHFER2NqcCttcFUvU05kNDFkM0dJMUVnKzYKWENYcVFKMkxNaEYyTUxQVmJwUXFCU0pPZXhnZ3RoSzR2NDNZaXVrNzlhalJxSGFiOWNsb3NESnNFU0NhVnNaWQpIbzIxcUlVQXVjNUpIWWRlTzRVNFlxL2g1ZFRXVjBQV04vSVZDSkp2cmJlVU5ocnVMK3R2cHN4VjNhZUFRbFpsCkdaZFB1ZENkb05RazlVcTV2SG1aeVNCaGE5YlpZRGozME5FZ0g4Nk42c0pFakx5VW1KeHpWeXp1eTNzT3czd1QKNUI3NWd0NFJpM2NyODA5dm5iMUhPSjhWM0Rrb1A0T1pTaXRxUTJoUVc0SDNKeFlYQStTa2hlR1pxblRvVE4xeQpybkRMOFNsK3dQN2ZJWUVkclJtcG0rU202WVVqQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUYkRwSEVlSVRmTUxCdWRONk5lbm1JVkJIS3FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWZBZ0twZUVpawp6VnBYNlhBZHEweFhxYWgwRXNMdnpzSW9sRC9JT0dnc1VPOFQ1TE5pWjNVYzFvaStadTNlKzZEa2x1S1JGWnlXCklPVnNwaXdPeXN6eFNmUHlRcTdPUDJmZmpGbG5wUFVpRkI2VmoreDVDNURPMDJNZ0E3KzhPTkZhZHlvWXpZc00KaUZpVnZMNEJsYTZCNG1EanBlWVdyR1pON0RMdmlzWEI2ZnNYTjdxZnpOdFR3bHdCSURidlBYUUd1NTlpcUY2RwphQ21TVHNFRHU1SUlaRUZ5ZEhrMHNBa1d3WXlOaXVaL3hFQjZwRHBFOWUvdVlCZW9NWWQ2dkxNdlduSldYbjJFCmpXdmNPVkxwVkZVcktGN2xxWVI2d2Q3Q2kra0RielVGSVJGTFUzY1YrQ2dsdGFUUEYxbXFmRXJQNjJTOHdrbjgKUWNlY1dHL29uRHdGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
                         }
                     ],
                     "certificateAuthority": {
-                        "data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVzU2UDBXZGdZZ2d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qa3dOVFF5TWpaYUZ3MHpOREF5TWpZd05UUTNNalphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN5TGVWS1VjMXZMQWVjdWVKVjNQVFNhOUZoSzlxOXdKYzUyS2FEekYzTkdweit3TVBVS1o3N2M4N2sKTDJ0TVZleUZEemdsNE5NbDFYNTlveGlFNHB5ZGRwZGgwOWhUd21WNTRKRGQ3Nk96UGFEMkJwbFN3VWxYZzJsMgpHUEZ0T0pjTEV3anZxbVpTcVpEM0JUb1VRVzRQNE1VRlh3Qmc2OUg0RU9qRmRMMFNncXlRWHh3cjVZMjVOT251CmVrWWtTTnRvUWplYU11dDFFdlo4K1pBU1V2bDd1QVNsNGFVNHRYUjJCYVN1WVB1Q01MdlQxb1Zka3JadHhxZ2IKNkJBMDNmc0FDS0V4ZkdKSWswL1RYOUpRVU50L0VJYUc0RFVmSmFaTDdYMitYNW9XZUQrQllKZmowREY4R3RFUwpWV1hRZVMrRTB2azdhR3M5Q21sQVEveGRJMFo1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMHJaRldaS3hWWXM4U2hvU0l6R2k4SWZwY0N6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQW1kV1ZwOG5VcApxazBkajJNQWp0VG0xMXFOamNzVGdoaGJUaThlY2E4Y2xxbEd0a3NhY1o5dEpPeng2Uzlha1JWbCswbnY5elkwCjM3N1g4U0I2MTVJUVcvRUVTKytibUdGeEpDbmxjdkhXWC9jN084RUNOcFZPd1JVZkE0a252VFZ2Q0Q4Q2N6emQKTDA1SlBtSU5Qb0xlYjhUVm1yV0FuV2ZNTWxKVkduSk93TjYzODNhYWpyMkhCRFZBdzNiMUtQVmwreU1SMVZvbgozUERZN3NEb3Z5OVNuUmE1M1hZODR3d2dlM2JaWklucnR1MjhkU0tSU1JIcHlVeFRIc1ZSMlRWYm5JMTRJVmU4Cmd2emRDVjBmSTVOR29YM2RtMko2bWt4dkZBMjNObENPK1BmMk9wdzFWWDNwR1dFYUZodTk1WmFUTDFwZjBXYkoKbThFckwvRUkxcmtPCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+                        "data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQit2VCtoN3hwUUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1qRXlNVE00TWpOYUZ3MHpOREF6TVRreU1UUXpNak5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMzUDduR0VJMFI2a3BuKzJKaUJxSFVsaUF1OTdmRk4xeHFER2NqcCttcFUvU05kNDFkM0dJMUVnKzYKWENYcVFKMkxNaEYyTUxQVmJwUXFCU0pPZXhnZ3RoSzR2NDNZaXVrNzlhalJxSGFiOWNsb3NESnNFU0NhVnNaWQpIbzIxcUlVQXVjNUpIWWRlTzRVNFlxL2g1ZFRXVjBQV04vSVZDSkp2cmJlVU5ocnVMK3R2cHN4VjNhZUFRbFpsCkdaZFB1ZENkb05RazlVcTV2SG1aeVNCaGE5YlpZRGozME5FZ0g4Nk42c0pFakx5VW1KeHpWeXp1eTNzT3czd1QKNUI3NWd0NFJpM2NyODA5dm5iMUhPSjhWM0Rrb1A0T1pTaXRxUTJoUVc0SDNKeFlYQStTa2hlR1pxblRvVE4xeQpybkRMOFNsK3dQN2ZJWUVkclJtcG0rU202WVVqQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUYkRwSEVlSVRmTUxCdWRONk5lbm1JVkJIS3FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWZBZ0twZUVpawp6VnBYNlhBZHEweFhxYWgwRXNMdnpzSW9sRC9JT0dnc1VPOFQ1TE5pWjNVYzFvaStadTNlKzZEa2x1S1JGWnlXCklPVnNwaXdPeXN6eFNmUHlRcTdPUDJmZmpGbG5wUFVpRkI2VmoreDVDNURPMDJNZ0E3KzhPTkZhZHlvWXpZc00KaUZpVnZMNEJsYTZCNG1EanBlWVdyR1pON0RMdmlzWEI2ZnNYTjdxZnpOdFR3bHdCSURidlBYUUd1NTlpcUY2RwphQ21TVHNFRHU1SUlaRUZ5ZEhrMHNBa1d3WXlOaXVaL3hFQjZwRHBFOWUvdVlCZW9NWWQ2dkxNdlduSldYbjJFCmpXdmNPVkxwVkZVcktGN2xxWVI2d2Q3Q2kra0RielVGSVJGTFUzY1YrQ2dsdGFUUEYxbXFmRXJQNjJTOHdrbjgKUWNlY1dHL29uRHdGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
                     },
-                    "createdAt": "2024-02-29 05:42:37.681 +0000 UTC",
+                    "createdAt": "2024-03-21 21:38:38.926 +0000 UTC",
                     "enabledClusterLogTypes": [],
                     "encryptionConfig": null,
-                    "endpoint": "https://E8378A6FCD92A05448CFBB103D6D08FB.gr7.us-west-2.eks.amazonaws.com",
-                    "id": "example-managed-nodegroups-eksCluster-e5de847",
+                    "endpoint": "https://047CF11A0133D9B0C0607307ABE9303C.gr7.us-west-2.eks.amazonaws.com",
+                    "id": "example-managed-nodegroups-eksCluster-00fc06d",
                     "identities": [
                         {
                             "oidcs": [
                                 {
-                                    "issuer": "https://oidc.eks.us-west-2.amazonaws.com/id/E8378A6FCD92A05448CFBB103D6D08FB"
+                                    "issuer": "https://oidc.eks.us-west-2.amazonaws.com/id/047CF11A0133D9B0C0607307ABE9303C"
                                 }
                             ]
                         }
@@ -813,10 +813,10 @@
                         "serviceIpv4Cidr": "10.100.0.0/16",
                         "serviceIpv6Cidr": ""
                     },
-                    "name": "example-managed-nodegroups-eksCluster-e5de847",
+                    "name": "example-managed-nodegroups-eksCluster-00fc06d",
                     "outpostConfig": null,
-                    "platformVersion": "eks.1",
-                    "roleArn": "arn:aws:iam::894850187425:role/example-managed-nodegroups-eksRole-role-25f569c",
+                    "platformVersion": "eks.4",
+                    "roleArn": "arn:aws:iam::894850187425:role/example-managed-nodegroups-eksRole-role-ac9c5a4",
                     "status": "ACTIVE",
                     "tags": {
                         "Name": "example-managed-nodegroups-eksCluster"
@@ -826,14 +826,14 @@
                     },
                     "version": "1.29",
                     "vpcConfig": {
-                        "clusterSecurityGroupId": "sg-0a94933933320d231",
+                        "clusterSecurityGroupId": "sg-009f28c72aafcaefc",
                         "endpointPrivateAccess": false,
                         "endpointPublicAccess": true,
                         "publicAccessCidrs": [
                             "0.0.0.0/0"
                         ],
                         "securityGroupIds": [
-                            "sg-054584f8440522489"
+                            "sg-0787b277008e3c68e"
                         ],
                         "subnetIds": [
                             "subnet-0fc2dc8f8ba906919",
@@ -844,83 +844,85 @@
                         "vpcId": "vpc-043be661de8760bec"
                     }
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
                     "roleArn": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
                     ],
-                    "tags": null,
+                    "tags": [],
                     "vpcConfig": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
                     ]
                 },
-                "created": "2024-02-29T05:50:32.179767365Z",
-                "modified": "2024-02-29T05:50:32.179767365Z",
+                "created": "2024-03-21T21:46:13.400267552Z",
+                "modified": "2024-03-21T21:46:13.400267552Z",
                 "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#573,24"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$pulumi:providers:kubernetes::example-managed-nodegroups-provider",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$pulumi:providers:kubernetes::example-managed-nodegroups-eks-k8s",
                 "custom": true,
-                "id": "74562e88-53c8-4502-8fdb-125705230974",
+                "id": "0d483041-e46b-4f0d-b8fb-afade95e0050",
                 "type": "pulumi:providers:kubernetes",
                 "inputs": {
-                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://E8378A6FCD92A05448CFBB103D6D08FB.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVzU2UDBXZGdZZ2d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qa3dOVFF5TWpaYUZ3MHpOREF5TWpZd05UUTNNalphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN5TGVWS1VjMXZMQWVjdWVKVjNQVFNhOUZoSzlxOXdKYzUyS2FEekYzTkdweit3TVBVS1o3N2M4N2sKTDJ0TVZleUZEemdsNE5NbDFYNTlveGlFNHB5ZGRwZGgwOWhUd21WNTRKRGQ3Nk96UGFEMkJwbFN3VWxYZzJsMgpHUEZ0T0pjTEV3anZxbVpTcVpEM0JUb1VRVzRQNE1VRlh3Qmc2OUg0RU9qRmRMMFNncXlRWHh3cjVZMjVOT251CmVrWWtTTnRvUWplYU11dDFFdlo4K1pBU1V2bDd1QVNsNGFVNHRYUjJCYVN1WVB1Q01MdlQxb1Zka3JadHhxZ2IKNkJBMDNmc0FDS0V4ZkdKSWswL1RYOUpRVU50L0VJYUc0RFVmSmFaTDdYMitYNW9XZUQrQllKZmowREY4R3RFUwpWV1hRZVMrRTB2azdhR3M5Q21sQVEveGRJMFo1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMHJaRldaS3hWWXM4U2hvU0l6R2k4SWZwY0N6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQW1kV1ZwOG5VcApxazBkajJNQWp0VG0xMXFOamNzVGdoaGJUaThlY2E4Y2xxbEd0a3NhY1o5dEpPeng2Uzlha1JWbCswbnY5elkwCjM3N1g4U0I2MTVJUVcvRUVTKytibUdGeEpDbmxjdkhXWC9jN084RUNOcFZPd1JVZkE0a252VFZ2Q0Q4Q2N6emQKTDA1SlBtSU5Qb0xlYjhUVm1yV0FuV2ZNTWxKVkduSk93TjYzODNhYWpyMkhCRFZBdzNiMUtQVmwreU1SMVZvbgozUERZN3NEb3Z5OVNuUmE1M1hZODR3d2dlM2JaWklucnR1MjhkU0tSU1JIcHlVeFRIc1ZSMlRWYm5JMTRJVmU4Cmd2emRDVjBmSTVOR29YM2RtMko2bWt4dkZBMjNObENPK1BmMk9wdzFWWDNwR1dFYUZodTk1WmFUTDFwZjBXYkoKbThFckwvRUkxcmtPCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-e5de847\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://047CF11A0133D9B0C0607307ABE9303C.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQit2VCtoN3hwUUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1qRXlNVE00TWpOYUZ3MHpOREF6TVRreU1UUXpNak5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMzUDduR0VJMFI2a3BuKzJKaUJxSFVsaUF1OTdmRk4xeHFER2NqcCttcFUvU05kNDFkM0dJMUVnKzYKWENYcVFKMkxNaEYyTUxQVmJwUXFCU0pPZXhnZ3RoSzR2NDNZaXVrNzlhalJxSGFiOWNsb3NESnNFU0NhVnNaWQpIbzIxcUlVQXVjNUpIWWRlTzRVNFlxL2g1ZFRXVjBQV04vSVZDSkp2cmJlVU5ocnVMK3R2cHN4VjNhZUFRbFpsCkdaZFB1ZENkb05RazlVcTV2SG1aeVNCaGE5YlpZRGozME5FZ0g4Nk42c0pFakx5VW1KeHpWeXp1eTNzT3czd1QKNUI3NWd0NFJpM2NyODA5dm5iMUhPSjhWM0Rrb1A0T1pTaXRxUTJoUVc0SDNKeFlYQStTa2hlR1pxblRvVE4xeQpybkRMOFNsK3dQN2ZJWUVkclJtcG0rU202WVVqQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUYkRwSEVlSVRmTUxCdWRONk5lbm1JVkJIS3FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWZBZ0twZUVpawp6VnBYNlhBZHEweFhxYWgwRXNMdnpzSW9sRC9JT0dnc1VPOFQ1TE5pWjNVYzFvaStadTNlKzZEa2x1S1JGWnlXCklPVnNwaXdPeXN6eFNmUHlRcTdPUDJmZmpGbG5wUFVpRkI2VmoreDVDNURPMDJNZ0E3KzhPTkZhZHlvWXpZc00KaUZpVnZMNEJsYTZCNG1EanBlWVdyR1pON0RMdmlzWEI2ZnNYTjdxZnpOdFR3bHdCSURidlBYUUd1NTlpcUY2RwphQ21TVHNFRHU1SUlaRUZ5ZEhrMHNBa1d3WXlOaXVaL3hFQjZwRHBFOWUvdVlCZW9NWWQ2dkxNdlduSldYbjJFCmpXdmNPVkxwVkZVcktGN2xxWVI2d2Q3Q2kra0RielVGSVJGTFUzY1YrQ2dsdGFUUEYxbXFmRXJQNjJTOHdrbjgKUWNlY1dHL29uRHdGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-00fc06d\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
                     "version": "4.1.1"
                 },
                 "outputs": {
-                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://E8378A6FCD92A05448CFBB103D6D08FB.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVzU2UDBXZGdZZ2d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qa3dOVFF5TWpaYUZ3MHpOREF5TWpZd05UUTNNalphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN5TGVWS1VjMXZMQWVjdWVKVjNQVFNhOUZoSzlxOXdKYzUyS2FEekYzTkdweit3TVBVS1o3N2M4N2sKTDJ0TVZleUZEemdsNE5NbDFYNTlveGlFNHB5ZGRwZGgwOWhUd21WNTRKRGQ3Nk96UGFEMkJwbFN3VWxYZzJsMgpHUEZ0T0pjTEV3anZxbVpTcVpEM0JUb1VRVzRQNE1VRlh3Qmc2OUg0RU9qRmRMMFNncXlRWHh3cjVZMjVOT251CmVrWWtTTnRvUWplYU11dDFFdlo4K1pBU1V2bDd1QVNsNGFVNHRYUjJCYVN1WVB1Q01MdlQxb1Zka3JadHhxZ2IKNkJBMDNmc0FDS0V4ZkdKSWswL1RYOUpRVU50L0VJYUc0RFVmSmFaTDdYMitYNW9XZUQrQllKZmowREY4R3RFUwpWV1hRZVMrRTB2azdhR3M5Q21sQVEveGRJMFo1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMHJaRldaS3hWWXM4U2hvU0l6R2k4SWZwY0N6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQW1kV1ZwOG5VcApxazBkajJNQWp0VG0xMXFOamNzVGdoaGJUaThlY2E4Y2xxbEd0a3NhY1o5dEpPeng2Uzlha1JWbCswbnY5elkwCjM3N1g4U0I2MTVJUVcvRUVTKytibUdGeEpDbmxjdkhXWC9jN084RUNOcFZPd1JVZkE0a252VFZ2Q0Q4Q2N6emQKTDA1SlBtSU5Qb0xlYjhUVm1yV0FuV2ZNTWxKVkduSk93TjYzODNhYWpyMkhCRFZBdzNiMUtQVmwreU1SMVZvbgozUERZN3NEb3Z5OVNuUmE1M1hZODR3d2dlM2JaWklucnR1MjhkU0tSU1JIcHlVeFRIc1ZSMlRWYm5JMTRJVmU4Cmd2emRDVjBmSTVOR29YM2RtMko2bWt4dkZBMjNObENPK1BmMk9wdzFWWDNwR1dFYUZodTk1WmFUTDFwZjBXYkoKbThFckwvRUkxcmtPCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-e5de847\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://047CF11A0133D9B0C0607307ABE9303C.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQit2VCtoN3hwUUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1qRXlNVE00TWpOYUZ3MHpOREF6TVRreU1UUXpNak5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMzUDduR0VJMFI2a3BuKzJKaUJxSFVsaUF1OTdmRk4xeHFER2NqcCttcFUvU05kNDFkM0dJMUVnKzYKWENYcVFKMkxNaEYyTUxQVmJwUXFCU0pPZXhnZ3RoSzR2NDNZaXVrNzlhalJxSGFiOWNsb3NESnNFU0NhVnNaWQpIbzIxcUlVQXVjNUpIWWRlTzRVNFlxL2g1ZFRXVjBQV04vSVZDSkp2cmJlVU5ocnVMK3R2cHN4VjNhZUFRbFpsCkdaZFB1ZENkb05RazlVcTV2SG1aeVNCaGE5YlpZRGozME5FZ0g4Nk42c0pFakx5VW1KeHpWeXp1eTNzT3czd1QKNUI3NWd0NFJpM2NyODA5dm5iMUhPSjhWM0Rrb1A0T1pTaXRxUTJoUVc0SDNKeFlYQStTa2hlR1pxblRvVE4xeQpybkRMOFNsK3dQN2ZJWUVkclJtcG0rU202WVVqQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUYkRwSEVlSVRmTUxCdWRONk5lbm1JVkJIS3FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWZBZ0twZUVpawp6VnBYNlhBZHEweFhxYWgwRXNMdnpzSW9sRC9JT0dnc1VPOFQ1TE5pWjNVYzFvaStadTNlKzZEa2x1S1JGWnlXCklPVnNwaXdPeXN6eFNmUHlRcTdPUDJmZmpGbG5wUFVpRkI2VmoreDVDNURPMDJNZ0E3KzhPTkZhZHlvWXpZc00KaUZpVnZMNEJsYTZCNG1EanBlWVdyR1pON0RMdmlzWEI2ZnNYTjdxZnpOdFR3bHdCSURidlBYUUd1NTlpcUY2RwphQ21TVHNFRHU1SUlaRUZ5ZEhrMHNBa1d3WXlOaXVaL3hFQjZwRHBFOWUvdVlCZW9NWWQ2dkxNdlduSldYbjJFCmpXdmNPVkxwVkZVcktGN2xxWVI2d2Q3Q2kra0RielVGSVJGTFUzY1YrQ2dsdGFUUEYxbXFmRXJQNjJTOHdrbjgKUWNlY1dHL29uRHdGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-00fc06d\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
                     "version": "4.1.1"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
                 ],
                 "propertyDependencies": {
                     "kubeconfig": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
-                    ]
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
+                    ],
+                    "version": []
                 },
-                "created": "2024-02-29T05:50:32.565217943Z",
-                "modified": "2024-02-29T05:50:32.565217943Z",
+                "created": "2024-03-21T21:46:13.845309206Z",
+                "modified": "2024-03-21T21:46:13.845309206Z",
                 "sourcePosition": "project:///node_modules/@pulumi/provider.ts#54,9"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$pulumi:providers:kubernetes::example-managed-nodegroups-eks-k8s",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$pulumi:providers:kubernetes::example-managed-nodegroups-provider",
                 "custom": true,
-                "id": "bb9316fb-59e6-44b7-9edb-44cef2dd5bfb",
+                "id": "977a2946-c147-4ba0-864d-631dec8422e2",
                 "type": "pulumi:providers:kubernetes",
                 "inputs": {
-                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://E8378A6FCD92A05448CFBB103D6D08FB.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVzU2UDBXZGdZZ2d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qa3dOVFF5TWpaYUZ3MHpOREF5TWpZd05UUTNNalphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN5TGVWS1VjMXZMQWVjdWVKVjNQVFNhOUZoSzlxOXdKYzUyS2FEekYzTkdweit3TVBVS1o3N2M4N2sKTDJ0TVZleUZEemdsNE5NbDFYNTlveGlFNHB5ZGRwZGgwOWhUd21WNTRKRGQ3Nk96UGFEMkJwbFN3VWxYZzJsMgpHUEZ0T0pjTEV3anZxbVpTcVpEM0JUb1VRVzRQNE1VRlh3Qmc2OUg0RU9qRmRMMFNncXlRWHh3cjVZMjVOT251CmVrWWtTTnRvUWplYU11dDFFdlo4K1pBU1V2bDd1QVNsNGFVNHRYUjJCYVN1WVB1Q01MdlQxb1Zka3JadHhxZ2IKNkJBMDNmc0FDS0V4ZkdKSWswL1RYOUpRVU50L0VJYUc0RFVmSmFaTDdYMitYNW9XZUQrQllKZmowREY4R3RFUwpWV1hRZVMrRTB2azdhR3M5Q21sQVEveGRJMFo1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMHJaRldaS3hWWXM4U2hvU0l6R2k4SWZwY0N6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQW1kV1ZwOG5VcApxazBkajJNQWp0VG0xMXFOamNzVGdoaGJUaThlY2E4Y2xxbEd0a3NhY1o5dEpPeng2Uzlha1JWbCswbnY5elkwCjM3N1g4U0I2MTVJUVcvRUVTKytibUdGeEpDbmxjdkhXWC9jN084RUNOcFZPd1JVZkE0a252VFZ2Q0Q4Q2N6emQKTDA1SlBtSU5Qb0xlYjhUVm1yV0FuV2ZNTWxKVkduSk93TjYzODNhYWpyMkhCRFZBdzNiMUtQVmwreU1SMVZvbgozUERZN3NEb3Z5OVNuUmE1M1hZODR3d2dlM2JaWklucnR1MjhkU0tSU1JIcHlVeFRIc1ZSMlRWYm5JMTRJVmU4Cmd2emRDVjBmSTVOR29YM2RtMko2bWt4dkZBMjNObENPK1BmMk9wdzFWWDNwR1dFYUZodTk1WmFUTDFwZjBXYkoKbThFckwvRUkxcmtPCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-e5de847\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://047CF11A0133D9B0C0607307ABE9303C.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQit2VCtoN3hwUUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1qRXlNVE00TWpOYUZ3MHpOREF6TVRreU1UUXpNak5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMzUDduR0VJMFI2a3BuKzJKaUJxSFVsaUF1OTdmRk4xeHFER2NqcCttcFUvU05kNDFkM0dJMUVnKzYKWENYcVFKMkxNaEYyTUxQVmJwUXFCU0pPZXhnZ3RoSzR2NDNZaXVrNzlhalJxSGFiOWNsb3NESnNFU0NhVnNaWQpIbzIxcUlVQXVjNUpIWWRlTzRVNFlxL2g1ZFRXVjBQV04vSVZDSkp2cmJlVU5ocnVMK3R2cHN4VjNhZUFRbFpsCkdaZFB1ZENkb05RazlVcTV2SG1aeVNCaGE5YlpZRGozME5FZ0g4Nk42c0pFakx5VW1KeHpWeXp1eTNzT3czd1QKNUI3NWd0NFJpM2NyODA5dm5iMUhPSjhWM0Rrb1A0T1pTaXRxUTJoUVc0SDNKeFlYQStTa2hlR1pxblRvVE4xeQpybkRMOFNsK3dQN2ZJWUVkclJtcG0rU202WVVqQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUYkRwSEVlSVRmTUxCdWRONk5lbm1JVkJIS3FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWZBZ0twZUVpawp6VnBYNlhBZHEweFhxYWgwRXNMdnpzSW9sRC9JT0dnc1VPOFQ1TE5pWjNVYzFvaStadTNlKzZEa2x1S1JGWnlXCklPVnNwaXdPeXN6eFNmUHlRcTdPUDJmZmpGbG5wUFVpRkI2VmoreDVDNURPMDJNZ0E3KzhPTkZhZHlvWXpZc00KaUZpVnZMNEJsYTZCNG1EanBlWVdyR1pON0RMdmlzWEI2ZnNYTjdxZnpOdFR3bHdCSURidlBYUUd1NTlpcUY2RwphQ21TVHNFRHU1SUlaRUZ5ZEhrMHNBa1d3WXlOaXVaL3hFQjZwRHBFOWUvdVlCZW9NWWQ2dkxNdlduSldYbjJFCmpXdmNPVkxwVkZVcktGN2xxWVI2d2Q3Q2kra0RielVGSVJGTFUzY1YrQ2dsdGFUUEYxbXFmRXJQNjJTOHdrbjgKUWNlY1dHL29uRHdGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-00fc06d\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
                     "version": "4.1.1"
                 },
                 "outputs": {
-                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://E8378A6FCD92A05448CFBB103D6D08FB.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVzU2UDBXZGdZZ2d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qa3dOVFF5TWpaYUZ3MHpOREF5TWpZd05UUTNNalphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN5TGVWS1VjMXZMQWVjdWVKVjNQVFNhOUZoSzlxOXdKYzUyS2FEekYzTkdweit3TVBVS1o3N2M4N2sKTDJ0TVZleUZEemdsNE5NbDFYNTlveGlFNHB5ZGRwZGgwOWhUd21WNTRKRGQ3Nk96UGFEMkJwbFN3VWxYZzJsMgpHUEZ0T0pjTEV3anZxbVpTcVpEM0JUb1VRVzRQNE1VRlh3Qmc2OUg0RU9qRmRMMFNncXlRWHh3cjVZMjVOT251CmVrWWtTTnRvUWplYU11dDFFdlo4K1pBU1V2bDd1QVNsNGFVNHRYUjJCYVN1WVB1Q01MdlQxb1Zka3JadHhxZ2IKNkJBMDNmc0FDS0V4ZkdKSWswL1RYOUpRVU50L0VJYUc0RFVmSmFaTDdYMitYNW9XZUQrQllKZmowREY4R3RFUwpWV1hRZVMrRTB2azdhR3M5Q21sQVEveGRJMFo1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMHJaRldaS3hWWXM4U2hvU0l6R2k4SWZwY0N6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQW1kV1ZwOG5VcApxazBkajJNQWp0VG0xMXFOamNzVGdoaGJUaThlY2E4Y2xxbEd0a3NhY1o5dEpPeng2Uzlha1JWbCswbnY5elkwCjM3N1g4U0I2MTVJUVcvRUVTKytibUdGeEpDbmxjdkhXWC9jN084RUNOcFZPd1JVZkE0a252VFZ2Q0Q4Q2N6emQKTDA1SlBtSU5Qb0xlYjhUVm1yV0FuV2ZNTWxKVkduSk93TjYzODNhYWpyMkhCRFZBdzNiMUtQVmwreU1SMVZvbgozUERZN3NEb3Z5OVNuUmE1M1hZODR3d2dlM2JaWklucnR1MjhkU0tSU1JIcHlVeFRIc1ZSMlRWYm5JMTRJVmU4Cmd2emRDVjBmSTVOR29YM2RtMko2bWt4dkZBMjNObENPK1BmMk9wdzFWWDNwR1dFYUZodTk1WmFUTDFwZjBXYkoKbThFckwvRUkxcmtPCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-e5de847\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://047CF11A0133D9B0C0607307ABE9303C.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQit2VCtoN3hwUUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1qRXlNVE00TWpOYUZ3MHpOREF6TVRreU1UUXpNak5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMzUDduR0VJMFI2a3BuKzJKaUJxSFVsaUF1OTdmRk4xeHFER2NqcCttcFUvU05kNDFkM0dJMUVnKzYKWENYcVFKMkxNaEYyTUxQVmJwUXFCU0pPZXhnZ3RoSzR2NDNZaXVrNzlhalJxSGFiOWNsb3NESnNFU0NhVnNaWQpIbzIxcUlVQXVjNUpIWWRlTzRVNFlxL2g1ZFRXVjBQV04vSVZDSkp2cmJlVU5ocnVMK3R2cHN4VjNhZUFRbFpsCkdaZFB1ZENkb05RazlVcTV2SG1aeVNCaGE5YlpZRGozME5FZ0g4Nk42c0pFakx5VW1KeHpWeXp1eTNzT3czd1QKNUI3NWd0NFJpM2NyODA5dm5iMUhPSjhWM0Rrb1A0T1pTaXRxUTJoUVc0SDNKeFlYQStTa2hlR1pxblRvVE4xeQpybkRMOFNsK3dQN2ZJWUVkclJtcG0rU202WVVqQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUYkRwSEVlSVRmTUxCdWRONk5lbm1JVkJIS3FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWZBZ0twZUVpawp6VnBYNlhBZHEweFhxYWgwRXNMdnpzSW9sRC9JT0dnc1VPOFQ1TE5pWjNVYzFvaStadTNlKzZEa2x1S1JGWnlXCklPVnNwaXdPeXN6eFNmUHlRcTdPUDJmZmpGbG5wUFVpRkI2VmoreDVDNURPMDJNZ0E3KzhPTkZhZHlvWXpZc00KaUZpVnZMNEJsYTZCNG1EanBlWVdyR1pON0RMdmlzWEI2ZnNYTjdxZnpOdFR3bHdCSURidlBYUUd1NTlpcUY2RwphQ21TVHNFRHU1SUlaRUZ5ZEhrMHNBa1d3WXlOaXVaL3hFQjZwRHBFOWUvdVlCZW9NWWQ2dkxNdlduSldYbjJFCmpXdmNPVkxwVkZVcktGN2xxWVI2d2Q3Q2kra0RielVGSVJGTFUzY1YrQ2dsdGFUUEYxbXFmRXJQNjJTOHdrbjgKUWNlY1dHL29uRHdGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-00fc06d\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
                     "version": "4.1.1"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
                 ],
                 "propertyDependencies": {
                     "kubeconfig": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
-                    ]
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
+                    ],
+                    "version": []
                 },
-                "created": "2024-02-29T05:50:32.614009073Z",
-                "modified": "2024-02-29T05:50:32.614009073Z",
+                "created": "2024-03-21T21:46:13.883818171Z",
+                "modified": "2024-03-21T21:46:13.883818171Z",
                 "sourcePosition": "project:///node_modules/@pulumi/provider.ts#54,9"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:eks::default",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:eks::default",
                 "custom": true,
-                "id": "b8f1b2c2-d2ce-4939-a96a-978c36ca5c9b",
+                "id": "557436a7-d899-4c8c-8862-d2425dd6b34b",
                 "type": "pulumi:providers:eks",
                 "inputs": {
                     "version": "2.2.1"
@@ -928,75 +930,75 @@
                 "outputs": {
                     "version": "2.2.1"
                 },
-                "created": "2024-02-29T05:50:33.174085823Z",
-                "modified": "2024-02-29T05:50:33.174085823Z"
+                "created": "2024-03-21T21:46:14.52509676Z",
+                "modified": "2024-03-21T21:46:14.52509676Z"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup",
                 "custom": true,
-                "id": "sg-0d11edd5274231e9a",
+                "id": "sg-0a87de732c1906dfe",
                 "type": "aws:ec2/securityGroup:SecurityGroup",
                 "inputs": {
                     "__defaults": [
                         "name"
                     ],
                     "description": "Managed by Pulumi",
-                    "name": "example-managed-nodegroups-nodeSecurityGroup-34c66f1",
+                    "name": "example-managed-nodegroups-nodeSecurityGroup-cc2ccd5",
                     "revokeRulesOnDelete": true,
                     "tags": {
                         "Name": "example-managed-nodegroups-nodeSecurityGroup",
                         "__defaults": [],
-                        "kubernetes.io/cluster/example-managed-nodegroups-eksCluster-e5de847": "owned"
+                        "kubernetes.io/cluster/example-managed-nodegroups-eksCluster-00fc06d": "owned"
                     },
                     "vpcId": "vpc-043be661de8760bec"
                 },
                 "outputs": {
                     "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":900000000000},\"schema_version\":\"1\"}",
-                    "arn": "arn:aws:ec2:us-west-2:894850187425:security-group/sg-0d11edd5274231e9a",
+                    "arn": "arn:aws:ec2:us-west-2:894850187425:security-group/sg-0a87de732c1906dfe",
                     "description": "Managed by Pulumi",
                     "egress": [],
-                    "id": "sg-0d11edd5274231e9a",
+                    "id": "sg-0a87de732c1906dfe",
                     "ingress": [],
-                    "name": "example-managed-nodegroups-nodeSecurityGroup-34c66f1",
+                    "name": "example-managed-nodegroups-nodeSecurityGroup-cc2ccd5",
                     "namePrefix": "",
                     "ownerId": "894850187425",
                     "revokeRulesOnDelete": true,
                     "tags": {
                         "Name": "example-managed-nodegroups-nodeSecurityGroup",
-                        "kubernetes.io/cluster/example-managed-nodegroups-eksCluster-e5de847": "owned"
+                        "kubernetes.io/cluster/example-managed-nodegroups-eksCluster-00fc06d": "owned"
                     },
                     "tagsAll": {
                         "Name": "example-managed-nodegroups-nodeSecurityGroup",
-                        "kubernetes.io/cluster/example-managed-nodegroups-eksCluster-e5de847": "owned"
+                        "kubernetes.io/cluster/example-managed-nodegroups-eksCluster-00fc06d": "owned"
                     },
                     "vpcId": "vpc-043be661de8760bec"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "description": null,
-                    "revokeRulesOnDelete": null,
+                    "description": [],
+                    "revokeRulesOnDelete": [],
                     "tags": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
                     ],
-                    "vpcId": null
+                    "vpcId": []
                 },
-                "created": "2024-02-29T05:50:34.726098844Z",
-                "modified": "2024-02-29T05:50:34.726098844Z",
+                "created": "2024-03-21T21:46:16.058206379Z",
+                "modified": "2024-03-21T21:46:16.058206379Z",
                 "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#101,31"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$kubernetes:core/v1:ConfigMap::example-managed-nodegroups-nodeAccess",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$kubernetes:core/v1:ConfigMap::example-managed-nodegroups-nodeAccess",
                 "custom": true,
                 "id": "kube-system/aws-auth",
                 "type": "kubernetes:core/v1:ConfigMap",
                 "inputs": {
                     "apiVersion": "v1",
                     "data": {
-                        "mapRoles": "- rolearn: arn:aws:iam::894850187425:role/example-role0-98bac22\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role1-b88a3d4\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role2-aa67cd0\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
+                        "mapRoles": "- rolearn: arn:aws:iam::894850187425:role/example-role0-be9f8be\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role1-9961a28\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role2-4210053\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
                     },
                     "kind": "ConfigMap",
                     "metadata": {
@@ -1005,12 +1007,12 @@
                     }
                 },
                 "outputs": {
-                    "__fieldManager": "pulumi-kubernetes-fba1393b",
+                    "__fieldManager": "pulumi-kubernetes-b545a85d",
                     "__initialApiVersion": "v1",
                     "__inputs": {
                         "apiVersion": "v1",
                         "data": {
-                            "mapRoles": "- rolearn: arn:aws:iam::894850187425:role/example-role0-98bac22\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role1-b88a3d4\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role2-aa67cd0\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
+                            "mapRoles": "- rolearn: arn:aws:iam::894850187425:role/example-role0-be9f8be\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role1-9961a28\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role2-4210053\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
                         },
                         "kind": "ConfigMap",
                         "metadata": {
@@ -1020,11 +1022,11 @@
                     },
                     "apiVersion": "v1",
                     "data": {
-                        "mapRoles": "- rolearn: arn:aws:iam::894850187425:role/example-role0-98bac22\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role1-b88a3d4\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role2-aa67cd0\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
+                        "mapRoles": "- rolearn: arn:aws:iam::894850187425:role/example-role0-be9f8be\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role1-9961a28\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n- rolearn: arn:aws:iam::894850187425:role/example-role2-4210053\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
                     },
                     "kind": "ConfigMap",
                     "metadata": {
-                        "creationTimestamp": "2024-02-29T05:50:35Z",
+                        "creationTimestamp": "2024-03-21T21:46:16Z",
                         "managedFields": [
                             {
                                 "apiVersion": "v1",
@@ -1034,242 +1036,42 @@
                                         "f:mapRoles": {}
                                     }
                                 },
-                                "manager": "pulumi-kubernetes-fba1393b",
+                                "manager": "pulumi-kubernetes-b545a85d",
                                 "operation": "Apply",
-                                "time": "2024-02-29T05:50:35Z"
+                                "time": "2024-03-21T21:46:16Z"
                             }
                         ],
                         "name": "aws-auth",
                         "namespace": "kube-system",
-                        "resourceVersion": "735",
-                        "uid": "db3cd197-9297-4d7f-9026-f47968c85862"
+                        "resourceVersion": "682",
+                        "uid": "e680c3c6-399b-4aae-b950-d535fe45d4a4"
                     }
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$pulumi:providers:kubernetes::example-managed-nodegroups-eks-k8s::bb9316fb-59e6-44b7-9edb-44cef2dd5bfb",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$pulumi:providers:kubernetes::example-managed-nodegroups-eks-k8s::0d483041-e46b-4f0d-b8fb-afade95e0050",
                 "propertyDependencies": {
-                    "apiVersion": null,
+                    "apiVersion": [],
                     "data": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
                     ],
-                    "kind": null,
-                    "metadata": null
+                    "kind": [],
+                    "metadata": []
                 },
-                "created": "2024-02-29T05:50:35.487526363Z",
-                "modified": "2024-02-29T05:50:35.487526363Z",
+                "created": "2024-03-21T21:46:16.293199473Z",
+                "modified": "2024-03-21T21:46:16.293199473Z",
                 "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#861,27"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksClusterIngressRule",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksNodeInternetEgressRule",
                 "custom": true,
-                "id": "sgrule-2622914740",
-                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
-                "inputs": {
-                    "__defaults": [],
-                    "description": "Allow pods to communicate with the cluster API Server",
-                    "fromPort": 443,
-                    "protocol": "tcp",
-                    "securityGroupId": "sg-054584f8440522489",
-                    "sourceSecurityGroupId": "sg-0d11edd5274231e9a",
-                    "toPort": 443,
-                    "type": "ingress"
-                },
-                "outputs": {
-                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
-                    "description": "Allow pods to communicate with the cluster API Server",
-                    "fromPort": 443,
-                    "id": "sgrule-2622914740",
-                    "protocol": "tcp",
-                    "securityGroupId": "sg-054584f8440522489",
-                    "securityGroupRuleId": "sgr-0b424541d16ae7873",
-                    "self": false,
-                    "sourceSecurityGroupId": "sg-0d11edd5274231e9a",
-                    "toPort": 443,
-                    "type": "ingress"
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
-                "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
-                ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
-                "propertyDependencies": {
-                    "description": null,
-                    "fromPort": null,
-                    "protocol": null,
-                    "securityGroupId": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
-                    ],
-                    "sourceSecurityGroupId": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
-                    ],
-                    "toPort": null,
-                    "type": null
-                },
-                "created": "2024-02-29T05:50:35.98312229Z",
-                "modified": "2024-02-29T05:50:35.98312229Z",
-                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#176,35"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksNodeIngressRule",
-                "custom": true,
-                "id": "sgrule-570212241",
-                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
-                "inputs": {
-                    "__defaults": [],
-                    "description": "Allow nodes to communicate with each other",
-                    "fromPort": 0,
-                    "protocol": "-1",
-                    "securityGroupId": "sg-0d11edd5274231e9a",
-                    "self": true,
-                    "toPort": 0,
-                    "type": "ingress"
-                },
-                "outputs": {
-                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
-                    "description": "Allow nodes to communicate with each other",
-                    "fromPort": 0,
-                    "id": "sgrule-570212241",
-                    "protocol": "-1",
-                    "securityGroupId": "sg-0d11edd5274231e9a",
-                    "securityGroupRuleId": "sgr-0738a651d76ecab16",
-                    "self": true,
-                    "toPort": 0,
-                    "type": "ingress"
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
-                "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
-                ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
-                "propertyDependencies": {
-                    "description": null,
-                    "fromPort": null,
-                    "protocol": null,
-                    "securityGroupId": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
-                    ],
-                    "self": null,
-                    "toPort": null,
-                    "type": null
-                },
-                "created": "2024-02-29T05:50:35.989146357Z",
-                "modified": "2024-02-29T05:50:35.989146357Z",
-                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#118,29"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksExtApiServerClusterIngressRule",
-                "custom": true,
-                "id": "sgrule-2357265533",
-                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
-                "inputs": {
-                    "__defaults": [],
-                    "description": "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
-                    "fromPort": 443,
-                    "protocol": "tcp",
-                    "securityGroupId": "sg-0d11edd5274231e9a",
-                    "sourceSecurityGroupId": "sg-054584f8440522489",
-                    "toPort": 443,
-                    "type": "ingress"
-                },
-                "outputs": {
-                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
-                    "description": "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
-                    "fromPort": 443,
-                    "id": "sgrule-2357265533",
-                    "protocol": "tcp",
-                    "securityGroupId": "sg-0d11edd5274231e9a",
-                    "securityGroupRuleId": "sgr-03e281513ebc21aa4",
-                    "self": false,
-                    "sourceSecurityGroupId": "sg-054584f8440522489",
-                    "toPort": 443,
-                    "type": "ingress"
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
-                "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
-                ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
-                "propertyDependencies": {
-                    "description": null,
-                    "fromPort": null,
-                    "protocol": null,
-                    "securityGroupId": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
-                    ],
-                    "sourceSecurityGroupId": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
-                    ],
-                    "toPort": null,
-                    "type": null
-                },
-                "created": "2024-02-29T05:50:36.886435444Z",
-                "modified": "2024-02-29T05:50:36.886435444Z",
-                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#147,44"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksNodeClusterIngressRule",
-                "custom": true,
-                "id": "sgrule-3372820465",
-                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
-                "inputs": {
-                    "__defaults": [],
-                    "description": "Allow worker Kubelets and pods to receive communication from the cluster control plane",
-                    "fromPort": 1025,
-                    "protocol": "tcp",
-                    "securityGroupId": "sg-0d11edd5274231e9a",
-                    "sourceSecurityGroupId": "sg-054584f8440522489",
-                    "toPort": 65535,
-                    "type": "ingress"
-                },
-                "outputs": {
-                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
-                    "description": "Allow worker Kubelets and pods to receive communication from the cluster control plane",
-                    "fromPort": 1025,
-                    "id": "sgrule-3372820465",
-                    "protocol": "tcp",
-                    "securityGroupId": "sg-0d11edd5274231e9a",
-                    "securityGroupRuleId": "sgr-0a56c7a33cb5f69d5",
-                    "self": false,
-                    "sourceSecurityGroupId": "sg-054584f8440522489",
-                    "toPort": 65535,
-                    "type": "ingress"
-                },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
-                "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
-                ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
-                "propertyDependencies": {
-                    "description": null,
-                    "fromPort": null,
-                    "protocol": null,
-                    "securityGroupId": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
-                    ],
-                    "sourceSecurityGroupId": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
-                    ],
-                    "toPort": null,
-                    "type": null
-                },
-                "created": "2024-02-29T05:50:37.700956269Z",
-                "modified": "2024-02-29T05:50:37.700956269Z",
-                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#132,36"
-            },
-            {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksNodeInternetEgressRule",
-                "custom": true,
-                "id": "sgrule-3408473858",
+                "id": "sgrule-3688275739",
                 "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
                 "inputs": {
                     "__defaults": [],
@@ -1279,7 +1081,7 @@
                     "description": "Allow internet access.",
                     "fromPort": 0,
                     "protocol": "-1",
-                    "securityGroupId": "sg-0d11edd5274231e9a",
+                    "securityGroupId": "sg-0a87de732c1906dfe",
                     "toPort": 0,
                     "type": "egress"
                 },
@@ -1290,68 +1092,266 @@
                     ],
                     "description": "Allow internet access.",
                     "fromPort": 0,
-                    "id": "sgrule-3408473858",
+                    "id": "sgrule-3688275739",
                     "protocol": "-1",
-                    "securityGroupId": "sg-0d11edd5274231e9a",
-                    "securityGroupRuleId": "sgr-0c4b3cafab9ac2b59",
+                    "securityGroupId": "sg-0a87de732c1906dfe",
+                    "securityGroupRuleId": "sgr-05be9619c6895a4b8",
                     "self": false,
                     "toPort": 0,
                     "type": "egress"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
-                    "cidrBlocks": null,
-                    "description": null,
-                    "fromPort": null,
-                    "protocol": null,
+                    "cidrBlocks": [],
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
                     "securityGroupId": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
                     ],
-                    "toPort": null,
-                    "type": null
+                    "toPort": [],
+                    "type": []
                 },
-                "created": "2024-02-29T05:50:38.422894337Z",
-                "modified": "2024-02-29T05:50:38.422894337Z",
+                "created": "2024-03-21T21:46:16.969563138Z",
+                "modified": "2024-03-21T21:46:16.969563138Z",
                 "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#162,36"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:VpcCni::example-managed-nodegroups-vpc-cni",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksClusterIngressRule",
                 "custom": true,
-                "id": "179d7ef7133d458d",
+                "id": "sgrule-1508696973",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow pods to communicate with the cluster API Server",
+                    "fromPort": 443,
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0787b277008e3c68e",
+                    "sourceSecurityGroupId": "sg-0a87de732c1906dfe",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow pods to communicate with the cluster API Server",
+                    "fromPort": 443,
+                    "id": "sgrule-1508696973",
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0787b277008e3c68e",
+                    "securityGroupRuleId": "sgr-05a701045017f4666",
+                    "self": false,
+                    "sourceSecurityGroupId": "sg-0a87de732c1906dfe",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
+                "propertyDependencies": {
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
+                    ],
+                    "sourceSecurityGroupId": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
+                    ],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-03-21T21:46:16.97069089Z",
+                "modified": "2024-03-21T21:46:16.97069089Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#176,35"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksNodeClusterIngressRule",
+                "custom": true,
+                "id": "sgrule-2400916628",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow worker Kubelets and pods to receive communication from the cluster control plane",
+                    "fromPort": 1025,
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0a87de732c1906dfe",
+                    "sourceSecurityGroupId": "sg-0787b277008e3c68e",
+                    "toPort": 65535,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow worker Kubelets and pods to receive communication from the cluster control plane",
+                    "fromPort": 1025,
+                    "id": "sgrule-2400916628",
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0a87de732c1906dfe",
+                    "securityGroupRuleId": "sgr-0cd05f36e2b61410f",
+                    "self": false,
+                    "sourceSecurityGroupId": "sg-0787b277008e3c68e",
+                    "toPort": 65535,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
+                "propertyDependencies": {
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
+                    ],
+                    "sourceSecurityGroupId": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
+                    ],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-03-21T21:46:17.981080323Z",
+                "modified": "2024-03-21T21:46:17.981080323Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#132,36"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksNodeIngressRule",
+                "custom": true,
+                "id": "sgrule-3500792716",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow nodes to communicate with each other",
+                    "fromPort": 0,
+                    "protocol": "-1",
+                    "securityGroupId": "sg-0a87de732c1906dfe",
+                    "self": true,
+                    "toPort": 0,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow nodes to communicate with each other",
+                    "fromPort": 0,
+                    "id": "sgrule-3500792716",
+                    "protocol": "-1",
+                    "securityGroupId": "sg-0a87de732c1906dfe",
+                    "securityGroupRuleId": "sgr-03090371a233898dd",
+                    "self": true,
+                    "toPort": 0,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
+                "propertyDependencies": {
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
+                    ],
+                    "self": [],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-03-21T21:46:18.707048525Z",
+                "modified": "2024-03-21T21:46:18.707048525Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#118,29"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::example-managed-nodegroups-eksExtApiServerClusterIngressRule",
+                "custom": true,
+                "id": "sgrule-668181894",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
+                    "fromPort": 443,
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0a87de732c1906dfe",
+                    "sourceSecurityGroupId": "sg-0787b277008e3c68e",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
+                    "fromPort": 443,
+                    "id": "sgrule-668181894",
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0a87de732c1906dfe",
+                    "securityGroupRuleId": "sgr-099dfc81d501bd2c6",
+                    "self": false,
+                    "sourceSecurityGroupId": "sg-0787b277008e3c68e",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
+                "propertyDependencies": {
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-nodeSecurityGroup"
+                    ],
+                    "sourceSecurityGroupId": [
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::example-managed-nodegroups-eksClusterSecurityGroup"
+                    ],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-03-21T21:46:19.422542285Z",
+                "modified": "2024-03-21T21:46:19.422542285Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#147,44"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:VpcCni::example-managed-nodegroups-vpc-cni",
+                "custom": true,
+                "id": "bf5ad69848b25949",
                 "type": "eks:index:VpcCni",
                 "inputs": {
-                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://E8378A6FCD92A05448CFBB103D6D08FB.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVzU2UDBXZGdZZ2d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qa3dOVFF5TWpaYUZ3MHpOREF5TWpZd05UUTNNalphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN5TGVWS1VjMXZMQWVjdWVKVjNQVFNhOUZoSzlxOXdKYzUyS2FEekYzTkdweit3TVBVS1o3N2M4N2sKTDJ0TVZleUZEemdsNE5NbDFYNTlveGlFNHB5ZGRwZGgwOWhUd21WNTRKRGQ3Nk96UGFEMkJwbFN3VWxYZzJsMgpHUEZ0T0pjTEV3anZxbVpTcVpEM0JUb1VRVzRQNE1VRlh3Qmc2OUg0RU9qRmRMMFNncXlRWHh3cjVZMjVOT251CmVrWWtTTnRvUWplYU11dDFFdlo4K1pBU1V2bDd1QVNsNGFVNHRYUjJCYVN1WVB1Q01MdlQxb1Zka3JadHhxZ2IKNkJBMDNmc0FDS0V4ZkdKSWswL1RYOUpRVU50L0VJYUc0RFVmSmFaTDdYMitYNW9XZUQrQllKZmowREY4R3RFUwpWV1hRZVMrRTB2azdhR3M5Q21sQVEveGRJMFo1QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMHJaRldaS3hWWXM4U2hvU0l6R2k4SWZwY0N6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQW1kV1ZwOG5VcApxazBkajJNQWp0VG0xMXFOamNzVGdoaGJUaThlY2E4Y2xxbEd0a3NhY1o5dEpPeng2Uzlha1JWbCswbnY5elkwCjM3N1g4U0I2MTVJUVcvRUVTKytibUdGeEpDbmxjdkhXWC9jN084RUNOcFZPd1JVZkE0a252VFZ2Q0Q4Q2N6emQKTDA1SlBtSU5Qb0xlYjhUVm1yV0FuV2ZNTWxKVkduSk93TjYzODNhYWpyMkhCRFZBdzNiMUtQVmwreU1SMVZvbgozUERZN3NEb3Z5OVNuUmE1M1hZODR3d2dlM2JaWklucnR1MjhkU0tSU1JIcHlVeFRIc1ZSMlRWYm5JMTRJVmU4Cmd2emRDVjBmSTVOR29YM2RtMko2bWt4dkZBMjNObENPK1BmMk9wdzFWWDNwR1dFYUZodTk1WmFUTDFwZjBXYkoKbThFckwvRUkxcmtPCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-e5de847\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}"
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://047CF11A0133D9B0C0607307ABE9303C.gr7.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQit2VCtoN3hwUUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBek1qRXlNVE00TWpOYUZ3MHpOREF6TVRreU1UUXpNak5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMzUDduR0VJMFI2a3BuKzJKaUJxSFVsaUF1OTdmRk4xeHFER2NqcCttcFUvU05kNDFkM0dJMUVnKzYKWENYcVFKMkxNaEYyTUxQVmJwUXFCU0pPZXhnZ3RoSzR2NDNZaXVrNzlhalJxSGFiOWNsb3NESnNFU0NhVnNaWQpIbzIxcUlVQXVjNUpIWWRlTzRVNFlxL2g1ZFRXVjBQV04vSVZDSkp2cmJlVU5ocnVMK3R2cHN4VjNhZUFRbFpsCkdaZFB1ZENkb05RazlVcTV2SG1aeVNCaGE5YlpZRGozME5FZ0g4Nk42c0pFakx5VW1KeHpWeXp1eTNzT3czd1QKNUI3NWd0NFJpM2NyODA5dm5iMUhPSjhWM0Rrb1A0T1pTaXRxUTJoUVc0SDNKeFlYQStTa2hlR1pxblRvVE4xeQpybkRMOFNsK3dQN2ZJWUVkclJtcG0rU202WVVqQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUYkRwSEVlSVRmTUxCdWRONk5lbm1JVkJIS3FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWZBZ0twZUVpawp6VnBYNlhBZHEweFhxYWgwRXNMdnpzSW9sRC9JT0dnc1VPOFQ1TE5pWjNVYzFvaStadTNlKzZEa2x1S1JGWnlXCklPVnNwaXdPeXN6eFNmUHlRcTdPUDJmZmpGbG5wUFVpRkI2VmoreDVDNURPMDJNZ0E3KzhPTkZhZHlvWXpZc00KaUZpVnZMNEJsYTZCNG1EanBlWVdyR1pON0RMdmlzWEI2ZnNYTjdxZnpOdFR3bHdCSURidlBYUUd1NTlpcUY2RwphQ21TVHNFRHU1SUlaRUZ5ZEhrMHNBa1d3WXlOaXVaL3hFQjZwRHBFOWUvdVlCZW9NWWQ2dkxNdlduSldYbjJFCmpXdmNPVkxwVkZVcktGN2xxWVI2d2Q3Q2kra0RielVGSVJGTFUzY1YrQ2dsdGFUUEYxbXFmRXJQNjJTOHdrbjgKUWNlY1dHL29uRHdGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"example-managed-nodegroups-eksCluster-00fc06d\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:eks::default::b8f1b2c2-d2ce-4939-a96a-978c36ca5c9b",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:eks::default::557436a7-d899-4c8c-8862-d2425dd6b34b",
                 "propertyDependencies": {
                     "kubeconfig": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
                     ]
                 },
-                "created": "2024-02-29T05:50:38.465778636Z",
-                "modified": "2024-02-29T05:50:38.465778636Z",
+                "created": "2024-03-21T21:46:19.471890265Z",
+                "modified": "2024-03-21T21:46:19.471890265Z",
                 "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#735,18"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster$aws:eks/nodeGroup:NodeGroup::example-managed-ng0",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/nodeGroup:NodeGroup::example-managed-ng1",
                 "custom": true,
-                "id": "example-managed-nodegroups-eksCluster-e5de847:example-managed-ng0-1d63849",
+                "id": "example-managed-nodegroups-eksCluster-00fc06d:aws-managed-ng1",
                 "type": "aws:eks/nodeGroup:NodeGroup",
                 "inputs": {
-                    "__defaults": [
-                        "nodeGroupName"
-                    ],
-                    "clusterName": "example-managed-nodegroups-eksCluster-e5de847",
-                    "nodeGroupName": "example-managed-ng0-1d63849",
-                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role0-98bac22",
+                    "__defaults": [],
+                    "clusterName": "example-managed-nodegroups-eksCluster-00fc06d",
+                    "nodeGroupName": "aws-managed-ng1",
+                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role1-9961a28",
                     "scalingConfig": {
                         "__defaults": [],
                         "desiredSize": 2,
@@ -1368,26 +1368,26 @@
                 "outputs": {
                     "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":3600000000000,\"delete\":3600000000000,\"update\":3600000000000}}",
                     "amiType": "AL2_x86_64",
-                    "arn": "arn:aws:eks:us-west-2:894850187425:nodegroup/example-managed-nodegroups-eksCluster-e5de847/example-managed-ng0-1d63849/54c6f9b5-1133-5f4c-8b04-53584560c6c7",
+                    "arn": "arn:aws:eks:us-west-2:894850187425:nodegroup/example-managed-nodegroups-eksCluster-00fc06d/aws-managed-ng1/1cc7317d-50f3-75a8-0d55-d153cff377d9",
                     "capacityType": "ON_DEMAND",
-                    "clusterName": "example-managed-nodegroups-eksCluster-e5de847",
+                    "clusterName": "example-managed-nodegroups-eksCluster-00fc06d",
                     "diskSize": 20,
-                    "id": "example-managed-nodegroups-eksCluster-e5de847:example-managed-ng0-1d63849",
+                    "id": "example-managed-nodegroups-eksCluster-00fc06d:aws-managed-ng1",
                     "instanceTypes": [
                         "t3.medium"
                     ],
                     "labels": {},
                     "launchTemplate": null,
-                    "nodeGroupName": "example-managed-ng0-1d63849",
+                    "nodeGroupName": "aws-managed-ng1",
                     "nodeGroupNamePrefix": "",
-                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role0-98bac22",
-                    "releaseVersion": "1.29.0-20240227",
+                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role1-9961a28",
+                    "releaseVersion": "1.29.0-20240307",
                     "remoteAccess": null,
                     "resources": [
                         {
                             "autoscalingGroups": [
                                 {
-                                    "name": "eks-example-managed-ng0-1d63849-54c6f9b5-1133-5f4c-8b04-53584560c6c7"
+                                    "name": "eks-aws-managed-ng1-1cc7317d-50f3-75a8-0d55-d153cff377d9"
                                 }
                             ],
                             "remoteAccessSecurityGroupId": ""
@@ -1414,43 +1414,44 @@
                     },
                     "version": "1.29"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$kubernetes:core/v1:ConfigMap::example-managed-nodegroups-nodeAccess",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$kubernetes:core/v1:ConfigMap::example-managed-nodegroups-nodeAccess",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
                     "clusterName": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
                     ],
+                    "nodeGroupName": [],
                     "nodeRoleArn": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role0"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role1"
                     ],
-                    "scalingConfig": null,
+                    "scalingConfig": [],
                     "subnetIds": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
                     ]
                 },
-                "created": "2024-02-29T05:51:54.036833226Z",
-                "modified": "2024-02-29T05:51:54.036833226Z",
+                "created": "2024-03-21T21:48:14.829386954Z",
+                "modified": "2024-03-21T21:48:14.829386954Z",
                 "sourcePosition": "project:///node_modules/@pulumi/nodegroup.ts#1648,23"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/nodeGroup:NodeGroup::example-managed-ng2",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/nodeGroup:NodeGroup::example-managed-ng2",
                 "custom": true,
-                "id": "example-managed-nodegroups-eksCluster-e5de847:aws-managed-ng2",
+                "id": "example-managed-nodegroups-eksCluster-00fc06d:aws-managed-ng2",
                 "type": "aws:eks/nodeGroup:NodeGroup",
                 "inputs": {
                     "__defaults": [],
-                    "clusterName": "example-managed-nodegroups-eksCluster-e5de847",
+                    "clusterName": "example-managed-nodegroups-eksCluster-00fc06d",
                     "diskSize": 20,
                     "instanceTypes": [
                         "t3.medium"
@@ -1460,7 +1461,7 @@
                         "ondemand": "true"
                     },
                     "nodeGroupName": "aws-managed-ng2",
-                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role2-aa67cd0",
+                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role2-4210053",
                     "scalingConfig": {
                         "__defaults": [],
                         "desiredSize": 1,
@@ -1481,11 +1482,11 @@
                 "outputs": {
                     "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":3600000000000,\"delete\":3600000000000,\"update\":3600000000000}}",
                     "amiType": "AL2_x86_64",
-                    "arn": "arn:aws:eks:us-west-2:894850187425:nodegroup/example-managed-nodegroups-eksCluster-e5de847/aws-managed-ng2/94c6f9b5-112c-523c-e0e0-d88552c69088",
+                    "arn": "arn:aws:eks:us-west-2:894850187425:nodegroup/example-managed-nodegroups-eksCluster-00fc06d/aws-managed-ng2/e8c7317d-50f2-fa6f-a947-646508555a0d",
                     "capacityType": "ON_DEMAND",
-                    "clusterName": "example-managed-nodegroups-eksCluster-e5de847",
+                    "clusterName": "example-managed-nodegroups-eksCluster-00fc06d",
                     "diskSize": 20,
-                    "id": "example-managed-nodegroups-eksCluster-e5de847:aws-managed-ng2",
+                    "id": "example-managed-nodegroups-eksCluster-00fc06d:aws-managed-ng2",
                     "instanceTypes": [
                         "t3.medium"
                     ],
@@ -1495,14 +1496,14 @@
                     "launchTemplate": null,
                     "nodeGroupName": "aws-managed-ng2",
                     "nodeGroupNamePrefix": "",
-                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role2-aa67cd0",
-                    "releaseVersion": "1.29.0-20240227",
+                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role2-4210053",
+                    "releaseVersion": "1.29.0-20240307",
                     "remoteAccess": null,
                     "resources": [
                         {
                             "autoscalingGroups": [
                                 {
-                                    "name": "eks-aws-managed-ng2-94c6f9b5-112c-523c-e0e0-d88552c69088"
+                                    "name": "eks-aws-managed-ng2-e8c7317d-50f2-fa6f-a947-646508555a0d"
                                 }
                             ],
                             "remoteAccessSecurityGroupId": ""
@@ -1533,50 +1534,52 @@
                     },
                     "version": "1.29"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$kubernetes:core/v1:ConfigMap::example-managed-nodegroups-nodeAccess",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$kubernetes:core/v1:ConfigMap::example-managed-nodegroups-nodeAccess",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
                     "clusterName": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster"
                     ],
-                    "diskSize": null,
-                    "instanceTypes": null,
-                    "labels": null,
-                    "nodeGroupName": null,
+                    "diskSize": [],
+                    "instanceTypes": [],
+                    "labels": [],
+                    "nodeGroupName": [],
                     "nodeRoleArn": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role2"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role2"
                     ],
-                    "scalingConfig": null,
+                    "scalingConfig": [],
                     "subnetIds": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
                     ],
-                    "tags": null
+                    "tags": []
                 },
-                "created": "2024-02-29T05:52:33.921188913Z",
-                "modified": "2024-02-29T05:52:33.921188913Z",
+                "created": "2024-03-21T21:48:15.89797136Z",
+                "modified": "2024-03-21T21:48:15.89797136Z",
                 "sourcePosition": "project:///node_modules/@pulumi/nodegroup.ts#1648,23"
             },
             {
-                "urn": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/nodeGroup:NodeGroup::example-managed-ng1",
+                "urn": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster$aws:eks/nodeGroup:NodeGroup::example-managed-ng0",
                 "custom": true,
-                "id": "example-managed-nodegroups-eksCluster-e5de847:aws-managed-ng1",
+                "id": "example-managed-nodegroups-eksCluster-00fc06d:example-managed-ng0-797ab06",
                 "type": "aws:eks/nodeGroup:NodeGroup",
                 "inputs": {
-                    "__defaults": [],
-                    "clusterName": "example-managed-nodegroups-eksCluster-e5de847",
-                    "nodeGroupName": "aws-managed-ng1",
-                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role1-b88a3d4",
+                    "__defaults": [
+                        "nodeGroupName"
+                    ],
+                    "clusterName": "example-managed-nodegroups-eksCluster-00fc06d",
+                    "nodeGroupName": "example-managed-ng0-797ab06",
+                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role0-be9f8be",
                     "scalingConfig": {
                         "__defaults": [],
                         "desiredSize": 2,
@@ -1593,26 +1596,26 @@
                 "outputs": {
                     "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":3600000000000,\"delete\":3600000000000,\"update\":3600000000000}}",
                     "amiType": "AL2_x86_64",
-                    "arn": "arn:aws:eks:us-west-2:894850187425:nodegroup/example-managed-nodegroups-eksCluster-e5de847/aws-managed-ng1/44c6f9b5-1136-7af2-251c-47d40ef681e6",
+                    "arn": "arn:aws:eks:us-west-2:894850187425:nodegroup/example-managed-nodegroups-eksCluster-00fc06d/example-managed-ng0-797ab06/d2c7317d-5100-e0d4-3a6a-eb5a4504371a",
                     "capacityType": "ON_DEMAND",
-                    "clusterName": "example-managed-nodegroups-eksCluster-e5de847",
+                    "clusterName": "example-managed-nodegroups-eksCluster-00fc06d",
                     "diskSize": 20,
-                    "id": "example-managed-nodegroups-eksCluster-e5de847:aws-managed-ng1",
+                    "id": "example-managed-nodegroups-eksCluster-00fc06d:example-managed-ng0-797ab06",
                     "instanceTypes": [
                         "t3.medium"
                     ],
                     "labels": {},
                     "launchTemplate": null,
-                    "nodeGroupName": "aws-managed-ng1",
+                    "nodeGroupName": "example-managed-ng0-797ab06",
                     "nodeGroupNamePrefix": "",
-                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role1-b88a3d4",
-                    "releaseVersion": "1.29.0-20240227",
+                    "nodeRoleArn": "arn:aws:iam::894850187425:role/example-role0-be9f8be",
+                    "releaseVersion": "1.29.0-20240307",
                     "remoteAccess": null,
                     "resources": [
                         {
                             "autoscalingGroups": [
                                 {
-                                    "name": "eks-aws-managed-ng1-44c6f9b5-1136-7af2-251c-47d40ef681e6"
+                                    "name": "eks-example-managed-ng0-797ab06-d2c7317d-5100-e0d4-3a6a-eb5a4504371a"
                                 }
                             ],
                             "remoteAccessSecurityGroupId": ""
@@ -1639,34 +1642,33 @@
                     },
                     "version": "1.29"
                 },
-                "parent": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster::example-managed-nodegroups",
+                "parent": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
                 "dependencies": [
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$kubernetes:core/v1:ConfigMap::example-managed-nodegroups-nodeAccess",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
-                    "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1"
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$kubernetes:core/v1:ConfigMap::example-managed-nodegroups-nodeAccess",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
+                    "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0"
                 ],
-                "provider": "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::a6e1f555-ef91-4a25-8b9e-9d858862fd3d",
+                "provider": "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::pulumi:providers:aws::default_6_0_4::31fbc690-5e1c-4a5f-b983-3b7e10c67bd4",
                 "propertyDependencies": {
                     "clusterName": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
                     ],
-                    "nodeGroupName": null,
                     "nodeRoleArn": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::aws:iam/role:Role::example-role1"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::aws:iam/role:Role::example-role0"
                     ],
-                    "scalingConfig": null,
+                    "scalingConfig": [],
                     "subnetIds": [
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role",
-                        "urn:pulumi:p-it-runner-managed-no-53b61cb9::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823"
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::example-managed-nodegroups-eksRole-4b490823",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$aws:eks/cluster:Cluster::example-managed-nodegroups-eksCluster",
+                        "urn:pulumi:p-it-runner-managed-no-dd1184a3::example-managed-nodegroups::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::example-managed-nodegroups-eksRole-role"
                     ]
                 },
-                "created": "2024-02-29T05:52:45.264041164Z",
-                "modified": "2024-02-29T05:52:45.264041164Z",
+                "created": "2024-03-21T21:48:25.079691985Z",
+                "modified": "2024-03-21T21:48:25.079691985Z",
                 "sourcePosition": "project:///node_modules/@pulumi/nodegroup.ts#1648,23"
             }
         ]

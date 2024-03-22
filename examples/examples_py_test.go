@@ -32,9 +32,13 @@ func TestAccAwsProfilePy(t *testing.T) {
 			NoParallel: true,
 			Dir:        filepath.Join(getCwd(t), "aws-profile-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				// The `cluster.kubeconfig` output should fail as it does not have the right AWS_PROFILE set.
+				t.Logf("Ensuring cluster.kubeconfig fails without AWS_PROFILE envvar set")
+				utils.EnsureKubeconfigFails(t, info.Outputs["kubeconfig"])
+
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
+					info.Outputs["kubeconfig_with_profile"],
 				)
 			},
 		})
