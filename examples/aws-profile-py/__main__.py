@@ -29,3 +29,6 @@ cluster = eks.Cluster(project_name,
 
 # Export the cluster kubeconfig.
 pulumi.export("kubeconfig", cluster.kubeconfig)
+
+# Export the cluster kubeconfig with the AWS_PROFILE set.
+pulumi.export("kubeconfig_with_profile", cluster.get_kubeconfig(profile_name=profile_name))

@@ -38,3 +38,6 @@ const cluster = new eks.Cluster(`${projectName}`, {
 
 // Export the cluster kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
+
+// Export the cluster kubeconfig with the AWS_PROFILE set.
+export const kubeconfigWithProfile = cluster.getKubeconfig({profileName: profileName})
