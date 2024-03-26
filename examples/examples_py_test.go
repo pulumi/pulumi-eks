@@ -17,6 +17,7 @@
 package example
 
 import (
+	"path"
 	"path/filepath"
 	"testing"
 
@@ -99,6 +100,21 @@ func TestAccNodeGroupPy(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			RunUpdateTest: false,
 			Dir:           filepath.Join(getCwd(t), "nodegroup-py"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+			},
+			EditDirs: []integration.EditDir{
+				{
+					// Re-running should not introduce any changes.
+					Dir:             path.Join(getCwd(t), "nodegroup"),
+					ExpectNoChanges: true,
+					Additive:        true,
+				},
+			},
 		})
 
 	integration.ProgramTest(t, &test)
