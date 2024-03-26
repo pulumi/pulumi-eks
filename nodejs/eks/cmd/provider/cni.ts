@@ -226,15 +226,19 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     return cniYaml.map((o) => `---\n${jsyaml.dump(o)}`).join("");
 }
 
-function applyVpcCniYaml(args: VpcCniInputs) {
-    // Check to ensure that a compatible kubectl is installed, as we'll need it in order to deploy k8s resources below.
-    assertCompatibleKubectlVersionExists();
-
+function getBaseVpcCniYaml(): string {
     const yamlPath = path.join(__dirname, "../../cni/aws-k8s-cni.yaml");
     const cniYamlText = fs.readFileSync(yamlPath).toString();
 
+    return cniYamlText;
+}
+
+function applyVpcCniYaml(args: VpcCniInputs): string {
+    // Check to ensure that a compatible kubectl is installed, as we'll need it in order to deploy k8s resources below.
+    assertCompatibleKubectlVersionExists();
+
     const kubeconfig: string =
-        typeof args.kubeconfig === "string" ? args.kubeconfig : JSON.stringify(args);
+        typeof args.kubeconfig === "string" ? args.kubeconfig : JSON.stringify(args.kubeconfig);
 
     // Dump the kubeconfig to a file.
     const tmpKubeconfig = tmp.fileSync();
@@ -242,12 +246,15 @@ function applyVpcCniYaml(args: VpcCniInputs) {
 
     // Compute the required CNI YAML and dump it to a file.
     const tmpYaml = tmp.fileSync();
-    fs.writeFileSync(tmpYaml.fd, computeVpcCniYaml(cniYamlText, args));
+    const computedCniManifest = computeVpcCniYaml(getBaseVpcCniYaml(), args);
+    fs.writeFileSync(tmpYaml.fd, computedCniManifest);
 
     // Call kubectl to apply the YAML.
     childProcess.execSync(`kubectl apply -f ${tmpYaml.name}`, {
         env: { ...process.env, KUBECONFIG: tmpKubeconfig.name },
     });
+
+    return computedCniManifest;
 }
 
 /** @internal */
@@ -266,24 +273,32 @@ export function vpcCniProviderFactory(): pulumi.provider.Provider {
             }
             return Promise.resolve({ inputs });
         },
+        diff: (id: pulumi.ID, urn: pulumi.URN, olds: any, news: any) => {
+            const computedCniManifest = computeVpcCniYaml(getBaseVpcCniYaml(), <VpcCniInputs>news);
+            if (olds.manifest !== computedCniManifest) {
+                return Promise.resolve({ changes: true });
+            }
+
+            return Promise.resolve({ changes: false });
+        },
         create: (urn: pulumi.URN, inputs: any) => {
             try {
-                applyVpcCniYaml(<VpcCniInputs>inputs);
+                const manifest = applyVpcCniYaml(<VpcCniInputs>inputs);
+                return Promise.resolve({
+                    id: crypto.randomBytes(8).toString("hex"),
+                    outs: { manifest: manifest },
+                });
             } catch (e) {
                 return Promise.reject(e);
             }
-            return Promise.resolve({
-                id: crypto.randomBytes(8).toString("hex"),
-                outs: {},
-            });
         },
         update: (id: pulumi.ID, urn: pulumi.URN, olds: any, news: any) => {
             try {
-                applyVpcCniYaml(<VpcCniInputs>news);
+                const manifest = applyVpcCniYaml(<VpcCniInputs>news);
+                return Promise.resolve({ outs: { manifest: manifest } });
             } catch (e) {
                 return Promise.reject(e);
             }
-            return Promise.resolve({ outs: {} });
         },
         version: "", // ignored
     };

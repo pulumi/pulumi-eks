@@ -514,17 +514,17 @@ func mapClusterToKubeAccess(kubeconfigs ...interface{}) (clusterKubeAccessMap, e
 	// Map EKS cluster names to its KubeAccess.
 	clusterToKubeAccess := make(clusterKubeAccessMap)
 	for _, kubeconfig := range kubeconfigs {
-		// Convert kubeconfig to KubeAccess. We might need to work with either the raw
-		// or jsonified kubeconfig data.
 		var kc []byte
-		var err error
-		if kubeStr, ok := kubeconfig.(string); !ok {
+
+		switch v := kubeconfig.(type) {
+		case string:
+			kc = []byte(v)
+		default:
+			var err error
 			kc, err = json.Marshal(kubeconfig)
 			if err != nil {
 				return nil, err
 			}
-		} else {
-			kc = []byte(kubeStr)
 		}
 
 		kubeAccess, err := KubeconfigToKubeAccess(kc)
