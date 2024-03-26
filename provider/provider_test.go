@@ -99,6 +99,11 @@ func test(dir string, opts ...providertest.Option) *providertest.ProviderTest {
 				continue
 			}
 
+			if strings.Contains(string(diff.URN), "VpcCni:") {
+				log.Println("Ignoring change for upgrading the CNI manifest")
+				continue
+			}
+
 			assert.Falsef(t, diff.HasChanges, "Unexpected difference: %+v", diff)
 		}
 	}
