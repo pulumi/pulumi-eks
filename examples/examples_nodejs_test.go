@@ -28,8 +28,11 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 
+	"github.com/pulumi/providertest/pulumitest"
+	"github.com/pulumi/providertest/pulumitest/opttest"
 	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
+	"github.com/pulumi/pulumi/sdk/v3/go/auto/optup"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -620,4 +623,57 @@ func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	})
 
 	return baseJS
+}
+
+// TestAccCNIAcrossUpdates tests that the CNI manifest is reapplied when the EKS provider changes its base manifest.
+func TestAccCNIAcrossUpdates(t *testing.T) {
+	t.Log("Running `pulumi up` with v2.1.0 of the EKS provider")
+	pt := pulumitest.NewPulumiTest(t, "ensure-cni-upgrade", opttest.AttachDownloadedPlugin("eks", "2.1.0"))
+	result := pt.Up()
+
+	t.Log("Ensuring a kubeconfig output is present")
+	kcfg, ok := result.Outputs["kubeconfig"]
+	require.True(t, ok)
+
+	t.Log("Validating that the v1.11.0 CNI manifest is applied correctly")
+	var awsNodeContainerFound bool
+	assert.NoError(t, utils.ValidateDaemonSet(t, kcfg.Value, "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
+		for _, c := range ds.Spec.Template.Spec.Containers {
+			switch c.Name {
+			case "aws-node":
+				awsNodeContainerFound = true
+				assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.11.0", c.Image)
+			}
+		}
+	}))
+	assert.True(t, awsNodeContainerFound)
+
+	t.Log("Running `pulumi up` with the latest version of the EKS provider")
+	pt = pt.CopyToTempDir(opttest.Defaults())
+
+	prevResult := pt.Preview()
+	assert.Equal(t, 1, len(prevResult.ChangeSummary))
+
+	result = pt.Up()
+	kcfg, ok = result.Outputs["kubeconfig"]
+	require.True(t, ok)
+
+	t.Log("Validating that the CNI manifests has been updated to the latest v1.16.0 version")
+	awsNodeContainerFound = false
+	assert.NoError(t, utils.ValidateDaemonSet(t, kcfg.Value, "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
+		// The exact image names/versions are obtained from the manifest in `nodejs/eks/cni/aws-k8s-cni.yaml`.
+		for _, c := range ds.Spec.Template.Spec.Containers {
+			switch c.Name {
+			case "aws-node":
+				awsNodeContainerFound = true
+				assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.16.0", c.Image)
+			case "aws-eks-nodeagent":
+				assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon/aws-network-policy-agent:v1.0.7", c.Image)
+			}
+		}
+	}))
+	assert.True(t, awsNodeContainerFound)
+
+	t.Log("Ensuring that re-running `pulumi up` results in no changes and no spurious diffs")
+	pt.Up(optup.ExpectNoChanges())
 }
