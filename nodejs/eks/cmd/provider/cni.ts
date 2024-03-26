@@ -238,7 +238,7 @@ function applyVpcCniYaml(args: VpcCniInputs): string {
     assertCompatibleKubectlVersionExists();
 
     const kubeconfig: string =
-        typeof args.kubeconfig === "string" ? args.kubeconfig : JSON.stringify(args);
+        typeof args.kubeconfig === "string" ? args.kubeconfig : JSON.stringify(args.kubeconfig);
 
     // Dump the kubeconfig to a file.
     const tmpKubeconfig = tmp.fileSync();
