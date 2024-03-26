@@ -36,7 +36,7 @@ jobs:
       - name: Unshallow clone for tags
         run: git fetch --prune --unshallow --tags
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Setup Node
@@ -71,13 +71,11 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v4
-        with:
-          pulumi-version: v3.89.0
+        uses: pulumi/actions@v5
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -155,13 +153,11 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v4
-        with:
-          pulumi-version: v3.89.0
+        uses: pulumi/actions@v5
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check worktree clean
@@ -203,13 +199,11 @@ jobs:
         with:
           tag: v2.1.5-procursus2
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v4
-        with:
-          pulumi-version: v3.89.0
+        uses: pulumi/actions@v5
       - name: Create Provider Binaries
         run: make dist
       - name: Upload Provider Binaries
@@ -241,13 +235,11 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v4
-        with:
-          pulumi-version: v3.89.0
+        uses: pulumi/actions@v5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -309,13 +301,11 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v4
-        with:
-          pulumi-version: v3.89.0
+        uses: pulumi/actions@v5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -355,7 +345,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - env:
@@ -381,7 +371,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Setup Python
@@ -393,9 +383,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v4
-        with:
-          pulumi-version: v3.89.0
+        uses: pulumi/actions@v5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -496,13 +484,11 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v4
-        with:
-          pulumi-version: v3.89.0
+        uses: pulumi/actions@v5
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -608,13 +594,11 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.1.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v4
-        with:
-          pulumi-version: v3.89.0
+        uses: pulumi/actions@v5
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
