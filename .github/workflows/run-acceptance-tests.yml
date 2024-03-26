@@ -417,6 +417,7 @@ jobs:
         test-name:
           - AwsProfile
           - Cluster
+          - CNIAcrossUpdates
           - EncryptionProvider
           - ExtraSecurityGroups
           - Fargate
@@ -424,8 +425,8 @@ jobs:
           - KubernetesServiceIPv4RangeForCluster
           - ManagedNodeGroup
           - MigrateNodeGroups
-          - MNG_withMissingRole
           - MNG_withAwsAuth
+          - MNG_withMissingRole
           - NodeGroup
           - NodegroupOptions
           - OidcIam
@@ -433,8 +434,8 @@ jobs:
           - ReplaceSecGroup
           - ScopedKubeconfig
           - StorageClasses
-          - Tags
           - TagInputTypes
+          - Tags
           - VpcSubnetTags
   test-python:
     name: Run Python Tests
