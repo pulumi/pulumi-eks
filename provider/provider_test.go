@@ -125,8 +125,8 @@ func test(dir string, opts ...providertest.Option) *providertest.ProviderTest {
 		// baseline provider version uses the correct dependencies that the older provider version would have used.
 		providertest.WithBaselineVersion("2.2.1"),
 		providertest.WithExtraBaselineDependencies(map[string]string{
-			"aws":        "6.0.4",
-			"kubernetes": "4.1.1",
+			"aws":        "6.27.0",
+			"kubernetes": "4.9.1",
 		}),
 
 		// This region needs to match the one configured in .github for the CI workflows.
