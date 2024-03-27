@@ -91,7 +91,7 @@ namespace Pulumi.Eks.Inputs
         public Input<bool>? ExternalSnat { get; set; }
 
         /// <summary>
-        /// Specifies the container image to use in the AWS CNI cluster DaemonSet.
+        /// Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
         /// 
         /// Defaults to the official AWS CNI image in ECR.
         /// </summary>
@@ -122,6 +122,14 @@ namespace Pulumi.Eks.Inputs
         /// </summary>
         [Input("logLevel")]
         public Input<string>? LogLevel { get; set; }
+
+        /// <summary>
+        /// Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
+        /// 
+        /// Defaults to the official AWS CNI nodeagent image in ECR.
+        /// </summary>
+        [Input("nodeAgentImage")]
+        public Input<string>? NodeAgentImage { get; set; }
 
         /// <summary>
         /// Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
