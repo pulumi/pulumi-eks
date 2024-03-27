@@ -152,6 +152,27 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Sets the &#39;enableConfigMapMutable&#39; option on the cluster kubernetes provider.
+     * 
+     * Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+     * https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
+     * 
+     */
+    @Import(name="enableConfigMapMutable")
+    private @Nullable Output<Boolean> enableConfigMapMutable;
+
+    /**
+     * @return Sets the &#39;enableConfigMapMutable&#39; option on the cluster kubernetes provider.
+     * 
+     * Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+     * https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
+     * 
+     */
+    public Optional<Output<Boolean>> enableConfigMapMutable() {
+        return Optional.ofNullable(this.enableConfigMapMutable);
+    }
+
+    /**
      * Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: [&#34;api&#34;, &#34;audit&#34;, &#34;authenticator&#34;, &#34;controllerManager&#34;, &#34;scheduler&#34;]. By default it is off.
      * 
      */
@@ -950,6 +971,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.creationRoleProvider = $.creationRoleProvider;
         this.defaultAddonsToRemove = $.defaultAddonsToRemove;
         this.desiredCapacity = $.desiredCapacity;
+        this.enableConfigMapMutable = $.enableConfigMapMutable;
         this.enabledClusterLogTypes = $.enabledClusterLogTypes;
         this.encryptionConfigKeyArn = $.encryptionConfigKeyArn;
         this.endpointPrivateAccess = $.endpointPrivateAccess;
@@ -1170,6 +1192,33 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder desiredCapacity(Integer desiredCapacity) {
             return desiredCapacity(Output.of(desiredCapacity));
+        }
+
+        /**
+         * @param enableConfigMapMutable Sets the &#39;enableConfigMapMutable&#39; option on the cluster kubernetes provider.
+         * 
+         * Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+         * https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
+         * 
+         * @return builder
+         * 
+         */
+        public Builder enableConfigMapMutable(@Nullable Output<Boolean> enableConfigMapMutable) {
+            $.enableConfigMapMutable = enableConfigMapMutable;
+            return this;
+        }
+
+        /**
+         * @param enableConfigMapMutable Sets the &#39;enableConfigMapMutable&#39; option on the cluster kubernetes provider.
+         * 
+         * Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+         * https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
+         * 
+         * @return builder
+         * 
+         */
+        public Builder enableConfigMapMutable(Boolean enableConfigMapMutable) {
+            return enableConfigMapMutable(Output.of(enableConfigMapMutable));
         }
 
         /**
