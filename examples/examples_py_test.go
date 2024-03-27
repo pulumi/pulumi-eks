@@ -17,6 +17,7 @@
 package example
 
 import (
+	"path"
 	"path/filepath"
 	"testing"
 
@@ -99,6 +100,14 @@ func TestAccNodeGroupPy(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			RunUpdateTest: false,
 			Dir:           filepath.Join(getCwd(t), "nodegroup-py"),
+			EditDirs: []integration.EditDir{
+				{
+					// Re-running should not introduce any changes.
+					Dir:             path.Join(getCwd(t), "nodegroup-py"),
+					ExpectNoChanges: true,
+					Additive:        true,
+				},
+			},
 		})
 
 	integration.ProgramTest(t, &test)

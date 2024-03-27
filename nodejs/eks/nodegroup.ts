@@ -1169,7 +1169,7 @@ ${customUserData}
                   maxPrice: args.spotPrice,
               },
           }
-        : {};
+        : undefined;
 
     const device = pulumi.output(amiId).apply((id) =>
         aws.ec2.getAmi(
