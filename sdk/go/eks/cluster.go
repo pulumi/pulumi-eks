@@ -80,6 +80,11 @@ type clusterArgs struct {
 	DefaultAddonsToRemove []string `pulumi:"defaultAddonsToRemove"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity *int `pulumi:"desiredCapacity"`
+	// Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
+	//
+	// Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+	// https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
+	EnableConfigMapMutable *bool `pulumi:"enableConfigMapMutable"`
 	// Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
 	EnabledClusterLogTypes []string `pulumi:"enabledClusterLogTypes"`
 	// KMS Key ARN to use with the encryption configuration for the cluster.
@@ -286,6 +291,11 @@ type ClusterArgs struct {
 	DefaultAddonsToRemove pulumi.StringArrayInput
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput
+	// Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
+	//
+	// Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+	// https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
+	EnableConfigMapMutable pulumi.BoolPtrInput
 	// Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
 	EnabledClusterLogTypes pulumi.StringArrayInput
 	// KMS Key ARN to use with the encryption configuration for the cluster.
