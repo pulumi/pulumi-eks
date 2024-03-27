@@ -696,6 +696,10 @@
                     "type": "integer",
                     "description": "The number of worker nodes that should be running in the cluster. Defaults to 2."
                 },
+                "enableConfigMapMutable": {
+                    "type": "boolean",
+                    "description": "Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.\n\nApplies updates to the aws-auth ConfigMap in place over a replace operation if set to true.\nhttps://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs"
+                },
                 "enabledClusterLogTypes": {
                     "type": "array",
                     "items": {

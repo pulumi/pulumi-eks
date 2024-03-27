@@ -713,6 +713,7 @@ export function createCore(
         `${name}-eks-k8s`,
         {
             kubeconfig: kubeconfig.apply(JSON.stringify),
+            enableConfigMapMutable: args.enableConfigMapMutable,
         },
         { parent: parent },
     );
@@ -874,9 +875,13 @@ export function createCore(
         `${name}-nodeAccess`,
         {
             apiVersion: "v1",
+            immutable: false,
             metadata: {
                 name: `aws-auth`,
                 namespace: "kube-system",
+                annotations: {
+                    "pulumi.com/patchForce": "true",
+                },
             },
             data: nodeAccessData,
         },
@@ -1508,6 +1513,13 @@ export interface ClusterOptions {
      * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
      */
     providerCredentialOpts?: pulumi.Input<KubeconfigOptions>;
+
+    /**
+     * Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
+     * Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+     * https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
+     */
+    enableConfigMapMutable?: pulumi.Input<boolean>;
 
     /**
      * KMS Key ARN to use with the encryption configuration for the cluster.

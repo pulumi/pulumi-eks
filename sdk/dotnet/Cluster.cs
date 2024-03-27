@@ -184,6 +184,15 @@ namespace Pulumi.Eks
         [Input("desiredCapacity")]
         public Input<int>? DesiredCapacity { get; set; }
 
+        /// <summary>
+        /// Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
+        /// 
+        /// Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+        /// https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
+        /// </summary>
+        [Input("enableConfigMapMutable")]
+        public Input<bool>? EnableConfigMapMutable { get; set; }
+
         [Input("enabledClusterLogTypes")]
         private InputList<string>? _enabledClusterLogTypes;
 

@@ -584,6 +584,12 @@ func generateSchema() schema.PackageSpec {
 							"- https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration\n" +
 							"- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html",
 					},
+					"enableConfigMapMutable": {
+						TypeSpec: schema.TypeSpec{Type: "boolean"},
+						Description: "Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.\n\n" +
+							"Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.\n" +
+							"https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs",
+					},
 					"encryptionConfigKeyArn": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "KMS Key ARN to use with the encryption configuration for the cluster.\n\n" +
