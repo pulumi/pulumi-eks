@@ -93,11 +93,18 @@ export interface VpcCniOptions {
     logFile?: pulumi.Input<string>;
 
     /**
-     * Specifies the container image to use in the AWS CNI cluster DaemonSet.
+     * Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
      *
      * Defaults to the official AWS CNI image in ECR.
      */
     image?: pulumi.Input<string>;
+
+    /**
+     * Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
+     *
+     * Defaults to the official AWS CNI image in ECR.
+     */
+    nodeAgentImage?: pulumi.Input<string>;
 
     /**
      * Specifies the init container image to use in the AWS CNI cluster DaemonSet.
@@ -244,6 +251,7 @@ export class VpcCni extends pulumi.CustomResource {
                 logLevel: args?.logLevel,
                 logFile: args?.logFile,
                 image: args?.image,
+                nodeAgentImage: args?.nodeAgentImage,
                 initImage: args?.initImage,
                 eniConfigLabelDef: args?.eniConfigLabelDef,
                 pluginLogLevel: args?.pluginLogLevel,

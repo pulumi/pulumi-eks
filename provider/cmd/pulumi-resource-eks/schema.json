@@ -555,7 +555,7 @@
                 },
                 "image": {
                     "type": "string",
-                    "description": "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI image in ECR."
+                    "description": "Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI image in ECR."
                 },
                 "initImage": {
                     "type": "string",
@@ -568,6 +568,10 @@
                 "logLevel": {
                     "type": "string",
                     "description": "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nValid values: \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", or \"FATAL\"."
+                },
+                "nodeAgentImage": {
+                    "type": "string",
+                    "description": "Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI nodeagent image in ECR."
                 },
                 "nodePortSupport": {
                     "type": "boolean",
@@ -1522,7 +1526,7 @@
                 },
                 "image": {
                     "type": "string",
-                    "description": "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI image in ECR."
+                    "description": "Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI image in ECR."
                 },
                 "initImage": {
                     "type": "string",
@@ -1539,6 +1543,10 @@
                 "logLevel": {
                     "type": "string",
                     "description": "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nValid values: \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", or \"FATAL\"."
+                },
+                "nodeAgentImage": {
+                    "type": "string",
+                    "description": "Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI nodeagent image in ECR."
                 },
                 "nodePortSupport": {
                     "type": "boolean",
