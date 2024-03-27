@@ -157,6 +157,14 @@ func TestAccNodeGroup(t *testing.T) {
 					info.Outputs["kubeconfig2"],
 				)
 			},
+			EditDirs: []integration.EditDir{
+				{
+					// Re-running should not introduce any changes.
+					Dir:             path.Join(getCwd(t), "nodegroup"),
+					ExpectNoChanges: true,
+					Additive:        true,
+				},
+			},
 		})
 
 	integration.ProgramTest(t, &test)
