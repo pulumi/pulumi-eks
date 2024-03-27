@@ -26,6 +26,7 @@ class ClusterArgs:
                  creation_role_provider: Optional['CreationRoleProviderArgs'] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
+                 enable_config_map_mutable: Optional[pulumi.Input[bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
                  endpoint_private_access: Optional[pulumi.Input[bool]] = None,
@@ -82,6 +83,10 @@ class ClusterArgs:
         :param 'CreationRoleProviderArgs' creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
         :param pulumi.Input[Sequence[pulumi.Input[str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
+        :param pulumi.Input[bool] enable_config_map_mutable: Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
+               
+               Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+               https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
         :param pulumi.Input[Sequence[pulumi.Input[str]]] enabled_cluster_log_types: Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
         :param pulumi.Input[str] encryption_config_key_arn: KMS Key ARN to use with the encryption configuration for the cluster.
                
@@ -238,6 +243,8 @@ class ClusterArgs:
             pulumi.set(__self__, "default_addons_to_remove", default_addons_to_remove)
         if desired_capacity is not None:
             pulumi.set(__self__, "desired_capacity", desired_capacity)
+        if enable_config_map_mutable is not None:
+            pulumi.set(__self__, "enable_config_map_mutable", enable_config_map_mutable)
         if enabled_cluster_log_types is not None:
             pulumi.set(__self__, "enabled_cluster_log_types", enabled_cluster_log_types)
         if encryption_config_key_arn is not None:
@@ -408,6 +415,21 @@ class ClusterArgs:
     @desired_capacity.setter
     def desired_capacity(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "desired_capacity", value)
+
+    @property
+    @pulumi.getter(name="enableConfigMapMutable")
+    def enable_config_map_mutable(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
+
+        Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+        https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
+        """
+        return pulumi.get(self, "enable_config_map_mutable")
+
+    @enable_config_map_mutable.setter
+    def enable_config_map_mutable(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "enable_config_map_mutable", value)
 
     @property
     @pulumi.getter(name="enabledClusterLogTypes")
@@ -992,6 +1014,7 @@ class Cluster(pulumi.ComponentResource):
                  creation_role_provider: Optional[pulumi.InputType['CreationRoleProviderArgs']] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
+                 enable_config_map_mutable: Optional[pulumi.Input[bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
                  endpoint_private_access: Optional[pulumi.Input[bool]] = None,
@@ -1052,6 +1075,10 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.InputType['CreationRoleProviderArgs'] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
         :param pulumi.Input[Sequence[pulumi.Input[str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
+        :param pulumi.Input[bool] enable_config_map_mutable: Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
+               
+               Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
+               https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
         :param pulumi.Input[Sequence[pulumi.Input[str]]] enabled_cluster_log_types: Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
         :param pulumi.Input[str] encryption_config_key_arn: KMS Key ARN to use with the encryption configuration for the cluster.
                
@@ -1225,6 +1252,7 @@ class Cluster(pulumi.ComponentResource):
                  creation_role_provider: Optional[pulumi.InputType['CreationRoleProviderArgs']] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
+                 enable_config_map_mutable: Optional[pulumi.Input[bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
                  endpoint_private_access: Optional[pulumi.Input[bool]] = None,
@@ -1282,6 +1310,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["creation_role_provider"] = creation_role_provider
             __props__.__dict__["default_addons_to_remove"] = default_addons_to_remove
             __props__.__dict__["desired_capacity"] = desired_capacity
+            __props__.__dict__["enable_config_map_mutable"] = enable_config_map_mutable
             __props__.__dict__["enabled_cluster_log_types"] = enabled_cluster_log_types
             __props__.__dict__["encryption_config_key_arn"] = encryption_config_key_arn
             __props__.__dict__["endpoint_private_access"] = endpoint_private_access
