@@ -30,6 +30,7 @@ class VpcCniArgs:
                  init_image: Optional[pulumi.Input[str]] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
+                 node_agent_image: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
                  security_context_privileged: Optional[pulumi.Input[bool]] = None,
                  veth_prefix: Optional[pulumi.Input[str]] = None,
@@ -59,7 +60,7 @@ class VpcCniArgs:
         :param pulumi.Input[bool] external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
                
                Defaults to false.
-        :param pulumi.Input[str] image: Specifies the container image to use in the AWS CNI cluster DaemonSet.
+        :param pulumi.Input[str] image: Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
                
                Defaults to the official AWS CNI image in ECR.
         :param pulumi.Input[str] init_image: Specifies the init container image to use in the AWS CNI cluster DaemonSet.
@@ -72,6 +73,9 @@ class VpcCniArgs:
                
                Defaults to "DEBUG"
                Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
+        :param pulumi.Input[str] node_agent_image: Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
+               
+               Defaults to the official AWS CNI nodeagent image in ECR.
         :param pulumi.Input[bool] node_port_support: Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
                
                Defaults to true.
@@ -118,6 +122,8 @@ class VpcCniArgs:
             pulumi.set(__self__, "log_file", log_file)
         if log_level is not None:
             pulumi.set(__self__, "log_level", log_level)
+        if node_agent_image is not None:
+            pulumi.set(__self__, "node_agent_image", node_agent_image)
         if node_port_support is not None:
             pulumi.set(__self__, "node_port_support", node_port_support)
         if security_context_privileged is not None:
@@ -288,7 +294,7 @@ class VpcCniArgs:
     @pulumi.getter
     def image(self) -> Optional[pulumi.Input[str]]:
         """
-        Specifies the container image to use in the AWS CNI cluster DaemonSet.
+        Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
 
         Defaults to the official AWS CNI image in ECR.
         """
@@ -340,6 +346,20 @@ class VpcCniArgs:
     @log_level.setter
     def log_level(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "log_level", value)
+
+    @property
+    @pulumi.getter(name="nodeAgentImage")
+    def node_agent_image(self) -> Optional[pulumi.Input[str]]:
+        """
+        Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
+
+        Defaults to the official AWS CNI nodeagent image in ECR.
+        """
+        return pulumi.get(self, "node_agent_image")
+
+    @node_agent_image.setter
+    def node_agent_image(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "node_agent_image", value)
 
     @property
     @pulumi.getter(name="nodePortSupport")
@@ -443,6 +463,7 @@ class VpcCni(pulumi.CustomResource):
                  kubeconfig: Optional[Any] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
+                 node_agent_image: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
                  security_context_privileged: Optional[pulumi.Input[bool]] = None,
                  veth_prefix: Optional[pulumi.Input[str]] = None,
@@ -475,7 +496,7 @@ class VpcCni(pulumi.CustomResource):
         :param pulumi.Input[bool] external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
                
                Defaults to false.
-        :param pulumi.Input[str] image: Specifies the container image to use in the AWS CNI cluster DaemonSet.
+        :param pulumi.Input[str] image: Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
                
                Defaults to the official AWS CNI image in ECR.
         :param pulumi.Input[str] init_image: Specifies the init container image to use in the AWS CNI cluster DaemonSet.
@@ -489,6 +510,9 @@ class VpcCni(pulumi.CustomResource):
                
                Defaults to "DEBUG"
                Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
+        :param pulumi.Input[str] node_agent_image: Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
+               
+               Defaults to the official AWS CNI nodeagent image in ECR.
         :param pulumi.Input[bool] node_port_support: Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
                
                Defaults to true.
@@ -544,6 +568,7 @@ class VpcCni(pulumi.CustomResource):
                  kubeconfig: Optional[Any] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
+                 node_agent_image: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
                  security_context_privileged: Optional[pulumi.Input[bool]] = None,
                  veth_prefix: Optional[pulumi.Input[str]] = None,
@@ -577,6 +602,7 @@ class VpcCni(pulumi.CustomResource):
             __props__.__dict__["kubeconfig"] = kubeconfig
             __props__.__dict__["log_file"] = log_file
             __props__.__dict__["log_level"] = log_level
+            __props__.__dict__["node_agent_image"] = node_agent_image
             __props__.__dict__["node_port_support"] = node_port_support
             __props__.__dict__["security_context_privileged"] = security_context_privileged
             __props__.__dict__["veth_prefix"] = veth_prefix
