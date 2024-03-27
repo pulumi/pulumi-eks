@@ -1688,8 +1688,13 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 		},
 		"image": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "Specifies the container image to use in the AWS CNI cluster DaemonSet.\n\n" +
+			Description: "Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.\n\n" +
 				"Defaults to the official AWS CNI image in ECR.",
+		},
+		"nodeAgentImage": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.\n\n" +
+				"Defaults to the official AWS CNI nodeagent image in ECR.",
 		},
 		"initImage": {
 			TypeSpec: schema.TypeSpec{Type: "string"},

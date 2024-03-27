@@ -91,7 +91,7 @@ type vpcCniArgs struct {
 	//
 	// Defaults to false.
 	ExternalSnat *bool `pulumi:"externalSnat"`
-	// Specifies the container image to use in the AWS CNI cluster DaemonSet.
+	// Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
 	//
 	// Defaults to the official AWS CNI image in ECR.
 	Image *string `pulumi:"image"`
@@ -110,6 +110,10 @@ type vpcCniArgs struct {
 	// Defaults to "DEBUG"
 	// Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
 	LogLevel *string `pulumi:"logLevel"`
+	// Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
+	//
+	// Defaults to the official AWS CNI nodeagent image in ECR.
+	NodeAgentImage *string `pulumi:"nodeAgentImage"`
 	// Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
 	//
 	// Defaults to true.
@@ -165,7 +169,7 @@ type VpcCniArgs struct {
 	//
 	// Defaults to false.
 	ExternalSnat pulumi.BoolPtrInput
-	// Specifies the container image to use in the AWS CNI cluster DaemonSet.
+	// Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
 	//
 	// Defaults to the official AWS CNI image in ECR.
 	Image pulumi.StringPtrInput
@@ -184,6 +188,10 @@ type VpcCniArgs struct {
 	// Defaults to "DEBUG"
 	// Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
 	LogLevel pulumi.StringPtrInput
+	// Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
+	//
+	// Defaults to the official AWS CNI nodeagent image in ECR.
+	NodeAgentImage pulumi.StringPtrInput
 	// Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
 	//
 	// Defaults to true.

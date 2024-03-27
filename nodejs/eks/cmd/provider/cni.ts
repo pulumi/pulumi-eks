@@ -36,6 +36,7 @@ interface VpcCniInputs {
     logLevel?: string;
     logFile?: string;
     image?: string;
+    nodeAgentImage?: string;
     initImage?: string;
     vethPrefix?: string;
     eniMtu?: number;
@@ -48,6 +49,17 @@ interface VpcCniInputs {
     cniCustomNetworkCfg?: boolean;
     cniExternalSnat?: boolean;
     securityContextPrivileged?: boolean;
+}
+
+export function updateImage(daemonSet: any, containerName: string, image: string): void {
+    for (const container of daemonSet.spec.template.spec.containers) {
+        if (container.name === containerName) {
+            container.image = image;
+            return;
+        }
+    }
+
+    throw new Error(`Container ${containerName} not found in daemonset`);
 }
 
 function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
@@ -137,7 +149,10 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
         env.push({ name: "AWS_VPC_ENI_MTU", value: "9001" });
     }
     if (args.image) {
-        daemonSet.spec.template.spec.containers[0].image = args.image.toString();
+        updateImage(daemonSet, "aws-node", args.image.toString());
+    }
+    if (args.nodeAgentImage) {
+        updateImage(daemonSet, "aws-eks-nodeagent", args.nodeAgentImage.toString());
     }
     if (args.initImage) {
         daemonSet.spec.template.spec.initContainers[0].image = args.initImage.toString();
@@ -226,7 +241,7 @@ function computeVpcCniYaml(cniYamlText: string, args: VpcCniInputs): string {
     return cniYaml.map((o) => `---\n${jsyaml.dump(o)}`).join("");
 }
 
-function getBaseVpcCniYaml(): string {
+export function getBaseVpcCniYaml(): string {
     const yamlPath = path.join(__dirname, "../../cni/aws-k8s-cni.yaml");
     const cniYamlText = fs.readFileSync(yamlPath).toString();
 
