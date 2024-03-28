@@ -39,10 +39,18 @@ func main() {
 			return err
 		}
 
+		cluster4, err := eks.NewCluster(ctx, "example-cluster-4", &eks.ClusterArgs{
+			IpFamily: pulumi.StringPtr("ipv6"),
+		})
+		if err != nil {
+			return err
+		}
+
 		// Export the kubeconfig for clusters
 		ctx.Export("kubeconfig1", cluster1.Kubeconfig)
 		ctx.Export("kubeconfig2", cluster2.Kubeconfig)
 		ctx.Export("kubeconfig3", cluster3.Kubeconfig)
+		ctx.Export("kubeconfig4", cluster4.Kubeconfig)
 		return nil
 	})
 }

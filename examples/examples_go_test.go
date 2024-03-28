@@ -35,6 +35,7 @@ func TestAccClusterGo(t *testing.T) {
 					info.Outputs["kubeconfig1"],
 					info.Outputs["kubeconfig2"],
 					info.Outputs["kubeconfig3"],
+					info.Outputs["kubeconfig4"],
 				)
 			},
 		})
@@ -70,7 +71,7 @@ func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 			"aws:region": region,
 		},
 		Dependencies: []string{
-			"github.com/pulumi/pulumi-eks/sdk",
+			"github.com/pulumi/pulumi-eks/sdk/v2",
 		},
 		Verbose: true,
 	})
