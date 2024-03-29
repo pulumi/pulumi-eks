@@ -32,7 +32,7 @@ func main() {
 			return err
 		}
 
-		// Create cluster that don't conflict between defaults and mutually exclusive arguments
+		// Create a cluster that avoids conflicts between default settings and mutually exclusive arguments
 		// https://github.com/pulumi/pulumi-eks/pull/813
 		cluster3, err := eks.NewCluster(ctx, "example-cluster-3", &eks.ClusterArgs{
 			NodeGroupOptions: &eks.ClusterNodeGroupOptionsArgs{
@@ -67,12 +67,9 @@ func main() {
 			subnet, err := ec2.NewSubnet(ctx, fmt.Sprintf("ipv6-subnet-%d", idx), &ec2.SubnetArgs{
 				VpcId:                       vpc.ID().ToStringOutput(),
 				AssignIpv6AddressOnCreation: pulumi.Bool(true),
-				// EnableDns64:                             pulumi.Bool(true),
-				// EnableResourceNameDnsAaaaRecordOnLaunch: pulumi.Bool(true),
-				AvailabilityZone: pulumi.String(az),
-				CidrBlock:        pulumi.String(fmt.Sprintf("10.100.%d.0/24", len(subnetIDs))),
-				// Ipv6Native:    pulumi.Bool(true), // Create a ipv6 only subnet
-				Ipv6CidrBlock: calculateIPV6CidrBlock(vpc.Ipv6CidrBlock, idx),
+				AvailabilityZone:            pulumi.String(az),
+				CidrBlock:                   pulumi.String(fmt.Sprintf("10.100.%d.0/24", len(subnetIDs))),
+				Ipv6CidrBlock:               calculateIPV6CidrBlock(vpc.Ipv6CidrBlock, idx),
 			})
 			if err != nil {
 				return err
