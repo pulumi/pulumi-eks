@@ -121,10 +121,13 @@ type clusterArgs struct {
 	InstanceRoles []*iam.Role `pulumi:"instanceRoles"`
 	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
 	InstanceType *string `pulumi:"instanceType"`
+	// The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
+	// You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+	IpFamily *string `pulumi:"ipFamily"`
 	// The CIDR block to assign Kubernetes service IP addresses from. If you don't
 	// specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
-	// 172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
-	// with resources in other networks that are peered or connected to your VPC. You can only specify
+	// 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
+	// that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
 	// a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
 	//
 	// The block must meet the following requirements:
@@ -332,10 +335,13 @@ type ClusterArgs struct {
 	InstanceRoles iam.RoleArrayInput
 	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
 	InstanceType pulumi.StringPtrInput
+	// The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
+	// You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+	IpFamily pulumi.StringPtrInput
 	// The CIDR block to assign Kubernetes service IP addresses from. If you don't
 	// specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
-	// 172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap
-	// with resources in other networks that are peered or connected to your VPC. You can only specify
+	// 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
+	// that does not overlap with resources in other networks that are peered or connected to your VPC. You can only specify
 	// a custom CIDR block when you create a cluster, changing this value will force a new cluster to be created.
 	//
 	// The block must meet the following requirements:
