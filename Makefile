@@ -188,6 +188,11 @@ test_dotnet:: install_provider
 test_java:: install_provider
 	cd examples && go test -tags=java -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
+test_unit_tests:
+	cd nodejs/eks && \
+		yarn install && \
+		yarn run test
+
 specific_test:: install_nodejs_sdk test_build
 	cd examples && go test -tags=$(LanguageTags) -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName) 2>&1 | tee /tmp/gotest.log | gotestfmt
 
