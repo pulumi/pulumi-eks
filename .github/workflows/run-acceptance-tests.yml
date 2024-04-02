@@ -47,7 +47,7 @@ jobs:
           body: |
             Please view the PR build - ${{ steps.vars.outputs.run-url }}
   lint:
-    name: lint
+    name: Lint and unit test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -71,6 +71,8 @@ jobs:
           echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
       - name: Run lint
         run: make lint
+      - name: Run unit tests
+        run: make test_unit_tests
   prerequisites:
     name: prerequisites
     runs-on: ubuntu-latest
