@@ -2,8 +2,8 @@ package provider
 
 import (
 	"fmt"
-	"log"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -18,6 +18,11 @@ const (
 
 	// The path to the yarn.lock file that the EKS provider was built with.
 	yarnLockPath = "../nodejs/eks/yarn.lock"
+)
+
+var (
+	// providerRegex is a regular expression that extracts the provider name from an URN.
+	providerRegex = regexp.MustCompile(`pulumi:providers:(\w+)::`)
 )
 
 func TestExamplesUpgrades(t *testing.T) {
@@ -105,7 +110,14 @@ func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.P
 			if strings.Contains(string(diff.URN), "pulumi:providers:") &&
 				len(diff.Diffs) == 1 &&
 				diff.Diffs[0] == "version" {
-				log.Println("Ignoring version change for providers used in test programs")
+				// Extract the provider name from the URN.
+				matches := providerRegex.FindStringSubmatch(string(diff.URN))
+				if len(matches) == 2 {
+					t.Logf("Ignoring version change for provider %q used in test programs", matches[1])
+				} else {
+					t.Errorf("Failed to extract provider name from URN: %s", diff.URN)
+				}
+
 				continue
 			}
 
