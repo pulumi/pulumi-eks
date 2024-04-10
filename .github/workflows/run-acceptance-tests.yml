@@ -305,6 +305,15 @@ jobs:
           aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
           aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
+      - name: Clear GitHub Actions Ubuntu runner disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          dotnet: false
+          android: true
+          haskell: true
+          swap-storage: true
+          large-packages: false
       - name: Link nodejs binary for testing
         run: |
           cd ${{ github.workspace }}/bin
