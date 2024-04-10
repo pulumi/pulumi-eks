@@ -109,17 +109,6 @@ func test(t *testing.T, dir string, opts ...providertest.Option) *providertest.P
 				continue
 			}
 
-			// TODO(rquitales): Remove the following 2 exceptions once the EKS provider is cut with this change.
-			if strings.Contains(string(diff.URN), "VpcCni:") {
-				log.Println("Ignoring change for upgrading the CNI manifest")
-				continue
-			}
-
-			if strings.Contains(string(diff.URN), "ConfigMap:") {
-				log.Println("Ignoring change for upgrading the aws-auth ConfigMap")
-				continue
-			}
-
 			assert.Falsef(t, diff.HasChanges, "Unexpected difference: %+v", diff)
 		}
 	}
