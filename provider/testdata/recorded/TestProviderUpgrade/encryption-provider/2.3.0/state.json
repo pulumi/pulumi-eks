@@ -1,0 +1,1962 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2024-04-10T23:46:09.133241921Z",
+            "magic": "53d474cd474879a14fbdd70515dc0019236ed0be15dd684675cc214682376482",
+            "version": "v3.112.0"
+        },
+        "secrets_providers": {
+            "type": "passphrase",
+            "state": {
+                "salt": "v1:O25tOVLuRmo=:v1:SYLviOUU0MoTZ8aJ:5q5IelEyjF9JwhLxEsUHUWej/o/UHA=="
+            }
+        },
+        "resources": [
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:pulumi:Stack::encryption-provider-p-it-runner-encryption-54090184",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "aliasArn": "arn:aws:kms:us-west-2:894850187425:alias/k8s-secrets-encryption-key-0737cf0",
+                    "keyArn": "arn:aws:kms:us-west-2:894850187425:key/5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3",
+                    "kubeconfig": {
+                        "apiVersion": "v1",
+                        "clusters": [
+                            {
+                                "cluster": {
+                                    "certificate-authority-data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                                    "server": "https://BA1AD523554D3159B0D9828B8F61D79A.yl4.us-west-2.eks.amazonaws.com"
+                                },
+                                "name": "kubernetes"
+                            }
+                        ],
+                        "contexts": [
+                            {
+                                "context": {
+                                    "cluster": "kubernetes",
+                                    "user": "aws"
+                                },
+                                "name": "aws"
+                            }
+                        ],
+                        "current-context": "aws",
+                        "kind": "Config",
+                        "users": [
+                            {
+                                "name": "aws",
+                                "user": {
+                                    "exec": {
+                                        "apiVersion": "client.authentication.k8s.io/v1beta1",
+                                        "args": [
+                                            "eks",
+                                            "get-token",
+                                            "--cluster-name",
+                                            "encryption-provider-eksCluster-4743887"
+                                        ],
+                                        "command": "aws",
+                                        "env": [
+                                            {
+                                                "name": "KUBERNETES_EXEC_INFO",
+                                                "value": "{\"apiVersion\": \"client.authentication.k8s.io/v1beta1\"}"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "created": "2024-04-10T23:36:44.092560698Z",
+                "modified": "2024-04-10T23:36:44.092560698Z",
+                "sourcePosition": "project:///node_modules/@pulumi/runtime/stack.ts#36,23"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "custom": false,
+                "type": "eks:index:Cluster",
+                "outputs": {
+                    "eksCluster": {
+                        "4dabf18193072939515e22adb298388d": "5cf8f73096256a8f31e491e813e4eb8e",
+                        "id": "encryption-provider-eksCluster-4743887",
+                        "packageVersion": "",
+                        "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster"
+                    },
+                    "kubeconfig": {
+                        "apiVersion": "v1",
+                        "clusters": [
+                            {
+                                "cluster": {
+                                    "certificate-authority-data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                                    "server": "https://BA1AD523554D3159B0D9828B8F61D79A.yl4.us-west-2.eks.amazonaws.com"
+                                },
+                                "name": "kubernetes"
+                            }
+                        ],
+                        "contexts": [
+                            {
+                                "context": {
+                                    "cluster": "kubernetes",
+                                    "user": "aws"
+                                },
+                                "name": "aws"
+                            }
+                        ],
+                        "current-context": "aws",
+                        "kind": "Config",
+                        "users": [
+                            {
+                                "name": "aws",
+                                "user": {
+                                    "exec": {
+                                        "apiVersion": "client.authentication.k8s.io/v1beta1",
+                                        "args": [
+                                            "eks",
+                                            "get-token",
+                                            "--cluster-name",
+                                            "encryption-provider-eksCluster-4743887"
+                                        ],
+                                        "command": "aws",
+                                        "env": [
+                                            {
+                                                "name": "KUBERNETES_EXEC_INFO",
+                                                "value": "{\"apiVersion\": \"client.authentication.k8s.io/v1beta1\"}"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:pulumi:Stack::encryption-provider-p-it-runner-encryption-54090184",
+                "created": "2024-04-10T23:36:45.014521717Z",
+                "modified": "2024-04-10T23:36:45.014521717Z",
+                "sourcePosition": "project:///index.ts#27,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole::encryption-provider-instanceRole",
+                "custom": false,
+                "type": "eks:index:ServiceRole",
+                "outputs": {
+                    "role": {
+                        "4dabf18193072939515e22adb298388d": "5cf8f73096256a8f31e491e813e4eb8e",
+                        "id": "encryption-provider-instanceRole-role-5395ad0",
+                        "packageVersion": "",
+                        "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role"
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "created": "2024-04-10T23:36:46.716375077Z",
+                "modified": "2024-04-10T23:36:46.716375077Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#782,30"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4",
+                "custom": true,
+                "id": "927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "type": "pulumi:providers:aws",
+                "inputs": {
+                    "region": "us-west-2",
+                    "skipCredentialsValidation": "false",
+                    "skipMetadataApiCheck": "true",
+                    "skipRegionValidation": "true",
+                    "version": "6.0.4"
+                },
+                "outputs": {
+                    "region": "us-west-2",
+                    "skipCredentialsValidation": "false",
+                    "skipMetadataApiCheck": "true",
+                    "skipRegionValidation": "true",
+                    "version": "6.0.4"
+                },
+                "created": "2024-04-10T23:36:46.71711373Z",
+                "modified": "2024-04-10T23:36:46.71711373Z"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole::encryption-provider-eksRole",
+                "custom": false,
+                "type": "eks:index:ServiceRole",
+                "outputs": {
+                    "role": {
+                        "4dabf18193072939515e22adb298388d": "5cf8f73096256a8f31e491e813e4eb8e",
+                        "id": "encryption-provider-eksRole-role-af6d010",
+                        "packageVersion": "",
+                        "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role"
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "created": "2024-04-10T23:36:46.718006919Z",
+                "modified": "2024-04-10T23:36:46.718006919Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#487,19"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:random::default_4_16_0",
+                "custom": true,
+                "id": "0a992ab9-e13e-4f5a-96ff-9fccaf455aa5",
+                "type": "pulumi:providers:random",
+                "inputs": {
+                    "version": "4.16.0"
+                },
+                "outputs": {
+                    "version": "4.16.0"
+                },
+                "created": "2024-04-10T23:36:47.187183848Z",
+                "modified": "2024-04-10T23:36:47.187183848Z"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:eks::default",
+                "custom": true,
+                "id": "329cdd53-e3b6-401e-b4c6-f1efb45a59b7",
+                "type": "pulumi:providers:eks",
+                "inputs": {
+                    "version": "2.3.0"
+                },
+                "outputs": {
+                    "version": "2.3.0"
+                },
+                "created": "2024-04-10T23:36:47.720155231Z",
+                "modified": "2024-04-10T23:36:47.720155231Z"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:RandomSuffix::encryption-provider-cfnStackName",
+                "custom": true,
+                "id": "encryption-provider-cfnStackName",
+                "type": "eks:index:RandomSuffix",
+                "inputs": {
+                    "input": "encryption-provider"
+                },
+                "outputs": {
+                    "output": "encryption-provider-bb5debc2"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:eks::default::329cdd53-e3b6-401e-b4c6-f1efb45a59b7",
+                "propertyDependencies": {
+                    "input": []
+                },
+                "created": "2024-04-10T23:36:47.73024074Z",
+                "modified": "2024-04-10T23:36:47.73024074Z",
+                "sourcePosition": "project:///node_modules/@pulumi/randomSuffix.ts#59,12"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::random:index/randomPassword:RandomPassword::db-password",
+                "custom": true,
+                "id": "none",
+                "type": "random:index/randomPassword:RandomPassword",
+                "inputs": {
+                    "length": 32
+                },
+                "outputs": {
+                    "__meta": "{\"schema_version\":\"3\"}",
+                    "bcryptHash": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "v1:Y6iyi5faeKbevNOb:WKfFv3o32h2x5FWNuNVPkvAiiJTvcvlI+vN98M7XEPJ4lQ7OFlX/PHid5k/gHTsj36PYveCdW3/8qZB91q+VQVFCQjvp0f6WA5UiYrNX"
+                    },
+                    "id": "none",
+                    "length": 32,
+                    "lower": true,
+                    "minLower": 0,
+                    "minNumeric": 0,
+                    "minSpecial": 0,
+                    "minUpper": 0,
+                    "number": true,
+                    "numeric": true,
+                    "result": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "v1:sDdMyeC029epxNXJ:KM16R1TS76Tdk8dbkS3sdoT4nBJzm2ipzcSecwe5xA3jD1Se4BNAcNDi07qA4yid4y+bTo4JMGguL51C"
+                    },
+                    "special": true,
+                    "upper": true
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:pulumi:Stack::encryption-provider-p-it-runner-encryption-54090184",
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:random::default_4_16_0::0a992ab9-e13e-4f5a-96ff-9fccaf455aa5",
+                "propertyDependencies": {
+                    "length": []
+                },
+                "additionalSecretOutputs": [
+                    "result",
+                    "bcryptHash",
+                    "result"
+                ],
+                "created": "2024-04-10T23:36:47.791548223Z",
+                "modified": "2024-04-10T23:36:47.791548223Z",
+                "sourcePosition": "project:///index.ts#35,20"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                "custom": true,
+                "id": "encryption-provider-instanceRole-role-5395ad0",
+                "type": "aws:iam/role:Role",
+                "inputs": {
+                    "__defaults": [
+                        "forceDetachPolicies",
+                        "maxSessionDuration",
+                        "name",
+                        "path"
+                    ],
+                    "assumeRolePolicy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"ec2.amazonaws.com\"]}}]}",
+                    "forceDetachPolicies": false,
+                    "maxSessionDuration": 3600,
+                    "name": "encryption-provider-instanceRole-role-5395ad0",
+                    "path": "/"
+                },
+                "outputs": {
+                    "arn": "arn:aws:iam::894850187425:role/encryption-provider-instanceRole-role-5395ad0",
+                    "assumeRolePolicy": "{\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"ec2.amazonaws.com\"]}}],\"Version\":\"2012-10-17\"}",
+                    "createDate": "2024-04-10T23:36:47Z",
+                    "description": "",
+                    "forceDetachPolicies": false,
+                    "id": "encryption-provider-instanceRole-role-5395ad0",
+                    "inlinePolicies": [],
+                    "managedPolicyArns": [],
+                    "maxSessionDuration": 3600,
+                    "name": "encryption-provider-instanceRole-role-5395ad0",
+                    "namePrefix": "",
+                    "path": "/",
+                    "tags": {},
+                    "tagsAll": {},
+                    "uniqueId": "AROA5AWJ2ICQ4SX6334HH"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole::encryption-provider-instanceRole",
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "assumeRolePolicy": []
+                },
+                "created": "2024-04-10T23:36:47.911889077Z",
+                "modified": "2024-04-10T23:36:47.911889077Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#77,22"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/key:Key::secrets-encryption-key",
+                "custom": true,
+                "id": "5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3",
+                "type": "aws:kms/key:Key",
+                "inputs": {
+                    "__defaults": [
+                        "bypassPolicyLockoutSafetyCheck",
+                        "customerMasterKeySpec",
+                        "enableKeyRotation",
+                        "isEnabled",
+                        "keyUsage"
+                    ],
+                    "bypassPolicyLockoutSafetyCheck": false,
+                    "customerMasterKeySpec": "SYMMETRIC_DEFAULT",
+                    "deletionWindowInDays": 7,
+                    "description": "KMS key for encrypting Kubernetes Secrets using envelope encryption",
+                    "enableKeyRotation": false,
+                    "isEnabled": true,
+                    "keyUsage": "ENCRYPT_DECRYPT"
+                },
+                "outputs": {
+                    "arn": "arn:aws:kms:us-west-2:894850187425:key/5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3",
+                    "bypassPolicyLockoutSafetyCheck": false,
+                    "customKeyStoreId": "",
+                    "customerMasterKeySpec": "SYMMETRIC_DEFAULT",
+                    "deletionWindowInDays": 7,
+                    "description": "KMS key for encrypting Kubernetes Secrets using envelope encryption",
+                    "enableKeyRotation": false,
+                    "id": "5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3",
+                    "isEnabled": true,
+                    "keyId": "5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3",
+                    "keyUsage": "ENCRYPT_DECRYPT",
+                    "multiRegion": false,
+                    "policy": "{\"Id\":\"key-default-1\",\"Statement\":[{\"Action\":\"kms:*\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::894850187425:root\"},\"Resource\":\"*\",\"Sid\":\"Enable IAM User Permissions\"}],\"Version\":\"2012-10-17\"}",
+                    "tags": {},
+                    "tagsAll": {}
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:pulumi:Stack::encryption-provider-p-it-runner-encryption-54090184",
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "deletionWindowInDays": [],
+                    "description": []
+                },
+                "created": "2024-04-10T23:36:47.91340056Z",
+                "modified": "2024-04-10T23:36:47.91340056Z",
+                "sourcePosition": "project:///index.ts#12,13"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role",
+                "custom": true,
+                "id": "encryption-provider-eksRole-role-af6d010",
+                "type": "aws:iam/role:Role",
+                "inputs": {
+                    "__defaults": [
+                        "forceDetachPolicies",
+                        "maxSessionDuration",
+                        "name",
+                        "path"
+                    ],
+                    "assumeRolePolicy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"eks.amazonaws.com\"]}}]}",
+                    "description": "Allows EKS to manage clusters on your behalf.",
+                    "forceDetachPolicies": false,
+                    "maxSessionDuration": 3600,
+                    "name": "encryption-provider-eksRole-role-af6d010",
+                    "path": "/"
+                },
+                "outputs": {
+                    "arn": "arn:aws:iam::894850187425:role/encryption-provider-eksRole-role-af6d010",
+                    "assumeRolePolicy": "{\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"eks.amazonaws.com\"]}}],\"Version\":\"2012-10-17\"}",
+                    "createDate": "2024-04-10T23:36:47Z",
+                    "description": "Allows EKS to manage clusters on your behalf.",
+                    "forceDetachPolicies": false,
+                    "id": "encryption-provider-eksRole-role-af6d010",
+                    "inlinePolicies": [],
+                    "managedPolicyArns": [],
+                    "maxSessionDuration": 3600,
+                    "name": "encryption-provider-eksRole-role-af6d010",
+                    "namePrefix": "",
+                    "path": "/",
+                    "tags": {},
+                    "tagsAll": {},
+                    "uniqueId": "AROA5AWJ2ICQ563RX2E5R"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole::encryption-provider-eksRole",
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "assumeRolePolicy": [],
+                    "description": []
+                },
+                "created": "2024-04-10T23:36:48.006557388Z",
+                "modified": "2024-04-10T23:36:48.006557388Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#77,22"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                "custom": true,
+                "id": "encryption-provider-instanceRole-role-5395ad0-20240410233647980700000001",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+                    "role": "encryption-provider-instanceRole-role-5395ad0"
+                },
+                "outputs": {
+                    "id": "encryption-provider-instanceRole-role-5395ad0-20240410233647980700000001",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+                    "role": "encryption-provider-instanceRole-role-5395ad0"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole::encryption-provider-instanceRole",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "policyArn": [],
+                    "role": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role"
+                    ]
+                },
+                "created": "2024-04-10T23:36:48.017030609Z",
+                "modified": "2024-04-10T23:36:48.017030609Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#89,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2",
+                "custom": true,
+                "id": "encryption-provider-instanceRole-role-5395ad0-20240410233648018100000002",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "encryption-provider-instanceRole-role-5395ad0"
+                },
+                "outputs": {
+                    "id": "encryption-provider-instanceRole-role-5395ad0-20240410233648018100000002",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                    "role": "encryption-provider-instanceRole-role-5395ad0"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole::encryption-provider-instanceRole",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "policyArn": [],
+                    "role": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role"
+                    ]
+                },
+                "created": "2024-04-10T23:36:48.044422963Z",
+                "modified": "2024-04-10T23:36:48.044422963Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#89,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97",
+                "custom": true,
+                "id": "encryption-provider-instanceRole-role-5395ad0-20240410233648039900000003",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+                    "role": "encryption-provider-instanceRole-role-5395ad0"
+                },
+                "outputs": {
+                    "id": "encryption-provider-instanceRole-role-5395ad0-20240410233648039900000003",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+                    "role": "encryption-provider-instanceRole-role-5395ad0"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole::encryption-provider-instanceRole",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "policyArn": [],
+                    "role": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role"
+                    ]
+                },
+                "created": "2024-04-10T23:36:48.088777205Z",
+                "modified": "2024-04-10T23:36:48.088777205Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#89,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key",
+                "custom": true,
+                "id": "alias/k8s-secrets-encryption-key-0737cf0",
+                "type": "aws:kms/alias:Alias",
+                "inputs": {
+                    "__defaults": [
+                        "name"
+                    ],
+                    "name": "alias/k8s-secrets-encryption-key-0737cf0",
+                    "targetKeyId": "5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3"
+                },
+                "outputs": {
+                    "arn": "arn:aws:kms:us-west-2:894850187425:alias/k8s-secrets-encryption-key-0737cf0",
+                    "id": "alias/k8s-secrets-encryption-key-0737cf0",
+                    "name": "alias/k8s-secrets-encryption-key-0737cf0",
+                    "namePrefix": "",
+                    "targetKeyArn": "arn:aws:kms:us-west-2:894850187425:key/5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3",
+                    "targetKeyId": "5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:pulumi:Stack::encryption-provider-p-it-runner-encryption-54090184",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/key:Key::secrets-encryption-key"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "targetKeyId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/key:Key::secrets-encryption-key"
+                    ]
+                },
+                "created": "2024-04-10T23:36:48.110544624Z",
+                "modified": "2024-04-10T23:36:48.110544624Z",
+                "sourcePosition": "project:///index.ts#18,15"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823",
+                "custom": true,
+                "id": "encryption-provider-eksRole-role-af6d010-20240410233648084700000004",
+                "type": "aws:iam/rolePolicyAttachment:RolePolicyAttachment",
+                "inputs": {
+                    "__defaults": [],
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+                    "role": "encryption-provider-eksRole-role-af6d010"
+                },
+                "outputs": {
+                    "id": "encryption-provider-eksRole-role-af6d010-20240410233648084700000004",
+                    "policyArn": "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+                    "role": "encryption-provider-eksRole-role-af6d010"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole::encryption-provider-eksRole",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "policyArn": [],
+                    "role": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role"
+                    ]
+                },
+                "created": "2024-04-10T23:36:48.124718849Z",
+                "modified": "2024-04-10T23:36:48.124718849Z",
+                "sourcePosition": "project:///node_modules/@pulumi/servicerole.ts#89,17"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:iam/instanceProfile:InstanceProfile::encryption-provider-instanceProfile",
+                "custom": true,
+                "id": "encryption-provider-instanceProfile-804efe5",
+                "type": "aws:iam/instanceProfile:InstanceProfile",
+                "inputs": {
+                    "__defaults": [
+                        "name",
+                        "path"
+                    ],
+                    "name": "encryption-provider-instanceProfile-804efe5",
+                    "path": "/",
+                    "role": "encryption-provider-instanceRole-role-5395ad0"
+                },
+                "outputs": {
+                    "arn": "arn:aws:iam::894850187425:instance-profile/encryption-provider-instanceProfile-804efe5",
+                    "createDate": "2024-04-10T23:36:48Z",
+                    "id": "encryption-provider-instanceProfile-804efe5",
+                    "name": "encryption-provider-instanceProfile-804efe5",
+                    "namePrefix": "",
+                    "path": "/",
+                    "role": "encryption-provider-instanceRole-role-5395ad0",
+                    "tags": {},
+                    "tagsAll": {},
+                    "uniqueId": "AIPA5AWJ2ICQZM5UIAHJ4"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "role": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2"
+                    ]
+                },
+                "created": "2024-04-10T23:36:48.419046784Z",
+                "modified": "2024-04-10T23:36:48.419046784Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#173,27"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup",
+                "custom": true,
+                "id": "sg-0db3fc85b4554e101",
+                "type": "aws:ec2/securityGroup:SecurityGroup",
+                "inputs": {
+                    "__defaults": [
+                        "name"
+                    ],
+                    "description": "Managed by Pulumi",
+                    "name": "encryption-provider-eksClusterSecurityGroup-dc5d3d4",
+                    "revokeRulesOnDelete": true,
+                    "tags": {
+                        "Name": "encryption-provider-eksClusterSecurityGroup",
+                        "__defaults": []
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":900000000000},\"schema_version\":\"1\"}",
+                    "arn": "arn:aws:ec2:us-west-2:894850187425:security-group/sg-0db3fc85b4554e101",
+                    "description": "Managed by Pulumi",
+                    "egress": [],
+                    "id": "sg-0db3fc85b4554e101",
+                    "ingress": [],
+                    "name": "encryption-provider-eksClusterSecurityGroup-dc5d3d4",
+                    "namePrefix": "",
+                    "ownerId": "894850187425",
+                    "revokeRulesOnDelete": true,
+                    "tags": {
+                        "Name": "encryption-provider-eksClusterSecurityGroup"
+                    },
+                    "tagsAll": {
+                        "Name": "encryption-provider-eksClusterSecurityGroup"
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "description": [],
+                    "revokeRulesOnDelete": [],
+                    "tags": [],
+                    "vpcId": []
+                },
+                "created": "2024-04-10T23:36:50.539468768Z",
+                "modified": "2024-04-10T23:36:50.539468768Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#508,35"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::encryption-provider-eksClusterInternetEgressRule",
+                "custom": true,
+                "id": "sgrule-941108326",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "cidrBlocks": [
+                        "0.0.0.0/0"
+                    ],
+                    "description": "Allow internet access.",
+                    "fromPort": 0,
+                    "protocol": "-1",
+                    "securityGroupId": "sg-0db3fc85b4554e101",
+                    "toPort": 0,
+                    "type": "egress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "cidrBlocks": [
+                        "0.0.0.0/0"
+                    ],
+                    "description": "Allow internet access.",
+                    "fromPort": 0,
+                    "id": "sgrule-941108326",
+                    "protocol": "-1",
+                    "securityGroupId": "sg-0db3fc85b4554e101",
+                    "securityGroupRuleId": "sgr-0167467218b0465dc",
+                    "self": false,
+                    "toPort": 0,
+                    "type": "egress"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "cidrBlocks": [],
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup"
+                    ],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-04-10T23:36:51.223838704Z",
+                "modified": "2024-04-10T23:36:51.223838704Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#525,46"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster",
+                "custom": true,
+                "id": "encryption-provider-eksCluster-4743887",
+                "type": "aws:eks/cluster:Cluster",
+                "inputs": {
+                    "__defaults": [
+                        "name"
+                    ],
+                    "encryptionConfig": {
+                        "__defaults": [],
+                        "provider": {
+                            "__defaults": [],
+                            "keyArn": "arn:aws:kms:us-west-2:894850187425:key/5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3"
+                        },
+                        "resources": [
+                            "secrets"
+                        ]
+                    },
+                    "name": "encryption-provider-eksCluster-4743887",
+                    "roleArn": "arn:aws:iam::894850187425:role/encryption-provider-eksRole-role-af6d010",
+                    "tags": {
+                        "Name": "encryption-provider-eksCluster",
+                        "__defaults": []
+                    },
+                    "vpcConfig": {
+                        "__defaults": [
+                            "endpointPrivateAccess",
+                            "endpointPublicAccess"
+                        ],
+                        "endpointPrivateAccess": false,
+                        "endpointPublicAccess": true,
+                        "securityGroupIds": [
+                            "sg-0db3fc85b4554e101"
+                        ],
+                        "subnetIds": [
+                            "subnet-03711d3b9b21b3a8e",
+                            "subnet-06e8296c053e2b952",
+                            "subnet-0fc2dc8f8ba906919",
+                            "subnet-037f366816336db85"
+                        ]
+                    }
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":1800000000000,\"delete\":900000000000,\"update\":3600000000000}}",
+                    "arn": "arn:aws:eks:us-west-2:894850187425:cluster/encryption-provider-eksCluster-4743887",
+                    "certificateAuthorities": [
+                        {
+                            "data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+                        }
+                    ],
+                    "certificateAuthority": {
+                        "data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+                    },
+                    "createdAt": "2024-04-10 23:36:52.561 +0000 UTC",
+                    "enabledClusterLogTypes": [],
+                    "encryptionConfig": {
+                        "provider": {
+                            "keyArn": "arn:aws:kms:us-west-2:894850187425:key/5c9e6be7-7a52-4d5a-b8e9-fc6ba265ccc3"
+                        },
+                        "resources": [
+                            "secrets"
+                        ]
+                    },
+                    "endpoint": "https://BA1AD523554D3159B0D9828B8F61D79A.yl4.us-west-2.eks.amazonaws.com",
+                    "id": "encryption-provider-eksCluster-4743887",
+                    "identities": [
+                        {
+                            "oidcs": [
+                                {
+                                    "issuer": "https://oidc.eks.us-west-2.amazonaws.com/id/BA1AD523554D3159B0D9828B8F61D79A"
+                                }
+                            ]
+                        }
+                    ],
+                    "kubernetesNetworkConfig": {
+                        "ipFamily": "ipv4",
+                        "serviceIpv4Cidr": "10.100.0.0/16",
+                        "serviceIpv6Cidr": ""
+                    },
+                    "name": "encryption-provider-eksCluster-4743887",
+                    "outpostConfig": null,
+                    "platformVersion": "eks.5",
+                    "roleArn": "arn:aws:iam::894850187425:role/encryption-provider-eksRole-role-af6d010",
+                    "status": "ACTIVE",
+                    "tags": {
+                        "Name": "encryption-provider-eksCluster"
+                    },
+                    "tagsAll": {
+                        "Name": "encryption-provider-eksCluster"
+                    },
+                    "version": "1.29",
+                    "vpcConfig": {
+                        "clusterSecurityGroupId": "sg-0edd219053602211a",
+                        "endpointPrivateAccess": false,
+                        "endpointPublicAccess": true,
+                        "publicAccessCidrs": [
+                            "0.0.0.0/0"
+                        ],
+                        "securityGroupIds": [
+                            "sg-0db3fc85b4554e101"
+                        ],
+                        "subnetIds": [
+                            "subnet-0fc2dc8f8ba906919",
+                            "subnet-06e8296c053e2b952",
+                            "subnet-03711d3b9b21b3a8e",
+                            "subnet-037f366816336db85"
+                        ],
+                        "vpcId": "vpc-043be661de8760bec"
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "encryptionConfig": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key"
+                    ],
+                    "roleArn": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823"
+                    ],
+                    "tags": [],
+                    "vpcConfig": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup"
+                    ]
+                },
+                "created": "2024-04-10T23:44:37.09260019Z",
+                "modified": "2024-04-10T23:44:37.09260019Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#575,24"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$pulumi:providers:kubernetes::encryption-provider-eks-k8s",
+                "custom": true,
+                "id": "333b5f9c-320b-4c49-9f47-349b245dd5dc",
+                "type": "pulumi:providers:kubernetes",
+                "inputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://BA1AD523554D3159B0D9828B8F61D79A.yl4.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"encryption-provider-eksCluster-4743887\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "version": "4.1.1"
+                },
+                "outputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://BA1AD523554D3159B0D9828B8F61D79A.yl4.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"encryption-provider-eksCluster-4743887\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "version": "4.1.1"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster"
+                ],
+                "propertyDependencies": {
+                    "kubeconfig": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster"
+                    ]
+                },
+                "created": "2024-04-10T23:44:37.562635101Z",
+                "modified": "2024-04-10T23:44:37.562635101Z",
+                "sourcePosition": "project:///node_modules/@pulumi/provider.ts#54,9"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup",
+                "custom": true,
+                "id": "sg-005d42af3c410cd27",
+                "type": "aws:ec2/securityGroup:SecurityGroup",
+                "inputs": {
+                    "__defaults": [
+                        "name"
+                    ],
+                    "description": "Managed by Pulumi",
+                    "name": "encryption-provider-nodeSecurityGroup-5be03b3",
+                    "revokeRulesOnDelete": true,
+                    "tags": {
+                        "Name": "encryption-provider-nodeSecurityGroup",
+                        "__defaults": [],
+                        "kubernetes.io/cluster/encryption-provider-eksCluster-4743887": "owned"
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":900000000000},\"schema_version\":\"1\"}",
+                    "arn": "arn:aws:ec2:us-west-2:894850187425:security-group/sg-005d42af3c410cd27",
+                    "description": "Managed by Pulumi",
+                    "egress": [],
+                    "id": "sg-005d42af3c410cd27",
+                    "ingress": [],
+                    "name": "encryption-provider-nodeSecurityGroup-5be03b3",
+                    "namePrefix": "",
+                    "ownerId": "894850187425",
+                    "revokeRulesOnDelete": true,
+                    "tags": {
+                        "Name": "encryption-provider-nodeSecurityGroup",
+                        "kubernetes.io/cluster/encryption-provider-eksCluster-4743887": "owned"
+                    },
+                    "tagsAll": {
+                        "Name": "encryption-provider-nodeSecurityGroup",
+                        "kubernetes.io/cluster/encryption-provider-eksCluster-4743887": "owned"
+                    },
+                    "vpcId": "vpc-043be661de8760bec"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "description": [],
+                    "revokeRulesOnDelete": [],
+                    "tags": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster"
+                    ],
+                    "vpcId": []
+                },
+                "created": "2024-04-10T23:44:39.546805834Z",
+                "modified": "2024-04-10T23:44:39.546805834Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#101,31"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$kubernetes:core/v1:ConfigMap::encryption-provider-nodeAccess",
+                "custom": true,
+                "id": "kube-system/aws-auth",
+                "type": "kubernetes:core/v1:ConfigMap",
+                "inputs": {
+                    "apiVersion": "v1",
+                    "data": {
+                        "mapRoles": "- rolearn: arn:aws:iam::894850187425:role/encryption-provider-instanceRole-role-5395ad0\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
+                    },
+                    "immutable": false,
+                    "kind": "ConfigMap",
+                    "metadata": {
+                        "annotations": {
+                            "pulumi.com/patchForce": "true"
+                        },
+                        "name": "aws-auth",
+                        "namespace": "kube-system"
+                    }
+                },
+                "outputs": {
+                    "__fieldManager": "pulumi-kubernetes-a1173db2",
+                    "__initialApiVersion": "v1",
+                    "__inputs": {
+                        "apiVersion": "v1",
+                        "data": {
+                            "mapRoles": "- rolearn: arn:aws:iam::894850187425:role/encryption-provider-instanceRole-role-5395ad0\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
+                        },
+                        "immutable": false,
+                        "kind": "ConfigMap",
+                        "metadata": {
+                            "annotations": {
+                                "pulumi.com/patchForce": "true"
+                            },
+                            "name": "aws-auth",
+                            "namespace": "kube-system"
+                        }
+                    },
+                    "apiVersion": "v1",
+                    "data": {
+                        "mapRoles": "- rolearn: arn:aws:iam::894850187425:role/encryption-provider-instanceRole-role-5395ad0\n  username: system:node:{{EC2PrivateDNSName}}\n  groups:\n    - system:bootstrappers\n    - system:nodes\n"
+                    },
+                    "immutable": false,
+                    "kind": "ConfigMap",
+                    "metadata": {
+                        "annotations": {
+                            "pulumi.com/patchForce": "true"
+                        },
+                        "creationTimestamp": "2024-04-10T23:44:40Z",
+                        "managedFields": [
+                            {
+                                "apiVersion": "v1",
+                                "fieldsType": "FieldsV1",
+                                "fieldsV1": {
+                                    "f:data": {
+                                        "f:mapRoles": {}
+                                    },
+                                    "f:immutable": {},
+                                    "f:metadata": {
+                                        "f:annotations": {
+                                            "f:pulumi.com/patchForce": {}
+                                        }
+                                    }
+                                },
+                                "manager": "pulumi-kubernetes-a1173db2",
+                                "operation": "Apply",
+                                "time": "2024-04-10T23:44:39Z"
+                            }
+                        ],
+                        "name": "aws-auth",
+                        "namespace": "kube-system",
+                        "resourceVersion": "698",
+                        "uid": "1107a67f-19cc-4fc6-8e14-249cacfb4195"
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$pulumi:providers:kubernetes::encryption-provider-eks-k8s::333b5f9c-320b-4c49-9f47-349b245dd5dc",
+                "propertyDependencies": {
+                    "apiVersion": [],
+                    "data": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2"
+                    ],
+                    "immutable": [],
+                    "kind": [],
+                    "metadata": []
+                },
+                "created": "2024-04-10T23:44:40.146729397Z",
+                "modified": "2024-04-10T23:44:40.146729397Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#877,27"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::encryption-provider-eksNodeInternetEgressRule",
+                "custom": true,
+                "id": "sgrule-1425114180",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "cidrBlocks": [
+                        "0.0.0.0/0"
+                    ],
+                    "description": "Allow internet access.",
+                    "fromPort": 0,
+                    "protocol": "-1",
+                    "securityGroupId": "sg-005d42af3c410cd27",
+                    "toPort": 0,
+                    "type": "egress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "cidrBlocks": [
+                        "0.0.0.0/0"
+                    ],
+                    "description": "Allow internet access.",
+                    "fromPort": 0,
+                    "id": "sgrule-1425114180",
+                    "protocol": "-1",
+                    "securityGroupId": "sg-005d42af3c410cd27",
+                    "securityGroupRuleId": "sgr-04e87bce58228447f",
+                    "self": false,
+                    "toPort": 0,
+                    "type": "egress"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "cidrBlocks": [],
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                    ],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-04-10T23:44:40.472453649Z",
+                "modified": "2024-04-10T23:44:40.472453649Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#162,36"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::encryption-provider-eksClusterIngressRule",
+                "custom": true,
+                "id": "sgrule-2171607790",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow pods to communicate with the cluster API Server",
+                    "fromPort": 443,
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0db3fc85b4554e101",
+                    "sourceSecurityGroupId": "sg-005d42af3c410cd27",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow pods to communicate with the cluster API Server",
+                    "fromPort": 443,
+                    "id": "sgrule-2171607790",
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-0db3fc85b4554e101",
+                    "securityGroupRuleId": "sgr-0e6e47309d6587f89",
+                    "self": false,
+                    "sourceSecurityGroupId": "sg-005d42af3c410cd27",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup"
+                    ],
+                    "sourceSecurityGroupId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                    ],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-04-10T23:44:40.51043989Z",
+                "modified": "2024-04-10T23:44:40.51043989Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#176,35"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::encryption-provider-eksNodeIngressRule",
+                "custom": true,
+                "id": "sgrule-1562625909",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow nodes to communicate with each other",
+                    "fromPort": 0,
+                    "protocol": "-1",
+                    "securityGroupId": "sg-005d42af3c410cd27",
+                    "self": true,
+                    "toPort": 0,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow nodes to communicate with each other",
+                    "fromPort": 0,
+                    "id": "sgrule-1562625909",
+                    "protocol": "-1",
+                    "securityGroupId": "sg-005d42af3c410cd27",
+                    "securityGroupRuleId": "sgr-0ec7922cec80f3f7c",
+                    "self": true,
+                    "toPort": 0,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                    ],
+                    "self": [],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-04-10T23:44:41.157949105Z",
+                "modified": "2024-04-10T23:44:41.157949105Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#118,29"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:VpcCni::encryption-provider-vpc-cni",
+                "custom": true,
+                "id": "59952951a9d2f322",
+                "type": "eks:index:VpcCni",
+                "inputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://BA1AD523554D3159B0D9828B8F61D79A.yl4.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"encryption-provider-eksCluster-4743887\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}"
+                },
+                "outputs": {
+                    "manifest": "---\napiVersion: apiextensions.k8s.io/v1\nkind: CustomResourceDefinition\nmetadata:\n  name: eniconfigs.crd.k8s.amazonaws.com\nspec:\n  scope: Cluster\n  group: crd.k8s.amazonaws.com\n  preserveUnknownFields: false\n  versions:\n    - name: v1alpha1\n      served: true\n      storage: true\n      schema:\n        openAPIV3Schema:\n          type: object\n          x-kubernetes-preserve-unknown-fields: true\n  names:\n    plural: eniconfigs\n    singular: eniconfig\n    kind: ENIConfig\n---\napiVersion: apiextensions.k8s.io/v1\nkind: CustomResourceDefinition\nmetadata:\n  annotations:\n    controller-gen.kubebuilder.io/version: v0.11.3\n  creationTimestamp: null\n  labels:\n    app.kubernetes.io/name: amazon-network-policy-controller-k8s\n  name: policyendpoints.networking.k8s.aws\nspec:\n  group: networking.k8s.aws\n  names:\n    kind: PolicyEndpoint\n    listKind: PolicyEndpointList\n    plural: policyendpoints\n    singular: policyendpoint\n  scope: Namespaced\n  versions:\n    - name: v1alpha1\n      schema:\n        openAPIV3Schema:\n          description: PolicyEndpoint is the Schema for the policyendpoints API\n          properties:\n            apiVersion:\n              description: >-\n                APIVersion defines the versioned schema of this representation\n                of an object. Servers should convert recognized schemas to the\n                latest internal value, and may reject unrecognized values. More\n                info:\n                https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\n              type: string\n            kind:\n              description: >-\n                Kind is a string value representing the REST resource this\n                object represents. Servers may infer this from the endpoint the\n                client submits requests to. Cannot be updated. In CamelCase.\n                More info:\n                https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\n              type: string\n            metadata:\n              type: object\n            spec:\n              description: PolicyEndpointSpec defines the desired state of PolicyEndpoint\n              properties:\n                egress:\n                  description: >-\n                    Egress is the list of egress rules containing resolved\n                    network addresses\n                  items:\n                    description: >-\n                      EndpointInfo defines the network endpoint information for\n                      the policy ingress/egress\n                    properties:\n                      cidr:\n                        description: CIDR is the network address(s) of the endpoint\n                        type: string\n                      except:\n                        description: >-\n                          Except is the exceptions to the CIDR ranges mentioned\n                          above.\n                        items:\n                          type: string\n                        type: array\n                      ports:\n                        description: Ports is the list of ports\n                        items:\n                          description: >-\n                            Port contains information about the transport\n                            port/protocol\n                          properties:\n                            endPort:\n                              description: >-\n                                Endport specifies the port range port to endPort\n                                port must be defined and an integer, endPort >\n                                port\n                              format: int32\n                              type: integer\n                            port:\n                              description: >-\n                                Port specifies the numerical port for the\n                                protocol. If empty applies to all ports\n                              format: int32\n                              type: integer\n                            protocol:\n                              default: TCP\n                              description: >-\n                                Protocol specifies the transport protocol,\n                                default TCP\n                              type: string\n                          type: object\n                        type: array\n                    required:\n                      - cidr\n                    type: object\n                  type: array\n                ingress:\n                  description: >-\n                    Ingress is the list of ingress rules containing resolved\n                    network addresses\n                  items:\n                    description: >-\n                      EndpointInfo defines the network endpoint information for\n                      the policy ingress/egress\n                    properties:\n                      cidr:\n                        description: CIDR is the network address(s) of the endpoint\n                        type: string\n                      except:\n                        description: >-\n                          Except is the exceptions to the CIDR ranges mentioned\n                          above.\n                        items:\n                          type: string\n                        type: array\n                      ports:\n                        description: Ports is the list of ports\n                        items:\n                          description: >-\n                            Port contains information about the transport\n                            port/protocol\n                          properties:\n                            endPort:\n                              description: >-\n                                Endport specifies the port range port to endPort\n                                port must be defined and an integer, endPort >\n                                port\n                              format: int32\n                              type: integer\n                            port:\n                              description: >-\n                                Port specifies the numerical port for the\n                                protocol. If empty applies to all ports\n                              format: int32\n                              type: integer\n                            protocol:\n                              default: TCP\n                              description: >-\n                                Protocol specifies the transport protocol,\n                                default TCP\n                              type: string\n                          type: object\n                        type: array\n                    required:\n                      - cidr\n                    type: object\n                  type: array\n                podIsolation:\n                  description: >-\n                    PodIsolation specifies whether the pod needs to be isolated\n                    for a particular traffic direction Ingress or Egress, or\n                    both. If default isolation is not specified, and there are\n                    no ingress/egress rules, then the pod is not isolated from\n                    the point of view of this policy. This follows the\n                    NetworkPolicy spec.PolicyTypes.\n                  items:\n                    description: >-\n                      PolicyType string describes the NetworkPolicy type This\n                      type is beta-level in 1.8\n                    type: string\n                  type: array\n                podSelector:\n                  description: PodSelector is the podSelector from the policy resource\n                  properties:\n                    matchExpressions:\n                      description: >-\n                        matchExpressions is a list of label selector\n                        requirements. The requirements are ANDed.\n                      items:\n                        description: >-\n                          A label selector requirement is a selector that\n                          contains values, a key, and an operator that relates\n                          the key and values.\n                        properties:\n                          key:\n                            description: key is the label key that the selector applies to.\n                            type: string\n                          operator:\n                            description: >-\n                              operator represents a key's relationship to a set\n                              of values. Valid operators are In, NotIn, Exists\n                              and DoesNotExist.\n                            type: string\n                          values:\n                            description: >-\n                              values is an array of string values. If the\n                              operator is In or NotIn, the values array must be\n                              non-empty. If the operator is Exists or\n                              DoesNotExist, the values array must be empty. This\n                              array is replaced during a strategic merge patch.\n                            items:\n                              type: string\n                            type: array\n                        required:\n                          - key\n                          - operator\n                        type: object\n                      type: array\n                    matchLabels:\n                      additionalProperties:\n                        type: string\n                      description: >-\n                        matchLabels is a map of {key,value} pairs. A single\n                        {key,value} in the matchLabels map is equivalent to an\n                        element of matchExpressions, whose key field is \"key\",\n                        the operator is \"In\", and the values array contains only\n                        \"value\". The requirements are ANDed.\n                      type: object\n                  type: object\n                  x-kubernetes-map-type: atomic\n                podSelectorEndpoints:\n                  description: >-\n                    PodSelectorEndpoints contains information about the pods\n                    matching the podSelector\n                  items:\n                    description: PodEndpoint defines the summary information for the pods\n                    properties:\n                      hostIP:\n                        description: >-\n                          HostIP is the IP address of the host the pod is\n                          currently running on\n                        type: string\n                      name:\n                        description: Name is the pod name\n                        type: string\n                      namespace:\n                        description: Namespace is the pod namespace\n                        type: string\n                      podIP:\n                        description: PodIP is the IP address of the pod\n                        type: string\n                    required:\n                      - hostIP\n                      - name\n                      - namespace\n                      - podIP\n                    type: object\n                  type: array\n                policyRef:\n                  description: >-\n                    PolicyRef is a reference to the Kubernetes NetworkPolicy\n                    resource.\n                  properties:\n                    name:\n                      description: Name is the name of the Policy\n                      type: string\n                    namespace:\n                      description: Namespace is the namespace of the Policy\n                      type: string\n                  required:\n                    - name\n                    - namespace\n                  type: object\n              required:\n                - policyRef\n              type: object\n            status:\n              description: >-\n                PolicyEndpointStatus defines the observed state of\n                PolicyEndpoint\n              type: object\n          type: object\n      served: true\n      storage: true\n      subresources:\n        status: {}\n---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: aws-node\n  namespace: kube-system\n  labels:\n    app.kubernetes.io/name: aws-node\n    app.kubernetes.io/instance: aws-vpc-cni\n    k8s-app: aws-node\n    app.kubernetes.io/version: v1.16.0\n---\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: amazon-vpc-cni\n  namespace: kube-system\n  labels:\n    app.kubernetes.io/name: aws-node\n    app.kubernetes.io/instance: aws-vpc-cni\n    k8s-app: aws-node\n    app.kubernetes.io/version: v1.16.0\ndata:\n  enable-windows-ipam: 'false'\n  enable-network-policy-controller: 'false'\n  enable-windows-prefix-delegation: 'false'\n  warm-prefix-target: '0'\n  warm-ip-target: '1'\n  minimum-ip-target: '3'\n  branch-eni-cooldown: '60'\n---\napiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: aws-node\n  labels:\n    app.kubernetes.io/name: aws-node\n    app.kubernetes.io/instance: aws-vpc-cni\n    k8s-app: aws-node\n    app.kubernetes.io/version: v1.16.0\nrules:\n  - apiGroups:\n      - crd.k8s.amazonaws.com\n    resources:\n      - eniconfigs\n    verbs:\n      - list\n      - watch\n      - get\n  - apiGroups:\n      - ''\n    resources:\n      - namespaces\n    verbs:\n      - list\n      - watch\n      - get\n  - apiGroups:\n      - ''\n    resources:\n      - pods\n    verbs:\n      - list\n      - watch\n      - get\n  - apiGroups:\n      - ''\n    resources:\n      - nodes\n    verbs:\n      - list\n      - watch\n      - get\n  - apiGroups:\n      - ''\n      - events.k8s.io\n    resources:\n      - events\n    verbs:\n      - create\n      - patch\n      - list\n  - apiGroups:\n      - networking.k8s.aws\n    resources:\n      - policyendpoints\n    verbs:\n      - get\n      - list\n      - watch\n  - apiGroups:\n      - networking.k8s.aws\n    resources:\n      - policyendpoints/status\n    verbs:\n      - get\n  - apiGroups:\n      - vpcresources.k8s.aws\n    resources:\n      - cninodes\n    verbs:\n      - get\n      - list\n      - watch\n      - patch\n---\napiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRoleBinding\nmetadata:\n  name: aws-node\n  labels:\n    app.kubernetes.io/name: aws-node\n    app.kubernetes.io/instance: aws-vpc-cni\n    k8s-app: aws-node\n    app.kubernetes.io/version: v1.16.0\nroleRef:\n  apiGroup: rbac.authorization.k8s.io\n  kind: ClusterRole\n  name: aws-node\nsubjects:\n  - kind: ServiceAccount\n    name: aws-node\n    namespace: kube-system\n---\nkind: DaemonSet\napiVersion: apps/v1\nmetadata:\n  name: aws-node\n  namespace: kube-system\n  labels:\n    app.kubernetes.io/name: aws-node\n    app.kubernetes.io/instance: aws-vpc-cni\n    k8s-app: aws-node\n    app.kubernetes.io/version: v1.16.0\nspec:\n  updateStrategy:\n    rollingUpdate:\n      maxUnavailable: 10%\n    type: RollingUpdate\n  selector:\n    matchLabels:\n      k8s-app: aws-node\n  template:\n    metadata:\n      labels:\n        app.kubernetes.io/name: aws-node\n        app.kubernetes.io/instance: aws-vpc-cni\n        k8s-app: aws-node\n    spec:\n      priorityClassName: system-node-critical\n      serviceAccountName: aws-node\n      hostNetwork: true\n      initContainers:\n        - name: aws-vpc-cni-init\n          image: >-\n            602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni-init:v1.16.0\n          env:\n            - name: ENABLE_IPv6\n              value: 'false'\n            - name: ENABLE_IPv4\n              value: 'true'\n            - name: DISABLE_TCP_EARLY_DEMUX\n              value: 'false'\n          securityContext:\n            privileged: true\n          resources:\n            requests:\n              cpu: 25m\n          volumeMounts:\n            - mountPath: /host/opt/cni/bin\n              name: cni-bin-dir\n      terminationGracePeriodSeconds: 10\n      tolerations:\n        - operator: Exists\n      securityContext: {}\n      containers:\n        - name: aws-node\n          image: 602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.16.0\n          ports:\n            - containerPort: 61678\n              name: metrics\n          livenessProbe:\n            exec:\n              command:\n                - /app/grpc-health-probe\n                - '-addr=:50051'\n                - '-connect-timeout=5s'\n                - '-rpc-timeout=5s'\n            initialDelaySeconds: 60\n            timeoutSeconds: 10\n          readinessProbe:\n            exec:\n              command:\n                - /app/grpc-health-probe\n                - '-addr=:50051'\n                - '-connect-timeout=5s'\n                - '-rpc-timeout=5s'\n            initialDelaySeconds: 1\n            timeoutSeconds: 10\n          env:\n            - name: ADDITIONAL_ENI_TAGS\n              value: '{}'\n            - name: AWS_VPC_K8S_CNI_RANDOMIZESNAT\n              value: prng\n            - name: DISABLE_INTROSPECTION\n              value: 'false'\n            - name: DISABLE_METRICS\n              value: 'false'\n            - name: DISABLE_NETWORK_RESOURCE_PROVISIONING\n              value: 'false'\n            - name: ENABLE_IPv4\n              value: 'true'\n            - name: VPC_CNI_VERSION\n              value: v1.16.0\n            - name: WARM_PREFIX_TARGET\n              value: '1'\n            - name: MY_NODE_NAME\n              valueFrom:\n                fieldRef:\n                  apiVersion: v1\n                  fieldPath: spec.nodeName\n            - name: MY_POD_NAME\n              valueFrom:\n                fieldRef:\n                  apiVersion: v1\n                  fieldPath: metadata.name\n            - name: WARM_ENI_TARGET\n              value: '1'\n            - name: ENABLE_IPv6\n              value: 'false'\n            - name: ENABLE_IPv4\n              value: 'true'\n            - name: AWS_VPC_K8S_CNI_LOGLEVEL\n              value: DEBUG\n            - name: AWS_VPC_K8S_CNI_LOG_FILE\n              value: /host/var/log/aws-routed-eni/ipamd.log\n            - name: AWS_VPC_K8S_CNI_VETHPREFIX\n              value: eni\n            - name: AWS_VPC_ENI_MTU\n              value: '9001'\n            - name: AWS_VPC_K8S_PLUGIN_LOG_LEVEL\n              value: DEBUG\n            - name: AWS_VPC_K8S_PLUGIN_LOG_FILE\n              value: /var/log/aws-routed-eni/plugin.log\n            - name: ENABLE_POD_ENI\n              value: 'false'\n            - name: AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG\n              value: 'false'\n            - name: AWS_VPC_K8S_CNI_EXTERNALSNAT\n              value: 'false'\n          resources:\n            requests:\n              cpu: 25m\n          securityContext:\n            capabilities:\n              add:\n                - NET_ADMIN\n                - NET_RAW\n          volumeMounts:\n            - mountPath: /host/opt/cni/bin\n              name: cni-bin-dir\n            - mountPath: /host/etc/cni/net.d\n              name: cni-net-dir\n            - mountPath: /host/var/log/aws-routed-eni\n              name: log-dir\n            - mountPath: /var/run/aws-node\n              name: run-dir\n            - mountPath: /run/xtables.lock\n              name: xtables-lock\n        - name: aws-eks-nodeagent\n          image: >-\n            602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon/aws-network-policy-agent:v1.0.7\n          env:\n            - name: MY_NODE_NAME\n              valueFrom:\n                fieldRef:\n                  apiVersion: v1\n                  fieldPath: spec.nodeName\n          args:\n            - '--enable-ipv6=false'\n            - '--enable-network-policy=false'\n            - '--enable-cloudwatch-logs=false'\n            - '--enable-policy-event-logs=false'\n            - '--metrics-bind-addr=:8162'\n            - '--health-probe-bind-addr=:8163'\n            - '--conntrack-cache-cleanup-period=300'\n          resources:\n            requests:\n              cpu: 25m\n          securityContext:\n            capabilities:\n              add:\n                - NET_ADMIN\n            privileged: true\n          volumeMounts:\n            - mountPath: /host/opt/cni/bin\n              name: cni-bin-dir\n            - mountPath: /sys/fs/bpf\n              name: bpf-pin-path\n            - mountPath: /var/log/aws-routed-eni\n              name: log-dir\n            - mountPath: /var/run/aws-node\n              name: run-dir\n      volumes:\n        - name: bpf-pin-path\n          hostPath:\n            path: /sys/fs/bpf\n        - name: cni-bin-dir\n          hostPath:\n            path: /opt/cni/bin\n        - name: cni-net-dir\n          hostPath:\n            path: /etc/cni/net.d\n        - name: log-dir\n          hostPath:\n            path: /var/log/aws-routed-eni\n            type: DirectoryOrCreate\n        - name: run-dir\n          hostPath:\n            path: /var/run/aws-node\n            type: DirectoryOrCreate\n        - name: xtables-lock\n          hostPath:\n            path: /run/xtables.lock\n      affinity:\n        nodeAffinity:\n          requiredDuringSchedulingIgnoredDuringExecution:\n            nodeSelectorTerms:\n              - matchExpressions:\n                  - key: kubernetes.io/os\n                    operator: In\n                    values:\n                      - linux\n                  - key: kubernetes.io/arch\n                    operator: In\n                    values:\n                      - amd64\n                      - arm64\n                  - key: eks.amazonaws.com/compute-type\n                    operator: NotIn\n                    values:\n                      - fargate\n"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:eks::default::329cdd53-e3b6-401e-b4c6-f1efb45a59b7",
+                "propertyDependencies": {
+                    "kubeconfig": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster"
+                    ]
+                },
+                "created": "2024-04-10T23:44:41.344100742Z",
+                "modified": "2024-04-10T23:44:41.344100742Z",
+                "sourcePosition": "project:///node_modules/@pulumi/cluster.ts#751,18"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/launchConfiguration:LaunchConfiguration::encryption-provider-nodeLaunchConfiguration",
+                "custom": true,
+                "id": "encryption-provider-nodeLaunchConfiguration-3f1f7cb",
+                "type": "aws:ec2/launchConfiguration:LaunchConfiguration",
+                "inputs": {
+                    "__defaults": [
+                        "enableMonitoring",
+                        "name"
+                    ],
+                    "associatePublicIpAddress": true,
+                    "enableMonitoring": true,
+                    "iamInstanceProfile": "encryption-provider-instanceProfile-804efe5",
+                    "imageId": "ami-0b32b7df616e81aca",
+                    "instanceType": "t2.medium",
+                    "name": "encryption-provider-nodeLaunchConfiguration-3f1f7cb",
+                    "rootBlockDevice": {
+                        "__defaults": [],
+                        "deleteOnTermination": true,
+                        "encrypted": false,
+                        "volumeSize": 20,
+                        "volumeType": "gp2"
+                    },
+                    "securityGroups": [
+                        "sg-005d42af3c410cd27"
+                    ],
+                    "userData": "#!/bin/bash\n\n/etc/eks/bootstrap.sh --apiserver-endpoint \"https://BA1AD523554D3159B0D9828B8F61D79A.yl4.us-west-2.eks.amazonaws.com\" --b64-cluster-ca \"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\" \"encryption-provider-eksCluster-4743887\"\n\n/opt/aws/bin/cfn-signal --exit-code $? --stack encryption-provider-bb5debc2 --resource NodeGroup --region us-west-2\n"
+                },
+                "outputs": {
+                    "arn": "arn:aws:autoscaling:us-west-2:894850187425:launchConfiguration:db8ad1f5-590f-4495-9cbb-d60f92b16ac5:launchConfigurationName/encryption-provider-nodeLaunchConfiguration-3f1f7cb",
+                    "associatePublicIpAddress": true,
+                    "ebsBlockDevices": [],
+                    "ebsOptimized": false,
+                    "enableMonitoring": true,
+                    "ephemeralBlockDevices": [],
+                    "iamInstanceProfile": "encryption-provider-instanceProfile-804efe5",
+                    "id": "encryption-provider-nodeLaunchConfiguration-3f1f7cb",
+                    "imageId": "ami-0b32b7df616e81aca",
+                    "instanceType": "t2.medium",
+                    "keyName": "",
+                    "metadataOptions": null,
+                    "name": "encryption-provider-nodeLaunchConfiguration-3f1f7cb",
+                    "namePrefix": "",
+                    "placementTenancy": "",
+                    "rootBlockDevice": {
+                        "deleteOnTermination": true,
+                        "encrypted": false,
+                        "iops": 0,
+                        "throughput": 0,
+                        "volumeSize": 20,
+                        "volumeType": "gp2"
+                    },
+                    "securityGroups": [
+                        "sg-005d42af3c410cd27"
+                    ],
+                    "spotPrice": "",
+                    "userData": "9586d995ccff149e19fd08068a837243dc2fca37"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:iam/instanceProfile:InstanceProfile::encryption-provider-instanceProfile",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::encryption-provider-eksClusterIngressRule",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:RandomSuffix::encryption-provider-cfnStackName"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "associatePublicIpAddress": [],
+                    "iamInstanceProfile": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:iam/instanceProfile:InstanceProfile::encryption-provider-instanceProfile",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role"
+                    ],
+                    "imageId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97"
+                    ],
+                    "instanceType": [],
+                    "rootBlockDevice": [],
+                    "securityGroups": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::encryption-provider-eksClusterIngressRule"
+                    ],
+                    "userData": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:RandomSuffix::encryption-provider-cfnStackName",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role"
+                    ]
+                },
+                "created": "2024-04-10T23:44:41.534802209Z",
+                "modified": "2024-04-10T23:44:41.534802209Z",
+                "sourcePosition": "project:///node_modules/@pulumi/nodegroup.ts#777,37"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::encryption-provider-eksExtApiServerClusterIngressRule",
+                "custom": true,
+                "id": "sgrule-80744542",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
+                    "fromPort": 443,
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-005d42af3c410cd27",
+                    "sourceSecurityGroupId": "sg-0db3fc85b4554e101",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow pods running extension API servers on port 443 to receive communication from cluster control plane",
+                    "fromPort": 443,
+                    "id": "sgrule-80744542",
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-005d42af3c410cd27",
+                    "securityGroupRuleId": "sgr-006c2360be2e76d92",
+                    "self": false,
+                    "sourceSecurityGroupId": "sg-0db3fc85b4554e101",
+                    "toPort": 443,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                    ],
+                    "sourceSecurityGroupId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup"
+                    ],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-04-10T23:44:41.872339419Z",
+                "modified": "2024-04-10T23:44:41.872339419Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#147,44"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroupRule:SecurityGroupRule::encryption-provider-eksNodeClusterIngressRule",
+                "custom": true,
+                "id": "sgrule-926352751",
+                "type": "aws:ec2/securityGroupRule:SecurityGroupRule",
+                "inputs": {
+                    "__defaults": [],
+                    "description": "Allow worker Kubelets and pods to receive communication from the cluster control plane",
+                    "fromPort": 1025,
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-005d42af3c410cd27",
+                    "sourceSecurityGroupId": "sg-0db3fc85b4554e101",
+                    "toPort": 65535,
+                    "type": "ingress"
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":300000000000},\"schema_version\":\"2\"}",
+                    "description": "Allow worker Kubelets and pods to receive communication from the cluster control plane",
+                    "fromPort": 1025,
+                    "id": "sgrule-926352751",
+                    "protocol": "tcp",
+                    "securityGroupId": "sg-005d42af3c410cd27",
+                    "securityGroupRuleId": "sgr-0cf2f30508d25d722",
+                    "self": false,
+                    "sourceSecurityGroupId": "sg-0db3fc85b4554e101",
+                    "toPort": 65535,
+                    "type": "ingress"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "description": [],
+                    "fromPort": [],
+                    "protocol": [],
+                    "securityGroupId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-nodeSecurityGroup"
+                    ],
+                    "sourceSecurityGroupId": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/securityGroup:SecurityGroup::encryption-provider-eksClusterSecurityGroup"
+                    ],
+                    "toPort": [],
+                    "type": []
+                },
+                "created": "2024-04-10T23:44:42.792204481Z",
+                "modified": "2024-04-10T23:44:42.792204481Z",
+                "sourcePosition": "project:///node_modules/@pulumi/securitygroup.ts#132,36"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:cloudformation/stack:Stack::encryption-provider-nodes",
+                "custom": true,
+                "id": "arn:aws:cloudformation:us-west-2:894850187425:stack/encryption-provider-bb5debc2/4d504230-f794-11ee-a0b0-0a9dc6cf1d49",
+                "type": "aws:cloudformation/stack:Stack",
+                "inputs": {
+                    "__defaults": [],
+                    "name": "encryption-provider-bb5debc2",
+                    "tags": {
+                        "Name": "encryption-provider-nodes",
+                        "__defaults": []
+                    },
+                    "templateBody": "\n                AWSTemplateFormatVersion: '2010-09-09'\n                Outputs:\n                    NodeGroup:\n                        Value: !Ref NodeGroup\n                Resources:\n                    NodeGroup:\n                        Type: AWS::AutoScaling::AutoScalingGroup\n                        Properties:\n                          DesiredCapacity: 2\n                          LaunchConfigurationName: encryption-provider-nodeLaunchConfiguration-3f1f7cb\n                          MinSize: 1\n                          MaxSize: 2\n                          VPCZoneIdentifier: [\"subnet-03711d3b9b21b3a8e\",\"subnet-06e8296c053e2b952\",\"subnet-0fc2dc8f8ba906919\",\"subnet-037f366816336db85\"]\n                          Tags:\n                          \n                          - Key: Name\n                            Value: encryption-provider-eksCluster-4743887-worker\n                            PropagateAtLaunch: 'true'\n                          - Key: kubernetes.io/cluster/encryption-provider-eksCluster-4743887\n                            Value: owned\n                            PropagateAtLaunch: 'true'\n                        UpdatePolicy:\n                          AutoScalingRollingUpdate:\n                            MinInstancesInService: '1'\n                            MaxBatchSize: '1'\n                "
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":1800000000000,\"delete\":1800000000000,\"update\":1800000000000}}",
+                    "disableRollback": false,
+                    "iamRoleArn": "",
+                    "id": "arn:aws:cloudformation:us-west-2:894850187425:stack/encryption-provider-bb5debc2/4d504230-f794-11ee-a0b0-0a9dc6cf1d49",
+                    "name": "encryption-provider-bb5debc2",
+                    "outputs": {
+                        "NodeGroup": "encryption-provider-bb5debc2-NodeGroup-QjDE6VVeKoVZ"
+                    },
+                    "parameters": {},
+                    "tags": {
+                        "Name": "encryption-provider-nodes"
+                    },
+                    "tagsAll": {
+                        "Name": "encryption-provider-nodes"
+                    },
+                    "templateBody": "\n                AWSTemplateFormatVersion: '2010-09-09'\n                Outputs:\n                    NodeGroup:\n                        Value: !Ref NodeGroup\n                Resources:\n                    NodeGroup:\n                        Type: AWS::AutoScaling::AutoScalingGroup\n                        Properties:\n                          DesiredCapacity: 2\n                          LaunchConfigurationName: encryption-provider-nodeLaunchConfiguration-3f1f7cb\n                          MinSize: 1\n                          MaxSize: 2\n                          VPCZoneIdentifier: [\"subnet-03711d3b9b21b3a8e\",\"subnet-06e8296c053e2b952\",\"subnet-0fc2dc8f8ba906919\",\"subnet-037f366816336db85\"]\n                          Tags:\n                          \n                          - Key: Name\n                            Value: encryption-provider-eksCluster-4743887-worker\n                            PropagateAtLaunch: 'true'\n                          - Key: kubernetes.io/cluster/encryption-provider-eksCluster-4743887\n                            Value: owned\n                            PropagateAtLaunch: 'true'\n                        UpdatePolicy:\n                          AutoScalingRollingUpdate:\n                            MinInstancesInService: '1'\n                            MaxBatchSize: '1'\n                ",
+                    "timeoutInMinutes": 0
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:VpcCni::encryption-provider-vpc-cni",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:RandomSuffix::encryption-provider-cfnStackName",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/launchConfiguration:LaunchConfiguration::encryption-provider-nodeLaunchConfiguration",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$kubernetes:core/v1:ConfigMap::encryption-provider-nodeAccess",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:providers:aws::default_6_0_4::927864e6-17c9-4fa3-83ff-6c1ca85e6401",
+                "propertyDependencies": {
+                    "name": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:RandomSuffix::encryption-provider-cfnStackName"
+                    ],
+                    "tags": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2"
+                    ],
+                    "templateBody": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:ec2/launchConfiguration:LaunchConfiguration::encryption-provider-nodeLaunchConfiguration",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-3eb088f2",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-eksRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/role:Role::encryption-provider-instanceRole-role",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-03516f97",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-instanceRole-e1b295bd",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::aws:kms/alias:Alias::alias/k8s-secrets-encryption-key",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$eks:index:ServiceRole$aws:iam/rolePolicyAttachment:RolePolicyAttachment::encryption-provider-eksRole-4b490823"
+                    ]
+                },
+                "created": "2024-04-10T23:45:39.699986525Z",
+                "modified": "2024-04-10T23:45:39.699986525Z",
+                "sourcePosition": "project:///node_modules/@pulumi/nodegroup.ts#880,22"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$pulumi:providers:kubernetes::encryption-provider-provider",
+                "custom": true,
+                "id": "ec24f33e-4ddf-4856-b039-b997ca3e3bdf",
+                "type": "pulumi:providers:kubernetes",
+                "inputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://BA1AD523554D3159B0D9828B8F61D79A.yl4.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"encryption-provider-eksCluster-4743887\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "version": "4.1.1"
+                },
+                "outputs": {
+                    "kubeconfig": "{\"apiVersion\":\"v1\",\"clusters\":[{\"cluster\":{\"server\":\"https://BA1AD523554D3159B0D9828B8F61D79A.yl4.us-west-2.eks.amazonaws.com\",\"certificate-authority-data\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJUGxEY09WWk1kZUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1UQXlNek0yTkRGYUZ3MHpOREEwTURneU16UXhOREZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNuTmhPcm1lMjdUMEVnd25rZmhuOG83NHRJS1VuUUlsOWF4eWhPa0g5R2ZZc3UzTGRTa0tIdFAzeXMKNGVSOVlXbE5GZG84djJPRHNNZUZyQ1VBUEwrN1dkVjF3ejhsbEdZNTEyUEpzMGtJeHRpVVBwVVhYZnh3SFVtdAo3Qi9IMEJmTGJXNG1ScTlUbWZjOW9rNTZFN1FoV3Q0T2xpeituZEowbm1UbU54S2JJNW0wUVFmMjhWdjVLN1laCmFOa0hLOElYdThmbk1tV3B2MDRoRlFNOE9GZHRmNyt3K1ZnOFhQVlM1ZXMyeWhYMnVGK1JwWTN0bTE1UWp2UGYKWFI5aFZmeHRQSWZmNTk1aG50TDdBQ0VmUEdNTEdqWk1tTlRBMTA3ZUxEUnBKS2ZIU3RMMjg0dTQ5VzNFZjFBdwpWOHM4VFNmYW4vdnNtbW5IWkErcDkvdEdxZk83QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUQ2dVeTFVdFRZeHMrUnFJanNCbWpJV2RwS3JEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVk4VGROUThrTApYL3pxb3AzOTdaQ1lhdGkrbWVTS3lYU2tnVHVIdXhySXllZloyRUUwZ01QN0FwQjRaZkd3eTlocDBnMlhVQWNsCkxCR0UrTGhWR0VHTHA3b01nbVUxV0pIVVczdDh2c1poVGluWGxJK2Q0cUM4STNYbk5rQVR6R0VLUkZRMXNudSsKZU45bHlobEZsRWR2STVUVFExS1hRTy9WY2pyMVRjWlE0Q1poWWtaUkZsbTVCS3RQdU5JelZubFBLb3JLd3NHMAo2NDVwMUw3dkhwZFNqZHYwR0ZXWFdZNVdjeXQ4OEFsYmVNTDZmbFVFbHE2dVp0NnJzL01FZ2lWa1VYNVAzbEcxCm9OYjhIRFN0TEJ3ekRURUlrQlEzSEp6ZFdoR0k4WDNJalBDWDZzOHZPZUhKM0d4cEw1cUtpcFNuakQwSGFEdXEKaksrSWxyZWkwU09BCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\"},\"name\":\"kubernetes\"}],\"contexts\":[{\"context\":{\"cluster\":\"kubernetes\",\"user\":\"aws\"},\"name\":\"aws\"}],\"current-context\":\"aws\",\"kind\":\"Config\",\"users\":[{\"name\":\"aws\",\"user\":{\"exec\":{\"apiVersion\":\"client.authentication.k8s.io/v1beta1\",\"command\":\"aws\",\"args\":[\"eks\",\"get-token\",\"--cluster-name\",\"encryption-provider-eksCluster-4743887\"],\"env\":[{\"name\":\"KUBERNETES_EXEC_INFO\",\"value\":\"{\\\"apiVersion\\\": \\\"client.authentication.k8s.io/v1beta1\\\"}\"}]}}}]}",
+                    "version": "4.1.1"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster::encryption-provider",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:cloudformation/stack:Stack::encryption-provider-nodes",
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster"
+                ],
+                "propertyDependencies": {
+                    "kubeconfig": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:eks/cluster:Cluster::encryption-provider-eksCluster",
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$aws:cloudformation/stack:Stack::encryption-provider-nodes"
+                    ]
+                },
+                "created": "2024-04-10T23:45:39.757957801Z",
+                "modified": "2024-04-10T23:45:39.757957801Z",
+                "sourcePosition": "project:///node_modules/@pulumi/provider.ts#54,9"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::kubernetes:core/v1:Secret::db-password",
+                "custom": true,
+                "id": "default/db-password-ca9e8a8a",
+                "type": "kubernetes:core/v1:Secret",
+                "inputs": {
+                    "apiVersion": "v1",
+                    "data": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "v1:+Dr9tSK7Q3R3lw96:98hGdpEl2oECM9/OfZA/6kdPYhmoa6Z0e26cVkdOKhYpqHZ2gk9hyMzKw9EmKMOlFvSzXR81kGm2KlA0U3pfqS7JnFFjvs4Je+D/KVI="
+                    },
+                    "kind": "Secret",
+                    "metadata": {
+                        "annotations": {
+                            "pulumi.com/autonamed": "true"
+                        },
+                        "name": "db-password-ca9e8a8a",
+                        "namespace": "default"
+                    }
+                },
+                "outputs": {
+                    "__fieldManager": "pulumi-kubernetes-878e3534",
+                    "__initialApiVersion": "v1",
+                    "__inputs": {
+                        "apiVersion": "v1",
+                        "data": {
+                            "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                            "ciphertext": "v1:EzgtCYoR3g0Ftrk2:bYCYi0oojkaW8V2FC3JeL/0vqAaz2raQWSEhLJH395OwX3evndJWlOJWCjk5cTuyPytjEv2KPg3/HX/RrHFI1+K/r5plwOGgzO49Efc="
+                        },
+                        "kind": "Secret",
+                        "metadata": {
+                            "annotations": {
+                                "pulumi.com/autonamed": "true"
+                            },
+                            "name": "db-password-ca9e8a8a",
+                            "namespace": "default"
+                        }
+                    },
+                    "apiVersion": "v1",
+                    "data": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "v1:W4AnLOtmM0tEQamg:svWLqYa4NCQE1oQYwKSy1JZqw/poA+7cymD7IDeq9TFqUPOIeG+BHzAOZ4ROjDEMKKPJZuvoDpxjRluB3oc0Rp7xhjZg8p5c4kTD5Lk="
+                    },
+                    "kind": "Secret",
+                    "metadata": {
+                        "annotations": {
+                            "pulumi.com/autonamed": "true"
+                        },
+                        "creationTimestamp": "2024-04-10T23:45:41Z",
+                        "managedFields": [
+                            {
+                                "apiVersion": "v1",
+                                "fieldsType": "FieldsV1",
+                                "fieldsV1": {
+                                    "f:data": {
+                                        "f:dbPassword": {}
+                                    },
+                                    "f:metadata": {
+                                        "f:annotations": {
+                                            "f:pulumi.com/autonamed": {}
+                                        }
+                                    }
+                                },
+                                "manager": "pulumi-kubernetes-878e3534",
+                                "operation": "Apply",
+                                "time": "2024-04-10T23:45:41Z"
+                            }
+                        ],
+                        "name": "db-password-ca9e8a8a",
+                        "namespace": "default",
+                        "resourceVersion": "931",
+                        "uid": "4ee650fc-3078-49a8-be4d-4b62edde93ad"
+                    },
+                    "type": "Opaque"
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:pulumi:Stack::encryption-provider-p-it-runner-encryption-54090184",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::random:index/randomPassword:RandomPassword::db-password"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$pulumi:providers:kubernetes::encryption-provider-provider::ec24f33e-4ddf-4856-b039-b997ca3e3bdf",
+                "propertyDependencies": {
+                    "apiVersion": [],
+                    "kind": [],
+                    "stringData": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::random:index/randomPassword:RandomPassword::db-password"
+                    ]
+                },
+                "additionalSecretOutputs": [
+                    "data",
+                    "stringData"
+                ],
+                "created": "2024-04-10T23:45:41.532059002Z",
+                "modified": "2024-04-10T23:45:41.532059002Z",
+                "sourcePosition": "project:///node_modules/@pulumi/kubernetesx/kx.js#307,9"
+            },
+            {
+                "urn": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::kubernetes:apps/v1:Deployment::nginx",
+                "custom": true,
+                "id": "default/nginx-479a0bc0",
+                "type": "kubernetes:apps/v1:Deployment",
+                "inputs": {
+                    "apiVersion": "apps/v1",
+                    "kind": "Deployment",
+                    "metadata": {
+                        "annotations": {
+                            "pulumi.com/autonamed": "true"
+                        },
+                        "name": "nginx-479a0bc0",
+                        "namespace": "default"
+                    },
+                    "spec": {
+                        "replicas": 1,
+                        "selector": {
+                            "matchLabels": {
+                                "app": "nginx"
+                            }
+                        },
+                        "template": {
+                            "metadata": {
+                                "labels": {
+                                    "app": "nginx"
+                                }
+                            },
+                            "spec": {
+                                "containers": [
+                                    {
+                                        "env": [
+                                            {
+                                                "name": "PASSWORD",
+                                                "valueFrom": {
+                                                    "secretKeyRef": {
+                                                        "key": "dbPassword",
+                                                        "name": "db-password-ca9e8a8a"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "image": "nginx",
+                                        "name": "nginx",
+                                        "ports": [
+                                            {
+                                                "containerPort": 8080,
+                                                "name": "http"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "outputs": {
+                    "__fieldManager": "pulumi-kubernetes-6f909c46",
+                    "__initialApiVersion": "apps/v1",
+                    "__inputs": {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "metadata": {
+                            "annotations": {
+                                "pulumi.com/autonamed": "true"
+                            },
+                            "name": "nginx-479a0bc0",
+                            "namespace": "default"
+                        },
+                        "spec": {
+                            "replicas": 1,
+                            "selector": {
+                                "matchLabels": {
+                                    "app": "nginx"
+                                }
+                            },
+                            "template": {
+                                "metadata": {
+                                    "labels": {
+                                        "app": "nginx"
+                                    }
+                                },
+                                "spec": {
+                                    "containers": [
+                                        {
+                                            "env": [
+                                                {
+                                                    "name": "PASSWORD",
+                                                    "valueFrom": {
+                                                        "secretKeyRef": {
+                                                            "key": "dbPassword",
+                                                            "name": "db-password-ca9e8a8a"
+                                                        }
+                                                    }
+                                                }
+                                            ],
+                                            "image": "nginx",
+                                            "name": "nginx",
+                                            "ports": [
+                                                {
+                                                    "containerPort": 8080,
+                                                    "name": "http"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "apiVersion": "apps/v1",
+                    "kind": "Deployment",
+                    "metadata": {
+                        "annotations": {
+                            "deployment.kubernetes.io/revision": "1",
+                            "pulumi.com/autonamed": "true"
+                        },
+                        "creationTimestamp": "2024-04-10T23:45:41Z",
+                        "generation": 1,
+                        "managedFields": [
+                            {
+                                "apiVersion": "apps/v1",
+                                "fieldsType": "FieldsV1",
+                                "fieldsV1": {
+                                    "f:metadata": {
+                                        "f:annotations": {
+                                            "f:pulumi.com/autonamed": {}
+                                        }
+                                    },
+                                    "f:spec": {
+                                        "f:replicas": {},
+                                        "f:selector": {},
+                                        "f:template": {
+                                            "f:metadata": {
+                                                "f:labels": {
+                                                    "f:app": {}
+                                                }
+                                            },
+                                            "f:spec": {
+                                                "f:containers": {
+                                                    "k:{\"name\":\"nginx\"}": {
+                                                        ".": {},
+                                                        "f:env": {
+                                                            "k:{\"name\":\"PASSWORD\"}": {
+                                                                ".": {},
+                                                                "f:name": {},
+                                                                "f:valueFrom": {
+                                                                    "f:secretKeyRef": {}
+                                                                }
+                                                            }
+                                                        },
+                                                        "f:image": {},
+                                                        "f:name": {},
+                                                        "f:ports": {
+                                                            "k:{\"containerPort\":8080,\"protocol\":\"TCP\"}": {
+                                                                ".": {},
+                                                                "f:containerPort": {},
+                                                                "f:name": {}
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "manager": "pulumi-kubernetes-6f909c46",
+                                "operation": "Apply",
+                                "time": "2024-04-10T23:45:41Z"
+                            },
+                            {
+                                "apiVersion": "apps/v1",
+                                "fieldsType": "FieldsV1",
+                                "fieldsV1": {
+                                    "f:metadata": {
+                                        "f:annotations": {
+                                            "f:deployment.kubernetes.io/revision": {}
+                                        }
+                                    },
+                                    "f:status": {
+                                        "f:availableReplicas": {},
+                                        "f:conditions": {
+                                            ".": {},
+                                            "k:{\"type\":\"Available\"}": {
+                                                ".": {},
+                                                "f:lastTransitionTime": {},
+                                                "f:lastUpdateTime": {},
+                                                "f:message": {},
+                                                "f:reason": {},
+                                                "f:status": {},
+                                                "f:type": {}
+                                            },
+                                            "k:{\"type\":\"Progressing\"}": {
+                                                ".": {},
+                                                "f:lastTransitionTime": {},
+                                                "f:lastUpdateTime": {},
+                                                "f:message": {},
+                                                "f:reason": {},
+                                                "f:status": {},
+                                                "f:type": {}
+                                            }
+                                        },
+                                        "f:observedGeneration": {},
+                                        "f:readyReplicas": {},
+                                        "f:replicas": {},
+                                        "f:updatedReplicas": {}
+                                    }
+                                },
+                                "manager": "kube-controller-manager",
+                                "operation": "Update",
+                                "subresource": "status",
+                                "time": "2024-04-10T23:46:08Z"
+                            }
+                        ],
+                        "name": "nginx-479a0bc0",
+                        "namespace": "default",
+                        "resourceVersion": "1099",
+                        "uid": "2d52f26f-3e67-478d-9f2b-594f3840820a"
+                    },
+                    "spec": {
+                        "progressDeadlineSeconds": 600,
+                        "replicas": 1,
+                        "revisionHistoryLimit": 10,
+                        "selector": {
+                            "matchLabels": {
+                                "app": "nginx"
+                            }
+                        },
+                        "strategy": {
+                            "rollingUpdate": {
+                                "maxSurge": "25%",
+                                "maxUnavailable": "25%"
+                            },
+                            "type": "RollingUpdate"
+                        },
+                        "template": {
+                            "metadata": {
+                                "labels": {
+                                    "app": "nginx"
+                                }
+                            },
+                            "spec": {
+                                "containers": [
+                                    {
+                                        "env": [
+                                            {
+                                                "name": "PASSWORD",
+                                                "valueFrom": {
+                                                    "secretKeyRef": {
+                                                        "key": "dbPassword",
+                                                        "name": "db-password-ca9e8a8a"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "image": "nginx",
+                                        "imagePullPolicy": "Always",
+                                        "name": "nginx",
+                                        "ports": [
+                                            {
+                                                "containerPort": 8080,
+                                                "name": "http",
+                                                "protocol": "TCP"
+                                            }
+                                        ],
+                                        "resources": {},
+                                        "terminationMessagePath": "/dev/termination-log",
+                                        "terminationMessagePolicy": "File"
+                                    }
+                                ],
+                                "dnsPolicy": "ClusterFirst",
+                                "restartPolicy": "Always",
+                                "schedulerName": "default-scheduler",
+                                "securityContext": {},
+                                "terminationGracePeriodSeconds": 30
+                            }
+                        }
+                    },
+                    "status": {
+                        "availableReplicas": 1,
+                        "conditions": [
+                            {
+                                "lastTransitionTime": "2024-04-10T23:46:08Z",
+                                "lastUpdateTime": "2024-04-10T23:46:08Z",
+                                "message": "Deployment has minimum availability.",
+                                "reason": "MinimumReplicasAvailable",
+                                "status": "True",
+                                "type": "Available"
+                            },
+                            {
+                                "lastTransitionTime": "2024-04-10T23:45:41Z",
+                                "lastUpdateTime": "2024-04-10T23:46:08Z",
+                                "message": "ReplicaSet \"nginx-479a0bc0-f87898fb6\" has successfully progressed.",
+                                "reason": "NewReplicaSetAvailable",
+                                "status": "True",
+                                "type": "Progressing"
+                            }
+                        ],
+                        "observedGeneration": 1,
+                        "readyReplicas": 1,
+                        "replicas": 1,
+                        "updatedReplicas": 1
+                    }
+                },
+                "parent": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::pulumi:pulumi:Stack::encryption-provider-p-it-runner-encryption-54090184",
+                "dependencies": [
+                    "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::kubernetes:core/v1:Secret::db-password"
+                ],
+                "provider": "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::eks:index:Cluster$pulumi:providers:kubernetes::encryption-provider-provider::ec24f33e-4ddf-4856-b039-b997ca3e3bdf",
+                "propertyDependencies": {
+                    "apiVersion": [],
+                    "kind": [],
+                    "spec": [
+                        "urn:pulumi:p-it-runner-encryption-54090184::encryption-provider::kubernetes:core/v1:Secret::db-password"
+                    ]
+                },
+                "created": "2024-04-10T23:46:09.082112909Z",
+                "modified": "2024-04-10T23:46:09.082112909Z",
+                "sourcePosition": "project:///node_modules/@pulumi/kubernetesx/kx.js#168,9"
+            }
+        ]
+    }
+}
