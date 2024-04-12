@@ -33,12 +33,16 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      * 
+     * Note: The security group resource should not contain any inline ingress or egress rules.
+     * 
      */
     @Import(name="clusterSecurityGroup")
     private @Nullable Output<SecurityGroup> clusterSecurityGroup;
 
     /**
      * @return The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
+     * 
+     * Note: The security group resource should not contain any inline ingress or egress rules.
      * 
      */
     public Optional<Output<SecurityGroup>> clusterSecurityGroup() {
@@ -1052,6 +1056,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         /**
          * @param clusterSecurityGroup The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
          * 
+         * Note: The security group resource should not contain any inline ingress or egress rules.
+         * 
          * @return builder
          * 
          */
@@ -1062,6 +1068,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
         /**
          * @param clusterSecurityGroup The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
+         * 
+         * Note: The security group resource should not contain any inline ingress or egress rules.
          * 
          * @return builder
          * 
