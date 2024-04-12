@@ -59,6 +59,8 @@ func NewCluster(ctx *pulumi.Context,
 
 type clusterArgs struct {
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
+	//
+	// Note: The security group resource should not contain any inline ingress or egress rules.
 	ClusterSecurityGroup *ec2.SecurityGroup `pulumi:"clusterSecurityGroup"`
 	// The tags to apply to the cluster security group.
 	ClusterSecurityGroupTags map[string]string `pulumi:"clusterSecurityGroupTags"`
@@ -273,6 +275,8 @@ type clusterArgs struct {
 // The set of arguments for constructing a Cluster resource.
 type ClusterArgs struct {
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
+	//
+	// Note: The security group resource should not contain any inline ingress or egress rules.
 	ClusterSecurityGroup ec2.SecurityGroupInput
 	// The tags to apply to the cluster security group.
 	ClusterSecurityGroupTags pulumi.StringMapInput
