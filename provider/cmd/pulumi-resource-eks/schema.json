@@ -289,7 +289,7 @@
             ]
         },
         "eks:index:CreationRoleProvider": {
-            "description": "Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html",
+            "description": "Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html\n\nNote: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.",
             "properties": {
                 "provider": {
                     "$ref": "/aws/v6.5.0/schema.json#/provider",
@@ -687,7 +687,7 @@
                 "creationRoleProvider": {
                     "$ref": "#/types/eks:index:CreationRoleProvider",
                     "plain": true,
-                    "description": "The IAM Role Provider used to create \u0026 authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html"
+                    "description": "The IAM Role Provider used to create \u0026 authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html\n\nNote: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead."
                 },
                 "defaultAddonsToRemove": {
                     "type": "array",
