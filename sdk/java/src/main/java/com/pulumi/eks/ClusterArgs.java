@@ -113,12 +113,16 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     /**
      * The IAM Role Provider used to create &amp; authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
      * 
+     * Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
+     * 
      */
     @Import(name="creationRoleProvider")
     private @Nullable CreationRoleProviderArgs creationRoleProvider;
 
     /**
      * @return The IAM Role Provider used to create &amp; authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+     * 
+     * Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
      * 
      */
     public Optional<CreationRoleProviderArgs> creationRoleProvider() {
@@ -1159,6 +1163,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
         /**
          * @param creationRoleProvider The IAM Role Provider used to create &amp; authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+         * 
+         * Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
          * 
          * @return builder
          * 
