@@ -393,7 +393,8 @@ func generateSchema() schema.PackageSpec {
 							Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
 						},
 						Description: "The security group to use for the cluster API endpoint. If not provided, a new " +
-							"security group will be created with full internet egress and ingress from node groups.",
+							"security group will be created with full internet egress and ingress from node groups.\n\n" +
+							"Note: The security group resource should not contain any inline ingress or egress rules.",
 					},
 					"clusterSecurityGroupTags": {
 						TypeSpec: schema.TypeSpec{
