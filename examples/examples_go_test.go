@@ -17,18 +17,22 @@
 package example
 
 import (
+	"bytes"
 	"path/filepath"
 	"testing"
 
 	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAccClusterGo(t *testing.T) {
+	var stdErr bytes.Buffer
+
 	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			RunUpdateTest: false,
-			Dir:           filepath.Join(getCwd(t), "cluster-go"),
+			Dir:           filepath.Join(getCwd(t), "cluster-go", "step1"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -37,9 +41,20 @@ func TestAccClusterGo(t *testing.T) {
 					info.Outputs["kubeconfig3"],
 				)
 			},
+			EditDirs: []integration.EditDir{
+				{
+					// Step 2 should fail because the `creationRoleProvider` option is not supported in non nodejs Pulumi programs.
+					Dir:           filepath.Join(getCwd(t), "cluster-go", "step2"),
+					ExpectFailure: true,
+					Additive:      true,
+					Stderr:        &stdErr,
+				},
+			},
 		})
 
 	integration.ProgramTest(t, &test)
+	// Ensure that the provider error message is as expected.
+	assert.Contains(t, stdErr.String(), "not supported")
 }
 
 // TestAccClusterGoWithOidc tests that we can set extra node security groups on new node groups.
