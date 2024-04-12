@@ -1907,6 +1907,12 @@ export class ClusterInternal extends pulumi.ComponentResource {
 
         super(type, name, args, opts);
 
+        if (args?.creationRoleProvider?.provider) {
+            throw new Error(
+                "The `creationRoleProvider.provider` option is not supported in non-nodejs Pulumi programs. Please use the `providerCredentialOpts` option instead.",
+            );
+        }
+
         const cluster = createCluster(name, this, args, opts);
         this.kubeconfig = cluster.kubeconfig;
         this.kubeconfigJson = cluster.kubeconfigJson;
