@@ -992,6 +992,8 @@ func (o CoreDataOutput) VpcId() pulumi.StringOutput {
 }
 
 // Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+//
+// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
 type CreationRoleProvider struct {
 	Provider *aws.Provider `pulumi:"provider"`
 	Role     *iam.Role     `pulumi:"role"`
@@ -1009,6 +1011,8 @@ type CreationRoleProviderInput interface {
 }
 
 // Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+//
+// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
 type CreationRoleProviderArgs struct {
 	Provider *aws.Provider `pulumi:"provider"`
 	Role     *iam.Role     `pulumi:"role"`
@@ -1068,6 +1072,8 @@ func (i *creationRoleProviderPtrType) ToCreationRoleProviderPtrOutputWithContext
 }
 
 // Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+//
+// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
 type CreationRoleProviderOutput struct{ *pulumi.OutputState }
 
 func (CreationRoleProviderOutput) ElementType() reflect.Type {

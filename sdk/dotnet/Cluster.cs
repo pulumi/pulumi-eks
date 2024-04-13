@@ -164,6 +164,8 @@ namespace Pulumi.Eks
 
         /// <summary>
         /// The IAM Role Provider used to create &amp; authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+        /// 
+        /// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
         /// </summary>
         [Input("creationRoleProvider")]
         public Inputs.CreationRoleProviderArgs? CreationRoleProvider { get; set; }

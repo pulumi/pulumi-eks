@@ -12,6 +12,8 @@ import java.util.Objects;
 /**
  * Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
  * 
+ * Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
+ * 
  */
 public final class CreationRoleProviderArgs extends com.pulumi.resources.ResourceArgs {
 

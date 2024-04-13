@@ -77,6 +77,8 @@ type clusterArgs struct {
 	//  - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
 	CreateOidcProvider *bool `pulumi:"createOidcProvider"`
 	// The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+	//
+	// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
 	CreationRoleProvider *CreationRoleProvider `pulumi:"creationRoleProvider"`
 	// List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
 	DefaultAddonsToRemove []string `pulumi:"defaultAddonsToRemove"`
@@ -293,6 +295,8 @@ type ClusterArgs struct {
 	//  - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
 	CreateOidcProvider pulumi.BoolPtrInput
 	// The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+	//
+	// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
 	CreationRoleProvider *CreationRoleProviderArgs
 	// List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
 	DefaultAddonsToRemove pulumi.StringArrayInput
