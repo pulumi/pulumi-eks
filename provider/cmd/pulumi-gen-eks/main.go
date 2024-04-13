@@ -348,7 +348,8 @@ func generateSchema() schema.PackageSpec {
 						},
 						Description: "The IAM Role Provider used to create & authenticate against the EKS cluster. " +
 							"This role is given `[system:masters]` permission in K8S, See: " +
-							"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html",
+							"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html\n\n" +
+							"Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.",
 					},
 					"instanceRoles": {
 						TypeSpec: schema.TypeSpec{
@@ -1047,7 +1048,8 @@ func generateSchema() schema.PackageSpec {
 					Type: "object",
 					Description: "Contains the AWS Role and Provider necessary to override the `[system:master]` " +
 						"entity ARN. This is an optional argument used when creating `Cluster`. Read more: " +
-						"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html",
+						"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html\n\n" +
+						"Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.",
 					Properties: map[string]schema.PropertySpec{
 						"role": {
 							TypeSpec: schema.TypeSpec{

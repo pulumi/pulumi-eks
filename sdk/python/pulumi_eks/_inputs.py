@@ -807,6 +807,8 @@ class CreationRoleProviderArgs:
                  role: 'pulumi_aws.iam.Role'):
         """
         Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+
+        Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
         """
         pulumi.set(__self__, "provider", provider)
         pulumi.set(__self__, "role", role)

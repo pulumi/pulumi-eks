@@ -84,6 +84,8 @@ class ClusterArgs:
                 - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
                 - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
         :param 'CreationRoleProviderArgs' creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+               
+               Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] enable_config_map_mutable: Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
@@ -394,6 +396,8 @@ class ClusterArgs:
     def creation_role_provider(self) -> Optional['CreationRoleProviderArgs']:
         """
         The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+
+        Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
         """
         return pulumi.get(self, "creation_role_provider")
 
@@ -1098,6 +1102,8 @@ class Cluster(pulumi.ComponentResource):
                 - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
                 - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
         :param pulumi.InputType['CreationRoleProviderArgs'] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+               
+               Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] enable_config_map_mutable: Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
