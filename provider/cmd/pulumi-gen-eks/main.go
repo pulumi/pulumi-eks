@@ -149,9 +149,32 @@ func generateSchema() schema.PackageSpec {
 				// TODO: method: createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup
 				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
-					Description: "Cluster is a component that wraps the AWS and Kubernetes resources necessary to " +
-						"run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional " +
-						"deployment of the Kubernetes Dashboard.",
+					Description: "Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.\n\n" +
+						"## Example Usage\n\n### Provisioning a New EKS Cluster\n\n" +
+						"<!--Start PulumiCodeChooser -->\n" +
+						// TS example
+						"```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as eks from \"@pulumi/eks\";\n\n" +
+						"// Create an EKS cluster with the default configuration.\nconst cluster = new eks.Cluster(\"cluster\", {});\n\n" +
+						"// Export the cluster's kubeconfig.\nexport const kubeconfig = cluster.kubeconfig;\n ```\n\n" +
+						// Python example
+						"```python\n import pulumi\n import pulumi_eks as eks\n \n # Create an EKS cluster with the default configuration.\n cluster = eks.Cluster(\"cluster\")\n\n " +
+						"# Export the cluster's kubeconfig.\n pulumi.export(\"kubeconfig\", cluster.kubeconfig)\n ```\n\n" +
+						// Go example
+						"```go\n package main\n \n import (\n \t\"github.com/pulumi/pulumi-eks/sdk/go/eks\"\n \t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n )\n\n" +
+						"func main() {\n \tpulumi.Run(func(ctx *pulumi.Context) error {\n \t\t// Create an EKS cluster with the default configuration.\n" +
+						"\t\tcluster, err := eks.NewCluster(ctx, \"cluster\", nil)\n \t\tif err != nil {\n \t\t\treturn err\n \t\t}\n \t\t// Export the cluster's kubeconfig.\n \t\tctx.Export(\"kubeconfig\", cluster.Kubeconfig)\n" +
+						"\t\treturn nil\n \t})\n }\n ```\n\n" +
+						// C# example
+						"```csharp\n using System.Collections.Generic;\n using Pulumi;\n using Eks = Pulumi.Eks;\n \n return await Deployment.RunAsync(() =>\n {\n \t// Create an EKS cluster with the default configuration.\n" +
+						"\tvar cluster = new Eks.Cluster(\"cluster\");\n \n \treturn new Dictionary<string, object?>\n \t{\n \t\t// Export the cluster's kubeconfig.\n \t\t[\"kubeconfig\"] = cluster.Kubeconfig,\n \t};\n });\n\n```\n\n" +
+						// Java example
+						"```java\n import com.pulumi.Context;\n import com.pulumi.Pulumi;\n import com.pulumi.core.Output;\n import com.pulumi.eks.Cluster;\n import java.util.List;\n import java.util.ArrayList;\n import java.util.Map;\n" +
+						" import java.io.File;\n import java.nio.file.Files;\n import java.nio.file.Paths;\n \n public class App {\n \tpublic static void main(String[] args) {\n \t\tPulumi.run(App::stack);\n \t}\n \n" +
+						"\t public static void stack(Context ctx) {\n \t\t// Create an EKS cluster with the default configuration.\n \t\tvar cluster = new Cluster(\"cluster\");\n \n \t\t// Export the cluster's kubeconfig.\n" +
+						"\t\tctx.export(\"kubeconfig\", cluster.kubeconfig());\n \t}\n }\n ```\n\n" +
+						"```yaml\nresources:\n# Create an EKS cluster with the default configuration.\ncluster:\ntype: eks:Cluster\noutputs:\n# Export the cluster's kubeconfig.\n" +
+						"kubeconfig: ${cluster.kubeconfig}\n\n```\n" +
+						"<!--End PulumiCodeChooser -->",
 					Properties: map[string]schema.PropertySpec{
 						"kubeconfig": {
 							TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
