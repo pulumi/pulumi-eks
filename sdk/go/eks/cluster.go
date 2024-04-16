@@ -16,6 +16,37 @@ import (
 )
 
 // Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
+//
+// ## Example Usage
+//
+// ### Provisioning a New EKS Cluster
+//
+// <!--Start PulumiCodeChooser -->
+//
+// ```go
+//
+//	package main
+//
+//	import (
+//		"github.com/pulumi/pulumi-eks/sdk/go/eks"
+//		"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//	)
+//
+//	func main() {
+//	 	pulumi.Run(func(ctx *pulumi.Context) error {
+//	 		// Create an EKS cluster with the default configuration.
+//			cluster, err := eks.NewCluster(ctx, "cluster", nil)
+//	 		if err != nil {
+//	 			return err
+//	 		}
+//	 		// Export the cluster's kubeconfig.
+//	 		ctx.Export("kubeconfig", cluster.Kubeconfig)
+//			return nil
+//	 	})
+//	 }
+//
+// ```
+// <!--End PulumiCodeChooser -->
 type Cluster struct {
 	pulumi.ResourceState
 
