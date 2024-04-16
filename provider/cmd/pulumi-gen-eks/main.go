@@ -168,10 +168,11 @@ func generateSchema() schema.PackageSpec {
 						"```csharp\n using System.Collections.Generic;\n using Pulumi;\n using Eks = Pulumi.Eks;\n \n return await Deployment.RunAsync(() =>\n {\n \t// Create an EKS cluster with the default configuration.\n" +
 						"\tvar cluster = new Eks.Cluster(\"cluster\");\n \n \treturn new Dictionary<string, object?>\n \t{\n \t\t// Export the cluster's kubeconfig.\n \t\t[\"kubeconfig\"] = cluster.Kubeconfig,\n \t};\n });\n\n```\n\n" +
 						// Java example
-						"```java\n import com.pulumi.Context;\n import com.pulumi.Pulumi;\n import com.pulumi.core.Output;\n import com.pulumi.eks.Cluster;\n import java.util.List;\n import java.util.ArrayList;\n import java.util.Map;\n" +
-						" import java.io.File;\n import java.nio.file.Files;\n import java.nio.file.Paths;\n \n public class App {\n \tpublic static void main(String[] args) {\n \t\tPulumi.run(App::stack);\n \t}\n \n" +
+						"```java\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.eks.Cluster;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\n" +
+						"import java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n\tpublic static void main(String[] args) {\n\t\tPulumi.run(App::stack);\n\t}\n\n" +
 						"\t public static void stack(Context ctx) {\n \t\t// Create an EKS cluster with the default configuration.\n \t\tvar cluster = new Cluster(\"cluster\");\n \n \t\t// Export the cluster's kubeconfig.\n" +
-						"\t\tctx.export(\"kubeconfig\", cluster.kubeconfig());\n \t}\n }\n ```\n\n" +
+						"\t\tctx.export(\"kubeconfig\", cluster.kubeconfig());\n\t}\n }\n```\n\n" +
+						// YAML example
 						"```yaml\nresources:\n# Create an EKS cluster with the default configuration.\ncluster:\ntype: eks:Cluster\noutputs:\n# Export the cluster's kubeconfig.\n" +
 						"kubeconfig: ${cluster.kubeconfig}\n\n```\n" +
 						"<!--End PulumiCodeChooser -->",
