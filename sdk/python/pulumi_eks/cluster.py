@@ -1526,6 +1526,9 @@ class Cluster(pulumi.ComponentResource):
         @property
         @pulumi.getter
         def result(self) -> str:
+            """
+            The kubeconfig for the cluster.
+            """
             return pulumi.get(self, "result")
 
     def get_kubeconfig(__self__, *,

@@ -573,6 +573,19 @@ class CoreData(dict):
         """
         Defines the core set of data associated with an EKS cluster, including the network in which it runs.
         :param 'pulumi_aws.iam.Role' cluster_iam_role: The IAM Role attached to the EKS Cluster
+        :param str endpoint: The EKS cluster's Kubernetes API server endpoint.
+        :param Sequence['pulumi_aws.iam.Role'] instance_roles: The IAM instance roles for the cluster's nodes.
+        :param 'ClusterNodeGroupOptions' node_group_options: The cluster's node group options.
+        :param Sequence[str] subnet_ids: List of subnet IDs for the EKS cluster.
+        :param str vpc_id: ID of the cluster's VPC.
+        :param 'pulumi_aws.eks.FargateProfile' fargate_profile: The Fargate profile used to manage which pods run on Fargate.
+        :param Any kubeconfig: The kubeconfig file for the cluster.
+        :param Mapping[str, str] node_security_group_tags: Tags attached to the security groups associated with the cluster's worker nodes.
+        :param Sequence[str] private_subnet_ids: List of subnet IDs for the private subnets.
+        :param Sequence[str] public_subnet_ids: List of subnet IDs for the public subnets.
+        :param Mapping[str, 'pulumi_kubernetes.storage.v1.StorageClass'] storage_classes: The storage class used for persistent storage by the cluster.
+        :param Mapping[str, str] tags: A map of tags assigned to the EKS cluster.
+        :param 'VpcCni' vpc_cni: The VPC CNI for the cluster.
         """
         pulumi.set(__self__, "cluster", cluster)
         pulumi.set(__self__, "cluster_iam_role", cluster_iam_role)
@@ -629,16 +642,25 @@ class CoreData(dict):
     @property
     @pulumi.getter
     def endpoint(self) -> str:
+        """
+        The EKS cluster's Kubernetes API server endpoint.
+        """
         return pulumi.get(self, "endpoint")
 
     @property
     @pulumi.getter(name="instanceRoles")
     def instance_roles(self) -> Sequence['pulumi_aws.iam.Role']:
+        """
+        The IAM instance roles for the cluster's nodes.
+        """
         return pulumi.get(self, "instance_roles")
 
     @property
     @pulumi.getter(name="nodeGroupOptions")
     def node_group_options(self) -> 'outputs.ClusterNodeGroupOptions':
+        """
+        The cluster's node group options.
+        """
         return pulumi.get(self, "node_group_options")
 
     @property
@@ -649,11 +671,17 @@ class CoreData(dict):
     @property
     @pulumi.getter(name="subnetIds")
     def subnet_ids(self) -> Sequence[str]:
+        """
+        List of subnet IDs for the EKS cluster.
+        """
         return pulumi.get(self, "subnet_ids")
 
     @property
     @pulumi.getter(name="vpcId")
     def vpc_id(self) -> str:
+        """
+        ID of the cluster's VPC.
+        """
         return pulumi.get(self, "vpc_id")
 
     @property
@@ -674,16 +702,25 @@ class CoreData(dict):
     @property
     @pulumi.getter(name="fargateProfile")
     def fargate_profile(self) -> Optional['pulumi_aws.eks.FargateProfile']:
+        """
+        The Fargate profile used to manage which pods run on Fargate.
+        """
         return pulumi.get(self, "fargate_profile")
 
     @property
     @pulumi.getter
     def kubeconfig(self) -> Optional[Any]:
+        """
+        The kubeconfig file for the cluster.
+        """
         return pulumi.get(self, "kubeconfig")
 
     @property
     @pulumi.getter(name="nodeSecurityGroupTags")
     def node_security_group_tags(self) -> Optional[Mapping[str, str]]:
+        """
+        Tags attached to the security groups associated with the cluster's worker nodes.
+        """
         return pulumi.get(self, "node_security_group_tags")
 
     @property
@@ -694,26 +731,41 @@ class CoreData(dict):
     @property
     @pulumi.getter(name="privateSubnetIds")
     def private_subnet_ids(self) -> Optional[Sequence[str]]:
+        """
+        List of subnet IDs for the private subnets.
+        """
         return pulumi.get(self, "private_subnet_ids")
 
     @property
     @pulumi.getter(name="publicSubnetIds")
     def public_subnet_ids(self) -> Optional[Sequence[str]]:
+        """
+        List of subnet IDs for the public subnets.
+        """
         return pulumi.get(self, "public_subnet_ids")
 
     @property
     @pulumi.getter(name="storageClasses")
     def storage_classes(self) -> Optional[Mapping[str, 'pulumi_kubernetes.storage.v1.StorageClass']]:
+        """
+        The storage class used for persistent storage by the cluster.
+        """
         return pulumi.get(self, "storage_classes")
 
     @property
     @pulumi.getter
     def tags(self) -> Optional[Mapping[str, str]]:
+        """
+        A map of tags assigned to the EKS cluster.
+        """
         return pulumi.get(self, "tags")
 
     @property
     @pulumi.getter(name="vpcCni")
     def vpc_cni(self) -> Optional['VpcCni']:
+        """
+        The VPC CNI for the cluster.
+        """
         return pulumi.get(self, "vpc_cni")
 
 

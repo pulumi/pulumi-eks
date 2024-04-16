@@ -571,6 +571,7 @@ func (ClusterGetKubeconfigArgs) ElementType() reflect.Type {
 }
 
 type clusterGetKubeconfigResult struct {
+	// The kubeconfig for the cluster.
 	Result string `pulumi:"result"`
 }
 
@@ -580,6 +581,7 @@ func (clusterGetKubeconfigResultOutput) ElementType() reflect.Type {
 	return reflect.TypeOf((*clusterGetKubeconfigResult)(nil)).Elem()
 }
 
+// The kubeconfig for the cluster.
 func (o clusterGetKubeconfigResultOutput) Result() pulumi.StringOutput {
 	return o.ApplyT(func(v clusterGetKubeconfigResult) string { return v.Result }).(pulumi.StringOutput)
 }

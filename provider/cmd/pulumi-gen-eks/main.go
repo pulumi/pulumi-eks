@@ -136,7 +136,8 @@ func generateSchema() schema.PackageSpec {
 				Outputs: &schema.ObjectTypeSpec{
 					Properties: map[string]schema.PropertySpec{
 						"result": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The kubeconfig for the cluster.",
 						},
 					},
 					Required: []string{"result"},
@@ -972,16 +973,19 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster")},
 						},
 						"vpcId": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "ID of the cluster's VPC.",
 						},
 						"subnetIds": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
 								Items: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "List of subnet IDs for the EKS cluster.",
 						},
 						"endpoint": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The EKS cluster's Kubernetes API server endpoint.",
 						},
 						"clusterSecurityGroup": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
@@ -994,9 +998,11 @@ func generateSchema() schema.PackageSpec {
 								Type:  "array",
 								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
 							},
+							Description: "The IAM instance roles for the cluster's nodes.",
 						},
 						"nodeGroupOptions": {
-							TypeSpec: schema.TypeSpec{Ref: "#/types/eks:index:ClusterNodeGroupOptions"},
+							TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:ClusterNodeGroupOptions"},
+							Description: "The cluster's node group options.",
 						},
 						"awsProvider": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
@@ -1006,12 +1012,14 @@ func generateSchema() schema.PackageSpec {
 								Type:  "array",
 								Items: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "List of subnet IDs for the public subnets.",
 						},
 						"privateSubnetIds": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
 								Items: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "List of subnet IDs for the private subnets.",
 						},
 						"eksNodeAccess": {
 							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:core%2Fv1:ConfigMap")},
@@ -1021,27 +1029,33 @@ func generateSchema() schema.PackageSpec {
 								Type:                 "object",
 								AdditionalProperties: &schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:storage.k8s.io%2Fv1:StorageClass")},
 							},
+							Description: "The storage class used for persistent storage by the cluster.",
 						},
 						"kubeconfig": {
-							TypeSpec: schema.TypeSpec{Ref: "pulumi.json#/Any"},
+							TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
+							Description: "The kubeconfig file for the cluster.",
 						},
 						"vpcCni": {
-							TypeSpec: schema.TypeSpec{Ref: "#/resources/eks:index:VpcCni"},
+							TypeSpec:    schema.TypeSpec{Ref: "#/resources/eks:index:VpcCni"},
+							Description: "The VPC CNI for the cluster.",
 						},
 						"tags": {
 							TypeSpec: schema.TypeSpec{
 								Type:                 "object",
 								AdditionalProperties: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "A map of tags assigned to the EKS cluster.",
 						},
 						"nodeSecurityGroupTags": {
 							TypeSpec: schema.TypeSpec{
 								Type:                 "object",
 								AdditionalProperties: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "Tags attached to the security groups associated with the cluster's worker nodes.",
 						},
 						"fargateProfile": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FfargateProfile:FargateProfile")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FfargateProfile:FargateProfile")},
+							Description: "The Fargate profile used to manage which pods run on Fargate.",
 						},
 						"oidcProvider": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider")},

@@ -671,6 +671,9 @@ namespace Pulumi.Eks
     [OutputType]
     internal sealed class ClusterGetKubeconfigResult
     {
+        /// <summary>
+        /// The kubeconfig for the cluster.
+        /// </summary>
         public readonly string Result;
 
         [OutputConstructor]
