@@ -821,25 +821,38 @@ type CoreData struct {
 	AwsProvider *aws.Provider `pulumi:"awsProvider"`
 	Cluster     *eks.Cluster  `pulumi:"cluster"`
 	// The IAM Role attached to the EKS Cluster
-	ClusterIamRole        *iam.Role                          `pulumi:"clusterIamRole"`
-	ClusterSecurityGroup  *ec2.SecurityGroup                 `pulumi:"clusterSecurityGroup"`
-	EksNodeAccess         *corev1.ConfigMap                  `pulumi:"eksNodeAccess"`
-	EncryptionConfig      *eks.ClusterEncryptionConfig       `pulumi:"encryptionConfig"`
-	Endpoint              string                             `pulumi:"endpoint"`
-	FargateProfile        *eks.FargateProfile                `pulumi:"fargateProfile"`
-	InstanceRoles         []*iam.Role                        `pulumi:"instanceRoles"`
-	Kubeconfig            interface{}                        `pulumi:"kubeconfig"`
-	NodeGroupOptions      ClusterNodeGroupOptions            `pulumi:"nodeGroupOptions"`
-	NodeSecurityGroupTags map[string]string                  `pulumi:"nodeSecurityGroupTags"`
-	OidcProvider          *iam.OpenIdConnectProvider         `pulumi:"oidcProvider"`
-	PrivateSubnetIds      []string                           `pulumi:"privateSubnetIds"`
-	Provider              *kubernetes.Provider               `pulumi:"provider"`
-	PublicSubnetIds       []string                           `pulumi:"publicSubnetIds"`
-	StorageClasses        map[string]*storagev1.StorageClass `pulumi:"storageClasses"`
-	SubnetIds             []string                           `pulumi:"subnetIds"`
-	Tags                  map[string]string                  `pulumi:"tags"`
-	VpcCni                *VpcCni                            `pulumi:"vpcCni"`
-	VpcId                 string                             `pulumi:"vpcId"`
+	ClusterIamRole       *iam.Role                    `pulumi:"clusterIamRole"`
+	ClusterSecurityGroup *ec2.SecurityGroup           `pulumi:"clusterSecurityGroup"`
+	EksNodeAccess        *corev1.ConfigMap            `pulumi:"eksNodeAccess"`
+	EncryptionConfig     *eks.ClusterEncryptionConfig `pulumi:"encryptionConfig"`
+	// The EKS cluster's Kubernetes API server endpoint.
+	Endpoint string `pulumi:"endpoint"`
+	// The Fargate profile used to manage which pods run on Fargate.
+	FargateProfile *eks.FargateProfile `pulumi:"fargateProfile"`
+	// The IAM instance roles for the cluster's nodes.
+	InstanceRoles []*iam.Role `pulumi:"instanceRoles"`
+	// The kubeconfig file for the cluster.
+	Kubeconfig interface{} `pulumi:"kubeconfig"`
+	// The cluster's node group options.
+	NodeGroupOptions ClusterNodeGroupOptions `pulumi:"nodeGroupOptions"`
+	// Tags attached to the security groups associated with the cluster's worker nodes.
+	NodeSecurityGroupTags map[string]string          `pulumi:"nodeSecurityGroupTags"`
+	OidcProvider          *iam.OpenIdConnectProvider `pulumi:"oidcProvider"`
+	// List of subnet IDs for the private subnets.
+	PrivateSubnetIds []string             `pulumi:"privateSubnetIds"`
+	Provider         *kubernetes.Provider `pulumi:"provider"`
+	// List of subnet IDs for the public subnets.
+	PublicSubnetIds []string `pulumi:"publicSubnetIds"`
+	// The storage class used for persistent storage by the cluster.
+	StorageClasses map[string]*storagev1.StorageClass `pulumi:"storageClasses"`
+	// List of subnet IDs for the EKS cluster.
+	SubnetIds []string `pulumi:"subnetIds"`
+	// A map of tags assigned to the EKS cluster.
+	Tags map[string]string `pulumi:"tags"`
+	// The VPC CNI for the cluster.
+	VpcCni *VpcCni `pulumi:"vpcCni"`
+	// ID of the cluster's VPC.
+	VpcId string `pulumi:"vpcId"`
 }
 
 // CoreDataInput is an input type that accepts CoreDataArgs and CoreDataOutput values.
@@ -858,25 +871,38 @@ type CoreDataArgs struct {
 	AwsProvider aws.ProviderInput `pulumi:"awsProvider"`
 	Cluster     eks.ClusterInput  `pulumi:"cluster"`
 	// The IAM Role attached to the EKS Cluster
-	ClusterIamRole        iam.RoleInput                       `pulumi:"clusterIamRole"`
-	ClusterSecurityGroup  ec2.SecurityGroupInput              `pulumi:"clusterSecurityGroup"`
-	EksNodeAccess         corev1.ConfigMapInput               `pulumi:"eksNodeAccess"`
-	EncryptionConfig      eks.ClusterEncryptionConfigPtrInput `pulumi:"encryptionConfig"`
-	Endpoint              pulumi.StringInput                  `pulumi:"endpoint"`
-	FargateProfile        eks.FargateProfileInput             `pulumi:"fargateProfile"`
-	InstanceRoles         iam.RoleArrayInput                  `pulumi:"instanceRoles"`
-	Kubeconfig            pulumi.Input                        `pulumi:"kubeconfig"`
-	NodeGroupOptions      ClusterNodeGroupOptionsInput        `pulumi:"nodeGroupOptions"`
-	NodeSecurityGroupTags pulumi.StringMapInput               `pulumi:"nodeSecurityGroupTags"`
-	OidcProvider          iam.OpenIdConnectProviderInput      `pulumi:"oidcProvider"`
-	PrivateSubnetIds      pulumi.StringArrayInput             `pulumi:"privateSubnetIds"`
-	Provider              kubernetes.ProviderInput            `pulumi:"provider"`
-	PublicSubnetIds       pulumi.StringArrayInput             `pulumi:"publicSubnetIds"`
-	StorageClasses        storagev1.StorageClassMapInput      `pulumi:"storageClasses"`
-	SubnetIds             pulumi.StringArrayInput             `pulumi:"subnetIds"`
-	Tags                  pulumi.StringMapInput               `pulumi:"tags"`
-	VpcCni                VpcCniInput                         `pulumi:"vpcCni"`
-	VpcId                 pulumi.StringInput                  `pulumi:"vpcId"`
+	ClusterIamRole       iam.RoleInput                       `pulumi:"clusterIamRole"`
+	ClusterSecurityGroup ec2.SecurityGroupInput              `pulumi:"clusterSecurityGroup"`
+	EksNodeAccess        corev1.ConfigMapInput               `pulumi:"eksNodeAccess"`
+	EncryptionConfig     eks.ClusterEncryptionConfigPtrInput `pulumi:"encryptionConfig"`
+	// The EKS cluster's Kubernetes API server endpoint.
+	Endpoint pulumi.StringInput `pulumi:"endpoint"`
+	// The Fargate profile used to manage which pods run on Fargate.
+	FargateProfile eks.FargateProfileInput `pulumi:"fargateProfile"`
+	// The IAM instance roles for the cluster's nodes.
+	InstanceRoles iam.RoleArrayInput `pulumi:"instanceRoles"`
+	// The kubeconfig file for the cluster.
+	Kubeconfig pulumi.Input `pulumi:"kubeconfig"`
+	// The cluster's node group options.
+	NodeGroupOptions ClusterNodeGroupOptionsInput `pulumi:"nodeGroupOptions"`
+	// Tags attached to the security groups associated with the cluster's worker nodes.
+	NodeSecurityGroupTags pulumi.StringMapInput          `pulumi:"nodeSecurityGroupTags"`
+	OidcProvider          iam.OpenIdConnectProviderInput `pulumi:"oidcProvider"`
+	// List of subnet IDs for the private subnets.
+	PrivateSubnetIds pulumi.StringArrayInput  `pulumi:"privateSubnetIds"`
+	Provider         kubernetes.ProviderInput `pulumi:"provider"`
+	// List of subnet IDs for the public subnets.
+	PublicSubnetIds pulumi.StringArrayInput `pulumi:"publicSubnetIds"`
+	// The storage class used for persistent storage by the cluster.
+	StorageClasses storagev1.StorageClassMapInput `pulumi:"storageClasses"`
+	// List of subnet IDs for the EKS cluster.
+	SubnetIds pulumi.StringArrayInput `pulumi:"subnetIds"`
+	// A map of tags assigned to the EKS cluster.
+	Tags pulumi.StringMapInput `pulumi:"tags"`
+	// The VPC CNI for the cluster.
+	VpcCni VpcCniInput `pulumi:"vpcCni"`
+	// ID of the cluster's VPC.
+	VpcId pulumi.StringInput `pulumi:"vpcId"`
 }
 
 func (CoreDataArgs) ElementType() reflect.Type {
@@ -931,26 +957,32 @@ func (o CoreDataOutput) EncryptionConfig() eks.ClusterEncryptionConfigPtrOutput 
 	return o.ApplyT(func(v CoreData) *eks.ClusterEncryptionConfig { return v.EncryptionConfig }).(eks.ClusterEncryptionConfigPtrOutput)
 }
 
+// The EKS cluster's Kubernetes API server endpoint.
 func (o CoreDataOutput) Endpoint() pulumi.StringOutput {
 	return o.ApplyT(func(v CoreData) string { return v.Endpoint }).(pulumi.StringOutput)
 }
 
+// The Fargate profile used to manage which pods run on Fargate.
 func (o CoreDataOutput) FargateProfile() eks.FargateProfileOutput {
 	return o.ApplyT(func(v CoreData) *eks.FargateProfile { return v.FargateProfile }).(eks.FargateProfileOutput)
 }
 
+// The IAM instance roles for the cluster's nodes.
 func (o CoreDataOutput) InstanceRoles() iam.RoleArrayOutput {
 	return o.ApplyT(func(v CoreData) []*iam.Role { return v.InstanceRoles }).(iam.RoleArrayOutput)
 }
 
+// The kubeconfig file for the cluster.
 func (o CoreDataOutput) Kubeconfig() pulumi.AnyOutput {
 	return o.ApplyT(func(v CoreData) interface{} { return v.Kubeconfig }).(pulumi.AnyOutput)
 }
 
+// The cluster's node group options.
 func (o CoreDataOutput) NodeGroupOptions() ClusterNodeGroupOptionsOutput {
 	return o.ApplyT(func(v CoreData) ClusterNodeGroupOptions { return v.NodeGroupOptions }).(ClusterNodeGroupOptionsOutput)
 }
 
+// Tags attached to the security groups associated with the cluster's worker nodes.
 func (o CoreDataOutput) NodeSecurityGroupTags() pulumi.StringMapOutput {
 	return o.ApplyT(func(v CoreData) map[string]string { return v.NodeSecurityGroupTags }).(pulumi.StringMapOutput)
 }
@@ -959,6 +991,7 @@ func (o CoreDataOutput) OidcProvider() iam.OpenIdConnectProviderOutput {
 	return o.ApplyT(func(v CoreData) *iam.OpenIdConnectProvider { return v.OidcProvider }).(iam.OpenIdConnectProviderOutput)
 }
 
+// List of subnet IDs for the private subnets.
 func (o CoreDataOutput) PrivateSubnetIds() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v CoreData) []string { return v.PrivateSubnetIds }).(pulumi.StringArrayOutput)
 }
@@ -967,26 +1000,32 @@ func (o CoreDataOutput) Provider() kubernetes.ProviderOutput {
 	return o.ApplyT(func(v CoreData) *kubernetes.Provider { return v.Provider }).(kubernetes.ProviderOutput)
 }
 
+// List of subnet IDs for the public subnets.
 func (o CoreDataOutput) PublicSubnetIds() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v CoreData) []string { return v.PublicSubnetIds }).(pulumi.StringArrayOutput)
 }
 
+// The storage class used for persistent storage by the cluster.
 func (o CoreDataOutput) StorageClasses() storagev1.StorageClassMapOutput {
 	return o.ApplyT(func(v CoreData) map[string]*storagev1.StorageClass { return v.StorageClasses }).(storagev1.StorageClassMapOutput)
 }
 
+// List of subnet IDs for the EKS cluster.
 func (o CoreDataOutput) SubnetIds() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v CoreData) []string { return v.SubnetIds }).(pulumi.StringArrayOutput)
 }
 
+// A map of tags assigned to the EKS cluster.
 func (o CoreDataOutput) Tags() pulumi.StringMapOutput {
 	return o.ApplyT(func(v CoreData) map[string]string { return v.Tags }).(pulumi.StringMapOutput)
 }
 
+// The VPC CNI for the cluster.
 func (o CoreDataOutput) VpcCni() VpcCniOutput {
 	return o.ApplyT(func(v CoreData) *VpcCni { return v.VpcCni }).(VpcCniOutput)
 }
 
+// ID of the cluster's VPC.
 func (o CoreDataOutput) VpcId() pulumi.StringOutput {
 	return o.ApplyT(func(v CoreData) string { return v.VpcId }).(pulumi.StringOutput)
 }

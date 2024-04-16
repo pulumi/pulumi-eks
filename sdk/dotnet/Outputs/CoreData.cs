@@ -25,20 +25,59 @@ namespace Pulumi.Eks.Outputs
         public readonly Pulumi.Aws.Ec2.SecurityGroup ClusterSecurityGroup;
         public readonly Pulumi.Kubernetes.Core.V1.ConfigMap? EksNodeAccess;
         public readonly Pulumi.Aws.Eks.Outputs.ClusterEncryptionConfig? EncryptionConfig;
+        /// <summary>
+        /// The EKS cluster's Kubernetes API server endpoint.
+        /// </summary>
         public readonly string Endpoint;
+        /// <summary>
+        /// The Fargate profile used to manage which pods run on Fargate.
+        /// </summary>
         public readonly Pulumi.Aws.Eks.FargateProfile? FargateProfile;
+        /// <summary>
+        /// The IAM instance roles for the cluster's nodes.
+        /// </summary>
         public readonly ImmutableArray<Pulumi.Aws.Iam.Role> InstanceRoles;
+        /// <summary>
+        /// The kubeconfig file for the cluster.
+        /// </summary>
         public readonly object? Kubeconfig;
+        /// <summary>
+        /// The cluster's node group options.
+        /// </summary>
         public readonly Outputs.ClusterNodeGroupOptions NodeGroupOptions;
+        /// <summary>
+        /// Tags attached to the security groups associated with the cluster's worker nodes.
+        /// </summary>
         public readonly ImmutableDictionary<string, string>? NodeSecurityGroupTags;
         public readonly Pulumi.Aws.Iam.OpenIdConnectProvider? OidcProvider;
+        /// <summary>
+        /// List of subnet IDs for the private subnets.
+        /// </summary>
         public readonly ImmutableArray<string> PrivateSubnetIds;
         public readonly Pulumi.Kubernetes.Provider Provider;
+        /// <summary>
+        /// List of subnet IDs for the public subnets.
+        /// </summary>
         public readonly ImmutableArray<string> PublicSubnetIds;
+        /// <summary>
+        /// The storage class used for persistent storage by the cluster.
+        /// </summary>
         public readonly ImmutableDictionary<string, Pulumi.Kubernetes.Storage.V1.StorageClass>? StorageClasses;
+        /// <summary>
+        /// List of subnet IDs for the EKS cluster.
+        /// </summary>
         public readonly ImmutableArray<string> SubnetIds;
+        /// <summary>
+        /// A map of tags assigned to the EKS cluster.
+        /// </summary>
         public readonly ImmutableDictionary<string, string>? Tags;
+        /// <summary>
+        /// The VPC CNI for the cluster.
+        /// </summary>
         public readonly Pulumi.Eks.VpcCni? VpcCni;
+        /// <summary>
+        /// ID of the cluster's VPC.
+        /// </summary>
         public readonly string VpcId;
 
         [OutputConstructor]

@@ -209,28 +209,34 @@
                     "$ref": "/aws/v6.5.0/schema.json#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig"
                 },
                 "endpoint": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The EKS cluster's Kubernetes API server endpoint."
                 },
                 "fargateProfile": {
-                    "$ref": "/aws/v6.5.0/schema.json#/resources/aws:eks%2FfargateProfile:FargateProfile"
+                    "$ref": "/aws/v6.5.0/schema.json#/resources/aws:eks%2FfargateProfile:FargateProfile",
+                    "description": "The Fargate profile used to manage which pods run on Fargate."
                 },
                 "instanceRoles": {
                     "type": "array",
                     "items": {
                         "$ref": "/aws/v6.5.0/schema.json#/resources/aws:iam%2Frole:Role"
-                    }
+                    },
+                    "description": "The IAM instance roles for the cluster's nodes."
                 },
                 "kubeconfig": {
-                    "$ref": "pulumi.json#/Any"
+                    "$ref": "pulumi.json#/Any",
+                    "description": "The kubeconfig file for the cluster."
                 },
                 "nodeGroupOptions": {
-                    "$ref": "#/types/eks:index:ClusterNodeGroupOptions"
+                    "$ref": "#/types/eks:index:ClusterNodeGroupOptions",
+                    "description": "The cluster's node group options."
                 },
                 "nodeSecurityGroupTags": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
-                    }
+                    },
+                    "description": "Tags attached to the security groups associated with the cluster's worker nodes."
                 },
                 "oidcProvider": {
                     "$ref": "/aws/v6.5.0/schema.json#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider"
@@ -239,7 +245,8 @@
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "description": "List of subnet IDs for the private subnets."
                 },
                 "provider": {
                     "$ref": "/kubernetes/v4.4.0/schema.json#/provider"
@@ -248,31 +255,37 @@
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "description": "List of subnet IDs for the public subnets."
                 },
                 "storageClasses": {
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "/kubernetes/v4.4.0/schema.json#/resources/kubernetes:storage.k8s.io%2Fv1:StorageClass"
-                    }
+                    },
+                    "description": "The storage class used for persistent storage by the cluster."
                 },
                 "subnetIds": {
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "description": "List of subnet IDs for the EKS cluster."
                 },
                 "tags": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
-                    }
+                    },
+                    "description": "A map of tags assigned to the EKS cluster."
                 },
                 "vpcCni": {
-                    "$ref": "#/resources/eks:index:VpcCni"
+                    "$ref": "#/resources/eks:index:VpcCni",
+                    "description": "The VPC CNI for the cluster."
                 },
                 "vpcId": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "ID of the cluster's VPC."
                 }
             },
             "type": "object",
@@ -1607,7 +1620,8 @@
             "outputs": {
                 "properties": {
                     "result": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The kubeconfig for the cluster."
                     }
                 },
                 "required": [
