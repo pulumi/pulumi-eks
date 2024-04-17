@@ -35,20 +35,72 @@ public final class CoreData {
     private SecurityGroup clusterSecurityGroup;
     private @Nullable ConfigMap eksNodeAccess;
     private @Nullable ClusterEncryptionConfig encryptionConfig;
+    /**
+     * @return The EKS cluster&#39;s Kubernetes API server endpoint.
+     * 
+     */
     private String endpoint;
+    /**
+     * @return The Fargate profile used to manage which pods run on Fargate.
+     * 
+     */
     private @Nullable FargateProfile fargateProfile;
+    /**
+     * @return The IAM instance roles for the cluster&#39;s nodes.
+     * 
+     */
     private List<Role> instanceRoles;
+    /**
+     * @return The kubeconfig file for the cluster.
+     * 
+     */
     private @Nullable Object kubeconfig;
+    /**
+     * @return The cluster&#39;s node group options.
+     * 
+     */
     private ClusterNodeGroupOptions nodeGroupOptions;
+    /**
+     * @return Tags attached to the security groups associated with the cluster&#39;s worker nodes.
+     * 
+     */
     private @Nullable Map<String,String> nodeSecurityGroupTags;
     private @Nullable OpenIdConnectProvider oidcProvider;
+    /**
+     * @return List of subnet IDs for the private subnets.
+     * 
+     */
     private @Nullable List<String> privateSubnetIds;
     private com.pulumi.kubernetes.Provider provider;
+    /**
+     * @return List of subnet IDs for the public subnets.
+     * 
+     */
     private @Nullable List<String> publicSubnetIds;
+    /**
+     * @return The storage class used for persistent storage by the cluster.
+     * 
+     */
     private @Nullable Map<String,StorageClass> storageClasses;
+    /**
+     * @return List of subnet IDs for the EKS cluster.
+     * 
+     */
     private List<String> subnetIds;
+    /**
+     * @return A map of tags assigned to the EKS cluster.
+     * 
+     */
     private @Nullable Map<String,String> tags;
+    /**
+     * @return The VPC CNI for the cluster.
+     * 
+     */
     private @Nullable VpcCni vpcCni;
+    /**
+     * @return ID of the cluster&#39;s VPC.
+     * 
+     */
     private String vpcId;
 
     private CoreData() {}
@@ -74,48 +126,100 @@ public final class CoreData {
     public Optional<ClusterEncryptionConfig> encryptionConfig() {
         return Optional.ofNullable(this.encryptionConfig);
     }
+    /**
+     * @return The EKS cluster&#39;s Kubernetes API server endpoint.
+     * 
+     */
     public String endpoint() {
         return this.endpoint;
     }
+    /**
+     * @return The Fargate profile used to manage which pods run on Fargate.
+     * 
+     */
     public Optional<FargateProfile> fargateProfile() {
         return Optional.ofNullable(this.fargateProfile);
     }
+    /**
+     * @return The IAM instance roles for the cluster&#39;s nodes.
+     * 
+     */
     public List<Role> instanceRoles() {
         return this.instanceRoles;
     }
+    /**
+     * @return The kubeconfig file for the cluster.
+     * 
+     */
     public Optional<Object> kubeconfig() {
         return Optional.ofNullable(this.kubeconfig);
     }
+    /**
+     * @return The cluster&#39;s node group options.
+     * 
+     */
     public ClusterNodeGroupOptions nodeGroupOptions() {
         return this.nodeGroupOptions;
     }
+    /**
+     * @return Tags attached to the security groups associated with the cluster&#39;s worker nodes.
+     * 
+     */
     public Map<String,String> nodeSecurityGroupTags() {
         return this.nodeSecurityGroupTags == null ? Map.of() : this.nodeSecurityGroupTags;
     }
     public Optional<OpenIdConnectProvider> oidcProvider() {
         return Optional.ofNullable(this.oidcProvider);
     }
+    /**
+     * @return List of subnet IDs for the private subnets.
+     * 
+     */
     public List<String> privateSubnetIds() {
         return this.privateSubnetIds == null ? List.of() : this.privateSubnetIds;
     }
     public com.pulumi.kubernetes.Provider provider() {
         return this.provider;
     }
+    /**
+     * @return List of subnet IDs for the public subnets.
+     * 
+     */
     public List<String> publicSubnetIds() {
         return this.publicSubnetIds == null ? List.of() : this.publicSubnetIds;
     }
+    /**
+     * @return The storage class used for persistent storage by the cluster.
+     * 
+     */
     public Map<String,StorageClass> storageClasses() {
         return this.storageClasses == null ? Map.of() : this.storageClasses;
     }
+    /**
+     * @return List of subnet IDs for the EKS cluster.
+     * 
+     */
     public List<String> subnetIds() {
         return this.subnetIds;
     }
+    /**
+     * @return A map of tags assigned to the EKS cluster.
+     * 
+     */
     public Map<String,String> tags() {
         return this.tags == null ? Map.of() : this.tags;
     }
+    /**
+     * @return The VPC CNI for the cluster.
+     * 
+     */
     public Optional<VpcCni> vpcCni() {
         return Optional.ofNullable(this.vpcCni);
     }
+    /**
+     * @return ID of the cluster&#39;s VPC.
+     * 
+     */
     public String vpcId() {
         return this.vpcId;
     }
