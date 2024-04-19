@@ -83,44 +83,92 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
         return Optional.ofNullable(this.encryptionConfig);
     }
 
+    /**
+     * The EKS cluster&#39;s Kubernetes API server endpoint.
+     * 
+     */
     @Import(name="endpoint", required=true)
     private Output<String> endpoint;
 
+    /**
+     * @return The EKS cluster&#39;s Kubernetes API server endpoint.
+     * 
+     */
     public Output<String> endpoint() {
         return this.endpoint;
     }
 
+    /**
+     * The Fargate profile used to manage which pods run on Fargate.
+     * 
+     */
     @Import(name="fargateProfile")
     private @Nullable Output<FargateProfile> fargateProfile;
 
+    /**
+     * @return The Fargate profile used to manage which pods run on Fargate.
+     * 
+     */
     public Optional<Output<FargateProfile>> fargateProfile() {
         return Optional.ofNullable(this.fargateProfile);
     }
 
+    /**
+     * The IAM instance roles for the cluster&#39;s nodes.
+     * 
+     */
     @Import(name="instanceRoles", required=true)
     private Output<List<Role>> instanceRoles;
 
+    /**
+     * @return The IAM instance roles for the cluster&#39;s nodes.
+     * 
+     */
     public Output<List<Role>> instanceRoles() {
         return this.instanceRoles;
     }
 
+    /**
+     * The kubeconfig file for the cluster.
+     * 
+     */
     @Import(name="kubeconfig")
     private @Nullable Output<Object> kubeconfig;
 
+    /**
+     * @return The kubeconfig file for the cluster.
+     * 
+     */
     public Optional<Output<Object>> kubeconfig() {
         return Optional.ofNullable(this.kubeconfig);
     }
 
+    /**
+     * The cluster&#39;s node group options.
+     * 
+     */
     @Import(name="nodeGroupOptions", required=true)
     private Output<ClusterNodeGroupOptionsArgs> nodeGroupOptions;
 
+    /**
+     * @return The cluster&#39;s node group options.
+     * 
+     */
     public Output<ClusterNodeGroupOptionsArgs> nodeGroupOptions() {
         return this.nodeGroupOptions;
     }
 
+    /**
+     * Tags attached to the security groups associated with the cluster&#39;s worker nodes.
+     * 
+     */
     @Import(name="nodeSecurityGroupTags")
     private @Nullable Output<Map<String,String>> nodeSecurityGroupTags;
 
+    /**
+     * @return Tags attached to the security groups associated with the cluster&#39;s worker nodes.
+     * 
+     */
     public Optional<Output<Map<String,String>>> nodeSecurityGroupTags() {
         return Optional.ofNullable(this.nodeSecurityGroupTags);
     }
@@ -132,9 +180,17 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
         return Optional.ofNullable(this.oidcProvider);
     }
 
+    /**
+     * List of subnet IDs for the private subnets.
+     * 
+     */
     @Import(name="privateSubnetIds")
     private @Nullable Output<List<String>> privateSubnetIds;
 
+    /**
+     * @return List of subnet IDs for the private subnets.
+     * 
+     */
     public Optional<Output<List<String>>> privateSubnetIds() {
         return Optional.ofNullable(this.privateSubnetIds);
     }
@@ -146,44 +202,92 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
         return this.provider;
     }
 
+    /**
+     * List of subnet IDs for the public subnets.
+     * 
+     */
     @Import(name="publicSubnetIds")
     private @Nullable Output<List<String>> publicSubnetIds;
 
+    /**
+     * @return List of subnet IDs for the public subnets.
+     * 
+     */
     public Optional<Output<List<String>>> publicSubnetIds() {
         return Optional.ofNullable(this.publicSubnetIds);
     }
 
+    /**
+     * The storage class used for persistent storage by the cluster.
+     * 
+     */
     @Import(name="storageClasses")
     private @Nullable Output<Map<String,StorageClass>> storageClasses;
 
+    /**
+     * @return The storage class used for persistent storage by the cluster.
+     * 
+     */
     public Optional<Output<Map<String,StorageClass>>> storageClasses() {
         return Optional.ofNullable(this.storageClasses);
     }
 
+    /**
+     * List of subnet IDs for the EKS cluster.
+     * 
+     */
     @Import(name="subnetIds", required=true)
     private Output<List<String>> subnetIds;
 
+    /**
+     * @return List of subnet IDs for the EKS cluster.
+     * 
+     */
     public Output<List<String>> subnetIds() {
         return this.subnetIds;
     }
 
+    /**
+     * A map of tags assigned to the EKS cluster.
+     * 
+     */
     @Import(name="tags")
     private @Nullable Output<Map<String,String>> tags;
 
+    /**
+     * @return A map of tags assigned to the EKS cluster.
+     * 
+     */
     public Optional<Output<Map<String,String>>> tags() {
         return Optional.ofNullable(this.tags);
     }
 
+    /**
+     * The VPC CNI for the cluster.
+     * 
+     */
     @Import(name="vpcCni")
     private @Nullable Output<VpcCni> vpcCni;
 
+    /**
+     * @return The VPC CNI for the cluster.
+     * 
+     */
     public Optional<Output<VpcCni>> vpcCni() {
         return Optional.ofNullable(this.vpcCni);
     }
 
+    /**
+     * ID of the cluster&#39;s VPC.
+     * 
+     */
     @Import(name="vpcId", required=true)
     private Output<String> vpcId;
 
+    /**
+     * @return ID of the cluster&#39;s VPC.
+     * 
+     */
     public Output<String> vpcId() {
         return this.vpcId;
     }
@@ -298,60 +402,138 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
             return encryptionConfig(Output.of(encryptionConfig));
         }
 
+        /**
+         * @param endpoint The EKS cluster&#39;s Kubernetes API server endpoint.
+         * 
+         * @return builder
+         * 
+         */
         public Builder endpoint(Output<String> endpoint) {
             $.endpoint = endpoint;
             return this;
         }
 
+        /**
+         * @param endpoint The EKS cluster&#39;s Kubernetes API server endpoint.
+         * 
+         * @return builder
+         * 
+         */
         public Builder endpoint(String endpoint) {
             return endpoint(Output.of(endpoint));
         }
 
+        /**
+         * @param fargateProfile The Fargate profile used to manage which pods run on Fargate.
+         * 
+         * @return builder
+         * 
+         */
         public Builder fargateProfile(@Nullable Output<FargateProfile> fargateProfile) {
             $.fargateProfile = fargateProfile;
             return this;
         }
 
+        /**
+         * @param fargateProfile The Fargate profile used to manage which pods run on Fargate.
+         * 
+         * @return builder
+         * 
+         */
         public Builder fargateProfile(FargateProfile fargateProfile) {
             return fargateProfile(Output.of(fargateProfile));
         }
 
+        /**
+         * @param instanceRoles The IAM instance roles for the cluster&#39;s nodes.
+         * 
+         * @return builder
+         * 
+         */
         public Builder instanceRoles(Output<List<Role>> instanceRoles) {
             $.instanceRoles = instanceRoles;
             return this;
         }
 
+        /**
+         * @param instanceRoles The IAM instance roles for the cluster&#39;s nodes.
+         * 
+         * @return builder
+         * 
+         */
         public Builder instanceRoles(List<Role> instanceRoles) {
             return instanceRoles(Output.of(instanceRoles));
         }
 
+        /**
+         * @param instanceRoles The IAM instance roles for the cluster&#39;s nodes.
+         * 
+         * @return builder
+         * 
+         */
         public Builder instanceRoles(Role... instanceRoles) {
             return instanceRoles(List.of(instanceRoles));
         }
 
+        /**
+         * @param kubeconfig The kubeconfig file for the cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder kubeconfig(@Nullable Output<Object> kubeconfig) {
             $.kubeconfig = kubeconfig;
             return this;
         }
 
+        /**
+         * @param kubeconfig The kubeconfig file for the cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder kubeconfig(Object kubeconfig) {
             return kubeconfig(Output.of(kubeconfig));
         }
 
+        /**
+         * @param nodeGroupOptions The cluster&#39;s node group options.
+         * 
+         * @return builder
+         * 
+         */
         public Builder nodeGroupOptions(Output<ClusterNodeGroupOptionsArgs> nodeGroupOptions) {
             $.nodeGroupOptions = nodeGroupOptions;
             return this;
         }
 
+        /**
+         * @param nodeGroupOptions The cluster&#39;s node group options.
+         * 
+         * @return builder
+         * 
+         */
         public Builder nodeGroupOptions(ClusterNodeGroupOptionsArgs nodeGroupOptions) {
             return nodeGroupOptions(Output.of(nodeGroupOptions));
         }
 
+        /**
+         * @param nodeSecurityGroupTags Tags attached to the security groups associated with the cluster&#39;s worker nodes.
+         * 
+         * @return builder
+         * 
+         */
         public Builder nodeSecurityGroupTags(@Nullable Output<Map<String,String>> nodeSecurityGroupTags) {
             $.nodeSecurityGroupTags = nodeSecurityGroupTags;
             return this;
         }
 
+        /**
+         * @param nodeSecurityGroupTags Tags attached to the security groups associated with the cluster&#39;s worker nodes.
+         * 
+         * @return builder
+         * 
+         */
         public Builder nodeSecurityGroupTags(Map<String,String> nodeSecurityGroupTags) {
             return nodeSecurityGroupTags(Output.of(nodeSecurityGroupTags));
         }
@@ -365,15 +547,33 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
             return oidcProvider(Output.of(oidcProvider));
         }
 
+        /**
+         * @param privateSubnetIds List of subnet IDs for the private subnets.
+         * 
+         * @return builder
+         * 
+         */
         public Builder privateSubnetIds(@Nullable Output<List<String>> privateSubnetIds) {
             $.privateSubnetIds = privateSubnetIds;
             return this;
         }
 
+        /**
+         * @param privateSubnetIds List of subnet IDs for the private subnets.
+         * 
+         * @return builder
+         * 
+         */
         public Builder privateSubnetIds(List<String> privateSubnetIds) {
             return privateSubnetIds(Output.of(privateSubnetIds));
         }
 
+        /**
+         * @param privateSubnetIds List of subnet IDs for the private subnets.
+         * 
+         * @return builder
+         * 
+         */
         public Builder privateSubnetIds(String... privateSubnetIds) {
             return privateSubnetIds(List.of(privateSubnetIds));
         }
@@ -387,64 +587,148 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
             return provider(Output.of(provider));
         }
 
+        /**
+         * @param publicSubnetIds List of subnet IDs for the public subnets.
+         * 
+         * @return builder
+         * 
+         */
         public Builder publicSubnetIds(@Nullable Output<List<String>> publicSubnetIds) {
             $.publicSubnetIds = publicSubnetIds;
             return this;
         }
 
+        /**
+         * @param publicSubnetIds List of subnet IDs for the public subnets.
+         * 
+         * @return builder
+         * 
+         */
         public Builder publicSubnetIds(List<String> publicSubnetIds) {
             return publicSubnetIds(Output.of(publicSubnetIds));
         }
 
+        /**
+         * @param publicSubnetIds List of subnet IDs for the public subnets.
+         * 
+         * @return builder
+         * 
+         */
         public Builder publicSubnetIds(String... publicSubnetIds) {
             return publicSubnetIds(List.of(publicSubnetIds));
         }
 
+        /**
+         * @param storageClasses The storage class used for persistent storage by the cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder storageClasses(@Nullable Output<Map<String,StorageClass>> storageClasses) {
             $.storageClasses = storageClasses;
             return this;
         }
 
+        /**
+         * @param storageClasses The storage class used for persistent storage by the cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder storageClasses(Map<String,StorageClass> storageClasses) {
             return storageClasses(Output.of(storageClasses));
         }
 
+        /**
+         * @param subnetIds List of subnet IDs for the EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder subnetIds(Output<List<String>> subnetIds) {
             $.subnetIds = subnetIds;
             return this;
         }
 
+        /**
+         * @param subnetIds List of subnet IDs for the EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder subnetIds(List<String> subnetIds) {
             return subnetIds(Output.of(subnetIds));
         }
 
+        /**
+         * @param subnetIds List of subnet IDs for the EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder subnetIds(String... subnetIds) {
             return subnetIds(List.of(subnetIds));
         }
 
+        /**
+         * @param tags A map of tags assigned to the EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder tags(@Nullable Output<Map<String,String>> tags) {
             $.tags = tags;
             return this;
         }
 
+        /**
+         * @param tags A map of tags assigned to the EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder tags(Map<String,String> tags) {
             return tags(Output.of(tags));
         }
 
+        /**
+         * @param vpcCni The VPC CNI for the cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder vpcCni(@Nullable Output<VpcCni> vpcCni) {
             $.vpcCni = vpcCni;
             return this;
         }
 
+        /**
+         * @param vpcCni The VPC CNI for the cluster.
+         * 
+         * @return builder
+         * 
+         */
         public Builder vpcCni(VpcCni vpcCni) {
             return vpcCni(Output.of(vpcCni));
         }
 
+        /**
+         * @param vpcId ID of the cluster&#39;s VPC.
+         * 
+         * @return builder
+         * 
+         */
         public Builder vpcId(Output<String> vpcId) {
             $.vpcId = vpcId;
             return this;
         }
 
+        /**
+         * @param vpcId ID of the cluster&#39;s VPC.
+         * 
+         * @return builder
+         * 
+         */
         public Builder vpcId(String vpcId) {
             return vpcId(Output.of(vpcId));
         }
