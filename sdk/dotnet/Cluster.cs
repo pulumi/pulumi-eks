@@ -11,6 +11,32 @@ namespace Pulumi.Eks
 {
     /// <summary>
     /// Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
+    /// 
+    /// ## Example Usage
+    /// 
+    /// ### Provisioning a New EKS Cluster
+    /// 
+    /// &lt;!--Start PulumiCodeChooser --&gt;
+    /// 
+    /// ```csharp
+    ///  using System.Collections.Generic;
+    ///  using Pulumi;
+    ///  using Eks = Pulumi.Eks;
+    ///  
+    ///  return await Deployment.RunAsync(() =&gt;
+    ///  {
+    ///  	// Create an EKS cluster with the default configuration.
+    /// 	var cluster = new Eks.Cluster("cluster");
+    ///  
+    ///  	return new Dictionary&lt;string, object?&gt;
+    ///  	{
+    ///  		// Export the cluster's kubeconfig.
+    ///  		["kubeconfig"] = cluster.Kubeconfig,
+    ///  	};
+    ///  });
+    /// 
+    /// ```
+    /// &lt;!--End PulumiCodeChooser --&gt;
     /// </summary>
     [EksResourceType("eks:index:Cluster")]
     public partial class Cluster : global::Pulumi.ComponentResource
@@ -645,6 +671,9 @@ namespace Pulumi.Eks
     [OutputType]
     internal sealed class ClusterGetKubeconfigResult
     {
+        /// <summary>
+        /// The kubeconfig for the cluster.
+        /// </summary>
         public readonly string Result;
 
         [OutputConstructor]

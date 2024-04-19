@@ -1085,6 +1085,24 @@ class Cluster(pulumi.ComponentResource):
         """
         Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
 
+        ## Example Usage
+
+        ### Provisioning a New EKS Cluster
+
+        <!--Start PulumiCodeChooser -->
+
+        ```python
+         import pulumi
+         import pulumi_eks as eks
+         
+         # Create an EKS cluster with the default configuration.
+         cluster = eks.Cluster("cluster")
+
+         # Export the cluster's kubeconfig.
+         pulumi.export("kubeconfig", cluster.kubeconfig)
+        ```
+        <!--End PulumiCodeChooser -->
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
@@ -1262,6 +1280,24 @@ class Cluster(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
+
+        ## Example Usage
+
+        ### Provisioning a New EKS Cluster
+
+        <!--Start PulumiCodeChooser -->
+
+        ```python
+         import pulumi
+         import pulumi_eks as eks
+         
+         # Create an EKS cluster with the default configuration.
+         cluster = eks.Cluster("cluster")
+
+         # Export the cluster's kubeconfig.
+         pulumi.export("kubeconfig", cluster.kubeconfig)
+        ```
+        <!--End PulumiCodeChooser -->
 
         :param str resource_name: The name of the resource.
         :param ClusterArgs args: The arguments to use to populate this resource's properties.
@@ -1490,6 +1526,9 @@ class Cluster(pulumi.ComponentResource):
         @property
         @pulumi.getter
         def result(self) -> str:
+            """
+            The kubeconfig for the cluster.
+            """
             return pulumi.get(self, "result")
 
     def get_kubeconfig(__self__, *,

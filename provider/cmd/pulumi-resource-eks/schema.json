@@ -209,28 +209,34 @@
                     "$ref": "/aws/v6.5.0/schema.json#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig"
                 },
                 "endpoint": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The EKS cluster's Kubernetes API server endpoint."
                 },
                 "fargateProfile": {
-                    "$ref": "/aws/v6.5.0/schema.json#/resources/aws:eks%2FfargateProfile:FargateProfile"
+                    "$ref": "/aws/v6.5.0/schema.json#/resources/aws:eks%2FfargateProfile:FargateProfile",
+                    "description": "The Fargate profile used to manage which pods run on Fargate."
                 },
                 "instanceRoles": {
                     "type": "array",
                     "items": {
                         "$ref": "/aws/v6.5.0/schema.json#/resources/aws:iam%2Frole:Role"
-                    }
+                    },
+                    "description": "The IAM instance roles for the cluster's nodes."
                 },
                 "kubeconfig": {
-                    "$ref": "pulumi.json#/Any"
+                    "$ref": "pulumi.json#/Any",
+                    "description": "The kubeconfig file for the cluster."
                 },
                 "nodeGroupOptions": {
-                    "$ref": "#/types/eks:index:ClusterNodeGroupOptions"
+                    "$ref": "#/types/eks:index:ClusterNodeGroupOptions",
+                    "description": "The cluster's node group options."
                 },
                 "nodeSecurityGroupTags": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
-                    }
+                    },
+                    "description": "Tags attached to the security groups associated with the cluster's worker nodes."
                 },
                 "oidcProvider": {
                     "$ref": "/aws/v6.5.0/schema.json#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider"
@@ -239,7 +245,8 @@
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "description": "List of subnet IDs for the private subnets."
                 },
                 "provider": {
                     "$ref": "/kubernetes/v4.4.0/schema.json#/provider"
@@ -248,31 +255,37 @@
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "description": "List of subnet IDs for the public subnets."
                 },
                 "storageClasses": {
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "/kubernetes/v4.4.0/schema.json#/resources/kubernetes:storage.k8s.io%2Fv1:StorageClass"
-                    }
+                    },
+                    "description": "The storage class used for persistent storage by the cluster."
                 },
                 "subnetIds": {
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "description": "List of subnet IDs for the EKS cluster."
                 },
                 "tags": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
-                    }
+                    },
+                    "description": "A map of tags assigned to the EKS cluster."
                 },
                 "vpcCni": {
-                    "$ref": "#/resources/eks:index:VpcCni"
+                    "$ref": "#/resources/eks:index:VpcCni",
+                    "description": "The VPC CNI for the cluster."
                 },
                 "vpcId": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "ID of the cluster's VPC."
                 }
             },
             "type": "object",
@@ -604,7 +617,7 @@
     "provider": {},
     "resources": {
         "eks:index:Cluster": {
-            "description": "Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.",
+            "description": "Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.\n\n## Example Usage\n\n### Provisioning a New EKS Cluster\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as eks from \"@pulumi/eks\";\n\n// Create an EKS cluster with the default configuration.\nconst cluster = new eks.Cluster(\"cluster\", {});\n\n// Export the cluster's kubeconfig.\nexport const kubeconfig = cluster.kubeconfig;\n ```\n\n```python\n import pulumi\n import pulumi_eks as eks\n \n # Create an EKS cluster with the default configuration.\n cluster = eks.Cluster(\"cluster\")\n\n # Export the cluster's kubeconfig.\n pulumi.export(\"kubeconfig\", cluster.kubeconfig)\n ```\n\n```go\n package main\n \n import (\n \t\"github.com/pulumi/pulumi-eks/sdk/go/eks\"\n \t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n )\n\nfunc main() {\n \tpulumi.Run(func(ctx *pulumi.Context) error {\n \t\t// Create an EKS cluster with the default configuration.\n\t\tcluster, err := eks.NewCluster(ctx, \"cluster\", nil)\n \t\tif err != nil {\n \t\t\treturn err\n \t\t}\n \t\t// Export the cluster's kubeconfig.\n \t\tctx.Export(\"kubeconfig\", cluster.Kubeconfig)\n\t\treturn nil\n \t})\n }\n ```\n\n```csharp\n using System.Collections.Generic;\n using Pulumi;\n using Eks = Pulumi.Eks;\n \n return await Deployment.RunAsync(() =\u003e\n {\n \t// Create an EKS cluster with the default configuration.\n\tvar cluster = new Eks.Cluster(\"cluster\");\n \n \treturn new Dictionary\u003cstring, object?\u003e\n \t{\n \t\t// Export the cluster's kubeconfig.\n \t\t[\"kubeconfig\"] = cluster.Kubeconfig,\n \t};\n });\n\n```\n\n```java\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.eks.Cluster;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n\tpublic static void main(String[] args) {\n\t\tPulumi.run(App::stack);\n\t}\n\n\t public static void stack(Context ctx) {\n \t\t// Create an EKS cluster with the default configuration.\n \t\tvar cluster = new Cluster(\"cluster\");\n \n \t\t// Export the cluster's kubeconfig.\n\t\tctx.export(\"kubeconfig\", cluster.kubeconfig());\n\t}\n }\n```\n\n```yaml\nresources:\n# Create an EKS cluster with the default configuration.\ncluster:\ntype: eks:Cluster\noutputs:\n# Export the cluster's kubeconfig.\nkubeconfig: ${cluster.kubeconfig}\n\n```\n\u003c!--End PulumiCodeChooser --\u003e",
             "properties": {
                 "awsProvider": {
                     "$ref": "/aws/v6.5.0/schema.json#/provider",
@@ -1607,7 +1620,8 @@
             "outputs": {
                 "properties": {
                     "result": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The kubeconfig for the cluster."
                     }
                 },
                 "required": [

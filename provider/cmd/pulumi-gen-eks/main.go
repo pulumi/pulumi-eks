@@ -136,7 +136,8 @@ func generateSchema() schema.PackageSpec {
 				Outputs: &schema.ObjectTypeSpec{
 					Properties: map[string]schema.PropertySpec{
 						"result": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The kubeconfig for the cluster.",
 						},
 					},
 					Required: []string{"result"},
@@ -149,9 +150,33 @@ func generateSchema() schema.PackageSpec {
 				// TODO: method: createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup
 				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
-					Description: "Cluster is a component that wraps the AWS and Kubernetes resources necessary to " +
-						"run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional " +
-						"deployment of the Kubernetes Dashboard.",
+					Description: "Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.\n\n" +
+						"## Example Usage\n\n### Provisioning a New EKS Cluster\n\n" +
+						"<!--Start PulumiCodeChooser -->\n" +
+						// TS example
+						"```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as eks from \"@pulumi/eks\";\n\n" +
+						"// Create an EKS cluster with the default configuration.\nconst cluster = new eks.Cluster(\"cluster\", {});\n\n" +
+						"// Export the cluster's kubeconfig.\nexport const kubeconfig = cluster.kubeconfig;\n ```\n\n" +
+						// Python example
+						"```python\n import pulumi\n import pulumi_eks as eks\n \n # Create an EKS cluster with the default configuration.\n cluster = eks.Cluster(\"cluster\")\n\n " +
+						"# Export the cluster's kubeconfig.\n pulumi.export(\"kubeconfig\", cluster.kubeconfig)\n ```\n\n" +
+						// Go example
+						"```go\n package main\n \n import (\n \t\"github.com/pulumi/pulumi-eks/sdk/go/eks\"\n \t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n )\n\n" +
+						"func main() {\n \tpulumi.Run(func(ctx *pulumi.Context) error {\n \t\t// Create an EKS cluster with the default configuration.\n" +
+						"\t\tcluster, err := eks.NewCluster(ctx, \"cluster\", nil)\n \t\tif err != nil {\n \t\t\treturn err\n \t\t}\n \t\t// Export the cluster's kubeconfig.\n \t\tctx.Export(\"kubeconfig\", cluster.Kubeconfig)\n" +
+						"\t\treturn nil\n \t})\n }\n ```\n\n" +
+						// C# example
+						"```csharp\n using System.Collections.Generic;\n using Pulumi;\n using Eks = Pulumi.Eks;\n \n return await Deployment.RunAsync(() =>\n {\n \t// Create an EKS cluster with the default configuration.\n" +
+						"\tvar cluster = new Eks.Cluster(\"cluster\");\n \n \treturn new Dictionary<string, object?>\n \t{\n \t\t// Export the cluster's kubeconfig.\n \t\t[\"kubeconfig\"] = cluster.Kubeconfig,\n \t};\n });\n\n```\n\n" +
+						// Java example
+						"```java\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.eks.Cluster;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\n" +
+						"import java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n\tpublic static void main(String[] args) {\n\t\tPulumi.run(App::stack);\n\t}\n\n" +
+						"\t public static void stack(Context ctx) {\n \t\t// Create an EKS cluster with the default configuration.\n \t\tvar cluster = new Cluster(\"cluster\");\n \n \t\t// Export the cluster's kubeconfig.\n" +
+						"\t\tctx.export(\"kubeconfig\", cluster.kubeconfig());\n\t}\n }\n```\n\n" +
+						// YAML example
+						"```yaml\nresources:\n# Create an EKS cluster with the default configuration.\ncluster:\ntype: eks:Cluster\noutputs:\n# Export the cluster's kubeconfig.\n" +
+						"kubeconfig: ${cluster.kubeconfig}\n\n```\n" +
+						"<!--End PulumiCodeChooser -->",
 					Properties: map[string]schema.PropertySpec{
 						"kubeconfig": {
 							TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
@@ -948,16 +973,19 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster")},
 						},
 						"vpcId": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "ID of the cluster's VPC.",
 						},
 						"subnetIds": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
 								Items: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "List of subnet IDs for the EKS cluster.",
 						},
 						"endpoint": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The EKS cluster's Kubernetes API server endpoint.",
 						},
 						"clusterSecurityGroup": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
@@ -970,9 +998,11 @@ func generateSchema() schema.PackageSpec {
 								Type:  "array",
 								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
 							},
+							Description: "The IAM instance roles for the cluster's nodes.",
 						},
 						"nodeGroupOptions": {
-							TypeSpec: schema.TypeSpec{Ref: "#/types/eks:index:ClusterNodeGroupOptions"},
+							TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:ClusterNodeGroupOptions"},
+							Description: "The cluster's node group options.",
 						},
 						"awsProvider": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
@@ -982,12 +1012,14 @@ func generateSchema() schema.PackageSpec {
 								Type:  "array",
 								Items: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "List of subnet IDs for the public subnets.",
 						},
 						"privateSubnetIds": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
 								Items: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "List of subnet IDs for the private subnets.",
 						},
 						"eksNodeAccess": {
 							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:core%2Fv1:ConfigMap")},
@@ -997,27 +1029,33 @@ func generateSchema() schema.PackageSpec {
 								Type:                 "object",
 								AdditionalProperties: &schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:storage.k8s.io%2Fv1:StorageClass")},
 							},
+							Description: "The storage class used for persistent storage by the cluster.",
 						},
 						"kubeconfig": {
-							TypeSpec: schema.TypeSpec{Ref: "pulumi.json#/Any"},
+							TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
+							Description: "The kubeconfig file for the cluster.",
 						},
 						"vpcCni": {
-							TypeSpec: schema.TypeSpec{Ref: "#/resources/eks:index:VpcCni"},
+							TypeSpec:    schema.TypeSpec{Ref: "#/resources/eks:index:VpcCni"},
+							Description: "The VPC CNI for the cluster.",
 						},
 						"tags": {
 							TypeSpec: schema.TypeSpec{
 								Type:                 "object",
 								AdditionalProperties: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "A map of tags assigned to the EKS cluster.",
 						},
 						"nodeSecurityGroupTags": {
 							TypeSpec: schema.TypeSpec{
 								Type:                 "object",
 								AdditionalProperties: &schema.TypeSpec{Type: "string"},
 							},
+							Description: "Tags attached to the security groups associated with the cluster's worker nodes.",
 						},
 						"fargateProfile": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FfargateProfile:FargateProfile")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FfargateProfile:FargateProfile")},
+							Description: "The Fargate profile used to manage which pods run on Fargate.",
 						},
 						"oidcProvider": {
 							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider")},

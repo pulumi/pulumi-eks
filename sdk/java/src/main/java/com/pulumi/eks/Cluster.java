@@ -24,6 +24,40 @@ import javax.annotation.Nullable;
 /**
  * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
  * 
+ * ## Example Usage
+ * 
+ * ### Provisioning a New EKS Cluster
+ * 
+ * &lt;!--Start PulumiCodeChooser --&gt;
+ * 
+ * ```java
+ * import com.pulumi.Context;
+ * import com.pulumi.Pulumi;
+ * import com.pulumi.core.Output;
+ * import com.pulumi.eks.Cluster;
+ * import java.util.List;
+ * import java.util.ArrayList;
+ * import java.util.Map;
+ * import java.io.File;
+ * import java.nio.file.Files;
+ * import java.nio.file.Paths;
+ * 
+ * public class App {
+ * 	public static void main(String[] args) {
+ * 		Pulumi.run(App::stack);
+ * 	}
+ * 
+ * 	 public static void stack(Context ctx) {
+ *  		// Create an EKS cluster with the default configuration.
+ *  		var cluster = new Cluster(&#34;cluster&#34;);
+ *  
+ *  		// Export the cluster&#39;s kubeconfig.
+ * 		ctx.export(&#34;kubeconfig&#34;, cluster.kubeconfig());
+ * 	}
+ *  }
+ * ```
+ * &lt;!--End PulumiCodeChooser --&gt;
+ * 
  */
 @ResourceType(type="eks:index:Cluster")
 public class Cluster extends com.pulumi.resources.ComponentResource {
