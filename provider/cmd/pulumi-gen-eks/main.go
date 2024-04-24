@@ -754,8 +754,9 @@ func generateSchema() schema.PackageSpec {
 							"will not be managed.",
 					},
 					"launchTemplate": {
-						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate")},
-						Description: "Launch Template settings.",
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate")},
+						Description: "Launch Template settings.\n\n" +
+							"Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.",
 					},
 					"nodeGroupName": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -829,6 +830,30 @@ func generateSchema() schema.PackageSpec {
 					},
 					"version": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
+					},
+					"kubeletExtraArgs": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "string",
+							Plain: true,
+						},
+						Description: "Extra args to pass to the Kubelet. Corresponds to the options passed in the " +
+							"`--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, " +
+							"'--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will " +
+							"be applied to this list (using `--node-labels` and `--register-with-taints` " +
+							"respectively) after to the explicit `kubeletExtraArgs`.\n\n" +
+							"Note that this field conflicts with `launchTemplate`.",
+					},
+					"bootstrapExtraArgs": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "string",
+							Plain: true,
+						},
+						Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on " +
+							"available options, see: " +
+							"https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. " +
+							"Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` " +
+							"flags are included automatically based on other configuration parameters.\n\n" +
+							"Note that this field conflicts with `launchTemplate`.",
 					},
 				},
 				RequiredInputs: []string{"cluster"},
