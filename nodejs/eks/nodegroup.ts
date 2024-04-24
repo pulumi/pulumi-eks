@@ -222,7 +222,7 @@ export interface NodeGroupBaseOptions {
     kubeletExtraArgs?: string;
 
     /**
-     * Additional args to pass directly to `/etc/eks/bootstrap.sh`.  Fror details on available options, see:
+     * Additional args to pass directly to `/etc/eks/bootstrap.sh`.  For details on available options, see:
      * https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh.  Note that the `--apiserver-endpoint`,
      * `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration
      * parameters.
@@ -1438,6 +1438,24 @@ export type ManagedNodeGroupOptions = Omit<
     clusterName?: pulumi.Output<string>;
 
     /**
+     * Extra args to pass to the Kubelet.  Corresponds to the options passed in the `--kubeletExtraArgs` flag to
+     * `/etc/eks/bootstrap.sh`.  For example, '--port=10251 --address=0.0.0.0'.
+     * 
+     * Note that this field conflicts with `launchTemplate`.
+     */
+    kubeletExtraArgs?: string;
+
+    /**
+     * Additional args to pass directly to `/etc/eks/bootstrap.sh`.  For details on available options, see:
+     * https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh.  Note that the `--apiserver-endpoint`,
+     * `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration
+     * parameters.
+     * 
+     * Note that this field conflicts with `launchTemplate`.
+     */
+    bootstrapExtraArgs?: string;
+
+    /**
      * Make nodeGroupName optional, since the NodeGroup resource name can be
      * used as a default.
      */
@@ -1657,6 +1675,20 @@ function createManagedNodeGroupInternal(
         delete (<any>nodeGroupArgs).cluster;
     }
 
+    // Create a custom launch template for the managed node group if the user specifies either kubeletExtraArgs or bootstrapExtraArgs.
+    // If the user sepcifies a custom LaunchTemplate, we throw an error and suggest that the user include this in the launch template that they are providing.
+    // If neither of these are provided, we can use the default launch template for managed node groups.
+    if (args.launchTemplate && (args.kubeletExtraArgs || args.bootstrapExtraArgs)) {
+        throw new Error(
+            "If you provide a custom launch template, you cannot provide kubeletExtraArgs or bootstrapExtraArgs. Please include these in the launch template that you are providing.",
+        );
+    }
+
+    let launchTemplate: aws.ec2.LaunchTemplate | undefined;
+    if (args.kubeletExtraArgs || args.bootstrapExtraArgs) {
+        launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
+    }
+
     // Make the aws-auth configmap a dependency of the node group.
     const ngDeps = core.apply((c) => (c.eksNodeAccess !== undefined ? [c.eksNodeAccess] : []));
     // Create the managed node group.
@@ -1677,11 +1709,55 @@ function createManagedNodeGroupInternal(
                 };
             }),
             subnetIds: subnetIds,
+            launchTemplate: launchTemplate ? { id: launchTemplate.id, version: "$Latest"} : undefined,
         },
         { parent: parent, dependsOn: ngDeps, provider },
     );
 
     return nodeGroup;
+}
+
+/**
+ * Create a custom launch template for the managed node group if the user specifies either kubeletExtraArgs or bootstrapExtraArgs.
+ */
+function createMNGCustomLaunchTemplate(
+    name: string,
+    args: Omit<ManagedNodeGroupOptions, "cluster">,
+    core: pulumi.Output<pulumi.Unwrap<CoreData>>,
+    parent: pulumi.Resource,
+    provider?: pulumi.ProviderResource,
+): aws.ec2.LaunchTemplate {
+    const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
+    let bootstrapExtraArgs = args.bootstrapExtraArgs ? " " + args.bootstrapExtraArgs : "";
+
+    if (kubeletExtraArgs.length === 1) {
+        // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
+        bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
+    } else if (kubeletExtraArgs.length > 1) {
+        bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
+    }
+
+    const userdata = pulumi.all([core.cluster.name, core.cluster.endpoint, core.cluster.certificateAuthority.data, args.clusterName]).apply(([clusterName, clusterEndpoint, clusterCertAuthority, argsClusterName]) => {
+        return `#!/bin/bash
+
+        /etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${
+            clusterCertAuthority
+        }" "${argsClusterName || clusterName}"${bootstrapExtraArgs}
+        `;
+    });
+
+    // Encode the user data as base64.
+    const encodedUserData = pulumi.output(userdata).apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
+
+    const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
+        `${name}-launchTemplate`,
+        {
+            userData: encodedUserData,
+        },
+        { parent, provider },
+    );
+
+    return nodeLaunchTemplate;
 }
 
 /**
