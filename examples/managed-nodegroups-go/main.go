@@ -95,8 +95,9 @@ func main() {
 		_, err = eks.NewManagedNodeGroup(ctx,
 			"aws-managed-ng0",
 			&eks.ManagedNodeGroupArgs{
-				Cluster:  cluster,
-				NodeRole: role0,
+				Cluster:          cluster,
+				NodeRole:         role0,
+				KubeletExtraArgs: pulumi.StringRef("--max-pods=50"),
 			})
 		if err != nil {
 			return err
