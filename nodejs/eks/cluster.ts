@@ -203,7 +203,7 @@ export function generateKubeconfig(
     certData?: pulumi.Input<string>,
     opts?: KubeconfigOptions,
 ) {
-    let args = ["eks", "get-token", "--cluster-name", clusterName];
+    let args = ["eks", "get-token", "--cluster-name", clusterName, "--output", "json"];
     const env: ExecEnvVar[] = [
         {
             name: "KUBERNETES_EXEC_INFO",
