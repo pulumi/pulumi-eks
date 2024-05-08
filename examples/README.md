@@ -17,4 +17,4 @@ clusters.
 1. [Import and modify the AWS-created default cluster security group](./modify-default-eks-sg)
 1. [Cluster with Fargate Managed Nodes](./fargate)
 1. [Cluster with an OIDC provider and Service Accounts for Pod IAM](./oidc-iam-sa)
-1. [Migrating Node Groups with Zero Downtime](https://www.pulumi.com/docs/reference/tutorials/kubernetes/tutorial-eks-migrate-nodegroups/)
+1. [Migrating Node Groups with Zero Downtime](https://www.pulumi.com/registry/packages/kubernetes/how-to-guides/eks-migrate-nodegroups/)
