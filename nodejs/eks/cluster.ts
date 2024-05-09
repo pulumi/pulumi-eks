@@ -611,7 +611,7 @@ export function createCore(
     // cases where it is not yet available immediately after provisioning - possibly due to DNS
     // propagation delay or other non-deterministic factors.
     const endpoint = eksCluster.endpoint.apply(async (clusterEndpoint) => {
-        if (!pulumi.runtime.isDryRun()) {
+        if (!pulumi.runtime.isDryRun() && args.endpointPublicAccess) {
             // For up to 300 seconds, try to contact the API cluster healthz
             // endpoint, and verify that it is reachable.
             const healthz = `${clusterEndpoint}/healthz`;
