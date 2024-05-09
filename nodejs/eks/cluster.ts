@@ -1512,7 +1512,7 @@ export interface ClusterOptions {
      * `pulumi config set aws:profile <profileName>`
      *
      * See for more details:
-     * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+     * - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
      * - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
      * - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
      * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html

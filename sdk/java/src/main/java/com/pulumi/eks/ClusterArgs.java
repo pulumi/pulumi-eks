@@ -88,7 +88,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      *  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
      *  - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
      *  - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-     *  - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+     *  - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
      * 
      */
     @Import(name="createOidcProvider")
@@ -103,7 +103,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      *  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
      *  - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
      *  - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-     *  - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+     *  - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
      * 
      */
     public Optional<Output<Boolean>> createOidcProvider() {
@@ -675,7 +675,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      *   `pulumi config set aws:profile &lt;profileName&gt;`
      * 
      * See for more details:
-     * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+     * - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
      * - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
      * - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
      * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
@@ -694,7 +694,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      *   `pulumi config set aws:profile &lt;profileName&gt;`
      * 
      * See for more details:
-     * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+     * - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
      * - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
      * - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
      * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
@@ -1133,7 +1133,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          *  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
          *  - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
          *  - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-         *  - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+         *  - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
          * 
          * @return builder
          * 
@@ -1152,7 +1152,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          *  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
          *  - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
          *  - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-         *  - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+         *  - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
          * 
          * @return builder
          * 
@@ -1954,7 +1954,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          *   `pulumi config set aws:profile &lt;profileName&gt;`
          * 
          * See for more details:
-         * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+         * - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
          * - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
          * - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
          * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
@@ -1977,7 +1977,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          *   `pulumi config set aws:profile &lt;profileName&gt;`
          * 
          * See for more details:
-         * - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+         * - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
          * - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
          * - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
          * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html

@@ -82,7 +82,7 @@ class ClusterArgs:
                 - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
                 - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
                 - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-                - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+                - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
         :param 'CreationRoleProviderArgs' creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
                
                Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
@@ -181,7 +181,7 @@ class ClusterArgs:
                `pulumi config set aws:profile <profileName>`
                
                See for more details:
-               - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+               - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
                - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
                - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
                - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
@@ -383,7 +383,7 @@ class ClusterArgs:
          - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
          - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
          - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-         - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+         - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
         """
         return pulumi.get(self, "create_oidc_provider")
 
@@ -812,7 +812,7 @@ class ClusterArgs:
         `pulumi config set aws:profile <profileName>`
 
         See for more details:
-        - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+        - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
         - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
         - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
         - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
@@ -1118,7 +1118,7 @@ class Cluster(pulumi.ComponentResource):
                 - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
                 - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
                 - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-                - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+                - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
         :param pulumi.InputType['CreationRoleProviderArgs'] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
                
                Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
@@ -1217,7 +1217,7 @@ class Cluster(pulumi.ComponentResource):
                `pulumi config set aws:profile <profileName>`
                
                See for more details:
-               - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+               - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
                - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
                - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
                - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
