@@ -105,7 +105,7 @@ type clusterArgs struct {
 	//  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
 	//  - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
 	//  - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-	//  - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+	//  - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
 	CreateOidcProvider *bool `pulumi:"createOidcProvider"`
 	// The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
 	//
@@ -234,7 +234,7 @@ type clusterArgs struct {
 	//   `pulumi config set aws:profile <profileName>`
 	//
 	// See for more details:
-	// - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+	// - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
 	// - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
 	// - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
 	// - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
@@ -323,7 +323,7 @@ type ClusterArgs struct {
 	//  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
 	//  - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
 	//  - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
-	//  - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts
+	//  - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
 	CreateOidcProvider pulumi.BoolPtrInput
 	// The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
 	//
@@ -452,7 +452,7 @@ type ClusterArgs struct {
 	//   `pulumi config set aws:profile <profileName>`
 	//
 	// See for more details:
-	// - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider
+	// - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
 	// - https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/
 	// - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
 	// - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html

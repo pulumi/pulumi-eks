@@ -572,7 +572,7 @@ func generateSchema() schema.PackageSpec {
 							" - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html\n" +
 							" - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html\n" +
 							" - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/\n" +
-							" - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts",
+							" - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts",
 					},
 					"name": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -606,7 +606,7 @@ func generateSchema() schema.PackageSpec {
 							"- Using a named profile configured on the AWS provider via:\n" +
 							"`pulumi config set aws:profile <profileName>`\n\n" +
 							"See for more details:\n" +
-							"- https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider\n" +
+							"- https://www.pulumi.com/registry/packages/aws/api-docs/provider/\n" +
 							"- https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/\n" +
 							"- https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration\n" +
 							"- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html",

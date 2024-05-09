@@ -695,7 +695,7 @@
                 },
                 "createOidcProvider": {
                     "type": "boolean",
-                    "description": "Indicates whether an IAM OIDC Provider is created for the EKS cluster.\n\nThe OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.\n\nSee for more details:\n - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html\n - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html\n - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/\n - https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/eks/#enabling-iam-roles-for-service-accounts"
+                    "description": "Indicates whether an IAM OIDC Provider is created for the EKS cluster.\n\nThe OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.\n\nSee for more details:\n - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html\n - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html\n - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/\n - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts"
                 },
                 "creationRoleProvider": {
                     "$ref": "#/types/eks:index:CreationRoleProvider",
@@ -844,7 +844,7 @@
                 },
                 "providerCredentialOpts": {
                     "$ref": "#/types/eks:index:KubeconfigOptions",
-                    "description": "The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.\n\nThis is required for certain auth scenarios. For example:\n- Creating and using a new AWS provider instance, or\n- Setting the AWS_PROFILE environment variable, or\n- Using a named profile configured on the AWS provider via:\n`pulumi config set aws:profile \u003cprofileName\u003e`\n\nSee for more details:\n- https://www.pulumi.com/docs/reference/pkg/nodejs/pulumi/aws/#Provider\n- https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/\n- https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration\n- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html"
+                    "description": "The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.\n\nThis is required for certain auth scenarios. For example:\n- Creating and using a new AWS provider instance, or\n- Setting the AWS_PROFILE environment variable, or\n- Using a named profile configured on the AWS provider via:\n`pulumi config set aws:profile \u003cprofileName\u003e`\n\nSee for more details:\n- https://www.pulumi.com/registry/packages/aws/api-docs/provider/\n- https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/\n- https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration\n- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html"
                 },
                 "proxy": {
                     "type": "string",
