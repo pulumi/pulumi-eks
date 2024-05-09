@@ -1709,7 +1709,7 @@ function createManagedNodeGroupInternal(
                 };
             }),
             subnetIds: subnetIds,
-            launchTemplate: launchTemplate ? { id: launchTemplate.id, version: "$Latest"} : undefined,
+            launchTemplate: launchTemplate ? { id: launchTemplate.id, version: launchTemplate.latestVersion.apply((version) => {return `${version}`})} : undefined,
         },
         { parent: parent, dependsOn: ngDeps, provider },
     );
