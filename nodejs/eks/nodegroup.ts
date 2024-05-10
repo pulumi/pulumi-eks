@@ -1457,6 +1457,16 @@ export type ManagedNodeGroupOptions = Omit<
     bootstrapExtraArgs?: string;
 
     /**
+     * Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance
+     * metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
+     * Defaults to `false`.
+     * 
+     * Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should
+     * enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
+     */
+    enableIMDSv2?: boolean;
+
+    /**
      * Make nodeGroupName optional, since the NodeGroup resource name can be
      * used as a default.
      */
