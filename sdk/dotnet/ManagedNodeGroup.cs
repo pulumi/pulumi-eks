@@ -91,6 +91,15 @@ namespace Pulumi.Eks
         public Input<int>? DiskSize { get; set; }
 
         /// <summary>
+        /// Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
+        /// Defaults to `false`.
+        /// 
+        /// Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
+        /// </summary>
+        [Input("enableIMDSv2")]
+        public bool? EnableIMDSv2 { get; set; }
+
+        /// <summary>
         /// Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
         /// </summary>
         [Input("forceUpdateVersion")]
