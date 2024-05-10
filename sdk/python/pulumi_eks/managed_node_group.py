@@ -25,6 +25,7 @@ class ManagedNodeGroupArgs:
                  capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
+                 enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  kubelet_extra_args: Optional[str] = None,
@@ -51,6 +52,10 @@ class ManagedNodeGroupArgs:
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
+        :param bool enable_imd_sv2: Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
+               Defaults to `false`.
+               
+               Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
@@ -97,6 +102,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "cluster_name", cluster_name)
         if disk_size is not None:
             pulumi.set(__self__, "disk_size", disk_size)
+        if enable_imd_sv2 is not None:
+            pulumi.set(__self__, "enable_imd_sv2", enable_imd_sv2)
         if force_update_version is not None:
             pulumi.set(__self__, "force_update_version", force_update_version)
         if instance_types is not None:
@@ -203,6 +210,21 @@ class ManagedNodeGroupArgs:
     @disk_size.setter
     def disk_size(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "disk_size", value)
+
+    @property
+    @pulumi.getter(name="enableIMDSv2")
+    def enable_imd_sv2(self) -> Optional[bool]:
+        """
+        Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
+        Defaults to `false`.
+
+        Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
+        """
+        return pulumi.get(self, "enable_imd_sv2")
+
+    @enable_imd_sv2.setter
+    def enable_imd_sv2(self, value: Optional[bool]):
+        pulumi.set(self, "enable_imd_sv2", value)
 
     @property
     @pulumi.getter(name="forceUpdateVersion")
@@ -424,6 +446,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
+                 enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  kubelet_extra_args: Optional[str] = None,
@@ -457,6 +480,10 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]] cluster: The target EKS cluster.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
+        :param bool enable_imd_sv2: Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
+               Defaults to `false`.
+               
+               Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
@@ -525,6 +552,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
+                 enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  kubelet_extra_args: Optional[str] = None,
@@ -560,6 +588,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["cluster"] = cluster
             __props__.__dict__["cluster_name"] = cluster_name
             __props__.__dict__["disk_size"] = disk_size
+            __props__.__dict__["enable_imd_sv2"] = enable_imd_sv2
             __props__.__dict__["force_update_version"] = force_update_version
             __props__.__dict__["instance_types"] = instance_types
             __props__.__dict__["kubelet_extra_args"] = kubelet_extra_args
