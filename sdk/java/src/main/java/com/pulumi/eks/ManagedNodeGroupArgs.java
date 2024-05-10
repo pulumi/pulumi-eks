@@ -122,6 +122,27 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     }
 
     /**
+     * Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
+     * Defaults to `false`.
+     * 
+     * Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
+     * 
+     */
+    @Import(name="enableIMDSv2")
+    private @Nullable Boolean enableIMDSv2;
+
+    /**
+     * @return Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
+     * Defaults to `false`.
+     * 
+     * Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
+     * 
+     */
+    public Optional<Boolean> enableIMDSv2() {
+        return Optional.ofNullable(this.enableIMDSv2);
+    }
+
+    /**
      * Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
      * 
      */
@@ -400,6 +421,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         this.cluster = $.cluster;
         this.clusterName = $.clusterName;
         this.diskSize = $.diskSize;
+        this.enableIMDSv2 = $.enableIMDSv2;
         this.forceUpdateVersion = $.forceUpdateVersion;
         this.instanceTypes = $.instanceTypes;
         this.kubeletExtraArgs = $.kubeletExtraArgs;
@@ -572,6 +594,20 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          */
         public Builder diskSize(Integer diskSize) {
             return diskSize(Output.of(diskSize));
+        }
+
+        /**
+         * @param enableIMDSv2 Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
+         * Defaults to `false`.
+         * 
+         * Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder enableIMDSv2(@Nullable Boolean enableIMDSv2) {
+            $.enableIMDSv2 = enableIMDSv2;
+            return this;
         }
 
         /**
