@@ -1640,6 +1640,16 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				"should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not " +
 				"both.",
 		},
+		"enableDetailedMonitoring": {
+			TypeSpec: schema.TypeSpec{
+				Type:  "boolean",
+			},
+			Description: "Enables/disables detailed monitoring of the EC2 instances.\n\n" +
+				"With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.\n" +
+				"When enabled, you can also get aggregated data across groups of similar instances.\n\n" +
+				"Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\n" +
+				"For more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/.",
+		},
 	}
 
 	if cluster {
