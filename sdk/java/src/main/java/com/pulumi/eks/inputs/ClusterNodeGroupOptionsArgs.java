@@ -167,6 +167,33 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
     }
 
     /**
+     * Enables/disables detailed monitoring of the EC2 instances.
+     * 
+     * With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+     * When enabled, you can also get aggregated data across groups of similar instances.
+     * 
+     * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+     * For more information, see &#34;Paid tier&#34; and &#34;Example 1 - EC2 Detailed Monitoring&#34; here https://aws.amazon.com/cloudwatch/pricing/.
+     * 
+     */
+    @Import(name="enableDetailedMonitoring")
+    private @Nullable Output<Boolean> enableDetailedMonitoring;
+
+    /**
+     * @return Enables/disables detailed monitoring of the EC2 instances.
+     * 
+     * With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+     * When enabled, you can also get aggregated data across groups of similar instances.
+     * 
+     * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+     * For more information, see &#34;Paid tier&#34; and &#34;Example 1 - EC2 Detailed Monitoring&#34; here https://aws.amazon.com/cloudwatch/pricing/.
+     * 
+     */
+    public Optional<Output<Boolean>> enableDetailedMonitoring() {
+        return Optional.ofNullable(this.enableDetailedMonitoring);
+    }
+
+    /**
      * Encrypt the root block device of the nodes in the node group.
      * 
      */
@@ -522,6 +549,7 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         this.cloudFormationTags = $.cloudFormationTags;
         this.clusterIngressRule = $.clusterIngressRule;
         this.desiredCapacity = $.desiredCapacity;
+        this.enableDetailedMonitoring = $.enableDetailedMonitoring;
         this.encryptRootBlockDevice = $.encryptRootBlockDevice;
         this.extraNodeSecurityGroups = $.extraNodeSecurityGroups;
         this.gpu = $.gpu;
@@ -731,6 +759,39 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          */
         public Builder desiredCapacity(Integer desiredCapacity) {
             return desiredCapacity(Output.of(desiredCapacity));
+        }
+
+        /**
+         * @param enableDetailedMonitoring Enables/disables detailed monitoring of the EC2 instances.
+         * 
+         * With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+         * When enabled, you can also get aggregated data across groups of similar instances.
+         * 
+         * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+         * For more information, see &#34;Paid tier&#34; and &#34;Example 1 - EC2 Detailed Monitoring&#34; here https://aws.amazon.com/cloudwatch/pricing/.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder enableDetailedMonitoring(@Nullable Output<Boolean> enableDetailedMonitoring) {
+            $.enableDetailedMonitoring = enableDetailedMonitoring;
+            return this;
+        }
+
+        /**
+         * @param enableDetailedMonitoring Enables/disables detailed monitoring of the EC2 instances.
+         * 
+         * With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+         * When enabled, you can also get aggregated data across groups of similar instances.
+         * 
+         * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+         * For more information, see &#34;Paid tier&#34; and &#34;Example 1 - EC2 Detailed Monitoring&#34; here https://aws.amazon.com/cloudwatch/pricing/.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder enableDetailedMonitoring(Boolean enableDetailedMonitoring) {
+            return enableDetailedMonitoring(Output.of(enableDetailedMonitoring));
         }
 
         /**

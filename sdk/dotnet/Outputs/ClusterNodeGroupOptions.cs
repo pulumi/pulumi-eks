@@ -62,6 +62,16 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly int? DesiredCapacity;
         /// <summary>
+        /// Enables/disables detailed monitoring of the EC2 instances.
+        /// 
+        /// With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+        /// When enabled, you can also get aggregated data across groups of similar instances.
+        /// 
+        /// Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+        /// For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
+        /// </summary>
+        public readonly bool? EnableDetailedMonitoring;
+        /// <summary>
         /// Encrypt the root block device of the nodes in the node group.
         /// </summary>
         public readonly bool? EncryptRootBlockDevice;
@@ -181,6 +191,8 @@ namespace Pulumi.Eks.Outputs
 
             int? desiredCapacity,
 
+            bool? enableDetailedMonitoring,
+
             bool? encryptRootBlockDevice,
 
             ImmutableArray<Pulumi.Aws.Ec2.SecurityGroup> extraNodeSecurityGroups,
@@ -228,6 +240,7 @@ namespace Pulumi.Eks.Outputs
             CloudFormationTags = cloudFormationTags;
             ClusterIngressRule = clusterIngressRule;
             DesiredCapacity = desiredCapacity;
+            EnableDetailedMonitoring = enableDetailedMonitoring;
             EncryptRootBlockDevice = encryptRootBlockDevice;
             ExtraNodeSecurityGroups = extraNodeSecurityGroups;
             Gpu = gpu;
