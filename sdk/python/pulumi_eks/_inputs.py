@@ -35,6 +35,7 @@ class ClusterNodeGroupOptionsArgs:
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
+                 enable_detailed_monitoring: Optional[pulumi.Input[bool]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
@@ -81,6 +82,13 @@ class ClusterNodeGroupOptionsArgs:
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroupRule'] cluster_ingress_rule: The ingress rule that gives node group access.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
+        :param pulumi.Input[bool] enable_detailed_monitoring: Enables/disables detailed monitoring of the EC2 instances.
+               
+               With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
+               When enabled, you can also get aggregated data across groups of similar instances.
+               
+               Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+               For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
         :param pulumi.Input[bool] encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]] extra_node_security_groups: Extra security groups to attach on all nodes in this worker node group.
                
@@ -139,6 +147,8 @@ class ClusterNodeGroupOptionsArgs:
             pulumi.set(__self__, "cluster_ingress_rule", cluster_ingress_rule)
         if desired_capacity is not None:
             pulumi.set(__self__, "desired_capacity", desired_capacity)
+        if enable_detailed_monitoring is not None:
+            pulumi.set(__self__, "enable_detailed_monitoring", enable_detailed_monitoring)
         if encrypt_root_block_device is not None:
             pulumi.set(__self__, "encrypt_root_block_device", encrypt_root_block_device)
         if extra_node_security_groups is not None:
@@ -280,6 +290,24 @@ class ClusterNodeGroupOptionsArgs:
     @desired_capacity.setter
     def desired_capacity(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "desired_capacity", value)
+
+    @property
+    @pulumi.getter(name="enableDetailedMonitoring")
+    def enable_detailed_monitoring(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Enables/disables detailed monitoring of the EC2 instances.
+
+        With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
+        When enabled, you can also get aggregated data across groups of similar instances.
+
+        Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+        For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
+        """
+        return pulumi.get(self, "enable_detailed_monitoring")
+
+    @enable_detailed_monitoring.setter
+    def enable_detailed_monitoring(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "enable_detailed_monitoring", value)
 
     @property
     @pulumi.getter(name="encryptRootBlockDevice")
