@@ -37,9 +37,10 @@ func main() {
 		// https://github.com/pulumi/pulumi-eks/pull/813
 		cluster3, err := eks.NewCluster(ctx, "example-cluster-3", &eks.ClusterArgs{
 			NodeGroupOptions: &eks.ClusterNodeGroupOptionsArgs{
-				DesiredCapacity: pulumi.IntPtr(2),
-				MinSize:         pulumi.IntPtr(2),
-				MaxSize:         pulumi.IntPtr(2),
+				DesiredCapacity:          pulumi.IntPtr(2),
+				MinSize:                  pulumi.IntPtr(2),
+				MaxSize:                  pulumi.IntPtr(2),
+				EnableDetailedMonitoring: pulumi.Bool(false),
 			},
 		})
 		if err != nil {
