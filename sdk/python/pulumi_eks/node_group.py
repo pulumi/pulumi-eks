@@ -77,7 +77,7 @@ class NodeGroupArgs:
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] enable_detailed_monitoring: Enables/disables detailed monitoring of the EC2 instances.
                
-               With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+               With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
                When enabled, you can also get aggregated data across groups of similar instances.
                
                Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
@@ -303,7 +303,7 @@ class NodeGroupArgs:
         """
         Enables/disables detailed monitoring of the EC2 instances.
 
-        With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+        With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
         When enabled, you can also get aggregated data across groups of similar instances.
 
         Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
@@ -646,7 +646,7 @@ class NodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] enable_detailed_monitoring: Enables/disables detailed monitoring of the EC2 instances.
                
-               With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+               With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
                When enabled, you can also get aggregated data across groups of similar instances.
                
                Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.

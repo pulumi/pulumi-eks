@@ -86,7 +86,7 @@
                 },
                 "enableDetailedMonitoring": {
                     "type": "boolean",
-                    "description": "Enables/disables detailed monitoring of the EC2 instances.\n\nWith detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.\nWhen enabled, you can also get aggregated data across groups of similar instances.\n\nNote: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\nFor more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/."
+                    "description": "Enables/disables detailed monitoring of the EC2 instances.\n\nWith detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.\nWhen enabled, you can also get aggregated data across groups of similar instances.\n\nNote: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\nFor more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/."
                 },
                 "encryptRootBlockDevice": {
                     "type": "boolean",
@@ -1165,7 +1165,7 @@
                 },
                 "enableDetailedMonitoring": {
                     "type": "boolean",
-                    "description": "Enables/disables detailed monitoring of the EC2 instances.\n\nWith detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.\nWhen enabled, you can also get aggregated data across groups of similar instances.\n\nNote: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\nFor more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/."
+                    "description": "Enables/disables detailed monitoring of the EC2 instances.\n\nWith detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.\nWhen enabled, you can also get aggregated data across groups of similar instances.\n\nNote: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\nFor more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/."
                 },
                 "encryptRootBlockDevice": {
                     "type": "boolean",
@@ -1389,7 +1389,7 @@
                 },
                 "enableDetailedMonitoring": {
                     "type": "boolean",
-                    "description": "Enables/disables detailed monitoring of the EC2 instances.\n\nWith detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.\nWhen enabled, you can also get aggregated data across groups of similar instances.\n\nNote: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\nFor more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/."
+                    "description": "Enables/disables detailed monitoring of the EC2 instances.\n\nWith detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.\nWhen enabled, you can also get aggregated data across groups of similar instances.\n\nNote: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\nFor more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/."
                 },
                 "encryptRootBlockDevice": {
                     "type": "boolean",

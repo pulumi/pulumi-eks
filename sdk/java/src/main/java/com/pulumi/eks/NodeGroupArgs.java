@@ -183,7 +183,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
     /**
      * Enables/disables detailed monitoring of the EC2 instances.
      * 
-     * With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+     * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
      * When enabled, you can also get aggregated data across groups of similar instances.
      * 
      * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
@@ -196,7 +196,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
     /**
      * @return Enables/disables detailed monitoring of the EC2 instances.
      * 
-     * With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+     * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
      * When enabled, you can also get aggregated data across groups of similar instances.
      * 
      * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
@@ -820,7 +820,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
         /**
          * @param enableDetailedMonitoring Enables/disables detailed monitoring of the EC2 instances.
          * 
-         * With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+         * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
          * When enabled, you can also get aggregated data across groups of similar instances.
          * 
          * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
@@ -837,7 +837,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
         /**
          * @param enableDetailedMonitoring Enables/disables detailed monitoring of the EC2 instances.
          * 
-         * With detailed monitoring all metrics, including status check metrics, are available in 1-minute periods.
+         * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
          * When enabled, you can also get aggregated data across groups of similar instances.
          * 
          * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
