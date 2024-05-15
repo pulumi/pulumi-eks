@@ -271,6 +271,17 @@ export interface NodeGroupBaseOptions {
      * `autoScalingGroupTags` or `cloudFormationTags`, but not both.
      */
     cloudFormationTags?: InputTags;
+
+    /**
+     * Enables/disables detailed monitoring of the EC2 instances.
+     * 
+     * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
+     * When enabled, you can also get aggregated data across groups of similar instances.
+     * 
+     * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+     * For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
+     */
+    enableDetailedMonitoring?: pulumi.Input<boolean>;
 }
 
 /**
@@ -795,6 +806,7 @@ ${customUserData}
                 deleteOnTermination: args.nodeRootVolumeDeleteOnTermination ?? true,
             },
             userData: args.nodeUserDataOverride || userdata,
+            enableMonitoring: args.enableDetailedMonitoring,
         },
         { parent, provider },
     );
@@ -1219,6 +1231,9 @@ ${customUserData}
             metadataOptions: args.metadataOptions,
             userData: userdata,
             tagSpecifications: args.launchTemplateTagSpecifications,
+            monitoring: {
+                enabled: args.enableDetailedMonitoring,
+            },
         },
         { parent, provider },
     );

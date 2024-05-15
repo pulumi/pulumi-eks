@@ -72,6 +72,17 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable Integer desiredCapacity;
     /**
+     * @return Enables/disables detailed monitoring of the EC2 instances.
+     * 
+     * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
+     * When enabled, you can also get aggregated data across groups of similar instances.
+     * 
+     * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+     * For more information, see &#34;Paid tier&#34; and &#34;Example 1 - EC2 Detailed Monitoring&#34; here https://aws.amazon.com/cloudwatch/pricing/.
+     * 
+     */
+    private @Nullable Boolean enableDetailedMonitoring;
+    /**
      * @return Encrypt the root block device of the nodes in the node group.
      * 
      */
@@ -263,6 +274,19 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.desiredCapacity);
     }
     /**
+     * @return Enables/disables detailed monitoring of the EC2 instances.
+     * 
+     * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
+     * When enabled, you can also get aggregated data across groups of similar instances.
+     * 
+     * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+     * For more information, see &#34;Paid tier&#34; and &#34;Example 1 - EC2 Detailed Monitoring&#34; here https://aws.amazon.com/cloudwatch/pricing/.
+     * 
+     */
+    public Optional<Boolean> enableDetailedMonitoring() {
+        return Optional.ofNullable(this.enableDetailedMonitoring);
+    }
+    /**
      * @return Encrypt the root block device of the nodes in the node group.
      * 
      */
@@ -442,6 +466,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable Map<String,String> cloudFormationTags;
         private @Nullable SecurityGroupRule clusterIngressRule;
         private @Nullable Integer desiredCapacity;
+        private @Nullable Boolean enableDetailedMonitoring;
         private @Nullable Boolean encryptRootBlockDevice;
         private @Nullable List<SecurityGroup> extraNodeSecurityGroups;
         private @Nullable Boolean gpu;
@@ -472,6 +497,7 @@ public final class ClusterNodeGroupOptions {
     	      this.cloudFormationTags = defaults.cloudFormationTags;
     	      this.clusterIngressRule = defaults.clusterIngressRule;
     	      this.desiredCapacity = defaults.desiredCapacity;
+    	      this.enableDetailedMonitoring = defaults.enableDetailedMonitoring;
     	      this.encryptRootBlockDevice = defaults.encryptRootBlockDevice;
     	      this.extraNodeSecurityGroups = defaults.extraNodeSecurityGroups;
     	      this.gpu = defaults.gpu;
@@ -527,6 +553,11 @@ public final class ClusterNodeGroupOptions {
         @CustomType.Setter
         public Builder desiredCapacity(@Nullable Integer desiredCapacity) {
             this.desiredCapacity = desiredCapacity;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder enableDetailedMonitoring(@Nullable Boolean enableDetailedMonitoring) {
+            this.enableDetailedMonitoring = enableDetailedMonitoring;
             return this;
         }
         @CustomType.Setter
@@ -644,6 +675,7 @@ public final class ClusterNodeGroupOptions {
             _resultValue.cloudFormationTags = cloudFormationTags;
             _resultValue.clusterIngressRule = clusterIngressRule;
             _resultValue.desiredCapacity = desiredCapacity;
+            _resultValue.enableDetailedMonitoring = enableDetailedMonitoring;
             _resultValue.encryptRootBlockDevice = encryptRootBlockDevice;
             _resultValue.extraNodeSecurityGroups = extraNodeSecurityGroups;
             _resultValue.gpu = gpu;

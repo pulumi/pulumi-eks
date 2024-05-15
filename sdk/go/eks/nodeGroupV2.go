@@ -80,6 +80,14 @@ type nodeGroupV2Args struct {
 	ClusterIngressRule *ec2.SecurityGroupRule `pulumi:"clusterIngressRule"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity *int `pulumi:"desiredCapacity"`
+	// Enables/disables detailed monitoring of the EC2 instances.
+	//
+	// With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
+	// When enabled, you can also get aggregated data across groups of similar instances.
+	//
+	// Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+	// For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
+	EnableDetailedMonitoring *bool `pulumi:"enableDetailedMonitoring"`
 	// Encrypt the root block device of the nodes in the node group.
 	EncryptRootBlockDevice *bool `pulumi:"encryptRootBlockDevice"`
 	// Extra security groups to attach on all nodes in this worker node group.
@@ -184,6 +192,14 @@ type NodeGroupV2Args struct {
 	ClusterIngressRule ec2.SecurityGroupRuleInput
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput
+	// Enables/disables detailed monitoring of the EC2 instances.
+	//
+	// With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
+	// When enabled, you can also get aggregated data across groups of similar instances.
+	//
+	// Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+	// For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
+	EnableDetailedMonitoring pulumi.BoolPtrInput
 	// Encrypt the root block device of the nodes in the node group.
 	EncryptRootBlockDevice pulumi.BoolPtrInput
 	// Extra security groups to attach on all nodes in this worker node group.
