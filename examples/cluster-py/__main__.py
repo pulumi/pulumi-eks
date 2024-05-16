@@ -66,6 +66,17 @@ cluster3 = eks.Cluster(f"{project_name}-3",
                             }
 )
 
+##########################
+###     EKS Addons     ###
+##########################
+
+coredns = eks.Addon(
+    f"{project_name}-cluster3-coredns",
+    cluster=cluster3,
+    addon_name="coredns",
+    addon_version="v1.11.1-eksbuild.9",
+    resolve_conflicts_on_update="PRESERVE",
+)
 
 
 # Export the clusters' kubeconfig.
