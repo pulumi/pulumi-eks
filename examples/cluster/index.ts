@@ -4,14 +4,18 @@ import * as eks from "@pulumi/eks";
 
 const projectName = pulumi.getProject();
 
+// Create an EKS cluster with a non-default configuration.
+const vpc = new awsx.ec2.Vpc(`${projectName}-2`, {
+  tags: { Name: `${projectName}-2` },
+});
+
+////////////////////////////
+///     EKS Clusters     ///
+////////////////////////////
+
 // Create an EKS cluster with the default configuration.
 const cluster1 = new eks.Cluster(`${projectName}-1`, {
     nodeAmiId: "ami-0384725f0d30527c7",
-});
-
-// Create an EKS cluster with a non-default configuration.
-const vpc = new awsx.ec2.Vpc(`${projectName}-2`, {
-    tags: {"Name": `${projectName}-2`},
 });
 
 const cluster2 = new eks.Cluster(`${projectName}-2`, {
@@ -53,6 +57,18 @@ const cluster4 = new eks.Cluster(`${projectName}-4`, {
     nodeAmiId: "ami-0350263ff18287b83",
     instanceType: "t4g.small",
 })
+
+//////////////////////////
+///     EKS Addons     ///
+//////////////////////////
+
+// Test that we can create a coredns addon within cluster3.
+const coredns = new eks.Addon("coredns", {
+  cluster: cluster3,
+  addonName: "coredns",
+  addonVersion: "v1.11.1-eksbuild.9",
+  resolveConflictsOnUpdate: "PRESERVE",
+});
 
 // Export the clusters' kubeconfig.
 export const kubeconfig1 = cluster1.kubeconfig;
