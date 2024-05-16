@@ -14,7 +14,7 @@ import (
 
 const (
 	// The baseline version is the version of the provider that the upgrade tests will be run against.
-	baselineVersion = "2.3.0"
+	baselineVersion = "2.4.0"
 
 	// The path to the yarn.lock file that the EKS provider was built with.
 	yarnLockPath = "../nodejs/eks/yarn.lock"
