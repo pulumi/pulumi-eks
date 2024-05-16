@@ -25,6 +25,7 @@ import {
 } from "./nodegroup";
 import { randomSuffixProviderFactory } from "./randomSuffix";
 import { nodeGroupSecurityGroupProviderFactory } from "./securitygroup";
+import { managedAddonProviderFactory } from "./addon";
 
 class Provider implements pulumi.provider.Provider {
     // A map of types to provider factories. Calling a factory may return a new instance each
@@ -38,6 +39,7 @@ class Provider implements pulumi.provider.Provider {
         "eks:index:NodeGroupSecurityGroup": nodeGroupSecurityGroupProviderFactory,
         "eks:index:RandomSuffix": randomSuffixProviderFactory,
         "eks:index:VpcCni": vpcCniProviderFactory,
+        "eks:index:Addon": managedAddonProviderFactory,
     };
 
     constructor(readonly version: string, readonly schema: string) {
