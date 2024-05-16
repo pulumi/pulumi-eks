@@ -17,6 +17,7 @@
     },
     "files": [
         "authenticationMode.ts",
+        "addon.ts",
         "cluster.ts",
         "cni.ts",
         "nodegroup.ts",
