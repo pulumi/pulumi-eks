@@ -1439,7 +1439,8 @@ export type ManagedNodeGroupOptions = Omit<
 
     /**
      * Extra args to pass to the Kubelet.  Corresponds to the options passed in the `--kubeletExtraArgs` flag to
-     * `/etc/eks/bootstrap.sh`.  For example, '--port=10251 --address=0.0.0.0'.
+     * `/etc/eks/bootstrap.sh`.  For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra args
+     * value, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
      * 
      * Note that this field conflicts with `launchTemplate`.
      */

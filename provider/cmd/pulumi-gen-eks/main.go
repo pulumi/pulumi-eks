@@ -838,9 +838,8 @@ func generateSchema() schema.PackageSpec {
 						},
 						Description: "Extra args to pass to the Kubelet. Corresponds to the options passed in the " +
 							"`--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, " +
-							"'--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will " +
-							"be applied to this list (using `--node-labels` and `--register-with-taints` " +
-							"respectively) after to the explicit `kubeletExtraArgs`.\n\n" +
+							"'--port=10251 --address=0.0.0.0'. To escape characters in the extra args" +
+							"value, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls \"net.core.somaxconn\"'`.\n" +
 							"Note that this field conflicts with `launchTemplate`.",
 					},
 					"bootstrapExtraArgs": {
@@ -1667,7 +1666,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"enableDetailedMonitoring": {
 			TypeSpec: schema.TypeSpec{
-				Type:  "boolean",
+				Type: "boolean",
 			},
 			Description: "Enables/disables detailed monitoring of the EC2 instances.\n\n" +
 				"With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.\n" +
