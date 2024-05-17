@@ -22,6 +22,7 @@ export const kubeconfig = cluster.kubeconfig;
 const managedNodeGroup0 = eks.createManagedNodeGroup("example-managed-ng0", {
     cluster: cluster,
     nodeRole: role0,
+    kubeletExtraArgs: "--max-pods=500",
 });
 
 // Create a simple AWS managed node group using a cluster as input and the

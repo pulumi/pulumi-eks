@@ -59,6 +59,14 @@ namespace Pulumi.Eks
         public Input<string>? AmiType { get; set; }
 
         /// <summary>
+        /// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+        /// 
+        /// Note that this field conflicts with `launchTemplate`.
+        /// </summary>
+        [Input("bootstrapExtraArgs")]
+        public string? BootstrapExtraArgs { get; set; }
+
+        /// <summary>
         /// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         /// </summary>
         [Input("capacityType")]
@@ -100,6 +108,13 @@ namespace Pulumi.Eks
             set => _instanceTypes = value;
         }
 
+        /// <summary>
+        /// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
+        /// Note that this field conflicts with `launchTemplate`.
+        /// </summary>
+        [Input("kubeletExtraArgs")]
+        public string? KubeletExtraArgs { get; set; }
+
         [Input("labels")]
         private InputMap<string>? _labels;
 
@@ -114,6 +129,8 @@ namespace Pulumi.Eks
 
         /// <summary>
         /// Launch Template settings.
+        /// 
+        /// Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
         /// </summary>
         [Input("launchTemplate")]
         public Input<Pulumi.Aws.Eks.Inputs.NodeGroupLaunchTemplateArgs>? LaunchTemplate { get; set; }

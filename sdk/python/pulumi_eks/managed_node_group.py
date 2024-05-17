@@ -21,11 +21,13 @@ class ManagedNodeGroupArgs:
     def __init__(__self__, *,
                  cluster: pulumi.Input[Union['Cluster', 'CoreDataArgs']],
                  ami_type: Optional[pulumi.Input[str]] = None,
+                 bootstrap_extra_args: Optional[str] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 kubelet_extra_args: Optional[str] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  launch_template: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
@@ -43,13 +45,20 @@ class ManagedNodeGroupArgs:
         The set of arguments for constructing a ManagedNodeGroup resource.
         :param pulumi.Input[Union['Cluster', 'CoreDataArgs']] cluster: The target EKS cluster.
         :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+        :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+               
+               Note that this field conflicts with `launchTemplate`.
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
+        :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
+               Note that this field conflicts with `launchTemplate`.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
         :param pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs'] launch_template: Launch Template settings.
+               
+               Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
         :param pulumi.Input[str] node_group_name: Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
         :param pulumi.Input[str] node_group_name_prefix: Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`.
         :param pulumi.Input['pulumi_aws.iam.Role'] node_role: The IAM Role that provides permissions for the EKS Node Group.
@@ -80,6 +89,8 @@ class ManagedNodeGroupArgs:
         pulumi.set(__self__, "cluster", cluster)
         if ami_type is not None:
             pulumi.set(__self__, "ami_type", ami_type)
+        if bootstrap_extra_args is not None:
+            pulumi.set(__self__, "bootstrap_extra_args", bootstrap_extra_args)
         if capacity_type is not None:
             pulumi.set(__self__, "capacity_type", capacity_type)
         if cluster_name is not None:
@@ -90,6 +101,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "force_update_version", force_update_version)
         if instance_types is not None:
             pulumi.set(__self__, "instance_types", instance_types)
+        if kubelet_extra_args is not None:
+            pulumi.set(__self__, "kubelet_extra_args", kubelet_extra_args)
         if labels is not None:
             pulumi.set(__self__, "labels", labels)
         if launch_template is not None:
@@ -140,6 +153,20 @@ class ManagedNodeGroupArgs:
     @ami_type.setter
     def ami_type(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "ami_type", value)
+
+    @property
+    @pulumi.getter(name="bootstrapExtraArgs")
+    def bootstrap_extra_args(self) -> Optional[str]:
+        """
+        Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+
+        Note that this field conflicts with `launchTemplate`.
+        """
+        return pulumi.get(self, "bootstrap_extra_args")
+
+    @bootstrap_extra_args.setter
+    def bootstrap_extra_args(self, value: Optional[str]):
+        pulumi.set(self, "bootstrap_extra_args", value)
 
     @property
     @pulumi.getter(name="capacityType")
@@ -202,6 +229,19 @@ class ManagedNodeGroupArgs:
         pulumi.set(self, "instance_types", value)
 
     @property
+    @pulumi.getter(name="kubeletExtraArgs")
+    def kubelet_extra_args(self) -> Optional[str]:
+        """
+        Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
+        Note that this field conflicts with `launchTemplate`.
+        """
+        return pulumi.get(self, "kubelet_extra_args")
+
+    @kubelet_extra_args.setter
+    def kubelet_extra_args(self, value: Optional[str]):
+        pulumi.set(self, "kubelet_extra_args", value)
+
+    @property
     @pulumi.getter
     def labels(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
         """
@@ -218,6 +258,8 @@ class ManagedNodeGroupArgs:
     def launch_template(self) -> Optional[pulumi.Input['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]:
         """
         Launch Template settings.
+
+        Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
         """
         return pulumi.get(self, "launch_template")
 
@@ -377,12 +419,14 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
+                 bootstrap_extra_args: Optional[str] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 kubelet_extra_args: Optional[str] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  launch_template: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
@@ -406,14 +450,21 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+        :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+               
+               Note that this field conflicts with `launchTemplate`.
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]] cluster: The target EKS cluster.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
+        :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
+               Note that this field conflicts with `launchTemplate`.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
         :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']] launch_template: Launch Template settings.
+               
+               Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
         :param pulumi.Input[str] node_group_name: Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
         :param pulumi.Input[str] node_group_name_prefix: Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`.
         :param pulumi.Input['pulumi_aws.iam.Role'] node_role: The IAM Role that provides permissions for the EKS Node Group.
@@ -469,12 +520,14 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
+                 bootstrap_extra_args: Optional[str] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 kubelet_extra_args: Optional[str] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  launch_template: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupLaunchTemplateArgs']]] = None,
                  node_group_name: Optional[pulumi.Input[str]] = None,
@@ -500,6 +553,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__ = ManagedNodeGroupArgs.__new__(ManagedNodeGroupArgs)
 
             __props__.__dict__["ami_type"] = ami_type
+            __props__.__dict__["bootstrap_extra_args"] = bootstrap_extra_args
             __props__.__dict__["capacity_type"] = capacity_type
             if cluster is None and not opts.urn:
                 raise TypeError("Missing required property 'cluster'")
@@ -508,6 +562,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["disk_size"] = disk_size
             __props__.__dict__["force_update_version"] = force_update_version
             __props__.__dict__["instance_types"] = instance_types
+            __props__.__dict__["kubelet_extra_args"] = kubelet_extra_args
             __props__.__dict__["labels"] = labels
             __props__.__dict__["launch_template"] = launch_template
             __props__.__dict__["node_group_name"] = node_group_name
