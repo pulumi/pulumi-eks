@@ -47,6 +47,10 @@ func NewManagedNodeGroup(ctx *pulumi.Context,
 type managedNodeGroupArgs struct {
 	// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
 	AmiType *string `pulumi:"amiType"`
+	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+	//
+	// Note that this field conflicts with `launchTemplate`.
+	BootstrapExtraArgs *string `pulumi:"bootstrapExtraArgs"`
 	// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
 	CapacityType *string `pulumi:"capacityType"`
 	// The target EKS cluster.
@@ -59,9 +63,14 @@ type managedNodeGroupArgs struct {
 	ForceUpdateVersion *bool `pulumi:"forceUpdateVersion"`
 	// Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
 	InstanceTypes []string `pulumi:"instanceTypes"`
+	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
+	// Note that this field conflicts with `launchTemplate`.
+	KubeletExtraArgs *string `pulumi:"kubeletExtraArgs"`
 	// Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
 	Labels map[string]string `pulumi:"labels"`
 	// Launch Template settings.
+	//
+	// Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
 	LaunchTemplate *eks.NodeGroupLaunchTemplate `pulumi:"launchTemplate"`
 	// Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
 	NodeGroupName *string `pulumi:"nodeGroupName"`
@@ -106,6 +115,10 @@ type managedNodeGroupArgs struct {
 type ManagedNodeGroupArgs struct {
 	// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
 	AmiType pulumi.StringPtrInput
+	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+	//
+	// Note that this field conflicts with `launchTemplate`.
+	BootstrapExtraArgs *string
 	// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
 	CapacityType pulumi.StringPtrInput
 	// The target EKS cluster.
@@ -118,9 +131,14 @@ type ManagedNodeGroupArgs struct {
 	ForceUpdateVersion pulumi.BoolPtrInput
 	// Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
 	InstanceTypes pulumi.StringArrayInput
+	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
+	// Note that this field conflicts with `launchTemplate`.
+	KubeletExtraArgs *string
 	// Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
 	Labels pulumi.StringMapInput
 	// Launch Template settings.
+	//
+	// Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
 	LaunchTemplate eks.NodeGroupLaunchTemplatePtrInput
 	// Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
 	NodeGroupName pulumi.StringPtrInput

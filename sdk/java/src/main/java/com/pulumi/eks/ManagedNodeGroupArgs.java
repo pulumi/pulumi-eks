@@ -43,6 +43,25 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     }
 
     /**
+     * Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+     * 
+     * Note that this field conflicts with `launchTemplate`.
+     * 
+     */
+    @Import(name="bootstrapExtraArgs")
+    private @Nullable String bootstrapExtraArgs;
+
+    /**
+     * @return Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+     * 
+     * Note that this field conflicts with `launchTemplate`.
+     * 
+     */
+    public Optional<String> bootstrapExtraArgs() {
+        return Optional.ofNullable(this.bootstrapExtraArgs);
+    }
+
+    /**
      * Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
      * 
      */
@@ -133,6 +152,23 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     }
 
     /**
+     * Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = &#39;--allowed-unsafe-sysctls &#34;net.core.somaxconn&#34;&#39;`.
+     * Note that this field conflicts with `launchTemplate`.
+     * 
+     */
+    @Import(name="kubeletExtraArgs")
+    private @Nullable String kubeletExtraArgs;
+
+    /**
+     * @return Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = &#39;--allowed-unsafe-sysctls &#34;net.core.somaxconn&#34;&#39;`.
+     * Note that this field conflicts with `launchTemplate`.
+     * 
+     */
+    public Optional<String> kubeletExtraArgs() {
+        return Optional.ofNullable(this.kubeletExtraArgs);
+    }
+
+    /**
      * Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
      * 
      */
@@ -150,12 +186,16 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     /**
      * Launch Template settings.
      * 
+     * Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
+     * 
      */
     @Import(name="launchTemplate")
     private @Nullable Output<NodeGroupLaunchTemplateArgs> launchTemplate;
 
     /**
      * @return Launch Template settings.
+     * 
+     * Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
      * 
      */
     public Optional<Output<NodeGroupLaunchTemplateArgs>> launchTemplate() {
@@ -355,12 +395,14 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
 
     private ManagedNodeGroupArgs(ManagedNodeGroupArgs $) {
         this.amiType = $.amiType;
+        this.bootstrapExtraArgs = $.bootstrapExtraArgs;
         this.capacityType = $.capacityType;
         this.cluster = $.cluster;
         this.clusterName = $.clusterName;
         this.diskSize = $.diskSize;
         this.forceUpdateVersion = $.forceUpdateVersion;
         this.instanceTypes = $.instanceTypes;
+        this.kubeletExtraArgs = $.kubeletExtraArgs;
         this.labels = $.labels;
         this.launchTemplate = $.launchTemplate;
         this.nodeGroupName = $.nodeGroupName;
@@ -413,6 +455,19 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          */
         public Builder amiType(String amiType) {
             return amiType(Output.of(amiType));
+        }
+
+        /**
+         * @param bootstrapExtraArgs Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+         * 
+         * Note that this field conflicts with `launchTemplate`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder bootstrapExtraArgs(@Nullable String bootstrapExtraArgs) {
+            $.bootstrapExtraArgs = bootstrapExtraArgs;
+            return this;
         }
 
         /**
@@ -572,6 +627,18 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         }
 
         /**
+         * @param kubeletExtraArgs Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = &#39;--allowed-unsafe-sysctls &#34;net.core.somaxconn&#34;&#39;`.
+         * Note that this field conflicts with `launchTemplate`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder kubeletExtraArgs(@Nullable String kubeletExtraArgs) {
+            $.kubeletExtraArgs = kubeletExtraArgs;
+            return this;
+        }
+
+        /**
          * @param labels Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
          * 
          * @return builder
@@ -595,6 +662,8 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         /**
          * @param launchTemplate Launch Template settings.
          * 
+         * Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
+         * 
          * @return builder
          * 
          */
@@ -605,6 +674,8 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
 
         /**
          * @param launchTemplate Launch Template settings.
+         * 
+         * Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
          * 
          * @return builder
          * 
