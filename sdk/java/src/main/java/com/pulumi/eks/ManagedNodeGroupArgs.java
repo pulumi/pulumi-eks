@@ -152,8 +152,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     }
 
     /**
-     * Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
-     * 
+     * Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = &#39;--allowed-unsafe-sysctls &#34;net.core.somaxconn&#34;&#39;`.
      * Note that this field conflicts with `launchTemplate`.
      * 
      */
@@ -161,8 +160,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     private @Nullable String kubeletExtraArgs;
 
     /**
-     * @return Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
-     * 
+     * @return Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = &#39;--allowed-unsafe-sysctls &#34;net.core.somaxconn&#34;&#39;`.
      * Note that this field conflicts with `launchTemplate`.
      * 
      */
@@ -629,8 +627,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         }
 
         /**
-         * @param kubeletExtraArgs Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
-         * 
+         * @param kubeletExtraArgs Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = &#39;--allowed-unsafe-sysctls &#34;net.core.somaxconn&#34;&#39;`.
          * Note that this field conflicts with `launchTemplate`.
          * 
          * @return builder
