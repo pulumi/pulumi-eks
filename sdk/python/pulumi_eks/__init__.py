@@ -6,6 +6,7 @@ from . import _utilities
 import typing
 # Export this package's modules as members:
 from ._enums import *
+from .addon import *
 from .cluster import *
 from .cluster_creation_role_provider import *
 from .managed_node_group import *
@@ -24,6 +25,7 @@ _utilities.register(
   "mod": "index",
   "fqn": "pulumi_eks",
   "classes": {
+   "eks:index:Addon": "Addon",
    "eks:index:Cluster": "Cluster",
    "eks:index:ClusterCreationRoleProvider": "ClusterCreationRoleProvider",
    "eks:index:ManagedNodeGroup": "ManagedNodeGroup",
