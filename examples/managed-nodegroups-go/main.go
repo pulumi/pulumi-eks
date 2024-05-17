@@ -97,7 +97,7 @@ func main() {
 			&eks.ManagedNodeGroupArgs{
 				Cluster:          cluster,
 				NodeRole:         role0,
-				KubeletExtraArgs: pulumi.StringRef("--max-pods=50"),
+				KubeletExtraArgs: pulumi.StringRef("--max-pods=500"),
 			})
 		if err != nil {
 			return err
