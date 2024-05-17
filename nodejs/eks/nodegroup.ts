@@ -1451,7 +1451,7 @@ export type ManagedNodeGroupOptions = Omit<
      * https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh.  Note that the `--apiserver-endpoint`,
      * `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration
      * parameters.
-     * 
+     *
      * Note that this field conflicts with `launchTemplate`.
      */
     bootstrapExtraArgs?: string;
@@ -1460,7 +1460,7 @@ export type ManagedNodeGroupOptions = Omit<
      * Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance
      * metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
      * Defaults to `false`.
-     * 
+     *
      * Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should
      * enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
      */
@@ -1720,7 +1720,14 @@ function createManagedNodeGroupInternal(
                 };
             }),
             subnetIds: subnetIds,
-            launchTemplate: launchTemplate ? { id: launchTemplate.id, version: launchTemplate.latestVersion.apply((version) => {return `${version}`})} : undefined,
+            launchTemplate: launchTemplate
+                ? {
+                      id: launchTemplate.id,
+                      version: launchTemplate.latestVersion.apply((version) => {
+                          return `${version}`;
+                      }),
+                  }
+                : undefined,
         },
         { parent: parent, dependsOn: ngDeps, provider },
     );
@@ -1748,17 +1755,26 @@ function createMNGCustomLaunchTemplate(
         bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
     }
 
-    const userdata = pulumi.all([core.cluster.name, core.cluster.endpoint, core.cluster.certificateAuthority.data, args.clusterName]).apply(([clusterName, clusterEndpoint, clusterCertAuthority, argsClusterName]) => {
-        return `#!/bin/bash
+    const userdata = pulumi
+        .all([
+            core.cluster.name,
+            core.cluster.endpoint,
+            core.cluster.certificateAuthority.data,
+            args.clusterName,
+        ])
+        .apply(([clusterName, clusterEndpoint, clusterCertAuthority, argsClusterName]) => {
+            return `#!/bin/bash
 
-        /etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${
-            clusterCertAuthority
-        }" "${argsClusterName || clusterName}"${bootstrapExtraArgs}
+        /etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCertAuthority}" "${
+                argsClusterName || clusterName
+            }"${bootstrapExtraArgs}
         `;
-    });
+        });
 
     // Encode the user data as base64.
-    const encodedUserData = pulumi.output(userdata).apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
+    const encodedUserData = pulumi
+        .output(userdata)
+        .apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
