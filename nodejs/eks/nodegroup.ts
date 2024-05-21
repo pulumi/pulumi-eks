@@ -274,10 +274,10 @@ export interface NodeGroupBaseOptions {
 
     /**
      * Enables/disables detailed monitoring of the EC2 instances.
-     * 
+     *
      * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
      * When enabled, you can also get aggregated data across groups of similar instances.
-     * 
+     *
      * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
      * For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
      */
@@ -1441,7 +1441,7 @@ export type ManagedNodeGroupOptions = Omit<
      * Extra args to pass to the Kubelet.  Corresponds to the options passed in the `--kubeletExtraArgs` flag to
      * `/etc/eks/bootstrap.sh`.  For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra args
      * value, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
-     * 
+     *
      * Note that this field conflicts with `launchTemplate`.
      */
     kubeletExtraArgs?: string;
@@ -1771,7 +1771,7 @@ function createMNGCustomLaunchTemplate(
             ])
             .apply(([clusterName, clusterEndpoint, clusterCertAuthority, argsClusterName]) => {
                 return `#!/bin/bash
-    
+
             /etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCertAuthority}" "${
                     argsClusterName || clusterName
                 }"${bootstrapExtraArgs}
@@ -1785,7 +1785,7 @@ function createMNGCustomLaunchTemplate(
     }
 
     // If the user specifies enableIMDSv2, we need to set the metadata options in the launch template.
-    let metadataOptions = args.enableIMDSv2
+    const metadataOptions = args.enableIMDSv2
         ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
         : undefined;
 
