@@ -80,7 +80,7 @@ func main() {
 }
 
 const (
-	awsVersion = "v6.5.0"
+	awsVersion = "v6.18.2"
 	k8sVersion = "v4.4.0"
 )
 
@@ -1091,6 +1091,15 @@ func generateSchema() schema.PackageSpec {
 							Description: "The IAM Role attached to the EKS Cluster",
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
 						},
+						"authenticationMode": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "string",
+								Plain: true,
+							},
+							Description: "The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. " +
+								"Defaults to `CONFIG_MAP`.\n\nSee for more details:\n" +
+								"https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
+						},
 					},
 					Required: []string{
 						"cluster",
@@ -1247,11 +1256,19 @@ func generateSchema() schema.PackageSpec {
 							},
 							Description: "A list of groups within Kubernetes to which the role is mapped.",
 						},
+						"accessPolicies": {
+							TypeSpec: schema.TypeSpec{
+								Type: "array",
+								Items: &schema.TypeSpec{
+									Ref: "#/types/eks:index:AccessPolicyAssociation",
+								},
+							},
+							Description: "A list of EKS access policies to associate with the role. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.",
+						},
 					},
 					Required: []string{
 						"roleArn",
 						"username",
-						"groups",
 					},
 				},
 			},
@@ -1383,11 +1400,19 @@ func generateSchema() schema.PackageSpec {
 							},
 							Description: "A list of groups within Kubernetes to which the user is mapped to.",
 						},
+						"accessPolicies": {
+							TypeSpec: schema.TypeSpec{
+								Type: "array",
+								Items: &schema.TypeSpec{
+									Ref: "#/types/eks:index:AccessPolicyAssociation",
+								},
+							},
+							Description: "A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.",
+						},
 					},
 					Required: []string{
 						"userArn",
 						"username",
-						"groups",
 					},
 				},
 			},
@@ -1417,6 +1442,29 @@ func generateSchema() schema.PackageSpec {
 					Type:        "object",
 					Description: "Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.",
 					Properties:  vpcCniProperties(false /*kubeconfig*/),
+				},
+			},
+
+			"eks:index:AccessPolicyAssociation": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Description: "Associates an access policy and its scope to an IAM principal.\n\n" +
+						"See for more details:\n" +
+						"https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html",
+					Properties: map[string]schema.PropertySpec{
+						"policyArn": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The ARN of the access policy to associate with the principal",
+						},
+						"accessScope": {
+							TypeSpec: schema.TypeSpec{
+								Ref: awsRef("#/types/aws:eks%2FAccessPolicyAssociationAccessScope:AccessPolicyAssociationAccessScope"),
+							},
+							Description: "The scope of the access policy association. This controls whether the access policy is scoped " +
+								"to the cluster or to a particular namespace.",
+						},
+					},
+					Required: []string{"policyArn", "accessScope"},
 				},
 			},
 		},
@@ -1452,7 +1500,7 @@ func generateSchema() schema.PackageSpec {
 			}),
 			"java": rawMessage(map[string]interface{}{
 				"dependencies": map[string]string{
-					"com.pulumi:aws":        "6.5.0",
+					"com.pulumi:aws":        "6.18.2",
 					"com.pulumi:kubernetes": "4.4.0",
 				},
 			}),
