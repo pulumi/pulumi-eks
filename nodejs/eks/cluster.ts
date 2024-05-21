@@ -562,14 +562,14 @@ export function createCore(
     let kubernetesNetworkConfig:
         | pulumi.Output<aws.types.input.eks.ClusterKubernetesNetworkConfig>
         | undefined;
-        if (args.kubernetesServiceIpAddressRange || args.ipFamily ) {
-            kubernetesNetworkConfig = pulumi.all([args.kubernetesServiceIpAddressRange, args.ipFamily]).apply(
-                ([serviceIpv4Cidr, ipFamily = "ipv4"]) => ({ 
-                    serviceIpv4Cidr: ipFamily === "ipv4" ? serviceIpv4Cidr : undefined, // only applicable for IPv4 IP family 
-                    ipFamily: ipFamily 
-                }),
-            );
-        }
+    if (args.kubernetesServiceIpAddressRange || args.ipFamily) {
+        kubernetesNetworkConfig = pulumi
+            .all([args.kubernetesServiceIpAddressRange, args.ipFamily])
+            .apply(([serviceIpv4Cidr, ipFamily = "ipv4"]) => ({
+                serviceIpv4Cidr: ipFamily === "ipv4" ? serviceIpv4Cidr : undefined, // only applicable for IPv4 IP family
+                ipFamily: ipFamily,
+            }));
+    }
 
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(
@@ -657,54 +657,54 @@ export function createCore(
     // its worker nodes have come up.
     const genKubeconfig = (useProfileName: boolean) => {
         const kubeconfig = pulumi
-        .all([
-            eksCluster.name,
-            endpoint,
-            eksCluster.certificateAuthority,
-            args.providerCredentialOpts,
-        ])
-        .apply(
-            ([
-                clusterName,
-                clusterEndpoint,
-                clusterCertificateAuthority,
-                providerCredentialOpts,
-            ]) => {
-                let config = {};
+            .all([
+                eksCluster.name,
+                endpoint,
+                eksCluster.certificateAuthority,
+                args.providerCredentialOpts,
+            ])
+            .apply(
+                ([
+                    clusterName,
+                    clusterEndpoint,
+                    clusterCertificateAuthority,
+                    providerCredentialOpts,
+                ]) => {
+                    let config = {};
 
-                if (args.creationRoleProvider) {
-                    config = args.creationRoleProvider.role.arn.apply((arn) => {
-                        const opts: KubeconfigOptions = { roleArn: arn };
-                        return generateKubeconfig(
+                    if (args.creationRoleProvider) {
+                        config = args.creationRoleProvider.role.arn.apply((arn) => {
+                            const opts: KubeconfigOptions = { roleArn: arn };
+                            return generateKubeconfig(
+                                clusterName,
+                                clusterEndpoint,
+                                useProfileName,
+                                clusterCertificateAuthority?.data,
+                                opts,
+                            );
+                        });
+                    } else if (providerCredentialOpts) {
+                        config = generateKubeconfig(
                             clusterName,
                             clusterEndpoint,
                             useProfileName,
                             clusterCertificateAuthority?.data,
-                            opts,
+                            providerCredentialOpts,
                         );
-                    });
-                } else if (providerCredentialOpts) {
-                    config = generateKubeconfig(
-                        clusterName,
-                        clusterEndpoint,
-                        useProfileName,
-                        clusterCertificateAuthority?.data,
-                        providerCredentialOpts,
-                    );
-                } else {
-                    config = generateKubeconfig(
-                        clusterName,
-                        clusterEndpoint,
-                        useProfileName,
-                        clusterCertificateAuthority?.data,
-                    );
-                }
-                return config;
-            },
-        );
-        
+                    } else {
+                        config = generateKubeconfig(
+                            clusterName,
+                            clusterEndpoint,
+                            useProfileName,
+                            clusterCertificateAuthority?.data,
+                        );
+                    }
+                    return config;
+                },
+            );
+
         return kubeconfig;
-    }
+    };
 
     // We need 2 forms of kubeconfig, one with the profile name and one without. The one with the profile name
     // is required to interact with the cluster by this provider. The one without is used by the user to interact
@@ -1311,7 +1311,7 @@ export interface ClusterOptions {
     /**
      * The security group to use for the cluster API endpoint.  If not provided, a new security group will be created
      * with full internet egress and ingress from node groups.
-     * 
+     *
      * Note: The security group resource should not contain any inline ingress or egress rules.
      */
     clusterSecurityGroup?: aws.ec2.SecurityGroup;

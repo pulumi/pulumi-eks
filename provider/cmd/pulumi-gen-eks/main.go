@@ -854,6 +854,14 @@ func generateSchema() schema.PackageSpec {
 							"flags are included automatically based on other configuration parameters.\n\n" +
 							"Note that this field conflicts with `launchTemplate`.",
 					},
+					"enableIMDSv2": {
+						TypeSpec: schema.TypeSpec{Type: "boolean", Plain: true},
+						Description: "Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance " +
+							"metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.\n" +
+							"Defaults to `false`.\n\n" +
+							"Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should " +
+							"enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.",
+					},
 				},
 				RequiredInputs: []string{"cluster"},
 			},
