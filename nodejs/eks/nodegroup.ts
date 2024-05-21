@@ -274,10 +274,10 @@ export interface NodeGroupBaseOptions {
 
     /**
      * Enables/disables detailed monitoring of the EC2 instances.
-     * 
+     *
      * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
      * When enabled, you can also get aggregated data across groups of similar instances.
-     * 
+     *
      * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
      * For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
      */
@@ -1441,7 +1441,7 @@ export type ManagedNodeGroupOptions = Omit<
      * Extra args to pass to the Kubelet.  Corresponds to the options passed in the `--kubeletExtraArgs` flag to
      * `/etc/eks/bootstrap.sh`.  For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra args
      * value, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
-     * 
+     *
      * Note that this field conflicts with `launchTemplate`.
      */
     kubeletExtraArgs?: string;
@@ -1451,10 +1451,20 @@ export type ManagedNodeGroupOptions = Omit<
      * https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh.  Note that the `--apiserver-endpoint`,
      * `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration
      * parameters.
-     * 
+     *
      * Note that this field conflicts with `launchTemplate`.
      */
     bootstrapExtraArgs?: string;
+
+    /**
+     * Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance
+     * metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
+     * Defaults to `false`.
+     *
+     * Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should
+     * enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
+     */
+    enableIMDSv2?: boolean;
 
     /**
      * Make nodeGroupName optional, since the NodeGroup resource name can be
@@ -1679,14 +1689,17 @@ function createManagedNodeGroupInternal(
     // Create a custom launch template for the managed node group if the user specifies either kubeletExtraArgs or bootstrapExtraArgs.
     // If the user sepcifies a custom LaunchTemplate, we throw an error and suggest that the user include this in the launch template that they are providing.
     // If neither of these are provided, we can use the default launch template for managed node groups.
-    if (args.launchTemplate && (args.kubeletExtraArgs || args.bootstrapExtraArgs)) {
+    if (
+        args.launchTemplate &&
+        (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2)
+    ) {
         throw new Error(
-            "If you provide a custom launch template, you cannot provide kubeletExtraArgs or bootstrapExtraArgs. Please include these in the launch template that you are providing.",
+            "If you provide a custom launch template, you cannot provide kubeletExtraArgs, bootstrapExtraArgs or enableIMDSv2. Please include these in the launch template that you are providing.",
         );
     }
 
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
-    if (args.kubeletExtraArgs || args.bootstrapExtraArgs) {
+    if (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2) {
         launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
     }
 
@@ -1710,7 +1723,14 @@ function createManagedNodeGroupInternal(
                 };
             }),
             subnetIds: subnetIds,
-            launchTemplate: launchTemplate ? { id: launchTemplate.id, version: launchTemplate.latestVersion.apply((version) => {return `${version}`})} : undefined,
+            launchTemplate: launchTemplate
+                ? {
+                      id: launchTemplate.id,
+                      version: launchTemplate.latestVersion.apply((version) => {
+                          return `${version}`;
+                      }),
+                  }
+                : undefined,
         },
         { parent: parent, dependsOn: ngDeps, provider },
     );
@@ -1728,37 +1748,55 @@ function createMNGCustomLaunchTemplate(
     parent: pulumi.Resource,
     provider?: pulumi.ProviderResource,
 ): aws.ec2.LaunchTemplate {
-    const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
-    let bootstrapExtraArgs = args.bootstrapExtraArgs ? " " + args.bootstrapExtraArgs : "";
+    let userData;
 
-    if (kubeletExtraArgs.length === 1) {
-        // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
-        bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
-    } else if (kubeletExtraArgs.length > 1) {
-        bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
+    // If the user specifies either kubeletExtraArgs or bootstrapExtraArgs, we need to create a base64 encoded user data script.
+    if (args.kubeletExtraArgs || args.bootstrapExtraArgs) {
+        const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
+        let bootstrapExtraArgs = args.bootstrapExtraArgs ? " " + args.bootstrapExtraArgs : "";
+
+        if (kubeletExtraArgs.length === 1) {
+            // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
+            bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
+        } else if (kubeletExtraArgs.length > 1) {
+            bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
+        }
+
+        const userdata = pulumi
+            .all([
+                core.cluster.name,
+                core.cluster.endpoint,
+                core.cluster.certificateAuthority.data,
+                args.clusterName,
+            ])
+            .apply(([clusterName, clusterEndpoint, clusterCertAuthority, argsClusterName]) => {
+                return `#!/bin/bash
+
+            /etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCertAuthority}" "${
+                    argsClusterName || clusterName
+                }"${bootstrapExtraArgs}
+            `;
+            });
+
+        // Encode the user data as base64.
+        userData = pulumi
+            .output(userdata)
+            .apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
     }
 
-    const userdata = pulumi.all([core.cluster.name, core.cluster.endpoint, core.cluster.certificateAuthority.data, args.clusterName]).apply(([clusterName, clusterEndpoint, clusterCertAuthority, argsClusterName]) => {
-        return `#!/bin/bash
+    // If the user specifies enableIMDSv2, we need to set the metadata options in the launch template.
+    const metadataOptions = args.enableIMDSv2
+        ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
+        : undefined;
 
-        /etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${
-            clusterCertAuthority
-        }" "${argsClusterName || clusterName}"${bootstrapExtraArgs}
-        `;
-    });
-
-    // Encode the user data as base64.
-    const encodedUserData = pulumi.output(userdata).apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
-
-    const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
+    return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
         {
-            userData: encodedUserData,
+            userData,
+            metadataOptions,
         },
         { parent, provider },
     );
-
-    return nodeLaunchTemplate;
 }
 
 /**

@@ -37,10 +37,13 @@ export function assertCompatibleKubectlVersionExists() {
         );
     }
 
-    const kubectlVersionJson = childProcess.execSync(`kubectl version --client=true --output=json`, {
-        stdio: ["pipe", "pipe", "ignore"],
-        encoding: "utf8",
-    });
+    const kubectlVersionJson = childProcess.execSync(
+        `kubectl version --client=true --output=json`,
+        {
+            stdio: ["pipe", "pipe", "ignore"],
+            encoding: "utf8",
+        },
+    );
 
     let kctlVersion: KubectlVersion;
     try {

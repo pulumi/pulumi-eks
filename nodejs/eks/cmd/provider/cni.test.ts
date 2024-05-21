@@ -34,7 +34,7 @@ describe("updateImage", () => {
         };
 
         expect(testCode).not.toThrow();
-        expect(testCode()).toBe(updatedManifest)
+        expect(testCode()).toBe(updatedManifest);
     });
 });
 
