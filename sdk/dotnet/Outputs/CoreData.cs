@@ -16,6 +16,13 @@ namespace Pulumi.Eks.Outputs
     [OutputType]
     public sealed class CoreData
     {
+        /// <summary>
+        /// The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+        /// 
+        /// See for more details:
+        /// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+        /// </summary>
+        public readonly string? AuthenticationMode;
         public readonly Pulumi.Aws.Provider? AwsProvider;
         public readonly Pulumi.Aws.Eks.Cluster Cluster;
         /// <summary>
@@ -82,6 +89,8 @@ namespace Pulumi.Eks.Outputs
 
         [OutputConstructor]
         private CoreData(
+            string? authenticationMode,
+
             Pulumi.Aws.Provider? awsProvider,
 
             Pulumi.Aws.Eks.Cluster cluster,
@@ -124,6 +133,7 @@ namespace Pulumi.Eks.Outputs
 
             string vpcId)
         {
+            AuthenticationMode = authenticationMode;
             AwsProvider = awsProvider;
             Cluster = cluster;
             ClusterIamRole = clusterIamRole;

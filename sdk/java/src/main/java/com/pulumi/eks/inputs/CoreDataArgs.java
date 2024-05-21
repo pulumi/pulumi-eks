@@ -33,6 +33,27 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
 
     public static final CoreDataArgs Empty = new CoreDataArgs();
 
+    /**
+     * The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+     * 
+     */
+    @Import(name="authenticationMode")
+    private @Nullable String authenticationMode;
+
+    /**
+     * @return The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+     * 
+     */
+    public Optional<String> authenticationMode() {
+        return Optional.ofNullable(this.authenticationMode);
+    }
+
     @Import(name="awsProvider")
     private @Nullable Output<Provider> awsProvider;
 
@@ -295,6 +316,7 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
     private CoreDataArgs() {}
 
     private CoreDataArgs(CoreDataArgs $) {
+        this.authenticationMode = $.authenticationMode;
         this.awsProvider = $.awsProvider;
         this.cluster = $.cluster;
         this.clusterIamRole = $.clusterIamRole;
@@ -334,6 +356,20 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder(CoreDataArgs defaults) {
             $ = new CoreDataArgs(Objects.requireNonNull(defaults));
+        }
+
+        /**
+         * @param authenticationMode The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+         * 
+         * See for more details:
+         * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+         * 
+         * @return builder
+         * 
+         */
+        public Builder authenticationMode(@Nullable String authenticationMode) {
+            $.authenticationMode = authenticationMode;
+            return this;
         }
 
         public Builder awsProvider(@Nullable Output<Provider> awsProvider) {

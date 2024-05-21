@@ -25,6 +25,14 @@ import javax.annotation.Nullable;
 
 @CustomType
 public final class CoreData {
+    /**
+     * @return The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+     * 
+     */
+    private @Nullable String authenticationMode;
     private @Nullable Provider awsProvider;
     private Cluster cluster;
     /**
@@ -104,6 +112,16 @@ public final class CoreData {
     private String vpcId;
 
     private CoreData() {}
+    /**
+     * @return The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+     * 
+     */
+    public Optional<String> authenticationMode() {
+        return Optional.ofNullable(this.authenticationMode);
+    }
     public Optional<Provider> awsProvider() {
         return Optional.ofNullable(this.awsProvider);
     }
@@ -233,6 +251,7 @@ public final class CoreData {
     }
     @CustomType.Builder
     public static final class Builder {
+        private @Nullable String authenticationMode;
         private @Nullable Provider awsProvider;
         private Cluster cluster;
         private Role clusterIamRole;
@@ -257,6 +276,7 @@ public final class CoreData {
         public Builder() {}
         public Builder(CoreData defaults) {
     	      Objects.requireNonNull(defaults);
+    	      this.authenticationMode = defaults.authenticationMode;
     	      this.awsProvider = defaults.awsProvider;
     	      this.cluster = defaults.cluster;
     	      this.clusterIamRole = defaults.clusterIamRole;
@@ -280,6 +300,11 @@ public final class CoreData {
     	      this.vpcId = defaults.vpcId;
         }
 
+        @CustomType.Setter
+        public Builder authenticationMode(@Nullable String authenticationMode) {
+            this.authenticationMode = authenticationMode;
+            return this;
+        }
         @CustomType.Setter
         public Builder awsProvider(@Nullable Provider awsProvider) {
             this.awsProvider = awsProvider;
@@ -399,6 +424,7 @@ public final class CoreData {
         }
         public CoreData build() {
             final var _resultValue = new CoreData();
+            _resultValue.authenticationMode = authenticationMode;
             _resultValue.awsProvider = awsProvider;
             _resultValue.cluster = cluster;
             _resultValue.clusterIamRole = clusterIamRole;

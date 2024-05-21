@@ -15,6 +15,15 @@ namespace Pulumi.Eks.Inputs
     /// </summary>
     public sealed class CoreDataArgs : global::Pulumi.ResourceArgs
     {
+        /// <summary>
+        /// The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+        /// 
+        /// See for more details:
+        /// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+        /// </summary>
+        [Input("authenticationMode")]
+        public string? AuthenticationMode { get; set; }
+
         [Input("awsProvider")]
         public Input<Pulumi.Aws.Provider>? AwsProvider { get; set; }
 

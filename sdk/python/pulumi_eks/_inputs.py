@@ -13,6 +13,7 @@ import pulumi_aws
 import pulumi_kubernetes
 
 __all__ = [
+    'AccessPolicyAssociationArgs',
     'ClusterNodeGroupOptionsArgs',
     'CoreDataArgs',
     'CreationRoleProviderArgs',
@@ -24,6 +25,47 @@ __all__ = [
     'UserMappingArgs',
     'VpcCniOptionsArgs',
 ]
+
+@pulumi.input_type
+class AccessPolicyAssociationArgs:
+    def __init__(__self__, *,
+                 access_scope: pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs'],
+                 policy_arn: pulumi.Input[str]):
+        """
+        Associates an access policy and its scope to an IAM principal.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+        :param pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs'] access_scope: The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+        :param pulumi.Input[str] policy_arn: The ARN of the access policy to associate with the principal
+        """
+        pulumi.set(__self__, "access_scope", access_scope)
+        pulumi.set(__self__, "policy_arn", policy_arn)
+
+    @property
+    @pulumi.getter(name="accessScope")
+    def access_scope(self) -> pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs']:
+        """
+        The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+        """
+        return pulumi.get(self, "access_scope")
+
+    @access_scope.setter
+    def access_scope(self, value: pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs']):
+        pulumi.set(self, "access_scope", value)
+
+    @property
+    @pulumi.getter(name="policyArn")
+    def policy_arn(self) -> pulumi.Input[str]:
+        """
+        The ARN of the access policy to associate with the principal
+        """
+        return pulumi.get(self, "policy_arn")
+
+    @policy_arn.setter
+    def policy_arn(self, value: pulumi.Input[str]):
+        pulumi.set(self, "policy_arn", value)
+
 
 @pulumi.input_type
 class ClusterNodeGroupOptionsArgs:
@@ -585,6 +627,7 @@ class CoreDataArgs:
                  provider: pulumi.Input['pulumi_kubernetes.Provider'],
                  subnet_ids: pulumi.Input[Sequence[pulumi.Input[str]]],
                  vpc_id: pulumi.Input[str],
+                 authentication_mode: Optional[str] = None,
                  aws_provider: Optional[pulumi.Input['pulumi_aws.Provider']] = None,
                  eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']] = None,
                  encryption_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']] = None,
@@ -605,6 +648,10 @@ class CoreDataArgs:
         :param pulumi.Input['ClusterNodeGroupOptionsArgs'] node_group_options: The cluster's node group options.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: List of subnet IDs for the EKS cluster.
         :param pulumi.Input[str] vpc_id: ID of the cluster's VPC.
+        :param str authentication_mode: The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+               
+               See for more details:
+               https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
         :param pulumi.Input['pulumi_aws.eks.FargateProfile'] fargate_profile: The Fargate profile used to manage which pods run on Fargate.
         :param Any kubeconfig: The kubeconfig file for the cluster.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] node_security_group_tags: Tags attached to the security groups associated with the cluster's worker nodes.
@@ -623,6 +670,8 @@ class CoreDataArgs:
         pulumi.set(__self__, "provider", provider)
         pulumi.set(__self__, "subnet_ids", subnet_ids)
         pulumi.set(__self__, "vpc_id", vpc_id)
+        if authentication_mode is not None:
+            pulumi.set(__self__, "authentication_mode", authentication_mode)
         if aws_provider is not None:
             pulumi.set(__self__, "aws_provider", aws_provider)
         if eks_node_access is not None:
@@ -746,6 +795,21 @@ class CoreDataArgs:
     @vpc_id.setter
     def vpc_id(self, value: pulumi.Input[str]):
         pulumi.set(self, "vpc_id", value)
+
+    @property
+    @pulumi.getter(name="authenticationMode")
+    def authentication_mode(self) -> Optional[str]:
+        """
+        The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+        """
+        return pulumi.get(self, "authentication_mode")
+
+    @authentication_mode.setter
+    def authentication_mode(self, value: Optional[str]):
+        pulumi.set(self, "authentication_mode", value)
 
     @property
     @pulumi.getter(name="awsProvider")
@@ -1036,16 +1100,20 @@ class RoleMappingArgs:
     def __init__(__self__, *,
                  groups: pulumi.Input[Sequence[pulumi.Input[str]]],
                  role_arn: pulumi.Input[str],
-                 username: pulumi.Input[str]):
+                 username: pulumi.Input[str],
+                 access_policies: Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]] = None):
         """
         Describes a mapping from an AWS IAM role to a Kubernetes user and groups.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] groups: A list of groups within Kubernetes to which the role is mapped.
         :param pulumi.Input[str] role_arn: The ARN of the IAM role to add.
         :param pulumi.Input[str] username: The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role.
+        :param pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]] access_policies: A list of EKS access policies to associate with the role. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
         """
         pulumi.set(__self__, "groups", groups)
         pulumi.set(__self__, "role_arn", role_arn)
         pulumi.set(__self__, "username", username)
+        if access_policies is not None:
+            pulumi.set(__self__, "access_policies", access_policies)
 
     @property
     @pulumi.getter
@@ -1082,6 +1150,18 @@ class RoleMappingArgs:
     @username.setter
     def username(self, value: pulumi.Input[str]):
         pulumi.set(self, "username", value)
+
+    @property
+    @pulumi.getter(name="accessPolicies")
+    def access_policies(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]]:
+        """
+        A list of EKS access policies to associate with the role. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+        """
+        return pulumi.get(self, "access_policies")
+
+    @access_policies.setter
+    def access_policies(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]]):
+        pulumi.set(self, "access_policies", value)
 
 
 @pulumi.input_type
@@ -1318,16 +1398,20 @@ class UserMappingArgs:
     def __init__(__self__, *,
                  groups: pulumi.Input[Sequence[pulumi.Input[str]]],
                  user_arn: pulumi.Input[str],
-                 username: pulumi.Input[str]):
+                 username: pulumi.Input[str],
+                 access_policies: Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]] = None):
         """
         Describes a mapping from an AWS IAM user to a Kubernetes user and groups.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] groups: A list of groups within Kubernetes to which the user is mapped to.
         :param pulumi.Input[str] user_arn: The ARN of the IAM user to add.
         :param pulumi.Input[str] username: The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user.
+        :param pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]] access_policies: A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
         """
         pulumi.set(__self__, "groups", groups)
         pulumi.set(__self__, "user_arn", user_arn)
         pulumi.set(__self__, "username", username)
+        if access_policies is not None:
+            pulumi.set(__self__, "access_policies", access_policies)
 
     @property
     @pulumi.getter
@@ -1364,6 +1448,18 @@ class UserMappingArgs:
     @username.setter
     def username(self, value: pulumi.Input[str]):
         pulumi.set(self, "username", value)
+
+    @property
+    @pulumi.getter(name="accessPolicies")
+    def access_policies(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]]:
+        """
+        A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+        """
+        return pulumi.get(self, "access_policies")
+
+    @access_policies.setter
+    def access_policies(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]]):
+        pulumi.set(self, "access_policies", value)
 
 
 @pulumi.input_type

@@ -5,9 +5,12 @@ package com.pulumi.eks.inputs;
 
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.eks.inputs.AccessPolicyAssociationArgs;
 import java.lang.String;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import javax.annotation.Nullable;
 
 
 /**
@@ -17,6 +20,21 @@ import java.util.Objects;
 public final class UserMappingArgs extends com.pulumi.resources.ResourceArgs {
 
     public static final UserMappingArgs Empty = new UserMappingArgs();
+
+    /**
+     * A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+     * 
+     */
+    @Import(name="accessPolicies")
+    private @Nullable Output<List<AccessPolicyAssociationArgs>> accessPolicies;
+
+    /**
+     * @return A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+     * 
+     */
+    public Optional<Output<List<AccessPolicyAssociationArgs>>> accessPolicies() {
+        return Optional.ofNullable(this.accessPolicies);
+    }
 
     /**
      * A list of groups within Kubernetes to which the user is mapped to.
@@ -66,6 +84,7 @@ public final class UserMappingArgs extends com.pulumi.resources.ResourceArgs {
     private UserMappingArgs() {}
 
     private UserMappingArgs(UserMappingArgs $) {
+        this.accessPolicies = $.accessPolicies;
         this.groups = $.groups;
         this.userArn = $.userArn;
         this.username = $.username;
@@ -87,6 +106,37 @@ public final class UserMappingArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder(UserMappingArgs defaults) {
             $ = new UserMappingArgs(Objects.requireNonNull(defaults));
+        }
+
+        /**
+         * @param accessPolicies A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder accessPolicies(@Nullable Output<List<AccessPolicyAssociationArgs>> accessPolicies) {
+            $.accessPolicies = accessPolicies;
+            return this;
+        }
+
+        /**
+         * @param accessPolicies A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder accessPolicies(List<AccessPolicyAssociationArgs> accessPolicies) {
+            return accessPolicies(Output.of(accessPolicies));
+        }
+
+        /**
+         * @param accessPolicies A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder accessPolicies(AccessPolicyAssociationArgs... accessPolicies) {
+            return accessPolicies(List.of(accessPolicies));
         }
 
         /**

@@ -15,6 +15,18 @@ namespace Pulumi.Eks.Inputs
     /// </summary>
     public sealed class RoleMappingArgs : global::Pulumi.ResourceArgs
     {
+        [Input("accessPolicies")]
+        private InputList<Inputs.AccessPolicyAssociationArgs>? _accessPolicies;
+
+        /// <summary>
+        /// A list of EKS access policies to associate with the role. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+        /// </summary>
+        public InputList<Inputs.AccessPolicyAssociationArgs> AccessPolicies
+        {
+            get => _accessPolicies ?? (_accessPolicies = new InputList<Inputs.AccessPolicyAssociationArgs>());
+            set => _accessPolicies = value;
+        }
+
         [Input("groups", required: true)]
         private InputList<string>? _groups;
 

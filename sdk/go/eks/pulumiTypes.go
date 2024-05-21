@@ -22,6 +22,124 @@ import (
 
 var _ = utilities.GetEnvOrDefault
 
+// Associates an access policy and its scope to an IAM principal.
+//
+// See for more details:
+// https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+type AccessPolicyAssociation struct {
+	// The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+	AccessScope eks.AccessPolicyAssociationAccessScope `pulumi:"accessScope"`
+	// The ARN of the access policy to associate with the principal
+	PolicyArn string `pulumi:"policyArn"`
+}
+
+// AccessPolicyAssociationInput is an input type that accepts AccessPolicyAssociationArgs and AccessPolicyAssociationOutput values.
+// You can construct a concrete instance of `AccessPolicyAssociationInput` via:
+//
+//	AccessPolicyAssociationArgs{...}
+type AccessPolicyAssociationInput interface {
+	pulumi.Input
+
+	ToAccessPolicyAssociationOutput() AccessPolicyAssociationOutput
+	ToAccessPolicyAssociationOutputWithContext(context.Context) AccessPolicyAssociationOutput
+}
+
+// Associates an access policy and its scope to an IAM principal.
+//
+// See for more details:
+// https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+type AccessPolicyAssociationArgs struct {
+	// The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+	AccessScope eks.AccessPolicyAssociationAccessScopeInput `pulumi:"accessScope"`
+	// The ARN of the access policy to associate with the principal
+	PolicyArn pulumi.StringInput `pulumi:"policyArn"`
+}
+
+func (AccessPolicyAssociationArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AccessPolicyAssociation)(nil)).Elem()
+}
+
+func (i AccessPolicyAssociationArgs) ToAccessPolicyAssociationOutput() AccessPolicyAssociationOutput {
+	return i.ToAccessPolicyAssociationOutputWithContext(context.Background())
+}
+
+func (i AccessPolicyAssociationArgs) ToAccessPolicyAssociationOutputWithContext(ctx context.Context) AccessPolicyAssociationOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AccessPolicyAssociationOutput)
+}
+
+// AccessPolicyAssociationArrayInput is an input type that accepts AccessPolicyAssociationArray and AccessPolicyAssociationArrayOutput values.
+// You can construct a concrete instance of `AccessPolicyAssociationArrayInput` via:
+//
+//	AccessPolicyAssociationArray{ AccessPolicyAssociationArgs{...} }
+type AccessPolicyAssociationArrayInput interface {
+	pulumi.Input
+
+	ToAccessPolicyAssociationArrayOutput() AccessPolicyAssociationArrayOutput
+	ToAccessPolicyAssociationArrayOutputWithContext(context.Context) AccessPolicyAssociationArrayOutput
+}
+
+type AccessPolicyAssociationArray []AccessPolicyAssociationInput
+
+func (AccessPolicyAssociationArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AccessPolicyAssociation)(nil)).Elem()
+}
+
+func (i AccessPolicyAssociationArray) ToAccessPolicyAssociationArrayOutput() AccessPolicyAssociationArrayOutput {
+	return i.ToAccessPolicyAssociationArrayOutputWithContext(context.Background())
+}
+
+func (i AccessPolicyAssociationArray) ToAccessPolicyAssociationArrayOutputWithContext(ctx context.Context) AccessPolicyAssociationArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AccessPolicyAssociationArrayOutput)
+}
+
+// Associates an access policy and its scope to an IAM principal.
+//
+// See for more details:
+// https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+type AccessPolicyAssociationOutput struct{ *pulumi.OutputState }
+
+func (AccessPolicyAssociationOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AccessPolicyAssociation)(nil)).Elem()
+}
+
+func (o AccessPolicyAssociationOutput) ToAccessPolicyAssociationOutput() AccessPolicyAssociationOutput {
+	return o
+}
+
+func (o AccessPolicyAssociationOutput) ToAccessPolicyAssociationOutputWithContext(ctx context.Context) AccessPolicyAssociationOutput {
+	return o
+}
+
+// The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+func (o AccessPolicyAssociationOutput) AccessScope() eks.AccessPolicyAssociationAccessScopeOutput {
+	return o.ApplyT(func(v AccessPolicyAssociation) eks.AccessPolicyAssociationAccessScope { return v.AccessScope }).(eks.AccessPolicyAssociationAccessScopeOutput)
+}
+
+// The ARN of the access policy to associate with the principal
+func (o AccessPolicyAssociationOutput) PolicyArn() pulumi.StringOutput {
+	return o.ApplyT(func(v AccessPolicyAssociation) string { return v.PolicyArn }).(pulumi.StringOutput)
+}
+
+type AccessPolicyAssociationArrayOutput struct{ *pulumi.OutputState }
+
+func (AccessPolicyAssociationArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AccessPolicyAssociation)(nil)).Elem()
+}
+
+func (o AccessPolicyAssociationArrayOutput) ToAccessPolicyAssociationArrayOutput() AccessPolicyAssociationArrayOutput {
+	return o
+}
+
+func (o AccessPolicyAssociationArrayOutput) ToAccessPolicyAssociationArrayOutputWithContext(ctx context.Context) AccessPolicyAssociationArrayOutput {
+	return o
+}
+
+func (o AccessPolicyAssociationArrayOutput) Index(i pulumi.IntInput) AccessPolicyAssociationOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AccessPolicyAssociation {
+		return vs[0].([]AccessPolicyAssociation)[vs[1].(int)]
+	}).(AccessPolicyAssociationOutput)
+}
+
 // Describes the configuration options accepted by a cluster to create its own node groups.
 type ClusterNodeGroupOptions struct {
 	// The AMI ID to use for the worker nodes.
@@ -861,8 +979,13 @@ func (o ClusterNodeGroupOptionsPtrOutput) Version() pulumi.StringPtrOutput {
 
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreData struct {
-	AwsProvider *aws.Provider `pulumi:"awsProvider"`
-	Cluster     *eks.Cluster  `pulumi:"cluster"`
+	// The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+	AuthenticationMode *string       `pulumi:"authenticationMode"`
+	AwsProvider        *aws.Provider `pulumi:"awsProvider"`
+	Cluster            *eks.Cluster  `pulumi:"cluster"`
 	// The IAM Role attached to the EKS Cluster
 	ClusterIamRole       *iam.Role                    `pulumi:"clusterIamRole"`
 	ClusterSecurityGroup *ec2.SecurityGroup           `pulumi:"clusterSecurityGroup"`
@@ -911,8 +1034,13 @@ type CoreDataInput interface {
 
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreDataArgs struct {
-	AwsProvider aws.ProviderInput `pulumi:"awsProvider"`
-	Cluster     eks.ClusterInput  `pulumi:"cluster"`
+	// The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+	AuthenticationMode *string           `pulumi:"authenticationMode"`
+	AwsProvider        aws.ProviderInput `pulumi:"awsProvider"`
+	Cluster            eks.ClusterInput  `pulumi:"cluster"`
 	// The IAM Role attached to the EKS Cluster
 	ClusterIamRole       iam.RoleInput                       `pulumi:"clusterIamRole"`
 	ClusterSecurityGroup ec2.SecurityGroupInput              `pulumi:"clusterSecurityGroup"`
@@ -973,6 +1101,14 @@ func (o CoreDataOutput) ToCoreDataOutput() CoreDataOutput {
 
 func (o CoreDataOutput) ToCoreDataOutputWithContext(ctx context.Context) CoreDataOutput {
 	return o
+}
+
+// The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+//
+// See for more details:
+// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+func (o CoreDataOutput) AuthenticationMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v CoreData) *string { return v.AuthenticationMode }).(pulumi.StringPtrOutput)
 }
 
 func (o CoreDataOutput) AwsProvider() aws.ProviderOutput {
@@ -1741,6 +1877,8 @@ func (o NodeGroupDataPtrOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
 
 // Describes a mapping from an AWS IAM role to a Kubernetes user and groups.
 type RoleMapping struct {
+	// A list of EKS access policies to associate with the role. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+	AccessPolicies []AccessPolicyAssociation `pulumi:"accessPolicies"`
 	// A list of groups within Kubernetes to which the role is mapped.
 	Groups []string `pulumi:"groups"`
 	// The ARN of the IAM role to add.
@@ -1762,6 +1900,8 @@ type RoleMappingInput interface {
 
 // Describes a mapping from an AWS IAM role to a Kubernetes user and groups.
 type RoleMappingArgs struct {
+	// A list of EKS access policies to associate with the role. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+	AccessPolicies AccessPolicyAssociationArrayInput `pulumi:"accessPolicies"`
 	// A list of groups within Kubernetes to which the role is mapped.
 	Groups pulumi.StringArrayInput `pulumi:"groups"`
 	// The ARN of the IAM role to add.
@@ -1820,6 +1960,11 @@ func (o RoleMappingOutput) ToRoleMappingOutput() RoleMappingOutput {
 
 func (o RoleMappingOutput) ToRoleMappingOutputWithContext(ctx context.Context) RoleMappingOutput {
 	return o
+}
+
+// A list of EKS access policies to associate with the role. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+func (o RoleMappingOutput) AccessPolicies() AccessPolicyAssociationArrayOutput {
+	return o.ApplyT(func(v RoleMapping) []AccessPolicyAssociation { return v.AccessPolicies }).(AccessPolicyAssociationArrayOutput)
 }
 
 // A list of groups within Kubernetes to which the role is mapped.
@@ -2170,6 +2315,8 @@ func (o TaintMapOutput) MapIndex(k pulumi.StringInput) TaintOutput {
 
 // Describes a mapping from an AWS IAM user to a Kubernetes user and groups.
 type UserMapping struct {
+	// A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+	AccessPolicies []AccessPolicyAssociation `pulumi:"accessPolicies"`
 	// A list of groups within Kubernetes to which the user is mapped to.
 	Groups []string `pulumi:"groups"`
 	// The ARN of the IAM user to add.
@@ -2191,6 +2338,8 @@ type UserMappingInput interface {
 
 // Describes a mapping from an AWS IAM user to a Kubernetes user and groups.
 type UserMappingArgs struct {
+	// A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+	AccessPolicies AccessPolicyAssociationArrayInput `pulumi:"accessPolicies"`
 	// A list of groups within Kubernetes to which the user is mapped to.
 	Groups pulumi.StringArrayInput `pulumi:"groups"`
 	// The ARN of the IAM user to add.
@@ -2249,6 +2398,11 @@ func (o UserMappingOutput) ToUserMappingOutput() UserMappingOutput {
 
 func (o UserMappingOutput) ToUserMappingOutputWithContext(ctx context.Context) UserMappingOutput {
 	return o
+}
+
+// A list of EKS access policies to associate with the user. This is only applicable when the mode of cluster authentication is either `API_AND_CONFIG_MAP` or `API`.
+func (o UserMappingOutput) AccessPolicies() AccessPolicyAssociationArrayOutput {
+	return o.ApplyT(func(v UserMapping) []AccessPolicyAssociation { return v.AccessPolicies }).(AccessPolicyAssociationArrayOutput)
 }
 
 // A list of groups within Kubernetes to which the user is mapped to.
@@ -2938,6 +3092,8 @@ func (o VpcCniOptionsPtrOutput) WarmPrefixTarget() pulumi.IntPtrOutput {
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*AccessPolicyAssociationInput)(nil)).Elem(), AccessPolicyAssociationArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AccessPolicyAssociationArrayInput)(nil)).Elem(), AccessPolicyAssociationArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsPtrInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CoreDataInput)(nil)).Elem(), CoreDataArgs{})
@@ -2957,6 +3113,8 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*UserMappingArrayInput)(nil)).Elem(), UserMappingArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniOptionsInput)(nil)).Elem(), VpcCniOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniOptionsPtrInput)(nil)).Elem(), VpcCniOptionsArgs{})
+	pulumi.RegisterOutputType(AccessPolicyAssociationOutput{})
+	pulumi.RegisterOutputType(AccessPolicyAssociationArrayOutput{})
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsOutput{})
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsPtrOutput{})
 	pulumi.RegisterOutputType(CoreDataOutput{})

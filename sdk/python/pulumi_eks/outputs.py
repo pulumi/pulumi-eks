@@ -542,6 +542,8 @@ class CoreData(dict):
             suggest = "subnet_ids"
         elif key == "vpcId":
             suggest = "vpc_id"
+        elif key == "authenticationMode":
+            suggest = "authentication_mode"
         elif key == "awsProvider":
             suggest = "aws_provider"
         elif key == "eksNodeAccess":
@@ -584,6 +586,7 @@ class CoreData(dict):
                  provider: 'pulumi_kubernetes.Provider',
                  subnet_ids: Sequence[str],
                  vpc_id: str,
+                 authentication_mode: Optional[str] = None,
                  aws_provider: Optional['pulumi_aws.Provider'] = None,
                  eks_node_access: Optional['pulumi_kubernetes.core.v1.ConfigMap'] = None,
                  encryption_config: Optional['pulumi_aws.eks.outputs.ClusterEncryptionConfig'] = None,
@@ -604,6 +607,10 @@ class CoreData(dict):
         :param 'ClusterNodeGroupOptions' node_group_options: The cluster's node group options.
         :param Sequence[str] subnet_ids: List of subnet IDs for the EKS cluster.
         :param str vpc_id: ID of the cluster's VPC.
+        :param str authentication_mode: The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+               
+               See for more details:
+               https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
         :param 'pulumi_aws.eks.FargateProfile' fargate_profile: The Fargate profile used to manage which pods run on Fargate.
         :param Any kubeconfig: The kubeconfig file for the cluster.
         :param Mapping[str, str] node_security_group_tags: Tags attached to the security groups associated with the cluster's worker nodes.
@@ -622,6 +629,8 @@ class CoreData(dict):
         pulumi.set(__self__, "provider", provider)
         pulumi.set(__self__, "subnet_ids", subnet_ids)
         pulumi.set(__self__, "vpc_id", vpc_id)
+        if authentication_mode is not None:
+            pulumi.set(__self__, "authentication_mode", authentication_mode)
         if aws_provider is not None:
             pulumi.set(__self__, "aws_provider", aws_provider)
         if eks_node_access is not None:
@@ -709,6 +718,17 @@ class CoreData(dict):
         ID of the cluster's VPC.
         """
         return pulumi.get(self, "vpc_id")
+
+    @property
+    @pulumi.getter(name="authenticationMode")
+    def authentication_mode(self) -> Optional[str]:
+        """
+        The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`. Defaults to `CONFIG_MAP`.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+        """
+        return pulumi.get(self, "authentication_mode")
 
     @property
     @pulumi.getter(name="awsProvider")
