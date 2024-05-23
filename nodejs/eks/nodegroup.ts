@@ -1770,12 +1770,18 @@ function createMNGCustomLaunchTemplate(
                 args.clusterName,
             ])
             .apply(([clusterName, clusterEndpoint, clusterCertAuthority, argsClusterName]) => {
-                return `#!/bin/bash
+                return `MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
 
-            /etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCertAuthority}" "${
+--==MYBOUNDARY==
+Content-Type: text/x-shellscript; charset="us-ascii"
+
+#!/bin/bash
+
+/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCertAuthority}" "${
                     argsClusterName || clusterName
                 }"${bootstrapExtraArgs}
-            `;
+--==MYBOUNDARY==--`;
             });
 
         // Encode the user data as base64.
