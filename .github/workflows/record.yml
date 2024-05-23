@@ -4,8 +4,9 @@ on:
     inputs:
       runTests:
         type: string
-        description: 'The tests in examples to record snapshots for, as a regex for `go test -run`'
+        description: 'The tests in examples to record snapshots for, as a regex for `go test -run`. Defaults to `TestExamplesUpgrades`'
         required: true
+        default: "TestExamplesUpgrades"
       targetBranch:
         type: string
         description: 'The branch to open the PR against'
