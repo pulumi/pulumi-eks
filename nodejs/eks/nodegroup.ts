@@ -1800,6 +1800,9 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         {
             userData,
             metadataOptions,
+            // We need to always supply an imageId, otherwise AWS will attempt to merge the user data which will result in
+            // nodes failing to join the cluster.
+            imageId: getRecommendedAMI(args, core.cluster.version, parent),
         },
         { parent, provider },
     );
@@ -1812,11 +1815,14 @@ Content-Type: text/x-shellscript; charset="us-ascii"
  * See: https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
  */
 function getRecommendedAMI(
-    args: Omit<NodeGroupOptions, "cluster"> | Omit<NodeGroupV2Options, "cluster">,
+    args: Omit<NodeGroupOptions, "cluster"> | Omit<NodeGroupV2Options, "cluster"> | Omit<ManagedNodeGroupOptions, "cluster">,
     k8sVersion: pulumi.Output<string>,
     parent: pulumi.Resource | undefined,
 ): pulumi.Input<string> {
-    const amiType = getAMIType(args.amiType, args.gpu, args.instanceType);
+    const gpu = "gpu" in args ? args.gpu : undefined;
+    const instanceType = "instanceType" in args ? args.instanceType : undefined;
+
+    const amiType = getAMIType(args.amiType, gpu, instanceType);
     const amiID = k8sVersion.apply((v) => {
         const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
         return pulumi.output(aws.ssm.getParameter({ name: parameterName }, { parent, async: true }))
