@@ -19,6 +19,8 @@ __all__ = ['ClusterArgs', 'Cluster']
 @pulumi.input_type
 class ClusterArgs:
     def __init__(__self__, *,
+                 access_entries: Optional[Mapping[str, 'AccessEntryArgs']] = None,
+                 authentication_mode: Optional[str] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -69,6 +71,14 @@ class ClusterArgs:
                  vpc_id: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a Cluster resource.
+        :param Mapping[str, 'AccessEntryArgs'] access_entries: Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+               
+               See for more details:
+               https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+        :param str authentication_mode: The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+               
+               See for more details:
+               https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
                Note: The security group resource should not contain any inline ingress or egress rules.
@@ -111,7 +121,7 @@ class ClusterArgs:
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
                - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
         :param pulumi.Input[str] instance_profile_name: The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
-        :param pulumi.Input['pulumi_aws.iam.Role'] instance_role: This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
+        :param pulumi.Input['pulumi_aws.iam.Role'] instance_role: This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
                
                Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]] instance_roles: This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
@@ -214,7 +224,7 @@ class ClusterArgs:
                   - Default all worker nodes to run in private subnets, and use the public subnets for internet-facing load balancers.
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
-        :param pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups.
+        :param pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
         :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
         :param Union[str, Mapping[str, 'StorageClassArgs']] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
@@ -231,11 +241,15 @@ class ClusterArgs:
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
         :param bool use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
-        :param pulumi.Input[Sequence[pulumi.Input['UserMappingArgs']]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups.
+        :param pulumi.Input[Sequence[pulumi.Input['UserMappingArgs']]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         :param 'VpcCniOptionsArgs' vpc_cni_options: The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
         :param pulumi.Input[str] vpc_id: The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the default VPC.
         """
+        if access_entries is not None:
+            pulumi.set(__self__, "access_entries", access_entries)
+        if authentication_mode is not None:
+            pulumi.set(__self__, "authentication_mode", authentication_mode)
         if cluster_security_group is not None:
             pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         if cluster_security_group_tags is not None:
@@ -332,6 +346,36 @@ class ClusterArgs:
             pulumi.set(__self__, "vpc_cni_options", vpc_cni_options)
         if vpc_id is not None:
             pulumi.set(__self__, "vpc_id", vpc_id)
+
+    @property
+    @pulumi.getter(name="accessEntries")
+    def access_entries(self) -> Optional[Mapping[str, 'AccessEntryArgs']]:
+        """
+        Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+        """
+        return pulumi.get(self, "access_entries")
+
+    @access_entries.setter
+    def access_entries(self, value: Optional[Mapping[str, 'AccessEntryArgs']]):
+        pulumi.set(self, "access_entries", value)
+
+    @property
+    @pulumi.getter(name="authenticationMode")
+    def authentication_mode(self) -> Optional[str]:
+        """
+        The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+        """
+        return pulumi.get(self, "authentication_mode")
+
+    @authentication_mode.setter
+    def authentication_mode(self, value: Optional[str]):
+        pulumi.set(self, "authentication_mode", value)
 
     @property
     @pulumi.getter(name="clusterSecurityGroup")
@@ -544,7 +588,7 @@ class ClusterArgs:
     @pulumi.getter(name="instanceRole")
     def instance_role(self) -> Optional[pulumi.Input['pulumi_aws.iam.Role']]:
         """
-        This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
+        This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 
         Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         """
@@ -889,7 +933,7 @@ class ClusterArgs:
     @pulumi.getter(name="roleMappings")
     def role_mappings(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]]]:
         """
-        Optional mappings from AWS IAM roles to Kubernetes users and groups.
+        Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         """
         return pulumi.get(self, "role_mappings")
 
@@ -983,7 +1027,7 @@ class ClusterArgs:
     @pulumi.getter(name="userMappings")
     def user_mappings(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['UserMappingArgs']]]]:
         """
-        Optional mappings from AWS IAM users to Kubernetes users and groups.
+        Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         """
         return pulumi.get(self, "user_mappings")
 
@@ -1033,6 +1077,8 @@ class Cluster(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 access_entries: Optional[Mapping[str, pulumi.InputType['AccessEntryArgs']]] = None,
+                 authentication_mode: Optional[str] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -1105,6 +1151,14 @@ class Cluster(pulumi.ComponentResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
+        :param Mapping[str, pulumi.InputType['AccessEntryArgs']] access_entries: Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+               
+               See for more details:
+               https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+        :param str authentication_mode: The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+               
+               See for more details:
+               https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
                Note: The security group resource should not contain any inline ingress or egress rules.
@@ -1147,7 +1201,7 @@ class Cluster(pulumi.ComponentResource):
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
                - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
         :param pulumi.Input[str] instance_profile_name: The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
-        :param pulumi.Input['pulumi_aws.iam.Role'] instance_role: This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
+        :param pulumi.Input['pulumi_aws.iam.Role'] instance_role: This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
                
                Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]] instance_roles: This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
@@ -1250,7 +1304,7 @@ class Cluster(pulumi.ComponentResource):
                   - Default all worker nodes to run in private subnets, and use the public subnets for internet-facing load balancers.
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
-        :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups.
+        :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
         :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
         :param Union[str, Mapping[str, pulumi.InputType['StorageClassArgs']]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
@@ -1267,7 +1321,7 @@ class Cluster(pulumi.ComponentResource):
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
         :param bool use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
-        :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['UserMappingArgs']]]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups.
+        :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['UserMappingArgs']]]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         :param pulumi.InputType['VpcCniOptionsArgs'] vpc_cni_options: The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
         :param pulumi.Input[str] vpc_id: The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the default VPC.
@@ -1314,6 +1368,8 @@ class Cluster(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 access_entries: Optional[Mapping[str, pulumi.InputType['AccessEntryArgs']]] = None,
+                 authentication_mode: Optional[str] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -1373,6 +1429,8 @@ class Cluster(pulumi.ComponentResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = ClusterArgs.__new__(ClusterArgs)
 
+            __props__.__dict__["access_entries"] = access_entries
+            __props__.__dict__["authentication_mode"] = authentication_mode
             __props__.__dict__["cluster_security_group"] = cluster_security_group
             __props__.__dict__["cluster_security_group_tags"] = cluster_security_group_tags
             __props__.__dict__["cluster_tags"] = cluster_tags
@@ -1488,7 +1546,7 @@ class Cluster(pulumi.ComponentResource):
     @pulumi.getter(name="instanceRoles")
     def instance_roles(self) -> pulumi.Output[Sequence['pulumi_aws.iam.Role']]:
         """
-        The service roles used by the EKS cluster.
+        The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         """
         return pulumi.get(self, "instance_roles")
 

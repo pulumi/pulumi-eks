@@ -13,6 +13,7 @@ import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.VpcCni;
+import com.pulumi.eks.inputs.AccessPolicyAssociationArgs;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
 import com.pulumi.kubernetes.core.v1.ConfigMap;
 import com.pulumi.kubernetes.storage.v1.StorageClass;
@@ -32,6 +33,21 @@ import javax.annotation.Nullable;
 public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
 
     public static final CoreDataArgs Empty = new CoreDataArgs();
+
+    /**
+     * The access entries added to the cluster.
+     * 
+     */
+    @Import(name="accessEntries")
+    private @Nullable Output<List<AccessPolicyAssociationArgs>> accessEntries;
+
+    /**
+     * @return The access entries added to the cluster.
+     * 
+     */
+    public Optional<Output<List<AccessPolicyAssociationArgs>>> accessEntries() {
+        return Optional.ofNullable(this.accessEntries);
+    }
 
     @Import(name="awsProvider")
     private @Nullable Output<Provider> awsProvider;
@@ -295,6 +311,7 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
     private CoreDataArgs() {}
 
     private CoreDataArgs(CoreDataArgs $) {
+        this.accessEntries = $.accessEntries;
         this.awsProvider = $.awsProvider;
         this.cluster = $.cluster;
         this.clusterIamRole = $.clusterIamRole;
@@ -334,6 +351,37 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder(CoreDataArgs defaults) {
             $ = new CoreDataArgs(Objects.requireNonNull(defaults));
+        }
+
+        /**
+         * @param accessEntries The access entries added to the cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder accessEntries(@Nullable Output<List<AccessPolicyAssociationArgs>> accessEntries) {
+            $.accessEntries = accessEntries;
+            return this;
+        }
+
+        /**
+         * @param accessEntries The access entries added to the cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder accessEntries(List<AccessPolicyAssociationArgs> accessEntries) {
+            return accessEntries(Output.of(accessEntries));
+        }
+
+        /**
+         * @param accessEntries The access entries added to the cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder accessEntries(AccessPolicyAssociationArgs... accessEntries) {
+            return accessEntries(List.of(accessEntries));
         }
 
         public Builder awsProvider(@Nullable Output<Provider> awsProvider) {

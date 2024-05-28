@@ -13,6 +13,8 @@ import pulumi_aws
 import pulumi_kubernetes
 
 __all__ = [
+    'AccessEntryArgs',
+    'AccessPolicyAssociationArgs',
     'ClusterNodeGroupOptionsArgs',
     'CoreDataArgs',
     'CreationRoleProviderArgs',
@@ -24,6 +26,155 @@ __all__ = [
     'UserMappingArgs',
     'VpcCniOptionsArgs',
 ]
+
+@pulumi.input_type
+class AccessEntryArgs:
+    def __init__(__self__, *,
+                 principal_arn: pulumi.Input[str],
+                 access_policies: Optional[Mapping[str, pulumi.Input['AccessPolicyAssociationArgs']]] = None,
+                 kubernetes_groups: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 type: Optional[pulumi.Input[str]] = None,
+                 username: Optional[pulumi.Input[str]] = None):
+        """
+        Access entries allow an IAM principal to access your cluster.
+
+        You have the following options for authorizing an IAM principal to access Kubernetes objects on your cluster: Kubernetes role-based access control (RBAC), Amazon EKS, or both.
+        Kubernetes RBAC authorization requires you to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects, in addition to managing access entries. If you use Amazon EKS authorization exclusively, you don't need to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects.
+        :param pulumi.Input[str] principal_arn: The IAM Principal ARN which requires Authentication access to the EKS cluster.
+        :param Mapping[str, pulumi.Input['AccessPolicyAssociationArgs']] access_policies: The access policies to associate to the access entry.
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] kubernetes_groups: A list of groups within Kubernetes to which the IAM principal is mapped to.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: The tags to apply to the AccessEntry.
+        :param pulumi.Input[str] type: The type of the new access entry. Valid values are Standard, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+               Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
+        :param pulumi.Input[str] username: Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
+        """
+        pulumi.set(__self__, "principal_arn", principal_arn)
+        if access_policies is not None:
+            pulumi.set(__self__, "access_policies", access_policies)
+        if kubernetes_groups is not None:
+            pulumi.set(__self__, "kubernetes_groups", kubernetes_groups)
+        if tags is not None:
+            pulumi.set(__self__, "tags", tags)
+        if type is not None:
+            pulumi.set(__self__, "type", type)
+        if username is not None:
+            pulumi.set(__self__, "username", username)
+
+    @property
+    @pulumi.getter(name="principalArn")
+    def principal_arn(self) -> pulumi.Input[str]:
+        """
+        The IAM Principal ARN which requires Authentication access to the EKS cluster.
+        """
+        return pulumi.get(self, "principal_arn")
+
+    @principal_arn.setter
+    def principal_arn(self, value: pulumi.Input[str]):
+        pulumi.set(self, "principal_arn", value)
+
+    @property
+    @pulumi.getter(name="accessPolicies")
+    def access_policies(self) -> Optional[Mapping[str, pulumi.Input['AccessPolicyAssociationArgs']]]:
+        """
+        The access policies to associate to the access entry.
+        """
+        return pulumi.get(self, "access_policies")
+
+    @access_policies.setter
+    def access_policies(self, value: Optional[Mapping[str, pulumi.Input['AccessPolicyAssociationArgs']]]):
+        pulumi.set(self, "access_policies", value)
+
+    @property
+    @pulumi.getter(name="kubernetesGroups")
+    def kubernetes_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
+        """
+        A list of groups within Kubernetes to which the IAM principal is mapped to.
+        """
+        return pulumi.get(self, "kubernetes_groups")
+
+    @kubernetes_groups.setter
+    def kubernetes_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
+        pulumi.set(self, "kubernetes_groups", value)
+
+    @property
+    @pulumi.getter
+    def tags(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
+        """
+        The tags to apply to the AccessEntry.
+        """
+        return pulumi.get(self, "tags")
+
+    @tags.setter
+    def tags(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]):
+        pulumi.set(self, "tags", value)
+
+    @property
+    @pulumi.getter
+    def type(self) -> Optional[pulumi.Input[str]]:
+        """
+        The type of the new access entry. Valid values are Standard, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+        Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
+        """
+        return pulumi.get(self, "type")
+
+    @type.setter
+    def type(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "type", value)
+
+    @property
+    @pulumi.getter
+    def username(self) -> Optional[pulumi.Input[str]]:
+        """
+        Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
+        """
+        return pulumi.get(self, "username")
+
+    @username.setter
+    def username(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "username", value)
+
+
+@pulumi.input_type
+class AccessPolicyAssociationArgs:
+    def __init__(__self__, *,
+                 access_scope: pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs'],
+                 policy_arn: pulumi.Input[str]):
+        """
+        Associates an access policy and its scope to an IAM principal.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+        :param pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs'] access_scope: The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+        :param pulumi.Input[str] policy_arn: The ARN of the access policy to associate with the principal
+        """
+        pulumi.set(__self__, "access_scope", access_scope)
+        pulumi.set(__self__, "policy_arn", policy_arn)
+
+    @property
+    @pulumi.getter(name="accessScope")
+    def access_scope(self) -> pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs']:
+        """
+        The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+        """
+        return pulumi.get(self, "access_scope")
+
+    @access_scope.setter
+    def access_scope(self, value: pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs']):
+        pulumi.set(self, "access_scope", value)
+
+    @property
+    @pulumi.getter(name="policyArn")
+    def policy_arn(self) -> pulumi.Input[str]:
+        """
+        The ARN of the access policy to associate with the principal
+        """
+        return pulumi.get(self, "policy_arn")
+
+    @policy_arn.setter
+    def policy_arn(self, value: pulumi.Input[str]):
+        pulumi.set(self, "policy_arn", value)
+
 
 @pulumi.input_type
 class ClusterNodeGroupOptionsArgs:
@@ -585,6 +736,7 @@ class CoreDataArgs:
                  provider: pulumi.Input['pulumi_kubernetes.Provider'],
                  subnet_ids: pulumi.Input[Sequence[pulumi.Input[str]]],
                  vpc_id: pulumi.Input[str],
+                 access_entries: Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]] = None,
                  aws_provider: Optional[pulumi.Input['pulumi_aws.Provider']] = None,
                  eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']] = None,
                  encryption_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']] = None,
@@ -605,6 +757,7 @@ class CoreDataArgs:
         :param pulumi.Input['ClusterNodeGroupOptionsArgs'] node_group_options: The cluster's node group options.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: List of subnet IDs for the EKS cluster.
         :param pulumi.Input[str] vpc_id: ID of the cluster's VPC.
+        :param pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]] access_entries: The access entries added to the cluster.
         :param pulumi.Input['pulumi_aws.eks.FargateProfile'] fargate_profile: The Fargate profile used to manage which pods run on Fargate.
         :param Any kubeconfig: The kubeconfig file for the cluster.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] node_security_group_tags: Tags attached to the security groups associated with the cluster's worker nodes.
@@ -623,6 +776,8 @@ class CoreDataArgs:
         pulumi.set(__self__, "provider", provider)
         pulumi.set(__self__, "subnet_ids", subnet_ids)
         pulumi.set(__self__, "vpc_id", vpc_id)
+        if access_entries is not None:
+            pulumi.set(__self__, "access_entries", access_entries)
         if aws_provider is not None:
             pulumi.set(__self__, "aws_provider", aws_provider)
         if eks_node_access is not None:
@@ -746,6 +901,18 @@ class CoreDataArgs:
     @vpc_id.setter
     def vpc_id(self, value: pulumi.Input[str]):
         pulumi.set(self, "vpc_id", value)
+
+    @property
+    @pulumi.getter(name="accessEntries")
+    def access_entries(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]]:
+        """
+        The access entries added to the cluster.
+        """
+        return pulumi.get(self, "access_entries")
+
+    @access_entries.setter
+    def access_entries(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]]):
+        pulumi.set(self, "access_entries", value)
 
     @property
     @pulumi.getter(name="awsProvider")

@@ -203,7 +203,7 @@ func generateSchema() schema.PackageSpec {
 								Type:  "array",
 								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
 							},
-							Description: "The service roles used by the EKS cluster.",
+							Description: "The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.",
 						},
 						"nodeSecurityGroup": {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
@@ -321,14 +321,14 @@ func generateSchema() schema.PackageSpec {
 							Type:  "array",
 							Items: &schema.TypeSpec{Ref: "#/types/eks:index:RoleMapping"},
 						},
-						Description: "Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`",
+						Description: "Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`",
 					},
 					"userMappings": {
 						TypeSpec: schema.TypeSpec{
 							Type:  "array",
 							Items: &schema.TypeSpec{Ref: "#/types/eks:index:UserMapping"},
 						},
-						Description: "Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.",
+						Description: "Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.",
 					},
 					"vpcCniOptions": {
 						TypeSpec: schema.TypeSpec{
@@ -353,7 +353,7 @@ func generateSchema() schema.PackageSpec {
 						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
 						Description: "This enables the simple case of only registering a *single* IAM instance role " +
 							"with the cluster, that is required to be shared by *all* node groups in their instance " +
-							"profiles.\n\n" +
+							"profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.\n\n" +
 							"Note: options `instanceRole` and `instanceRoles` are mutually exclusive.",
 					},
 					"instanceProfileName": {
@@ -1120,6 +1120,15 @@ func generateSchema() schema.PackageSpec {
 							Description: "The IAM Role attached to the EKS Cluster",
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
 						},
+						"accessEntries": {
+							TypeSpec: schema.TypeSpec{
+								Type: "array",
+								Items: &schema.TypeSpec{
+									Ref: "#/types/eks:index:AccessPolicyAssociation",
+								},
+							},
+							Description: "The access entries added to the cluster.",
+						},
 					},
 					Required: []string{
 						"cluster",
@@ -1463,7 +1472,7 @@ func generateSchema() schema.PackageSpec {
 						},
 						"username": {
 							TypeSpec:    schema.TypeSpec{Type: "string"},
-							Description: "Defaults to principal ARN if the principal is a user, else defaults to assume-role/session-name.",
+							Description: "Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.",
 						},
 						"kubernetesGroups": {
 							TypeSpec: schema.TypeSpec{
@@ -1477,10 +1486,10 @@ func generateSchema() schema.PackageSpec {
 								Type: "object",
 								AdditionalProperties: &schema.TypeSpec{
 									Ref: "#/types/eks:index:AccessPolicyAssociation",
-									// Plain: true, //TODO I don't think we need this
 								},
 								Plain: true,
 							},
+							Description: "The access policies to associate to the access entry.",
 						},
 						"tags": {
 							TypeSpec: schema.TypeSpec{
@@ -1493,7 +1502,8 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec: schema.TypeSpec{
 								Type: "string",
 							},
-							Description: "Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or groups, and prevent associations.",
+							Description: "The type of the new access entry. Valid values are Standard, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.\n" +
+								"Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.",
 						},
 					},
 					Required: []string{"principalArn"},

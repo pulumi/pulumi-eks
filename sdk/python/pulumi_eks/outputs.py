@@ -14,11 +14,70 @@ import pulumi_aws
 import pulumi_kubernetes
 
 __all__ = [
+    'AccessPolicyAssociation',
     'ClusterNodeGroupOptions',
     'CoreData',
     'NodeGroupData',
     'Taint',
 ]
+
+@pulumi.output_type
+class AccessPolicyAssociation(dict):
+    """
+    Associates an access policy and its scope to an IAM principal.
+
+    See for more details:
+    https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+    """
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "accessScope":
+            suggest = "access_scope"
+        elif key == "policyArn":
+            suggest = "policy_arn"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in AccessPolicyAssociation. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        AccessPolicyAssociation.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        AccessPolicyAssociation.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 access_scope: 'pulumi_aws.eks.outputs.AccessPolicyAssociationAccessScope',
+                 policy_arn: str):
+        """
+        Associates an access policy and its scope to an IAM principal.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+        :param 'pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs' access_scope: The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+        :param str policy_arn: The ARN of the access policy to associate with the principal
+        """
+        pulumi.set(__self__, "access_scope", access_scope)
+        pulumi.set(__self__, "policy_arn", policy_arn)
+
+    @property
+    @pulumi.getter(name="accessScope")
+    def access_scope(self) -> 'pulumi_aws.eks.outputs.AccessPolicyAssociationAccessScope':
+        """
+        The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+        """
+        return pulumi.get(self, "access_scope")
+
+    @property
+    @pulumi.getter(name="policyArn")
+    def policy_arn(self) -> str:
+        """
+        The ARN of the access policy to associate with the principal
+        """
+        return pulumi.get(self, "policy_arn")
+
 
 @pulumi.output_type
 class ClusterNodeGroupOptions(dict):
@@ -542,6 +601,8 @@ class CoreData(dict):
             suggest = "subnet_ids"
         elif key == "vpcId":
             suggest = "vpc_id"
+        elif key == "accessEntries":
+            suggest = "access_entries"
         elif key == "awsProvider":
             suggest = "aws_provider"
         elif key == "eksNodeAccess":
@@ -584,6 +645,7 @@ class CoreData(dict):
                  provider: 'pulumi_kubernetes.Provider',
                  subnet_ids: Sequence[str],
                  vpc_id: str,
+                 access_entries: Optional[Sequence['outputs.AccessPolicyAssociation']] = None,
                  aws_provider: Optional['pulumi_aws.Provider'] = None,
                  eks_node_access: Optional['pulumi_kubernetes.core.v1.ConfigMap'] = None,
                  encryption_config: Optional['pulumi_aws.eks.outputs.ClusterEncryptionConfig'] = None,
@@ -604,6 +666,7 @@ class CoreData(dict):
         :param 'ClusterNodeGroupOptions' node_group_options: The cluster's node group options.
         :param Sequence[str] subnet_ids: List of subnet IDs for the EKS cluster.
         :param str vpc_id: ID of the cluster's VPC.
+        :param Sequence['AccessPolicyAssociation'] access_entries: The access entries added to the cluster.
         :param 'pulumi_aws.eks.FargateProfile' fargate_profile: The Fargate profile used to manage which pods run on Fargate.
         :param Any kubeconfig: The kubeconfig file for the cluster.
         :param Mapping[str, str] node_security_group_tags: Tags attached to the security groups associated with the cluster's worker nodes.
@@ -622,6 +685,8 @@ class CoreData(dict):
         pulumi.set(__self__, "provider", provider)
         pulumi.set(__self__, "subnet_ids", subnet_ids)
         pulumi.set(__self__, "vpc_id", vpc_id)
+        if access_entries is not None:
+            pulumi.set(__self__, "access_entries", access_entries)
         if aws_provider is not None:
             pulumi.set(__self__, "aws_provider", aws_provider)
         if eks_node_access is not None:
@@ -709,6 +774,14 @@ class CoreData(dict):
         ID of the cluster's VPC.
         """
         return pulumi.get(self, "vpc_id")
+
+    @property
+    @pulumi.getter(name="accessEntries")
+    def access_entries(self) -> Optional[Sequence['outputs.AccessPolicyAssociation']]:
+        """
+        The access entries added to the cluster.
+        """
+        return pulumi.get(self, "access_entries")
 
     @property
     @pulumi.getter(name="awsProvider")

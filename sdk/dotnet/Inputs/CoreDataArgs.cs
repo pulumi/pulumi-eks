@@ -15,6 +15,18 @@ namespace Pulumi.Eks.Inputs
     /// </summary>
     public sealed class CoreDataArgs : global::Pulumi.ResourceArgs
     {
+        [Input("accessEntries")]
+        private InputList<Inputs.AccessPolicyAssociationArgs>? _accessEntries;
+
+        /// <summary>
+        /// The access entries added to the cluster.
+        /// </summary>
+        public InputList<Inputs.AccessPolicyAssociationArgs> AccessEntries
+        {
+            get => _accessEntries ?? (_accessEntries = new InputList<Inputs.AccessPolicyAssociationArgs>());
+            set => _accessEntries = value;
+        }
+
         [Input("awsProvider")]
         public Input<Pulumi.Aws.Provider>? AwsProvider { get; set; }
 

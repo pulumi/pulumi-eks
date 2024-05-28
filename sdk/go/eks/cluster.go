@@ -62,7 +62,7 @@ type Cluster struct {
 	EksCluster eks.ClusterOutput `pulumi:"eksCluster"`
 	// The ingress rule that gives node group access to cluster API server.
 	EksClusterIngressRule ec2.SecurityGroupRuleOutput `pulumi:"eksClusterIngressRule"`
-	// The service roles used by the EKS cluster.
+	// The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	InstanceRoles iam.RoleArrayOutput `pulumi:"instanceRoles"`
 	// A kubeconfig that can be used to connect to the EKS cluster.
 	Kubeconfig pulumi.AnyOutput `pulumi:"kubeconfig"`
@@ -89,6 +89,16 @@ func NewCluster(ctx *pulumi.Context,
 }
 
 type clusterArgs struct {
+	// Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+	AccessEntries map[string]AccessEntry `pulumi:"accessEntries"`
+	// The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+	AuthenticationMode *string `pulumi:"authenticationMode"`
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -146,7 +156,7 @@ type clusterArgs struct {
 	Gpu *bool `pulumi:"gpu"`
 	// The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
 	InstanceProfileName *string `pulumi:"instanceProfileName"`
-	// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
+	// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	//
 	// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
 	InstanceRole *iam.Role `pulumi:"instanceRole"`
@@ -271,7 +281,7 @@ type clusterArgs struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
 	PublicSubnetIds []string `pulumi:"publicSubnetIds"`
-	// Optional mappings from AWS IAM roles to Kubernetes users and groups.
+	// Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
 	RoleMappings []RoleMapping `pulumi:"roleMappings"`
 	// IAM Service Role for EKS to use to manage the cluster.
 	ServiceRole *iam.Role `pulumi:"serviceRole"`
@@ -295,7 +305,7 @@ type clusterArgs struct {
 	Tags map[string]string `pulumi:"tags"`
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
 	UseDefaultVpcCni *bool `pulumi:"useDefaultVpcCni"`
-	// Optional mappings from AWS IAM users to Kubernetes users and groups.
+	// Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	UserMappings []UserMapping `pulumi:"userMappings"`
 	// Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
 	Version *string `pulumi:"version"`
@@ -307,6 +317,16 @@ type clusterArgs struct {
 
 // The set of arguments for constructing a Cluster resource.
 type ClusterArgs struct {
+	// Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+	AccessEntries map[string]AccessEntryArgs
+	// The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+	AuthenticationMode *string
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -364,7 +384,7 @@ type ClusterArgs struct {
 	Gpu pulumi.BoolPtrInput
 	// The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
 	InstanceProfileName pulumi.StringPtrInput
-	// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
+	// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	//
 	// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
 	InstanceRole iam.RoleInput
@@ -489,7 +509,7 @@ type ClusterArgs struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
 	PublicSubnetIds pulumi.StringArrayInput
-	// Optional mappings from AWS IAM roles to Kubernetes users and groups.
+	// Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
 	RoleMappings RoleMappingArrayInput
 	// IAM Service Role for EKS to use to manage the cluster.
 	ServiceRole iam.RoleInput
@@ -513,7 +533,7 @@ type ClusterArgs struct {
 	Tags pulumi.StringMapInput
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
 	UseDefaultVpcCni *bool
-	// Optional mappings from AWS IAM users to Kubernetes users and groups.
+	// Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	UserMappings UserMappingArrayInput
 	// Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
 	Version pulumi.StringPtrInput
@@ -699,7 +719,7 @@ func (o ClusterOutput) EksClusterIngressRule() ec2.SecurityGroupRuleOutput {
 	return o.ApplyT(func(v *Cluster) ec2.SecurityGroupRuleOutput { return v.EksClusterIngressRule }).(ec2.SecurityGroupRuleOutput)
 }
 
-// The service roles used by the EKS cluster.
+// The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 func (o ClusterOutput) InstanceRoles() iam.RoleArrayOutput {
 	return o.ApplyT(func(v *Cluster) iam.RoleArrayOutput { return v.InstanceRoles }).(iam.RoleArrayOutput)
 }
