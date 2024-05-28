@@ -18,18 +18,18 @@ import * as pulumi from "@pulumi/pulumi";
 import * as jsyaml from "js-yaml";
 import { AccessEntry, ClusterOptions, RoleMapping, UserMapping } from "./cluster";
 
-export const AuthModeConfigMap = "CONFIG_MAP"
-export const AuthModeApiAndConfigMap = "API_AND_CONFIG_MAP"
-export const AuthModeApi = "API"
+export const CONFIG_MAP = "CONFIG_MAP"
+export const API_AND_CONFIG_MAP = "API_AND_CONFIG_MAP"
+export const API = "API"
 
 
 export function validateAuthenticationMode(args: ClusterOptions) {
-    if (args.authenticationMode && args.authenticationMode !== AuthModeConfigMap && args.authenticationMode !== AuthModeApiAndConfigMap && args.authenticationMode !== AuthModeApi) {
-        throw new Error(`Invalid value for authenticationMode: ${args.authenticationMode}. Allowed values are: ${AuthModeConfigMap}, ${AuthModeApiAndConfigMap}, ${AuthModeApi}.`);
+    if (args.authenticationMode && args.authenticationMode !== CONFIG_MAP && args.authenticationMode !== API_AND_CONFIG_MAP && args.authenticationMode !== API) {
+        throw new Error(`Invalid value for authenticationMode: ${args.authenticationMode}. Allowed values are: ${CONFIG_MAP}, ${API_AND_CONFIG_MAP}, ${API}.`);
     }
 
     // If authenticationMode is not provided, EKS defaults to CONFIG_MAP
-    const authMode = args.authenticationMode || AuthModeConfigMap;
+    const authMode = args.authenticationMode || CONFIG_MAP;
 
     const configMapOnlyProperties: (keyof ClusterOptions)[] = ["roleMappings", "userMappings", "instanceRoles", "instanceRole"];
     const apiOnlyProperties: (keyof ClusterOptions)[] = ["accessEntries"];
@@ -53,11 +53,11 @@ export function validateAuthenticationMode(args: ClusterOptions) {
 
 export function supportsConfigMap(authenticationMode: string | undefined) {
     // If authenticationMode is not provided, it defaults to CONFIG_MAP
-    return !authenticationMode || authenticationMode === AuthModeConfigMap || authenticationMode === AuthModeApiAndConfigMap;
+    return !authenticationMode || authenticationMode === CONFIG_MAP || authenticationMode === API_AND_CONFIG_MAP;
 }
 
 export function supportsAccessEntries(authenticationMode: string | undefined) {
-    return authenticationMode === AuthModeApi || authenticationMode === AuthModeApiAndConfigMap;
+    return authenticationMode === API || authenticationMode === API_AND_CONFIG_MAP;
 }
 
 /**
