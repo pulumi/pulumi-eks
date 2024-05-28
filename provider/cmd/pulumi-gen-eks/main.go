@@ -80,7 +80,7 @@ func main() {
 }
 
 const (
-	awsVersion = "v6.5.0"
+	awsVersion = "v6.18.2"
 	k8sVersion = "v4.4.0"
 )
 
@@ -321,14 +321,14 @@ func generateSchema() schema.PackageSpec {
 							Type:  "array",
 							Items: &schema.TypeSpec{Ref: "#/types/eks:index:RoleMapping"},
 						},
-						Description: "Optional mappings from AWS IAM roles to Kubernetes users and groups.",
+						Description: "Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`",
 					},
 					"userMappings": {
 						TypeSpec: schema.TypeSpec{
 							Type:  "array",
 							Items: &schema.TypeSpec{Ref: "#/types/eks:index:UserMapping"},
 						},
-						Description: "Optional mappings from AWS IAM users to Kubernetes users and groups.",
+						Description: "Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.",
 					},
 					"vpcCniOptions": {
 						TypeSpec: schema.TypeSpec{
@@ -642,6 +642,27 @@ func generateSchema() schema.PackageSpec {
 							"- Doesn't overlap with any CIDR block assigned to the VPC that you selected for VPC.\n" +
 							"- Between /24 and /12." +
 							"",
+					},
+					"accessEntries": {
+						TypeSpec: schema.TypeSpec{
+							Type: "object",
+							AdditionalProperties: &schema.TypeSpec{
+								Ref:   "#/types/eks:index:AccessEntry",
+								Plain: true,
+							},
+							Plain: true,
+						},
+						Description: "Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. " +
+							"Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.\n\n" +
+							"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/access-entries.html",
+					},
+					"authenticationMode": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "string",
+							Plain: true,
+						},
+						Description: "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\n" +
+							"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
 					},
 				},
 				Methods: map[string]string{
@@ -1427,6 +1448,80 @@ func generateSchema() schema.PackageSpec {
 					Properties:  vpcCniProperties(false /*kubeconfig*/),
 				},
 			},
+
+			"eks:index:AccessEntry": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Description: "Access entries allow an IAM principal to access your cluster.\n\n" +
+						"You have the following options for authorizing an IAM principal to access Kubernetes objects on your cluster: Kubernetes role-based access control (RBAC), Amazon EKS, or both.\n" +
+						"Kubernetes RBAC authorization requires you to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects, in addition to managing access entries. " +
+						"If you use Amazon EKS authorization exclusively, you don't need to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects.",
+					Properties: map[string]schema.PropertySpec{
+						"principalArn": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The IAM Principal ARN which requires Authentication access to the EKS cluster.",
+						},
+						"username": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "Defaults to principal ARN if the principal is a user, else defaults to assume-role/session-name.",
+						},
+						"kubernetesGroups": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "array",
+								Items: &schema.TypeSpec{Type: "string"},
+							},
+							Description: "A list of groups within Kubernetes to which the IAM principal is mapped to.",
+						},
+						"accessPolicies": {
+							TypeSpec: schema.TypeSpec{
+								Type: "object",
+								AdditionalProperties: &schema.TypeSpec{
+									Ref: "#/types/eks:index:AccessPolicyAssociation",
+									// Plain: true, //TODO I don't think we need this
+								},
+								Plain: true,
+							},
+						},
+						"tags": {
+							TypeSpec: schema.TypeSpec{
+								Type:                 "object",
+								AdditionalProperties: &schema.TypeSpec{Type: "string"},
+							},
+							Description: "The tags to apply to the AccessEntry.",
+						},
+						"type": {
+							TypeSpec: schema.TypeSpec{
+								Type: "string",
+							},
+							Description: "Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or groups, and prevent associations.",
+						},
+					},
+					Required: []string{"principalArn"},
+				},
+			},
+
+			"eks:index:AccessPolicyAssociation": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Description: "Associates an access policy and its scope to an IAM principal.\n\n" +
+						"See for more details:\n" +
+						"https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html",
+					Properties: map[string]schema.PropertySpec{
+						"policyArn": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The ARN of the access policy to associate with the principal",
+						},
+						"accessScope": {
+							TypeSpec: schema.TypeSpec{
+								Ref: awsRef("#/types/aws:eks%2FAccessPolicyAssociationAccessScope:AccessPolicyAssociationAccessScope"),
+							},
+							Description: "The scope of the access policy association. This controls whether the access policy is scoped " +
+								"to the cluster or to a particular namespace.",
+						},
+					},
+					Required: []string{"policyArn", "accessScope"},
+				},
+			},
 		},
 
 		Language: map[string]schema.RawMessage{
@@ -1460,7 +1555,7 @@ func generateSchema() schema.PackageSpec {
 			}),
 			"java": rawMessage(map[string]interface{}{
 				"dependencies": map[string]string{
-					"com.pulumi:aws":        "6.5.0",
+					"com.pulumi:aws":        "6.18.2",
 					"com.pulumi:kubernetes": "4.4.0",
 				},
 			}),
