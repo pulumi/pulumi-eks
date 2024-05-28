@@ -25,7 +25,13 @@ import * as process from "process";
 import * as tmp from "tmp";
 import * as url from "url";
 
-import { createAccessEntries, createAwsAuthData, supportsConfigMap, supportsAccessEntries, validateAuthenticationMode } from "./authenticationMode";
+import {
+    createAccessEntries,
+    createAwsAuthData,
+    supportsConfigMap,
+    supportsAccessEntries,
+    validateAuthenticationMode,
+} from "./authenticationMode";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
@@ -601,7 +607,9 @@ export function createCore(
             ),
             encryptionConfig,
             kubernetesNetworkConfig,
-            accessConfig: args.authenticationMode ? { authenticationMode: args.authenticationMode } : undefined,
+            accessConfig: args.authenticationMode
+                ? { authenticationMode: args.authenticationMode }
+                : undefined,
         },
         {
             parent,
@@ -831,13 +839,15 @@ export function createCore(
         }
     }
 
-    if (!supportsConfigMap(args.authenticationMode) && args.userMappings) {}
-
     let eksNodeAccess: k8s.core.v1.ConfigMap | undefined = undefined;
     if (supportsConfigMap(args.authenticationMode)) {
         // Create the aws-auth ConfigMap if the authentication mode supports it. This maps instance roles, regular IAM roles, and IAM users to
         // Kubernetes RBAC users and groups.
-        const nodeAccessData = createAwsAuthData(instanceRoles, args.roleMappings, args.userMappings)
+        const nodeAccessData = createAwsAuthData(
+            instanceRoles,
+            args.roleMappings,
+            args.userMappings,
+        );
         eksNodeAccess = new k8s.core.v1.ConfigMap(
             `${name}-nodeAccess`,
             {
@@ -865,10 +875,12 @@ export function createCore(
             accessEntryInputs[`${name}-defaultNodeGroupInstanceRole`] = {
                 principalArn: defaultInstanceRole.arn,
                 type: "EC2_LINUX",
-            }
+            };
         }
 
-        accessEntries = pulumi.output(createAccessEntries(eksCluster.name, accessEntryInputs, { parent, provider }));
+        accessEntries = pulumi.output(
+            createAccessEntries(eksCluster.name, accessEntryInputs, { parent, provider }),
+        );
     }
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi
@@ -1535,7 +1547,7 @@ export interface ClusterOptions {
     /**
      * Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster.
      * Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
-     * 
+     *
      * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
      */
     accessEntries?: { [key: string]: AccessEntry };
@@ -1596,16 +1608,14 @@ export interface AccessEntry {
 
     /**
      * The type of the new access entry. Valid values are Standard, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
-     * 
+     *
      * Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow
      * users to input a username or kubernetesGroup, and prevent associating access policies.
      */
     type?: pulumi.Input<string>;
-
 }
 
 export interface AccessPolicyAssociation {
-
     /**
      * The ARN of the access policy to associate with the principal
      */
