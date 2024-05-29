@@ -757,33 +757,38 @@ ${customUserData}
 
     const numeric = new RegExp("^\\d+$");
 
-    if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
-        throw new Error(
-            "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
-        );
-    }
+    // We need to wrap the validation in a pulumi.all as MLCs could supply pulumi.Output<T> or T.
+    pulumi
+        .all([args.nodeRootVolumeIops, args.nodeRootVolumeType, args.nodeRootVolumeThroughput])
+        .apply(([nodeRootVolumeIops, nodeRootVolumeType, nodeRootVolumeThroughput]) => {
+            if (nodeRootVolumeIops && nodeRootVolumeType !== "io1") {
+                throw new Error(
+                    "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
+                );
+            }
 
-    if (args.nodeRootVolumeType === "io1" && args.nodeRootVolumeIops) {
-        if (!numeric.test(args.nodeRootVolumeIops?.toString())) {
-            throw new Error(
-                "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
-            );
-        }
-    }
+            if (nodeRootVolumeType === "io1" && nodeRootVolumeIops) {
+                if (!numeric.test(nodeRootVolumeIops?.toString())) {
+                    throw new Error(
+                        "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
+                    );
+                }
+            }
 
-    if (args.nodeRootVolumeThroughput && args.nodeRootVolumeType !== "gp3") {
-        throw new Error(
-            "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
-        );
-    }
+            if (nodeRootVolumeThroughput && nodeRootVolumeType !== "gp3") {
+                throw new Error(
+                    "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
+                );
+            }
 
-    if (args.nodeRootVolumeType === "gp3" && args.nodeRootVolumeThroughput) {
-        if (!numeric.test(args.nodeRootVolumeThroughput?.toString())) {
-            throw new Error(
-                "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
-            );
-        }
-    }
+            if (nodeRootVolumeType === "gp3" && nodeRootVolumeThroughput) {
+                if (!numeric.test(nodeRootVolumeThroughput?.toString())) {
+                    throw new Error(
+                        "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
+                    );
+                }
+            }
+        });
 
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(
         `${name}-nodeLaunchConfiguration`,
@@ -1146,33 +1151,38 @@ ${customUserData}
 
     const numeric = new RegExp("^\\d+$");
 
-    if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
-        throw new Error(
-            "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
-        );
-    }
+    // We need to wrap the validation in a pulumi.all as MLCs could supply pulumi.Output<T> or T.
+    pulumi
+        .all([args.nodeRootVolumeIops, args.nodeRootVolumeType, args.nodeRootVolumeThroughput])
+        .apply(([nodeRootVolumeIops, nodeRootVolumeType, nodeRootVolumeThroughput]) => {
+            if (nodeRootVolumeIops && nodeRootVolumeType !== "io1") {
+                throw new Error(
+                    "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
+                );
+            }
 
-    if (args.nodeRootVolumeType === "io1" && args.nodeRootVolumeIops) {
-        if (!numeric.test(args.nodeRootVolumeIops?.toString())) {
-            throw new Error(
-                "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
-            );
-        }
-    }
+            if (nodeRootVolumeType === "io1" && nodeRootVolumeIops) {
+                if (!numeric.test(nodeRootVolumeIops?.toString())) {
+                    throw new Error(
+                        "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
+                    );
+                }
+            }
 
-    if (args.nodeRootVolumeThroughput && args.nodeRootVolumeType !== "gp3") {
-        throw new Error(
-            "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
-        );
-    }
+            if (nodeRootVolumeThroughput && nodeRootVolumeType !== "gp3") {
+                throw new Error(
+                    "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
+                );
+            }
 
-    if (args.nodeRootVolumeType === "gp3" && args.nodeRootVolumeThroughput) {
-        if (!numeric.test(args.nodeRootVolumeThroughput?.toString())) {
-            throw new Error(
-                "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
-            );
-        }
-    }
+            if (nodeRootVolumeType === "gp3" && nodeRootVolumeThroughput) {
+                if (!numeric.test(nodeRootVolumeThroughput?.toString())) {
+                    throw new Error(
+                        "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
+                    );
+                }
+            }
+        });
 
     const marketOptions = args.spotPrice
         ? {
@@ -1829,8 +1839,8 @@ function getRecommendedAMI(
     const instanceType = "instanceType" in args ? args.instanceType : undefined;
 
     const amiType = getAMIType(args.amiType, gpu, instanceType);
-    const amiID = k8sVersion.apply((v) => {
-        const parameterName = `/aws/service/eks/optimized-ami/${v}/${amiType}/recommended/image_id`;
+    const amiID = pulumi.output([k8sVersion, amiType]).apply(([version, type]) => {
+        const parameterName = `/aws/service/eks/optimized-ami/${version}/${type}/recommended/image_id`;
         return pulumi.output(aws.ssm.getParameter({ name: parameterName }, { parent, async: true }))
             .value;
     });
@@ -1876,21 +1886,23 @@ function getAMIType(
     amiType: pulumi.Input<string> | undefined,
     gpu: pulumi.Input<boolean> | undefined,
     instanceType: pulumi.Input<string> | undefined,
-): string {
-    if (amiType) {
-        // Return the user-specified AMI type.
-        return amiType.toString();
-    }
+): pulumi.Output<string> {
+    return pulumi.all([amiType, gpu, instanceType]).apply(([amiType, gpu, instanceType]) => {
+        if (amiType) {
+            // Return the user-specified AMI type.
+            return amiType;
+        }
 
-    if (gpu) {
-        // Return the Amazon Linux 2 GPU AMI type.
-        return "amazon-linux-2-gpu";
-    }
+        if (gpu) {
+            // Return the Amazon Linux 2 GPU AMI type.
+            return "amazon-linux-2-gpu";
+        }
 
-    if (instanceType && isGravitonInstance(instanceType.toString())) {
-        // Return the Amazon Linux 2 ARM64 AMI type.
-        return "amazon-linux-2-arm64";
-    }
+        if (instanceType && isGravitonInstance(instanceType)) {
+            // Return the Amazon Linux 2 ARM64 AMI type.
+            return "amazon-linux-2-arm64";
+        }
 
-    return "amazon-linux-2";
+        return "amazon-linux-2";
+    });
 }
