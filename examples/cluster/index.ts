@@ -36,7 +36,7 @@ const cluster3 = new eks.Cluster(`${projectName}-3`, {
         desiredCapacity: 1,
         minSize: 1,
         maxSize: 1,
-        instanceType: "t3.small",
+        instanceType: pulumi.output(Promise.resolve("t3.small")),
         enableDetailedMonitoring: false,
     }
 })
