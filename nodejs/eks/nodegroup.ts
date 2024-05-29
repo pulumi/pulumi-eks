@@ -755,7 +755,7 @@ ${customUserData}
         nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
     }
 
-    const numeric = new RegExp("^d+$");
+    const numeric = new RegExp("^\\d+$");
 
     if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
         throw new Error(
@@ -1144,7 +1144,7 @@ ${customUserData}
         nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
     }
 
-    const numeric = new RegExp("^d+$");
+    const numeric = new RegExp("^\\d+$");
 
     if (args.nodeRootVolumeIops && args.nodeRootVolumeType !== "io1") {
         throw new Error(
