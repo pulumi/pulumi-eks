@@ -736,7 +736,7 @@ class CoreDataArgs:
                  provider: pulumi.Input['pulumi_kubernetes.Provider'],
                  subnet_ids: pulumi.Input[Sequence[pulumi.Input[str]]],
                  vpc_id: pulumi.Input[str],
-                 access_entries: Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]] = None,
+                 access_entries: Optional[pulumi.Input[Sequence[pulumi.Input['AccessEntryArgs']]]] = None,
                  aws_provider: Optional[pulumi.Input['pulumi_aws.Provider']] = None,
                  eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']] = None,
                  encryption_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']] = None,
@@ -757,7 +757,7 @@ class CoreDataArgs:
         :param pulumi.Input['ClusterNodeGroupOptionsArgs'] node_group_options: The cluster's node group options.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: List of subnet IDs for the EKS cluster.
         :param pulumi.Input[str] vpc_id: ID of the cluster's VPC.
-        :param pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]] access_entries: The access entries added to the cluster.
+        :param pulumi.Input[Sequence[pulumi.Input['AccessEntryArgs']]] access_entries: The access entries added to the cluster.
         :param pulumi.Input['pulumi_aws.eks.FargateProfile'] fargate_profile: The Fargate profile used to manage which pods run on Fargate.
         :param Any kubeconfig: The kubeconfig file for the cluster.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] node_security_group_tags: Tags attached to the security groups associated with the cluster's worker nodes.
@@ -904,14 +904,14 @@ class CoreDataArgs:
 
     @property
     @pulumi.getter(name="accessEntries")
-    def access_entries(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]]:
+    def access_entries(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AccessEntryArgs']]]]:
         """
         The access entries added to the cluster.
         """
         return pulumi.get(self, "access_entries")
 
     @access_entries.setter
-    def access_entries(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AccessPolicyAssociationArgs']]]]):
+    def access_entries(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AccessEntryArgs']]]]):
         pulumi.set(self, "access_entries", value)
 
     @property

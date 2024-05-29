@@ -42,6 +42,143 @@ type AccessEntry struct {
 	Username *string `pulumi:"username"`
 }
 
+// AccessEntryInput is an input type that accepts AccessEntryArgs and AccessEntryOutput values.
+// You can construct a concrete instance of `AccessEntryInput` via:
+//
+//	AccessEntryArgs{...}
+type AccessEntryInput interface {
+	pulumi.Input
+
+	ToAccessEntryOutput() AccessEntryOutput
+	ToAccessEntryOutputWithContext(context.Context) AccessEntryOutput
+}
+
+// Access entries allow an IAM principal to access your cluster.
+//
+// You have the following options for authorizing an IAM principal to access Kubernetes objects on your cluster: Kubernetes role-based access control (RBAC), Amazon EKS, or both.
+// Kubernetes RBAC authorization requires you to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects, in addition to managing access entries. If you use Amazon EKS authorization exclusively, you don't need to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects.
+type AccessEntryArgs struct {
+	// The access policies to associate to the access entry.
+	AccessPolicies map[string]AccessPolicyAssociationInput `pulumi:"accessPolicies"`
+	// A list of groups within Kubernetes to which the IAM principal is mapped to.
+	KubernetesGroups pulumi.StringArrayInput `pulumi:"kubernetesGroups"`
+	// The IAM Principal ARN which requires Authentication access to the EKS cluster.
+	PrincipalArn pulumi.StringInput `pulumi:"principalArn"`
+	// The tags to apply to the AccessEntry.
+	Tags pulumi.StringMapInput `pulumi:"tags"`
+	// The type of the new access entry. Valid values are Standard, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+	// Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
+	Type pulumi.StringPtrInput `pulumi:"type"`
+	// Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
+	Username pulumi.StringPtrInput `pulumi:"username"`
+}
+
+func (AccessEntryArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AccessEntry)(nil)).Elem()
+}
+
+func (i AccessEntryArgs) ToAccessEntryOutput() AccessEntryOutput {
+	return i.ToAccessEntryOutputWithContext(context.Background())
+}
+
+func (i AccessEntryArgs) ToAccessEntryOutputWithContext(ctx context.Context) AccessEntryOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AccessEntryOutput)
+}
+
+// AccessEntryArrayInput is an input type that accepts AccessEntryArray and AccessEntryArrayOutput values.
+// You can construct a concrete instance of `AccessEntryArrayInput` via:
+//
+//	AccessEntryArray{ AccessEntryArgs{...} }
+type AccessEntryArrayInput interface {
+	pulumi.Input
+
+	ToAccessEntryArrayOutput() AccessEntryArrayOutput
+	ToAccessEntryArrayOutputWithContext(context.Context) AccessEntryArrayOutput
+}
+
+type AccessEntryArray []AccessEntryInput
+
+func (AccessEntryArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AccessEntry)(nil)).Elem()
+}
+
+func (i AccessEntryArray) ToAccessEntryArrayOutput() AccessEntryArrayOutput {
+	return i.ToAccessEntryArrayOutputWithContext(context.Background())
+}
+
+func (i AccessEntryArray) ToAccessEntryArrayOutputWithContext(ctx context.Context) AccessEntryArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AccessEntryArrayOutput)
+}
+
+// Access entries allow an IAM principal to access your cluster.
+//
+// You have the following options for authorizing an IAM principal to access Kubernetes objects on your cluster: Kubernetes role-based access control (RBAC), Amazon EKS, or both.
+// Kubernetes RBAC authorization requires you to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects, in addition to managing access entries. If you use Amazon EKS authorization exclusively, you don't need to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects.
+type AccessEntryOutput struct{ *pulumi.OutputState }
+
+func (AccessEntryOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AccessEntry)(nil)).Elem()
+}
+
+func (o AccessEntryOutput) ToAccessEntryOutput() AccessEntryOutput {
+	return o
+}
+
+func (o AccessEntryOutput) ToAccessEntryOutputWithContext(ctx context.Context) AccessEntryOutput {
+	return o
+}
+
+// The access policies to associate to the access entry.
+func (o AccessEntryOutput) AccessPolicies() AccessPolicyAssociationMapOutput {
+	return o.ApplyT(func(v AccessEntry) map[string]AccessPolicyAssociation { return v.AccessPolicies }).(AccessPolicyAssociationMapOutput)
+}
+
+// A list of groups within Kubernetes to which the IAM principal is mapped to.
+func (o AccessEntryOutput) KubernetesGroups() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v AccessEntry) []string { return v.KubernetesGroups }).(pulumi.StringArrayOutput)
+}
+
+// The IAM Principal ARN which requires Authentication access to the EKS cluster.
+func (o AccessEntryOutput) PrincipalArn() pulumi.StringOutput {
+	return o.ApplyT(func(v AccessEntry) string { return v.PrincipalArn }).(pulumi.StringOutput)
+}
+
+// The tags to apply to the AccessEntry.
+func (o AccessEntryOutput) Tags() pulumi.StringMapOutput {
+	return o.ApplyT(func(v AccessEntry) map[string]string { return v.Tags }).(pulumi.StringMapOutput)
+}
+
+// The type of the new access entry. Valid values are Standard, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+// Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
+func (o AccessEntryOutput) Type() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AccessEntry) *string { return v.Type }).(pulumi.StringPtrOutput)
+}
+
+// Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
+func (o AccessEntryOutput) Username() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v AccessEntry) *string { return v.Username }).(pulumi.StringPtrOutput)
+}
+
+type AccessEntryArrayOutput struct{ *pulumi.OutputState }
+
+func (AccessEntryArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]AccessEntry)(nil)).Elem()
+}
+
+func (o AccessEntryArrayOutput) ToAccessEntryArrayOutput() AccessEntryArrayOutput {
+	return o
+}
+
+func (o AccessEntryArrayOutput) ToAccessEntryArrayOutputWithContext(ctx context.Context) AccessEntryArrayOutput {
+	return o
+}
+
+func (o AccessEntryArrayOutput) Index(i pulumi.IntInput) AccessEntryOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AccessEntry {
+		return vs[0].([]AccessEntry)[vs[1].(int)]
+	}).(AccessEntryOutput)
+}
+
 // Associates an access policy and its scope to an IAM principal.
 //
 // See for more details:
@@ -87,29 +224,29 @@ func (i AccessPolicyAssociationArgs) ToAccessPolicyAssociationOutputWithContext(
 	return pulumi.ToOutputWithContext(ctx, i).(AccessPolicyAssociationOutput)
 }
 
-// AccessPolicyAssociationArrayInput is an input type that accepts AccessPolicyAssociationArray and AccessPolicyAssociationArrayOutput values.
-// You can construct a concrete instance of `AccessPolicyAssociationArrayInput` via:
+// AccessPolicyAssociationMapInput is an input type that accepts AccessPolicyAssociationMap and AccessPolicyAssociationMapOutput values.
+// You can construct a concrete instance of `AccessPolicyAssociationMapInput` via:
 //
-//	AccessPolicyAssociationArray{ AccessPolicyAssociationArgs{...} }
-type AccessPolicyAssociationArrayInput interface {
+//	AccessPolicyAssociationMap{ "key": AccessPolicyAssociationArgs{...} }
+type AccessPolicyAssociationMapInput interface {
 	pulumi.Input
 
-	ToAccessPolicyAssociationArrayOutput() AccessPolicyAssociationArrayOutput
-	ToAccessPolicyAssociationArrayOutputWithContext(context.Context) AccessPolicyAssociationArrayOutput
+	ToAccessPolicyAssociationMapOutput() AccessPolicyAssociationMapOutput
+	ToAccessPolicyAssociationMapOutputWithContext(context.Context) AccessPolicyAssociationMapOutput
 }
 
-type AccessPolicyAssociationArray []AccessPolicyAssociationInput
+type AccessPolicyAssociationMap map[string]AccessPolicyAssociationInput
 
-func (AccessPolicyAssociationArray) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]AccessPolicyAssociation)(nil)).Elem()
+func (AccessPolicyAssociationMap) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]AccessPolicyAssociation)(nil)).Elem()
 }
 
-func (i AccessPolicyAssociationArray) ToAccessPolicyAssociationArrayOutput() AccessPolicyAssociationArrayOutput {
-	return i.ToAccessPolicyAssociationArrayOutputWithContext(context.Background())
+func (i AccessPolicyAssociationMap) ToAccessPolicyAssociationMapOutput() AccessPolicyAssociationMapOutput {
+	return i.ToAccessPolicyAssociationMapOutputWithContext(context.Background())
 }
 
-func (i AccessPolicyAssociationArray) ToAccessPolicyAssociationArrayOutputWithContext(ctx context.Context) AccessPolicyAssociationArrayOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(AccessPolicyAssociationArrayOutput)
+func (i AccessPolicyAssociationMap) ToAccessPolicyAssociationMapOutputWithContext(ctx context.Context) AccessPolicyAssociationMapOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AccessPolicyAssociationMapOutput)
 }
 
 // Associates an access policy and its scope to an IAM principal.
@@ -140,23 +277,23 @@ func (o AccessPolicyAssociationOutput) PolicyArn() pulumi.StringOutput {
 	return o.ApplyT(func(v AccessPolicyAssociation) string { return v.PolicyArn }).(pulumi.StringOutput)
 }
 
-type AccessPolicyAssociationArrayOutput struct{ *pulumi.OutputState }
+type AccessPolicyAssociationMapOutput struct{ *pulumi.OutputState }
 
-func (AccessPolicyAssociationArrayOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]AccessPolicyAssociation)(nil)).Elem()
+func (AccessPolicyAssociationMapOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]AccessPolicyAssociation)(nil)).Elem()
 }
 
-func (o AccessPolicyAssociationArrayOutput) ToAccessPolicyAssociationArrayOutput() AccessPolicyAssociationArrayOutput {
+func (o AccessPolicyAssociationMapOutput) ToAccessPolicyAssociationMapOutput() AccessPolicyAssociationMapOutput {
 	return o
 }
 
-func (o AccessPolicyAssociationArrayOutput) ToAccessPolicyAssociationArrayOutputWithContext(ctx context.Context) AccessPolicyAssociationArrayOutput {
+func (o AccessPolicyAssociationMapOutput) ToAccessPolicyAssociationMapOutputWithContext(ctx context.Context) AccessPolicyAssociationMapOutput {
 	return o
 }
 
-func (o AccessPolicyAssociationArrayOutput) Index(i pulumi.IntInput) AccessPolicyAssociationOutput {
-	return pulumi.All(o, i).ApplyT(func(vs []interface{}) AccessPolicyAssociation {
-		return vs[0].([]AccessPolicyAssociation)[vs[1].(int)]
+func (o AccessPolicyAssociationMapOutput) MapIndex(k pulumi.StringInput) AccessPolicyAssociationOutput {
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) AccessPolicyAssociation {
+		return vs[0].(map[string]AccessPolicyAssociation)[vs[1].(string)]
 	}).(AccessPolicyAssociationOutput)
 }
 
@@ -1000,9 +1137,9 @@ func (o ClusterNodeGroupOptionsPtrOutput) Version() pulumi.StringPtrOutput {
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreData struct {
 	// The access entries added to the cluster.
-	AccessEntries []AccessPolicyAssociation `pulumi:"accessEntries"`
-	AwsProvider   *aws.Provider             `pulumi:"awsProvider"`
-	Cluster       *eks.Cluster              `pulumi:"cluster"`
+	AccessEntries []AccessEntry `pulumi:"accessEntries"`
+	AwsProvider   *aws.Provider `pulumi:"awsProvider"`
+	Cluster       *eks.Cluster  `pulumi:"cluster"`
 	// The IAM Role attached to the EKS Cluster
 	ClusterIamRole       *iam.Role                    `pulumi:"clusterIamRole"`
 	ClusterSecurityGroup *ec2.SecurityGroup           `pulumi:"clusterSecurityGroup"`
@@ -1052,9 +1189,9 @@ type CoreDataInput interface {
 // Defines the core set of data associated with an EKS cluster, including the network in which it runs.
 type CoreDataArgs struct {
 	// The access entries added to the cluster.
-	AccessEntries AccessPolicyAssociationArrayInput `pulumi:"accessEntries"`
-	AwsProvider   aws.ProviderInput                 `pulumi:"awsProvider"`
-	Cluster       eks.ClusterInput                  `pulumi:"cluster"`
+	AccessEntries AccessEntryArrayInput `pulumi:"accessEntries"`
+	AwsProvider   aws.ProviderInput     `pulumi:"awsProvider"`
+	Cluster       eks.ClusterInput      `pulumi:"cluster"`
 	// The IAM Role attached to the EKS Cluster
 	ClusterIamRole       iam.RoleInput                       `pulumi:"clusterIamRole"`
 	ClusterSecurityGroup ec2.SecurityGroupInput              `pulumi:"clusterSecurityGroup"`
@@ -1118,8 +1255,8 @@ func (o CoreDataOutput) ToCoreDataOutputWithContext(ctx context.Context) CoreDat
 }
 
 // The access entries added to the cluster.
-func (o CoreDataOutput) AccessEntries() AccessPolicyAssociationArrayOutput {
-	return o.ApplyT(func(v CoreData) []AccessPolicyAssociation { return v.AccessEntries }).(AccessPolicyAssociationArrayOutput)
+func (o CoreDataOutput) AccessEntries() AccessEntryArrayOutput {
+	return o.ApplyT(func(v CoreData) []AccessEntry { return v.AccessEntries }).(AccessEntryArrayOutput)
 }
 
 func (o CoreDataOutput) AwsProvider() aws.ProviderOutput {
@@ -3085,8 +3222,10 @@ func (o VpcCniOptionsPtrOutput) WarmPrefixTarget() pulumi.IntPtrOutput {
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*AccessEntryInput)(nil)).Elem(), AccessEntryArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AccessEntryArrayInput)(nil)).Elem(), AccessEntryArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*AccessPolicyAssociationInput)(nil)).Elem(), AccessPolicyAssociationArgs{})
-	pulumi.RegisterInputType(reflect.TypeOf((*AccessPolicyAssociationArrayInput)(nil)).Elem(), AccessPolicyAssociationArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AccessPolicyAssociationMapInput)(nil)).Elem(), AccessPolicyAssociationMap{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsPtrInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CoreDataInput)(nil)).Elem(), CoreDataArgs{})
@@ -3106,8 +3245,10 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*UserMappingArrayInput)(nil)).Elem(), UserMappingArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniOptionsInput)(nil)).Elem(), VpcCniOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniOptionsPtrInput)(nil)).Elem(), VpcCniOptionsArgs{})
+	pulumi.RegisterOutputType(AccessEntryOutput{})
+	pulumi.RegisterOutputType(AccessEntryArrayOutput{})
 	pulumi.RegisterOutputType(AccessPolicyAssociationOutput{})
-	pulumi.RegisterOutputType(AccessPolicyAssociationArrayOutput{})
+	pulumi.RegisterOutputType(AccessPolicyAssociationMapOutput{})
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsOutput{})
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsPtrOutput{})
 	pulumi.RegisterOutputType(CoreDataOutput{})

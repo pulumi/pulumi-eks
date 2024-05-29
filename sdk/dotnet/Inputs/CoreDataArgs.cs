@@ -16,14 +16,14 @@ namespace Pulumi.Eks.Inputs
     public sealed class CoreDataArgs : global::Pulumi.ResourceArgs
     {
         [Input("accessEntries")]
-        private InputList<Inputs.AccessPolicyAssociationArgs>? _accessEntries;
+        private InputList<Inputs.AccessEntryArgs>? _accessEntries;
 
         /// <summary>
         /// The access entries added to the cluster.
         /// </summary>
-        public InputList<Inputs.AccessPolicyAssociationArgs> AccessEntries
+        public InputList<Inputs.AccessEntryArgs> AccessEntries
         {
-            get => _accessEntries ?? (_accessEntries = new InputList<Inputs.AccessPolicyAssociationArgs>());
+            get => _accessEntries ?? (_accessEntries = new InputList<Inputs.AccessEntryArgs>());
             set => _accessEntries = value;
         }
 

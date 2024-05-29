@@ -13,7 +13,7 @@ import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.VpcCni;
-import com.pulumi.eks.inputs.AccessPolicyAssociationArgs;
+import com.pulumi.eks.inputs.AccessEntryArgs;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
 import com.pulumi.kubernetes.core.v1.ConfigMap;
 import com.pulumi.kubernetes.storage.v1.StorageClass;
@@ -39,13 +39,13 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="accessEntries")
-    private @Nullable Output<List<AccessPolicyAssociationArgs>> accessEntries;
+    private @Nullable Output<List<AccessEntryArgs>> accessEntries;
 
     /**
      * @return The access entries added to the cluster.
      * 
      */
-    public Optional<Output<List<AccessPolicyAssociationArgs>>> accessEntries() {
+    public Optional<Output<List<AccessEntryArgs>>> accessEntries() {
         return Optional.ofNullable(this.accessEntries);
     }
 
@@ -359,7 +359,7 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder accessEntries(@Nullable Output<List<AccessPolicyAssociationArgs>> accessEntries) {
+        public Builder accessEntries(@Nullable Output<List<AccessEntryArgs>> accessEntries) {
             $.accessEntries = accessEntries;
             return this;
         }
@@ -370,7 +370,7 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder accessEntries(List<AccessPolicyAssociationArgs> accessEntries) {
+        public Builder accessEntries(List<AccessEntryArgs> accessEntries) {
             return accessEntries(Output.of(accessEntries));
         }
 
@@ -380,7 +380,7 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder accessEntries(AccessPolicyAssociationArgs... accessEntries) {
+        public Builder accessEntries(AccessEntryArgs... accessEntries) {
             return accessEntries(List.of(accessEntries));
         }
 

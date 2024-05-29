@@ -1124,7 +1124,7 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec: schema.TypeSpec{
 								Type: "array",
 								Items: &schema.TypeSpec{
-									Ref: "#/types/eks:index:AccessPolicyAssociation",
+									Ref: "#/types/eks:index:AccessEntry",
 								},
 							},
 							Description: "The access entries added to the cluster.",

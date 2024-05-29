@@ -257,7 +257,7 @@
                 "accessEntries": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/types/eks:index:AccessPolicyAssociation"
+                        "$ref": "#/types/eks:index:AccessEntry"
                     },
                     "description": "The access entries added to the cluster."
                 },

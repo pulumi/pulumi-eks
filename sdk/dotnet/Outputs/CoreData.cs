@@ -19,7 +19,7 @@ namespace Pulumi.Eks.Outputs
         /// <summary>
         /// The access entries added to the cluster.
         /// </summary>
-        public readonly ImmutableArray<Outputs.AccessPolicyAssociation> AccessEntries;
+        public readonly ImmutableArray<Outputs.AccessEntry> AccessEntries;
         public readonly Pulumi.Aws.Provider? AwsProvider;
         public readonly Pulumi.Aws.Eks.Cluster Cluster;
         /// <summary>
@@ -86,7 +86,7 @@ namespace Pulumi.Eks.Outputs
 
         [OutputConstructor]
         private CoreData(
-            ImmutableArray<Outputs.AccessPolicyAssociation> accessEntries,
+            ImmutableArray<Outputs.AccessEntry> accessEntries,
 
             Pulumi.Aws.Provider? awsProvider,
 
