@@ -1,6 +1,3 @@
-# examples/authentication-mode
+# examples/tests/authentication-mode-migration
 
-Creates three EKS clusters, each with a different authentication mode:
-- CONFIG_MAP
-- API_AND_CONFIG_MAP
-- API
+Creates an EKS cluster with autentication mode CONFIG_MAP and then migrates it to API_AND_CONFIG_MAP and then finally API.
