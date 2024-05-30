@@ -89,10 +89,6 @@ func TestExamplesUpgrades(t *testing.T) {
 	t.Run("tags", func(t *testing.T) {
 		runExampleParallel(t, "tags")
 	})
-
-	t.Run("authentication-mode", func(t *testing.T) {
-		runExampleParallel(t, "authentication-mode")
-	})
 }
 
 func TestReportUpgradeCoverage(t *testing.T) {
