@@ -744,6 +744,17 @@ func TestAccAuthenticationModeMigration(t *testing.T) {
 						)
 					},
 				},
+				// step4 scale nodegroups up to ensure new instances are able to register with the cluster
+				{
+					Dir:      path.Join(getCwd(t), "tests", "authentication-mode-migration", "step4"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
 			},
 		})
 

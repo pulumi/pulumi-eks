@@ -54,7 +54,10 @@ export function validateAuthenticationMode(args: ClusterOptions) {
     if (!supportsAccessEntries(args.authenticationMode)) {
         apiOnlyProperties.forEach((prop) => {
             if (args[prop]) {
-                const errorMsg = args.authenticationMode != null ? `set to '${args.authenticationMode}` : "not set";
+                const errorMsg =
+                    args.authenticationMode != null
+                        ? `set to '${args.authenticationMode}'`
+                        : "not set";
                 throw new Error(
                     `The '${prop}' property is not supported when 'authenticationMode' is ${errorMsg}.`,
                 );
