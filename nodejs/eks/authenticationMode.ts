@@ -38,7 +38,6 @@ export function validateAuthenticationMode(args: ClusterOptions) {
         "roleMappings",
         "userMappings",
         "instanceRoles",
-        "instanceRole",
     ];
     const apiOnlyProperties: (keyof ClusterOptions)[] = ["accessEntries"];
 

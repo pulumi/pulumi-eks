@@ -353,7 +353,7 @@ func generateSchema() schema.PackageSpec {
 						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
 						Description: "This enables the simple case of only registering a *single* IAM instance role " +
 							"with the cluster, that is required to be shared by *all* node groups in their instance " +
-							"profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.\n\n" +
+							"profiles.\n\n" +
 							"Note: options `instanceRole` and `instanceRoles` are mutually exclusive.",
 					},
 					"instanceProfileName": {

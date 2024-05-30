@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 import * as aws from "@pulumi/aws";
+import * as iam from "./iam";
 
 const projectName = pulumi.getProject();
 
@@ -29,12 +30,27 @@ const iamRole = new aws.iam.Role(`${projectName}-role`, {
     })
 });
 
+/**
+ * Identical IAM for all NodeGroups: all NodeGroups share the same `instanceRole`.
+ */
+
+// Create example IAM roles and profiles to show to use them with NodeGroups.
+// Note, all roles for the instance profiles are required to at least have
+// the following EKS Managed Policies attached to successfully auth and join the
+// cluster:
+//   - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+//   - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+//   - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+const role0 = iam.createRole("example-role0");
+const instanceProfile0 = new aws.iam.InstanceProfile("example-instanceProfile0", {role: role0});
+
 const cluster = new eks.Cluster(`${projectName}-cluster`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    instanceRole: role0,
     authenticationMode: "API",
     accessEntries: {
         [`${projectName}-role`]: {
@@ -43,6 +59,15 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
             username: "test-role",
         }
     }
+});
+
+cluster.createNodeGroup("example-ng-simple-ondemand", {
+    instanceType: "t3.medium",
+    desiredCapacity: 1,
+    minSize: 1,
+    maxSize: 2,
+    labels: {"ondemand": "true"},
+    instanceProfile: instanceProfile0,
 });
 
 // Export the clusters' kubeconfig.

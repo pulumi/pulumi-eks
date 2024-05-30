@@ -353,7 +353,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+     * This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
      * 
      * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
      * 
@@ -362,7 +362,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     private @Nullable Output<Role> instanceRole;
 
     /**
-     * @return This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+     * @return This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
      * 
      * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
      * 
@@ -1528,7 +1528,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param instanceRole This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+         * @param instanceRole This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
          * 
          * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
          * 
@@ -1541,7 +1541,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param instanceRole This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+         * @param instanceRole This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
          * 
          * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
          * 

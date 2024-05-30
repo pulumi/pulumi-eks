@@ -308,7 +308,7 @@ namespace Pulumi.Eks
         public Input<string>? InstanceProfileName { get; set; }
 
         /// <summary>
-        /// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+        /// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
         /// 
         /// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         /// </summary>

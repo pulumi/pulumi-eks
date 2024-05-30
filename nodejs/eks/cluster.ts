@@ -1256,6 +1256,7 @@ export interface ClusterOptions {
     /**
      * This enables the advanced case of registering *many* IAM instance roles
      * with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
+     * Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      *
      * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
      */

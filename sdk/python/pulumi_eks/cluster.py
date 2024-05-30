@@ -121,7 +121,7 @@ class ClusterArgs:
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
                - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
         :param pulumi.Input[str] instance_profile_name: The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
-        :param pulumi.Input['pulumi_aws.iam.Role'] instance_role: This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+        :param pulumi.Input['pulumi_aws.iam.Role'] instance_role: This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
                
                Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]] instance_roles: This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
@@ -588,7 +588,7 @@ class ClusterArgs:
     @pulumi.getter(name="instanceRole")
     def instance_role(self) -> Optional[pulumi.Input['pulumi_aws.iam.Role']]:
         """
-        This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+        This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
 
         Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         """
@@ -1201,7 +1201,7 @@ class Cluster(pulumi.ComponentResource):
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
                - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
         :param pulumi.Input[str] instance_profile_name: The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
-        :param pulumi.Input['pulumi_aws.iam.Role'] instance_role: This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+        :param pulumi.Input['pulumi_aws.iam.Role'] instance_role: This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
                
                Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]] instance_roles: This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.

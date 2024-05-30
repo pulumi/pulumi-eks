@@ -843,7 +843,7 @@
                 },
                 "instanceRole": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2Frole:Role",
-                    "description": "This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.\n\nNote: options `instanceRole` and `instanceRoles` are mutually exclusive."
+                    "description": "This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.\n\nNote: options `instanceRole` and `instanceRoles` are mutually exclusive."
                 },
                 "instanceRoles": {
                     "type": "array",

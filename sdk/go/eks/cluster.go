@@ -156,7 +156,7 @@ type clusterArgs struct {
 	Gpu *bool `pulumi:"gpu"`
 	// The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
 	InstanceProfileName *string `pulumi:"instanceProfileName"`
-	// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+	// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
 	//
 	// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
 	InstanceRole *iam.Role `pulumi:"instanceRole"`
@@ -384,7 +384,7 @@ type ClusterArgs struct {
 	Gpu pulumi.BoolPtrInput
 	// The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
 	InstanceProfileName pulumi.StringPtrInput
-	// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+	// This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
 	//
 	// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
 	InstanceRole iam.RoleInput
