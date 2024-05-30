@@ -45,7 +45,7 @@ class AccessEntryArgs:
         :param Mapping[str, pulumi.Input['AccessPolicyAssociationArgs']] access_policies: The access policies to associate to the access entry.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] kubernetes_groups: A list of groups within Kubernetes to which the IAM principal is mapped to.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: The tags to apply to the AccessEntry.
-        :param pulumi.Input[str] type: The type of the new access entry. Valid values are Standard, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+        :param pulumi.Input[str] type: The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
                Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
         :param pulumi.Input[str] username: Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
         """
@@ -113,7 +113,7 @@ class AccessEntryArgs:
     @pulumi.getter
     def type(self) -> Optional[pulumi.Input[str]]:
         """
-        The type of the new access entry. Valid values are Standard, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+        The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
         Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
         """
         return pulumi.get(self, "type")
