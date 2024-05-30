@@ -608,7 +608,13 @@ export function createCore(
             encryptionConfig,
             kubernetesNetworkConfig,
             accessConfig: args.authenticationMode
-                ? { authenticationMode: args.authenticationMode }
+                ? {
+                      authenticationMode: args.authenticationMode,
+                      // Explicitely grants the principal creating the cluster admin access to the cluster.
+                      // This is the default behavior of EKS when no accessConfig is provided.
+                      // It is required for this component because it deploys charts to the cluster.
+                      bootstrapClusterCreatorAdminPermissions: true,
+                  }
                 : undefined,
         },
         {
@@ -866,21 +872,33 @@ export function createCore(
         );
     }
 
+    // Create the access entries if the authentication mode supports it.
     let accessEntries: pulumi.Output<aws.eks.AccessEntry[]> | undefined = undefined;
     if (supportsAccessEntries(args.authenticationMode)) {
-        // Create the access entries if the authentication mode supports it.
+        let createdAccessEntries: aws.eks.AccessEntry[] = [];
+
         // This additionally maps the defaultInstanceRole to a EC2_LINUX access entry which allows the nodes to register & communicate with the EKS control plane.
-        const accessEntryInputs = args.accessEntries || {};
         if (defaultInstanceRole) {
-            accessEntryInputs[`${name}-defaultNodeGroupInstanceRole`] = {
-                principalArn: defaultInstanceRole.arn,
-                type: "EC2_LINUX",
-            };
+            createdAccessEntries = createAccessEntries(
+                name,
+                eksCluster.name,
+                {
+                    defaultNodeGroupInstanceRole: {
+                        principalArn: defaultInstanceRole.arn,
+                        type: "EC2_LINUX",
+                    },
+                },
+                { parent, provider },
+            );
         }
 
-        accessEntries = pulumi.output(
-            createAccessEntries(eksCluster.name, accessEntryInputs, { parent, provider }),
+        createdAccessEntries = createdAccessEntries.concat(
+            createAccessEntries(name, eksCluster.name, args.accessEntries || {}, {
+                parent,
+                provider,
+            }),
         );
+        accessEntries = pulumi.output(createdAccessEntries);
     }
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi

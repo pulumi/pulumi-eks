@@ -34,9 +34,6 @@ export function validateAuthenticationMode(args: ClusterOptions) {
         );
     }
 
-    // If authenticationMode is not provided, EKS defaults to CONFIG_MAP
-    const authMode = args.authenticationMode || CONFIG_MAP;
-
     const configMapOnlyProperties: (keyof ClusterOptions)[] = [
         "roleMappings",
         "userMappings",
@@ -49,7 +46,7 @@ export function validateAuthenticationMode(args: ClusterOptions) {
         configMapOnlyProperties.forEach((prop) => {
             if (args[prop]) {
                 throw new Error(
-                    `The '${prop}' property is not supported when 'authenticationMode' is set to '${authMode}'.`,
+                    `The '${prop}' property is not supported when 'authenticationMode' is set to '${args.authenticationMode}'.`,
                 );
             }
         });
@@ -58,8 +55,9 @@ export function validateAuthenticationMode(args: ClusterOptions) {
     if (!supportsAccessEntries(args.authenticationMode)) {
         apiOnlyProperties.forEach((prop) => {
             if (args[prop]) {
+                const errorMsg = args.authenticationMode != null ? `set to '${args.authenticationMode}` : "not set";
                 throw new Error(
-                    `The '${prop}' property is not supported when 'authenticationMode' is set to '${authMode}'.`,
+                    `The '${prop}' property is not supported when 'authenticationMode' is ${errorMsg}.`,
                 );
             }
         });
@@ -143,13 +141,14 @@ export function createAwsAuthData(
 }
 
 export function createAccessEntries(
+    componentName: string,
     clusterName: pulumi.Input<string>,
     accessEntries: { [key: string]: AccessEntry },
     opts: pulumi.CustomResourceOptions,
 ): aws.eks.AccessEntry[] {
     return Object.entries(accessEntries).map(([name, accessEntry]) => {
         const entry = new aws.eks.AccessEntry(
-            name,
+            `${componentName}-${name}`,
             {
                 ...accessEntry,
                 clusterName,
@@ -161,7 +160,7 @@ export function createAccessEntries(
         Object.entries(accessEntry.accessPolicies || {}).map(([associationName, association]) => {
             const associationOutput = pulumi.output(association);
             const policyAssociation = new aws.eks.AccessPolicyAssociation(
-                associationName,
+                `${componentName}-${name}-${associationName}`,
                 {
                     accessScope: associationOutput.accessScope,
                     principalArn: accessEntry.principalArn,
@@ -170,6 +169,7 @@ export function createAccessEntries(
                 },
                 {
                     ...opts,
+                    parent: entry,
                     dependsOn: [entry],
                 },
             );
