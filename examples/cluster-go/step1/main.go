@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
+	awseks "github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
 	"github.com/pulumi/pulumi-eks/sdk/v2/go/eks"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -17,6 +19,23 @@ func main() {
 			return err
 		}
 
+		role, err := iam.NewRole(ctx, "example-cluster-2-role", &iam.RoleArgs{
+			AssumeRolePolicy: pulumi.String(`{
+				"Version": "2012-10-17",
+				"Statement": [{
+					"Action": "sts:AssumeRole",
+					"Effect": "Allow",
+					"Principal": {
+						"Service": "ec2.amazonaws.com"
+					}
+				}]
+			}`),
+		})
+		if err != nil {
+			return err
+		}
+
+		authMode := "API_AND_CONFIG_MAP"
 		// Create cluster with non-default settings
 		cluster2, err := eks.NewCluster(ctx, "example-cluster-2", &eks.ClusterArgs{
 			DesiredCapacity: pulumi.IntPtr(2),
@@ -26,6 +45,23 @@ func main() {
 				pulumi.String("api"),
 				pulumi.String("audit"),
 				pulumi.String("authenticator"),
+			},
+			AuthenticationMode: &authMode,
+			AccessEntries: map[string]eks.AccessEntryArgs{
+				"example-cluster-role": eks.AccessEntryArgs{
+					PrincipalArn: role.Arn,
+					AccessPolicies: map[string]eks.AccessPolicyAssociationInput{
+						"view": eks.AccessPolicyAssociationArgs{
+							PolicyArn: pulumi.String("arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"),
+							AccessScope: awseks.AccessPolicyAssociationAccessScopeArgs{
+								Type: pulumi.String("namespace"),
+								Namespaces: pulumi.StringArray{
+									pulumi.String("default"),
+								},
+							},
+						},
+					},
+				},
 			},
 		})
 		if err != nil {

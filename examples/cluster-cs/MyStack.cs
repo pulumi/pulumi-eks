@@ -1,6 +1,8 @@
 using Pulumi;
 using Eks = Pulumi.Eks;
+using Aws = Pulumi.Aws;
 using Awsx = Pulumi.Awsx;
+using System.Collections.Generic;
 
 class MyStack : Stack
 {
@@ -21,7 +23,8 @@ class MyStack : Stack
 
         var vpc = new Awsx.Ec2.Vpc($"{projectName}-2");
 
-        var cluster2 = new Eks.Cluster($"{projectName}-2", new Eks.ClusterArgs {
+        var cluster2 = new Eks.Cluster($"{projectName}-2", new Eks.ClusterArgs
+        {
             VpcId = vpc.VpcId,
             PublicSubnetIds = vpc.PublicSubnetIds,
             DesiredCapacity = 2,
@@ -34,15 +37,50 @@ class MyStack : Stack
             }
         });
 
-        var cluster3 = new Eks.Cluster($"{projectName}-3", new Eks.ClusterArgs {
+        var iamRole = new Aws.Iam.Role("ec2Role", new Aws.Iam.RoleArgs
+        {
+            AssumeRolePolicy = @"{
+                ""Version"": ""2012-10-17"",
+                ""Statement"": [
+                    {
+                        ""Effect"": ""Allow"",
+                        ""Principal"": {
+                            ""Service"": ""ec2.amazonaws.com""
+                        },
+                        ""Action"": ""sts:AssumeRole""
+                    }
+                ]
+            }"
+        });
+
+        var cluster3 = new Eks.Cluster($"{projectName}-3", new Eks.ClusterArgs
+        {
             VpcId = vpc.VpcId,
             PublicSubnetIds = vpc.PublicSubnetIds,
-            NodeGroupOptions = new Eks.Inputs.ClusterNodeGroupOptionsArgs {
+            NodeGroupOptions = new Eks.Inputs.ClusterNodeGroupOptionsArgs
+            {
                 DesiredCapacity = 1,
                 MinSize = 1,
                 MaxSize = 1,
                 InstanceType = "t3.small",
             },
+            AuthenticationMode = "API_AND_CONFIG_MAP",
+            AccessEntries = new Dictionary<string, Eks.Inputs.AccessEntryArgs>
+                {
+                     { $"{projectName}-role", new Eks.Inputs.AccessEntryArgs {
+                        PrincipalArn = iamRole.Arn,
+                        AccessPolicies = new Dictionary<string, Input<Eks.Inputs.AccessPolicyAssociationArgs>> {
+                            { "accessPolicy1", new Eks.Inputs.AccessPolicyAssociationArgs {
+                                AccessScope = new Aws.Eks.Inputs.AccessPolicyAssociationAccessScopeArgs {
+                                    Namespaces = new[] { "default", "application" },
+                                    Type = "namespace"
+                                },
+                                PolicyArn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy",
+                            }
+                        }
+                    },
+                    }}
+                }
         });
 
         // Export the clusters' kubeconfig.

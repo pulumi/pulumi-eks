@@ -52,6 +52,12 @@ func RunEKSSmokeTest(t *testing.T, resources []apitype.ResourceV3, kubeconfigs .
 		t.Error(err)
 	}
 
+	// Map the cluster name to their authentication mode.
+	clusterAuthenticationMode, err := mapClusterToAuthenticationMode(resources)
+	if err != nil {
+		t.Error(err)
+	}
+
 	// Run the smoke test against each cluster, expecting the total desired
 	// Node count.
 	var wg sync.WaitGroup
@@ -61,17 +67,19 @@ func RunEKSSmokeTest(t *testing.T, resources []apitype.ResourceV3, kubeconfigs .
 	for clusterName := range kubeAccess {
 		clusterName := clusterName
 		PrintAndLog(fmt.Sprintf("Testing Cluster: %s\n", clusterName), t)
+		authenticationMode := clusterAuthenticationMode[clusterName]
+		PrintAndLog(fmt.Sprintf("Detected authentication mode '%s' for Cluster %s\n", authenticationMode, clusterName), t)
 
 		go wgWrapper(&wg, func() {
 			clientset := kubeAccess[clusterName].Clientset
-			eksSmokeTest(t, clientset, clusterNodeCount[clusterName])
+			eksSmokeTest(t, clientset, clusterNodeCount[clusterName], authenticationMode)
 		})
 	}
 }
 
 // EKSSmokeTest runs a checklist of operational successes required to deem the
 // EKS cluster as successfully running and ready for use.
-func eksSmokeTest(t *testing.T, clientset *kubernetes.Clientset, desiredNodeCount int) {
+func eksSmokeTest(t *testing.T, clientset *kubernetes.Clientset, desiredNodeCount int, authenticationMode string) {
 	APIServerVersionInfo(t, clientset)
 
 	// Run all tests.
@@ -79,7 +87,11 @@ func eksSmokeTest(t *testing.T, clientset *kubernetes.Clientset, desiredNodeCoun
 	wg.Add(3)
 	defer wg.Wait()
 
-	go wgWrapper(&wg, func() { assertEKSConfigMapReady(t, clientset) })
+	if authenticationMode == "CONFIG_MAP" || authenticationMode == "API_AND_CONFIG_MAP"{
+		go wgWrapper(&wg, func() { assertEKSConfigMapReady(t, clientset) })
+	} else {
+		go wgWrapper(&wg, func() { assertEKSConfigMapRemoved(t, clientset) })
+	}
 	go wgWrapper(&wg, func() { AssertAllNodesReady(t, clientset, desiredNodeCount) })
 	go wgWrapper(&wg, func() { AssertKindInAllNamespacesReady(t, clientset, "pods") })
 }
@@ -124,6 +136,31 @@ func assertEKSConfigMapReady(t *testing.T, clientset *kubernetes.Clientset) {
 	require.NotNil(t, awsAuth.Data, "%s ConfigMap should not be nil", configMapName)
 	require.NotEmpty(t, awsAuth.Data, "%q ConfigMap should not be empty", configMapName)
 	PrintAndLog(fmt.Sprintf("EKS ConfigMap %q exists and has data\n", configMapName), t)
+}
+
+// assertEKSConfigMapRemoved is a helper function that asserts the removal of the aws-auth ConfigMap in the kube-system namespace.
+// The function attempts to validate that the aws-auth ConfigMap exists and waits for it to be deleted.
+// If the ConfigMap is still found after the maximum number of retries, the function fails the test.
+func assertEKSConfigMapRemoved(t *testing.T, clientset *kubernetes.Clientset) {
+	awsAuthExists, retries := true, MaxRetries
+	configMapName, namespace := "aws-auth", "kube-system"
+	var awsAuth *corev1.ConfigMap
+	var err error
+
+	// Attempt to validate that the aws-auth ConfigMap exists.
+	for awsAuthExists && retries > 0 {
+		awsAuth, err = clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, metav1.GetOptions{})
+		retries--
+		if err == nil {
+			waitFor(t, fmt.Sprintf("ConfigMap %q", configMapName), "deleted")
+			continue
+		}
+		awsAuthExists = false
+	}
+
+	require.Equal(t, false, awsAuthExists, "EKS ConfigMap %q still exists in namespace %q", configMapName, namespace)
+	require.Nil(t, awsAuth.Data, "%s ConfigMap should be nil", configMapName)
+	PrintAndLog(fmt.Sprintf("EKS ConfigMap %q has been deleted\n", configMapName), t)
 }
 
 // AssertAllNodesReady ensures that all Nodes are running & have a "Ready"
@@ -533,12 +570,53 @@ func mapClusterToKubeAccess(kubeconfigs ...interface{}) (clusterKubeAccessMap, e
 		}
 
 		// Parse the kubeconfig user auth exec args for the cluster name.
-		clusterNameIndex := len(kubeAccess.RESTConfig.ExecProvider.Args) - 1
+		var clusterNameIndex int
+		for idx, arg := range kubeAccess.RESTConfig.ExecProvider.Args {
+			if arg == "--cluster-name" {
+				clusterNameIndex = idx + 1
+			}
+		}
+
+		if clusterNameIndex >= len(kubeAccess.RESTConfig.ExecProvider.Args) {
+			return nil, fmt.Errorf("cluster name not found in kubeconfig exec provider args")
+		}
+
 		clusterName := kubeAccess.RESTConfig.ExecProvider.Args[clusterNameIndex]
 		clusterToKubeAccess[clusterName] = kubeAccess
 	}
 
 	return clusterToKubeAccess, nil
+}
+
+// clusterNodeCountMap implements a map of Kubernetes cluster names to their authentication mode.
+type clusterAuthenticationModeMap map[string]string
+
+func mapClusterToAuthenticationMode(resources []apitype.ResourceV3) (clusterAuthenticationModeMap, error) {
+	clusterToAuthenticationMode := make(clusterAuthenticationModeMap)
+
+	for _, res := range resources {
+		if res.Type.String() == "aws:eks/cluster:Cluster" {
+			clusterName := res.Outputs["name"].(string)
+			
+			var authenticationMode string
+			if ac, ok := res.Inputs["accessConfig"]; ok {
+				if accessConfig, ok := ac.(map[string]interface{}); ok {
+					if authMode, ok := accessConfig["authenticationMode"]; ok {
+						authenticationMode = authMode.(string)
+					}
+				}
+			}
+			
+			if authenticationMode == "" {
+				// EKS defaults to "CONFIG_MAP" if not specified.
+				authenticationMode = "CONFIG_MAP"
+			}
+
+			clusterToAuthenticationMode[clusterName] = authenticationMode
+		}
+	}
+
+	return clusterToAuthenticationMode, nil
 }
 
 type cloudFormationTemplateBody struct {
