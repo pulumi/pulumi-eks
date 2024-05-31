@@ -39,7 +39,7 @@ namespace Pulumi.Eks.Outputs
         /// The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
         /// Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
         /// </summary>
-        public readonly string? Type;
+        public readonly Pulumi.Eks.AccessEntryType? Type;
         /// <summary>
         /// Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
         /// </summary>
@@ -55,7 +55,7 @@ namespace Pulumi.Eks.Outputs
 
             ImmutableDictionary<string, string>? tags,
 
-            string? type,
+            Pulumi.Eks.AccessEntryType? type,
 
             string? username)
         {

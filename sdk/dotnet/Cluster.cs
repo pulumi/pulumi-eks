@@ -164,7 +164,7 @@ namespace Pulumi.Eks
         /// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
         /// </summary>
         [Input("authenticationMode")]
-        public string? AuthenticationMode { get; set; }
+        public Pulumi.Eks.AuthenticationMode? AuthenticationMode { get; set; }
 
         /// <summary>
         /// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.

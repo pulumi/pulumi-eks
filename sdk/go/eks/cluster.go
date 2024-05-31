@@ -98,7 +98,7 @@ type clusterArgs struct {
 	//
 	// See for more details:
 	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
-	AuthenticationMode *string `pulumi:"authenticationMode"`
+	AuthenticationMode *AuthenticationMode `pulumi:"authenticationMode"`
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -326,7 +326,7 @@ type ClusterArgs struct {
 	//
 	// See for more details:
 	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
-	AuthenticationMode *string
+	AuthenticationMode *AuthenticationMode
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.

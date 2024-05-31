@@ -55,6 +55,12 @@ func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
 }
 
 func providerPluginPathEnv() (string, error) {
+	// providerDir := filepath.Join("..", "bin")
+	// absProviderDir, err := filepath.Abs(providerDir)
+	// if err != nil {
+	// 	return "", err
+	// }
+
 	// Local build of eks plugin.
 	pluginDir := filepath.Join("..", "provider", "cmd", "pulumi-resource-eks", "bin")
 	absPluginDir, err := filepath.Abs(pluginDir)
@@ -74,6 +80,7 @@ func providerPluginPathEnv() (string, error) {
 		pathSeparator = ";"
 	}
 	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir, nil
+	// return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir + pathSeparator + absProviderDir, nil
 }
 
 var envToUnset = [...]string{"AWS_SECRET_ACCESS_KEY", "AWS_ACCESS_KEY_ID", "AWS_SESSION_TOKEN"}

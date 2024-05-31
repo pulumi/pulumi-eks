@@ -9,6 +9,7 @@ import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 from . import outputs
+from ._enums import *
 from ._inputs import *
 from .vpc_cni import VpcCni
 import pulumi_aws
@@ -20,7 +21,7 @@ __all__ = ['ClusterArgs', 'Cluster']
 class ClusterArgs:
     def __init__(__self__, *,
                  access_entries: Optional[Mapping[str, 'AccessEntryArgs']] = None,
-                 authentication_mode: Optional[str] = None,
+                 authentication_mode: Optional['AuthenticationMode'] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -75,7 +76,7 @@ class ClusterArgs:
                
                See for more details:
                https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
-        :param str authentication_mode: The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+        :param 'AuthenticationMode' authentication_mode: The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
                
                See for more details:
                https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
@@ -364,7 +365,7 @@ class ClusterArgs:
 
     @property
     @pulumi.getter(name="authenticationMode")
-    def authentication_mode(self) -> Optional[str]:
+    def authentication_mode(self) -> Optional['AuthenticationMode']:
         """
         The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
 
@@ -374,7 +375,7 @@ class ClusterArgs:
         return pulumi.get(self, "authentication_mode")
 
     @authentication_mode.setter
-    def authentication_mode(self, value: Optional[str]):
+    def authentication_mode(self, value: Optional['AuthenticationMode']):
         pulumi.set(self, "authentication_mode", value)
 
     @property
@@ -1078,7 +1079,7 @@ class Cluster(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  access_entries: Optional[Mapping[str, pulumi.InputType['AccessEntryArgs']]] = None,
-                 authentication_mode: Optional[str] = None,
+                 authentication_mode: Optional['AuthenticationMode'] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -1155,7 +1156,7 @@ class Cluster(pulumi.ComponentResource):
                
                See for more details:
                https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
-        :param str authentication_mode: The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+        :param 'AuthenticationMode' authentication_mode: The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
                
                See for more details:
                https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
@@ -1369,7 +1370,7 @@ class Cluster(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  access_entries: Optional[Mapping[str, pulumi.InputType['AccessEntryArgs']]] = None,
-                 authentication_mode: Optional[str] = None,
+                 authentication_mode: Optional['AuthenticationMode'] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,

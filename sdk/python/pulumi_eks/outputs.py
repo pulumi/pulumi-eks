@@ -9,6 +9,7 @@ import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 from . import outputs
+from ._enums import *
 from .vpc_cni import VpcCni
 import pulumi_aws
 import pulumi_kubernetes
@@ -56,7 +57,7 @@ class AccessEntry(dict):
                  access_policies: Optional[Mapping[str, 'outputs.AccessPolicyAssociation']] = None,
                  kubernetes_groups: Optional[Sequence[str]] = None,
                  tags: Optional[Mapping[str, str]] = None,
-                 type: Optional[str] = None,
+                 type: Optional['AccessEntryType'] = None,
                  username: Optional[str] = None):
         """
         Access entries allow an IAM principal to access your cluster.
@@ -67,7 +68,7 @@ class AccessEntry(dict):
         :param Mapping[str, 'AccessPolicyAssociation'] access_policies: The access policies to associate to the access entry.
         :param Sequence[str] kubernetes_groups: A list of groups within Kubernetes to which the IAM principal is mapped to.
         :param Mapping[str, str] tags: The tags to apply to the AccessEntry.
-        :param str type: The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+        :param 'AccessEntryType' type: The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
                Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
         :param str username: Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
         """
@@ -117,7 +118,7 @@ class AccessEntry(dict):
 
     @property
     @pulumi.getter
-    def type(self) -> Optional[str]:
+    def type(self) -> Optional['AccessEntryType']:
         """
         The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
         Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.

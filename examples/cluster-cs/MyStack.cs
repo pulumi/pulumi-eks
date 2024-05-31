@@ -64,7 +64,7 @@ class MyStack : Stack
                 MaxSize = 1,
                 InstanceType = "t3.small",
             },
-            AuthenticationMode = "API_AND_CONFIG_MAP",
+            AuthenticationMode = Eks.AuthenticationMode.ApiAndConfigMap,
             AccessEntries = new Dictionary<string, Eks.Inputs.AccessEntryArgs>
                 {
                      { $"{projectName}-role", new Eks.Inputs.AccessEntryArgs {

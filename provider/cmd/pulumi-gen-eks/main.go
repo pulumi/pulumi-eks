@@ -658,7 +658,7 @@ func generateSchema() schema.PackageSpec {
 					},
 					"authenticationMode": {
 						TypeSpec: schema.TypeSpec{
-							Type:  "string",
+							Ref: "#/types/eks:index:AuthenticationMode",
 							Plain: true,
 						},
 						Description: "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\n" +
@@ -1500,7 +1500,7 @@ func generateSchema() schema.PackageSpec {
 						},
 						"type": {
 							TypeSpec: schema.TypeSpec{
-								Type: "string",
+								Ref: "#/types/eks:index:AccessEntryType",
 							},
 							Description: "The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.\n" +
 								"Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.",
@@ -1530,6 +1530,59 @@ func generateSchema() schema.PackageSpec {
 						},
 					},
 					Required: []string{"policyArn", "accessScope"},
+				},
+			},
+			"eks:index:AccessEntryType": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type:        "string",
+					Description: "The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.\n" +
+					"Defaults to STANDARD which provides the standard workflow. EC2_LINUX and EC2_WINDOWS types disallow users to input a kubernetesGroup, and prevent associating access policies.",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:        "Standard",
+						Value:       "STANDARD",
+						Description: "Standard Access Entry Workflow. Allows users to input a username and kubernetesGroup, and to associate access policies.",
+					},
+					{
+						Name:        "FargateLinux",
+						Value:       "FARGATE_LINUX",
+						Description: "For IAM roles used with AWS Fargate profiles.",
+					},
+					{
+						Name:        "EC2Linux",
+						Value:       "EC2_LINUX",
+						Description: "For IAM roles associated with self-managed Linux node groups. Allows the nodes to join the cluster.",
+					},
+					{
+						Name:        "EC2Windows",
+						Value: 	 	 "EC2_WINDOWS",
+						Description: "For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.",
+					},
+				},
+			},
+			"eks:index:AuthenticationMode": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type:        "string",
+					Description: "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\n" +
+					"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:        "ConfigMap",
+						Value:       "CONFIG_MAP",
+						Description: "Only aws-auth ConfigMap will be used for authenticating to the Kubernetes API.",
+					},
+					{
+						Name:        "Api",
+						Value:       "API",
+						Description: "Only Access Entries will be used for authenticating to the Kubernetes API.",
+					},
+					{
+						Name:        "ApiAndConfigMap",
+						Value:       "API_AND_CONFIG_MAP",
+						Description: "Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.",
+					},
 				},
 			},
 		},

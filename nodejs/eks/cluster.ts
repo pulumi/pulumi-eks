@@ -885,7 +885,7 @@ export function createCore(
                 {
                     defaultNodeGroupInstanceRole: {
                         principalArn: defaultInstanceRole.arn,
-                        type: "EC2_LINUX",
+                        type: AccessEntryType.EC2_LINUX,
                     },
                 },
                 { parent, provider },
@@ -1561,7 +1561,7 @@ export interface ClusterOptions {
      * The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`
      * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
      */
-    authenticationMode?: string;
+    authenticationMode?: AuthenticationMode;
 
     /**
      * Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster.
@@ -1628,10 +1628,10 @@ export interface AccessEntry {
     /**
      * The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
      *
-     * Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow
-     * users to input a username or kubernetesGroup, and prevent associating access policies.
+     * Defaults to STANDARD which provides the standard workflow. EC2_LINUX and EC2_WINDOWS types disallow users
+     * to input a kubernetesGroup, and prevent associating access policies..
      */
-    type?: pulumi.Input<string>;
+    type?: pulumi.Input<AccessEntryType>;
 }
 
 export interface AccessPolicyAssociation {
@@ -1645,6 +1645,53 @@ export interface AccessPolicyAssociation {
      */
     accessScope: aws.types.input.eks.AccessPolicyAssociationAccessScope;
 }
+
+export const AuthenticationMode = {
+    /**
+     * Only Access Entries will be used for authenticating to the Kubernetes API.
+     */
+    API: "API",
+    /**
+     * Only aws-auth ConfigMap will be used for authenticating to the Kubernetes API.
+     */
+    CONFIG_MAP: "CONFIG_MAP",
+    /**
+     * Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.
+     */
+    API_AND_CONFIG_MAP: "API_AND_CONFIG_MAP",
+} as const;
+
+/**
+ * The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`
+ * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+ */
+export type AuthenticationMode = (typeof AuthenticationMode)[keyof typeof AuthenticationMode];
+
+export const AccessEntryType = {
+    /**
+     * Standard Access Entry Workflow. Allows users to input a username and kubernetesGroup, and to associate access policies.
+     */
+    STANDARD: "STANDARD",
+    /**
+     * For IAM roles used with AWS Fargate profiles.
+     */
+    FARGATE_LINUX: "FARGATE_LINUX",
+    /**
+     * For IAM roles associated with self-managed Linux node groups. Allows the nodes to join the cluster.
+     */
+    EC2_LINUX: "EC2_LINUX",
+    /**
+     * For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
+     */
+    EC2_WINDOWS: "EC2_WINDOWS",
+} as const;
+
+/**
+ * The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`
+ * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+ */
+export type AccessEntryType = (typeof AccessEntryType)[keyof typeof AccessEntryType];
+
 
 /**
  * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker

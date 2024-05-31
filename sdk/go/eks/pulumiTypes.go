@@ -37,7 +37,7 @@ type AccessEntry struct {
 	Tags map[string]string `pulumi:"tags"`
 	// The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
 	// Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
-	Type *string `pulumi:"type"`
+	Type *AccessEntryType `pulumi:"type"`
 	// Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
 	Username *string `pulumi:"username"`
 }
@@ -68,7 +68,7 @@ type AccessEntryArgs struct {
 	Tags pulumi.StringMapInput `pulumi:"tags"`
 	// The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
 	// Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
-	Type pulumi.StringPtrInput `pulumi:"type"`
+	Type AccessEntryTypePtrInput `pulumi:"type"`
 	// Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
 	Username pulumi.StringPtrInput `pulumi:"username"`
 }
@@ -150,8 +150,8 @@ func (o AccessEntryOutput) Tags() pulumi.StringMapOutput {
 
 // The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
 // Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
-func (o AccessEntryOutput) Type() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v AccessEntry) *string { return v.Type }).(pulumi.StringPtrOutput)
+func (o AccessEntryOutput) Type() AccessEntryTypePtrOutput {
+	return o.ApplyT(func(v AccessEntry) *AccessEntryType { return v.Type }).(AccessEntryTypePtrOutput)
 }
 
 // Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.

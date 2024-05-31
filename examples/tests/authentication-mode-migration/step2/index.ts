@@ -51,7 +51,7 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
     minSize: 1,
     maxSize: 2,
     instanceRole: role0,
-    authenticationMode: "API_AND_CONFIG_MAP",
+    authenticationMode: eks.AuthenticationMode.API_AND_CONFIG_MAP,
     roleMappings: [
         {
             roleArn: iamRole.arn,

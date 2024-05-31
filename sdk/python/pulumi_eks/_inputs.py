@@ -8,6 +8,7 @@ import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
+from ._enums import *
 from .vpc_cni import VpcCni
 import pulumi_aws
 import pulumi_kubernetes
@@ -34,7 +35,7 @@ class AccessEntryArgs:
                  access_policies: Optional[Mapping[str, pulumi.Input['AccessPolicyAssociationArgs']]] = None,
                  kubernetes_groups: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 type: Optional[pulumi.Input[str]] = None,
+                 type: Optional[pulumi.Input['AccessEntryType']] = None,
                  username: Optional[pulumi.Input[str]] = None):
         """
         Access entries allow an IAM principal to access your cluster.
@@ -45,7 +46,7 @@ class AccessEntryArgs:
         :param Mapping[str, pulumi.Input['AccessPolicyAssociationArgs']] access_policies: The access policies to associate to the access entry.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] kubernetes_groups: A list of groups within Kubernetes to which the IAM principal is mapped to.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: The tags to apply to the AccessEntry.
-        :param pulumi.Input[str] type: The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+        :param pulumi.Input['AccessEntryType'] type: The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
                Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
         :param pulumi.Input[str] username: Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
         """
@@ -111,7 +112,7 @@ class AccessEntryArgs:
 
     @property
     @pulumi.getter
-    def type(self) -> Optional[pulumi.Input[str]]:
+    def type(self) -> Optional[pulumi.Input['AccessEntryType']]:
         """
         The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
         Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
@@ -119,7 +120,7 @@ class AccessEntryArgs:
         return pulumi.get(self, "type")
 
     @type.setter
-    def type(self, value: Optional[pulumi.Input[str]]):
+    def type(self, value: Optional[pulumi.Input['AccessEntryType']]):
         pulumi.set(self, "type", value)
 
     @property

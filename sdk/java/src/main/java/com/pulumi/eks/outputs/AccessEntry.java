@@ -4,6 +4,7 @@
 package com.pulumi.eks.outputs;
 
 import com.pulumi.core.annotations.CustomType;
+import com.pulumi.eks.enums.AccessEntryType;
 import com.pulumi.eks.outputs.AccessPolicyAssociation;
 import java.lang.String;
 import java.util.List;
@@ -39,7 +40,7 @@ public final class AccessEntry {
      * Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
      * 
      */
-    private @Nullable String type;
+    private @Nullable AccessEntryType type;
     /**
      * @return Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
      * 
@@ -80,7 +81,7 @@ public final class AccessEntry {
      * Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
      * 
      */
-    public Optional<String> type() {
+    public Optional<AccessEntryType> type() {
         return Optional.ofNullable(this.type);
     }
     /**
@@ -104,7 +105,7 @@ public final class AccessEntry {
         private @Nullable List<String> kubernetesGroups;
         private String principalArn;
         private @Nullable Map<String,String> tags;
-        private @Nullable String type;
+        private @Nullable AccessEntryType type;
         private @Nullable String username;
         public Builder() {}
         public Builder(AccessEntry defaults) {
@@ -141,7 +142,7 @@ public final class AccessEntry {
             return this;
         }
         @CustomType.Setter
-        public Builder type(@Nullable String type) {
+        public Builder type(@Nullable AccessEntryType type) {
             this.type = type;
             return this;
         }

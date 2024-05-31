@@ -21,7 +21,7 @@ To do this, you need to set the `authenticationMode` parameter of your cluster t
 ```ts
 const clusterBoth = new eks.Cluster(`cluster`, {
     ...
-    authenticationMode: "API_AND_CONFIG_MAP",
+    authenticationMode: eks.AuthenticationMode.API_AND_CONFIG_MAP,
     ...
 });
 ```
@@ -38,10 +38,10 @@ To create Access Entries for those you need to choose the right Access Entry typ
 These map to Access Entries of type `STANDARD`, which is the default.
 
 The following shows how you'd add access entries for the role and user mappings:
-```
+```ts
 const cluster = new eks.Cluster(`${projectName}-cluster`, {
     ...
-    authenticationMode: "API_AND_CONFIG_MAP",
+    authenticationMode: eks.AuthenticationMode.API_AND_CONFIG_MAP,
     roleMappings: [
         {
             roleArn: iamRole.arn,
@@ -61,13 +61,13 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
             principalArn: iamRole.arn,
             kubernetesGroups: ["test-group"],
             username: "test-role",
-            type: "STANDARD"
+            type: eks.AccessEntryType.STANDARD
         },
         myUser: {
             principalArn: iamUser.arn,
             kubernetesGroups: ["user-group"],
             username: "test-user",
-            type: "STANDARD"
+            type: eks.AccessEntryType.STANDARD
         }
     }
     ...
@@ -78,17 +78,17 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
 These map to Access Entries of type `EC2_LINUX`.
 
 The following shows how you'd add access entries for the instance roles:
-```
+```ts
 const cluster = new eks.Cluster(`${projectName}-cluster`, {
     ...
-    authenticationMode: "API_AND_CONFIG_MAP",
+    authenticationMode: eks.AuthenticationMode.API_AND_CONFIG_MAP,
     instanceRoles: [
         ec2IamRole
     ],
     accessEntries: {
         myEC2InstanceRole: {
             principalArn: iamRole.arn,
-            type: "EC2_LINUX"
+            type: eks.AccessEntryType.EC2_LINUX
         }
     }
     ...
@@ -113,7 +113,7 @@ Now that the authentication is fully driven by access entries you can switch to 
 ```ts
 const clusterBoth = new eks.Cluster(`cluster`, {
     ...
-    authenticationMode: "API",
+    authenticationMode: eks.AuthenticationMode.API,
     ...
 });
 ```

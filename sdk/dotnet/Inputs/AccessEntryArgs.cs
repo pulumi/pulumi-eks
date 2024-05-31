@@ -65,7 +65,7 @@ namespace Pulumi.Eks.Inputs
         /// Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
         /// </summary>
         [Input("type")]
-        public Input<string>? Type { get; set; }
+        public Input<Pulumi.Eks.AccessEntryType>? Type { get; set; }
 
         /// <summary>
         /// Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.

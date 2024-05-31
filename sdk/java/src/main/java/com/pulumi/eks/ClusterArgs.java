@@ -8,6 +8,7 @@ import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Either;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.eks.enums.AuthenticationMode;
 import com.pulumi.eks.inputs.AccessEntryArgs;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
 import com.pulumi.eks.inputs.CreationRoleProviderArgs;
@@ -60,7 +61,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="authenticationMode")
-    private @Nullable String authenticationMode;
+    private @Nullable AuthenticationMode authenticationMode;
 
     /**
      * @return The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
@@ -69,7 +70,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
      * 
      */
-    public Optional<String> authenticationMode() {
+    public Optional<AuthenticationMode> authenticationMode() {
         return Optional.ofNullable(this.authenticationMode);
     }
 
@@ -1125,7 +1126,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder authenticationMode(@Nullable String authenticationMode) {
+        public Builder authenticationMode(@Nullable AuthenticationMode authenticationMode) {
             $.authenticationMode = authenticationMode;
             return this;
         }

@@ -5,6 +5,7 @@ package com.pulumi.eks.inputs;
 
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.eks.enums.AccessEntryType;
 import com.pulumi.eks.inputs.AccessPolicyAssociationArgs;
 import java.lang.String;
 import java.util.List;
@@ -91,14 +92,14 @@ public final class AccessEntryArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="type")
-    private @Nullable Output<String> type;
+    private @Nullable Output<AccessEntryType> type;
 
     /**
      * @return The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
      * Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
      * 
      */
-    public Optional<Output<String>> type() {
+    public Optional<Output<AccessEntryType>> type() {
         return Optional.ofNullable(this.type);
     }
 
@@ -237,7 +238,7 @@ public final class AccessEntryArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder type(@Nullable Output<String> type) {
+        public Builder type(@Nullable Output<AccessEntryType> type) {
             $.type = type;
             return this;
         }
@@ -249,7 +250,7 @@ public final class AccessEntryArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder type(String type) {
+        public Builder type(AccessEntryType type) {
             return type(Output.of(type));
         }
 
