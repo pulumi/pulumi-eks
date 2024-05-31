@@ -15,7 +15,7 @@ import (
 
 const (
 	// The baseline version is the version of the provider that the upgrade tests will be run against.
-	baselineVersion = "2.3.0"
+	baselineVersion = "2.5.2"
 	providerName    = "eks"
 )
 
