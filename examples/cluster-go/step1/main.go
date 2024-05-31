@@ -35,7 +35,7 @@ func main() {
 			return err
 		}
 
-		authMode := "API_AND_CONFIG_MAP"
+		authMode := eks.AuthenticationModeApiAndConfigMap
 		// Create cluster with non-default settings
 		cluster2, err := eks.NewCluster(ctx, "example-cluster-2", &eks.ClusterArgs{
 			DesiredCapacity: pulumi.IntPtr(2),
@@ -48,7 +48,7 @@ func main() {
 			},
 			AuthenticationMode: &authMode,
 			AccessEntries: map[string]eks.AccessEntryArgs{
-				"example-cluster-role": eks.AccessEntryArgs{
+				"example-cluster-role": {
 					PrincipalArn: role.Arn,
 					AccessPolicies: map[string]eks.AccessPolicyAssociationInput{
 						"view": eks.AccessPolicyAssociationArgs{

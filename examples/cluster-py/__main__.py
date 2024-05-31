@@ -53,7 +53,7 @@ cluster3 = eks.Cluster(f"{project_name}-3",
                                 max_size=1,
                                 instance_type="t3.small"
                             ),
-                            authentication_mode=eks.AuthenticationMode.AP_I_AN_D_CONFI_G_MAP,
+                            authentication_mode=eks.AuthenticationMode.API_AND_CONFIG_MAP,
                             access_entries={
                                 f'{project_name}-role': eks.AccessEntryArgs(
                                     principal_arn=iam_role.arn, kubernetes_groups=["test-group"], access_policies={
