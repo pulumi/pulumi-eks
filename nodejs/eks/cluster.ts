@@ -1646,6 +1646,7 @@ export interface AccessPolicyAssociation {
     accessScope: aws.types.input.eks.AccessPolicyAssociationAccessScope;
 }
 
+/* tslint:disable-next-line */ // Generating the enum object for AuthenticationMode like codegen does
 export const AuthenticationMode = {
     /**
      * Only Access Entries will be used for authenticating to the Kubernetes API.
@@ -1667,6 +1668,7 @@ export const AuthenticationMode = {
  */
 export type AuthenticationMode = (typeof AuthenticationMode)[keyof typeof AuthenticationMode];
 
+/* tslint:disable-next-line */ // Generating the enum object for AccessEntryType like codegen does
 export const AccessEntryType = {
     /**
      * Standard Access Entry Workflow. Allows users to input a username and kubernetesGroup, and to associate access policies.
@@ -1691,7 +1693,6 @@ export const AccessEntryType = {
  * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
  */
 export type AccessEntryType = (typeof AccessEntryType)[keyof typeof AccessEntryType];
-
 
 /**
  * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker
