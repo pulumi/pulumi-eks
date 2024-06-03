@@ -7,6 +7,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.Cluster;
 import java.lang.Boolean;
+import java.lang.Object;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
@@ -65,17 +66,17 @@ public final class AddonArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
+     * Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
      * 
      */
     @Import(name="configurationValues")
-    private @Nullable Output<String> configurationValues;
+    private @Nullable Output<Map<String,Object>> configurationValues;
 
     /**
-     * @return Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
+     * @return Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
      * 
      */
-    public Optional<Output<String>> configurationValues() {
+    public Optional<Output<Map<String,Object>>> configurationValues() {
         return Optional.ofNullable(this.configurationValues);
     }
 
@@ -254,23 +255,23 @@ public final class AddonArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param configurationValues Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
+         * @param configurationValues Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
          * 
          * @return builder
          * 
          */
-        public Builder configurationValues(@Nullable Output<String> configurationValues) {
+        public Builder configurationValues(@Nullable Output<Map<String,Object>> configurationValues) {
             $.configurationValues = configurationValues;
             return this;
         }
 
         /**
-         * @param configurationValues Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
+         * @param configurationValues Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
          * 
          * @return builder
          * 
          */
-        public Builder configurationValues(String configurationValues) {
+        public Builder configurationValues(Map<String,Object> configurationValues) {
             return configurationValues(Output.of(configurationValues));
         }
 

@@ -61,11 +61,17 @@ namespace Pulumi.Eks
         [Input("cluster", required: true)]
         public Input<Pulumi.Eks.Cluster> Cluster { get; set; } = null!;
 
-        /// <summary>
-        /// Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
-        /// </summary>
         [Input("configurationValues")]
-        public Input<string>? ConfigurationValues { get; set; }
+        private InputMap<object>? _configurationValues;
+
+        /// <summary>
+        /// Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
+        /// </summary>
+        public InputMap<object> ConfigurationValues
+        {
+            get => _configurationValues ?? (_configurationValues = new InputMap<object>());
+            set => _configurationValues = value;
+        }
 
         /// <summary>
         /// Indicates if you want to preserve the created resources when deleting the EKS add-on.
