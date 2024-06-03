@@ -21,8 +21,10 @@ import { Cluster, ClusterInternal } from "./cluster";
  * upstream `aws.eks.AddonArgs` and removes the deprecated `resolveConflicts` field. `clusterName` is also removed as we enable users to
  * pass in the cluster object directly.
  */
-export interface AddonOptions extends Omit<aws.eks.AddonArgs, "resolveConflicts" | "clusterName"> {
+export interface AddonOptions
+    extends Omit<aws.eks.AddonArgs, "resolveConflicts" | "clusterName" | "configurationValues"> {
     cluster: Cluster | ClusterInternal;
+    configurationValues?: object;
 }
 
 /**
@@ -45,6 +47,7 @@ export class Addon extends pulumi.ComponentResource {
             {
                 ...args,
                 clusterName: cluster.core.cluster.name,
+                configurationValues: JSON.stringify(args.configurationValues),
             },
             { parent: this, provider: opts?.provider },
         );
