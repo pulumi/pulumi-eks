@@ -1036,8 +1036,11 @@ func generateSchema() schema.PackageSpec {
 						Description: "The target EKS cluster.",
 					},
 					"configurationValues": {
-						TypeSpec:    schema.TypeSpec{Type: "string"},
-						Description: "Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.",
+						TypeSpec: schema.TypeSpec{
+							Type:                 "object",
+							AdditionalProperties: &schema.TypeSpec{Ref: "pulumi.json#/Any"},
+						},
+						Description: "Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.",
 					},
 					"preserve": {
 						TypeSpec:    schema.TypeSpec{Type: "boolean"},
