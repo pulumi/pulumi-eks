@@ -68,6 +68,19 @@ const coredns = new eks.Addon("coredns", {
   addonName: "coredns",
   addonVersion: "v1.11.1-eksbuild.9",
   resolveConflictsOnUpdate: "PRESERVE",
+  configurationValues: {
+    replicaCount: 4,
+    resources: {
+      limits: {
+        cpu: "100m",
+        memory: "150Mi",
+      },
+      requests: {
+        cpu: "100m",
+        memory: "150Mi",
+      },
+    },
+  },
 });
 
 // Export the clusters' kubeconfig.
