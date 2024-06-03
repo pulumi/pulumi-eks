@@ -76,6 +76,19 @@ coredns = eks.Addon(
     addon_name="coredns",
     addon_version="v1.11.1-eksbuild.9",
     resolve_conflicts_on_update="PRESERVE",
+    configuration_values={
+    "replicaCount": 4,
+    "resources": {
+      "limits": {
+        "cpu": "100m",
+        "memory": "150Mi",
+      },
+      "requests": {
+        "cpu": "100m",
+        "memory": "150Mi",
+      },
+    },
+  },
 )
 
 
