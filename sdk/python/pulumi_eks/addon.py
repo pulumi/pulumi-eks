@@ -18,7 +18,7 @@ class AddonArgs:
                  addon_name: pulumi.Input[str],
                  cluster: pulumi.Input['Cluster'],
                  addon_version: Optional[pulumi.Input[str]] = None,
-                 configuration_values: Optional[pulumi.Input[str]] = None,
+                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  preserve: Optional[pulumi.Input[bool]] = None,
                  resolve_conflicts_on_create: Optional[pulumi.Input[str]] = None,
                  resolve_conflicts_on_update: Optional[pulumi.Input[str]] = None,
@@ -29,7 +29,7 @@ class AddonArgs:
         :param pulumi.Input[str] addon_name: Name of the EKS add-on. The name must match one of the names returned by describe-addon-versions.
         :param pulumi.Input['Cluster'] cluster: The target EKS cluster.
         :param pulumi.Input[str] addon_version: The version of the EKS add-on. The version must match one of the versions returned by describe-addon-versions.
-        :param pulumi.Input[str] configuration_values: Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
+        :param pulumi.Input[Mapping[str, Any]] configuration_values: Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
         :param pulumi.Input[bool] preserve: Indicates if you want to preserve the created resources when deleting the EKS add-on.
         :param pulumi.Input[str] resolve_conflicts_on_create: How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
         :param pulumi.Input[str] resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
@@ -93,14 +93,14 @@ class AddonArgs:
 
     @property
     @pulumi.getter(name="configurationValues")
-    def configuration_values(self) -> Optional[pulumi.Input[str]]:
+    def configuration_values(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
         """
-        Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
+        Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
         """
         return pulumi.get(self, "configuration_values")
 
     @configuration_values.setter
-    def configuration_values(self, value: Optional[pulumi.Input[str]]):
+    def configuration_values(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
         pulumi.set(self, "configuration_values", value)
 
     @property
@@ -174,7 +174,7 @@ class Addon(pulumi.ComponentResource):
                  addon_name: Optional[pulumi.Input[str]] = None,
                  addon_version: Optional[pulumi.Input[str]] = None,
                  cluster: Optional[pulumi.Input['Cluster']] = None,
-                 configuration_values: Optional[pulumi.Input[str]] = None,
+                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  preserve: Optional[pulumi.Input[bool]] = None,
                  resolve_conflicts_on_create: Optional[pulumi.Input[str]] = None,
                  resolve_conflicts_on_update: Optional[pulumi.Input[str]] = None,
@@ -190,7 +190,7 @@ class Addon(pulumi.ComponentResource):
         :param pulumi.Input[str] addon_name: Name of the EKS add-on. The name must match one of the names returned by describe-addon-versions.
         :param pulumi.Input[str] addon_version: The version of the EKS add-on. The version must match one of the versions returned by describe-addon-versions.
         :param pulumi.Input['Cluster'] cluster: The target EKS cluster.
-        :param pulumi.Input[str] configuration_values: Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
+        :param pulumi.Input[Mapping[str, Any]] configuration_values: Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
         :param pulumi.Input[bool] preserve: Indicates if you want to preserve the created resources when deleting the EKS add-on.
         :param pulumi.Input[str] resolve_conflicts_on_create: How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
         :param pulumi.Input[str] resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
@@ -227,7 +227,7 @@ class Addon(pulumi.ComponentResource):
                  addon_name: Optional[pulumi.Input[str]] = None,
                  addon_version: Optional[pulumi.Input[str]] = None,
                  cluster: Optional[pulumi.Input['Cluster']] = None,
-                 configuration_values: Optional[pulumi.Input[str]] = None,
+                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  preserve: Optional[pulumi.Input[bool]] = None,
                  resolve_conflicts_on_create: Optional[pulumi.Input[str]] = None,
                  resolve_conflicts_on_update: Optional[pulumi.Input[str]] = None,

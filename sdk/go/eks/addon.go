@@ -47,8 +47,8 @@ type addonArgs struct {
 	AddonVersion *string `pulumi:"addonVersion"`
 	// The target EKS cluster.
 	Cluster *Cluster `pulumi:"cluster"`
-	// Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
-	ConfigurationValues *string `pulumi:"configurationValues"`
+	// Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
+	ConfigurationValues map[string]interface{} `pulumi:"configurationValues"`
 	// Indicates if you want to preserve the created resources when deleting the EKS add-on.
 	Preserve *bool `pulumi:"preserve"`
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
@@ -71,8 +71,8 @@ type AddonArgs struct {
 	AddonVersion pulumi.StringPtrInput
 	// The target EKS cluster.
 	Cluster ClusterInput
-	// Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration.
-	ConfigurationValues pulumi.StringPtrInput
+	// Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
+	ConfigurationValues pulumi.MapInput
 	// Indicates if you want to preserve the created resources when deleting the EKS add-on.
 	Preserve pulumi.BoolPtrInput
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
