@@ -751,8 +751,11 @@
                     "description": "The target EKS cluster."
                 },
                 "configurationValues": {
-                    "type": "string",
-                    "description": "Custom configuration values for addons with single JSON string. This JSON string value must match the JSON schema derived from describe-addon-configuration."
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration."
                 },
                 "preserve": {
                     "type": "boolean",
