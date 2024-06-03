@@ -18,7 +18,7 @@ const vpc = new awsx.ec2.Vpc("vpc",
             {type: SubnetType.Public, tags: {"kubernetes.io/role/elb": "1", ...tags}},
             {type: SubnetType.Private, tags: {"kubernetes.io/role/internal-elb": "1", ...tags}},
         ],
-        subnetStrategy: "Legacy", // Upstream awsx default is being switched to "Auto", explicitly set to "Legacy".
+        subnetStrategy: "Auto", // Upstream awsx default is being switched to "Auto", explicitly set to "Auto" to disable warning messages.
     },
     {
         // Inform pulumi to ignore tag changes to the VPCs or subnets, so that
