@@ -146,14 +146,14 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
         return this.eksClusterIngressRule;
     }
     /**
-     * The service roles used by the EKS cluster.
+     * The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      * 
      */
     @Export(name="instanceRoles", refs={List.class,Role.class}, tree="[0,1]")
     private Output<List<Role>> instanceRoles;
 
     /**
-     * @return The service roles used by the EKS cluster.
+     * @return The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      * 
      */
     public Output<List<Role>> instanceRoles() {

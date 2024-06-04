@@ -5,6 +5,7 @@
 from . import _utilities
 import typing
 # Export this package's modules as members:
+from ._enums import *
 from .cluster import *
 from .cluster_creation_role_provider import *
 from .managed_node_group import *

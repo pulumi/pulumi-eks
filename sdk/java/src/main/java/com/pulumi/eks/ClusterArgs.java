@@ -8,6 +8,8 @@ import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Either;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.eks.enums.AuthenticationMode;
+import com.pulumi.eks.inputs.AccessEntryArgs;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
 import com.pulumi.eks.inputs.CreationRoleProviderArgs;
 import com.pulumi.eks.inputs.FargateProfileArgs;
@@ -29,6 +31,48 @@ import javax.annotation.Nullable;
 public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
     public static final ClusterArgs Empty = new ClusterArgs();
+
+    /**
+     * Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+     * 
+     */
+    @Import(name="accessEntries")
+    private @Nullable Map<String,AccessEntryArgs> accessEntries;
+
+    /**
+     * @return Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+     * 
+     */
+    public Optional<Map<String,AccessEntryArgs>> accessEntries() {
+        return Optional.ofNullable(this.accessEntries);
+    }
+
+    /**
+     * The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+     * 
+     */
+    @Import(name="authenticationMode")
+    private @Nullable AuthenticationMode authenticationMode;
+
+    /**
+     * @return The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+     * 
+     */
+    public Optional<AuthenticationMode> authenticationMode() {
+        return Optional.ofNullable(this.authenticationMode);
+    }
 
     /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
@@ -802,14 +846,14 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Optional mappings from AWS IAM roles to Kubernetes users and groups.
+     * Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
      * 
      */
     @Import(name="roleMappings")
     private @Nullable Output<List<RoleMappingArgs>> roleMappings;
 
     /**
-     * @return Optional mappings from AWS IAM roles to Kubernetes users and groups.
+     * @return Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
      * 
      */
     public Optional<Output<List<RoleMappingArgs>>> roleMappings() {
@@ -927,14 +971,14 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Optional mappings from AWS IAM users to Kubernetes users and groups.
+     * Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      * 
      */
     @Import(name="userMappings")
     private @Nullable Output<List<UserMappingArgs>> userMappings;
 
     /**
-     * @return Optional mappings from AWS IAM users to Kubernetes users and groups.
+     * @return Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      * 
      */
     public Optional<Output<List<UserMappingArgs>>> userMappings() {
@@ -989,6 +1033,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     private ClusterArgs() {}
 
     private ClusterArgs(ClusterArgs $) {
+        this.accessEntries = $.accessEntries;
+        this.authenticationMode = $.authenticationMode;
         this.clusterSecurityGroup = $.clusterSecurityGroup;
         this.clusterSecurityGroupTags = $.clusterSecurityGroupTags;
         this.clusterTags = $.clusterTags;
@@ -1055,6 +1101,34 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder(ClusterArgs defaults) {
             $ = new ClusterArgs(Objects.requireNonNull(defaults));
+        }
+
+        /**
+         * @param accessEntries Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+         * 
+         * See for more details:
+         * https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder accessEntries(@Nullable Map<String,AccessEntryArgs> accessEntries) {
+            $.accessEntries = accessEntries;
+            return this;
+        }
+
+        /**
+         * @param authenticationMode The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+         * 
+         * See for more details:
+         * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+         * 
+         * @return builder
+         * 
+         */
+        public Builder authenticationMode(@Nullable AuthenticationMode authenticationMode) {
+            $.authenticationMode = authenticationMode;
+            return this;
         }
 
         /**
@@ -2113,7 +2187,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param roleMappings Optional mappings from AWS IAM roles to Kubernetes users and groups.
+         * @param roleMappings Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
          * 
          * @return builder
          * 
@@ -2124,7 +2198,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param roleMappings Optional mappings from AWS IAM roles to Kubernetes users and groups.
+         * @param roleMappings Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
          * 
          * @return builder
          * 
@@ -2134,7 +2208,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param roleMappings Optional mappings from AWS IAM roles to Kubernetes users and groups.
+         * @param roleMappings Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
          * 
          * @return builder
          * 
@@ -2300,7 +2374,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param userMappings Optional mappings from AWS IAM users to Kubernetes users and groups.
+         * @param userMappings Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
          * 
          * @return builder
          * 
@@ -2311,7 +2385,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param userMappings Optional mappings from AWS IAM users to Kubernetes users and groups.
+         * @param userMappings Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
          * 
          * @return builder
          * 
@@ -2321,7 +2395,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param userMappings Optional mappings from AWS IAM users to Kubernetes users and groups.
+         * @param userMappings Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
          * 
          * @return builder
          * 

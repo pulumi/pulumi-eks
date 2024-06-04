@@ -78,7 +78,7 @@ namespace Pulumi.Eks
         public Output<Pulumi.Aws.Ec2.SecurityGroupRule> EksClusterIngressRule { get; private set; } = null!;
 
         /// <summary>
-        /// The service roles used by the EKS cluster.
+        /// The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         /// </summary>
         [Output("instanceRoles")]
         public Output<ImmutableArray<Pulumi.Aws.Iam.Role>> InstanceRoles { get; private set; } = null!;
@@ -142,6 +142,30 @@ namespace Pulumi.Eks
 
     public sealed class ClusterArgs : global::Pulumi.ResourceArgs
     {
+        [Input("accessEntries")]
+        private Dictionary<string, Inputs.AccessEntryArgs>? _accessEntries;
+
+        /// <summary>
+        /// Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+        /// 
+        /// See for more details:
+        /// https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+        /// </summary>
+        public Dictionary<string, Inputs.AccessEntryArgs> AccessEntries
+        {
+            get => _accessEntries ?? (_accessEntries = new Dictionary<string, Inputs.AccessEntryArgs>());
+            set => _accessEntries = value;
+        }
+
+        /// <summary>
+        /// The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
+        /// 
+        /// See for more details:
+        /// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+        /// </summary>
+        [Input("authenticationMode")]
+        public Pulumi.Eks.AuthenticationMode? AuthenticationMode { get; set; }
+
         /// <summary>
         /// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
         /// 
@@ -536,7 +560,7 @@ namespace Pulumi.Eks
         private InputList<Inputs.RoleMappingArgs>? _roleMappings;
 
         /// <summary>
-        /// Optional mappings from AWS IAM roles to Kubernetes users and groups.
+        /// Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         /// </summary>
         public InputList<Inputs.RoleMappingArgs> RoleMappings
         {
@@ -606,7 +630,7 @@ namespace Pulumi.Eks
         private InputList<Inputs.UserMappingArgs>? _userMappings;
 
         /// <summary>
-        /// Optional mappings from AWS IAM users to Kubernetes users and groups.
+        /// Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         /// </summary>
         public InputList<Inputs.UserMappingArgs> UserMappings
         {

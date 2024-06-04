@@ -421,6 +421,7 @@ jobs:
       matrix:
         test-name:
           - AwsProfile
+          - AuthenticationMode
           - Cluster
           - CNIAcrossUpdates
           - EncryptionProvider

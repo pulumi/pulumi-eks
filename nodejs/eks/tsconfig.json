@@ -16,6 +16,7 @@
         "allowSyntheticDefaultImports": true
     },
     "files": [
+        "authenticationMode.ts",
         "cluster.ts",
         "cni.ts",
         "nodegroup.ts",

@@ -16,6 +16,10 @@ namespace Pulumi.Eks.Outputs
     [OutputType]
     public sealed class CoreData
     {
+        /// <summary>
+        /// The access entries added to the cluster.
+        /// </summary>
+        public readonly ImmutableArray<Outputs.AccessEntry> AccessEntries;
         public readonly Pulumi.Aws.Provider? AwsProvider;
         public readonly Pulumi.Aws.Eks.Cluster Cluster;
         /// <summary>
@@ -82,6 +86,8 @@ namespace Pulumi.Eks.Outputs
 
         [OutputConstructor]
         private CoreData(
+            ImmutableArray<Outputs.AccessEntry> accessEntries,
+
             Pulumi.Aws.Provider? awsProvider,
 
             Pulumi.Aws.Eks.Cluster cluster,
@@ -124,6 +130,7 @@ namespace Pulumi.Eks.Outputs
 
             string vpcId)
         {
+            AccessEntries = accessEntries;
             AwsProvider = awsProvider;
             Cluster = cluster;
             ClusterIamRole = clusterIamRole;

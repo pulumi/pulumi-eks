@@ -13,6 +13,10 @@
 // limitations under the License.
 
 export {
+    AccessEntry,
+    AccessEntryType,
+    AccessPolicyAssociation,
+    AuthenticationMode,
     Cluster,
     ClusterOptions,
     ClusterNodeGroupOptions,

@@ -12,6 +12,7 @@ import com.pulumi.aws.iam.OpenIdConnectProvider;
 import com.pulumi.aws.iam.Role;
 import com.pulumi.core.annotations.CustomType;
 import com.pulumi.eks.VpcCni;
+import com.pulumi.eks.outputs.AccessEntry;
 import com.pulumi.eks.outputs.ClusterNodeGroupOptions;
 import com.pulumi.kubernetes.core.v1.ConfigMap;
 import com.pulumi.kubernetes.storage.v1.StorageClass;
@@ -25,6 +26,11 @@ import javax.annotation.Nullable;
 
 @CustomType
 public final class CoreData {
+    /**
+     * @return The access entries added to the cluster.
+     * 
+     */
+    private @Nullable List<AccessEntry> accessEntries;
     private @Nullable Provider awsProvider;
     private Cluster cluster;
     /**
@@ -104,6 +110,13 @@ public final class CoreData {
     private String vpcId;
 
     private CoreData() {}
+    /**
+     * @return The access entries added to the cluster.
+     * 
+     */
+    public List<AccessEntry> accessEntries() {
+        return this.accessEntries == null ? List.of() : this.accessEntries;
+    }
     public Optional<Provider> awsProvider() {
         return Optional.ofNullable(this.awsProvider);
     }
@@ -233,6 +246,7 @@ public final class CoreData {
     }
     @CustomType.Builder
     public static final class Builder {
+        private @Nullable List<AccessEntry> accessEntries;
         private @Nullable Provider awsProvider;
         private Cluster cluster;
         private Role clusterIamRole;
@@ -257,6 +271,7 @@ public final class CoreData {
         public Builder() {}
         public Builder(CoreData defaults) {
     	      Objects.requireNonNull(defaults);
+    	      this.accessEntries = defaults.accessEntries;
     	      this.awsProvider = defaults.awsProvider;
     	      this.cluster = defaults.cluster;
     	      this.clusterIamRole = defaults.clusterIamRole;
@@ -280,6 +295,14 @@ public final class CoreData {
     	      this.vpcId = defaults.vpcId;
         }
 
+        @CustomType.Setter
+        public Builder accessEntries(@Nullable List<AccessEntry> accessEntries) {
+            this.accessEntries = accessEntries;
+            return this;
+        }
+        public Builder accessEntries(AccessEntry... accessEntries) {
+            return accessEntries(List.of(accessEntries));
+        }
         @CustomType.Setter
         public Builder awsProvider(@Nullable Provider awsProvider) {
             this.awsProvider = awsProvider;
@@ -399,6 +422,7 @@ public final class CoreData {
         }
         public CoreData build() {
             final var _resultValue = new CoreData();
+            _resultValue.accessEntries = accessEntries;
             _resultValue.awsProvider = awsProvider;
             _resultValue.cluster = cluster;
             _resultValue.clusterIamRole = clusterIamRole;

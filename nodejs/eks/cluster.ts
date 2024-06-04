@@ -21,11 +21,17 @@ import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
 import * as HttpsProxyAgent from "https-proxy-agent";
-import * as jsyaml from "js-yaml";
 import * as process from "process";
 import * as tmp from "tmp";
 import * as url from "url";
 
+import {
+    createAccessEntries,
+    createAwsAuthData,
+    supportsConfigMap,
+    supportsAccessEntries,
+    validateAuthenticationMode,
+} from "./authenticationMode";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
 import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
@@ -41,6 +47,7 @@ import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import { InputTags, UserStorageClasses } from "./utils";
+import cluster from "cluster";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -152,6 +159,7 @@ export interface CoreData {
     oidcProvider?: aws.iam.OpenIdConnectProvider;
     encryptionConfig?: pulumi.Output<aws.types.output.eks.ClusterEncryptionConfig>;
     clusterIamRole: pulumi.Output<aws.iam.Role>;
+    accessEntries?: pulumi.Output<aws.eks.AccessEntry[]>;
 }
 
 function createOrGetInstanceProfile(
@@ -399,6 +407,8 @@ export function createCore(
     // k8s resources later.
     assertCompatibleKubectlVersionExists();
 
+    validateAuthenticationMode(args);
+
     if (args.instanceRole && args.instanceRoles) {
         throw new Error(
             "instanceRole and instanceRoles are mutually exclusive, and cannot both be set.",
@@ -597,6 +607,15 @@ export function createCore(
             ),
             encryptionConfig,
             kubernetesNetworkConfig,
+            accessConfig: args.authenticationMode
+                ? {
+                      authenticationMode: args.authenticationMode,
+                      // Explicitely grants the principal creating the cluster admin access to the cluster.
+                      // This is the default behavior of EKS when no accessConfig is provided.
+                      // It is required for this component because it deploys charts to the cluster.
+                      bootstrapClusterCreatorAdminPermissions: true,
+                  }
+                : undefined,
         },
         {
             parent,
@@ -756,13 +775,10 @@ export function createCore(
         );
     }
 
-    let instanceRoleMappings: pulumi.Output<RoleMapping[]>;
     let instanceRoles: pulumi.Output<aws.iam.Role[]>;
+    let defaultInstanceRole: pulumi.Output<aws.iam.Role> | undefined;
     // Create role mappings of the instance roles specified for aws-auth.
     if (args.instanceRoles) {
-        instanceRoleMappings = pulumi
-            .output(args.instanceRoles)
-            .apply((roles) => roles.map((role) => createInstanceRoleMapping(role.arn)));
         instanceRoles = pulumi.output(args.instanceRoles);
     } else if (args.instanceRole) {
         // Create an instance profile if using a default node group
@@ -774,10 +790,8 @@ export function createCore(
                 args.instanceProfileName,
             );
         }
-        instanceRoleMappings = pulumi
-            .output(args.instanceRole)
-            .apply((instanceRole) => [createInstanceRoleMapping(instanceRole.arn)]);
         instanceRoles = pulumi.output([args.instanceRole]);
+        defaultInstanceRole = pulumi.output(args.instanceRole);
     } else {
         const instanceRole = new ServiceRole(
             `${name}-instanceRole`,
@@ -801,6 +815,7 @@ export function createCore(
             { parent, provider },
         ).role;
 
+        defaultInstanceRole = instanceRole;
         instanceRoles = pulumi.output([instanceRole]);
 
         // Create a new policy for the role, if specified.
@@ -828,68 +843,63 @@ export function createCore(
                 args.instanceProfileName,
             );
         }
-        instanceRoleMappings = pulumi
-            .output(instanceRole)
-            .apply((role) => [createInstanceRoleMapping(role.arn)]);
     }
 
-    const roleMappings = pulumi
-        .all([pulumi.output(args.roleMappings || []), instanceRoleMappings])
-        .apply(([mappings, instanceMappings]) => {
-            let mappingYaml = "";
-            try {
-                mappingYaml = jsyaml.dump(
-                    [...mappings, ...instanceMappings].map((m) => ({
-                        rolearn: m.roleArn,
-                        username: m.username,
-                        groups: m.groups,
-                    })),
-                );
-            } catch (e) {
-                throw new Error(
-                    `The IAM role mappings provided could not be properly serialized to YAML for the aws-auth ConfigMap`,
-                );
-            }
-            return mappingYaml;
-        });
-    const nodeAccessData: any = {
-        mapRoles: roleMappings,
-    };
-    if (args.userMappings) {
-        nodeAccessData.mapUsers = pulumi.output(args.userMappings).apply((mappings) => {
-            let mappingYaml = "";
-            try {
-                mappingYaml = jsyaml.dump(
-                    mappings.map((m) => ({
-                        userarn: m.userArn,
-                        username: m.username,
-                        groups: m.groups,
-                    })),
-                );
-            } catch (e) {
-                throw new Error(
-                    `The IAM user mappings provided could not be properly serialized to YAML for the aws-auth ConfigMap`,
-                );
-            }
-            return mappingYaml;
-        });
-    }
-    const eksNodeAccess = new k8s.core.v1.ConfigMap(
-        `${name}-nodeAccess`,
-        {
-            apiVersion: "v1",
-            immutable: false,
-            metadata: {
-                name: `aws-auth`,
-                namespace: "kube-system",
-                annotations: {
-                    "pulumi.com/patchForce": "true",
+    let eksNodeAccess: k8s.core.v1.ConfigMap | undefined = undefined;
+    if (supportsConfigMap(args.authenticationMode)) {
+        // Create the aws-auth ConfigMap if the authentication mode supports it. This maps instance roles, regular IAM roles, and IAM users to
+        // Kubernetes RBAC users and groups.
+        const nodeAccessData = createAwsAuthData(
+            instanceRoles,
+            args.roleMappings,
+            args.userMappings,
+        );
+        eksNodeAccess = new k8s.core.v1.ConfigMap(
+            `${name}-nodeAccess`,
+            {
+                apiVersion: "v1",
+                immutable: false,
+                metadata: {
+                    name: `aws-auth`,
+                    namespace: "kube-system",
+                    annotations: {
+                        "pulumi.com/patchForce": "true",
+                    },
                 },
+                data: nodeAccessData,
             },
-            data: nodeAccessData,
-        },
-        { parent, provider: k8sProvider },
-    );
+            { parent, provider: k8sProvider },
+        );
+    }
+
+    // Create the access entries if the authentication mode supports it.
+    let accessEntries: pulumi.Output<aws.eks.AccessEntry[]> | undefined = undefined;
+    if (supportsAccessEntries(args.authenticationMode)) {
+        let createdAccessEntries: aws.eks.AccessEntry[] = [];
+
+        // This additionally maps the defaultInstanceRole to a EC2_LINUX access entry which allows the nodes to register & communicate with the EKS control plane.
+        if (defaultInstanceRole) {
+            createdAccessEntries = createAccessEntries(
+                name,
+                eksCluster.name,
+                {
+                    defaultNodeGroupInstanceRole: {
+                        principalArn: defaultInstanceRole.arn,
+                        type: AccessEntryType.EC2_LINUX,
+                    },
+                },
+                { parent, provider },
+            );
+        }
+
+        createdAccessEntries = createdAccessEntries.concat(
+            createAccessEntries(name, eksCluster.name, args.accessEntries || {}, {
+                parent,
+                provider,
+            }),
+        );
+        accessEntries = pulumi.output(createdAccessEntries);
+    }
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi
         .output(args.fargate)
@@ -944,7 +954,7 @@ export function createCore(
                             }
                         }),
                     },
-                    { parent, dependsOn: [eksNodeAccess], provider },
+                    { parent, dependsOn: eksNodeAccess ? [eksNodeAccess] : undefined, provider },
                 );
 
                 // Once the FargateProfile has been created, try to patch/remove the CoreDNS computeType annotation.  See
@@ -1051,18 +1061,7 @@ export function createCore(
         oidcProvider: oidcProvider,
         encryptionConfig: encryptionConfig,
         clusterIamRole: eksRole,
-    };
-}
-
-/**
- * Enable access to the EKS cluster for worker nodes, by creating an
- * instance role mapping to the k8s username and groups of aws-auth.
- */
-function createInstanceRoleMapping(arn: pulumi.Input<string>): RoleMapping {
-    return {
-        roleArn: arn,
-        username: "system:node:{{EC2PrivateDNSName}}",
-        groups: ["system:bootstrappers", "system:nodes"],
+        accessEntries: accessEntries,
     };
 }
 
@@ -1203,11 +1202,13 @@ export interface ClusterOptions {
 
     /**
      * Optional mappings from AWS IAM roles to Kubernetes users and groups.
+     * Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      */
     roleMappings?: pulumi.Input<pulumi.Input<RoleMapping>[]>;
 
     /**
      * Optional mappings from AWS IAM users to Kubernetes users and groups.
+     * Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      */
     userMappings?: pulumi.Input<pulumi.Input<UserMapping>[]>;
 
@@ -1255,6 +1256,7 @@ export interface ClusterOptions {
     /**
      * This enables the advanced case of registering *many* IAM instance roles
      * with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
+     * Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      *
      * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
      */
@@ -1554,6 +1556,20 @@ export interface ClusterOptions {
      * a new cluster to be created.
      */
     ipFamily?: pulumi.Input<string>;
+
+    /**
+     * The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`
+     * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+     */
+    authenticationMode?: AuthenticationMode;
+
+    /**
+     * Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster.
+     * Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+     *
+     * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+     */
+    accessEntries?: { [key: string]: AccessEntry };
 }
 
 /**
@@ -1582,6 +1598,101 @@ export interface FargateProfile {
  * to create its own node groups. It's a subset of NodeGroupOptions.
  */
 export interface ClusterNodeGroupOptions extends NodeGroupBaseOptions {}
+
+export interface AccessEntry {
+    /**
+     * The IAM Principal ARN which requires Authentication access to the EKS cluster.
+     */
+    principalArn: pulumi.Input<string>;
+
+    /**
+     * Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
+     */
+    username?: pulumi.Input<string>;
+
+    /**
+     * A list of groups within Kubernetes to which the IAM principal is mapped to.
+     */
+    kubernetesGroups?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * The access policies to associate to the access entry.
+     */
+    accessPolicies?: { [key: string]: pulumi.Input<AccessPolicyAssociation> };
+
+    /**
+     * The tags to apply to the AccessEntry.
+     */
+    tags?: InputTags;
+
+    /**
+     * The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+     *
+     * Defaults to STANDARD which provides the standard workflow. EC2_LINUX and EC2_WINDOWS types disallow users
+     * to input a kubernetesGroup, and prevent associating access policies..
+     */
+    type?: pulumi.Input<AccessEntryType>;
+}
+
+export interface AccessPolicyAssociation {
+    /**
+     * The ARN of the access policy to associate with the principal
+     */
+    policyArn: pulumi.Input<string>;
+
+    /**
+     * The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+     */
+    accessScope: aws.types.input.eks.AccessPolicyAssociationAccessScope;
+}
+
+/* tslint:disable-next-line */ // Generating the enum object for AuthenticationMode like codegen does
+export const AuthenticationMode = {
+    /**
+     * Only Access Entries will be used for authenticating to the Kubernetes API.
+     */
+    API: "API",
+    /**
+     * Only aws-auth ConfigMap will be used for authenticating to the Kubernetes API.
+     */
+    CONFIG_MAP: "CONFIG_MAP",
+    /**
+     * Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.
+     */
+    API_AND_CONFIG_MAP: "API_AND_CONFIG_MAP",
+} as const;
+
+/**
+ * The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`
+ * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+ */
+export type AuthenticationMode = (typeof AuthenticationMode)[keyof typeof AuthenticationMode];
+
+/* tslint:disable-next-line */ // Generating the enum object for AccessEntryType like codegen does
+export const AccessEntryType = {
+    /**
+     * Standard Access Entry Workflow. Allows users to input a username and kubernetesGroup, and to associate access policies.
+     */
+    STANDARD: "STANDARD",
+    /**
+     * For IAM roles used with AWS Fargate profiles.
+     */
+    FARGATE_LINUX: "FARGATE_LINUX",
+    /**
+     * For IAM roles associated with self-managed Linux node groups. Allows the nodes to join the cluster.
+     */
+    EC2_LINUX: "EC2_LINUX",
+    /**
+     * For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
+     */
+    EC2_WINDOWS: "EC2_WINDOWS",
+} as const;
+
+/**
+ * The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`
+ * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+ */
+export type AccessEntryType = (typeof AccessEntryType)[keyof typeof AccessEntryType];
 
 /**
  * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker
