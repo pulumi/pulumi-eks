@@ -5,7 +5,9 @@ import * as eks from "@pulumi/eks";
 const projectName = pulumi.getProject();
 
 // Create an EKS cluster with the default configuration.
-const cluster1 = new eks.Cluster(`${projectName}-1`);
+const cluster1 = new eks.Cluster(`${projectName}-1`, {
+    nodeAmiId: "ami-0384725f0d30527c7",
+});
 
 // Create an EKS cluster with a non-default configuration.
 const vpc = new awsx.ec2.Vpc(`${projectName}-2`, {
@@ -18,6 +20,7 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
     desiredCapacity: 2,
     minSize: 2,
     maxSize: 2,
+    nodeAmiId: "ami-0384725f0d30527c7",
     deployDashboard: false,
     enabledClusterLogTypes: [
         "api",
@@ -32,6 +35,7 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
 const cluster3 = new eks.Cluster(`${projectName}-3`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
+    nodeAmiId: "ami-0384725f0d30527c7",
     nodeGroupOptions: {
         desiredCapacity: 1,
         minSize: 1,
@@ -46,6 +50,7 @@ const cluster3 = new eks.Cluster(`${projectName}-3`, {
 const cluster4 = new eks.Cluster(`${projectName}-4`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
+    nodeAmiId: "ami-0384725f0d30527c7",
     instanceType: "t4g.small",
 })
 
