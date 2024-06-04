@@ -1,88 +1,87 @@
 package provider
 
 import (
-	"fmt"
-	"regexp"
-	"strings"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/pulumi/providertest"
-	"github.com/stretchr/testify/assert"
+	"github.com/pulumi/providertest/optproviderupgrade"
+	"github.com/pulumi/providertest/pulumitest"
+	"github.com/pulumi/providertest/pulumitest/assertpreview"
+	"github.com/pulumi/providertest/pulumitest/opttest"
+	"github.com/stretchr/testify/require"
 )
 
 const (
 	// The baseline version is the version of the provider that the upgrade tests will be run against.
 	baselineVersion = "2.5.2"
-)
-
-var (
-	// providerRegex is a regular expression that extracts the provider name from an URN.
-	providerRegex = regexp.MustCompile(`pulumi:providers:(\w+)::`)
+	providerName    = "eks"
 )
 
 func TestExamplesUpgrades(t *testing.T) {
 	t.Run("cluster", func(t *testing.T) {
-		runExampleParallel(t, "cluster")
+		testProviderUpgrade(t, "cluster")
 	})
 
 	t.Run("aws-profile", func(t *testing.T) {
 		t.Skip("Fails with 'ALT_AWS_PROFILE must be set'")
-		runExampleParallel(t, "aws-profile")
+		testProviderUpgrade(t, "aws-profile")
 	})
 
 	t.Run("aws-profile-role", func(t *testing.T) {
-		runExampleParallel(t, "aws-profile-role")
+		testProviderUpgrade(t, "aws-profile-role")
 	})
 
 	t.Run("encryption-provider", func(t *testing.T) {
-		runExampleParallel(t, "encryption-provider")
+		testProviderUpgrade(t, "encryption-provider")
 	})
 
 	t.Run("cluster-with-serviceiprange", func(t *testing.T) {
-		runExampleParallel(t, "cluster-with-serviceiprange")
+		testProviderUpgrade(t, "cluster-with-serviceiprange")
 	})
 
 	t.Run("extra-sg", func(t *testing.T) {
-		runExampleParallel(t, "extra-sg")
+		testProviderUpgrade(t, "extra-sg")
 	})
 
 	t.Run("fargate", func(t *testing.T) {
 		t.Skip("upgradetest doesn't understand invoke getSecurityGroup, tracked by providertest #31")
-		runExampleParallel(t, "fargate")
+		testProviderUpgrade(t, "fargate")
 	})
 
 	t.Run("managed-nodegroups", func(t *testing.T) {
-		runExampleParallel(t, "managed-nodegroups")
+		testProviderUpgrade(t, "managed-nodegroups")
 	})
 
 	t.Run("modify-default-eks-sg", func(t *testing.T) {
 		t.Skip("upgradetest doesn't understand invoke aws:ec2/getSecurityGroup:getSecurityGroup")
-		runExampleParallel(t, "modify-default-eks-sg")
+		testProviderUpgrade(t, "modify-default-eks-sg")
 	})
 
 	t.Run("nodegroup", func(t *testing.T) {
-		runExampleParallel(t, "nodegroup")
+		testProviderUpgrade(t, "nodegroup")
 	})
 
 	t.Run("oidc-iam-sa", func(t *testing.T) {
-		runExampleParallel(t, "oidc-iam-sa")
+		testProviderUpgrade(t, "oidc-iam-sa")
 	})
 
 	t.Run("scoped-kubeconfigs", func(t *testing.T) {
 		t.Skip("Requires source change for args of GetCallerIdentityArgs")
-		runExampleParallel(t, "scoped-kubeconfigs")
+		testProviderUpgrade(t, "scoped-kubeconfigs")
 	})
 
 	t.Run("storage-classes", func(t *testing.T) {
-		runExampleParallel(t, "storage-classes")
+		testProviderUpgrade(t, "storage-classes")
 	})
 
 	t.Run("subnet-tags", func(t *testing.T) {
-		runExampleParallel(t, "subnet-tags")
+		testProviderUpgrade(t, "subnet-tags")
 	})
 
 	t.Run("tags", func(t *testing.T) {
-		runExampleParallel(t, "tags")
+		testProviderUpgrade(t, "tags")
 	})
 }
 
@@ -90,54 +89,24 @@ func TestReportUpgradeCoverage(t *testing.T) {
 	providertest.ReportUpgradeCoverage(t)
 }
 
-func runExampleParallel(t *testing.T, example string, opts ...providertest.Option) {
+func testProviderUpgrade(t *testing.T, example string) {
+	if testing.Short() {
+		t.Skip("Skipping provider upgrade tests in short mode")
+	}
 	t.Parallel()
-	test(fmt.Sprintf("../examples/%s", example), opts...).Run(t)
-}
+	t.Helper()
+	dir := filepath.Join("../examples", example)
 
-func test(dir string, opts ...providertest.Option) *providertest.ProviderTest {
-	eksDiffValidation := func(t *testing.T, diffs providertest.Diffs) {
-		for _, diff := range diffs {
-			if !diff.HasChanges {
-				continue
-			}
-
-			if strings.Contains(string(diff.URN), "pulumi:providers:") &&
-				len(diff.Diffs) == 1 &&
-				diff.Diffs[0] == "version" {
-				// Extract the provider name from the URN.
-				matches := providerRegex.FindStringSubmatch(string(diff.URN))
-				if len(matches) == 2 {
-					t.Logf("Ignoring version change for provider %q used in test programs", matches[1])
-				} else {
-					t.Errorf("Failed to extract provider name from URN: %s", diff.URN)
-				}
-
-				continue
-			}
-
-			assert.Falsef(t, diff.HasChanges, "Unexpected difference: %+v", diff)
-		}
+	cwd, err := os.Getwd()
+	require.NoError(t, err)
+	options := []opttest.Option{
+		opttest.DownloadProviderVersion(providerName, baselineVersion),
+		opttest.LocalProviderPath("eks", filepath.Join(cwd, "..", "bin")),
+		opttest.YarnLink("@pulumi/eks"),
 	}
 
-	opts = append(opts,
-		providertest.WithProviderName("eks"),
+	test := pulumitest.NewPulumiTest(t, dir, options...)
 
-		providertest.WithSkippedUpgradeTestMode(
-			providertest.UpgradeTestMode_Quick,
-			"Quick mode is only supported for providers written in Go at the moment"),
-
-		providertest.WithBaselineVersion(baselineVersion),
-
-		providertest.WithExtraBaselineDependencies(map[string]string{
-			"aws":        "6.0.4",
-			"kubernetes": "4.1.1",
-		}),
-
-		// This region needs to match the one configured in .github for the CI workflows.
-		providertest.WithConfig("aws:region", "us-west-2"),
-
-		providertest.WithDiffValidation(eksDiffValidation),
-	)
-	return providertest.NewProviderTest(dir, opts...)
+	result := providertest.PreviewProviderUpgrade(t, test, providerName, baselineVersion, optproviderupgrade.DisableAttach())
+	assertpreview.HasNoReplacements(t, result)
 }
