@@ -50,7 +50,7 @@ const cluster3 = new eks.Cluster(`${projectName}-3`, {
 const cluster4 = new eks.Cluster(`${projectName}-4`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
-    nodeAmiId: "ami-0384725f0d30527c7",
+    nodeAmiId: "ami-0350263ff18287b83",
     instanceType: "t4g.small",
 })
 
