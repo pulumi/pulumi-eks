@@ -685,3 +685,78 @@ func TestAccCNIAcrossUpdates(t *testing.T) {
 	t.Log("Ensuring that re-running `pulumi up` results in no changes and no spurious diffs")
 	pt.Up(optup.ExpectNoChanges())
 }
+
+func TestAccAuthenticationMode(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "authentication-mode"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				// Verify that the clusters with all three authentication modes are working.
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfigConfigMap"],
+					info.Outputs["kubeconfigBoth"],
+					info.Outputs["kubeconfigApi"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
+func TestAccAuthenticationModeMigration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			// step1 has authentication mode set to CONFIG_MAP
+			Dir: path.Join(getCwd(t), "tests", "authentication-mode-migration", "step1"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+			EditDirs: []integration.EditDir{
+				// step2 changes authentication mode to API_AND_CONFIG_MAP and adds the necessary access entries
+				{
+					Dir:      path.Join(getCwd(t), "tests", "authentication-mode-migration", "step2"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
+				// step3 changes the authentication mode to API only, this also deletes the aws-auth config-map
+				{
+					Dir:      path.Join(getCwd(t), "tests", "authentication-mode-migration", "step3"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
+				// step4 scale nodegroups up to ensure new instances are able to register with the cluster
+				{
+					Dir:      path.Join(getCwd(t), "tests", "authentication-mode-migration", "step4"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}

@@ -30,6 +30,20 @@ cluster2 = eks.Cluster('eks-cluster',
                               "authenticator",
                           ],)
 
+iam_role = aws.iam.Role(
+    f"{project_name}-role",
+    assume_role_policy=pulumi.Output.json_dumps({
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Action": "sts:AssumeRole",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            }
+        }]
+    })
+)
+
 cluster3 = eks.Cluster(f"{project_name}-3",
                             vpc_id=vpc.vpc_id,
                             public_subnet_ids=vpc.public_subnet_ids,
@@ -38,7 +52,18 @@ cluster3 = eks.Cluster(f"{project_name}-3",
                                 min_size=1,
                                 max_size=1,
                                 instance_type="t3.small"
-                            )
+                            ),
+                            authentication_mode=eks.AuthenticationMode.API_AND_CONFIG_MAP,
+                            access_entries={
+                                f'{project_name}-role': eks.AccessEntryArgs(
+                                    principal_arn=iam_role.arn, kubernetes_groups=["test-group"], access_policies={
+                                        'view': eks.AccessPolicyAssociationArgs(
+                                            policy_arn="arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy",
+                                            access_scope=aws.eks.AccessPolicyAssociationAccessScopeArgs(namespaces=["default", "application"], type="namespace")
+                                        )
+                                    }
+                                )
+                            }
 )
 
 

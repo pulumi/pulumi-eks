@@ -1,0 +1,3 @@
+name: example-cluster
+description: EKS cluster example
+runtime: nodejs

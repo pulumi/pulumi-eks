@@ -1231,9 +1231,12 @@ ${customUserData}
             metadataOptions: args.metadataOptions,
             userData: userdata,
             tagSpecifications: args.launchTemplateTagSpecifications,
-            monitoring: {
-                enabled: args.enableDetailedMonitoring,
-            },
+            monitoring:
+                args.enableDetailedMonitoring == null
+                    ? undefined
+                    : {
+                          enabled: args.enableDetailedMonitoring,
+                      },
         },
         { parent, provider },
     );
@@ -1815,7 +1818,10 @@ Content-Type: text/x-shellscript; charset="us-ascii"
  * See: https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
  */
 function getRecommendedAMI(
-    args: Omit<NodeGroupOptions, "cluster"> | Omit<NodeGroupV2Options, "cluster"> | Omit<ManagedNodeGroupOptions, "cluster">,
+    args:
+        | Omit<NodeGroupOptions, "cluster">
+        | Omit<NodeGroupV2Options, "cluster">
+        | Omit<ManagedNodeGroupOptions, "cluster">,
     k8sVersion: pulumi.Output<string>,
     parent: pulumi.Resource | undefined,
 ): pulumi.Input<string> {
