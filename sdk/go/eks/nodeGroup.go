@@ -126,8 +126,18 @@ type nodeGroupArgs struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey *string `pulumi:"nodePublicKey"`
+	// Whether the root block device should be deleted on termination of the instance. Defaults to true.
+	NodeRootVolumeDeleteOnTermination *bool `pulumi:"nodeRootVolumeDeleteOnTermination"`
+	// Whether to encrypt a cluster node's root volume. Defaults to false.
+	NodeRootVolumeEncrypted *bool `pulumi:"nodeRootVolumeEncrypted"`
+	// The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+	NodeRootVolumeIops *int `pulumi:"nodeRootVolumeIops"`
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize *int `pulumi:"nodeRootVolumeSize"`
+	// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+	NodeRootVolumeThroughput *int `pulumi:"nodeRootVolumeThroughput"`
+	// Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+	NodeRootVolumeType *string `pulumi:"nodeRootVolumeType"`
 	// The security group for the worker node group to communicate with the cluster.
 	//
 	// This security group requires specific inbound and outbound rules.
@@ -234,8 +244,18 @@ type NodeGroupArgs struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey pulumi.StringPtrInput
+	// Whether the root block device should be deleted on termination of the instance. Defaults to true.
+	NodeRootVolumeDeleteOnTermination pulumi.BoolPtrInput
+	// Whether to encrypt a cluster node's root volume. Defaults to false.
+	NodeRootVolumeEncrypted pulumi.BoolPtrInput
+	// The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+	NodeRootVolumeIops pulumi.IntPtrInput
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize pulumi.IntPtrInput
+	// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+	NodeRootVolumeThroughput pulumi.IntPtrInput
+	// Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+	NodeRootVolumeType pulumi.StringPtrInput
 	// The security group for the worker node group to communicate with the cluster.
 	//
 	// This security group requires specific inbound and outbound rules.

@@ -374,8 +374,18 @@ type ClusterNodeGroupOptions struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey *string `pulumi:"nodePublicKey"`
+	// Whether the root block device should be deleted on termination of the instance. Defaults to true.
+	NodeRootVolumeDeleteOnTermination *bool `pulumi:"nodeRootVolumeDeleteOnTermination"`
+	// Whether to encrypt a cluster node's root volume. Defaults to false.
+	NodeRootVolumeEncrypted *bool `pulumi:"nodeRootVolumeEncrypted"`
+	// The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+	NodeRootVolumeIops *int `pulumi:"nodeRootVolumeIops"`
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize *int `pulumi:"nodeRootVolumeSize"`
+	// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+	NodeRootVolumeThroughput *int `pulumi:"nodeRootVolumeThroughput"`
+	// Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+	NodeRootVolumeType *string `pulumi:"nodeRootVolumeType"`
 	// The security group for the worker node group to communicate with the cluster.
 	//
 	// This security group requires specific inbound and outbound rules.
@@ -491,8 +501,18 @@ type ClusterNodeGroupOptionsArgs struct {
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
 	NodePublicKey pulumi.StringPtrInput `pulumi:"nodePublicKey"`
+	// Whether the root block device should be deleted on termination of the instance. Defaults to true.
+	NodeRootVolumeDeleteOnTermination pulumi.BoolPtrInput `pulumi:"nodeRootVolumeDeleteOnTermination"`
+	// Whether to encrypt a cluster node's root volume. Defaults to false.
+	NodeRootVolumeEncrypted pulumi.BoolPtrInput `pulumi:"nodeRootVolumeEncrypted"`
+	// The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+	NodeRootVolumeIops pulumi.IntPtrInput `pulumi:"nodeRootVolumeIops"`
 	// The size in GiB of a cluster node's root volume. Defaults to 20.
 	NodeRootVolumeSize pulumi.IntPtrInput `pulumi:"nodeRootVolumeSize"`
+	// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+	NodeRootVolumeThroughput pulumi.IntPtrInput `pulumi:"nodeRootVolumeThroughput"`
+	// Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+	NodeRootVolumeType pulumi.StringPtrInput `pulumi:"nodeRootVolumeType"`
 	// The security group for the worker node group to communicate with the cluster.
 	//
 	// This security group requires specific inbound and outbound rules.
@@ -733,9 +753,34 @@ func (o ClusterNodeGroupOptionsOutput) NodePublicKey() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.NodePublicKey }).(pulumi.StringPtrOutput)
 }
 
+// Whether the root block device should be deleted on termination of the instance. Defaults to true.
+func (o ClusterNodeGroupOptionsOutput) NodeRootVolumeDeleteOnTermination() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *bool { return v.NodeRootVolumeDeleteOnTermination }).(pulumi.BoolPtrOutput)
+}
+
+// Whether to encrypt a cluster node's root volume. Defaults to false.
+func (o ClusterNodeGroupOptionsOutput) NodeRootVolumeEncrypted() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *bool { return v.NodeRootVolumeEncrypted }).(pulumi.BoolPtrOutput)
+}
+
+// The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+func (o ClusterNodeGroupOptionsOutput) NodeRootVolumeIops() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *int { return v.NodeRootVolumeIops }).(pulumi.IntPtrOutput)
+}
+
 // The size in GiB of a cluster node's root volume. Defaults to 20.
 func (o ClusterNodeGroupOptionsOutput) NodeRootVolumeSize() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *int { return v.NodeRootVolumeSize }).(pulumi.IntPtrOutput)
+}
+
+// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+func (o ClusterNodeGroupOptionsOutput) NodeRootVolumeThroughput() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *int { return v.NodeRootVolumeThroughput }).(pulumi.IntPtrOutput)
+}
+
+// Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+func (o ClusterNodeGroupOptionsOutput) NodeRootVolumeType() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.NodeRootVolumeType }).(pulumi.StringPtrOutput)
 }
 
 // The security group for the worker node group to communicate with the cluster.
@@ -1043,6 +1088,36 @@ func (o ClusterNodeGroupOptionsPtrOutput) NodePublicKey() pulumi.StringPtrOutput
 	}).(pulumi.StringPtrOutput)
 }
 
+// Whether the root block device should be deleted on termination of the instance. Defaults to true.
+func (o ClusterNodeGroupOptionsPtrOutput) NodeRootVolumeDeleteOnTermination() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.NodeRootVolumeDeleteOnTermination
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Whether to encrypt a cluster node's root volume. Defaults to false.
+func (o ClusterNodeGroupOptionsPtrOutput) NodeRootVolumeEncrypted() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.NodeRootVolumeEncrypted
+	}).(pulumi.BoolPtrOutput)
+}
+
+// The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+func (o ClusterNodeGroupOptionsPtrOutput) NodeRootVolumeIops() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *int {
+		if v == nil {
+			return nil
+		}
+		return v.NodeRootVolumeIops
+	}).(pulumi.IntPtrOutput)
+}
+
 // The size in GiB of a cluster node's root volume. Defaults to 20.
 func (o ClusterNodeGroupOptionsPtrOutput) NodeRootVolumeSize() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) *int {
@@ -1051,6 +1126,26 @@ func (o ClusterNodeGroupOptionsPtrOutput) NodeRootVolumeSize() pulumi.IntPtrOutp
 		}
 		return v.NodeRootVolumeSize
 	}).(pulumi.IntPtrOutput)
+}
+
+// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+func (o ClusterNodeGroupOptionsPtrOutput) NodeRootVolumeThroughput() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *int {
+		if v == nil {
+			return nil
+		}
+		return v.NodeRootVolumeThroughput
+	}).(pulumi.IntPtrOutput)
+}
+
+// Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+func (o ClusterNodeGroupOptionsPtrOutput) NodeRootVolumeType() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.NodeRootVolumeType
+	}).(pulumi.StringPtrOutput)
 }
 
 // The security group for the worker node group to communicate with the cluster.
