@@ -21,6 +21,7 @@ const instanceProfile0 = new aws.iam.InstanceProfile("example-instanceProfile0",
 const cluster1 = new eks.Cluster("example-nodegroup-iam-simple", {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
+    nodeAmiId: "ami-0384725f0d30527c7",
     instanceRole: role0,
 });
 
@@ -35,6 +36,7 @@ cluster1.createNodeGroup("example-ng-simple-ondemand", {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    amiId: "ami-0384725f0d30527c7",
     labels: {"ondemand": "true"},
     instanceProfile: instanceProfile0,
 });
@@ -45,6 +47,7 @@ const ng = new eks.NodeGroupV2("example-ng2-simple-ondemand", {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    amiId: "ami-0384725f0d30527c7",
     labels: {"ondemand": "true"},
     instanceProfile: instanceProfile0,
 });
@@ -56,6 +59,7 @@ const spot = new eks.NodeGroup("example-ng-simple-spot", {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    amiId: "ami-0384725f0d30527c7",
     spotPrice: "1",
     labels: {"preemptible": "true"},
     taints: {
@@ -76,6 +80,7 @@ const withLaunchTemplateTagSpecifications = new eks.NodeGroupV2("example-ng2-lau
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    amiId: "ami-0384725f0d30527c7",
     labels: { "ondemand": "true" },
     instanceProfile: instanceProfile0,
     launchTemplateTagSpecifications: [
@@ -114,6 +119,7 @@ const cluster2 = new eks.Cluster("example-nodegroup-iam-advanced", {
     skipDefaultNodeGroup: true,
     deployDashboard: false,
     instanceRoles: [role1, role2, role3],
+    nodeAmiId: "ami-0384725f0d30527c7",
 });
 
 // Create node groups using a different `instanceProfile` tied to one of the many
@@ -123,6 +129,7 @@ cluster2.createNodeGroup("example-ng-advanced-ondemand", {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    amiId: "ami-0384725f0d30527c7",
     labels: {"ondemand": "true"},
     instanceProfile: instanceProfile1,
 });
@@ -133,6 +140,7 @@ const ng2 = new eks.NodeGroupV2("example-ng-advanced-ondemand", {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    amiId: "ami-0384725f0d30527c7",
     labels: {"ondemand": "true"},
     instanceProfile: instanceProfile2,
 });
@@ -144,6 +152,7 @@ const spot2 = new eks.NodeGroup("example-ng-advanced-spot", {
     spotPrice: "1",
     minSize: 1,
     maxSize: 2,
+    amiId: "ami-0384725f0d30527c7",
     labels: {"preemptible": "true"},
     taints: {
         "special": {
