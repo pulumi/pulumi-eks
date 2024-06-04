@@ -8,6 +8,7 @@ const cluster1 = new eks.Cluster("example-tags-cluster1", {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    nodeAmiId: "ami-0384725f0d30527c7",
     tags: {
         "project": "foobar",
         "org": "barfoo",
@@ -48,6 +49,7 @@ cluster2.createNodeGroup("example-ng-tags-ondemand", {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    amiId: "ami-0384725f0d30527c7",
     labels: {"ondemand": "true"},
     instanceProfile: instanceProfile0,
     cloudFormationTags: { "myCloudFormationTag2": "true" },
@@ -61,6 +63,7 @@ const spot = new eks.NodeGroup("example-ng-tags-spot", {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
+    amiId: "ami-0384725f0d30527c7",
     spotPrice: "1",
     instanceProfile: instanceProfile0,
     labels: {"preemptible": "true"},
