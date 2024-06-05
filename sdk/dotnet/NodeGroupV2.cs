@@ -265,10 +265,40 @@ namespace Pulumi.Eks
         public Input<string>? NodePublicKey { get; set; }
 
         /// <summary>
+        /// Whether the root block device should be deleted on termination of the instance. Defaults to true.
+        /// </summary>
+        [Input("nodeRootVolumeDeleteOnTermination")]
+        public Input<bool>? NodeRootVolumeDeleteOnTermination { get; set; }
+
+        /// <summary>
+        /// Whether to encrypt a cluster node's root volume. Defaults to false.
+        /// </summary>
+        [Input("nodeRootVolumeEncrypted")]
+        public Input<bool>? NodeRootVolumeEncrypted { get; set; }
+
+        /// <summary>
+        /// The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+        /// </summary>
+        [Input("nodeRootVolumeIops")]
+        public Input<int>? NodeRootVolumeIops { get; set; }
+
+        /// <summary>
         /// The size in GiB of a cluster node's root volume. Defaults to 20.
         /// </summary>
         [Input("nodeRootVolumeSize")]
         public Input<int>? NodeRootVolumeSize { get; set; }
+
+        /// <summary>
+        /// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+        /// </summary>
+        [Input("nodeRootVolumeThroughput")]
+        public Input<int>? NodeRootVolumeThroughput { get; set; }
+
+        /// <summary>
+        /// Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+        /// </summary>
+        [Input("nodeRootVolumeType")]
+        public Input<string>? NodeRootVolumeType { get; set; }
 
         /// <summary>
         /// The security group for the worker node group to communicate with the cluster.

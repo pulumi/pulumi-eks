@@ -41,7 +41,12 @@ class NodeGroupArgs:
                  min_size: Optional[pulumi.Input[int]] = None,
                  node_associate_public_ip_address: Optional[bool] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
+                 node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_iops: Optional[pulumi.Input[int]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_throughput: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_type: Optional[pulumi.Input[str]] = None,
                  node_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
@@ -107,7 +112,12 @@ class NodeGroupArgs:
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
+        :param pulumi.Input[bool] node_root_volume_delete_on_termination: Whether the root block device should be deleted on termination of the instance. Defaults to true.
+        :param pulumi.Input[bool] node_root_volume_encrypted: Whether to encrypt a cluster node's root volume. Defaults to false.
+        :param pulumi.Input[int] node_root_volume_iops: The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
         :param pulumi.Input[int] node_root_volume_size: The size in GiB of a cluster node's root volume. Defaults to 20.
+        :param pulumi.Input[int] node_root_volume_throughput: Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+        :param pulumi.Input[str] node_root_volume_type: Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] node_security_group: The security group for the worker node group to communicate with the cluster.
                
                This security group requires specific inbound and outbound rules.
@@ -168,8 +178,18 @@ class NodeGroupArgs:
             pulumi.set(__self__, "node_associate_public_ip_address", node_associate_public_ip_address)
         if node_public_key is not None:
             pulumi.set(__self__, "node_public_key", node_public_key)
+        if node_root_volume_delete_on_termination is not None:
+            pulumi.set(__self__, "node_root_volume_delete_on_termination", node_root_volume_delete_on_termination)
+        if node_root_volume_encrypted is not None:
+            pulumi.set(__self__, "node_root_volume_encrypted", node_root_volume_encrypted)
+        if node_root_volume_iops is not None:
+            pulumi.set(__self__, "node_root_volume_iops", node_root_volume_iops)
         if node_root_volume_size is not None:
             pulumi.set(__self__, "node_root_volume_size", node_root_volume_size)
+        if node_root_volume_throughput is not None:
+            pulumi.set(__self__, "node_root_volume_throughput", node_root_volume_throughput)
+        if node_root_volume_type is not None:
+            pulumi.set(__self__, "node_root_volume_type", node_root_volume_type)
         if node_security_group is not None:
             pulumi.set(__self__, "node_security_group", node_security_group)
         if node_subnet_ids is not None:
@@ -473,6 +493,42 @@ class NodeGroupArgs:
         pulumi.set(self, "node_public_key", value)
 
     @property
+    @pulumi.getter(name="nodeRootVolumeDeleteOnTermination")
+    def node_root_volume_delete_on_termination(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Whether the root block device should be deleted on termination of the instance. Defaults to true.
+        """
+        return pulumi.get(self, "node_root_volume_delete_on_termination")
+
+    @node_root_volume_delete_on_termination.setter
+    def node_root_volume_delete_on_termination(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "node_root_volume_delete_on_termination", value)
+
+    @property
+    @pulumi.getter(name="nodeRootVolumeEncrypted")
+    def node_root_volume_encrypted(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Whether to encrypt a cluster node's root volume. Defaults to false.
+        """
+        return pulumi.get(self, "node_root_volume_encrypted")
+
+    @node_root_volume_encrypted.setter
+    def node_root_volume_encrypted(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "node_root_volume_encrypted", value)
+
+    @property
+    @pulumi.getter(name="nodeRootVolumeIops")
+    def node_root_volume_iops(self) -> Optional[pulumi.Input[int]]:
+        """
+        The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+        """
+        return pulumi.get(self, "node_root_volume_iops")
+
+    @node_root_volume_iops.setter
+    def node_root_volume_iops(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "node_root_volume_iops", value)
+
+    @property
     @pulumi.getter(name="nodeRootVolumeSize")
     def node_root_volume_size(self) -> Optional[pulumi.Input[int]]:
         """
@@ -483,6 +539,30 @@ class NodeGroupArgs:
     @node_root_volume_size.setter
     def node_root_volume_size(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "node_root_volume_size", value)
+
+    @property
+    @pulumi.getter(name="nodeRootVolumeThroughput")
+    def node_root_volume_throughput(self) -> Optional[pulumi.Input[int]]:
+        """
+        Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+        """
+        return pulumi.get(self, "node_root_volume_throughput")
+
+    @node_root_volume_throughput.setter
+    def node_root_volume_throughput(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "node_root_volume_throughput", value)
+
+    @property
+    @pulumi.getter(name="nodeRootVolumeType")
+    def node_root_volume_type(self) -> Optional[pulumi.Input[str]]:
+        """
+        Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+        """
+        return pulumi.get(self, "node_root_volume_type")
+
+    @node_root_volume_type.setter
+    def node_root_volume_type(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "node_root_volume_type", value)
 
     @property
     @pulumi.getter(name="nodeSecurityGroup")
@@ -606,7 +686,12 @@ class NodeGroup(pulumi.ComponentResource):
                  min_size: Optional[pulumi.Input[int]] = None,
                  node_associate_public_ip_address: Optional[bool] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
+                 node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_iops: Optional[pulumi.Input[int]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_throughput: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_type: Optional[pulumi.Input[str]] = None,
                  node_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
@@ -676,7 +761,12 @@ class NodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
+        :param pulumi.Input[bool] node_root_volume_delete_on_termination: Whether the root block device should be deleted on termination of the instance. Defaults to true.
+        :param pulumi.Input[bool] node_root_volume_encrypted: Whether to encrypt a cluster node's root volume. Defaults to false.
+        :param pulumi.Input[int] node_root_volume_iops: The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
         :param pulumi.Input[int] node_root_volume_size: The size in GiB of a cluster node's root volume. Defaults to 20.
+        :param pulumi.Input[int] node_root_volume_throughput: Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+        :param pulumi.Input[str] node_root_volume_type: Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] node_security_group: The security group for the worker node group to communicate with the cluster.
                
                This security group requires specific inbound and outbound rules.
@@ -741,7 +831,12 @@ class NodeGroup(pulumi.ComponentResource):
                  min_size: Optional[pulumi.Input[int]] = None,
                  node_associate_public_ip_address: Optional[bool] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
+                 node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
+                 node_root_volume_iops: Optional[pulumi.Input[int]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_throughput: Optional[pulumi.Input[int]] = None,
+                 node_root_volume_type: Optional[pulumi.Input[str]] = None,
                  node_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
@@ -783,7 +878,12 @@ class NodeGroup(pulumi.ComponentResource):
             __props__.__dict__["min_size"] = min_size
             __props__.__dict__["node_associate_public_ip_address"] = node_associate_public_ip_address
             __props__.__dict__["node_public_key"] = node_public_key
+            __props__.__dict__["node_root_volume_delete_on_termination"] = node_root_volume_delete_on_termination
+            __props__.__dict__["node_root_volume_encrypted"] = node_root_volume_encrypted
+            __props__.__dict__["node_root_volume_iops"] = node_root_volume_iops
             __props__.__dict__["node_root_volume_size"] = node_root_volume_size
+            __props__.__dict__["node_root_volume_throughput"] = node_root_volume_throughput
+            __props__.__dict__["node_root_volume_type"] = node_root_volume_type
             __props__.__dict__["node_security_group"] = node_security_group
             __props__.__dict__["node_subnet_ids"] = node_subnet_ids
             __props__.__dict__["node_user_data"] = node_user_data

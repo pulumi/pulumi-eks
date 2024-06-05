@@ -152,5 +152,20 @@ eks.NodeGroup(
     opts=pulumi.ResourceOptions(providers={"kubernetes": cluster2_provider}),
 )
 
+eks.NodeGroup(
+    "example-ng-advanced-spot-gp3-py",
+    cluster=cluster2,
+    instance_type="t3.medium",
+    desired_capacity=1,
+    min_size=1,
+    max_size=2,
+    node_root_volume_type="gp3",
+    spot_price="1",
+    labels={"preemptible": "true"},
+    taints={"special": eks.TaintArgs(value="true", effect="NoSchedule")},
+    instance_profile=instance_profile3,
+    opts=pulumi.ResourceOptions(providers={"kubernetes": cluster2_provider}),
+)
+
 # Export the cluster's kubeconfig.
 pulumi.export("kubeconfig2", cluster2.kubeconfig)

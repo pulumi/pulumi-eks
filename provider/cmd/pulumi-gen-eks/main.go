@@ -658,7 +658,7 @@ func generateSchema() schema.PackageSpec {
 					},
 					"authenticationMode": {
 						TypeSpec: schema.TypeSpec{
-							Ref: "#/types/eks:index:AuthenticationMode",
+							Ref:   "#/types/eks:index:AuthenticationMode",
 							Plain: true,
 						},
 						Description: "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\n" +
@@ -1587,9 +1587,9 @@ func generateSchema() schema.PackageSpec {
 			},
 			"eks:index:AccessEntryType": {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
-					Type:        "string",
+					Type: "string",
 					Description: "The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.\n" +
-					"Defaults to STANDARD which provides the standard workflow. EC2_LINUX and EC2_WINDOWS types disallow users to input a kubernetesGroup, and prevent associating access policies.",
+						"Defaults to STANDARD which provides the standard workflow. EC2_LINUX and EC2_WINDOWS types disallow users to input a kubernetesGroup, and prevent associating access policies.",
 				},
 				Enum: []schema.EnumValueSpec{
 					{
@@ -1609,16 +1609,16 @@ func generateSchema() schema.PackageSpec {
 					},
 					{
 						Name:        "EC2Windows",
-						Value: 	 	 "EC2_WINDOWS",
+						Value:       "EC2_WINDOWS",
 						Description: "For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.",
 					},
 				},
 			},
 			"eks:index:AuthenticationMode": {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
-					Type:        "string",
+					Type: "string",
 					Description: "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\n" +
-					"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
+						"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
 				},
 				Enum: []schema.EnumValueSpec{
 					{
@@ -1744,6 +1744,26 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		"nodeRootVolumeSize": {
 			TypeSpec:    schema.TypeSpec{Type: "integer"},
 			Description: "The size in GiB of a cluster node's root volume. Defaults to 20.",
+		},
+		"nodeRootVolumeDeleteOnTermination": {
+			TypeSpec:    schema.TypeSpec{Type: "boolean"},
+			Description: "Whether the root block device should be deleted on termination of the instance. Defaults to true.",
+		},
+		"nodeRootVolumeEncrypted": {
+			TypeSpec:    schema.TypeSpec{Type: "boolean"},
+			Description: "Whether to encrypt a cluster node's root volume. Defaults to false.",
+		},
+		"nodeRootVolumeIops": {
+			TypeSpec:    schema.TypeSpec{Type: "integer"},
+			Description: "The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.",
+		},
+		"nodeRootVolumeThroughput": {
+			TypeSpec:    schema.TypeSpec{Type: "integer"},
+			Description: "Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.",
+		},
+		"nodeRootVolumeType": {
+			TypeSpec:    schema.TypeSpec{Type: "string"},
+			Description: "Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.",
 		},
 		"nodeUserData": {
 			TypeSpec: schema.TypeSpec{Type: "string"},

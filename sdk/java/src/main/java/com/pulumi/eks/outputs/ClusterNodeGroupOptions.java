@@ -155,10 +155,35 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable String nodePublicKey;
     /**
+     * @return Whether the root block device should be deleted on termination of the instance. Defaults to true.
+     * 
+     */
+    private @Nullable Boolean nodeRootVolumeDeleteOnTermination;
+    /**
+     * @return Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
+     * 
+     */
+    private @Nullable Boolean nodeRootVolumeEncrypted;
+    /**
+     * @return The amount of provisioned IOPS. This is only valid with a volumeType of &#39;io1&#39;.
+     * 
+     */
+    private @Nullable Integer nodeRootVolumeIops;
+    /**
      * @return The size in GiB of a cluster node&#39;s root volume. Defaults to 20.
      * 
      */
     private @Nullable Integer nodeRootVolumeSize;
+    /**
+     * @return Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. This is only valid with a volumeType of &#39;gp3&#39;.
+     * 
+     */
+    private @Nullable Integer nodeRootVolumeThroughput;
+    /**
+     * @return Configured EBS type for a cluster node&#39;s root volume. Default is &#39;gp2&#39;. Supported values are &#39;standard&#39;, &#39;gp2&#39;, &#39;gp3&#39;, &#39;st1&#39;, &#39;sc1&#39;, &#39;io1&#39;.
+     * 
+     */
+    private @Nullable String nodeRootVolumeType;
     /**
      * @return The security group for the worker node group to communicate with the cluster.
      * 
@@ -383,11 +408,46 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.nodePublicKey);
     }
     /**
+     * @return Whether the root block device should be deleted on termination of the instance. Defaults to true.
+     * 
+     */
+    public Optional<Boolean> nodeRootVolumeDeleteOnTermination() {
+        return Optional.ofNullable(this.nodeRootVolumeDeleteOnTermination);
+    }
+    /**
+     * @return Whether to encrypt a cluster node&#39;s root volume. Defaults to false.
+     * 
+     */
+    public Optional<Boolean> nodeRootVolumeEncrypted() {
+        return Optional.ofNullable(this.nodeRootVolumeEncrypted);
+    }
+    /**
+     * @return The amount of provisioned IOPS. This is only valid with a volumeType of &#39;io1&#39;.
+     * 
+     */
+    public Optional<Integer> nodeRootVolumeIops() {
+        return Optional.ofNullable(this.nodeRootVolumeIops);
+    }
+    /**
      * @return The size in GiB of a cluster node&#39;s root volume. Defaults to 20.
      * 
      */
     public Optional<Integer> nodeRootVolumeSize() {
         return Optional.ofNullable(this.nodeRootVolumeSize);
+    }
+    /**
+     * @return Provisioned throughput performance in integer MiB/s for a cluster node&#39;s root volume. This is only valid with a volumeType of &#39;gp3&#39;.
+     * 
+     */
+    public Optional<Integer> nodeRootVolumeThroughput() {
+        return Optional.ofNullable(this.nodeRootVolumeThroughput);
+    }
+    /**
+     * @return Configured EBS type for a cluster node&#39;s root volume. Default is &#39;gp2&#39;. Supported values are &#39;standard&#39;, &#39;gp2&#39;, &#39;gp3&#39;, &#39;st1&#39;, &#39;sc1&#39;, &#39;io1&#39;.
+     * 
+     */
+    public Optional<String> nodeRootVolumeType() {
+        return Optional.ofNullable(this.nodeRootVolumeType);
     }
     /**
      * @return The security group for the worker node group to communicate with the cluster.
@@ -479,7 +539,12 @@ public final class ClusterNodeGroupOptions {
         private @Nullable Integer minSize;
         private @Nullable Boolean nodeAssociatePublicIpAddress;
         private @Nullable String nodePublicKey;
+        private @Nullable Boolean nodeRootVolumeDeleteOnTermination;
+        private @Nullable Boolean nodeRootVolumeEncrypted;
+        private @Nullable Integer nodeRootVolumeIops;
         private @Nullable Integer nodeRootVolumeSize;
+        private @Nullable Integer nodeRootVolumeThroughput;
+        private @Nullable String nodeRootVolumeType;
         private @Nullable SecurityGroup nodeSecurityGroup;
         private @Nullable List<String> nodeSubnetIds;
         private @Nullable String nodeUserData;
@@ -510,7 +575,12 @@ public final class ClusterNodeGroupOptions {
     	      this.minSize = defaults.minSize;
     	      this.nodeAssociatePublicIpAddress = defaults.nodeAssociatePublicIpAddress;
     	      this.nodePublicKey = defaults.nodePublicKey;
+    	      this.nodeRootVolumeDeleteOnTermination = defaults.nodeRootVolumeDeleteOnTermination;
+    	      this.nodeRootVolumeEncrypted = defaults.nodeRootVolumeEncrypted;
+    	      this.nodeRootVolumeIops = defaults.nodeRootVolumeIops;
     	      this.nodeRootVolumeSize = defaults.nodeRootVolumeSize;
+    	      this.nodeRootVolumeThroughput = defaults.nodeRootVolumeThroughput;
+    	      this.nodeRootVolumeType = defaults.nodeRootVolumeType;
     	      this.nodeSecurityGroup = defaults.nodeSecurityGroup;
     	      this.nodeSubnetIds = defaults.nodeSubnetIds;
     	      this.nodeUserData = defaults.nodeUserData;
@@ -624,8 +694,33 @@ public final class ClusterNodeGroupOptions {
             return this;
         }
         @CustomType.Setter
+        public Builder nodeRootVolumeDeleteOnTermination(@Nullable Boolean nodeRootVolumeDeleteOnTermination) {
+            this.nodeRootVolumeDeleteOnTermination = nodeRootVolumeDeleteOnTermination;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder nodeRootVolumeEncrypted(@Nullable Boolean nodeRootVolumeEncrypted) {
+            this.nodeRootVolumeEncrypted = nodeRootVolumeEncrypted;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder nodeRootVolumeIops(@Nullable Integer nodeRootVolumeIops) {
+            this.nodeRootVolumeIops = nodeRootVolumeIops;
+            return this;
+        }
+        @CustomType.Setter
         public Builder nodeRootVolumeSize(@Nullable Integer nodeRootVolumeSize) {
             this.nodeRootVolumeSize = nodeRootVolumeSize;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder nodeRootVolumeThroughput(@Nullable Integer nodeRootVolumeThroughput) {
+            this.nodeRootVolumeThroughput = nodeRootVolumeThroughput;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder nodeRootVolumeType(@Nullable String nodeRootVolumeType) {
+            this.nodeRootVolumeType = nodeRootVolumeType;
             return this;
         }
         @CustomType.Setter
@@ -688,7 +783,12 @@ public final class ClusterNodeGroupOptions {
             _resultValue.minSize = minSize;
             _resultValue.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
             _resultValue.nodePublicKey = nodePublicKey;
+            _resultValue.nodeRootVolumeDeleteOnTermination = nodeRootVolumeDeleteOnTermination;
+            _resultValue.nodeRootVolumeEncrypted = nodeRootVolumeEncrypted;
+            _resultValue.nodeRootVolumeIops = nodeRootVolumeIops;
             _resultValue.nodeRootVolumeSize = nodeRootVolumeSize;
+            _resultValue.nodeRootVolumeThroughput = nodeRootVolumeThroughput;
+            _resultValue.nodeRootVolumeType = nodeRootVolumeType;
             _resultValue.nodeSecurityGroup = nodeSecurityGroup;
             _resultValue.nodeSubnetIds = nodeSubnetIds;
             _resultValue.nodeUserData = nodeUserData;
