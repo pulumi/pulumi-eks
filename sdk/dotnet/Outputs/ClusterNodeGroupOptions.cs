@@ -132,9 +132,29 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly string? NodePublicKey;
         /// <summary>
+        /// Whether the root block device should be deleted on termination of the instance. Defaults to true.
+        /// </summary>
+        public readonly bool? NodeRootVolumeDeleteOnTermination;
+        /// <summary>
+        /// Whether to encrypt a cluster node's root volume. Defaults to false.
+        /// </summary>
+        public readonly bool? NodeRootVolumeEncrypted;
+        /// <summary>
+        /// The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+        /// </summary>
+        public readonly int? NodeRootVolumeIops;
+        /// <summary>
         /// The size in GiB of a cluster node's root volume. Defaults to 20.
         /// </summary>
         public readonly int? NodeRootVolumeSize;
+        /// <summary>
+        /// Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+        /// </summary>
+        public readonly int? NodeRootVolumeThroughput;
+        /// <summary>
+        /// Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+        /// </summary>
+        public readonly string? NodeRootVolumeType;
         /// <summary>
         /// The security group for the worker node group to communicate with the cluster.
         /// 
@@ -217,7 +237,17 @@ namespace Pulumi.Eks.Outputs
 
             string? nodePublicKey,
 
+            bool? nodeRootVolumeDeleteOnTermination,
+
+            bool? nodeRootVolumeEncrypted,
+
+            int? nodeRootVolumeIops,
+
             int? nodeRootVolumeSize,
+
+            int? nodeRootVolumeThroughput,
+
+            string? nodeRootVolumeType,
 
             Pulumi.Aws.Ec2.SecurityGroup? nodeSecurityGroup,
 
@@ -253,7 +283,12 @@ namespace Pulumi.Eks.Outputs
             MinSize = minSize;
             NodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
             NodePublicKey = nodePublicKey;
+            NodeRootVolumeDeleteOnTermination = nodeRootVolumeDeleteOnTermination;
+            NodeRootVolumeEncrypted = nodeRootVolumeEncrypted;
+            NodeRootVolumeIops = nodeRootVolumeIops;
             NodeRootVolumeSize = nodeRootVolumeSize;
+            NodeRootVolumeThroughput = nodeRootVolumeThroughput;
+            NodeRootVolumeType = nodeRootVolumeType;
             NodeSecurityGroup = nodeSecurityGroup;
             NodeSubnetIds = nodeSubnetIds;
             NodeUserData = nodeUserData;
