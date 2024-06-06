@@ -107,6 +107,8 @@ func testProviderUpgrade(t *testing.T, example string) {
 
 	test := pulumitest.NewPulumiTest(t, dir, options...)
 
-	result := providertest.PreviewProviderUpgrade(t, test, providerName, baselineVersion, optproviderupgrade.DisableAttach())
+	result := providertest.PreviewProviderUpgrade(t, test, providerName, baselineVersion,
+		optproviderupgrade.DisableAttach(),
+	)
 	assertpreview.HasNoReplacements(t, result)
 }
