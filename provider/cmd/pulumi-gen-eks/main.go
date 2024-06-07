@@ -17,7 +17,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -92,7 +91,7 @@ func k8sRef(ref string) string {
 	return fmt.Sprintf("/kubernetes/%s/schema.json%s", k8sVersion, ref)
 }
 
-// nolint: lll
+//nolint:lll,goconst
 func generateSchema() schema.PackageSpec {
 	return schema.PackageSpec{
 		Name:        "eks",
@@ -1679,6 +1678,7 @@ func generateSchema() schema.PackageSpec {
 	}
 }
 
+//nolint:lll
 func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 	props := map[string]schema.PropertySpec{
 		"nodeSubnetIds": {
@@ -1936,8 +1936,10 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 
 		props["launchTemplateTagSpecifications"] = schema.PropertySpec{
 			TypeSpec: schema.TypeSpec{
-				Type:  "array",
-				Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification")},
+				Type: "array",
+				Items: &schema.TypeSpec{
+					Ref: awsRef("#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification"),
+				},
 			},
 			Description: "The tag specifications to apply to the launch template.",
 		}
@@ -2096,13 +2098,13 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 
 func rawMessage(v interface{}) schema.RawMessage {
 	bytes, err := json.Marshal(v)
-	contract.Assert(err == nil)
+	contract.Assertf(err == nil, "failed to marshal raw message: %v", err)
 	return bytes
 }
 
 func readSchema(schemaPath string, version string) *schema.Package {
 	// Read in, decode, and import the schema.
-	schemaBytes, err := ioutil.ReadFile(schemaPath)
+	schemaBytes, err := os.ReadFile(schemaPath)
 	if err != nil {
 		panic(err)
 	}
@@ -2156,7 +2158,7 @@ func mustWriteFile(rootDir, filename string, contents []byte) {
 	if err := os.MkdirAll(filepath.Dir(outPath), 0755); err != nil {
 		panic(err)
 	}
-	err := ioutil.WriteFile(outPath, contents, 0600)
+	err := os.WriteFile(outPath, contents, 0600)
 	if err != nil {
 		panic(err)
 	}

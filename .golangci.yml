@@ -1,24 +1,20 @@
 linters:
   enable:
-  - deadcode
   - errcheck
   - goconst
   - gofmt
-  - golint
   - gosec
+  - gosimple
   - govet
   - ineffassign
-  - interfacer
   - lll
   - megacheck
   - misspell
   - nakedret
-  - structcheck
+  - revive
+  - staticcheck
+  - unused
   - unconvert
-  - varcheck
   enable-all: false
 run:
-  skip-files:
-  - schema.go
-  - pulumiManifest.go
   timeout: 10m
