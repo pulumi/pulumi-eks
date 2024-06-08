@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
+import * as utilities from "./utilities";
 
 // Dynamic providers don't currently work well with multi-language components [1]. To workaround this, the
 // dynamic providers in this library have been ported to be custom resources implemented by the new provider
@@ -29,11 +30,12 @@ class RandomSuffix extends pulumi.CustomResource {
     public readonly output!: pulumi.Output<string>;
 
     constructor(name: string, input: string, opts?: pulumi.CustomResourceOptions) {
-        // This was previously implemented as a dynamic provider, so alias the old type.
-        const aliasOpts = {
+        const defaultOpts = {
+            version: utilities.getVersion(),
+            // This was previously implemented as a dynamic provider, so alias the old type.
             aliases: [{ type: "pulumi-nodejs:dynamic:Resource" }],
         };
-        opts = pulumi.mergeOptions(opts, aliasOpts);
+        opts = pulumi.mergeOptions(opts, defaultOpts);
         super(
             "eks:index:RandomSuffix",
             name,
