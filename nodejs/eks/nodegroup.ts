@@ -1743,7 +1743,7 @@ function createManagedNodeGroupInternal(
                           return `${version}`;
                       }),
                   }
-                : undefined,
+                : args.launchTemplate,
         },
         { parent: parent, dependsOn: ngDeps, provider },
     );
