@@ -1,0 +1,3 @@
+name: custom-managed-nodegroup
+description: EKS managed nodegroup with custom configuration
+runtime: nodejs
