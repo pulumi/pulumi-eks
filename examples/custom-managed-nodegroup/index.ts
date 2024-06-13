@@ -23,7 +23,13 @@ const cluster = new eks.Cluster("example-managed-nodegroup", {
   publicSubnetIds: eksVpc.publicSubnetIds,
   // Private subnets will be used for cluster nodes
   privateSubnetIds: eksVpc.privateSubnetIds,
-  instanceRoles: [instanceRole],
+  authenticationMode: eks.AuthenticationMode.API,
+  accessEntries: {
+    instanceRole: {
+      principalArn: instanceRole.arn,
+      type: eks.AccessEntryType.EC2_LINUX,
+    }
+  }
 });
 
 // Export the cluster's kubeconfig.
