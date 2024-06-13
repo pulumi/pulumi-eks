@@ -760,3 +760,34 @@ func TestAccAuthenticationModeMigration(t *testing.T) {
 
 	integration.ProgramTest(t, &test)
 }
+
+func TestAccCustomManagedNodeGroup(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "custom-managed-nodegroup"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+
+				expectedLaunchTemplateName := info.Outputs["launchTemplateName"]
+
+				var launchTemplateFound bool = false
+				for _, resource := range info.Deployment.Resources {
+					if resource.Type.String() == "aws:eks/nodeGroup:NodeGroup" {
+						launchTemplateFound = true
+						// verify that the custom launch template is used
+						launchTemplateName := resource.Outputs["launchTemplate"].(map[string]interface{})["name"]
+						assert.Equal(t, expectedLaunchTemplateName, launchTemplateName)
+					}
+				}
+				assert.True(t, launchTemplateFound, "Expected launch template was not found")
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
