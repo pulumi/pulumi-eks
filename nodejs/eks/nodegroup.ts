@@ -19,6 +19,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as crypto from "crypto";
 import * as netmask from "netmask";
 
+import { supportsAccessEntries } from "./authenticationMode";
 import { Cluster, ClusterInternal, CoreData } from "./cluster";
 import randomSuffix from "./randomSuffix";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
@@ -1667,13 +1668,16 @@ function createManagedNodeGroupInternal(
         });
     });
 
-    nodegroupRole.apply((role) => {
-        if (!role) {
-            throw new Error(
-                `A managed node group cannot be created without first setting its role in the cluster's instanceRoles`,
-            );
-        }
-    });
+    pulumi
+        .all([core.cluster.accessConfig.authenticationMode, nodegroupRole])
+        .apply(([authMode, role]) => {
+            // access entries can be added out of band, so we don't require them to be set in the cluster.
+            if (!supportsAccessEntries(authMode) && !role) {
+                throw new Error(
+                    `A managed node group cannot be created without first setting its role in the cluster's instanceRoles`,
+                );
+            }
+        });
 
     // Compute the node group subnets to use.
     let subnetIds: pulumi.Output<string[]>;
