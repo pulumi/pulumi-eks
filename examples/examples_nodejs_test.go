@@ -761,7 +761,7 @@ func TestAccAuthenticationModeMigration(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestAccCustomManagedNodeGroup(t *testing.T) {
+func TestAccManagedNodeGroupCustom(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
