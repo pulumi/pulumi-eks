@@ -1658,10 +1658,10 @@ function createManagedNodeGroupInternal(
     // Check that the nodegroup role has been set on the cluster to
     // ensure that the aws-auth configmap was properly formed.
     const nodegroupRole = pulumi.all([core.instanceRoles, roleArn]).apply(([roles, rArn]) => {
-        // Map out the ARNs of all of the instanceRoles.
-        const roleArns = roles.map((role) => {
-            return role.arn;
-        });
+        // Map out the ARNs of all of the instanceRoles. Note that the roles array may be undefined if
+        // unspecified by the Pulumi program.
+        let roleArns: pulumi.Output<string>[] = roles ? roles.map((role) => role.arn) : [];
+        
         // Try finding the nodeRole in the ARNs array.
         return pulumi.all([roleArns, rArn]).apply(([arns, arn]) => {
             return arns.find((a) => a === arn);
