@@ -26,6 +26,7 @@ import {
 import { randomSuffixProviderFactory } from "./randomSuffix";
 import { nodeGroupSecurityGroupProviderFactory } from "./securitygroup";
 import { managedAddonProviderFactory } from "./addon";
+import * as utilities from "../../utilities";
 
 class Provider implements pulumi.provider.Provider {
     // A map of types to provider factories. Calling a factory may return a new instance each
@@ -182,13 +183,7 @@ export function main(args: string[]) {
     const schema: string = readFileSync(require.resolve("./schema.json"), {
         encoding: "utf-8",
     });
-    let version: string = require("../../package.json").version;
-    // Node allows for the version to be prefixed by a "v",
-    // while semver doesn't. If there is a v, strip it off.
-    if (version.startsWith("v")) {
-        version = version.slice(1);
-    }
-
+    const version = utilities.getVersion();
     return pulumi.provider.main(new Provider(version, schema), args);
 }
 
