@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
+import * as utilities from "./utilities";
 
 /**
  * VpcCniOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
@@ -230,11 +231,12 @@ export class VpcCni extends pulumi.CustomResource {
         args?: VpcCniOptions,
         opts?: pulumi.CustomResourceOptions,
     ) {
-        // This was previously implemented as a dynamic provider, so alias the old type.
-        const aliasOpts = {
+        const defaultOpts = {
+            version: utilities.getVersion(),
+            // This was previously implemented as a dynamic provider, so alias the old type.
             aliases: [{ type: "pulumi-nodejs:dynamic:Resource" }],
         };
-        opts = pulumi.mergeOptions(opts, aliasOpts);
+        opts = pulumi.mergeOptions(opts, defaultOpts);
         super(
             "eks:index:VpcCni",
             name,
