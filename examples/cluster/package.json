@@ -8,5 +8,8 @@
         "@pulumi/pulumi": "^3.0.0",
         "@pulumi/awsx": "^2.0.2",
         "@pulumi/eks": "latest"
+    },
+    "scripts": {
+        "build": "tsc"
     }
 }
