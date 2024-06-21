@@ -84,10 +84,10 @@ const coredns = new eks.Addon("coredns", {
 });
 
 // Export the clusters' kubeconfig.
-export const kubeconfig1 = cluster1.kubeconfig;
-export const kubeconfig2 = cluster2.kubeconfig;
-export const kubeconfig3 = cluster3.kubeconfig;
-export const kubeconfig4 = cluster4.kubeconfig;
+export const kubeconfig1: pulumi.Output<any> = cluster1.kubeconfig;
+export const kubeconfig2: pulumi.Output<any> = cluster2.kubeconfig;
+export const kubeconfig3: pulumi.Output<any> = cluster3.kubeconfig;
+export const kubeconfig4: pulumi.Output<any> = cluster4.kubeconfig;
 
 // export the IAM Role ARN of the cluster
-export const iamRoleArn = cluster1.core.clusterIamRole.arn;
+export const iamRoleArn: pulumi.Output<string> = cluster1.core.clusterIamRole.arn;
