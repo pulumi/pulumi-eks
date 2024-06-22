@@ -14,7 +14,7 @@
 
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
-import { Cluster, ClusterInternal } from "./cluster";
+import { Cluster } from "./cluster";
 
 /**
  * AddonOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes. This is obtained from
@@ -23,7 +23,7 @@ import { Cluster, ClusterInternal } from "./cluster";
  */
 export interface AddonOptions
     extends Omit<aws.eks.AddonArgs, "resolveConflicts" | "clusterName" | "configurationValues"> {
-    cluster: Cluster | ClusterInternal;
+    cluster: Cluster;
     configurationValues?: object;
 }
 
