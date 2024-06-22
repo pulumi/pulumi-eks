@@ -43,6 +43,7 @@ func TestAccCluster(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir:           path.Join(getCwd(t), "./cluster"),
 			RunUpdateTest: false,
+			RunBuild:      true, // ensure that we can transpile the TypeScript program
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
