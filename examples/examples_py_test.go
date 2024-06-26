@@ -17,12 +17,14 @@
 package example
 
 import (
+	"bytes"
 	"path"
 	"path/filepath"
 	"testing"
 
 	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAccAwsProfilePy(t *testing.T) {
@@ -63,6 +65,9 @@ func TestAccAwsProfileRolePy(t *testing.T) {
 }
 
 func TestAccClusterPy(t *testing.T) {
+	// Create io.Writer to capture stderr and stdout from Pulumi CLI.
+	var output bytes.Buffer
+
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), "cluster-py"),
@@ -73,6 +78,20 @@ func TestAccClusterPy(t *testing.T) {
 					info.Outputs["kubeconfig2"],
 					info.Outputs["kubeconfig3"],
 				)
+			},
+			EditDirs: []integration.EditDir{
+				{
+					Dir:           path.Join(getCwd(t), "cluster-py", "step2"),
+					ExpectFailure: true,
+					Stderr:        &output,
+					Stdout:        &output,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						// Ensure that the panic from https://github.com/pulumi/pulumi-eks/issues/1202 does not occur.
+						combinedOutput := output.String()
+						assert.NotContains(t, combinedOutput, "Cannot read properties of undefined")
+						assert.Contains(t, combinedOutput, "A managed node group cannot be created without first setting its role in the cluster's instanceRoles")
+					},
+				},
 			},
 		})
 
