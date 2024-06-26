@@ -1195,7 +1195,8 @@ ${customUserData}
             if (nodeRootVolumeType === "gp3" && nodeRootVolumeThroughput) {
                 if (!numeric.test(nodeRootVolumeThroughput?.toString())) {
                     throw new pulumi.ResourceError(
-                        "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.", parent
+                        "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
+                        parent,
                     );
                 }
             }
@@ -1681,7 +1682,7 @@ function createManagedNodeGroupInternal(
     const nodegroupRole = pulumi.all([core.instanceRoles, roleArn]).apply(([roles, rArn]) => {
         // Map out the ARNs of all of the instanceRoles. Note that the roles array may be undefined if
         // unspecified by the Pulumi program.
-        let roleArns: pulumi.Output<string>[] = roles ? roles.map((role) => role.arn) : [];
+        const roleArns: pulumi.Output<string>[] = roles ? roles.map((role) => role.arn) : [];
 
         // Try finding the nodeRole in the ARNs array.
         return pulumi.all([roleArns, rArn]).apply(([arns, arn]) => {
