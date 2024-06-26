@@ -83,6 +83,7 @@ func TestAccClusterPy(t *testing.T) {
 				{
 					Dir:           path.Join(getCwd(t), "cluster-py", "step2"),
 					ExpectFailure: true,
+					Additive:      true,
 					Stderr:        &output,
 					Stdout:        &output,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
