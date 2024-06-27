@@ -571,7 +571,7 @@ function createNodeGroupInternal(
 ): NodeGroupData {
     const instanceProfile = core.apply((c) => {
         if (!args.instanceProfile && !c.nodeGroupOptions.instanceProfile) {
-            throw new Error(`an instanceProfile is required`);
+            throw new pulumi.ResourceError(`an instanceProfile is required`, parent);
         }
         return args.instanceProfile ?? c.nodeGroupOptions.instanceProfile!;
     });
@@ -582,21 +582,23 @@ function createNodeGroupInternal(
                 c.nodeSecurityGroupTags &&
                 c.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id
             ) {
-                throw new Error(
+                throw new pulumi.ResourceError(
                     `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
+                    parent,
                 );
             }
         }
     });
 
     if (args.nodePublicKey && args.keyName) {
-        throw new Error(
+        throw new pulumi.ResourceError(
             "nodePublicKey and keyName are mutually exclusive. Choose a single approach",
+            parent,
         );
     }
 
     if (args.amiId && args.gpu) {
-        throw new Error("amiId and gpu are mutually exclusive.");
+        throw new pulumi.ResourceError("amiId and gpu are mutually exclusive.", parent);
     }
 
     if (
@@ -607,8 +609,9 @@ function createNodeGroupInternal(
             args.kubeletExtraArgs ||
             args.bootstrapExtraArgs)
     ) {
-        throw new Error(
+        throw new pulumi.ResourceError(
             "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.",
+            parent,
         );
     }
 
@@ -630,8 +633,9 @@ function createNodeGroupInternal(
     if (args.nodeSecurityGroup) {
         nodeSecurityGroup = args.nodeSecurityGroup;
         if (eksClusterIngressRule === undefined) {
-            throw new Error(
+            throw new pulumi.ResourceError(
                 `invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`,
+                parent,
             );
         }
     } else {
@@ -763,29 +767,33 @@ ${customUserData}
         .all([args.nodeRootVolumeIops, args.nodeRootVolumeType, args.nodeRootVolumeThroughput])
         .apply(([nodeRootVolumeIops, nodeRootVolumeType, nodeRootVolumeThroughput]) => {
             if (nodeRootVolumeIops && nodeRootVolumeType !== "io1") {
-                throw new Error(
+                throw new pulumi.ResourceError(
                     "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
+                    parent,
                 );
             }
 
             if (nodeRootVolumeType === "io1" && nodeRootVolumeIops) {
                 if (!numeric.test(nodeRootVolumeIops?.toString())) {
-                    throw new Error(
+                    throw new pulumi.ResourceError(
                         "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
+                        parent,
                     );
                 }
             }
 
             if (nodeRootVolumeThroughput && nodeRootVolumeType !== "gp3") {
-                throw new Error(
+                throw new pulumi.ResourceError(
                     "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
+                    parent,
                 );
             }
 
             if (nodeRootVolumeType === "gp3" && nodeRootVolumeThroughput) {
                 if (!numeric.test(nodeRootVolumeThroughput?.toString())) {
-                    throw new Error(
+                    throw new pulumi.ResourceError(
                         "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
+                        parent,
                     );
                 }
             }
@@ -914,8 +922,9 @@ ${customUserData}
 
     const autoScalingGroupName = cfnStack.outputs.apply((outputs) => {
         if (!("NodeGroup" in outputs)) {
-            throw new Error(
+            throw new pulumi.ResourceError(
                 "CloudFormation stack is not ready. Stack output key 'NodeGroup' does not exist.",
+                parent,
             );
         }
         return outputs["NodeGroup"];
@@ -954,7 +963,7 @@ function createNodeGroupV2Internal(
 ): NodeGroupV2Data {
     const instanceProfileArn = core.apply((c) => {
         if (!args.instanceProfile && !c.nodeGroupOptions.instanceProfile) {
-            throw new Error(`an instanceProfile is required`);
+            throw new pulumi.ResourceError(`an instanceProfile is required`, parent);
         }
         return args.instanceProfile?.arn ?? c.nodeGroupOptions.instanceProfile!.arn;
     });
@@ -965,21 +974,23 @@ function createNodeGroupV2Internal(
                 c.nodeSecurityGroupTags &&
                 c.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id
             ) {
-                throw new Error(
+                throw new pulumi.ResourceError(
                     `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
+                    parent,
                 );
             }
         }
     });
 
     if (args.nodePublicKey && args.keyName) {
-        throw new Error(
+        throw new pulumi.ResourceError(
             "nodePublicKey and keyName are mutually exclusive. Choose a single approach",
+            parent,
         );
     }
 
     if (args.amiId && args.gpu) {
-        throw new Error("amiId and gpu are mutually exclusive.");
+        throw new pulumi.ResourceError("amiId and gpu are mutually exclusive.", parent);
     }
 
     if (
@@ -990,8 +1001,9 @@ function createNodeGroupV2Internal(
             args.kubeletExtraArgs ||
             args.bootstrapExtraArgs)
     ) {
-        throw new Error(
+        throw new pulumi.ResourceError(
             "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.",
+            parent,
         );
     }
 
@@ -1013,8 +1025,9 @@ function createNodeGroupV2Internal(
     if (args.nodeSecurityGroup) {
         nodeSecurityGroup = args.nodeSecurityGroup;
         if (eksClusterIngressRule === undefined) {
-            throw new Error(
+            throw new pulumi.ResourceError(
                 `invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`,
+                parent,
             );
         }
     } else {
@@ -1157,29 +1170,33 @@ ${customUserData}
         .all([args.nodeRootVolumeIops, args.nodeRootVolumeType, args.nodeRootVolumeThroughput])
         .apply(([nodeRootVolumeIops, nodeRootVolumeType, nodeRootVolumeThroughput]) => {
             if (nodeRootVolumeIops && nodeRootVolumeType !== "io1") {
-                throw new Error(
+                throw new pulumi.ResourceError(
                     "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
+                    parent,
                 );
             }
 
             if (nodeRootVolumeType === "io1" && nodeRootVolumeIops) {
                 if (!numeric.test(nodeRootVolumeIops?.toString())) {
-                    throw new Error(
+                    throw new pulumi.ResourceError(
                         "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
+                        parent,
                     );
                 }
             }
 
             if (nodeRootVolumeThroughput && nodeRootVolumeType !== "gp3") {
-                throw new Error(
+                throw new pulumi.ResourceError(
                     "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
+                    parent,
                 );
             }
 
             if (nodeRootVolumeType === "gp3" && nodeRootVolumeThroughput) {
                 if (!numeric.test(nodeRootVolumeThroughput?.toString())) {
-                    throw new Error(
+                    throw new pulumi.ResourceError(
                         "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
+                        parent,
                     );
                 }
             }
@@ -1637,12 +1654,17 @@ function createManagedNodeGroupInternal(
 ): aws.eks.NodeGroup {
     // Compute the nodegroup role.
     if (!args.nodeRole && !args.nodeRoleArn) {
-        throw new Error(`An IAM role, or role ARN must be provided to create a managed node group`);
+        // throw new pulumi.ResourceError(`An IAM role, or role ARN must be provided to create a managed node group`);
+        throw new pulumi.ResourceError(
+            `An IAM role, or role ARN must be provided to create a managed node group`,
+            parent,
+        );
     }
 
     if (args.nodeRole && args.nodeRoleArn) {
-        throw new Error(
+        throw new pulumi.ResourceError(
             "nodeRole and nodeRoleArn are mutually exclusive to create a managed node group",
+            parent,
         );
     }
 
@@ -1652,16 +1674,16 @@ function createManagedNodeGroupInternal(
     } else if (args.nodeRole) {
         roleArn = pulumi.output(args.nodeRole).apply((r) => r.arn);
     } else {
-        throw new Error("The managed node group role provided is undefined");
+        throw new pulumi.ResourceError("The managed node group role provided is undefined", parent);
     }
 
     // Check that the nodegroup role has been set on the cluster to
     // ensure that the aws-auth configmap was properly formed.
     const nodegroupRole = pulumi.all([core.instanceRoles, roleArn]).apply(([roles, rArn]) => {
-        // Map out the ARNs of all of the instanceRoles.
-        const roleArns = roles.map((role) => {
-            return role.arn;
-        });
+        // Map out the ARNs of all of the instanceRoles. Note that the roles array may be undefined if
+        // unspecified by the Pulumi program.
+        const roleArns: pulumi.Output<string>[] = roles ? roles.map((role) => role.arn) : [];
+
         // Try finding the nodeRole in the ARNs array.
         return pulumi.all([roleArns, rArn]).apply(([arns, arn]) => {
             return arns.find((a) => a === arn);
@@ -1673,8 +1695,9 @@ function createManagedNodeGroupInternal(
         .apply(([authMode, role]) => {
             // access entries can be added out of band, so we don't require them to be set in the cluster.
             if (!supportsAccessEntries(authMode) && !role) {
-                throw new Error(
+                throw new pulumi.ResourceError(
                     `A managed node group cannot be created without first setting its role in the cluster's instanceRoles`,
+                    parent,
                 );
             }
         });
@@ -1710,8 +1733,9 @@ function createManagedNodeGroupInternal(
         args.launchTemplate &&
         (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2)
     ) {
-        throw new Error(
+        throw new pulumi.ResourceError(
             "If you provide a custom launch template, you cannot provide kubeletExtraArgs, bootstrapExtraArgs or enableIMDSv2. Please include these in the launch template that you are providing.",
+            parent,
         );
     }
 
@@ -1874,7 +1898,7 @@ const ec2InstanceRegex = /([a-z]+)([0-9]+)([a-z])?\-?([a-z]+)?\.([a-zA-Z0-9\-]+)
 export function isGravitonInstance(instanceType: string): boolean {
     const match = instanceType.toString().match(ec2InstanceRegex);
     if (!match) {
-        throw new Error(`Invalid EC2 instance type: ${instanceType}`);
+        throw new pulumi.ResourceError(`Invalid EC2 instance type: ${instanceType}`, undefined);
     }
 
     const processorFamily = match[3];
