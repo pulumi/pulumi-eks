@@ -842,11 +842,9 @@ export function createCore(
     // Create the access entries if the authentication mode supports it.
     let accessEntries: aws.eks.AccessEntry[] | undefined = undefined;
     if (supportsAccessEntries(args.authenticationMode)) {
-        let createdAccessEntries: aws.eks.AccessEntry[] = [];
-
         // This additionally maps the defaultInstanceRole to a EC2_LINUX access entry which allows the nodes to register & communicate with the EKS control plane.
         if (defaultInstanceRole) {
-            createdAccessEntries = createAccessEntries(
+            accessEntries = createAccessEntries(
                 name,
                 eksCluster.name,
                 {
@@ -859,7 +857,7 @@ export function createCore(
             );
         }
 
-        accessEntries = createdAccessEntries.concat(
+        accessEntries = (accessEntries || []).concat(
             createAccessEntries(name, eksCluster.name, args.accessEntries || {}, {
                 parent,
                 provider,
