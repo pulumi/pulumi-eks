@@ -740,40 +740,7 @@ export function createCore(
         { parent: parent },
     );
 
-    // Add any requested StorageClasses.
-    const storageClasses = args.storageClasses || {};
-    const userStorageClasses = {} as UserStorageClasses;
-    if (typeof storageClasses === "string") {
-        const storageClass = { type: storageClasses, default: true };
-        userStorageClasses[storageClasses] = pulumi.output(
-            createStorageClass(`${name.toLowerCase()}-${storageClasses}`, storageClass, {
-                parent,
-                provider: k8sProvider,
-            }),
-        );
-    } else {
-        for (const key of Object.keys(storageClasses)) {
-            userStorageClasses[key] = pulumi.output(
-                createStorageClass(`${name.toLowerCase()}-${key}`, storageClasses[key], {
-                    parent,
-                    provider: k8sProvider,
-                }),
-            );
-        }
-    }
-
     const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
-
-    // Create the VPC CNI management resource.
-    let vpcCni: VpcCni | undefined;
-    if (!args.useDefaultVpcCni) {
-        vpcCni = new VpcCni(
-            `${name}-vpc-cni`,
-            kubeconfig.apply(JSON.stringify),
-            args.vpcCniOptions,
-            { parent },
-        );
-    }
 
     let instanceRoles: pulumi.Output<aws.iam.Role[]>;
     let defaultInstanceRole: pulumi.Output<aws.iam.Role> | undefined;
@@ -873,7 +840,7 @@ export function createCore(
     }
 
     // Create the access entries if the authentication mode supports it.
-    let accessEntries: pulumi.Output<aws.eks.AccessEntry[]> | undefined = undefined;
+    let accessEntries: aws.eks.AccessEntry[] | undefined = undefined;
     if (supportsAccessEntries(args.authenticationMode)) {
         let createdAccessEntries: aws.eks.AccessEntry[] = [];
 
@@ -892,13 +859,52 @@ export function createCore(
             );
         }
 
-        createdAccessEntries = createdAccessEntries.concat(
+        accessEntries = createdAccessEntries.concat(
             createAccessEntries(name, eksCluster.name, args.accessEntries || {}, {
                 parent,
                 provider,
             }),
         );
-        accessEntries = pulumi.output(createdAccessEntries);
+    }
+
+    const authDependencies = [
+        ...(accessEntries ? accessEntries : []),
+        ...(eksNodeAccess ? [eksNodeAccess] : []),
+    ];
+
+    // Add any requested StorageClasses.
+    const storageClasses = args.storageClasses || {};
+    const userStorageClasses = {} as UserStorageClasses;
+    if (typeof storageClasses === "string") {
+        const storageClass = { type: storageClasses, default: true };
+        userStorageClasses[storageClasses] = pulumi.output(
+            createStorageClass(`${name.toLowerCase()}-${storageClasses}`, storageClass, {
+                parent,
+                provider: k8sProvider,
+                dependsOn: authDependencies,
+            }),
+        );
+    } else {
+        for (const key of Object.keys(storageClasses)) {
+            userStorageClasses[key] = pulumi.output(
+                createStorageClass(`${name.toLowerCase()}-${key}`, storageClasses[key], {
+                    parent,
+                    provider: k8sProvider,
+                    dependsOn: authDependencies,
+                }),
+            );
+        }
+    }
+
+    // Create the VPC CNI management resource.
+    let vpcCni: VpcCni | undefined;
+    if (!args.useDefaultVpcCni) {
+        vpcCni = new VpcCni(
+            `${name}-vpc-cni`,
+            kubeconfig.apply(JSON.stringify),
+            args.vpcCniOptions,
+            { parent, dependsOn: authDependencies },
+        );
     }
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi
@@ -1061,7 +1067,7 @@ export function createCore(
         oidcProvider: oidcProvider,
         encryptionConfig: encryptionConfig,
         clusterIamRole: eksRole,
-        accessEntries: accessEntries,
+        accessEntries: accessEntries ? pulumi.output(accessEntries) : undefined,
     };
 }
 
