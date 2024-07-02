@@ -777,6 +777,10 @@ export function createCore(
                         id: "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
                         arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly`,
                     },
+                    {
+                        id: "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+                        arn: "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+                    },
                 ],
             },
             { parent, provider },
@@ -1941,6 +1945,19 @@ export function createCluster(
         }
     }
 
+    if (defaultNodeGroup) {
+        // Add CSI Driver for Storage
+        const ebsCsiDriver = new aws.eks.Addon(
+            `${name}-aws-ebs-csi-driver`,
+            {
+                addonName: "aws-ebs-csi-driver",
+                clusterName: core.cluster.name,
+            },
+            {
+                parent: self,
+            },
+        );
+    }
     // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
     // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
     const kubeconfig = pulumi.all(configDeps).apply(([kc]) => kc);
