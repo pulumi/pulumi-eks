@@ -708,6 +708,25 @@ func TestAccAuthenticationMode(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccMultiRole(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "multi-role"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				// Verify that the cluster is working.
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccAuthenticationModeMigration(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
