@@ -853,7 +853,7 @@ export function createCore(
                         type: AccessEntryType.EC2_LINUX,
                     },
                 },
-                { parent, provider },
+                { parent, provider, dependsOn: [eksCluster] },
             );
         }
 
@@ -861,6 +861,7 @@ export function createCore(
             createAccessEntries(name, eksCluster.name, args.accessEntries || {}, {
                 parent,
                 provider,
+                dependsOn: [eksCluster],
             }),
         );
     }
