@@ -45,7 +45,7 @@ export function validateAuthenticationMode(args: ClusterOptions) {
         configMapOnlyProperties.forEach((prop) => {
             const arg: any = args[prop];
             if (arg) {
-                // Permit empty roleMappings as a specialCase.
+                // Permit empty instanceRoles as a specialCase.
                 if ((arg.length === 0) && prop === "instanceRoles") {
                     return;
                 }
