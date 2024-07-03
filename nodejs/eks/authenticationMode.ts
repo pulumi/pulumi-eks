@@ -43,7 +43,13 @@ export function validateAuthenticationMode(args: ClusterOptions) {
 
     if (!supportsConfigMap(args.authenticationMode)) {
         configMapOnlyProperties.forEach((prop) => {
-            if (args[prop]) {
+            const arg: any = args[prop];
+            if (arg) {
+                // Permit empty roleMappings as a specialCase.
+                if ((arg.length === 0) && prop === "instanceRoles") {
+                    return;
+                }
+
                 throw new Error(
                     `The '${prop}' property is not supported when 'authenticationMode' is set to '${args.authenticationMode}'.`,
                 );
