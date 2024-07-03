@@ -396,7 +396,7 @@ export function getRoleProvider(
  */
 export function createCore(
     name: string,
-    args: ClusterOptions,
+    rawArgs: ClusterOptions,
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): CoreData {
@@ -407,7 +407,7 @@ export function createCore(
     // k8s resources later.
     assertCompatibleKubectlVersionExists();
 
-    validateAuthenticationMode(args);
+    const args = validateAuthenticationMode(rawArgs);
 
     if (args.instanceRole && args.instanceRoles) {
         throw new Error(

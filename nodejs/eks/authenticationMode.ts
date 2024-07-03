@@ -22,7 +22,8 @@ export const CONFIG_MAP = "CONFIG_MAP";
 export const API_AND_CONFIG_MAP = "API_AND_CONFIG_MAP";
 export const API = "API";
 
-export function validateAuthenticationMode(args: ClusterOptions) {
+export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOptions {
+    const args = clusterOptionsShallowCopy(rawArgs);
     if (
         args.authenticationMode &&
         args.authenticationMode !== CONFIG_MAP &&
@@ -34,30 +35,30 @@ export function validateAuthenticationMode(args: ClusterOptions) {
         );
     }
 
-    const configMapOnlyProperties: (keyof ClusterOptions)[] = [
-        "roleMappings",
-        "userMappings",
-        "instanceRoles",
-    ];
-    const apiOnlyProperties: (keyof ClusterOptions)[] = ["accessEntries"];
-
     if (!supportsConfigMap(args.authenticationMode)) {
-        configMapOnlyProperties.forEach((prop) => {
-            const arg: any = args[prop];
-            if (arg) {
-                // Permit empty instanceRoles as a specialCase.
-                if ((arg.length === 0) && prop === "instanceRoles") {
-                    return;
-                }
-
+        const check: (prop: string) => (propertyValue: any|undefined) => void = (prop) => (pv) => {
+            if (pv !== undefined) {
                 throw new Error(
                     `The '${prop}' property is not supported when 'authenticationMode' is set to '${args.authenticationMode}'.`,
+                );
+            }
+        };
+
+        args.roleMappings = validatedInput(args.roleMappings, check("roleMappings"));
+        args.userMappings = validatedInput(args.userMappings, check("userMappings"));
+
+        // InstanceRoles is special as it permits empty values to pass through.
+        args.instanceRoles = validatedInput(args.instanceRoles, pv => {
+            if (pv !== undefined && pv.length !== 0) {
+                throw new Error(
+                    `The 'instanceRole' property does not support non-empty values when 'authenticationMode' is set to '${args.authenticationMode}'.`,
                 );
             }
         });
     }
 
     if (!supportsAccessEntries(args.authenticationMode)) {
+        const apiOnlyProperties: (keyof ClusterOptions)[] = ["accessEntries"];
         apiOnlyProperties.forEach((prop) => {
             if (args[prop]) {
                 const errorMsg =
@@ -70,6 +71,26 @@ export function validateAuthenticationMode(args: ClusterOptions) {
             }
         });
     }
+    return args;
+}
+
+function validatedInput<T>(
+    property: pulumi.Input<T>|undefined,
+    validate: (value: pulumi.Unwrap<T>|undefined) => void
+): pulumi.Input<pulumi.Unwrap<T>>|undefined {
+    if (property === undefined) {
+        validate(undefined);
+        return undefined;
+    }
+    return pulumi.Output.create(property).apply(value => {
+        validate(value);
+        return value;
+    });
+}
+
+// Create a shallow copy of ClusterOptions.
+function clusterOptionsShallowCopy(args: ClusterOptions): ClusterOptions {
+    return Object.assign({}, args);
 }
 
 export function supportsConfigMap(authenticationMode: string | undefined) {
