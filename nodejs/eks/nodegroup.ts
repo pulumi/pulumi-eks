@@ -1787,9 +1787,6 @@ function createManagedNodeGroupInternal(
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
     if (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2 || args.gpu || args.amiId || args.amiType) {
         launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
-
-        // Disk size is specified in the launch template.
-        delete nodeGroupArgs.diskSize;
     }
 
     // Make the aws-auth configmap a dependency of the node group.
@@ -1884,20 +1881,9 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
         : undefined;
 
-    const blockDeviceMappings = [
-        {
-            deviceName: "/dev/xvda",
-            ebs: {
-                volumeSize: args.diskSize,
-                volumeType: "gp2"
-            },
-        },
-    ];
-
     return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
         {
-            blockDeviceMappings,
             userData,
             metadataOptions,
             // We need to always supply an imageId, otherwise AWS will attempt to merge the user data which will result in
