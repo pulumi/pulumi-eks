@@ -1544,6 +1544,43 @@ export type ManagedNodeGroupOptions = Omit<
      *   - maxSize: 2
      */
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>;
+
+    /**
+     * The AMI type for the instance.
+     *
+     * If you are passing an amiId that is `arm64` type, then we need to ensure
+     * that this value is set as `amazon-linux-2-arm64`.
+     *
+     * Note: `amiType` and `gpu` are mutually exclusive.
+     */
+    amiType?: pulumi.Input<string>;
+
+    /**
+     * The AMI ID to use for the worker nodes.
+     *
+     * Defaults to the latest recommended EKS Optimized Linux AMI from the
+     * AWS Systems Manager Parameter Store.
+     *
+     * Note: `amiId` and `gpu` are mutually exclusive.
+     *
+     * See for more details:
+     * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+     */
+    amiId?: pulumi.Input<string>;
+
+    /**
+     * Use the latest recommended EKS Optimized Linux AMI with GPU support for
+     * the worker nodes from the AWS Systems Manager Parameter Store.
+     *
+     * Defaults to false.
+     *
+     * Note: `gpu` and `amiId` are mutually exclusive.
+     *
+     * See for more details:
+     * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+     * - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+     */
+    gpu?: pulumi.Input<boolean>;
 };
 
 /**
@@ -1668,6 +1705,14 @@ function createManagedNodeGroupInternal(
         );
     }
 
+    if (args.amiId && args.gpu) {
+        throw new pulumi.ResourceError("amiId and gpu are mutually exclusive.", parent);
+    }
+
+    if (args.amiType && args.gpu) {
+        throw new pulumi.ResourceError("amiType and gpu are mutually exclusive.", parent);
+    }
+
     let roleArn: pulumi.Input<string>;
     if (args.nodeRoleArn) {
         roleArn = args.nodeRoleArn;
@@ -1740,8 +1785,11 @@ function createManagedNodeGroupInternal(
     }
 
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
-    if (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2) {
+    if (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2 || args.gpu || args.amiId || args.amiType) {
         launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
+
+        // Disk size is specified in the launch template.
+        delete nodeGroupArgs.diskSize;
     }
 
     // Make the aws-auth configmap a dependency of the node group.
@@ -1836,9 +1884,20 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
         : undefined;
 
+    const blockDeviceMappings = [
+        {
+            deviceName: "/dev/xvda",
+            ebs: {
+                volumeSize: args.diskSize,
+                volumeType: "gp2"
+            },
+        },
+    ];
+
     return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
         {
+            blockDeviceMappings,
             userData,
             metadataOptions,
             // We need to always supply an imageId, otherwise AWS will attempt to merge the user data which will result in
