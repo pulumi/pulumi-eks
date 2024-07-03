@@ -74,6 +74,16 @@ describe("validateAuthenticationMode", () => {
         );
     });
 
+    it("should not throw an error for instanceRoles=[] when authentication mode is set to API", () => {
+        const args = {
+            authenticationMode: "API",
+            instanceRoles: [],
+        };
+
+        // This should not throw exceptions:
+        validateAuthenticationMode(args);
+    });
+
     it("should throw an error for accessEntries when authentication mode is set to CONFIG_MAP", () => {
         const args = {
             authenticationMode: "CONFIG_MAP",
