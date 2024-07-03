@@ -1546,16 +1546,6 @@ export type ManagedNodeGroupOptions = Omit<
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>;
 
     /**
-     * The AMI type for the instance.
-     *
-     * If you are passing an amiId that is `arm64` type, then we need to ensure
-     * that this value is set as `amazon-linux-2-arm64`.
-     *
-     * Note: `amiType` and `gpu` are mutually exclusive.
-     */
-    amiType?: pulumi.Input<string>;
-
-    /**
      * The AMI ID to use for the worker nodes.
      *
      * Defaults to the latest recommended EKS Optimized Linux AMI from the
