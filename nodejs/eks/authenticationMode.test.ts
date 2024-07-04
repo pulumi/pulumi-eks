@@ -70,7 +70,7 @@ describe("validateAuthenticationMode", () => {
         };
 
         expect(() => validateAuthenticationMode(args)).toThrowError(
-            "The 'instanceRoles' property is not supported when 'authenticationMode' is set to 'API'.",
+            "The 'instanceRoles' property does not support non-empty values when 'authenticationMode' is set to 'API'.",
         );
     });
 

@@ -51,7 +51,8 @@ export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOpti
         args.instanceRoles = validatedInput(args.instanceRoles, pv => {
             if (pv !== undefined && pv.length !== 0) {
                 throw new Error(
-                    `The 'instanceRole' property does not support non-empty values when 'authenticationMode' is set to '${args.authenticationMode}'.`,
+                    `The 'instanceRoles' property does not support non-empty values when 'authenticationMode' is set `+
+                        `to '${args.authenticationMode}'.`,
                 );
             }
         });
@@ -74,18 +75,30 @@ export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOpti
     return args;
 }
 
+// Validate promptly if possible, otherwise validate in the Promise chain underlying the Output and ensure that the
+// input is gated on the validation. Unfortunately since apply always unwraps, the validate function required here needs
+// to be able to handle both unwrapped and normal forms.
 function validatedInput<T>(
-    property: pulumi.Input<T>|undefined,
-    validate: (value: pulumi.Unwrap<T>|undefined) => void
-): pulumi.Input<pulumi.Unwrap<T>>|undefined {
-    if (property === undefined) {
+    i: pulumi.Input<T>|undefined,
+    validate: (value: T|pulumi.Unwrap<T>|undefined) => void
+): pulumi.Input<T>|undefined {
+    if (i instanceof Promise) {
+        return pulumi.output(i).apply(value => {
+            validate(value);
+            return i;
+        });
+    } else if (pulumi.Output.isInstance(i)) {
+        return i.apply(value => {
+            validate(value);
+            return i;
+        });
+    } else if (i === undefined) {
         validate(undefined);
         return undefined;
+    } else {
+        validate(i);
+        return i;
     }
-    return pulumi.Output.create(property).apply(value => {
-        validate(value);
-        return value;
-    });
 }
 
 // Create a shallow copy of ClusterOptions.
