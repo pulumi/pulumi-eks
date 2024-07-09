@@ -70,11 +70,6 @@ jobs:
         id: provider-version
         with:
           set-env: "PROVIDER_VERSION"
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -88,7 +83,14 @@ jobs:
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check worktree clean
-        run: ./ci-scripts/ci/check-worktree-is-clean
+        uses: pulumi/git-status-check-action@v1
+        with:
+          allowed-changes: |
+            sdk/**/pulumi-plugin.json
+            sdk/dotnet/Pulumi.*.csproj
+            sdk/go/**/pulumiUtilities.go
+            sdk/nodejs/package.json
+            sdk/python/pyproject.toml
       - name: Tar provider binaries
         run:
           tar -zcf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
@@ -116,11 +118,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -163,7 +160,14 @@ jobs:
       - name: Build SDK
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
-        run: ./ci-scripts/ci/check-worktree-is-clean
+        uses: pulumi/git-status-check-action@v1
+        with:
+          allowed-changes: |
+            sdk/**/pulumi-plugin.json
+            sdk/dotnet/Pulumi.*.csproj
+            sdk/go/**/pulumiUtilities.go
+            sdk/nodejs/package.json
+            sdk/python/pyproject.toml
       - name: Compress NodeJS SDK folder
         if: matrix.language == 'nodejs'
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
@@ -201,11 +205,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -318,11 +317,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -430,11 +424,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
       - name: Install Go
         uses: actions/setup-go@v2
         with:

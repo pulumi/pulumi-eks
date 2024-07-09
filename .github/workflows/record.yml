@@ -47,11 +47,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
       - name: Install Go
         uses: actions/setup-go@v4
         with:
@@ -65,7 +60,7 @@ jobs:
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check worktree clean
-        run: ./ci-scripts/ci/check-worktree-is-clean
+        uses: pulumi/git-status-check-action@v1
       - name: Tar provider binaries
         run: tar -zcf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace }}/bin/ pulumi-resource-${{ env.PROVIDER }}
       - name: Upload artifacts
@@ -85,11 +80,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ env.PR_COMMIT_SHA }}
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
       - name: Install Go
         uses: actions/setup-go@v4
         with:
@@ -134,7 +124,7 @@ jobs:
       - name: Build SDK
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
-        run: ./ci-scripts/ci/check-worktree-is-clean
+        uses: pulumi/git-status-check-action@v1
       - name: Compress NodeJS SDK folder
         if: matrix.language == 'nodejs'
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
@@ -172,11 +162,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v3
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
       - name: Install Go
         uses: actions/setup-go@v4
         with:
