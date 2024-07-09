@@ -53,8 +53,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
@@ -98,8 +96,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -160,8 +156,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -251,8 +245,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -358,8 +350,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -483,8 +473,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -598,8 +586,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -709,8 +695,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
