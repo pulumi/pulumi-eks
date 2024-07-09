@@ -84,9 +84,15 @@ jobs:
     name: prerequisites
     runs-on: ubuntu-latest
     if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    outputs:
+      version: ${{ steps.provider-version.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
+      - uses: pulumi/provider-version-action@v1
+        id: provider-version
+        with:
+          set-env: "PROVIDER_VERSION"
       - name: Checkout Scripts Repo
         uses: actions/checkout@v2
         with:
@@ -142,6 +148,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: prerequisites
     if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -226,9 +234,13 @@ jobs:
           - java
   test-nodejs-upgrade:
     name: Run NodeJS Upgrade Tests
-    needs: build_sdk
+    needs:
+      - prerequisites
+      - build_sdk
     runs-on: ubuntu-latest
     if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -275,8 +287,7 @@ jobs:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
       - name: Untar provider binaries
-        run:
-          tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace }}/bin
+        run: tar -zxf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace }}/bin
       - name: Restore binary perms
         run:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
@@ -330,9 +341,13 @@ jobs:
 
   test-nodejs:
     name: Run NodeJS Tests
-    needs: build_sdk
+    needs:
+      - prerequisites
+      - build_sdk
     runs-on: ubuntu-latest
     if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -453,9 +468,13 @@ jobs:
           - VpcSubnetTags
   test-python:
     name: Run Python Tests
-    needs: build_sdk
+    needs:
+      - prerequisites
+      - build_sdk
     runs-on: ubuntu-latest
     if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -564,9 +583,13 @@ jobs:
           - ManagedNodeGroupPy
   test-dotnet:
     name: Run DotNet Tests
-    needs: build_sdk
+    needs:
+      - prerequisites
+      - build_sdk
     runs-on: ubuntu-latest
     if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -671,9 +694,13 @@ jobs:
           - ClusterCs
   test-go:
     name: Run Go Tests
-    needs: build_sdk
+    needs:
+      - prerequisites
+      - build_sdk
     runs-on: ubuntu-latest
     if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
