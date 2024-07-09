@@ -13,9 +13,8 @@ package-lock.json
 .DS_Store
 __pycache__
 
-
-ci-scripts/
 *.tar.gz
+nuget/
 
 # for goreleaser
 /goreleaser

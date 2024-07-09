@@ -77,7 +77,8 @@ build_dotnet:: schema
 	cd provider/cmd/$(CODEGEN) && go run main.go dotnet ../../../sdk/dotnet ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
 	cd sdk/dotnet/ && \
 		echo "module fake_dotnet_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
-		echo "${VERSION_GENERIC}" >version.txt
+		echo "${VERSION_GENERIC}" >version.txt && \
+		dotnet build
 
 lint:
 	cd nodejs/eks && \
