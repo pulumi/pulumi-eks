@@ -52,8 +52,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v4
         with:
@@ -92,8 +90,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v4
         with:
@@ -181,8 +177,6 @@ jobs:
         with:
           path: ci-scripts
           repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v4
         with:
