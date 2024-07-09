@@ -1,24 +1,29 @@
 PROJECT_NAME := Pulumi Amazon Web Services (AWS) EKS Components
 
-VERSION         := $(shell pulumictl get version)
+# Override during CI using `make [TARGET] PROVIDER_VERSION=""` or by setting a PROVIDER_VERSION environment variable
+# Local & branch builds will just used this fixed default version unless specified
+PROVIDER_VERSION ?= 2.0.0-alpha.0+dev
+# Use this normalised version everywhere rather than the raw input to ensure consistency.
+VERSION_GENERIC = $(shell pulumictl convert-version --language generic --version "$(PROVIDER_VERSION)")
+
 TESTPARALLELISM := 12
 
 PACK            := eks
 PROVIDER        := pulumi-resource-${PACK}
 CODEGEN         := pulumi-gen-${PACK}
-GZIP_PREFIX	:= pulumi-resource-${PACK}-v${VERSION}
+GZIP_PREFIX     := pulumi-resource-${PACK}-v${VERSION_GENERIC}
 
 WORKING_DIR     := $(shell pwd)
 
-JAVA_GEN 		 := pulumi-java-gen
+JAVA_GEN         := pulumi-java-gen
 JAVA_GEN_VERSION := v0.9.8
 
-EKS_SRC 		:= $(wildcard nodejs/eks/*.*) $(wildcard nodejs/eks/*/*.ts) $(wildcard nodejs/eks/*/*/*.ts)
+EKS_SRC := $(wildcard nodejs/eks/*.*) $(wildcard nodejs/eks/*/*.ts) $(wildcard nodejs/eks/*/*/*.ts)
 
-LOCAL_PLAT		?= ""
+LOCAL_PLAT ?= ""
 
-PKG_ARGS 		:= --no-bytecode --public-packages "*" --public
-PKG_TARGET		:= ./bin/cmd/provider/index.js
+PKG_ARGS   := --no-bytecode --public-packages "*" --public
+PKG_TARGET := ./bin/cmd/provider/index.js
 
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
@@ -27,14 +32,13 @@ schema::
 
 provider:: bin/${PROVIDER}
 
-build_nodejs:: VERSION := $(shell pulumictl get version --language javascript)
 build_nodejs::
 	rm -rf nodejs/eks/bin/*
 	cd nodejs/eks && \
 		yarn install && \
 		yarn run tsc && \
 		yarn run tsc --version && \
-		sed -e 's/\$${VERSION}/$(VERSION)/g' < package.json > bin/package.json && \
+		sed -e 's/\$${VERSION}/$(VERSION_GENERIC)/g' < package.json > bin/package.json && \
 		cp ../../README.md ../../LICENSE bin/ && \
 		cp -R dashboard bin/ && \
 		cp -R cni bin/ && \
@@ -44,7 +48,7 @@ bin/pulumi-java-gen::
 	mkdir -p bin/
 	pulumictl download-binary -n pulumi-language-java -v $(JAVA_GEN_VERSION) -r pulumi/pulumi-java
 
-build_java:: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
+build_java:: PACKAGE_VERSION := ${VERSION_GENERIC}
 build_java:: bin/pulumi-java-gen schema
 	rm -rf sdk/java
 	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema provider/cmd/$(PROVIDER)/schema.json --out sdk/java --build gradle-nexus
@@ -52,34 +56,28 @@ build_java:: bin/pulumi-java-gen schema
 		echo "module fake_java_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		gradle --console=plain build
 
-build_python:: PYPI_VERSION := $(shell pulumictl get version --language python)
 build_python:: schema
 	rm -rf sdk/python
-	cd provider/cmd/$(CODEGEN) && go run main.go python ../../../sdk/python ../$(PROVIDER)/schema.json $(VERSION)
+	cd provider/cmd/$(CODEGEN) && go run main.go python ../../../sdk/python ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
 	cd sdk/python/ && \
 		echo "module fake_python_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		cp ../../README.md . && \
 		rm -rf ./bin/ ../python.bin/ && cp -R . ../python.bin && mv ../python.bin ./bin && \
-		sed -i.bak -e 's/^  version = .*/  version = "$(PYPI_VERSION)"/g' ./bin/pyproject.toml && \
-		rm ./bin/pyproject.toml.bak && \
 		python3 -m venv venv && \
 		./venv/bin/python -m pip install build && \
 		cd ./bin && \
 		../venv/bin/python -m build .
 
-build_go:: VERSION := $(shell pulumictl get version --language generic)
 build_go:: schema
 	rm -rf sdk/go
-	cd provider/cmd/$(CODEGEN) && go run main.go go ../../../sdk/go ../$(PROVIDER)/schema.json $(VERSION)
+	cd provider/cmd/$(CODEGEN) && go run main.go go ../../../sdk/go ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
 
-build_dotnet:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
 build_dotnet:: schema
 	rm -rf sdk/dotnet
-	cd provider/cmd/$(CODEGEN) && go run main.go dotnet ../../../sdk/dotnet ../$(PROVIDER)/schema.json $(VERSION)
+	cd provider/cmd/$(CODEGEN) && go run main.go dotnet ../../../sdk/dotnet ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
 	cd sdk/dotnet/ && \
 		echo "module fake_dotnet_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
-		echo "${DOTNET_VERSION}" >version.txt && \
-		dotnet build /p:Version=${DOTNET_VERSION}
+		echo "${VERSION_GENERIC}" >version.txt
 
 lint:
 	cd nodejs/eks && \
@@ -126,7 +124,7 @@ nodejs/eks/node_modules: nodejs/eks/package.json nodejs/eks/yarn.lock
 nodejs/eks/bin: nodejs/eks/node_modules ${EKS_SRC}
 	@cd nodejs/eks && \
 		yarn tsc && \
-		sed -e 's/\$${VERSION}/$(VERSION)/g' < package.json > bin/package.json && \
+		sed -e 's/\$${VERSION}/$(VERSION_GENERIC)/g' < package.json > bin/package.json && \
 		cp -R dashboard bin/ && \
 		cp -R cni bin/ && \
 		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
