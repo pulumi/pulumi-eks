@@ -165,7 +165,7 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Setup DotNet
@@ -255,7 +255,7 @@ jobs:
           chmod +x ./kubectl
           sudo mv kubectl /usr/local/bin
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -355,7 +355,7 @@ jobs:
           chmod +x ./kubectl
           sudo mv kubectl /usr/local/bin
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -479,7 +479,7 @@ jobs:
           node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -582,7 +582,7 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -691,7 +691,7 @@ jobs:
           node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
