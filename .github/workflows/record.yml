@@ -37,7 +37,6 @@ env:
   GOVERSION: "1.21.x"
   DOTNETVERSION: "6.x"
   PYTHONVERSION: "3.8"
-  NODEVERSION: "18.x"
   JAVAVERSION: "11"
 
 jobs:
@@ -99,9 +98,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNETVERSION }}
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Java
         if: matrix.language == 'java'

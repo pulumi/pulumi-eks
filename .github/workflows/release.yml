@@ -24,7 +24,6 @@ env:
   GOVERSION: "1.21.x"
   DOTNETVERSION: "6.x"
   PYTHONVERSION: "3.8"
-  NODEVERSION: "18.x"
   JAVAVERSION: "11"
   IS_PRERELEASE: ${{ contains(github.ref_name,'-') }}
 jobs:
@@ -39,9 +38,9 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Install Yarn
         run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
@@ -87,9 +86,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNETVERSION }}
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -256,10 +255,10 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           always-auth: true
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -316,10 +315,10 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           always-auth: true
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -391,9 +390,9 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Download provider binary
         uses: actions/download-artifact@v2
@@ -495,9 +494,9 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -610,9 +609,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup DotNet
         uses: actions/setup-dotnet@v1
