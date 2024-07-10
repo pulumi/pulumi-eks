@@ -34,7 +34,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Setup Node
@@ -72,7 +72,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -160,7 +160,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -214,7 +214,7 @@ jobs:
         with:
           tag: v2.1.5-procursus2
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -249,7 +249,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -309,7 +309,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -353,7 +353,7 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - env:
@@ -376,7 +376,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Setup Python
@@ -488,7 +488,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -595,7 +595,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -694,7 +694,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.5.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Download Go SDK
