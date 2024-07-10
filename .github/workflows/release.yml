@@ -122,7 +122,7 @@ jobs:
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
       - name: Upload NodeJS artifacts
         if: matrix.language == 'nodejs'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
           path: ${{ github.workspace}}/${{ matrix.language }}.tar.gz
@@ -131,7 +131,7 @@ jobs:
         run: tar -zcf sdk/${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}/ .
       - name: Upload Other Lang artifacts
         if: matrix.language != 'nodejs'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/${{ matrix.language }}.tar.gz
@@ -181,7 +181,7 @@ jobs:
           tar -zcf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
           }}/bin/ pulumi-resource-${{ env.PROVIDER }}
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin/provider.tar.gz
@@ -265,14 +265,14 @@ jobs:
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Download NodeJS SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
       - name: Uncompress NodeJS SDK folder
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Download Python SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: python-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
@@ -281,7 +281,7 @@ jobs:
       - name: Install Twine
         run: python -m pip install pip twine
       - name: Download DotNet SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: dotnet-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
@@ -331,7 +331,7 @@ jobs:
           distribution: temurin
           java-version: ${{ env.JAVAVERSION }}
       - name: Download Java SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: java-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
@@ -395,7 +395,7 @@ jobs:
           node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -410,7 +410,7 @@ jobs:
       - name: Update path
         run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
       - name: Download SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -511,7 +511,7 @@ jobs:
           pip3 install virtualenv==20.0.23
           pip3 install pipenv
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -526,7 +526,7 @@ jobs:
       - name: Update path
         run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
       - name: Download NodeJS SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -535,7 +535,7 @@ jobs:
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
       - name: Download Python SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: python-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
@@ -618,7 +618,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNETVERSION }}
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -633,7 +633,7 @@ jobs:
       - name: Update path
         run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
       - name: Download NodeJS SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -642,7 +642,7 @@ jobs:
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
       - name: Download DotNet SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: dotnet-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
