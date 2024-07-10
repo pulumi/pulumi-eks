@@ -63,7 +63,7 @@ jobs:
       - name: Tar provider binaries
         run: tar -zcf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace }}/bin/ pulumi-resource-${{ env.PROVIDER }}
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin/provider.tar.gz
@@ -129,7 +129,7 @@ jobs:
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
       - name: Upload NodeJS artifacts
         if: matrix.language == 'nodejs'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
           path: ${{ github.workspace}}/${{ matrix.language }}.tar.gz
@@ -138,7 +138,7 @@ jobs:
         run: tar -zcf sdk/${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}/ .
       - name: Upload Other Lang artifacts
         if: matrix.language != 'nodejs'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/${{ matrix.language }}.tar.gz
@@ -189,7 +189,7 @@ jobs:
           version: v2.4.0
 
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -202,7 +202,7 @@ jobs:
       - name: Update path
         run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
       - name: Download SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
