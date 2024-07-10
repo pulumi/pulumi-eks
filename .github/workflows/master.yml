@@ -128,7 +128,7 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Setup DotNet
@@ -258,7 +258,7 @@ jobs:
           node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Download NodeJS SDK
@@ -317,7 +317,7 @@ jobs:
           node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Setup Java
@@ -355,7 +355,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -471,7 +471,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -574,7 +574,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
