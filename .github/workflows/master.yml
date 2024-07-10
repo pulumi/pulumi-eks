@@ -33,7 +33,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Setup Node
@@ -74,7 +74,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -122,7 +122,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -220,7 +220,7 @@ jobs:
         with:
           tag: v2.1.5-procursus2
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -246,7 +246,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -305,7 +305,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -363,7 +363,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
@@ -467,7 +467,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Setup Python
@@ -582,7 +582,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
