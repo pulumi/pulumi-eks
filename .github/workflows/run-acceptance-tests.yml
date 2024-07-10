@@ -29,7 +29,6 @@ env:
   GOVERSION: "1.21.x"
   DOTNETVERSION: "6.x"
   PYTHONVERSION: "3.8"
-  NODEVERSION: "18.x"
   JAVAVERSION: "11"
 jobs:
   comment-notification:
@@ -38,7 +37,7 @@ jobs:
     steps:
       - name: Create URL to the run output
         id: vars
-        run: echo run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID >> "$GITHUB_OUTPUT"
+        run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
       - name: Update with Result
         uses: peter-evans/create-or-update-comment@v1
         with:
@@ -52,22 +51,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: pulumi/pulumictl
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Install Yarn
         run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
       - name: Update PATH for Yarn
         run: |
-          echo "$HOME/.yarn/bin" >> $GITHUB_PATH
-          echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
+          echo "$HOME/.yarn/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.config/yarn/global/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Run nodejs linter
         run: make lint
       - name: golangci-lint
@@ -86,13 +85,13 @@ jobs:
       version: ${{ steps.provider-version.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - uses: pulumi/provider-version-action@v1
         id: provider-version
         with:
           set-env: "PROVIDER_VERSION"
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -102,23 +101,25 @@ jobs:
       - name: Install Schema Tools
         uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
-          repo: mikhailshilkov/schema-tools
+          repo: pulumi/schema-tools
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check Schema is Valid
         run: |
-          echo 'SCHEMA_CHANGES<<EOF' >> $GITHUB_ENV
-          schema-tools compare ${{ env.PROVIDER }} ${{ github.base_ref || 'master' }} --local-path=provider/cmd/pulumi-resource-${{ env.PROVIDER }}/schema.json >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          {
+            echo "SCHEMA_CHANGES<<$EOF"
+            schema-tools compare -p eks -o ${{ github.base_ref || 'master' }} -n --local-path=provider/cmd/pulumi-resource-eks/schema.json
+            echo "$EOF"
+          } >> "$GITHUB_ENV"
       - if: github.event_name == 'pull_request'
         name: Comment on PR with Details of Schema Check
-        uses: thollander/actions-comment-pull-request@1.0.1
+        uses: thollander/actions-comment-pull-request@v2
         with:
+          comment_tag: schemaCheck
           message: |
-            ### Does the PR have any schema changes?
-
             ${{ env.SCHEMA_CHANGES }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check worktree clean
@@ -135,7 +136,7 @@ jobs:
           tar -zcf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
           }}/bin/ pulumi-resource-${{ env.PROVIDER }}
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin/provider.tar.gz
@@ -150,11 +151,11 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ env.PR_COMMIT_SHA }}
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -164,17 +165,17 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Setup DotNet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNETVERSION }}
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -190,8 +191,8 @@ jobs:
         run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
       - name: Update PATH for Yarn
         run: |
-          echo "$HOME/.yarn/bin" >> $GITHUB_PATH
-          echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
+          echo "$HOME/.yarn/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.config/yarn/global/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Build SDK
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
@@ -208,7 +209,7 @@ jobs:
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
       - name: Upload NodeJS artifacts
         if: matrix.language == 'nodejs'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
           path: ${{ github.workspace}}/${{ matrix.language }}.tar.gz
@@ -217,7 +218,7 @@ jobs:
         run: tar -zcf sdk/${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}/ .
       - name: Upload Other Lang artifacts
         if: matrix.language != 'nodejs'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/${{ matrix.language }}.tar.gz
@@ -241,20 +242,20 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ env.PR_COMMIT_SHA }}
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install Kubectl
         run: |
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv kubectl /usr/local/bin
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -268,12 +269,12 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -284,9 +285,9 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -300,7 +301,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v2.4.0
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ env.AWS_REGION }}
@@ -341,20 +342,20 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ env.PR_COMMIT_SHA }}
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install Kubectl
         run: |
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv kubectl /usr/local/bin
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -368,12 +369,12 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -386,9 +387,9 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -402,7 +403,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v2.4.0
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ env.AWS_REGION }}
@@ -461,9 +462,9 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -473,12 +474,12 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -490,7 +491,7 @@ jobs:
           pip3 install virtualenv==20.0.23
           pip3 install pipenv
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -503,9 +504,9 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download NodeJS SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -519,7 +520,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v2.4.0
       - name: Download Python SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: python-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
@@ -528,7 +529,7 @@ jobs:
       - name: Install dependencies
         run: make install_python_sdk
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ env.AWS_REGION }}
@@ -569,9 +570,9 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -581,7 +582,7 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -589,16 +590,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup DotNet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNETVERSION }}
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -611,9 +612,9 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download NodeJS SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -627,7 +628,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v2.4.0
       - name: Download DotNet SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: dotnet-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
@@ -637,7 +638,7 @@ jobs:
         run: make install_dotnet_sdk
       - run: dotnet nuget add source ${{ github.workspace }}/nuget
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ env.AWS_REGION }}
@@ -673,9 +674,9 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -685,12 +686,12 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEVERSION }}
+          node-version-file: .node-version
           registry-url: https://registry.npmjs.org
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Install awscli
@@ -698,11 +699,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Setup DotNet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNETVERSION }}
       - name: Download provider binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -715,9 +716,9 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download NodeJS SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
@@ -731,14 +732,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v2.4.0
       - name: Download Go SDK
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: go-sdk.tar.gz
           path: ${{ github.workspace}}/sdk/
       - name: Uncompress Go SDK folder
         run: tar -zxf ${{ github.workspace}}/sdk/go.tar.gz -C ${{github.workspace}}/sdk/go
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ env.AWS_REGION }}
