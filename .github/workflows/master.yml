@@ -70,7 +70,7 @@ jobs:
         with:
           set-env: "PROVIDER_VERSION"
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -118,7 +118,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -242,7 +242,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -301,7 +301,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -351,7 +351,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Setup Python
@@ -463,7 +463,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
@@ -570,7 +570,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Setup Python
