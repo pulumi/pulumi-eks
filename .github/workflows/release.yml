@@ -46,8 +46,8 @@ jobs:
         run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
       - name: Update PATH for Yarn
         run: |
-          echo "$HOME/.yarn/bin" >> $GITHUB_PATH
-          echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
+          echo "$HOME/.yarn/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.config/yarn/global/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Run nodejs linter
         run: make lint
       - name: golangci-lint
@@ -104,8 +104,8 @@ jobs:
         run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
       - name: Update PATH for Yarn
         run: |
-          echo "$HOME/.yarn/bin" >> $GITHUB_PATH
-          echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
+          echo "$HOME/.yarn/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.config/yarn/global/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Build SDK
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
@@ -359,7 +359,7 @@ jobs:
       - env:
           GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
         name: Dispatch event
-        run: pulumictl create docs-build pulumi-${{ env.PROVIDER }} ${GITHUB_REF#refs/tags/}
+        run: pulumictl create docs-build pulumi-${{ env.PROVIDER }} "${GITHUB_REF#refs/tags/}"
   test-nodejs:
     name: Run NodeJS Tests
     needs:
@@ -408,7 +408,7 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download SDK
         uses: actions/download-artifact@v4
         with:
@@ -524,7 +524,7 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download NodeJS SDK
         uses: actions/download-artifact@v4
         with:
@@ -631,7 +631,7 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download NodeJS SDK
         uses: actions/download-artifact@v4
         with:
