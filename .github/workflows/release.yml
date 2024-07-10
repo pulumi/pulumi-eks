@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
@@ -67,7 +67,7 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -151,7 +151,7 @@ jobs:
       version: ${{ steps.provider-version.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - uses: pulumi/provider-version-action@v1
         id: provider-version
         with:
@@ -200,7 +200,7 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -244,7 +244,7 @@ jobs:
       PACKAGE_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -304,7 +304,7 @@ jobs:
       PACKAGE_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -371,7 +371,7 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -483,7 +483,7 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -590,7 +590,7 @@ jobs:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Go
         uses: actions/setup-go@v2
         with:
