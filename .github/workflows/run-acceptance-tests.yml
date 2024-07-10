@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: Create URL to the run output
         id: vars
-        run: echo run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID >> "$GITHUB_OUTPUT"
+        run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
       - name: Update with Result
         uses: peter-evans/create-or-update-comment@v1
         with:
@@ -65,8 +65,8 @@ jobs:
         run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
       - name: Update PATH for Yarn
         run: |
-          echo "$HOME/.yarn/bin" >> $GITHUB_PATH
-          echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
+          echo "$HOME/.yarn/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.config/yarn/global/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Run nodejs linter
         run: make lint
       - name: golangci-lint
@@ -113,7 +113,7 @@ jobs:
             echo "SCHEMA_CHANGES<<$EOF"
             schema-tools compare -p eks -o ${{ github.base_ref || 'master' }} -n --local-path=provider/cmd/pulumi-resource-eks/schema.json
             echo "$EOF"
-          } >> $GITHUB_ENV
+          } >> "$GITHUB_ENV"
       - if: github.event_name == 'pull_request'
         name: Comment on PR with Details of Schema Check
         uses: thollander/actions-comment-pull-request@v2
@@ -191,8 +191,8 @@ jobs:
         run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
       - name: Update PATH for Yarn
         run: |
-          echo "$HOME/.yarn/bin" >> $GITHUB_PATH
-          echo "$HOME/.config/yarn/global/node_modules/.bin" >> $GITHUB_PATH
+          echo "$HOME/.yarn/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.config/yarn/global/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Build SDK
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
@@ -251,7 +251,7 @@ jobs:
           go-version: ${{ env.GOVERSION }}
       - name: Install Kubectl
         run: |
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv kubectl /usr/local/bin
       - name: Setup Python
@@ -285,7 +285,7 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download SDK
         uses: actions/download-artifact@v4
         with:
@@ -351,7 +351,7 @@ jobs:
           go-version: ${{ env.GOVERSION }}
       - name: Install Kubectl
         run: |
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv kubectl /usr/local/bin
       - name: Setup Python
@@ -387,7 +387,7 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download SDK
         uses: actions/download-artifact@v4
         with:
@@ -504,7 +504,7 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download NodeJS SDK
         uses: actions/download-artifact@v4
         with:
@@ -612,7 +612,7 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download NodeJS SDK
         uses: actions/download-artifact@v4
         with:
@@ -716,7 +716,7 @@ jobs:
           find ${{ github.workspace }} -name "pulumi-*-${{ env.PROVIDER }}" -print
           -exec chmod +x {} \;
       - name: Update path
-        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download NodeJS SDK
         uses: actions/download-artifact@v4
         with:
