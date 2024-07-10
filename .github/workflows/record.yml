@@ -254,7 +254,7 @@ jobs:
           git restore README.md
       - name: Open a PR with newly recorded test snapshots
         id: create-pr
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           author: Pulumi Bot <bot@pulumi.com>
           body: "Recording fresh test snapshots for `${{ inputs.runTests }}`."
