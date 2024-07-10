@@ -33,8 +33,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install pulumictl
         uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
@@ -63,16 +61,15 @@ jobs:
   prerequisites:
     name: prerequisites
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.provider-version.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
+      - uses: pulumi/provider-version-action@v1
+        id: provider-version
         with:
-          path: ci-scripts
-          repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
+          set-env: "PROVIDER_VERSION"
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -86,7 +83,14 @@ jobs:
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check worktree clean
-        run: ./ci-scripts/ci/check-worktree-is-clean
+        uses: pulumi/git-status-check-action@v1
+        with:
+          allowed-changes: |
+            sdk/**/pulumi-plugin.json
+            sdk/dotnet/Pulumi.*.csproj
+            sdk/go/**/pulumiUtilities.go
+            sdk/nodejs/package.json
+            sdk/python/pyproject.toml
       - name: Tar provider binaries
         run:
           tar -zcf ${{ github.workspace }}/bin/provider.tar.gz -C ${{ github.workspace
@@ -109,16 +113,11 @@ jobs:
     name: build_sdk
     runs-on: ubuntu-latest
     needs: prerequisites
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -161,7 +160,14 @@ jobs:
       - name: Build SDK
         run: make build_${{ matrix.language }}
       - name: Check worktree clean
-        run: ./ci-scripts/ci/check-worktree-is-clean
+        uses: pulumi/git-status-check-action@v1
+        with:
+          allowed-changes: |
+            sdk/**/pulumi-plugin.json
+            sdk/dotnet/Pulumi.*.csproj
+            sdk/go/**/pulumiUtilities.go
+            sdk/nodejs/package.json
+            sdk/python/pyproject.toml
       - name: Compress NodeJS SDK folder
         if: matrix.language == 'nodejs'
         run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
@@ -190,18 +196,15 @@ jobs:
           - java
   test-nodejs:
     name: Run NodeJS Tests
-    needs: build_sdk
+    needs:
+      - prerequisites
+      - build_sdk
     runs-on: ubuntu-latest
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -305,18 +308,15 @@ jobs:
           - VpcSubnetTags
   test-python:
     name: Run Python Tests
-    needs: build_sdk
+    needs:
+      - prerequisites
+      - build_sdk
     runs-on: ubuntu-latest
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -415,18 +415,15 @@ jobs:
           - ManagedNodeGroupPy
   test-dotnet:
     name: Run DotNet Tests
-    needs: build_sdk
+    needs:
+      - prerequisites
+      - build_sdk
     runs-on: ubuntu-latest
+    env:
+      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Checkout Scripts Repo
-        uses: actions/checkout@v2
-        with:
-          path: ci-scripts
-          repository: pulumi/scripts
-      - name: Unshallow clone for tags
-        run: git fetch --prune --unshallow --tags
       - name: Install Go
         uses: actions/setup-go@v2
         with:

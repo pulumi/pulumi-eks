@@ -1647,6 +1647,7 @@ func generateSchema() schema.PackageSpec {
 					"Pulumi.Kubernetes": "4.*",
 				},
 				"liftSingleValueMethodReturns": true,
+				"respectSchemaVersion":         true,
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
@@ -1661,12 +1662,14 @@ func generateSchema() schema.PackageSpec {
 				"pyproject": map[string]any{
 					"enabled": true,
 				},
+				"respectSchemaVersion": true,
 			}),
 			"go": rawMessage(map[string]interface{}{
 				"generateResourceContainerTypes": true,
 				"importBasePath":                 "github.com/pulumi/pulumi-eks/sdk/v2/go/eks",
 				"liftSingleValueMethodReturns":   true,
 				"internalModuleName":             "utilities",
+				"respectSchemaVersion":           true,
 			}),
 			"java": rawMessage(map[string]interface{}{
 				"dependencies": map[string]string{

@@ -16,13 +16,15 @@
                 "Pulumi": "3.*",
                 "Pulumi.Aws": "6.*",
                 "Pulumi.Kubernetes": "4.*"
-            }
+            },
+            "respectSchemaVersion": true
         },
         "go": {
             "generateResourceContainerTypes": true,
             "importBasePath": "github.com/pulumi/pulumi-eks/sdk/v2/go/eks",
             "internalModuleName": "utilities",
-            "liftSingleValueMethodReturns": true
+            "liftSingleValueMethodReturns": true,
+            "respectSchemaVersion": true
         },
         "java": {
             "dependencies": {
@@ -41,6 +43,7 @@
                 "pulumi-aws": "\u003e=6.0.0,\u003c7.0.0",
                 "pulumi-kubernetes": "\u003e=4.0.0,\u003c5.0.0"
             },
+            "respectSchemaVersion": true,
             "usesIOClasses": true
         }
     },
