@@ -36,7 +36,7 @@ export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOpti
     }
 
     if (!supportsConfigMap(args.authenticationMode)) {
-        const checkDefined: (prop: string) => (propertyValue: any|undefined) => void = (prop) => (pv) => {
+        const checkDefined: (prop: keyof ClusterOptions) => (propertyValue: any|undefined) => void = (prop) => (pv) => {
             if (pv !== undefined) {
                 throw new Error(
                     `The '${prop}' property is not supported when 'authenticationMode' is set to '${args.authenticationMode}'.`,
