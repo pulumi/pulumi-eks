@@ -42,7 +42,7 @@ describe("validateAuthenticationMode", () => {
         };
 
         expect(() => validateAuthenticationMode(args)).toThrowError(
-            "The 'roleMappings' property is not supported when 'authenticationMode' is set to 'API'.",
+            "The 'roleMappings' property does not support non-empty values when 'authenticationMode' is set to 'API'.",
         );
     });
 
@@ -59,7 +59,7 @@ describe("validateAuthenticationMode", () => {
         };
 
         expect(() => validateAuthenticationMode(args)).toThrowError(
-            "The 'userMappings' property is not supported when 'authenticationMode' is set to 'API'.",
+            "The 'userMappings' property does not support non-empty values when 'authenticationMode' is set to 'API'.",
         );
     });
 
