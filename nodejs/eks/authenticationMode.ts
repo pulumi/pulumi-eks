@@ -36,7 +36,7 @@ export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOpti
     }
 
     if (!supportsConfigMap(args.authenticationMode)) {
-        const check: (prop: string) => (propertyValue: any|undefined) => void = (prop) => (pv) => {
+        const checkDefined: (prop: string) => (propertyValue: any|undefined) => void = (prop) => (pv) => {
             if (pv !== undefined) {
                 throw new Error(
                     `The '${prop}' property is not supported when 'authenticationMode' is set to '${args.authenticationMode}'.`,
@@ -44,8 +44,8 @@ export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOpti
             }
         };
 
-        args.roleMappings = validatedInput(args.roleMappings, check("roleMappings"));
-        args.userMappings = validatedInput(args.userMappings, check("userMappings"));
+        args.roleMappings = validatedInput(args.roleMappings, checkDefined("roleMappings"));
+        args.userMappings = validatedInput(args.userMappings, checkDefined("userMappings"));
 
         // InstanceRoles is special as it permits empty values to pass through.
         args.instanceRoles = validatedInput(args.instanceRoles, pv => {
