@@ -18,10 +18,21 @@ import {
     validateAuthenticationMode,
 } from "./authenticationMode";
 
+import {
+    ClusterOptions, AuthenticationMode
+} from "./cluster";
+
+import * as aws from "@pulumi/aws";
+
 describe("validateAuthenticationMode", () => {
+
+    const testRole: aws.iam.Role = (<any>{"arn": "testRole"});
+
     it("should throw an error for invalid authentication mode", () => {
-        const args = {
-            authenticationMode: "INVALID_MODE",
+        const invalidMode: any = "INVALID_MODE";
+
+        const args: ClusterOptions = {
+            authenticationMode: invalidMode,
         };
 
         expect(() => validateAuthenticationMode(args)).toThrowError(
@@ -30,7 +41,7 @@ describe("validateAuthenticationMode", () => {
     });
 
     it("should throw an error for roleMappings when authentication mode is set to API", () => {
-        const args = {
+        const args: ClusterOptions = {
             authenticationMode: "API",
             roleMappings: [
                 {
@@ -47,7 +58,7 @@ describe("validateAuthenticationMode", () => {
     });
 
     it("should throw an error for userMappings when authentication mode is set to API", () => {
-        const args = {
+        const args: ClusterOptions = {
             authenticationMode: "API",
             userMappings: [
                 {
@@ -64,9 +75,9 @@ describe("validateAuthenticationMode", () => {
     });
 
     it("should throw an error for instanceRoles when authentication mode is set to API", () => {
-        const args = {
+        const args: ClusterOptions = {
             authenticationMode: "API",
-            instanceRoles: ["roleArn"],
+            instanceRoles: [testRole],
         };
 
         expect(() => validateAuthenticationMode(args)).toThrowError(
@@ -75,7 +86,7 @@ describe("validateAuthenticationMode", () => {
     });
 
     it("should not throw an error for instanceRoles=[] when authentication mode is set to API", () => {
-        const args = {
+        const args: ClusterOptions = {
             authenticationMode: "API",
             instanceRoles: [],
         };
@@ -85,13 +96,13 @@ describe("validateAuthenticationMode", () => {
     });
 
     it("should throw an error for accessEntries when authentication mode is set to CONFIG_MAP", () => {
-        const args = {
+        const args: ClusterOptions = {
             authenticationMode: "CONFIG_MAP",
-            accessEntries: [
-                {
+            accessEntries: {
+                "entry1": {
                     principalArn: "roleArn",
                 },
-            ],
+            },
         };
 
         expect(() => validateAuthenticationMode(args)).toThrowError(
@@ -101,11 +112,11 @@ describe("validateAuthenticationMode", () => {
 
     it("should throw an error for accessEntries when authentication mode is not set", () => {
         const args = {
-            accessEntries: [
-                {
+            accessEntries: {
+                "entry1": {
                     principalArn: "roleArn",
                 },
-            ],
+            },
         };
 
         expect(() => validateAuthenticationMode(args)).toThrowError(
@@ -113,7 +124,7 @@ describe("validateAuthenticationMode", () => {
         );
     });
 
-    test.each([
+    const cases: ClusterOptions[][] = [
         [
             {
                 authenticationMode: "CONFIG_MAP",
@@ -131,7 +142,7 @@ describe("validateAuthenticationMode", () => {
                         username: "test-role",
                     },
                 ],
-                instanceRoles: ["roleArn"],
+                instanceRoles: [testRole],
             },
         ],
         [
@@ -151,22 +162,22 @@ describe("validateAuthenticationMode", () => {
                         username: "test-role",
                     },
                 ],
-                instanceRoles: ["roleArn"],
-                accessEntries: [
-                    {
+                instanceRoles: [testRole],
+                accessEntries: {
+                    "entry1": {
                         principalArn: "roleArn",
                     },
-                ],
+                },
             },
         ],
         [
             {
                 authenticationMode: "API",
-                accessEntries: [
-                    {
+                accessEntries: {
+                    "entry1": {
                         principalArn: "roleArn",
                     },
-                ],
+                },
             },
         ],
         [
@@ -184,7 +195,9 @@ describe("validateAuthenticationMode", () => {
                 authenticationMode: "API_AND_CONFIG_MAP",
             },
         ],
-    ])("should not throw an error for valid authentication mode and properties", (args) => {
+    ];
+
+    test.each(cases)("should not throw an error for valid authentication mode and properties", (args) => {
         expect(() => validateAuthenticationMode(args)).not.toThrow();
     });
 });
