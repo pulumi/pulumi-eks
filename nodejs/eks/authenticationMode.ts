@@ -36,26 +36,18 @@ export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOpti
     }
 
     if (!supportsConfigMap(args.authenticationMode)) {
-        const checkDefined: (prop: keyof ClusterOptions) => (propertyValue: any|undefined) => void = (prop) => (pv) => {
-            if (pv !== undefined) {
+        const checkNonEmpty: (prop: keyof ClusterOptions) => (_: any|undefined) => void = (prop) => (pv) => {
+            if (pv !== undefined && pv.length !== 0) {
                 throw new Error(
-                    `The '${prop}' property is not supported when 'authenticationMode' is set to '${args.authenticationMode}'.`,
+                    `The '${prop}' property does not support non-empty values when 'authenticationMode' is set to `+
+                        `'${args.authenticationMode}'.`,
                 );
             }
         };
 
-        args.roleMappings = validatedInput(args.roleMappings, checkDefined("roleMappings"));
-        args.userMappings = validatedInput(args.userMappings, checkDefined("userMappings"));
-
-        // InstanceRoles is special as it permits empty values to pass through.
-        args.instanceRoles = validatedInput(args.instanceRoles, pv => {
-            if (pv !== undefined && pv.length !== 0) {
-                throw new Error(
-                    `The 'instanceRoles' property does not support non-empty values when 'authenticationMode' is set `+
-                        `to '${args.authenticationMode}'.`,
-                );
-            }
-        });
+        args.roleMappings = validatedInput(args.roleMappings, checkNonEmpty("roleMappings"));
+        args.userMappings = validatedInput(args.userMappings, checkNonEmpty("userMappings"));
+        args.instanceRoles = validatedInput(args.instanceRoles, checkNonEmpty("instanceRoles"));
     }
 
     if (!supportsAccessEntries(args.authenticationMode)) {
