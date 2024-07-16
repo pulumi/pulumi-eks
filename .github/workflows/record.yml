@@ -104,7 +104,7 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Setup Java
         if: matrix.language == 'java'
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           cache: gradle
           distribution: temurin
