@@ -193,6 +193,7 @@ jobs:
           - python
           - dotnet
           - java
+          - go
   publish:
     name: publish
     needs:
