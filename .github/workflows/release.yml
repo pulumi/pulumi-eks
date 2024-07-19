@@ -143,6 +143,7 @@ jobs:
           - python
           - dotnet
           - java
+          - go
   prerequisites:
     name: prerequisites
     runs-on: ubuntu-latest

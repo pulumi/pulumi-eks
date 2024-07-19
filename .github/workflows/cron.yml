@@ -193,6 +193,7 @@ jobs:
           - python
           - dotnet
           - java
+          - go
   test-nodejs:
     name: Run NodeJS Tests
     needs:
