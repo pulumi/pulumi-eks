@@ -227,6 +227,24 @@ func TestAccMNG_withAwsAuth(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestAccMNG_DiskSize(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "managed-ng-disk-size"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestAccTags(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -429,6 +447,7 @@ func TestAccTagInputTypes(t *testing.T) {
 
 	integration.ProgramTest(t, &test)
 }
+
 
 func TestAccNodegroupOptions(t *testing.T) {
 	test := getJSBaseOptions(t).

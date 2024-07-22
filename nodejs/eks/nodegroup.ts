@@ -1843,8 +1843,7 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         {
             deviceName: "/dev/xvda",
             ebs: {
-                volumeSize: args.diskSize,
-                volumeType: "gp2"
+                volumeSize: args.diskSize
             },
         },
     ];
