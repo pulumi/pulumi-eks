@@ -15,6 +15,8 @@
 package example
 
 import (
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -22,6 +24,7 @@ import (
 
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func getEnvRegion(t *testing.T) string {
@@ -96,5 +99,55 @@ func unsetAWSProfileEnv(t *testing.T) {
 	for _, envVar := range envToUnset {
 		t.Setenv(envVar, "")
 		assert.NoError(t, os.Unsetenv(envVar)) // Explicitly unset the environment variable, as well.
+	}
+}
+
+type programTestExtraOptions struct {
+	integration.ProgramTestOptions
+	IgnoreDestroyErrors bool
+}
+
+func programTestWithExtraOptions(t *testing.T, opts programTestExtraOptions) {
+	pt := integration.ProgramTestManualLifeCycle(t, &opts.ProgramTestOptions)
+
+	require.Falsef(t, opts.DestroyOnCleanup, "DestroyOnCleanup is not supported")
+	require.Falsef(t, opts.RunUpdateTest, "RunUpdateTest is not supported")
+
+	destroyStack := func() {
+		destroyErr := pt.TestLifeCycleDestroy()
+		if opts.IgnoreDestroyErrors {
+			assert.NoError(t, destroyErr)
+		} else {
+			t.Logf("IgnoreDestroyErrors: ignoring %v", destroyErr)
+		}
+	}
+
+	// Inlined pt.TestLifeCycleInitAndDestroy()
+	testLifeCycleInitAndDestroy := func() error {
+		err := pt.TestLifeCyclePrepare()
+		if err != nil {
+			return fmt.Errorf("copying test to temp dir: %w", err)
+		}
+
+		pt.TestFinished = false
+		defer pt.TestCleanUp()
+
+		err = pt.TestLifeCycleInitialize()
+		if err != nil {
+			return fmt.Errorf("initializing test project: %w", err)
+		}
+		// Ensure that before we exit, we attempt to destroy and remove the stack.
+		defer destroyStack()
+
+		if err = pt.TestPreviewUpdateAndEdits(); err != nil {
+			return fmt.Errorf("running test preview, update, and edits: %w", err)
+		}
+		pt.TestFinished = true
+		return nil
+	}
+
+	err := testLifeCycleInitAndDestroy()
+	if !errors.Is(err, integration.ErrTestFailed) {
+		assert.NoError(t, err)
 	}
 }
