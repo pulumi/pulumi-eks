@@ -1742,6 +1742,8 @@ function createManagedNodeGroupInternal(
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
     if (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2) {
         launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
+        // EKS doesn't allow setting the kubernetes version in the node group if a custom launch template is used.
+        delete nodeGroupArgs.version;
     }
 
     // Make the aws-auth configmap a dependency of the node group.
@@ -1867,7 +1869,10 @@ function getRecommendedAMI(
     const instanceType = "instanceType" in args ? args.instanceType : undefined;
 
     const amiType = getAMIType(args.amiType, gpu, instanceType);
-    const amiID = pulumi.output([k8sVersion, amiType]).apply(([version, type]) => {
+    // if specified use the version from the args, otherwise use the version from the cluster.
+    const version = args.version ? args.version : k8sVersion;
+
+    const amiID = pulumi.output([version, amiType]).apply(([version, type]) => {
         const parameterName = `/aws/service/eks/optimized-ami/${version}/${type}/recommended/image_id`;
         return pulumi.output(aws.ssm.getParameter({ name: parameterName }, { parent, async: true }))
             .value;
