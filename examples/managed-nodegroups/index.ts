@@ -6,7 +6,6 @@ import * as iam from "./iam";
 const role0 = iam.createRole("example-role0");
 const role1 = iam.createRole("example-role1");
 const role2 = iam.createRole("example-role2");
-const role3 = iam.createRole("example-role3");
 
 // Create a new VPC
 const eksVpc = new awsx.ec2.Vpc("eks-vpc", {
@@ -23,7 +22,7 @@ const cluster = new eks.Cluster("example-managed-nodegroups", {
   publicSubnetIds: eksVpc.publicSubnetIds,
   // Private subnets will be used for cluster nodes
   privateSubnetIds: eksVpc.privateSubnetIds,
-  instanceRoles: [role0, role1, role2, role3],
+  instanceRoles: [role0, role1, role2],
 });
 
 // Export the cluster's kubeconfig.
@@ -74,6 +73,6 @@ const managedNodeGroup2 = eks.createManagedNodeGroup(
 // Create a simple AWS managed node group with IMDSv2 enabled
 const managedNodeGroup3 = eks.createManagedNodeGroup("example-managed-ng3", {
   cluster: cluster,
-  nodeRole: role3,
+  nodeRole: role2,
   enableIMDSv2: true,
 });
