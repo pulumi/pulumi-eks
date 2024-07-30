@@ -1742,7 +1742,10 @@ function createManagedNodeGroupInternal(
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
     if (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2) {
         launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
-        // EKS doesn't allow setting the kubernetes version in the node group if a custom launch template is used.
+    }
+
+    if (launchTemplate?.imageId) {
+        // EKS doesn't allow setting the kubernetes version in the node group if an image id is provided within the launch template.
         delete nodeGroupArgs.version;
     }
 
@@ -1843,9 +1846,9 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         {
             userData,
             metadataOptions,
-            // We need to always supply an imageId, otherwise AWS will attempt to merge the user data which will result in
+            // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
             // nodes failing to join the cluster.
-            imageId: getRecommendedAMI(args, core.cluster.version, parent),
+            imageId: userData ? getRecommendedAMI(args, core.cluster.version, parent) : undefined,
         },
         { parent, provider },
     );
