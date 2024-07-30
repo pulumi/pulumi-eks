@@ -116,9 +116,9 @@ func programTestWithExtraOptions(t *testing.T, opts programTestExtraOptions) {
 	destroyStack := func() {
 		destroyErr := pt.TestLifeCycleDestroy()
 		if opts.IgnoreDestroyErrors {
-			assert.NoError(t, destroyErr)
-		} else {
 			t.Logf("IgnoreDestroyErrors: ignoring %v", destroyErr)
+		} else {
+			assert.NoError(t, destroyErr)
 		}
 	}
 
