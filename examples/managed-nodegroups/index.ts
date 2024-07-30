@@ -69,3 +69,10 @@ const managedNodeGroup2 = eks.createManagedNodeGroup(
   },
   cluster
 );
+
+// Create a simple AWS managed node group with IMDSv2 enabled
+const managedNodeGroup3 = eks.createManagedNodeGroup("example-managed-ng3", {
+  cluster: cluster,
+  nodeRole: role2,
+  enableIMDSv2: true,
+});
