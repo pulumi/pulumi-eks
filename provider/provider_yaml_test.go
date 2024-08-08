@@ -21,19 +21,37 @@ func TestEksAuthModeUpgrade(t *testing.T) {
 name: eksClusterAuthModeUpgrade
 runtime: yaml
 resources:
+  Vpc:
+    type: awsx:ec2:Vpc
+    properties:
+      subnetSpecs:
+        - type: Public
+      natGateways:
+        strategy: None
   EksCluster:
     type: eks:Cluster
     properties:
+      vpcId: ${Vpc.vpcId}
       skipDefaultNodeGroup: true
+      publicSubnetIds: ${Vpc.publicSubnetIds}
 `
 	const secondYaml = `
 name: eksClusterAuthModeUpgrade
 runtime: yaml
 resources:
+  Vpc:
+    type: awsx:ec2:Vpc
+    properties:
+      subnetSpecs:
+        - type: Public
+      natGateways:
+        strategy: None
   EksCluster:
     type: eks:Cluster
     properties:
+      vpcId: ${Vpc.vpcId}
       skipDefaultNodeGroup: true
+      publicSubnetIds: ${Vpc.publicSubnetIds}
       authenticationMode: CONFIG_MAP
 `
 
