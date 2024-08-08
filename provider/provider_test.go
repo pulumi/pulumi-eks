@@ -1,16 +1,20 @@
 package provider
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"fmt"
+
 	"github.com/pulumi/providertest"
 	"github.com/pulumi/providertest/optproviderupgrade"
 	"github.com/pulumi/providertest/pulumitest"
 	"github.com/pulumi/providertest/pulumitest/assertpreview"
+	"github.com/pulumi/providertest/pulumitest/optnewstack"
 	"github.com/pulumi/providertest/pulumitest/opttest"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
 	"github.com/stretchr/testify/require"
 )
 
@@ -156,4 +160,130 @@ func testProviderUpgrade(t *testing.T, example string) {
 		optproviderupgrade.DisableAttach(),
 	)
 	assertpreview.HasNoReplacements(t, result)
+}
+
+type testProviderCodeChangesOptions struct {
+	region               string
+	firstProgram         []byte
+	secondProgram        []byte
+	firstProgramOptions  []opttest.Option
+	secondProgramOptions []opttest.Option
+}
+
+// testProviderCodeChanges tests two different runs of a pulumi program. This allow you to run
+// pulumi up with an initial program, change the code of the program and then run another pulumi command
+func testProviderCodeChanges(t *testing.T, opts *testProviderCodeChangesOptions) *pulumitest.PulumiTest {
+	if testing.Short() {
+		t.Skip("Skipping provider tests in short mode")
+	}
+	t.Parallel()
+	t.Helper()
+
+	workdir := t.TempDir()
+	cacheDir := filepath.Join("testdata", "recorded", "TestProviderUpgrade", t.Name())
+	err := os.MkdirAll(cacheDir, 0755)
+	require.NoError(t, err)
+	stackExportFile := filepath.Join(cacheDir, "stack.json")
+
+	err = os.WriteFile(filepath.Join(workdir, "Pulumi.yaml"), opts.firstProgram, 0o600)
+	require.NoError(t, err)
+
+	options := []opttest.Option{
+		opttest.SkipInstall(),
+		opttest.NewStackOptions(optnewstack.DisableAutoDestroy()),
+	}
+
+	if opts.firstProgramOptions != nil {
+		options = append(options, opts.firstProgramOptions...)
+	}
+
+	pt := pulumitest.NewPulumiTest(t, workdir, options...)
+	region := "us-west-2"
+	if opts != nil && opts.region != "" {
+		region = opts.region
+	}
+	pt.SetConfig("aws:region", region)
+
+	var export *apitype.UntypedDeployment
+	export, err = tryReadStackExport(stackExportFile)
+	if err != nil {
+		pt.Up()
+		grpcLog := pt.GrpcLog()
+		grpcLogPath := filepath.Join(cacheDir, "grpc.json")
+		t.Logf("writing grpc log to %s", grpcLogPath)
+		err = grpcLog.WriteTo(grpcLogPath)
+		require.NoError(t, err)
+
+		e := pt.ExportStack()
+		export = &e
+		err = writeStackExport(stackExportFile, export, true)
+		require.NoError(t, err)
+	}
+
+	secondOptions := []opttest.Option{
+		opttest.SkipInstall(),
+		opttest.NewStackOptions(optnewstack.EnableAutoDestroy()),
+	}
+
+	if opts.secondProgramOptions != nil {
+		secondOptions = append(options, opts.secondProgramOptions...)
+	}
+	err = os.WriteFile(filepath.Join(workdir, "Pulumi.yaml"), opts.secondProgram, 0o600)
+	require.NoError(t, err)
+	secondTest := pulumitest.NewPulumiTest(t, workdir, secondOptions...)
+	secondTest.SetConfig("aws:region", region)
+	secondTest.ImportStack(*export)
+
+	return secondTest
+}
+
+// writeStackExport writes the stack export to the given path creating any directories needed.
+func writeStackExport(path string, snapshot *apitype.UntypedDeployment, overwrite bool) error {
+	if snapshot == nil {
+		return fmt.Errorf("stack export must not be nil")
+	}
+	dir := filepath.Dir(path)
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		return err
+	}
+	stackBytes, err := json.MarshalIndent(snapshot, "", "  ")
+	if err != nil {
+		return err
+	}
+	pathExists, err := exists(path)
+	if err != nil {
+		return err
+	}
+	if pathExists && !overwrite {
+		return fmt.Errorf("stack export already exists at %s", path)
+	}
+	//nolint:gosec // 0644 is the correct permission for this file
+	return os.WriteFile(path, stackBytes, 0644)
+}
+
+// tryReadStackExport reads a stack export from the given file path.
+// If the file does not exist, returns nil, nil.
+func tryReadStackExport(path string) (*apitype.UntypedDeployment, error) {
+	stackBytes, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read stack export at %s: %v", path, err)
+	}
+	var stackExport apitype.UntypedDeployment
+	err = json.Unmarshal(stackBytes, &stackExport)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal stack export at %s: %v", path, err)
+	}
+	return &stackExport, nil
+}
+
+func exists(filePath string) (bool, error) {
+	_, err := os.Stat(filePath)
+	switch {
+	case err == nil:
+		return true, nil
+	case !os.IsNotExist(err):
+		return false, err
+	}
+	return false, nil
 }

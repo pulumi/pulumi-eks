@@ -620,6 +620,10 @@ export function createCore(
         {
             parent,
             provider: args.creationRoleProvider ? args.creationRoleProvider.provider : provider,
+            // ignore changes to the bootstrapClusterCreatorAdminPermissions field because it has bi-modal default behavior
+            // in upstream and would cause replacements for users upgrading from older versions of the EKS provider (<=2.7.3).
+            // See https://github.com/pulumi/pulumi-aws/issues/3997#issuecomment-2223201333 for more details.
+            ignoreChanges: ["accessConfig.bootstrapClusterCreatorAdminPermissions"],
         },
     );
 
