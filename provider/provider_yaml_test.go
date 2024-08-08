@@ -38,8 +38,8 @@ resources:
 `
 
 	var (
-		providerName    string = "eks"
-		baselineVersion string = "2.7.3"
+		providerName    = "eks"
+		baselineVersion = "2.7.3"
 	)
 	cwd, err := os.Getwd()
 	assert.NoError(t, err)

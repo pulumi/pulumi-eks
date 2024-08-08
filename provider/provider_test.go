@@ -211,7 +211,8 @@ func testProviderCodeChanges(t *testing.T, opts *testProviderCodeChangesOptions)
 		grpcLog := pt.GrpcLog()
 		grpcLogPath := filepath.Join(cacheDir, "grpc.json")
 		t.Logf("writing grpc log to %s", grpcLogPath)
-		grpcLog.WriteTo(grpcLogPath)
+		err = grpcLog.WriteTo(grpcLogPath)
+		require.NoError(t, err)
 
 		e := pt.ExportStack()
 		export = &e
@@ -257,6 +258,7 @@ func writeStackExport(path string, snapshot *apitype.UntypedDeployment, overwrit
 	if pathExists && !overwrite {
 		return fmt.Errorf("stack export already exists at %s", path)
 	}
+	//nolint:gosec // 0644 is the correct permission for this file
 	return os.WriteFile(path, stackBytes, 0644)
 }
 
