@@ -1,0 +1,3 @@
+name: managed-ng-disk-size
+description: Tests that disk size can be specified correctly when a custom launch template is automatically created.
+runtime: nodejs

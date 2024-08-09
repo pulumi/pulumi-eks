@@ -1742,6 +1742,9 @@ function createManagedNodeGroupInternal(
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
     if (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2) {
         launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
+
+        // Disk size is specified in the launch template.
+        delete nodeGroupArgs.diskSize;
     }
 
     if (launchTemplate?.imageId) {
@@ -1841,9 +1844,19 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
         : undefined;
 
+    const blockDeviceMappings = [
+        {
+            deviceName: "/dev/xvda",
+            ebs: {
+                volumeSize: args.diskSize
+            },
+        },
+    ];
+
     return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
         {
+            blockDeviceMappings,
             userData,
             metadataOptions,
             // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
