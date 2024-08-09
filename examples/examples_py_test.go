@@ -46,7 +46,7 @@ func TestAccAwsProfilePy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccAwsProfileRolePy(t *testing.T) {
@@ -61,7 +61,7 @@ func TestAccAwsProfileRolePy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccClusterPy(t *testing.T) {
@@ -96,14 +96,7 @@ func TestAccClusterPy(t *testing.T) {
 			},
 		})
 
-	programTestWithExtraOptions(t, programTestExtraOptions{
-		ProgramTestOptions: test,
-
-		// TODO[pulumi/pulumi-eks#1226]: Deleting an eks.Cluster may fail with DependencyViolation on nodeSecurityGroup
-		// Try destroying the cluster to keep the test account clean but do not fail the test if it fails to destroy.
-		// This weakens the test but makes CI deterministic.
-		IgnoreDestroyErrors: true,
-	})
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccFargatePy(t *testing.T) {
@@ -119,7 +112,7 @@ func TestAccFargatePy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccNodeGroupPy(t *testing.T) {
@@ -137,7 +130,7 @@ func TestAccNodeGroupPy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccManagedNodeGroupPy(t *testing.T) {
@@ -153,7 +146,7 @@ func TestAccManagedNodeGroupPy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func getPythonBaseOptions(t *testing.T) integration.ProgramTestOptions {
