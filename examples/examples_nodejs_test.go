@@ -448,7 +448,6 @@ func TestAccTagInputTypes(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-
 func TestAccNodegroupOptions(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{

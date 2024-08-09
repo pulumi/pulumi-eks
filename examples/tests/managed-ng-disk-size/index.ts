@@ -16,6 +16,6 @@ export const kubeconfig = cluster.kubeconfig;
 eks.createManagedNodeGroup(`${projectName}-managed-ng`, {
     cluster: cluster,
     // Force creating a custom launch template
-    bootstrapExtraArgs: " ",
+    bootstrapExtraArgs: "--max-pods=500",
     diskSize: 50,
 });

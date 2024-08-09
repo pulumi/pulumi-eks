@@ -466,6 +466,7 @@ jobs:
           - MigrateNodeGroups
           - MNG_withAwsAuth
           - MNG_withMissingRole
+          - MNG_DiskSize
           - MultiRole
           - NodeGroup
           - NodegroupOptions
