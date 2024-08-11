@@ -239,6 +239,20 @@ func TestAccMNG_DiskSize(t *testing.T) {
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig"],
 				)
+
+				assert.NoError(t, utils.ValidateNodes(t, info.Outputs["kubeconfig"], func(nodes *corev1.NodeList) {
+					require.NotNil(t, nodes)
+					assert.NotEmpty(t, nodes.Items)
+
+					for _, node := range nodes.Items {
+						nodeEphemeralStorage := node.Status.Capacity[corev1.ResourceEphemeralStorage]
+
+						// Defined in test managed-ng-disk-size
+						var desiredSizeGB int64 = 50
+						assert.True(t, nodeEphemeralStorage.CmpInt64(desiredSizeGB*1_000_000_000) >= 0)
+					}
+
+				}))
 			},
 		})
 
