@@ -38,7 +38,7 @@ func TestAccClusterCs(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func getCSBaseOptions(t *testing.T) integration.ProgramTestOptions {

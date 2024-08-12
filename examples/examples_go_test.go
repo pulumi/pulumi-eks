@@ -52,7 +52,7 @@ func TestAccClusterGo(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 	// Ensure that the provider error message is as expected.
 	assert.Contains(t, stdErr.String(), "not supported")
 }
@@ -74,7 +74,7 @@ func TestAccExtraSecurityGroupsGo(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
