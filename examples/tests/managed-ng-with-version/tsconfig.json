@@ -16,8 +16,7 @@
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "forceConsistentCasingInFileNames": true,
-        "strictNullChecks": true,
-        "skipLibCheck": true
+        "strictNullChecks": true
     },
     "files": [
         "index.ts"

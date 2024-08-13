@@ -22,7 +22,8 @@ export const CONFIG_MAP = "CONFIG_MAP";
 export const API_AND_CONFIG_MAP = "API_AND_CONFIG_MAP";
 export const API = "API";
 
-export function validateAuthenticationMode(args: ClusterOptions) {
+export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOptions {
+    const args = clusterOptionsShallowCopy(rawArgs);
     if (
         args.authenticationMode &&
         args.authenticationMode !== CONFIG_MAP &&
@@ -34,24 +35,23 @@ export function validateAuthenticationMode(args: ClusterOptions) {
         );
     }
 
-    const configMapOnlyProperties: (keyof ClusterOptions)[] = [
-        "roleMappings",
-        "userMappings",
-        "instanceRoles",
-    ];
-    const apiOnlyProperties: (keyof ClusterOptions)[] = ["accessEntries"];
-
     if (!supportsConfigMap(args.authenticationMode)) {
-        configMapOnlyProperties.forEach((prop) => {
-            if (args[prop]) {
+        const checkNonEmpty: (prop: keyof ClusterOptions) => (_: any|undefined) => void = (prop) => (pv) => {
+            if (pv !== undefined && pv.length !== 0) {
                 throw new Error(
-                    `The '${prop}' property is not supported when 'authenticationMode' is set to '${args.authenticationMode}'.`,
+                    `The '${prop}' property does not support non-empty values when 'authenticationMode' is set to `+
+                        `'${args.authenticationMode}'.`,
                 );
             }
-        });
+        };
+
+        args.roleMappings = validatedInput(args.roleMappings, checkNonEmpty("roleMappings"));
+        args.userMappings = validatedInput(args.userMappings, checkNonEmpty("userMappings"));
+        args.instanceRoles = validatedInput(args.instanceRoles, checkNonEmpty("instanceRoles"));
     }
 
     if (!supportsAccessEntries(args.authenticationMode)) {
+        const apiOnlyProperties: (keyof ClusterOptions)[] = ["accessEntries"];
         apiOnlyProperties.forEach((prop) => {
             if (args[prop]) {
                 const errorMsg =
@@ -64,6 +64,38 @@ export function validateAuthenticationMode(args: ClusterOptions) {
             }
         });
     }
+    return args;
+}
+
+// Validate promptly if possible, otherwise validate in the Promise chain underlying the Output and ensure that the
+// input is gated on the validation. Unfortunately since apply always unwraps, the validate function required here needs
+// to be able to handle both unwrapped and normal forms.
+function validatedInput<T>(
+    i: pulumi.Input<T>|undefined,
+    validate: (value: T|pulumi.Unwrap<T>|undefined) => void
+): pulumi.Input<T>|undefined {
+    if (i instanceof Promise) {
+        return pulumi.output(i).apply(value => {
+            validate(value);
+            return i;
+        });
+    } else if (pulumi.Output.isInstance(i)) {
+        return i.apply(value => {
+            validate(value);
+            return i;
+        });
+    } else if (i === undefined) {
+        validate(undefined);
+        return undefined;
+    } else {
+        validate(i);
+        return i;
+    }
+}
+
+// Create a shallow copy of ClusterOptions.
+function clusterOptionsShallowCopy(args: ClusterOptions): ClusterOptions {
+    return Object.assign({}, args);
 }
 
 export function supportsConfigMap(authenticationMode: string | undefined) {

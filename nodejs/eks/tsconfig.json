@@ -33,6 +33,10 @@
         "cmd/provider/index.ts",
         "cmd/provider/nodegroup.ts",
         "cmd/provider/randomSuffix.ts",
-        "cmd/provider/securitygroup.ts"
+        "cmd/provider/securitygroup.ts",
+
+        "authenticationMode.test.ts",
+        "dependencies.test.ts",
+        "nodegroup.test.ts",
     ]
 }
