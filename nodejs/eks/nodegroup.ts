@@ -1839,14 +1839,14 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
         : undefined;
 
-    const blockDeviceMappings = [
+    const blockDeviceMappings = args.diskSize ? [
         {
             deviceName: "/dev/xvda",
             ebs: {
                 volumeSize: args.diskSize
             },
         },
-    ];
+    ] : undefined;
 
     return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
