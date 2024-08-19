@@ -1,0 +1,3 @@
+name: managed-ng-with-version
+description: Tests that the versions of managed node groups can be configured
+runtime: nodejs

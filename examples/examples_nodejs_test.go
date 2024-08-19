@@ -106,7 +106,7 @@ func TestAccCluster(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccKubernetesServiceIPv4RangeForCluster(t *testing.T) {
@@ -122,7 +122,7 @@ func TestAccKubernetesServiceIPv4RangeForCluster(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccFargate(t *testing.T) {
@@ -143,7 +143,7 @@ func TestAccFargate(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccNodeGroup(t *testing.T) {
@@ -168,7 +168,7 @@ func TestAccNodeGroup(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccManagedNodeGroup(t *testing.T) {
@@ -184,7 +184,7 @@ func TestAccManagedNodeGroup(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccMNG_withMissingRole(t *testing.T) {
@@ -197,7 +197,7 @@ func TestAccMNG_withMissingRole(t *testing.T) {
 			Quick:            true,
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccMNG_withAwsAuth(t *testing.T) {
@@ -224,7 +224,7 @@ func TestAccMNG_withAwsAuth(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccMNG_DiskSize(t *testing.T) {
@@ -272,7 +272,7 @@ func TestAccTags(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccStorageClasses(t *testing.T) {
@@ -288,7 +288,7 @@ func TestAccStorageClasses(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccOidcIam(t *testing.T) {
@@ -303,7 +303,7 @@ func TestAccOidcIam(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccScopedKubeconfig(t *testing.T) {
@@ -319,7 +319,7 @@ func TestAccScopedKubeconfig(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccAwsProfile(t *testing.T) {
@@ -341,7 +341,7 @@ func TestAccAwsProfile(t *testing.T) {
 			NoParallel: true,
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccAwsProfileRole(t *testing.T) {
@@ -356,7 +356,7 @@ func TestAccAwsProfileRole(t *testing.T) {
 			},
 			NoParallel: true,
 		})
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccEncryptionProvider(t *testing.T) {
@@ -374,7 +374,7 @@ func TestAccEncryptionProvider(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccExtraSecurityGroups(t *testing.T) {
@@ -392,7 +392,7 @@ func TestAccExtraSecurityGroups(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccReplaceSecGroup(t *testing.T) {
@@ -417,7 +417,7 @@ func TestAccReplaceSecGroup(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccReplaceClusterAddSubnets(t *testing.T) {
@@ -441,7 +441,7 @@ func TestAccReplaceClusterAddSubnets(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccTagInputTypes(t *testing.T) {
@@ -459,7 +459,7 @@ func TestAccTagInputTypes(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccNodegroupOptions(t *testing.T) {
@@ -474,7 +474,7 @@ func TestAccNodegroupOptions(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccImportDefaultEksSecgroup(t *testing.T) {
@@ -504,7 +504,7 @@ func TestAccImportDefaultEksSecgroup(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccVpcSubnetTags(t *testing.T) {
@@ -522,7 +522,7 @@ func TestAccVpcSubnetTags(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccMigrateNodeGroups(t *testing.T) {
@@ -647,7 +647,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
@@ -737,7 +737,7 @@ func TestAccAuthenticationMode(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccMultiRole(t *testing.T) {
@@ -756,7 +756,7 @@ func TestAccMultiRole(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccAuthenticationModeMigration(t *testing.T) {
@@ -810,7 +810,7 @@ func TestAccAuthenticationModeMigration(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccManagedNodeGroupCustom(t *testing.T) {
@@ -841,5 +841,23 @@ func TestAccManagedNodeGroupCustom(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
+}
+
+func TestAccManagedNodeGroupWithVersion(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "managed-ng-with-version"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
 }
