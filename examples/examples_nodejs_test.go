@@ -256,7 +256,7 @@ func TestAccMNG_DiskSize(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccTags(t *testing.T) {
