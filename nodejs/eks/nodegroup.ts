@@ -1846,6 +1846,7 @@ Content-Type: text/x-shellscript; charset="us-ascii"
 
     const blockDeviceMappings = args.diskSize ? [
         {
+            // /dev/xvda is the default device name for the root volume on an Amazon Linux 2 & AL2023 instance.
             deviceName: "/dev/xvda",
             ebs: {
                 volumeSize: args.diskSize
