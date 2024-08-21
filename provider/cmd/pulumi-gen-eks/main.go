@@ -2134,7 +2134,7 @@ func genDotNet(pkg *schema.Package, outdir string) {
 }
 
 func genGo(pkg *schema.Package, outdir string) {
-	files, err := gogen.GeneratePackage(Tool, pkg)
+	files, err := gogen.GeneratePackage(Tool, pkg, map[string]string{})
 	if err != nil {
 		panic(err)
 	}
