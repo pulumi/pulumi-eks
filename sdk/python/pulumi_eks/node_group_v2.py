@@ -702,7 +702,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  bootstrap_extra_args: Optional[str] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
+                 cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enable_detailed_monitoring: Optional[pulumi.Input[bool]] = None,
@@ -731,7 +731,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
-                 taints: Optional[Mapping[str, pulumi.InputType['TaintArgs']]] = None,
+                 taints: Optional[Mapping[str, Union['TaintArgs', 'TaintArgsDict']]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
@@ -761,7 +761,7 @@ class NodeGroupV2(pulumi.ComponentResource):
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cloud_formation_tags: The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
-        :param pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]] cluster: The target EKS cluster.
+        :param pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]] cluster: The target EKS cluster.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroupRule'] cluster_ingress_rule: The ingress rule that gives node group access.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] enable_detailed_monitoring: Enables/disables detailed monitoring of the EC2 instances.
@@ -819,7 +819,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
-        :param Mapping[str, pulumi.InputType['TaintArgs']] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
+        :param Mapping[str, Union['TaintArgs', 'TaintArgsDict']] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         """
         ...
@@ -851,7 +851,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  bootstrap_extra_args: Optional[str] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
+                 cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enable_detailed_monitoring: Optional[pulumi.Input[bool]] = None,
@@ -880,7 +880,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
-                 taints: Optional[Mapping[str, pulumi.InputType['TaintArgs']]] = None,
+                 taints: Optional[Mapping[str, Union['TaintArgs', 'TaintArgsDict']]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)

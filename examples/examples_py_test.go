@@ -46,7 +46,7 @@ func TestAccAwsProfilePy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccAwsProfileRolePy(t *testing.T) {
@@ -61,7 +61,7 @@ func TestAccAwsProfileRolePy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccClusterPy(t *testing.T) {
@@ -96,7 +96,7 @@ func TestAccClusterPy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccFargatePy(t *testing.T) {
@@ -112,7 +112,7 @@ func TestAccFargatePy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccNodeGroupPy(t *testing.T) {
@@ -130,7 +130,7 @@ func TestAccNodeGroupPy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func TestAccManagedNodeGroupPy(t *testing.T) {
@@ -146,7 +146,7 @@ func TestAccManagedNodeGroupPy(t *testing.T) {
 			},
 		})
 
-	integration.ProgramTest(t, &test)
+	programTestWithExtraOptions(t, &test, nil)
 }
 
 func getPythonBaseOptions(t *testing.T) integration.ProgramTestOptions {

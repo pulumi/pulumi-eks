@@ -1777,6 +1777,14 @@ function createManagedNodeGroupInternal(
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
     if (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2 || args.gpu || args.amiId || args.amiType) {
         launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
+
+        // Disk size is specified in the launch template.
+        delete nodeGroupArgs.diskSize;
+    }
+
+    if (launchTemplate?.imageId) {
+        // EKS doesn't allow setting the kubernetes version in the node group if an image id is provided within the launch template.
+        delete nodeGroupArgs.version;
     }
 
     // Make the aws-auth configmap a dependency of the node group.
@@ -1871,14 +1879,25 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
         : undefined;
 
+    const blockDeviceMappings = args.diskSize ? [
+        {
+            // /dev/xvda is the default device name for the root volume on an Amazon Linux 2 & AL2023 instance.
+            deviceName: "/dev/xvda",
+            ebs: {
+                volumeSize: args.diskSize
+            },
+        },
+    ] : undefined;
+
     return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
         {
+            blockDeviceMappings,
             userData,
             metadataOptions,
-            // We need to always supply an imageId, otherwise AWS will attempt to merge the user data which will result in
+            // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
             // nodes failing to join the cluster.
-            imageId: getRecommendedAMI(args, core.cluster.version, parent),
+            imageId: userData ? getRecommendedAMI(args, core.cluster.version, parent) : undefined,
         },
         { parent, provider },
     );
@@ -1902,7 +1921,10 @@ function getRecommendedAMI(
     const instanceType = "instanceType" in args ? args.instanceType : undefined;
 
     const amiType = getAMIType(args.amiType, gpu, instanceType);
-    const amiID = pulumi.output([k8sVersion, amiType]).apply(([version, type]) => {
+    // if specified use the version from the args, otherwise use the version from the cluster.
+    const version = args.version ? args.version : k8sVersion;
+
+    const amiID = pulumi.output([version, amiType]).apply(([version, type]) => {
         const parameterName = `/aws/service/eks/optimized-ami/${version}/${type}/recommended/image_id`;
         return pulumi.output(aws.ssm.getParameter({ name: parameterName }, { parent, async: true }))
             .value;

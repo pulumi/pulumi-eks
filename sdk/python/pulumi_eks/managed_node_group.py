@@ -444,7 +444,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  ami_type: Optional[pulumi.Input[str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
-                 cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
+                 cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
                  enable_imd_sv2: Optional[bool] = None,
@@ -478,7 +478,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                
                Note that this field conflicts with `launchTemplate`.
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
-        :param pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]] cluster: The target EKS cluster.
+        :param pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]] cluster: The target EKS cluster.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
         :param bool enable_imd_sv2: Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
@@ -550,7 +550,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  ami_type: Optional[pulumi.Input[str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
-                 cluster: Optional[pulumi.Input[Union['Cluster', pulumi.InputType['CoreDataArgs']]]] = None,
+                 cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
                  enable_imd_sv2: Optional[bool] = None,

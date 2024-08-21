@@ -396,7 +396,7 @@ export function getRoleProvider(
  */
 export function createCore(
     name: string,
-    args: ClusterOptions,
+    rawArgs: ClusterOptions,
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): CoreData {
@@ -407,7 +407,7 @@ export function createCore(
     // k8s resources later.
     assertCompatibleKubectlVersionExists();
 
-    validateAuthenticationMode(args);
+    const args = validateAuthenticationMode(rawArgs);
 
     if (args.instanceRole && args.instanceRoles) {
         throw new Error(
@@ -620,6 +620,10 @@ export function createCore(
         {
             parent,
             provider: args.creationRoleProvider ? args.creationRoleProvider.provider : provider,
+            // ignore changes to the bootstrapClusterCreatorAdminPermissions field because it has bi-modal default behavior
+            // in upstream and would cause replacements for users upgrading from older versions of the EKS provider (<=2.7.3).
+            // See https://github.com/pulumi/pulumi-aws/issues/3997#issuecomment-2223201333 for more details.
+            ignoreChanges: ["accessConfig.bootstrapClusterCreatorAdminPermissions"],
         },
     );
 

@@ -1078,13 +1078,13 @@ class Cluster(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 access_entries: Optional[Mapping[str, pulumi.InputType['AccessEntryArgs']]] = None,
+                 access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
-                 creation_role_provider: Optional[pulumi.InputType['CreationRoleProviderArgs']] = None,
+                 creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enable_config_map_mutable: Optional[pulumi.Input[bool]] = None,
@@ -1092,7 +1092,7 @@ class Cluster(pulumi.ComponentResource):
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
                  endpoint_private_access: Optional[pulumi.Input[bool]] = None,
                  endpoint_public_access: Optional[pulumi.Input[bool]] = None,
-                 fargate: Optional[pulumi.Input[Union[bool, pulumi.InputType['FargateProfileArgs']]]] = None,
+                 fargate: Optional[pulumi.Input[Union[bool, Union['FargateProfileArgs', 'FargateProfileArgsDict']]]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
                  instance_profile_name: Optional[pulumi.Input[str]] = None,
                  instance_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
@@ -1105,7 +1105,7 @@ class Cluster(pulumi.ComponentResource):
                  name: Optional[pulumi.Input[str]] = None,
                  node_ami_id: Optional[pulumi.Input[str]] = None,
                  node_associate_public_ip_address: Optional[bool] = None,
-                 node_group_options: Optional[pulumi.InputType['ClusterNodeGroupOptionsArgs']] = None,
+                 node_group_options: Optional[Union['ClusterNodeGroupOptionsArgs', 'ClusterNodeGroupOptionsArgsDict']] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
                  node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
@@ -1113,20 +1113,20 @@ class Cluster(pulumi.ComponentResource):
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  private_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 provider_credential_opts: Optional[pulumi.Input[pulumi.InputType['KubeconfigOptionsArgs']]] = None,
+                 provider_credential_opts: Optional[pulumi.Input[Union['KubeconfigOptionsArgs', 'KubeconfigOptionsArgsDict']]] = None,
                  proxy: Optional[str] = None,
                  public_access_cidrs: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  public_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]]] = None,
+                 role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[Union['RoleMappingArgs', 'RoleMappingArgsDict']]]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[bool] = None,
-                 storage_classes: Optional[Union[str, Mapping[str, pulumi.InputType['StorageClassArgs']]]] = None,
+                 storage_classes: Optional[Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  use_default_vpc_cni: Optional[bool] = None,
-                 user_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['UserMappingArgs']]]]] = None,
+                 user_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[Union['UserMappingArgs', 'UserMappingArgsDict']]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
-                 vpc_cni_options: Optional[pulumi.InputType['VpcCniOptionsArgs']] = None,
+                 vpc_cni_options: Optional[Union['VpcCniOptionsArgs', 'VpcCniOptionsArgsDict']] = None,
                  vpc_id: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
@@ -1152,7 +1152,7 @@ class Cluster(pulumi.ComponentResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param Mapping[str, pulumi.InputType['AccessEntryArgs']] access_entries: Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
+        :param Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']] access_entries: Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
                
                See for more details:
                https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
@@ -1174,7 +1174,7 @@ class Cluster(pulumi.ComponentResource):
                 - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
                 - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
                 - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
-        :param pulumi.InputType['CreationRoleProviderArgs'] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+        :param Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict'] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
                
                Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
@@ -1191,7 +1191,7 @@ class Cluster(pulumi.ComponentResource):
                - https://aws.amazon.com/about-aws/whats-new/2020/03/amazon-eks-adds-envelope-encryption-for-secrets-with-aws-kms/
         :param pulumi.Input[bool] endpoint_private_access: Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default is `false`.
         :param pulumi.Input[bool] endpoint_public_access: Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`.
-        :param pulumi.Input[Union[bool, pulumi.InputType['FargateProfileArgs']]] fargate: Add support for launching pods in Fargate. Defaults to launching pods in the `default` namespace.  If specified, the default node group is skipped as though `skipDefaultNodeGroup: true` had been passed.
+        :param pulumi.Input[Union[bool, Union['FargateProfileArgs', 'FargateProfileArgsDict']]] fargate: Add support for launching pods in Fargate. Defaults to launching pods in the `default` namespace.  If specified, the default node group is skipped as though `skipDefaultNodeGroup: true` had been passed.
         :param pulumi.Input[bool] gpu: Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
                
                Defaults to false.
@@ -1237,7 +1237,7 @@ class Cluster(pulumi.ComponentResource):
                See for more details:
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
         :param bool node_associate_public_ip_address: Whether or not to auto-assign the EKS worker nodes public IP addresses. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
-        :param pulumi.InputType['ClusterNodeGroupOptionsArgs'] node_group_options: The common configuration settings for NodeGroups.
+        :param Union['ClusterNodeGroupOptionsArgs', 'ClusterNodeGroupOptionsArgsDict'] node_group_options: The common configuration settings for NodeGroups.
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
@@ -1263,7 +1263,7 @@ class Cluster(pulumi.ComponentResource):
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
                
                Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.
-        :param pulumi.Input[pulumi.InputType['KubeconfigOptionsArgs']] provider_credential_opts: The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.
+        :param pulumi.Input[Union['KubeconfigOptionsArgs', 'KubeconfigOptionsArgsDict']] provider_credential_opts: The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.
                
                This is required for certain auth scenarios. For example:
                - Creating and using a new AWS provider instance, or
@@ -1305,10 +1305,10 @@ class Cluster(pulumi.ComponentResource):
                   - Default all worker nodes to run in private subnets, and use the public subnets for internet-facing load balancers.
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
-        :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
+        :param pulumi.Input[Sequence[pulumi.Input[Union['RoleMappingArgs', 'RoleMappingArgsDict']]]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
         :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-        :param Union[str, Mapping[str, pulumi.InputType['StorageClassArgs']]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
+        :param Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
                
                Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
         :param pulumi.Input[Sequence[pulumi.Input[str]]] subnet_ids: The set of all subnets, public and private, to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
@@ -1322,9 +1322,9 @@ class Cluster(pulumi.ComponentResource):
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
         :param bool use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
-        :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['UserMappingArgs']]]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
+        :param pulumi.Input[Sequence[pulumi.Input[Union['UserMappingArgs', 'UserMappingArgsDict']]]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
-        :param pulumi.InputType['VpcCniOptionsArgs'] vpc_cni_options: The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
+        :param Union['VpcCniOptionsArgs', 'VpcCniOptionsArgsDict'] vpc_cni_options: The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
         :param pulumi.Input[str] vpc_id: The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the default VPC.
         """
         ...
@@ -1369,13 +1369,13 @@ class Cluster(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 access_entries: Optional[Mapping[str, pulumi.InputType['AccessEntryArgs']]] = None,
+                 access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
-                 creation_role_provider: Optional[pulumi.InputType['CreationRoleProviderArgs']] = None,
+                 creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enable_config_map_mutable: Optional[pulumi.Input[bool]] = None,
@@ -1383,7 +1383,7 @@ class Cluster(pulumi.ComponentResource):
                  encryption_config_key_arn: Optional[pulumi.Input[str]] = None,
                  endpoint_private_access: Optional[pulumi.Input[bool]] = None,
                  endpoint_public_access: Optional[pulumi.Input[bool]] = None,
-                 fargate: Optional[pulumi.Input[Union[bool, pulumi.InputType['FargateProfileArgs']]]] = None,
+                 fargate: Optional[pulumi.Input[Union[bool, Union['FargateProfileArgs', 'FargateProfileArgsDict']]]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
                  instance_profile_name: Optional[pulumi.Input[str]] = None,
                  instance_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
@@ -1396,7 +1396,7 @@ class Cluster(pulumi.ComponentResource):
                  name: Optional[pulumi.Input[str]] = None,
                  node_ami_id: Optional[pulumi.Input[str]] = None,
                  node_associate_public_ip_address: Optional[bool] = None,
-                 node_group_options: Optional[pulumi.InputType['ClusterNodeGroupOptionsArgs']] = None,
+                 node_group_options: Optional[Union['ClusterNodeGroupOptionsArgs', 'ClusterNodeGroupOptionsArgsDict']] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
                  node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
                  node_root_volume_size: Optional[pulumi.Input[int]] = None,
@@ -1404,20 +1404,20 @@ class Cluster(pulumi.ComponentResource):
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  private_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 provider_credential_opts: Optional[pulumi.Input[pulumi.InputType['KubeconfigOptionsArgs']]] = None,
+                 provider_credential_opts: Optional[pulumi.Input[Union['KubeconfigOptionsArgs', 'KubeconfigOptionsArgsDict']]] = None,
                  proxy: Optional[str] = None,
                  public_access_cidrs: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  public_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['RoleMappingArgs']]]]] = None,
+                 role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[Union['RoleMappingArgs', 'RoleMappingArgsDict']]]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[bool] = None,
-                 storage_classes: Optional[Union[str, Mapping[str, pulumi.InputType['StorageClassArgs']]]] = None,
+                 storage_classes: Optional[Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  use_default_vpc_cni: Optional[bool] = None,
-                 user_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['UserMappingArgs']]]]] = None,
+                 user_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[Union['UserMappingArgs', 'UserMappingArgsDict']]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
-                 vpc_cni_options: Optional[pulumi.InputType['VpcCniOptionsArgs']] = None,
+                 vpc_cni_options: Optional[Union['VpcCniOptionsArgs', 'VpcCniOptionsArgsDict']] = None,
                  vpc_id: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
