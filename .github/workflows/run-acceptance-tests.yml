@@ -421,37 +421,20 @@ jobs:
         run: |
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
+      - name: Generate go test Slice
+        id: test_split
+        uses: hashicorp-forge/go-test-split-action@v1
+        with:
+          flags: -tags=nodejs
+          total: ${{ matrix.parallel }}
+          index: ${{ matrix.index }}
       - name: Run tests
-        run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=nodejs
+        run: cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 12 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
     strategy:
       fail-fast: false
       matrix:
-        test-name:
-          - AwsProfile
-          - AuthenticationMode
-          - Cluster
-          - CNIAcrossUpdates
-          - EncryptionProvider
-          - ExtraSecurityGroups
-          - Fargate
-          - ImportDefaultEksSecgroup
-          - KubernetesServiceIPv4RangeForCluster
-          - ManagedNodeGroup
-          - MigrateNodeGroups
-          - MNG_withAwsAuth
-          - MNG_withMissingRole
-          - MNG_DiskSize
-          - MultiRole
-          - NodeGroup
-          - NodegroupOptions
-          - OidcIam
-          - ReplaceClusterAddSubnets
-          - ReplaceSecGroup
-          - ScopedKubeconfig
-          - StorageClasses
-          - TagInputTypes
-          - Tags
-          - VpcSubnetTags
+        parallel: [12]
+        index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
   test-python:
     name: Run Python Tests
     needs:
@@ -548,18 +531,20 @@ jobs:
         run: |
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
+      - name: Generate go test Slice
+        id: test_split
+        uses: hashicorp-forge/go-test-split-action@v1
+        with:
+          flags: -tags=python
+          total: ${{ matrix.parallel }}
+          index: ${{ matrix.index }}
       - name: Run tests
-        run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=python
+        run: cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel 12 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
     strategy:
       fail-fast: false
       matrix:
-        test-name:
-          - AwsProfilePy
-          - AwsProfileRolePy
-          - ClusterPy
-          - FargatePy
-          - NodeGroupPy
-          - ManagedNodeGroupPy
+        parallel: [5]
+        index: [0, 1, 2, 3, 4]
   test-dotnet:
     name: Run DotNet Tests
     needs:
@@ -658,12 +643,7 @@ jobs:
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=dotnet
-    strategy:
-      fail-fast: false
-      matrix:
-        test-name:
-          - ClusterCs
+        run: cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel 12 . 2>&1 | tee /tmp/gotest.log | gotestfmt
   test-go:
     name: Run Go Tests
     needs:
@@ -759,9 +739,4 @@ jobs:
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: make specific_test TestName=${{ matrix.test-name }} LanguageTags=go
-    strategy:
-      fail-fast: false
-      matrix:
-        test-name:
-          - ClusterGo
+        run: cd examples && go test -tags=go -v -json -count=1 -cover -timeout 3h -parallel 12 . 2>&1 | tee /tmp/gotest.log | gotestfmt
