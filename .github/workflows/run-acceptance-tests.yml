@@ -425,7 +425,7 @@ jobs:
         id: test_split
         uses: hashicorp-forge/go-test-split-action@v1
         with:
-          working-directory: examples
+          working-directory: ${{ github.workspace }}/examples
           flags: -tags=nodejs
           total: ${{ matrix.parallel }}
           index: ${{ matrix.index }}
@@ -536,7 +536,7 @@ jobs:
         id: test_split
         uses: hashicorp-forge/go-test-split-action@v1
         with:
-          working-directory: examples
+          working-directory: ${{ github.workspace }}/examples
           flags: -tags=python
           total: ${{ matrix.parallel }}
           index: ${{ matrix.index }}
