@@ -71,18 +71,11 @@ func providerPluginPathEnv() (string, error) {
 		return "", err
 	}
 
-	// Test build of testvpc plugin.
-	testPluginDir := filepath.Join("utils", "testvpc")
-	absTestPluginDir, err := filepath.Abs(testPluginDir)
-	if err != nil {
-		return "", err
-	}
-
 	pathSeparator := ":"
 	if runtime.GOOS == "windows" {
 		pathSeparator = ";"
 	}
-	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir, nil
+	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir, nil
 	// return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir + pathSeparator + absProviderDir, nil
 }
 

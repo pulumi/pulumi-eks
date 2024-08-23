@@ -1,12 +1,13 @@
 import pulumi
 import pulumi_eks as eks
-
-from vpc import Vpc
+import pulumi_awsx as awsx
 
 project_name = pulumi.get_project()
 
 # Create an EKS cluster with the fargate configuration.
-vpc = Vpc(project_name)
+vpc = awsx.ec2.Vpc(project_name,
+    tags={"Name": project_name}
+)
 cluster = eks.Cluster(project_name,
                       vpc_id=vpc.vpc_id,
                       private_subnet_ids=vpc.private_subnet_ids,
