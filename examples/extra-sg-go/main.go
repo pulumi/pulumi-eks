@@ -67,11 +67,10 @@ func main() {
 		if err != nil {
 			return err
 		}
-		role1, err := createRole(ctx, "example-role1")
-		if err != nil {
-			return err
-		}
-		role2, err := createRole(ctx, "example-role2")
+
+		instanceProfile, err := iam.NewInstanceProfile(ctx, "instance-profile", &iam.InstanceProfileArgs{
+			Role: role0.Name,
+		})
 		if err != nil {
 			return err
 		}
@@ -81,8 +80,6 @@ func main() {
 			SkipDefaultNodeGroup: &t,
 			InstanceRoles: iam.RoleArray{
 				role0,
-				role1,
-				role2,
 			},
 		})
 		if err != nil {
@@ -111,6 +108,7 @@ func main() {
 					cluster.NodeSecurityGroup, // Input type
 					customSG,                  // Plain type
 				},
+				InstanceProfile: instanceProfile,
 			})
 		if err != nil {
 			return err
