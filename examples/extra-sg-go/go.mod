@@ -1,8 +1,6 @@
 module github.com/pulumi/pulumi-eks/examples/managed-nodegroups-go
 
-go 1.21.12
-
-toolchain go1.22.6
+go 1.21
 
 require (
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.50.1
