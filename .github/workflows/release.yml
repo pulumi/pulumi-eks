@@ -453,7 +453,7 @@ jobs:
           total: ${{ matrix.parallel }}
           index: ${{ matrix.index }}
       - name: Run tests
-        run: cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 12 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
     strategy:
       fail-fast: false
       max-parallel: 10
@@ -564,7 +564,7 @@ jobs:
           total: ${{ matrix.parallel }}
           index: ${{ matrix.index }}
       - name: Run tests
-        run: cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel 12 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
     strategy:
       fail-fast: false
       max-parallel: 4
@@ -668,7 +668,7 @@ jobs:
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel 12 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
   test-go:
     name: Run Go Tests
     needs:
@@ -764,7 +764,7 @@ jobs:
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: cd examples && go test -tags=go -v -json -count=1 -cover -timeout 3h -parallel 12 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd examples && go test -tags=go -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
   publish_go_sdk:
     name: publish_go_sdk
     needs:
