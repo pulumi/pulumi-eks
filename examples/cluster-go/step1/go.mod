@@ -3,7 +3,7 @@ module github.com/pulumi/pulumi-eks/examples/cluster-go
 go 1.21
 
 require (
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.9.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.50.1
 	github.com/pulumi/pulumi-eks/sdk/v2 v2.0.0
 	github.com/pulumi/pulumi/sdk/v3 v3.93.0
 )
