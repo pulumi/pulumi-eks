@@ -424,8 +424,8 @@ jobs:
       - name: Generate go test Slice
         id: test_split
         uses: hashicorp-forge/go-test-split-action@v1
-        working-directory: ${{ github.workspace }}/examples
         with:
+          working-directory: ${{ github.workspace }}/examples
           flags: -tags=nodejs
           total: ${{ matrix.parallel }}
           index: ${{ matrix.index }}
@@ -535,8 +535,8 @@ jobs:
       - name: Generate go test Slice
         id: test_split
         uses: hashicorp-forge/go-test-split-action@v1
-        working-directory: ${{ github.workspace }}/examples
         with:
+          working-directory: ${{ github.workspace }}/examples
           flags: -tags=python
           total: ${{ matrix.parallel }}
           index: ${{ matrix.index }}
