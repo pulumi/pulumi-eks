@@ -4,13 +4,15 @@ import pulumi
 import pulumi_aws as aws
 import pulumi_eks as eks
 import pulumi_kubernetes as k8s
+import pulumi_awsx as awsx
 
-from vpc import Vpc
 
 project_name = pulumi.get_project()
 
 # Create a new VPC.
-vpc = Vpc(project_name)
+vpc = awsx.ec2.Vpc(project_name,
+    tags={"Name": project_name}
+)
 
 # Create a new IAM role on the account caller to use as a cluster admin.
 account_id = aws.get_caller_identity().account_id
