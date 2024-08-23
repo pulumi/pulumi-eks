@@ -75,7 +75,7 @@ func providerPluginPathEnv() (string, error) {
 	if runtime.GOOS == "windows" {
 		pathSeparator = ";"
 	}
-	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir, nil
+	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir, nil
 	// return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir + pathSeparator + absProviderDir, nil
 }
 
