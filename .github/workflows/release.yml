@@ -195,6 +195,7 @@ jobs:
       - test-nodejs
       - test-python
       - test-dotnet
+      - test-go
     runs-on: ubuntu-latest
     env:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
