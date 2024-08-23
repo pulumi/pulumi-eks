@@ -1,0 +1,14 @@
+{
+    "name": "managed-ng-ami-options",
+    "devDependencies": {
+        "typescript": "^4.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "^3.0.0",
+        "@pulumi/aws": "^6.0.0",
+        "@pulumi/eks": "latest",
+        "@pulumi/awsx": "^2.0.0",
+        "@aws-sdk/client-ssm": "^3.637.0"
+    }
+}

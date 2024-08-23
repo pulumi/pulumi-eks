@@ -735,6 +735,21 @@ func generateSchema() schema.PackageSpec {
 							"(https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) " +
 							"for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.",
 					},
+					"amiId": {
+					    TypeSpec: schema.TypeSpec{Type: "string"},
+					    Description: "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended " +
+                            "EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.\n\nNote: " +
+                            "`amiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n" +
+                            "- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.",
+					},
+					"gpu": {
+					    TypeSpec: schema.TypeSpec{Type: "boolean"},
+                        Description: "Use the latest recommended EKS Optimized Linux AMI with GPU support for the " +
+                            "worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\n" +
+                            "Note: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details:\n" +
+                            "- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n" +
+                            "- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html",
+                    },
 					"capacityType": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "Type of capacity associated with the EKS Node Group. " +

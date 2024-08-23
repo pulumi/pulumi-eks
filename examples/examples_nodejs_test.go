@@ -259,6 +259,48 @@ func TestAccMNG_DiskSize(t *testing.T) {
 	programTestWithExtraOptions(t, &test, nil)
 }
 
+func TestAccMNG_Gpu(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "nodegroup-options"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
+func TestAccMNG_AmiOptions(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "managed-ng-ami-options", "ami-id"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+			EditDirs: []integration.EditDir{
+				{
+					Dir: path.Join(getCwd(t), "managed-ng-ami-options", "gpu"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
 func TestAccTags(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{

@@ -1,0 +1,3 @@
+name: managed-ng-ami-options
+description: Tests that various AMI related options can be set on managed nodegroup.
+runtime: nodejs
