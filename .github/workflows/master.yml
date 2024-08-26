@@ -429,7 +429,7 @@ jobs:
         with:
           working-directory: examples
           flags: -tags=nodejs
-          total: ${{ matrix.parallel }}
+          total: ${{ matrix.total }}
           index: ${{ matrix.index }}
       - name: Run tests
         run: cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
@@ -540,7 +540,7 @@ jobs:
         with:
           working-directory: examples
           flags: -tags=python
-          total: ${{ matrix.parallel }}
+          total: ${{ matrix.total }}
           index: ${{ matrix.index }}
       - name: Run tests
         run: cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
