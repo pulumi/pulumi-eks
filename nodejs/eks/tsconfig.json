@@ -37,6 +37,6 @@
 
         "authenticationMode.test.ts",
         "dependencies.test.ts",
-        "nodegroup.test.ts",
+        "nodegroup.test.ts"
     ]
 }

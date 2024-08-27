@@ -2095,32 +2095,6 @@ func rawMessage(v interface{}) schema.RawMessage {
 	return bytes
 }
 
-func readSchema(schemaPath string, version string) *schema.Package {
-	// Read in, decode, and import the schema.
-	schemaBytes, err := os.ReadFile(schemaPath)
-	if err != nil {
-		panic(err)
-	}
-
-	var pkgSpec schema.PackageSpec
-	if err = json.Unmarshal(schemaBytes, &pkgSpec); err != nil {
-		panic(err)
-	}
-	pkgSpec.Version = version
-
-	pkg, err := schema.ImportSpec(pkgSpec, nil)
-	if err != nil {
-		panic(err)
-	}
-	return pkg
-}
-
-func mustWriteFiles(rootDir string, files map[string][]byte) {
-	for filename, contents := range files {
-		mustWriteFile(rootDir, filename, contents)
-	}
-}
-
 func mustWriteFile(rootDir, filename string, contents []byte) {
 	outPath := filepath.Join(rootDir, filename)
 

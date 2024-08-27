@@ -1844,15 +1844,17 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
         : undefined;
 
-    const blockDeviceMappings = args.diskSize ? [
-        {
-            // /dev/xvda is the default device name for the root volume on an Amazon Linux 2 & AL2023 instance.
-            deviceName: "/dev/xvda",
-            ebs: {
-                volumeSize: args.diskSize
-            },
-        },
-    ] : undefined;
+    const blockDeviceMappings = args.diskSize
+        ? [
+              {
+                  // /dev/xvda is the default device name for the root volume on an Amazon Linux 2 & AL2023 instance.
+                  deviceName: "/dev/xvda",
+                  ebs: {
+                      volumeSize: args.diskSize,
+                  },
+              },
+          ]
+        : undefined;
 
     return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
