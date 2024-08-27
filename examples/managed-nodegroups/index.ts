@@ -6,6 +6,8 @@ import * as iam from "./iam";
 const role0 = iam.createRole("example-role0");
 const role1 = iam.createRole("example-role1");
 const role2 = iam.createRole("example-role2");
+const role3 = iam.createRole("example-role3");
+const role4 = iam.createRole("example-role4");
 
 // Create a new VPC
 const eksVpc = new awsx.ec2.Vpc("eks-vpc", {
@@ -73,6 +75,15 @@ const managedNodeGroup2 = eks.createManagedNodeGroup(
 // Create a simple AWS managed node group with IMDSv2 enabled
 const managedNodeGroup3 = eks.createManagedNodeGroup("example-managed-ng3", {
   cluster: cluster,
-  nodeRole: role2,
+  nodeRole: role3,
   enableIMDSv2: true,
+});
+
+// Node Group with graviton instances
+const managedNodeGroup4 = eks.createManagedNodeGroup("example-managed-ng4", {
+  cluster: cluster,
+  nodeRole: role4,
+  kubeletExtraArgs: "--max-pods=500",
+  enableIMDSv2: true,
+  instanceTypes: ["t4g.medium"],
 });

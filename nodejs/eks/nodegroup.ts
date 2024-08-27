@@ -1844,15 +1844,17 @@ Content-Type: text/x-shellscript; charset="us-ascii"
         ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
         : undefined;
 
-    const blockDeviceMappings = args.diskSize ? [
-        {
-            // /dev/xvda is the default device name for the root volume on an Amazon Linux 2 & AL2023 instance.
-            deviceName: "/dev/xvda",
-            ebs: {
-                volumeSize: args.diskSize
-            },
-        },
-    ] : undefined;
+    const blockDeviceMappings = args.diskSize
+        ? [
+              {
+                  // /dev/xvda is the default device name for the root volume on an Amazon Linux 2 & AL2023 instance.
+                  deviceName: "/dev/xvda",
+                  ebs: {
+                      volumeSize: args.diskSize,
+                  },
+              },
+          ]
+        : undefined;
 
     return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
@@ -1883,9 +1885,15 @@ function getRecommendedAMI(
     parent: pulumi.Resource | undefined,
 ): pulumi.Input<string> {
     const gpu = "gpu" in args ? args.gpu : undefined;
-    const instanceType = "instanceType" in args ? args.instanceType : undefined;
 
-    const amiType = getAMIType(args.amiType, gpu, instanceType);
+    let instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined;
+    if ("instanceType" in args && args.instanceType) {
+        instanceTypes = [args.instanceType];
+    } else if ("instanceTypes" in args) {
+        instanceTypes = args.instanceTypes;
+    }
+
+    const amiType = getAMIType(args.amiType, gpu, instanceTypes);
     // if specified use the version from the args, otherwise use the version from the cluster.
     const version = args.version ? args.version : k8sVersion;
 
@@ -1930,14 +1938,20 @@ export function isGravitonInstance(instanceType: string): boolean {
 
 /**
  * getAMIType returns the AMI type to use for the given configuration based on the
- * architecutre of the instance type.
+ * architecture of the instance type.
  */
 function getAMIType(
     amiType: pulumi.Input<string> | undefined,
     gpu: pulumi.Input<boolean> | undefined,
-    instanceType: pulumi.Input<string> | undefined,
+    instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined,
 ): pulumi.Output<string> {
-    return pulumi.all([amiType, gpu, instanceType]).apply(([amiType, gpu, instanceType]) => {
+    const architecture = pulumi.output(instanceTypes).apply((instanceTypes) => {
+        return pulumi
+            .all(instanceTypes ?? [])
+            .apply((instanceTypes) => getArchitecture(instanceTypes));
+    });
+
+    return pulumi.all([amiType, gpu, architecture]).apply(([amiType, gpu, architecture]) => {
         if (amiType) {
             // Return the user-specified AMI type.
             return amiType;
@@ -1948,11 +1962,42 @@ function getAMIType(
             return "amazon-linux-2-gpu";
         }
 
-        if (instanceType && isGravitonInstance(instanceType)) {
+        if (architecture === "arm64") {
             // Return the Amazon Linux 2 ARM64 AMI type.
             return "amazon-linux-2-arm64";
         }
 
         return "amazon-linux-2";
     });
+}
+
+type NodeArchitecture = "arm64" | "x86_64";
+
+/**
+ * Determines the architecture based on the provided instance types. Defaults to "x86_64" if no instance types are provided.
+ *
+ * @param instanceTypes - An array of instance types.
+ * @returns The architecture of the instance types, either "arm64" or "x86_64".
+ * @throws {pulumi.ResourceError} If the provided instance types do not share a common architecture.
+ */
+export function getArchitecture(instanceTypes: string[]): NodeArchitecture {
+    let hasGravitonInstances = false;
+    let hasX64Instances = false;
+
+    instanceTypes.forEach((instanceType) => {
+        if (isGravitonInstance(instanceType)) {
+            hasGravitonInstances = true;
+        } else {
+            hasX64Instances = true;
+        }
+
+        if (hasGravitonInstances && hasX64Instances) {
+            throw new pulumi.ResourceError(
+                "Cannot determine architecture of instance types. The provided instance types do not share a common architecture",
+                undefined,
+            );
+        }
+    });
+
+    return hasGravitonInstances ? "arm64" : "x86_64";
 }

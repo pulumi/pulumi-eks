@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import { isGravitonInstance } from "./nodegroup";
+import { getArchitecture } from "./nodegroup";
 
 const gravitonInstances = [
     "c6g.12xlarge",
@@ -309,6 +310,34 @@ describe("isGravitonInstance", () => {
     nonGravitonInstances.forEach((instanceType) => {
         test(`${instanceType} should return false for non-Graviton instance`, () => {
             expect(isGravitonInstance(instanceType)).toBe(false);
+        });
+    });
+    describe("getArchitecture", () => {
+        test("should return 'x86_64' when only x86_64 instances are provided", () => {
+            const instanceTypes = ["c5.large", "m5.large", "t3.large"];
+            const architecture = getArchitecture(instanceTypes);
+            expect(architecture).toBe("x86_64");
+        });
+
+        test("should return 'arm64' when only arm64 instances are provided", () => {
+            const instanceTypes = ["c6g.large", "m6g.large", "t4g.large"];
+            const architecture = getArchitecture(instanceTypes);
+            expect(architecture).toBe("arm64");
+        });
+
+        test("should throw an error when both x86_64 and arm64 instances are provided", () => {
+            const instanceTypes = ["c5.large", "c6g.large"];
+            expect(() => {
+                getArchitecture(instanceTypes);
+            }).toThrowError(
+                "Cannot determine architecture of instance types. The provided instance types do not share a common architecture",
+            );
+        });
+
+        test("should return 'x86_64' when no instance types are provided", () => {
+            const instanceTypes: string[] = [];
+            const architecture = getArchitecture(instanceTypes);
+            expect(architecture).toBe("x86_64");
         });
     });
 });
