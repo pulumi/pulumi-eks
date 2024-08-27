@@ -1,4 +1,5 @@
 import * as aws from "@pulumi/aws";
+import * as k8s from '@pulumi/kubernetes';
 import * as eks from "@pulumi/eks";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -13,6 +14,7 @@ interface NodeGroupArgs {
 export function createNodeGroup(
     name: string,
     args: NodeGroupArgs,
+    k8sProvider: k8s.Provider,
 ): eks.NodeGroup {
     return new eks.NodeGroup(name, {
         cluster: args.cluster,
@@ -26,6 +28,6 @@ export function createNodeGroup(
         instanceProfile: args.instanceProfile,
         taints: args.taints,
     }, {
-        providers: { kubernetes: args.cluster.provider},
+        providers: { kubernetes: k8sProvider},
     });
 }

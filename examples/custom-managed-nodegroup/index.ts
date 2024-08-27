@@ -17,17 +17,16 @@ const eksVpc = new awsx.ec2.Vpc("eks-vpc", {
 // Create an EKS cluster.
 const cluster = new eks.Cluster("example-managed-nodegroup", {
   skipDefaultNodeGroup: true,
-  deployDashboard: false,
   vpcId: eksVpc.vpcId,
   // Public subnets will be used for load balancers
   publicSubnetIds: eksVpc.publicSubnetIds,
   // Private subnets will be used for cluster nodes
   privateSubnetIds: eksVpc.privateSubnetIds,
-  authenticationMode: eks.AuthenticationMode.API,
+  authenticationMode: eks.AuthenticationMode.Api,
   accessEntries: {
     instanceRole: {
       principalArn: instanceRole.arn,
-      type: eks.AccessEntryType.EC2_LINUX,
+      type: eks.AccessEntryType.EC2Linux,
     }
   }
 });
@@ -64,7 +63,7 @@ export const launchTemplateName = launchTemplate.name;
 
 // Create a simple AWS managed node group using a cluster as input and the
 // refactored API.
-const managedNodeGroup = eks.createManagedNodeGroup("example-managed-ng", {
+new eks.ManagedNodeGroup('example-managed-ng', {
   cluster: cluster,
   nodeRole: instanceRole,
   launchTemplate: {

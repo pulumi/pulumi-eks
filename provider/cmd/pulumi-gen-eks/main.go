@@ -1677,6 +1677,28 @@ func generateSchema() schema.PackageSpec {
 					"com.pulumi:kubernetes": "4.4.0",
 				},
 			}),
+			"nodejs": rawMessage(map[string]interface{}{
+				"respectSchemaVersion": true,
+				"dependencies": map[string]string{
+					"@pulumi/aws":        "^6.18.2",
+					"@pulumi/kubernetes": "^4.1.1",
+					"@pulumi/pulumi":     "^3.47.0",
+					"https-proxy-agent":  "^5.0.1",
+					"jest":               "^29.7.0",
+					"js-yaml":            "^4.1.0",
+					"netmask":            "^2.0.2",
+					"semver":             "^7.3.7",
+					"which":              "^1.3.1",
+				},
+				"devDependencies": map[string]string{
+					"@types/js-yaml": "^4.0.5",
+					"@types/netmask": "^1.0.30",
+					"@types/node":    "^18.11.13",
+					"@types/semver":  "^7.3.10",
+					"typescript":     "^4.6.2",
+					"@types/which":   "^1.3.1",
+				},
+			}),
 		},
 	}
 }

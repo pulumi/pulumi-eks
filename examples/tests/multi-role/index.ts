@@ -40,7 +40,7 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     skipDefaultNodeGroup: true,
-    authenticationMode: eks.AuthenticationMode.API,
+    authenticationMode: eks.AuthenticationMode.Api,
     instanceRole: role0,
     storageClasses: {
         "mygp2": {
@@ -69,7 +69,8 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
     }
 });
 
-cluster.createNodeGroup("example-ng-simple-ondemand", {
+new eks.NodeGroup("example-ng-simple-ondemand", {
+    cluster,
     instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,

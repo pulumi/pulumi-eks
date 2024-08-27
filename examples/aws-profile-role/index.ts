@@ -63,14 +63,14 @@ export const kubeconfig = cluster.kubeconfig;
 
 // Create a role-based kubeconfig with the named profile and the new
 // role mapped into the cluster's RBAC.
-const roleKubeconfigOpts: eks.KubeconfigOptions = {
+const roleKubeconfigOpts: eks.types.input.KubeconfigOptionsArgs = {
     profileName: aws.config.profile,
     roleArn: clusterAdminRole.arn,
 };
 export const roleKubeconfig = cluster.getKubeconfig(roleKubeconfigOpts);
 const roleProvider = new k8s.Provider("provider", {
-    kubeconfig: roleKubeconfig,
-}, {dependsOn: [cluster.provider]});
+    kubeconfig: roleKubeconfig.result,
+}, {dependsOn: [cluster]});
 
 // Create a pod with the role-based kubeconfig.
 const pod = new k8s.core.v1.Pod("nginx", {

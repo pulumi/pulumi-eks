@@ -51,7 +51,7 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
     minSize: 1,
     maxSize: 2,
     instanceRole: role0,
-    authenticationMode: eks.AuthenticationMode.CONFIG_MAP,
+    authenticationMode: eks.AuthenticationMode.ConfigMap,
     roleMappings: [
         {
             roleArn: iamRole.arn,
@@ -61,7 +61,8 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
     ],
 });
 
-cluster.createNodeGroup("example-ng-simple-ondemand", {
+new eks.NodeGroup("example-ng-simple-ondemand", {
+    cluster,
     instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,

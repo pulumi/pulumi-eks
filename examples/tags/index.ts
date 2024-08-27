@@ -1,4 +1,5 @@
 import * as aws from "@pulumi/aws";
+import * as k8s from '@pulumi/kubernetes';
 import * as eks from "@pulumi/eks";
 import * as iam from "./iam";
 
@@ -16,7 +17,6 @@ const cluster1 = new eks.Cluster("example-tags-cluster1", {
     clusterSecurityGroupTags: { "myClusterSecurityGroupTag1": "true" },
     nodeSecurityGroupTags: { "myNodeSecurityGroupTag1": "true" },
     clusterTags: { "myClusterTag1": "true" },
-    deployDashboard: false,
 });
 
 // Export the cluster's kubeconfig.
@@ -27,7 +27,6 @@ const role0 = iam.createRole("example-tags-role0");
 const instanceProfile0 = new aws.iam.InstanceProfile("example-tags-instanceProfile0", {role: role0});
 const cluster2 = new eks.Cluster("example-tags-cluster2", {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     instanceRole: role0,
     tags: {
         "project": "foo",
@@ -44,7 +43,8 @@ const cluster2 = new eks.Cluster("example-tags-cluster2", {
 // 3. A `NodeGroupV2` resource which accepts an `eks.Cluster` as input
 
 // Create the node group using an on-demand instance and resource tags.
-cluster2.createNodeGroup("example-ng-tags-ondemand", {
+new eks.NodeGroup("example-ng-tags-ondemand", {
+    cluster: cluster2,
     instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
@@ -54,6 +54,10 @@ cluster2.createNodeGroup("example-ng-tags-ondemand", {
     instanceProfile: instanceProfile0,
     cloudFormationTags: { "myCloudFormationTag2": "true" },
 });
+
+const provider = new k8s.Provider('k8s-eks', {
+    kubeconfig: cluster2.kubeconfig,
+})
 
 // Create the second node group using a spot price instance, resource tags, and
 // specialized resource tags such as the autoScalingGroupTags.
@@ -79,7 +83,7 @@ const spot = new eks.NodeGroup("example-ng-tags-spot", {
         [`k8s.io/cluster-autoscaler/${clusterName}`]: "true",
     })),
 }, {
-    providers: { kubernetes: cluster2.provider},
+    providers: { kubernetes: provider},
 });
 
 const ng2 = new eks.NodeGroupV2("example-ng-tags-ng2", {

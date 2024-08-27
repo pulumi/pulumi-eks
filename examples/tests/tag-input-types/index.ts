@@ -1,4 +1,5 @@
 import * as aws from "@pulumi/aws";
+import * as k8s from '@pulumi/kubernetes';
 import * as eks from "@pulumi/eks";
 import * as pulumi from "@pulumi/pulumi";
 import * as iam from "./iam";
@@ -10,7 +11,6 @@ const instanceProfile0 = new aws.iam.InstanceProfile("instanceProfile0", {role: 
 // Create an EKS cluster with varying, specialized resource tags.
 const cluster1 = new eks.Cluster("test-tag-input-types", {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     instanceRole: role0,
     tags: {
         "project": "foo",
@@ -29,13 +29,17 @@ const autoScalingGroupTags: pulumi.Input<{ [key: string]: pulumi.Input<string> }
     [`k8s.io/cluster-autoscaler/${clusterName}`]: "true",
     "k8s.io/cluster-autoscaler/enabled": "true",
 }));
+
+const provider = new k8s.Provider('k8s-eks', {
+    kubeconfig: cluster1.kubeconfig,
+})
 const ng = new eks.NodeGroup("test-tag-input-types-ondemand", {
     cluster: cluster1,
     instanceProfile: instanceProfile0,
     autoScalingGroupTags: autoScalingGroupTags,
     cloudFormationTags: { "myCloudFormationTag1": "true" },
 }, {
-    providers: { kubernetes: cluster1.provider},
+    providers: { kubernetes: provider},
 });
 
 export const kubeconfig = cluster1.kubeconfig;

@@ -15,7 +15,6 @@ const projectName = pulumi.getProject();
 
 const cluster = new eks.Cluster(`${projectName}`, {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     vpcId: eksVpc.vpcId,
     // Public subnets will be used for load balancers
     publicSubnetIds: eksVpc.publicSubnetIds,
@@ -28,7 +27,7 @@ const cluster = new eks.Cluster(`${projectName}`, {
 export const kubeconfig = cluster.kubeconfig;
 
 // Create a managed node group using a cluster as input.
-eks.createManagedNodeGroup(`${projectName}-managed-ng`, {
+new eks.ManagedNodeGroup(`${projectName}-managed-ng`, {
     cluster: cluster,
     nodeRole: role,
     // Force creating a custom launch template

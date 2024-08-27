@@ -1,4 +1,5 @@
 import * as aws from "@pulumi/aws";
+import * as k8s from '@pulumi/kubernetes';
 import * as eks from "@pulumi/eks";
 import * as iam from "./iam";
 
@@ -20,7 +21,6 @@ const instanceProfile0 = new aws.iam.InstanceProfile("example-instanceProfile0",
 // cluster auth.
 const cluster1 = new eks.Cluster("example-nodegroup-iam-simple", {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     nodeAmiId: "ami-0384725f0d30527c7",
     instanceRole: role0,
 });
@@ -31,7 +31,8 @@ const cluster1 = new eks.Cluster("example-nodegroup-iam-simple", {
 
 // Create the node group using an `instanceProfile` tied to the shared, cluster
 // instance role registered with the cluster auth through `instanceRole`.
-cluster1.createNodeGroup("example-ng-simple-ondemand", {
+new eks.NodeGroup("example-ng-simple-ondemand", {
+    cluster: cluster1,
     instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
@@ -50,6 +51,10 @@ const ng = new eks.NodeGroupV2("example-ng2-simple-ondemand", {
     amiId: "ami-0384725f0d30527c7",
     labels: {"ondemand": "true"},
     instanceProfile: instanceProfile0,
+});
+
+const provider = new k8s.Provider('k8s-eks', {
+    kubeconfig: cluster1.kubeconfig,
 });
 
 // Create the second node group with spot t3.medium instance
@@ -71,7 +76,7 @@ const spot = new eks.NodeGroup("example-ng-simple-spot", {
     bootstrapExtraArgs: "--aws-api-retry-attempts 10",
     instanceProfile: instanceProfile0,
 }, {
-    providers: { kubernetes: cluster1.provider},
+    providers: { kubernetes: provider},
 });
 
 const withLaunchTemplateTagSpecifications = new eks.NodeGroupV2("example-ng2-launchtemplate-tags", {
@@ -117,14 +122,14 @@ const instanceProfile3 = new aws.iam.InstanceProfile("example-instanceProfile3",
 // Create an EKS cluster with many IAM roles to register with the cluster auth.
 const cluster2 = new eks.Cluster("example-nodegroup-iam-advanced", {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     instanceRoles: [role1, role2, role3],
     nodeAmiId: "ami-0384725f0d30527c7",
 });
 
 // Create node groups using a different `instanceProfile` tied to one of the many
 // instance roles registered with the cluster auth through `instanceRoles`.
-cluster2.createNodeGroup("example-ng-advanced-ondemand", {
+new eks.NodeGroup("example-ng-advanced-ondemand", {
+    cluster: cluster2,
     instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
@@ -145,6 +150,10 @@ const ng2 = new eks.NodeGroupV2("example-ng-advanced-ondemand", {
     instanceProfile: instanceProfile2,
 });
 
+const provider2 = new k8s.Provider('k8s-eks2', {
+    kubeconfig: cluster2.kubeconfig,
+});
+
 const spot2 = new eks.NodeGroup("example-ng-advanced-spot", {
     cluster: cluster2,
     instanceType: "t3.medium",
@@ -162,7 +171,7 @@ const spot2 = new eks.NodeGroup("example-ng-advanced-spot", {
     },
     instanceProfile: instanceProfile3,
 }, {
-    providers: { kubernetes: cluster2.provider},
+    providers: { kubernetes: provider2},
 });
 
 

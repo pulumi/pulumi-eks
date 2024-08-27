@@ -1,4 +1,5 @@
 import * as aws from "@pulumi/aws";
+import * as k8s from '@pulumi/kubernetes';
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 import * as pulumi from "@pulumi/pulumi";
@@ -25,7 +26,7 @@ const testCluster = new eks.Cluster(`${projectName}`, {
 // Create an external nodeSecurityGroup for the NodeGroup and set up its rules.
 const secgroupName = `${projectName}-extNodeSecurityGroup`;
 const nodeSecurityGroup = secgroup.createNodeGroupSecurityGroup(secgroupName, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     clusterSecurityGroup: testCluster.clusterSecurityGroup,
     eksCluster: testCluster.core.cluster,
 }, testCluster);
@@ -39,6 +40,10 @@ const eksClusterIngressRule = new aws.ec2.SecurityGroupRule(`${secgroupName}-eks
     sourceSecurityGroupId: nodeSecurityGroup.id,
 }, { parent: testCluster });
 
+const provider = new k8s.Provider('k8s-eks', {
+    kubeconfig: testCluster.kubeconfig,
+});
+
 // Create a node group.
 const ng = new eks.NodeGroup(`${projectName}-ng`, {
     cluster: testCluster,
@@ -47,7 +52,7 @@ const ng = new eks.NodeGroup(`${projectName}-ng`, {
     instanceProfile: instanceProfile,
     instanceType: "t3.small",
 }, {
-    providers: { kubernetes: testCluster.provider},
+    providers: { kubernetes: provider},
 });
 
 // Export the cluster kubeconfig.

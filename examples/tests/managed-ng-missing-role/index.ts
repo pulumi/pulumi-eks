@@ -33,14 +33,13 @@ export function createRole(name: string): aws.iam.Role {
 // the managed node group below.
 const cluster = new eks.Cluster(`${projectName}`, {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
 });
 
 // Export the cluster's kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
 
 // Create a managed node group using a cluster as input.
-eks.createManagedNodeGroup(`${projectName}-managed-ng`, {
+new eks.ManagedNodeGroup(`${projectName}-managed-ng`, {
     cluster: cluster,
     nodeRole: createRole("role0"),
 });
