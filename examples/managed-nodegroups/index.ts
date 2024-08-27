@@ -76,3 +76,12 @@ const managedNodeGroup3 = eks.createManagedNodeGroup("example-managed-ng3", {
   nodeRole: role2,
   enableIMDSv2: true,
 });
+
+// Node Group with graviton instances
+const managedNodeGroup4 = eks.createManagedNodeGroup("example-managed-ng4", {
+  cluster: cluster,
+  nodeRole: role0,
+  kubeletExtraArgs: "--max-pods=500",
+  enableIMDSv2: true,
+  instanceTypes: ["t4g.medium"],
+});
