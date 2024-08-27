@@ -33,11 +33,10 @@ const kubeconfigOpts: eks.KubeconfigOptions = {profileName: profileName};
 // Create the cluster using the AWS provider and credential opts.
 const cluster = new eks.Cluster(`${projectName}`, {
     providerCredentialOpts: kubeconfigOpts,
-    deployDashboard: false,
 }, {provider: awsProvider});
 
 // Export the cluster kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
 
 // Export the cluster kubeconfig with the AWS_PROFILE set.
-export const kubeconfigWithProfile = cluster.getKubeconfig({profileName: profileName})
+export const kubeconfigWithProfile = cluster.getKubeconfig({profileName: profileName}).result;

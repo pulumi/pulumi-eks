@@ -34,12 +34,10 @@ import {
 } from "./authenticationMode";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
 import { VpcCni, VpcCniOptions } from "./cni";
-import { createDashboard } from "./dashboard";
 import { assertCompatibleAWSCLIExists, assertCompatibleKubectlVersionExists } from "./dependencies";
 import {
     computeWorkerSubnets,
     createNodeGroup,
-    NodeGroup,
     NodeGroupBaseOptions,
     NodeGroupData,
 } from "./nodegroup";
@@ -313,7 +311,7 @@ export class ClusterCreationRoleProvider
  * creationRoleProvider: ... })`.  This can be used to provide a specific role to use for the
  * creation of the EKS cluster different from the role being used to run the Pulumi deployment.
  */
-export function getRoleProvider(
+function getRoleProvider(
     name: string,
     region?: pulumi.Input<aws.Region>,
     profile?: pulumi.Input<string>,
@@ -1799,7 +1797,6 @@ export class Cluster extends pulumi.ComponentResource {
         const cluster = createCluster(name, this, args, opts);
         this.kubeconfig = cluster.kubeconfig;
         this.kubeconfigJson = cluster.kubeconfigJson;
-        this.provider = cluster.provider;
         this.clusterSecurityGroup = cluster.clusterSecurityGroup;
         this.instanceRoles = cluster.instanceRoles;
         this.nodeSecurityGroup = cluster.nodeSecurityGroup;
@@ -1812,32 +1809,6 @@ export class Cluster extends pulumi.ComponentResource {
             kubeconfig: this.kubeconfig,
             eksCluster: this.eksCluster,
         });
-    }
-
-    /**
-     * Create a self-managed node group using CloudFormation and an ASG.
-     *
-     * See for more details:
-     * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
-     */
-    createNodeGroup(name: string, args: ClusterNodeGroupOptions): NodeGroup {
-        const awsProvider = this.core.awsProvider ? { aws: this.core.awsProvider } : undefined;
-        return new NodeGroup(
-            name,
-            {
-                ...args,
-                cluster: this.core,
-                nodeSecurityGroup: this.core.nodeGroupOptions.nodeSecurityGroup,
-                clusterIngressRule: this.core.nodeGroupOptions.clusterIngressRule,
-            },
-            {
-                parent: this,
-                providers: {
-                    ...awsProvider,
-                    kubernetes: this.provider,
-                },
-            },
-        );
     }
 
     /**
@@ -1870,7 +1841,6 @@ export interface ClusterResult {
     kubeconfig: pulumi.Output<any>;
     kubeconfigJson: pulumi.Output<string>;
     awsProvider?: pulumi.ProviderResource;
-    provider: k8s.Provider;
     clusterSecurityGroup: aws.ec2.SecurityGroup;
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
     nodeSecurityGroup: aws.ec2.SecurityGroup;
@@ -1956,25 +1926,6 @@ export function createCluster(
     const kubeconfig = pulumi.all(configDeps).apply(([kc]) => kc);
     const kubeconfigJson = kubeconfig.apply(JSON.stringify);
 
-    // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
-    // in order to help ensure that worker nodes are available before the provider can be used.
-    const provider = new k8s.Provider(
-        `${name}-provider`,
-        {
-            kubeconfig: kubeconfigJson,
-        },
-        { parent: self },
-    );
-
-    // If we need to deploy the Kubernetes dashboard, do so now.
-    if (args.deployDashboard) {
-        pulumi.log.warn(
-            "Option `deployDashboard` has been deprecated. Please consider using the Helm chart, or writing the dashboard directly in Pulumi.",
-            core.cluster,
-        );
-        createDashboard(name, {}, self, provider);
-    }
-
     return {
         core,
         clusterSecurityGroup: core.clusterSecurityGroup,
@@ -1986,7 +1937,6 @@ export function createCluster(
         defaultNodeGroup,
         kubeconfig,
         kubeconfigJson,
-        provider,
     };
 }
 

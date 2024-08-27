@@ -10,7 +10,6 @@ const cluster = new eks.Cluster(`${projectName}`, {
     vpcId: vpc.vpcId,
     privateSubnetIds: vpc.privateSubnetIds,
     fargate: true,
-    deployDashboard: false,
 });
 
 // Export the clusters' kubeconfig.

@@ -26,7 +26,6 @@ export {
     CreationRoleProvider,
     ClusterCreationRoleProvider,
     ClusterCreationRoleProviderOptions,
-    getRoleProvider,
     KubeconfigOptions,
 } from "./cluster";
 export {
@@ -36,11 +35,10 @@ export {
     NodeGroupV2,
     NodeGroupOptions,
     NodeGroupData,
-    createManagedNodeGroup,
 } from "./nodegroup";
 export { VpcCni, VpcCniOptions } from "./cni";
-export { NodeGroupSecurityGroup, createNodeGroupSecurityGroup } from "./securitygroup";
-export { StorageClass, EBSVolumeType, createStorageClass } from "./storageclass";
+export { NodeGroupSecurityGroup } from "./securitygroup";
+export { StorageClass, EBSVolumeType } from "./storageclass";
 export { InputTags, UserStorageClasses } from "./utils";
 export { Addon, AddonOptions } from "./addon";
 export { AmiType, OperatingSystem } from "./ami";

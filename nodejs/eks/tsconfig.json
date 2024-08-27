@@ -22,7 +22,6 @@
         "cluster.ts",
         "cni.ts",
         "nodegroup.ts",
-        "dashboard.ts",
         "randomSuffix.ts",
         "securitygroup.ts",
         "index.ts",

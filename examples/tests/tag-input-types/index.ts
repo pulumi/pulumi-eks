@@ -10,7 +10,6 @@ const instanceProfile0 = new aws.iam.InstanceProfile("instanceProfile0", {role: 
 // Create an EKS cluster with varying, specialized resource tags.
 const cluster1 = new eks.Cluster("test-tag-input-types", {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     instanceRole: role0,
     tags: {
         "project": "foo",

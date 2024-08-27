@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        "outDir": "bin",
+        "target": "es2016",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "declaration": true,
+        "sourceMap": true,
+        "stripInternal": true,
+        "experimentalDecorators": true,
+        "noFallthroughCasesInSwitch": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true
+    },
+    "files": [
+        "addon.ts",
+        "cluster.ts",
+        "clusterCreationRoleProvider.ts",
+        "clusterMixins.ts",
+        "index.ts",
+        "managedNodeGroup.ts",
+        "nodeGroup.ts",
+        "nodeGroupSecurityGroup.ts",
+        "nodeGroupV2.ts",
+        "nodegroupMixins.ts",
+        "provider.ts",
+        "storageclassMixins.ts",
+        "types/enums/index.ts",
+        "types/index.ts",
+        "types/input.ts",
+        "types/output.ts",
+        "utilities.ts",
+        "vpcCni.ts"
+    ]
+}
