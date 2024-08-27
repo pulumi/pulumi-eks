@@ -51,7 +51,6 @@ build_nodejs::
 		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
 
 
-build_java:: PACKAGE_VERSION := ${VERSION_GENERIC}
 build_java:: .pulumi/bin/pulumi schema
 	rm -rf sdk/java
 	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language java --version "${VERSION_GENERIC}"
@@ -73,7 +72,7 @@ build_go:: .pulumi/bin/pulumi schema
 	rm -rf sdk/go
 	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language go --version "$(VERSION_GENERIC)"
 
-build_dotnet:: schema
+build_dotnet:: .pulumi/bin/pulumi schema
 	rm -rf sdk/dotnet
 	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language dotnet --version "$(VERSION_GENERIC)"
 	cd sdk/dotnet/ && \
