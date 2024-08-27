@@ -24,6 +24,7 @@ LOCAL_PLAT ?= ""
 
 PKG_ARGS   := --no-bytecode --public-packages "*" --public
 PKG_TARGET := ./bin/cmd/provider/index.js
+SCHEMA_PATH := provider/cmd/$(PROVIDER)/schema.json
 
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
@@ -31,6 +32,11 @@ schema::
 	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER))
 
 provider:: bin/${PROVIDER}
+
+.pulumi/bin/pulumi: PULUMI_VERSION := $(shell cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3)
+.pulumi/bin/pulumi: HOME := $(WORKING_DIR)
+.pulumi/bin/pulumi:
+	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
 
 build_nodejs::
 	rm -rf nodejs/eks/bin/*
@@ -44,23 +50,18 @@ build_nodejs::
 		cp -R cni bin/ && \
 		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
 
-bin/pulumi-java-gen::
-	mkdir -p bin/
-	pulumictl download-binary -n pulumi-language-java -v $(JAVA_GEN_VERSION) -r pulumi/pulumi-java
 
 build_java:: PACKAGE_VERSION := ${VERSION_GENERIC}
-build_java:: bin/pulumi-java-gen schema
+build_java:: .pulumi/bin/pulumi schema
 	rm -rf sdk/java
-	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema provider/cmd/$(PROVIDER)/schema.json --out sdk/java --build gradle-nexus
+	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language java --version "${VERSION_GENERIC}"
 	cd sdk/java && \
-		echo "module fake_java_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		gradle --console=plain build
 
-build_python:: schema
+build_python:: .pulumi/bin/pulumi schema
 	rm -rf sdk/python
-	cd provider/cmd/$(CODEGEN) && go run main.go python ../../../sdk/python ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
+	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language python --version "$(VERSION_GENERIC)"
 	cd sdk/python/ && \
-		echo "module fake_python_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		cp ../../README.md . && \
 		rm -rf ./bin/ ../python.bin/ && cp -R . ../python.bin && mv ../python.bin ./bin && \
 		python3 -m venv venv && \
@@ -68,15 +69,14 @@ build_python:: schema
 		cd ./bin && \
 		../venv/bin/python -m build .
 
-build_go:: schema
+build_go:: .pulumi/bin/pulumi schema
 	rm -rf sdk/go
-	cd provider/cmd/$(CODEGEN) && go run main.go go ../../../sdk/go ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
+	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language go --version "$(VERSION_GENERIC)"
 
 build_dotnet:: schema
 	rm -rf sdk/dotnet
-	cd provider/cmd/$(CODEGEN) && go run main.go dotnet ../../../sdk/dotnet ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
+	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language dotnet --version "$(VERSION_GENERIC)"
 	cd sdk/dotnet/ && \
-		echo "module fake_dotnet_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		echo "${VERSION_GENERIC}" >version.txt && \
 		dotnet build
 

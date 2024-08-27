@@ -21,9 +21,6 @@ import (
 	"path/filepath"
 
 	"github.com/pkg/errors"
-	dotnetgen "github.com/pulumi/pulumi/pkg/v3/codegen/dotnet"
-	gogen "github.com/pulumi/pulumi/pkg/v3/codegen/go"
-	pygen "github.com/pulumi/pulumi/pkg/v3/codegen/python"
 	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 )
@@ -34,9 +31,6 @@ const Tool = "pulumi-gen-eks"
 type Language string
 
 const (
-	DotNet Language = "dotnet"
-	Go     Language = "go"
-	Python Language = "python"
 	Schema Language = "schema"
 )
 
@@ -53,23 +47,14 @@ func main() {
 
 	language, outdir := Language(args[0]), args[1]
 
-	var schemaFile string
-	var version string
 	if language != Schema {
 		if len(args) < 4 {
 			printUsage()
 			os.Exit(1)
 		}
-		schemaFile, version = args[2], args[3]
 	}
 
 	switch language {
-	case DotNet:
-		genDotNet(readSchema(schemaFile, version), outdir)
-	case Go:
-		genGo(readSchema(schemaFile, version), outdir)
-	case Python:
-		genPython(readSchema(schemaFile, version), outdir)
 	case Schema:
 		pkgSpec := generateSchema()
 		mustWritePulumiSchema(pkgSpec, outdir)
@@ -1672,9 +1657,14 @@ func generateSchema() schema.PackageSpec {
 				"respectSchemaVersion":           true,
 			}),
 			"java": rawMessage(map[string]interface{}{
+				"buildFiles":                      "gradle",
+				"gradleNexusPublishPluginVersion": "1.1.0",
 				"dependencies": map[string]string{
-					"com.pulumi:aws":        "6.18.2",
-					"com.pulumi:kubernetes": "4.4.0",
+					"com.google.code.findbugs:jsr305": "3.0.2",
+					"com.google.code.gson:gson":       "2.8.9",
+					"com.pulumi:pulumi":               "0.9.8",
+					"com.pulumi:aws":                  "6.18.2",
+					"com.pulumi:kubernetes":           "4.4.0",
 				},
 			}),
 		},
@@ -2123,30 +2113,6 @@ func readSchema(schemaPath string, version string) *schema.Package {
 		panic(err)
 	}
 	return pkg
-}
-
-func genDotNet(pkg *schema.Package, outdir string) {
-	files, err := dotnetgen.GeneratePackage(Tool, pkg, map[string][]byte{}, map[string]string{})
-	if err != nil {
-		panic(err)
-	}
-	mustWriteFiles(outdir, files)
-}
-
-func genGo(pkg *schema.Package, outdir string) {
-	files, err := gogen.GeneratePackage(Tool, pkg, map[string]string{})
-	if err != nil {
-		panic(err)
-	}
-	mustWriteFiles(outdir, files)
-}
-
-func genPython(pkg *schema.Package, outdir string) {
-	files, err := pygen.GeneratePackage(Tool, pkg, map[string][]byte{})
-	if err != nil {
-		panic(err)
-	}
-	mustWriteFiles(outdir, files)
 }
 
 func mustWriteFiles(rootDir string, files map[string][]byte) {
