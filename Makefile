@@ -53,7 +53,7 @@ build_nodejs::
 
 build_java:: .pulumi/bin/pulumi schema
 	rm -rf sdk/java
-	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language java --version "${VERSION_GENERIC}"
+	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language java --version "0.0.1"
 	cd sdk/java && \
 		gradle --console=plain build
 
