@@ -1,0 +1,3 @@
+name: example-nodegroup
+description: EKS nodegroup with IAM examples
+runtime: nodejs

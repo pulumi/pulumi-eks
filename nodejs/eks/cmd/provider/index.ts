@@ -61,9 +61,15 @@ class Provider implements pulumi.provider.Provider {
     }
 
     async call(token: string, inputs: pulumi.Inputs): Promise<pulumi.provider.InvokeResult> {
+        const self: ClusterInternal = inputs.__self__;
         switch (token) {
+            case "eks:index:Cluster/getK8sProvider":
+                return {
+                    outputs: {
+                        res: self.getK8sProvider(),
+                    }
+                }
             case "eks:index:Cluster/getKubeconfig":
-                const self: ClusterInternal = inputs.__self__;
                 const result = self.getKubeconfig({
                     profileName: inputs.profileName,
                     roleArn: inputs.roleArn,

@@ -102,6 +102,20 @@ func generateSchema() schema.PackageSpec {
 		Repository:  "https://github.com/pulumi/pulumi-eks",
 
 		Functions: map[string]schema.FunctionSpec{
+			"eks:index:Cluster/getK8sProvider": {
+				Description: "A Kubernetes resource provider that can be used to deploy into this cluster.",
+				Inputs: &schema.ObjectTypeSpec{
+					Properties: map[string]schema.PropertySpec{
+						"__self__": {
+							TypeSpec: schema.TypeSpec{Ref: "#/resources/eks:index:Cluster"},
+						},
+					},
+					Required: []string{"__self__"},
+				},
+				ReturnType: &schema.ReturnTypeSpec{
+					TypeSpec: &schema.TypeSpec{Plain: true, Ref: k8sRef("#/provider")},
+				},
+			},
 			"eks:index:Cluster/getKubeconfig": {
 				Description: "Generate a kubeconfig for cluster authentication that does not use the default AWS " +
 					"credential provider chain, and instead is scoped to the supported options in " +
@@ -665,7 +679,8 @@ func generateSchema() schema.PackageSpec {
 					},
 				},
 				Methods: map[string]string{
-					"getKubeconfig": "eks:index:Cluster/getKubeconfig",
+					"getKubeconfig":  "eks:index:Cluster/getKubeconfig",
+					"getK8sProvider": "eks:index:Cluster/getK8sProvider",
 				},
 			},
 			"eks:index:ClusterCreationRoleProvider": {
@@ -1675,6 +1690,28 @@ func generateSchema() schema.PackageSpec {
 				"dependencies": map[string]string{
 					"com.pulumi:aws":        "6.18.2",
 					"com.pulumi:kubernetes": "4.4.0",
+				},
+			}),
+			"nodejs": rawMessage(map[string]interface{}{
+				"respectSchemaVersion": true,
+				"dependencies": map[string]string{
+					"@pulumi/aws":        "^6.18.2",
+					"@pulumi/kubernetes": "^4.1.1",
+					"@pulumi/pulumi":     "^3.47.0",
+					"https-proxy-agent":  "^5.0.1",
+					"jest":               "^29.7.0",
+					"js-yaml":            "^4.1.0",
+					"netmask":            "^2.0.2",
+					"semver":             "^7.3.7",
+					"which":              "^1.3.1",
+				},
+				"devDependencies": map[string]string{
+					"@types/js-yaml": "^4.0.5",
+					"@types/netmask": "^1.0.30",
+					"@types/node":    "^18.11.13",
+					"@types/semver":  "^7.3.10",
+					"typescript":     "^4.6.2",
+					"@types/which":   "^1.3.1",
 				},
 			}),
 		},

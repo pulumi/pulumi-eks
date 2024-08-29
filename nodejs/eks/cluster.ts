@@ -2005,6 +2005,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
     public readonly kubeconfig!: pulumi.Output<any>;
     public readonly kubeconfigJson!: pulumi.Output<string>;
     public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
+    public readonly k8sProvider!: pulumi.Output<k8s.Provider>;
 
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:Cluster";
@@ -2043,6 +2044,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
         this.defaultNodeGroup = pulumi.output(cluster.defaultNodeGroup);
         this.eksCluster = pulumi.output(cluster.eksCluster);
         this.core = pulumi.output(cluster.core);
+        this.k8sProvider = pulumi.output(cluster.provider);
 
         this.registerOutputs({
             clusterSecurityGroup: this.clusterSecurityGroup,
@@ -2054,7 +2056,12 @@ export class ClusterInternal extends pulumi.ComponentResource {
             kubeconfig: this.kubeconfig,
             kubeconfigJson: this.kubeconfigJson,
             nodeSecurityGroup: this.nodeSecurityGroup,
+            k8sProvider: this.getK8sProvider,
         });
+    }
+
+    getK8sProvider(): pulumi.Output<k8s.Provider> {
+        return this.k8sProvider;
     }
 
     getKubeconfig(args: KubeconfigOptions): pulumi.Output<string> {

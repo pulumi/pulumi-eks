@@ -24,6 +24,7 @@ LOCAL_PLAT ?= ""
 
 PKG_ARGS   := --no-bytecode --public-packages "*" --public
 PKG_TARGET := ./bin/cmd/provider/index.js
+SCHEMA_PATH := provider/cmd/$(PROVIDER)/schema.json
 
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
@@ -32,17 +33,18 @@ schema::
 
 provider:: bin/${PROVIDER}
 
-build_nodejs::
-	rm -rf nodejs/eks/bin/*
-	cd nodejs/eks && \
-		yarn install && \
-		yarn run tsc && \
+.pulumi/bin/pulumi: PULUMI_VERSION := $(shell cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3)
+.pulumi/bin/pulumi: HOME := $(WORKING_DIR)
+.pulumi/bin/pulumi:
+	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
+
+build_nodejs:: .pulumi/bin/pulumi schema
+	rm -rf sdk/nodejs
+	.pulumi/bin/pulumi package gen-sdk ${SCHEMA_PATH} --language nodejs --version "${VERSION_GENERIC}"
+	cd sdk/nodejs && \
+		yarn install --no-progress && \
 		yarn run tsc --version && \
-		sed -e 's/\$${VERSION}/$(VERSION_GENERIC)/g' < package.json > bin/package.json && \
-		cp ../../README.md ../../LICENSE bin/ && \
-		cp -R dashboard bin/ && \
-		cp -R cni bin/ && \
-		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
+		yarn run tsc
 
 bin/pulumi-java-gen::
 	mkdir -p bin/
@@ -103,7 +105,7 @@ install_provider:: provider install_nodejs_sdk
 generate_schema:: schema
 
 install_nodejs_sdk:: build_nodejs
-	yarn link --cwd $(WORKING_DIR)/nodejs/eks/bin
+	yarn link --cwd $(WORKING_DIR)/sdk/nodejs/bin
 
 install_dotnet_sdk:: build_dotnet
 	mkdir -p $(WORKING_DIR)/nuget
