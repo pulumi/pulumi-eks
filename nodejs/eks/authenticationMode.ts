@@ -36,14 +36,15 @@ export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOpti
     }
 
     if (!supportsConfigMap(args.authenticationMode)) {
-        const checkNonEmpty: (prop: keyof ClusterOptions) => (_: any|undefined) => void = (prop) => (pv) => {
-            if (pv !== undefined && pv.length !== 0) {
-                throw new Error(
-                    `The '${prop}' property does not support non-empty values when 'authenticationMode' is set to `+
-                        `'${args.authenticationMode}'.`,
-                );
-            }
-        };
+        const checkNonEmpty: (prop: keyof ClusterOptions) => (_: any | undefined) => void =
+            (prop) => (pv) => {
+                if (pv !== undefined && pv.length !== 0) {
+                    throw new Error(
+                        `The '${prop}' property does not support non-empty values when 'authenticationMode' is set to ` +
+                            `'${args.authenticationMode}'.`,
+                    );
+                }
+            };
 
         args.roleMappings = validatedInput(args.roleMappings, checkNonEmpty("roleMappings"));
         args.userMappings = validatedInput(args.userMappings, checkNonEmpty("userMappings"));
@@ -71,16 +72,16 @@ export function validateAuthenticationMode(rawArgs: ClusterOptions): ClusterOpti
 // input is gated on the validation. Unfortunately since apply always unwraps, the validate function required here needs
 // to be able to handle both unwrapped and normal forms.
 function validatedInput<T>(
-    i: pulumi.Input<T>|undefined,
-    validate: (value: T|pulumi.Unwrap<T>|undefined) => void
-): pulumi.Input<T>|undefined {
+    i: pulumi.Input<T> | undefined,
+    validate: (value: T | pulumi.Unwrap<T> | undefined) => void,
+): pulumi.Input<T> | undefined {
     if (i instanceof Promise) {
-        return pulumi.output(i).apply(value => {
+        return pulumi.output(i).apply((value) => {
             validate(value);
             return i;
         });
     } else if (pulumi.Output.isInstance(i)) {
-        return i.apply(value => {
+        return i.apply((value) => {
             validate(value);
             return i;
         });
