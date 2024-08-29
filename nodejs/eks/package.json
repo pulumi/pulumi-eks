@@ -9,7 +9,10 @@
         "eks"
     ],
     "scripts": {
+        "format-check": "prettier --list-different .",
         "format": "prettier --list-different --write .",
+        "lint-check": "yarn run format-check && tslint -c ../tslint.json -p tsconfig.json",
+        "lint": "yarn run format && tslint -c ../tslint.json -p tsconfig.json --fix",
         "test": "jest"
     },
     "homepage": "https://pulumi.com",

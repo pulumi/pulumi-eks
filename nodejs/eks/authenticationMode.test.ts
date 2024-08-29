@@ -18,15 +18,12 @@ import {
     validateAuthenticationMode,
 } from "./authenticationMode";
 
-import {
-    ClusterOptions, AuthenticationMode
-} from "./cluster";
+import { ClusterOptions, AuthenticationMode } from "./cluster";
 
 import * as aws from "@pulumi/aws";
 
 describe("validateAuthenticationMode", () => {
-
-    const testRole: aws.iam.Role = (<any>{"arn": "testRole"});
+    const testRole: aws.iam.Role = <any>{ arn: "testRole" };
 
     it("should throw an error for invalid authentication mode", () => {
         const invalidMode: any = "INVALID_MODE";
@@ -99,7 +96,7 @@ describe("validateAuthenticationMode", () => {
         const args: ClusterOptions = {
             authenticationMode: "CONFIG_MAP",
             accessEntries: {
-                "entry1": {
+                entry1: {
                     principalArn: "roleArn",
                 },
             },
@@ -113,7 +110,7 @@ describe("validateAuthenticationMode", () => {
     it("should throw an error for accessEntries when authentication mode is not set", () => {
         const args = {
             accessEntries: {
-                "entry1": {
+                entry1: {
                     principalArn: "roleArn",
                 },
             },
@@ -164,7 +161,7 @@ describe("validateAuthenticationMode", () => {
                 ],
                 instanceRoles: [testRole],
                 accessEntries: {
-                    "entry1": {
+                    entry1: {
                         principalArn: "roleArn",
                     },
                 },
@@ -174,7 +171,7 @@ describe("validateAuthenticationMode", () => {
             {
                 authenticationMode: "API",
                 accessEntries: {
-                    "entry1": {
+                    entry1: {
                         principalArn: "roleArn",
                     },
                 },
@@ -197,9 +194,12 @@ describe("validateAuthenticationMode", () => {
         ],
     ];
 
-    test.each(cases)("should not throw an error for valid authentication mode and properties", (args) => {
-        expect(() => validateAuthenticationMode(args)).not.toThrow();
-    });
+    test.each(cases)(
+        "should not throw an error for valid authentication mode and properties",
+        (args) => {
+            expect(() => validateAuthenticationMode(args)).not.toThrow();
+        },
+    );
 });
 
 describe("supportsConfigMap", () => {

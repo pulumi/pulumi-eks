@@ -80,11 +80,15 @@ build_dotnet:: schema
 		echo "${VERSION_GENERIC}" >version.txt && \
 		dotnet build
 
+lint_fix:
+	cd nodejs/eks && \
+		yarn install && \
+		yarn lint
+
 lint:
 	cd nodejs/eks && \
 		yarn install && \
-		yarn format && \
-		yarn run tslint -c ../tslint.json -p tsconfig.json
+		yarn lint-check
 
 lint_provider::
 	cd provider && golangci-lint run -c ../.golangci.yml
