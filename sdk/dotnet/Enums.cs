@@ -54,6 +54,44 @@ namespace Pulumi.Eks
     }
 
     /// <summary>
+    /// Predefined AMI types for EKS optimized AMIs. Can be used to select the latest EKS optimized AMI for a node group.
+    /// </summary>
+    [EnumType]
+    public readonly struct AmiType : IEquatable<AmiType>
+    {
+        private readonly string _value;
+
+        private AmiType(string value)
+        {
+            _value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        public static AmiType AL2X86_64 { get; } = new AmiType("AL2_x86_64");
+        public static AmiType AL2X86_64GPU { get; } = new AmiType("AL2_x86_64_GPU");
+        public static AmiType AL2Arm64 { get; } = new AmiType("AL2_ARM_64");
+        public static AmiType AL2023X86_64Standard { get; } = new AmiType("AL2023_x86_64_STANDARD");
+        public static AmiType AL2023Arm64Standard { get; } = new AmiType("AL2023_ARM_64_STANDARD");
+        public static AmiType BottlerocketArm64 { get; } = new AmiType("BOTTLEROCKET_ARM_64");
+        public static AmiType BottlerocketX86_64 { get; } = new AmiType("BOTTLEROCKET_x86_64");
+        public static AmiType BottlerocketArm64Nvidia { get; } = new AmiType("BOTTLEROCKET_ARM_64_NVIDIA");
+        public static AmiType BottlerocketX86_64Nvidia { get; } = new AmiType("BOTTLEROCKET_x86_64_NVIDIA");
+
+        public static bool operator ==(AmiType left, AmiType right) => left.Equals(right);
+        public static bool operator !=(AmiType left, AmiType right) => !left.Equals(right);
+
+        public static explicit operator string(AmiType value) => value._value;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override bool Equals(object? obj) => obj is AmiType other && Equals(other);
+        public bool Equals(AmiType other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override int GetHashCode() => _value?.GetHashCode() ?? 0;
+
+        public override string ToString() => _value;
+    }
+
+    /// <summary>
     /// The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
     /// 
     /// See for more details:
@@ -90,6 +128,54 @@ namespace Pulumi.Eks
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override bool Equals(object? obj) => obj is AuthenticationMode other && Equals(other);
         public bool Equals(AuthenticationMode other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override int GetHashCode() => _value?.GetHashCode() ?? 0;
+
+        public override string ToString() => _value;
+    }
+
+    /// <summary>
+    /// The type of EKS optimized Operating System to use for node groups.
+    /// 
+    /// See for more details:
+    /// https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html
+    /// </summary>
+    [EnumType]
+    public readonly struct OperatingSystem : IEquatable<OperatingSystem>
+    {
+        private readonly string _value;
+
+        private OperatingSystem(string value)
+        {
+            _value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        /// <summary>
+        /// EKS optimized OS based on Amazon Linux 2 (AL2).
+        /// </summary>
+        [Obsolete(@"Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html")]
+        public static OperatingSystem AL2 { get; } = new OperatingSystem("AL2");
+        /// <summary>
+        /// EKS optimized OS based on Amazon Linux 2023 (AL2023).
+        /// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+        /// </summary>
+        public static OperatingSystem AL2023 { get; } = new OperatingSystem("AL2023");
+        /// <summary>
+        /// EKS optimized Container OS based on Bottlerocket.
+        /// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html
+        /// </summary>
+        public static OperatingSystem Bottlerocket { get; } = new OperatingSystem("Bottlerocket");
+
+        public static bool operator ==(OperatingSystem left, OperatingSystem right) => left.Equals(right);
+        public static bool operator !=(OperatingSystem left, OperatingSystem right) => !left.Equals(right);
+
+        public static explicit operator string(OperatingSystem value) => value._value;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override bool Equals(object? obj) => obj is OperatingSystem other && Equals(other);
+        public bool Equals(OperatingSystem other) => string.Equals(_value, other._value, StringComparison.Ordinal);
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override int GetHashCode() => _value?.GetHashCode() ?? 0;

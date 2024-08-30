@@ -405,6 +405,11 @@ type ClusterNodeGroupOptions struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
 	NodeUserDataOverride *string `pulumi:"nodeUserDataOverride"`
+	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+	//
+	// Defaults to `AL2`.
+	OperatingSystem *OperatingSystem `pulumi:"operatingSystem"`
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice *string `pulumi:"spotPrice"`
 	// Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
@@ -532,6 +537,11 @@ type ClusterNodeGroupOptionsArgs struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
 	NodeUserDataOverride pulumi.StringPtrInput `pulumi:"nodeUserDataOverride"`
+	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+	//
+	// Defaults to `AL2`.
+	OperatingSystem OperatingSystemPtrInput `pulumi:"operatingSystem"`
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice pulumi.StringPtrInput `pulumi:"spotPrice"`
 	// Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
@@ -812,6 +822,14 @@ func (o ClusterNodeGroupOptionsOutput) NodeUserData() pulumi.StringPtrOutput {
 // See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
 func (o ClusterNodeGroupOptionsOutput) NodeUserDataOverride() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.NodeUserDataOverride }).(pulumi.StringPtrOutput)
+}
+
+// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+//
+// Defaults to `AL2`.
+func (o ClusterNodeGroupOptionsOutput) OperatingSystem() OperatingSystemPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *OperatingSystem { return v.OperatingSystem }).(OperatingSystemPtrOutput)
 }
 
 // Bidding price for spot instance. If set, only spot instances will be added as worker node.
@@ -1197,6 +1215,19 @@ func (o ClusterNodeGroupOptionsPtrOutput) NodeUserDataOverride() pulumi.StringPt
 		}
 		return v.NodeUserDataOverride
 	}).(pulumi.StringPtrOutput)
+}
+
+// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+//
+// Defaults to `AL2`.
+func (o ClusterNodeGroupOptionsPtrOutput) OperatingSystem() OperatingSystemPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *OperatingSystem {
+		if v == nil {
+			return nil
+		}
+		return v.OperatingSystem
+	}).(OperatingSystemPtrOutput)
 }
 
 // Bidding price for spot instance. If set, only spot instances will be added as worker node.

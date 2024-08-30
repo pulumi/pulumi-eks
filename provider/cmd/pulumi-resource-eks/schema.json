@@ -136,6 +136,48 @@
                 "accessScope"
             ]
         },
+        "eks:index:AmiType": {
+            "description": "Predefined AMI types for EKS optimized AMIs. Can be used to select the latest EKS optimized AMI for a node group.",
+            "type": "string",
+            "enum": [
+                {
+                    "name": "AL2X86_64",
+                    "value": "AL2_x86_64"
+                },
+                {
+                    "name": "AL2X86_64GPU",
+                    "value": "AL2_x86_64_GPU"
+                },
+                {
+                    "name": "AL2Arm64",
+                    "value": "AL2_ARM_64"
+                },
+                {
+                    "name": "AL2023X86_64Standard",
+                    "value": "AL2023_x86_64_STANDARD"
+                },
+                {
+                    "name": "AL2023Arm64Standard",
+                    "value": "AL2023_ARM_64_STANDARD"
+                },
+                {
+                    "name": "BottlerocketArm64",
+                    "value": "BOTTLEROCKET_ARM_64"
+                },
+                {
+                    "name": "BottlerocketX86_64",
+                    "value": "BOTTLEROCKET_x86_64"
+                },
+                {
+                    "name": "BottlerocketArm64Nvidia",
+                    "value": "BOTTLEROCKET_ARM_64_NVIDIA"
+                },
+                {
+                    "name": "BottlerocketX86_64Nvidia",
+                    "value": "BOTTLEROCKET_x86_64_NVIDIA"
+                }
+            ]
+        },
         "eks:index:AuthenticationMode": {
             "description": "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
             "type": "string",
@@ -300,6 +342,10 @@
                 "nodeUserDataOverride": {
                     "type": "string",
                     "description": "User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html"
+                },
+                "operatingSystem": {
+                    "$ref": "#/types/eks:index:OperatingSystem",
+                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2`."
                 },
                 "spotPrice": {
                     "type": "string",
@@ -528,6 +574,28 @@
                 "extraNodeSecurityGroups",
                 "cfnStack",
                 "autoScalingGroupName"
+            ]
+        },
+        "eks:index:OperatingSystem": {
+            "description": "The type of EKS optimized Operating System to use for node groups.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html",
+            "type": "string",
+            "enum": [
+                {
+                    "name": "AL2",
+                    "description": "EKS optimized OS based on Amazon Linux 2 (AL2).",
+                    "value": "AL2",
+                    "deprecationMessage": "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html"
+                },
+                {
+                    "name": "AL2023",
+                    "description": "EKS optimized OS based on Amazon Linux 2023 (AL2023).\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html",
+                    "value": "AL2023"
+                },
+                {
+                    "name": "Bottlerocket",
+                    "description": "EKS optimized Container OS based on Bottlerocket.\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html",
+                    "value": "Bottlerocket"
+                }
             ]
         },
         "eks:index:RoleMapping": {
@@ -1267,6 +1335,10 @@
                     "type": "string",
                     "description": "Amazon Resource Name (ARN) of the IAM Role that provides permissions for the EKS Node Group.\n\nNote, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used."
                 },
+                "operatingSystem": {
+                    "$ref": "#/types/eks:index:OperatingSystem",
+                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2`."
+                },
                 "releaseVersion": {
                     "type": "string",
                     "description": "AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version."
@@ -1490,6 +1562,10 @@
                 "nodeUserDataOverride": {
                     "type": "string",
                     "description": "User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html"
+                },
+                "operatingSystem": {
+                    "$ref": "#/types/eks:index:OperatingSystem",
+                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2`."
                 },
                 "spotPrice": {
                     "type": "string",
@@ -1745,6 +1821,10 @@
                 "nodeUserDataOverride": {
                     "type": "string",
                     "description": "User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html"
+                },
+                "operatingSystem": {
+                    "$ref": "#/types/eks:index:OperatingSystem",
+                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2`."
                 },
                 "spotPrice": {
                     "type": "string",
