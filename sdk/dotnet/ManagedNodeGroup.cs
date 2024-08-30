@@ -173,6 +173,15 @@ namespace Pulumi.Eks
         public Input<string>? NodeRoleArn { get; set; }
 
         /// <summary>
+        /// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+        /// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+        /// 
+        /// Defaults to `AL2`.
+        /// </summary>
+        [Input("operatingSystem")]
+        public Input<Pulumi.Eks.OperatingSystem>? OperatingSystem { get; set; }
+
+        /// <summary>
         /// AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
         /// </summary>
         [Input("releaseVersion")]

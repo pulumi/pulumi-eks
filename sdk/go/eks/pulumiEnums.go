@@ -185,6 +185,21 @@ func (in *accessEntryTypePtr) ToAccessEntryTypePtrOutputWithContext(ctx context.
 	return pulumi.ToOutputWithContext(ctx, in).(AccessEntryTypePtrOutput)
 }
 
+// Predefined AMI types for EKS optimized AMIs. Can be used to select the latest EKS optimized AMI for a node group.
+type AmiType string
+
+const (
+	AmiType_AL2X86_64                = AmiType("AL2_x86_64")
+	AmiType_AL2X86_64GPU             = AmiType("AL2_x86_64_GPU")
+	AmiTypeAL2Arm64                  = AmiType("AL2_ARM_64")
+	AmiType_AL2023X86_64Standard     = AmiType("AL2023_x86_64_STANDARD")
+	AmiTypeAL2023Arm64Standard       = AmiType("AL2023_ARM_64_STANDARD")
+	AmiTypeBottlerocketArm64         = AmiType("BOTTLEROCKET_ARM_64")
+	AmiType_BottlerocketX86_64       = AmiType("BOTTLEROCKET_x86_64")
+	AmiTypeBottlerocketArm64Nvidia   = AmiType("BOTTLEROCKET_ARM_64_NVIDIA")
+	AmiType_BottlerocketX86_64Nvidia = AmiType("BOTTLEROCKET_x86_64_NVIDIA")
+)
+
 // The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
 //
 // See for more details:
@@ -200,9 +215,191 @@ const (
 	AuthenticationModeApiAndConfigMap = AuthenticationMode("API_AND_CONFIG_MAP")
 )
 
+// The type of EKS optimized Operating System to use for node groups.
+//
+// See for more details:
+// https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html
+type OperatingSystem string
+
+const (
+	// EKS optimized OS based on Amazon Linux 2 (AL2).
+	//
+	// Deprecated: Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html
+	OperatingSystemAL2 = OperatingSystem("AL2")
+	// EKS optimized OS based on Amazon Linux 2023 (AL2023).
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+	OperatingSystemAL2023 = OperatingSystem("AL2023")
+	// EKS optimized Container OS based on Bottlerocket.
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html
+	OperatingSystemBottlerocket = OperatingSystem("Bottlerocket")
+)
+
+func (OperatingSystem) ElementType() reflect.Type {
+	return reflect.TypeOf((*OperatingSystem)(nil)).Elem()
+}
+
+func (e OperatingSystem) ToOperatingSystemOutput() OperatingSystemOutput {
+	return pulumi.ToOutput(e).(OperatingSystemOutput)
+}
+
+func (e OperatingSystem) ToOperatingSystemOutputWithContext(ctx context.Context) OperatingSystemOutput {
+	return pulumi.ToOutputWithContext(ctx, e).(OperatingSystemOutput)
+}
+
+func (e OperatingSystem) ToOperatingSystemPtrOutput() OperatingSystemPtrOutput {
+	return e.ToOperatingSystemPtrOutputWithContext(context.Background())
+}
+
+func (e OperatingSystem) ToOperatingSystemPtrOutputWithContext(ctx context.Context) OperatingSystemPtrOutput {
+	return OperatingSystem(e).ToOperatingSystemOutputWithContext(ctx).ToOperatingSystemPtrOutputWithContext(ctx)
+}
+
+func (e OperatingSystem) ToStringOutput() pulumi.StringOutput {
+	return pulumi.ToOutput(pulumi.String(e)).(pulumi.StringOutput)
+}
+
+func (e OperatingSystem) ToStringOutputWithContext(ctx context.Context) pulumi.StringOutput {
+	return pulumi.ToOutputWithContext(ctx, pulumi.String(e)).(pulumi.StringOutput)
+}
+
+func (e OperatingSystem) ToStringPtrOutput() pulumi.StringPtrOutput {
+	return pulumi.String(e).ToStringPtrOutputWithContext(context.Background())
+}
+
+func (e OperatingSystem) ToStringPtrOutputWithContext(ctx context.Context) pulumi.StringPtrOutput {
+	return pulumi.String(e).ToStringOutputWithContext(ctx).ToStringPtrOutputWithContext(ctx)
+}
+
+type OperatingSystemOutput struct{ *pulumi.OutputState }
+
+func (OperatingSystemOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*OperatingSystem)(nil)).Elem()
+}
+
+func (o OperatingSystemOutput) ToOperatingSystemOutput() OperatingSystemOutput {
+	return o
+}
+
+func (o OperatingSystemOutput) ToOperatingSystemOutputWithContext(ctx context.Context) OperatingSystemOutput {
+	return o
+}
+
+func (o OperatingSystemOutput) ToOperatingSystemPtrOutput() OperatingSystemPtrOutput {
+	return o.ToOperatingSystemPtrOutputWithContext(context.Background())
+}
+
+func (o OperatingSystemOutput) ToOperatingSystemPtrOutputWithContext(ctx context.Context) OperatingSystemPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v OperatingSystem) *OperatingSystem {
+		return &v
+	}).(OperatingSystemPtrOutput)
+}
+
+func (o OperatingSystemOutput) ToStringOutput() pulumi.StringOutput {
+	return o.ToStringOutputWithContext(context.Background())
+}
+
+func (o OperatingSystemOutput) ToStringOutputWithContext(ctx context.Context) pulumi.StringOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, e OperatingSystem) string {
+		return string(e)
+	}).(pulumi.StringOutput)
+}
+
+func (o OperatingSystemOutput) ToStringPtrOutput() pulumi.StringPtrOutput {
+	return o.ToStringPtrOutputWithContext(context.Background())
+}
+
+func (o OperatingSystemOutput) ToStringPtrOutputWithContext(ctx context.Context) pulumi.StringPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, e OperatingSystem) *string {
+		v := string(e)
+		return &v
+	}).(pulumi.StringPtrOutput)
+}
+
+type OperatingSystemPtrOutput struct{ *pulumi.OutputState }
+
+func (OperatingSystemPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**OperatingSystem)(nil)).Elem()
+}
+
+func (o OperatingSystemPtrOutput) ToOperatingSystemPtrOutput() OperatingSystemPtrOutput {
+	return o
+}
+
+func (o OperatingSystemPtrOutput) ToOperatingSystemPtrOutputWithContext(ctx context.Context) OperatingSystemPtrOutput {
+	return o
+}
+
+func (o OperatingSystemPtrOutput) Elem() OperatingSystemOutput {
+	return o.ApplyT(func(v *OperatingSystem) OperatingSystem {
+		if v != nil {
+			return *v
+		}
+		var ret OperatingSystem
+		return ret
+	}).(OperatingSystemOutput)
+}
+
+func (o OperatingSystemPtrOutput) ToStringPtrOutput() pulumi.StringPtrOutput {
+	return o.ToStringPtrOutputWithContext(context.Background())
+}
+
+func (o OperatingSystemPtrOutput) ToStringPtrOutputWithContext(ctx context.Context) pulumi.StringPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, e *OperatingSystem) *string {
+		if e == nil {
+			return nil
+		}
+		v := string(*e)
+		return &v
+	}).(pulumi.StringPtrOutput)
+}
+
+// OperatingSystemInput is an input type that accepts values of the OperatingSystem enum
+// A concrete instance of `OperatingSystemInput` can be one of the following:
+//
+//	OperatingSystemAL2023
+//	OperatingSystemBottlerocket
+type OperatingSystemInput interface {
+	pulumi.Input
+
+	ToOperatingSystemOutput() OperatingSystemOutput
+	ToOperatingSystemOutputWithContext(context.Context) OperatingSystemOutput
+}
+
+var operatingSystemPtrType = reflect.TypeOf((**OperatingSystem)(nil)).Elem()
+
+type OperatingSystemPtrInput interface {
+	pulumi.Input
+
+	ToOperatingSystemPtrOutput() OperatingSystemPtrOutput
+	ToOperatingSystemPtrOutputWithContext(context.Context) OperatingSystemPtrOutput
+}
+
+type operatingSystemPtr string
+
+func OperatingSystemPtr(v string) OperatingSystemPtrInput {
+	return (*operatingSystemPtr)(&v)
+}
+
+func (*operatingSystemPtr) ElementType() reflect.Type {
+	return operatingSystemPtrType
+}
+
+func (in *operatingSystemPtr) ToOperatingSystemPtrOutput() OperatingSystemPtrOutput {
+	return pulumi.ToOutput(in).(OperatingSystemPtrOutput)
+}
+
+func (in *operatingSystemPtr) ToOperatingSystemPtrOutputWithContext(ctx context.Context) OperatingSystemPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, in).(OperatingSystemPtrOutput)
+}
+
 func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*AccessEntryTypeInput)(nil)).Elem(), AccessEntryType("STANDARD"))
 	pulumi.RegisterInputType(reflect.TypeOf((*AccessEntryTypePtrInput)(nil)).Elem(), AccessEntryType("STANDARD"))
+	pulumi.RegisterInputType(reflect.TypeOf((*OperatingSystemInput)(nil)).Elem(), OperatingSystem("AL2"))
+	pulumi.RegisterInputType(reflect.TypeOf((*OperatingSystemPtrInput)(nil)).Elem(), OperatingSystem("AL2"))
 	pulumi.RegisterOutputType(AccessEntryTypeOutput{})
 	pulumi.RegisterOutputType(AccessEntryTypePtrOutput{})
+	pulumi.RegisterOutputType(OperatingSystemOutput{})
+	pulumi.RegisterOutputType(OperatingSystemPtrOutput{})
 }

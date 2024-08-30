@@ -12,6 +12,7 @@ import com.pulumi.core.Either;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.Cluster;
+import com.pulumi.eks.enums.OperatingSystem;
 import com.pulumi.eks.inputs.CoreDataArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -292,6 +293,27 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     }
 
     /**
+     * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     * 
+     * Defaults to `AL2`.
+     * 
+     */
+    @Import(name="operatingSystem")
+    private @Nullable Output<OperatingSystem> operatingSystem;
+
+    /**
+     * @return The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     * 
+     * Defaults to `AL2`.
+     * 
+     */
+    public Optional<Output<OperatingSystem>> operatingSystem() {
+        return Optional.ofNullable(this.operatingSystem);
+    }
+
+    /**
      * AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
      * 
      */
@@ -431,6 +453,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         this.nodeGroupNamePrefix = $.nodeGroupNamePrefix;
         this.nodeRole = $.nodeRole;
         this.nodeRoleArn = $.nodeRoleArn;
+        this.operatingSystem = $.operatingSystem;
         this.releaseVersion = $.releaseVersion;
         this.remoteAccess = $.remoteAccess;
         this.scalingConfig = $.scalingConfig;
@@ -810,6 +833,33 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          */
         public Builder nodeRoleArn(String nodeRoleArn) {
             return nodeRoleArn(Output.of(nodeRoleArn));
+        }
+
+        /**
+         * @param operatingSystem The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+         * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+         * 
+         * Defaults to `AL2`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder operatingSystem(@Nullable Output<OperatingSystem> operatingSystem) {
+            $.operatingSystem = operatingSystem;
+            return this;
+        }
+
+        /**
+         * @param operatingSystem The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+         * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+         * 
+         * Defaults to `AL2`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder operatingSystem(OperatingSystem operatingSystem) {
+            return operatingSystem(Output.of(operatingSystem));
         }
 
         /**
