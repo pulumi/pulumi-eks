@@ -183,6 +183,13 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly string? NodeUserDataOverride;
         /// <summary>
+        /// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+        /// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+        /// 
+        /// Defaults to `AL2`.
+        /// </summary>
+        public readonly Pulumi.Eks.OperatingSystem? OperatingSystem;
+        /// <summary>
         /// Bidding price for spot instance. If set, only spot instances will be added as worker node.
         /// </summary>
         public readonly string? SpotPrice;
@@ -257,6 +264,8 @@ namespace Pulumi.Eks.Outputs
 
             string? nodeUserDataOverride,
 
+            Pulumi.Eks.OperatingSystem? operatingSystem,
+
             string? spotPrice,
 
             ImmutableDictionary<string, Outputs.Taint>? taints,
@@ -293,6 +302,7 @@ namespace Pulumi.Eks.Outputs
             NodeSubnetIds = nodeSubnetIds;
             NodeUserData = nodeUserData;
             NodeUserDataOverride = nodeUserDataOverride;
+            OperatingSystem = operatingSystem;
             SpotPrice = spotPrice;
             Taints = taints;
             Version = version;

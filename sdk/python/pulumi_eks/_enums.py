@@ -6,7 +6,9 @@ from enum import Enum
 
 __all__ = [
     'AccessEntryType',
+    'AmiType',
     'AuthenticationMode',
+    'OperatingSystem',
 ]
 
 
@@ -33,6 +35,21 @@ class AccessEntryType(str, Enum):
     """
 
 
+class AmiType(str, Enum):
+    """
+    Predefined AMI types for EKS optimized AMIs. Can be used to select the latest EKS optimized AMI for a node group.
+    """
+    AL2_X86_64 = "AL2_x86_64"
+    AL2_X86_64_GPU = "AL2_x86_64_GPU"
+    AL2_ARM64 = "AL2_ARM_64"
+    AL2023_X86_64_STANDARD = "AL2023_x86_64_STANDARD"
+    AL2023_ARM64_STANDARD = "AL2023_ARM_64_STANDARD"
+    BOTTLEROCKET_ARM64 = "BOTTLEROCKET_ARM_64"
+    BOTTLEROCKET_X86_64 = "BOTTLEROCKET_x86_64"
+    BOTTLEROCKET_ARM64_NVIDIA = "BOTTLEROCKET_ARM_64_NVIDIA"
+    BOTTLEROCKET_X86_64_NVIDIA = "BOTTLEROCKET_x86_64_NVIDIA"
+
+
 class AuthenticationMode(str, Enum):
     """
     The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.
@@ -51,4 +68,27 @@ class AuthenticationMode(str, Enum):
     API_AND_CONFIG_MAP = "API_AND_CONFIG_MAP"
     """
     Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.
+    """
+
+
+class OperatingSystem(str, Enum):
+    """
+    The type of EKS optimized Operating System to use for node groups.
+
+    See for more details:
+    https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html
+    """
+    AL2 = "AL2"
+    """
+    EKS optimized OS based on Amazon Linux 2 (AL2).
+    """
+    AL2023 = "AL2023"
+    """
+    EKS optimized OS based on Amazon Linux 2023 (AL2023).
+    See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+    """
+    BOTTLEROCKET = "Bottlerocket"
+    """
+    EKS optimized Container OS based on Bottlerocket.
+    See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html
     """

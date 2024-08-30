@@ -272,6 +272,15 @@ namespace Pulumi.Eks.Inputs
         public Input<string>? NodeUserDataOverride { get; set; }
 
         /// <summary>
+        /// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+        /// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+        /// 
+        /// Defaults to `AL2`.
+        /// </summary>
+        [Input("operatingSystem")]
+        public Input<Pulumi.Eks.OperatingSystem>? OperatingSystem { get; set; }
+
+        /// <summary>
         /// Bidding price for spot instance. If set, only spot instances will be added as worker node.
         /// </summary>
         [Input("spotPrice")]

@@ -36,6 +36,7 @@ class ManagedNodeGroupArgs:
                  node_group_name_prefix: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
+                 operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
                  remote_access: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs']] = None,
                  scaling_config: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs']] = None,
@@ -73,6 +74,10 @@ class ManagedNodeGroupArgs:
         :param pulumi.Input[str] node_role_arn: Amazon Resource Name (ARN) of the IAM Role that provides permissions for the EKS Node Group.
                
                Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
+        :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+               Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+               
+               Defaults to `AL2`.
         :param pulumi.Input[str] release_version: AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
         :param pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs'] remote_access: Remote access settings.
         :param pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs'] scaling_config: Scaling settings.
@@ -123,6 +128,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "node_role", node_role)
         if node_role_arn is not None:
             pulumi.set(__self__, "node_role_arn", node_role_arn)
+        if operating_system is not None:
+            pulumi.set(__self__, "operating_system", operating_system)
         if release_version is not None:
             pulumi.set(__self__, "release_version", release_version)
         if remote_access is not None:
@@ -343,6 +350,21 @@ class ManagedNodeGroupArgs:
         pulumi.set(self, "node_role_arn", value)
 
     @property
+    @pulumi.getter(name="operatingSystem")
+    def operating_system(self) -> Optional[pulumi.Input['OperatingSystem']]:
+        """
+        The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+        Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+
+        Defaults to `AL2`.
+        """
+        return pulumi.get(self, "operating_system")
+
+    @operating_system.setter
+    def operating_system(self, value: Optional[pulumi.Input['OperatingSystem']]):
+        pulumi.set(self, "operating_system", value)
+
+    @property
     @pulumi.getter(name="releaseVersion")
     def release_version(self) -> Optional[pulumi.Input[str]]:
         """
@@ -457,6 +479,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  node_group_name_prefix: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
+                 operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
                  remote_access: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']]] = None,
                  scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']]] = None,
@@ -501,6 +524,10 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[str] node_role_arn: Amazon Resource Name (ARN) of the IAM Role that provides permissions for the EKS Node Group.
                
                Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
+        :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+               Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+               
+               Defaults to `AL2`.
         :param pulumi.Input[str] release_version: AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
         :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']] remote_access: Remote access settings.
         :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']] scaling_config: Scaling settings.
@@ -563,6 +590,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  node_group_name_prefix: Optional[pulumi.Input[str]] = None,
                  node_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  node_role_arn: Optional[pulumi.Input[str]] = None,
+                 operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
                  remote_access: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']]] = None,
                  scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']]] = None,
@@ -599,6 +627,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["node_group_name_prefix"] = node_group_name_prefix
             __props__.__dict__["node_role"] = node_role
             __props__.__dict__["node_role_arn"] = node_role_arn
+            __props__.__dict__["operating_system"] = operating_system
             __props__.__dict__["release_version"] = release_version
             __props__.__dict__["remote_access"] = remote_access
             __props__.__dict__["scaling_config"] = scaling_config
