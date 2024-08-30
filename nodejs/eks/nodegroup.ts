@@ -14,16 +14,30 @@
 
 import * as aws from "@pulumi/aws";
 import * as awsInputs from "@pulumi/aws/types/input";
-import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
-import * as crypto from "crypto";
 import * as netmask from "netmask";
 
+import {
+    AmiType,
+    CpuArchitecture,
+    getAmiMetadata,
+    getAmiType,
+    getOperatingSystem,
+    OperatingSystem,
+    toAmiType,
+} from "./ami";
 import { supportsAccessEntries } from "./authenticationMode";
 import { Cluster, ClusterInternal, CoreData } from "./cluster";
 import randomSuffix from "./randomSuffix";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { InputTags } from "./utils";
+import {
+    createUserData,
+    ManagedNodeUserDataArgs,
+    requiresCustomUserData,
+    SelfManagedV1NodeUserDataArgs,
+    SelfManagedV2NodeUserDataArgs,
+} from "./userdata";
 
 /**
  * Taint represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup.  See
@@ -203,7 +217,7 @@ export interface NodeGroupBaseOptions {
     gpu?: pulumi.Input<boolean>;
 
     /**
-     * Custom k8s node labels to be attached to each woker node.  Adds the given key/value pairs to the `--node-labels`
+     * Custom k8s node labels to be attached to each worker node.  Adds the given key/value pairs to the `--node-labels`
      * kubelet argument.
      */
     labels?: { [key: string]: string };
@@ -283,6 +297,14 @@ export interface NodeGroupBaseOptions {
      * For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
      */
     enableDetailedMonitoring?: pulumi.Input<boolean>;
+
+    /**
+     * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the
+     * instance types and gpu configuration.
+     *
+     * Defaults to `AL2`.
+     */
+    operatingSystem?: pulumi.Input<OperatingSystem>;
 }
 
 /**
@@ -691,35 +713,12 @@ function createNodeGroupInternal(
     const cfnStackName = randomSuffix(`${name}-cfnStackName`, name, { parent });
 
     const awsRegion = pulumi.output(aws.getRegion({}, { parent, async: true }));
-    const userDataArg = args.nodeUserData || pulumi.output("");
 
-    const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
-    if (args.labels) {
-        const parts = [];
-        for (const key of Object.keys(args.labels)) {
-            parts.push(key + "=" + args.labels[key]);
-        }
-        if (parts.length > 0) {
-            kubeletExtraArgs.push("--node-labels=" + parts.join(","));
-        }
-    }
-    if (args.taints) {
-        const parts = [];
-        for (const key of Object.keys(args.taints)) {
-            const taint = args.taints[key];
-            parts.push(key + "=" + taint.value + ":" + taint.effect);
-        }
-        if (parts.length > 0) {
-            kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
-        }
-    }
-    let bootstrapExtraArgs = args.bootstrapExtraArgs ? " " + args.bootstrapExtraArgs : "";
-    if (kubeletExtraArgs.length === 1) {
-        // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
-        bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
-    } else if (kubeletExtraArgs.length > 1) {
-        bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
-    }
+    const os = pulumi
+        .all([args.amiType, args.operatingSystem])
+        .apply(([amiType, operatingSystem]) => {
+            return getOperatingSystem(amiType, operatingSystem);
+        });
 
     const userdata = pulumi
         .all([
@@ -728,25 +727,42 @@ function createNodeGroupInternal(
             eksCluster.endpoint,
             eksCluster.certificateAuthority,
             cfnStackName,
-            userDataArg,
+            args.nodeUserData,
+            args.nodeUserDataOverride,
+            os,
         ])
-        .apply(([region, clusterName, clusterEndpoint, clusterCa, stackName, customUserData]) => {
-            if (customUserData !== "") {
-                customUserData = `cat >/opt/user-data <<${stackName}-user-data
-${customUserData}
-${stackName}-user-data
-chmod +x /opt/user-data
-/opt/user-data
-`;
-            }
+        .apply(
+            ([
+                region,
+                clusterName,
+                clusterEndpoint,
+                clusterCa,
+                stackName,
+                extraUserData,
+                userDataOverride,
+                os,
+            ]) => {
+                const userDataArgs: SelfManagedV1NodeUserDataArgs = {
+                    nodeGroupType: "self-managed-v1",
+                    awsRegion: region.name,
+                    kubeletExtraArgs: args.kubeletExtraArgs,
+                    bootstrapExtraArgs: args.bootstrapExtraArgs,
+                    labels: args.labels,
+                    taints: args.taints,
+                    userDataOverride,
+                    extraUserData,
+                    stackName,
+                };
 
-            return `#!/bin/bash
+                const clusterMetadata = {
+                    name: clusterName,
+                    apiServerEndpoint: clusterEndpoint,
+                    certificateAuthority: clusterCa.data,
+                };
 
-/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"${bootstrapExtraArgs}
-${customUserData}
-/opt/aws/bin/cfn-signal --exit-code $? --stack ${stackName} --resource NodeGroup --region ${region.name}
-`;
-        });
+                return createUserData(os, clusterMetadata, userDataArgs);
+            },
+        );
 
     const version = pulumi.output(args.version || core.cluster.version);
 
@@ -1079,74 +1095,50 @@ function createNodeGroupV2Internal(
         keyName = key.keyName;
     }
 
-    const awsRegion = pulumi.output(aws.getRegion({}, { parent, async: true }));
-    const userDataArg = args.nodeUserData || pulumi.output("");
-
-    const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
-    if (args.labels) {
-        const parts = [];
-        for (const key of Object.keys(args.labels)) {
-            parts.push(key + "=" + args.labels[key]);
-        }
-        if (parts.length > 0) {
-            kubeletExtraArgs.push("--node-labels=" + parts.join(","));
-        }
-    }
-    if (args.taints) {
-        const parts = [];
-        for (const key of Object.keys(args.taints)) {
-            const taint = args.taints[key];
-            parts.push(key + "=" + taint.value + ":" + taint.effect);
-        }
-        if (parts.length > 0) {
-            kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
-        }
-    }
-    let bootstrapExtraArgs = args.bootstrapExtraArgs ? " " + args.bootstrapExtraArgs : "";
-    if (kubeletExtraArgs.length === 1) {
-        // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
-        bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
-    } else if (kubeletExtraArgs.length > 1) {
-        bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
-    }
+    const os = pulumi
+        .all([args.amiType, args.operatingSystem])
+        .apply(([amiType, operatingSystem]) => {
+            return getOperatingSystem(amiType, operatingSystem);
+        });
 
     const userdata = pulumi
         .all([
-            awsRegion,
             eksCluster.name,
             eksCluster.endpoint,
             eksCluster.certificateAuthority,
             name,
-            userDataArg,
+            args.nodeUserData,
             args.nodeUserDataOverride,
+            os,
         ])
         .apply(
             ([
-                region,
                 clusterName,
                 clusterEndpoint,
                 clusterCa,
                 stackName,
-                customUserData,
-                nodeUserDataOverride,
+                extraUserData,
+                userDataOverride,
+                os,
             ]) => {
-                if (nodeUserDataOverride !== undefined && nodeUserDataOverride !== "") {
-                    return nodeUserDataOverride;
-                }
-                if (customUserData !== "") {
-                    customUserData = `cat >/opt/user-data <<${stackName}-user-data
-${customUserData}
-${stackName}-user-data
-chmod +x /opt/user-data
-/opt/user-data
-`;
-                }
+                const userDataArgs: SelfManagedV2NodeUserDataArgs = {
+                    nodeGroupType: "self-managed-v2",
+                    kubeletExtraArgs: args.kubeletExtraArgs,
+                    bootstrapExtraArgs: args.bootstrapExtraArgs,
+                    labels: args.labels,
+                    taints: args.taints,
+                    userDataOverride,
+                    extraUserData,
+                    stackName,
+                };
 
-                return `#!/bin/bash
+                const clusterMetadata = {
+                    name: clusterName,
+                    apiServerEndpoint: clusterEndpoint,
+                    certificateAuthority: clusterCa.data,
+                };
 
-/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCa.data}" "${clusterName}"${bootstrapExtraArgs}
-${customUserData}
-`;
+                return createUserData(os, clusterMetadata, userDataArgs);
             },
         )
         .apply((x) => Buffer.from(x, "utf-8").toString("base64")); // Launch Templates require user data to be passed as base64.
@@ -1211,6 +1203,7 @@ ${customUserData}
           }
         : undefined;
 
+    // TODO: This wrongly assumes an AMI only has a single block device. Bottlerocket has two
     const device = pulumi.output(amiId).apply((id) =>
         aws.ec2.getAmi(
             {
@@ -1490,7 +1483,7 @@ export type ManagedNodeGroupOptions = Omit<
     /**
      * Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance
      * metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
-     * Defaults to `false`.
+     * Defaults to `false` for AL2 and true for AL2023 & Bottlerocket.
      *
      * Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should
      * enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
@@ -1544,6 +1537,14 @@ export type ManagedNodeGroupOptions = Omit<
      *   - maxSize: 2
      */
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>;
+
+    /**
+     * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the
+     * instance types and gpu configuration. Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     *
+     * Defaults to `AL2`.
+     */
+    operatingSystem?: pulumi.Input<OperatingSystem>;
 };
 
 /**
@@ -1729,27 +1730,40 @@ function createManagedNodeGroupInternal(
     // Create a custom launch template for the managed node group if the user specifies either kubeletExtraArgs or bootstrapExtraArgs.
     // If the user sepcifies a custom LaunchTemplate, we throw an error and suggest that the user include this in the launch template that they are providing.
     // If neither of these are provided, we can use the default launch template for managed node groups.
-    if (
-        args.launchTemplate &&
-        (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2)
-    ) {
+    if (args.launchTemplate && requiresCustomLaunchTemplate(args)) {
         throw new pulumi.ResourceError(
             "If you provide a custom launch template, you cannot provide kubeletExtraArgs, bootstrapExtraArgs or enableIMDSv2. Please include these in the launch template that you are providing.",
             parent,
         );
     }
 
+    const customUserDataArgs = {
+        kubeletExtraArgs: args.kubeletExtraArgs,
+        bootstrapExtraArgs: args.bootstrapExtraArgs,
+    };
+
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
-    if (args.kubeletExtraArgs || args.bootstrapExtraArgs || args.enableIMDSv2) {
+    if (requiresCustomUserData(customUserDataArgs) || args.enableIMDSv2) {
         launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
 
         // Disk size is specified in the launch template.
         delete nodeGroupArgs.diskSize;
     }
 
-    if (launchTemplate?.imageId) {
-        // EKS doesn't allow setting the kubernetes version in the node group if an image id is provided within the launch template.
+    // amiType, releaseVersion and version cannot be set if an AMI ID is set in a custom launch template.
+    // The AMI ID is set in the launch template if custom user data is required.
+    // See https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#mng-ami-id-conditions
+    if (requiresCustomUserData(customUserDataArgs)) {
         delete nodeGroupArgs.version;
+        delete nodeGroupArgs.releaseVersion;
+        delete nodeGroupArgs.amiType;
+    }
+
+    let amiType = args.amiType;
+    // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
+    if (amiType === undefined && args.operatingSystem !== undefined) {
+        // TODO: expose GPU support as an option for managed node groups
+        amiType = determineAmiType(args.operatingSystem, undefined, args.instanceTypes);
     }
 
     // Make the aws-auth configmap a dependency of the node group.
@@ -1759,6 +1773,7 @@ function createManagedNodeGroupInternal(
         name,
         {
             ...nodeGroupArgs,
+            amiType,
             clusterName: args.clusterName || core.cluster.name,
             nodeRoleArn: roleArn,
             scalingConfig: pulumi.all([args.scalingConfig]).apply(([config]) => {
@@ -1787,8 +1802,17 @@ function createManagedNodeGroupInternal(
     return nodeGroup;
 }
 
+function requiresCustomLaunchTemplate(args: Omit<ManagedNodeGroupOptions, "cluster">): boolean {
+    return (
+        requiresCustomUserData({
+            kubeletExtraArgs: args.kubeletExtraArgs,
+            bootstrapExtraArgs: args.bootstrapExtraArgs,
+        }) || args.enableIMDSv2 !== undefined
+    );
+}
+
 /**
- * Create a custom launch template for the managed node group if the user specifies either kubeletExtraArgs or bootstrapExtraArgs.
+ * Create a custom launch template for the managed node group based on user inputs.
  */
 function createMNGCustomLaunchTemplate(
     name: string,
@@ -1797,58 +1821,107 @@ function createMNGCustomLaunchTemplate(
     parent: pulumi.Resource,
     provider?: pulumi.ProviderResource,
 ): aws.ec2.LaunchTemplate {
-    let userData;
+    const os = pulumi
+        .all([args.amiType, args.operatingSystem])
+        .apply(([amiType, operatingSystem]) => {
+            return getOperatingSystem(amiType, operatingSystem);
+        });
 
-    // If the user specifies either kubeletExtraArgs or bootstrapExtraArgs, we need to create a base64 encoded user data script.
-    if (args.kubeletExtraArgs || args.bootstrapExtraArgs) {
-        const kubeletExtraArgs = args.kubeletExtraArgs ? args.kubeletExtraArgs.split(" ") : [];
-        let bootstrapExtraArgs = args.bootstrapExtraArgs ? " " + args.bootstrapExtraArgs : "";
+    const taints = args.taints
+        ? pulumi.output(args.taints).apply((taints) => {
+              return taints
+                  .map((taint) => {
+                      return {
+                          [taint.key]: {
+                              value: taint.value,
+                              effect: taint.effect,
+                          } as Taint,
+                      };
+                  })
+                  .reduce((acc, val) => Object.assign(acc, val), {});
+          })
+        : undefined;
 
-        if (kubeletExtraArgs.length === 1) {
-            // For backward compatibility with previous versions of this package, don't wrap a single argument with `''`.
-            bootstrapExtraArgs += ` --kubelet-extra-args ${kubeletExtraArgs[0]}`;
-        } else if (kubeletExtraArgs.length > 1) {
-            bootstrapExtraArgs += ` --kubelet-extra-args '${kubeletExtraArgs.join(" ")}'`;
-        }
-
-        const userdata = pulumi
+    const customUserDataArgs = {
+        kubeletExtraArgs: args.kubeletExtraArgs,
+        bootstrapExtraArgs: args.bootstrapExtraArgs,
+    };
+    let userData: pulumi.Output<string> | undefined;
+    if (requiresCustomUserData(customUserDataArgs)) {
+        userData = pulumi
             .all([
                 core.cluster.name,
                 core.cluster.endpoint,
                 core.cluster.certificateAuthority.data,
                 args.clusterName,
+                os,
+                args.labels,
+                taints,
             ])
-            .apply(([clusterName, clusterEndpoint, clusterCertAuthority, argsClusterName]) => {
-                return `MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
+            .apply(
+                ([
+                    clusterName,
+                    clusterEndpoint,
+                    clusterCertAuthority,
+                    argsClusterName,
+                    os,
+                    labels,
+                    taints,
+                ]) => {
+                    const clusterMetadata = {
+                        name: argsClusterName || clusterName,
+                        apiServerEndpoint: clusterEndpoint,
+                        certificateAuthority: clusterCertAuthority,
+                    };
 
---==MYBOUNDARY==
-Content-Type: text/x-shellscript; charset="us-ascii"
+                    const userDataArgs: ManagedNodeUserDataArgs = {
+                        nodeGroupType: "managed",
+                        kubeletExtraArgs: args.kubeletExtraArgs,
+                        bootstrapExtraArgs: args.bootstrapExtraArgs,
+                        labels,
+                        taints,
 
-#!/bin/bash
+                        // TODO: expose this as an option for managed node groups
+                        userDataOverride: undefined,
+                    };
 
-/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCertAuthority}" "${
-                    argsClusterName || clusterName
-                }"${bootstrapExtraArgs}
---==MYBOUNDARY==--`;
-            });
-
-        // Encode the user data as base64.
-        userData = pulumi
-            .output(userdata)
-            .apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
+                    const userData = createUserData(os, clusterMetadata, userDataArgs);
+                    return Buffer.from(userData, "utf-8").toString("base64");
+                },
+            );
     }
 
-    // If the user specifies enableIMDSv2, we need to set the metadata options in the launch template.
-    const metadataOptions = args.enableIMDSv2
-        ? { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" }
-        : undefined;
+    // Turn on/off IMDSv2 based on the user input. Different AMIs have different defaults built in.
+    // AL2 defaults to off, AL2023 & Bottlerocket defaults to on.
+    const metadataOptions =
+        args.enableIMDSv2 !== undefined
+            ? {
+                  httpTokens: args.enableIMDSv2 ? "required" : "optional",
+                  httpPutResponseHopLimit: 2,
+                  httpEndpoint: "enabled",
+              }
+            : undefined;
+
+    const deviceName = os.apply((os) => {
+        switch (os) {
+            case OperatingSystem.AL2:
+            case OperatingSystem.AL2023:
+                // /dev/xvda is the default device name for the root volume on an Amazon Linux 2 & AL2023 instance.
+                return "/dev/xvda";
+            case OperatingSystem.Bottlerocket:
+                // /dev/xvdb is the default device name for the data volume on a Bottlerocket instance.
+                return "/dev/xvdb";
+            default:
+                // ensures this switch/case is exhaustive
+                const exhaustiveCheck: never = os;
+                throw new Error(`Unknown operating system: ${exhaustiveCheck}`);
+        }
+    });
 
     const blockDeviceMappings = args.diskSize
         ? [
               {
-                  // /dev/xvda is the default device name for the root volume on an Amazon Linux 2 & AL2023 instance.
-                  deviceName: "/dev/xvda",
+                  deviceName: deviceName,
                   ebs: {
                       volumeSize: args.diskSize,
                   },
@@ -1862,6 +1935,7 @@ Content-Type: text/x-shellscript; charset="us-ascii"
             blockDeviceMappings,
             userData,
             metadataOptions,
+            // TODO: expose amiID as an option for managed node groups
             // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
             // nodes failing to join the cluster.
             imageId: userData ? getRecommendedAMI(args, core.cluster.version, parent) : undefined,
@@ -1884,6 +1958,7 @@ function getRecommendedAMI(
     k8sVersion: pulumi.Output<string>,
     parent: pulumi.Resource | undefined,
 ): pulumi.Input<string> {
+    // TODO: Add gpu argument to ManagedNodeGroupOptions
     const gpu = "gpu" in args ? args.gpu : undefined;
 
     let instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined;
@@ -1893,17 +1968,33 @@ function getRecommendedAMI(
         instanceTypes = args.instanceTypes;
     }
 
-    const amiType = getAMIType(args.amiType, gpu, instanceTypes);
+    const os = pulumi
+        .all([args.amiType, args.operatingSystem])
+        .apply(([amiType, operatingSystem]) => {
+            return getOperatingSystem(amiType, operatingSystem);
+        });
+
+    const amiType = args.amiType
+        ? pulumi.output(args.amiType).apply((amiType) => {
+              const resolvedType = toAmiType(amiType);
+              if (resolvedType === undefined) {
+                  throw new pulumi.ResourceError(
+                      `Cannot resolve recommended AMI for AMI type: ${amiType}. Please provide the AMI ID and userdata.`,
+                      parent,
+                  );
+              }
+              return resolvedType;
+          })
+        : determineAmiType(os, gpu, instanceTypes);
+
     // if specified use the version from the args, otherwise use the version from the cluster.
     const version = args.version ? args.version : k8sVersion;
 
-    const amiID = pulumi.output([version, amiType]).apply(([version, type]) => {
-        const parameterName = `/aws/service/eks/optimized-ami/${version}/${type}/recommended/image_id`;
+    return pulumi.all([amiType, version]).apply(([amiType, version]) => {
+        const parameterName = getAmiMetadata(amiType).ssmParameterName(version);
         return pulumi.output(aws.ssm.getParameter({ name: parameterName }, { parent, async: true }))
             .value;
     });
-
-    return amiID;
 }
 
 /**
@@ -1937,41 +2028,24 @@ export function isGravitonInstance(instanceType: string): boolean {
 }
 
 /**
- * getAMIType returns the AMI type to use for the given configuration based on the
- * architecture of the instance type.
+ * Determines the AMI type to use for the given configuration based on the OS, GPU support, and
+ * architecture of the instance types.
  */
-function getAMIType(
-    amiType: pulumi.Input<string> | undefined,
+function determineAmiType(
+    os: pulumi.Input<OperatingSystem>,
     gpu: pulumi.Input<boolean> | undefined,
     instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined,
-): pulumi.Output<string> {
+): pulumi.Output<AmiType> {
     const architecture = pulumi.output(instanceTypes).apply((instanceTypes) => {
         return pulumi
             .all(instanceTypes ?? [])
             .apply((instanceTypes) => getArchitecture(instanceTypes));
     });
 
-    return pulumi.all([amiType, gpu, architecture]).apply(([amiType, gpu, architecture]) => {
-        if (amiType) {
-            // Return the user-specified AMI type.
-            return amiType;
-        }
-
-        if (gpu) {
-            // Return the Amazon Linux 2 GPU AMI type.
-            return "amazon-linux-2-gpu";
-        }
-
-        if (architecture === "arm64") {
-            // Return the Amazon Linux 2 ARM64 AMI type.
-            return "amazon-linux-2-arm64";
-        }
-
-        return "amazon-linux-2";
-    });
+    return pulumi
+        .all([os, gpu, architecture])
+        .apply(([os, gpu, architecture]) => getAmiType(os, gpu ?? false, architecture));
 }
-
-type NodeArchitecture = "arm64" | "x86_64";
 
 /**
  * Determines the architecture based on the provided instance types. Defaults to "x86_64" if no instance types are provided.
@@ -1980,7 +2054,7 @@ type NodeArchitecture = "arm64" | "x86_64";
  * @returns The architecture of the instance types, either "arm64" or "x86_64".
  * @throws {pulumi.ResourceError} If the provided instance types do not share a common architecture.
  */
-export function getArchitecture(instanceTypes: string[]): NodeArchitecture {
+export function getArchitecture(instanceTypes: string[]): CpuArchitecture {
     let hasGravitonInstances = false;
     let hasX64Instances = false;
 
