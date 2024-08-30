@@ -159,6 +159,11 @@ type nodeGroupV2Args struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
 	NodeUserDataOverride *string `pulumi:"nodeUserDataOverride"`
+	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+	//
+	// Defaults to `AL2`.
+	OperatingSystem *OperatingSystem `pulumi:"operatingSystem"`
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice *string `pulumi:"spotPrice"`
 	// Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
@@ -281,6 +286,11 @@ type NodeGroupV2Args struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
 	NodeUserDataOverride pulumi.StringPtrInput
+	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+	//
+	// Defaults to `AL2`.
+	OperatingSystem OperatingSystemPtrInput
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice pulumi.StringPtrInput
 	// Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument

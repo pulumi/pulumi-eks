@@ -7,6 +7,7 @@ import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.aws.ec2.SecurityGroupRule;
 import com.pulumi.aws.iam.InstanceProfile;
 import com.pulumi.core.annotations.CustomType;
+import com.pulumi.eks.enums.OperatingSystem;
 import com.pulumi.eks.outputs.Taint;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -215,6 +216,14 @@ public final class ClusterNodeGroupOptions {
      * 
      */
     private @Nullable String nodeUserDataOverride;
+    /**
+     * @return The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     * 
+     * Defaults to `AL2`.
+     * 
+     */
+    private @Nullable OperatingSystem operatingSystem;
     /**
      * @return Bidding price for spot instance. If set, only spot instances will be added as worker node.
      * 
@@ -489,6 +498,16 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.nodeUserDataOverride);
     }
     /**
+     * @return The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     * 
+     * Defaults to `AL2`.
+     * 
+     */
+    public Optional<OperatingSystem> operatingSystem() {
+        return Optional.ofNullable(this.operatingSystem);
+    }
+    /**
      * @return Bidding price for spot instance. If set, only spot instances will be added as worker node.
      * 
      */
@@ -549,6 +568,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable List<String> nodeSubnetIds;
         private @Nullable String nodeUserData;
         private @Nullable String nodeUserDataOverride;
+        private @Nullable OperatingSystem operatingSystem;
         private @Nullable String spotPrice;
         private @Nullable Map<String,Taint> taints;
         private @Nullable String version;
@@ -585,6 +605,7 @@ public final class ClusterNodeGroupOptions {
     	      this.nodeSubnetIds = defaults.nodeSubnetIds;
     	      this.nodeUserData = defaults.nodeUserData;
     	      this.nodeUserDataOverride = defaults.nodeUserDataOverride;
+    	      this.operatingSystem = defaults.operatingSystem;
     	      this.spotPrice = defaults.spotPrice;
     	      this.taints = defaults.taints;
     	      this.version = defaults.version;
@@ -747,6 +768,11 @@ public final class ClusterNodeGroupOptions {
             return this;
         }
         @CustomType.Setter
+        public Builder operatingSystem(@Nullable OperatingSystem operatingSystem) {
+            this.operatingSystem = operatingSystem;
+            return this;
+        }
+        @CustomType.Setter
         public Builder spotPrice(@Nullable String spotPrice) {
             this.spotPrice = spotPrice;
             return this;
@@ -793,6 +819,7 @@ public final class ClusterNodeGroupOptions {
             _resultValue.nodeSubnetIds = nodeSubnetIds;
             _resultValue.nodeUserData = nodeUserData;
             _resultValue.nodeUserDataOverride = nodeUserDataOverride;
+            _resultValue.operatingSystem = operatingSystem;
             _resultValue.spotPrice = spotPrice;
             _resultValue.taints = taints;
             _resultValue.version = version;
