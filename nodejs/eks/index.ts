@@ -43,3 +43,4 @@ export { NodeGroupSecurityGroup, createNodeGroupSecurityGroup } from "./security
 export { StorageClass, EBSVolumeType, createStorageClass } from "./storageclass";
 export { InputTags, UserStorageClasses } from "./utils";
 export { Addon, AddonOptions } from "./addon";
+export { AmiType, OperatingSystem } from "./ami";

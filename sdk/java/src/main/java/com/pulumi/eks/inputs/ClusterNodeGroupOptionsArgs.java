@@ -8,6 +8,7 @@ import com.pulumi.aws.ec2.SecurityGroupRule;
 import com.pulumi.aws.iam.InstanceProfile;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.eks.enums.OperatingSystem;
 import com.pulumi.eks.inputs.TaintArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -570,6 +571,27 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
     }
 
     /**
+     * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     * 
+     * Defaults to `AL2`.
+     * 
+     */
+    @Import(name="operatingSystem")
+    private @Nullable Output<OperatingSystem> operatingSystem;
+
+    /**
+     * @return The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     * 
+     * Defaults to `AL2`.
+     * 
+     */
+    public Optional<Output<OperatingSystem>> operatingSystem() {
+        return Optional.ofNullable(this.operatingSystem);
+    }
+
+    /**
      * Bidding price for spot instance. If set, only spot instances will be added as worker node.
      * 
      */
@@ -647,6 +669,7 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         this.nodeSubnetIds = $.nodeSubnetIds;
         this.nodeUserData = $.nodeUserData;
         this.nodeUserDataOverride = $.nodeUserDataOverride;
+        this.operatingSystem = $.operatingSystem;
         this.spotPrice = $.spotPrice;
         this.taints = $.taints;
         this.version = $.version;
@@ -1364,6 +1387,33 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          */
         public Builder nodeUserDataOverride(String nodeUserDataOverride) {
             return nodeUserDataOverride(Output.of(nodeUserDataOverride));
+        }
+
+        /**
+         * @param operatingSystem The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+         * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+         * 
+         * Defaults to `AL2`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder operatingSystem(@Nullable Output<OperatingSystem> operatingSystem) {
+            $.operatingSystem = operatingSystem;
+            return this;
+        }
+
+        /**
+         * @param operatingSystem The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+         * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+         * 
+         * Defaults to `AL2`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder operatingSystem(OperatingSystem operatingSystem) {
+            return operatingSystem(Output.of(operatingSystem));
         }
 
         /**

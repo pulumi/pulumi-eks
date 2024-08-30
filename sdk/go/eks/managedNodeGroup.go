@@ -89,6 +89,11 @@ type managedNodeGroupArgs struct {
 	//
 	// Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
 	NodeRoleArn *string `pulumi:"nodeRoleArn"`
+	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+	//
+	// Defaults to `AL2`.
+	OperatingSystem *OperatingSystem `pulumi:"operatingSystem"`
 	// AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
 	ReleaseVersion *string `pulumi:"releaseVersion"`
 	// Remote access settings.
@@ -162,6 +167,11 @@ type ManagedNodeGroupArgs struct {
 	//
 	// Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
 	NodeRoleArn pulumi.StringPtrInput
+	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+	//
+	// Defaults to `AL2`.
+	OperatingSystem OperatingSystemPtrInput
 	// AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
 	ReleaseVersion pulumi.StringPtrInput
 	// Remote access settings.
