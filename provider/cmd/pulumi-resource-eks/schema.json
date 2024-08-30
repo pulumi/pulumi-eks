@@ -869,6 +869,10 @@
                     },
                     "description": "The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`."
                 },
+                "k8sProvider": {
+                    "$ref": "/kubernetes/v4.4.0/schema.json#/provider",
+                    "description": "A Kubernetes resource provider that can be used to deploy into this cluster."
+                },
                 "kubeconfig": {
                     "$ref": "pulumi.json#/Any",
                     "description": "A kubeconfig that can be used to connect to the EKS cluster."
@@ -886,6 +890,7 @@
                 "kubeconfig",
                 "kubeconfigJson",
                 "awsProvider",
+                "k8sProvider",
                 "clusterSecurityGroup",
                 "instanceRoles",
                 "nodeSecurityGroup",
@@ -1174,6 +1179,9 @@
             },
             "isComponent": true,
             "methods": {
+                "createNodeGroup": "eks:index:Cluster/createNodeGroup",
+                "getK8sProvider": "eks:index:Cluster/getK8sProvider",
+                "getK8sProviderUrn": "eks:index:Cluster/getK8sProviderUrn",
                 "getKubeconfig": "eks:index:Cluster/getKubeconfig"
             }
         },
@@ -1893,6 +1901,221 @@
         }
     },
     "functions": {
+        "eks:index:Cluster/createNodeGroup": {
+            "inputs": {
+                "properties": {
+                    "__self__": {
+                        "$ref": "#/resources/eks:index:Cluster"
+                    },
+                    "amiId": {
+                        "type": "string",
+                        "description": "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.\n\nNote: `amiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html."
+                    },
+                    "amiType": {
+                        "type": "string",
+                        "description": "The AMI Type to use for the worker nodes. \n\nOnly applicable when setting an AMI ID that is of type `arm64`. \n\nNote: `amiType` and `gpu` are mutually exclusive.\n\n"
+                    },
+                    "autoScalingGroupTags": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.\n\nPer AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
+                    },
+                    "bootstrapExtraArgs": {
+                        "type": "string",
+                        "plain": true,
+                        "description": "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters."
+                    },
+                    "cloudFormationTags": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "The tags to apply to the CloudFormation Stack of the Worker NodeGroup.\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
+                    },
+                    "clusterIngressRule": {
+                        "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                        "description": "The ingress rule that gives node group access."
+                    },
+                    "desiredCapacity": {
+                        "type": "integer",
+                        "description": "The number of worker nodes that should be running in the cluster. Defaults to 2."
+                    },
+                    "enableDetailedMonitoring": {
+                        "type": "boolean",
+                        "description": "Enables/disables detailed monitoring of the EC2 instances.\n\nWith detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.\nWhen enabled, you can also get aggregated data across groups of similar instances.\n\nNote: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\nFor more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/."
+                    },
+                    "encryptRootBlockDevice": {
+                        "type": "boolean",
+                        "description": "Encrypt the root block device of the nodes in the node group."
+                    },
+                    "extraNodeSecurityGroups": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        },
+                        "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
+                    },
+                    "gpu": {
+                        "type": "boolean",
+                        "description": "Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\nNote: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html"
+                    },
+                    "instanceProfile": {
+                        "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                        "plain": true,
+                        "description": "The ingress rule that gives node group access."
+                    },
+                    "instanceType": {
+                        "type": "string",
+                        "description": "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\"."
+                    },
+                    "keyName": {
+                        "type": "string",
+                        "description": "Name of the key pair to use for SSH access to worker nodes."
+                    },
+                    "kubeletExtraArgs": {
+                        "type": "string",
+                        "plain": true,
+                        "description": "Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`."
+                    },
+                    "labels": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string",
+                            "plain": true
+                        },
+                        "plain": true,
+                        "description": "Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument."
+                    },
+                    "maxSize": {
+                        "type": "integer",
+                        "description": "The maximum number of worker nodes running in the cluster. Defaults to 2."
+                    },
+                    "minSize": {
+                        "type": "integer",
+                        "description": "The minimum number of worker nodes running in the cluster. Defaults to 1."
+                    },
+                    "nodeAssociatePublicIpAddress": {
+                        "type": "boolean",
+                        "plain": true,
+                        "description": "Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs."
+                    },
+                    "nodePublicKey": {
+                        "type": "string",
+                        "description": "Public key material for SSH access to worker nodes. See allowed formats at:\nhttps://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html\nIf not provided, no SSH access is enabled on VMs."
+                    },
+                    "nodeRootVolumeDeleteOnTermination": {
+                        "type": "boolean",
+                        "description": "Whether the root block device should be deleted on termination of the instance. Defaults to true."
+                    },
+                    "nodeRootVolumeEncrypted": {
+                        "type": "boolean",
+                        "description": "Whether to encrypt a cluster node's root volume. Defaults to false."
+                    },
+                    "nodeRootVolumeIops": {
+                        "type": "integer",
+                        "description": "The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'."
+                    },
+                    "nodeRootVolumeSize": {
+                        "type": "integer",
+                        "description": "The size in GiB of a cluster node's root volume. Defaults to 20."
+                    },
+                    "nodeRootVolumeThroughput": {
+                        "type": "integer",
+                        "description": "Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'."
+                    },
+                    "nodeRootVolumeType": {
+                        "type": "string",
+                        "description": "Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'."
+                    },
+                    "nodeSecurityGroup": {
+                        "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                        "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
+                    },
+                    "nodeSubnetIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "The set of subnets to override and use for the worker node group.\n\nSetting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set."
+                    },
+                    "nodeUserData": {
+                        "type": "string",
+                        "description": "Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node signals its readiness to the managing CloudFormation stack. This code must be a typical user data script: critically it must begin with an interpreter directive (i.e. a `#!`)."
+                    },
+                    "nodeUserDataOverride": {
+                        "type": "string",
+                        "description": "User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html"
+                    },
+                    "spotPrice": {
+                        "type": "string",
+                        "description": "Bidding price for spot instance. If set, only spot instances will be added as worker node."
+                    },
+                    "taints": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/types/eks:index:Taint",
+                            "plain": true
+                        },
+                        "plain": true,
+                        "description": "Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument"
+                    },
+                    "version": {
+                        "type": "string",
+                        "description": "Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used."
+                    }
+                },
+                "required": [
+                    "__self__"
+                ]
+            },
+            "outputs": {
+                "$ref": "#/resources/eks:index:NodeGroup",
+                "plain": true
+            }
+        },
+        "eks:index:Cluster/getK8sProvider": {
+            "description": "A Kubernetes resource provider that can be used to deploy into this cluster.",
+            "inputs": {
+                "properties": {
+                    "__self__": {
+                        "$ref": "#/resources/eks:index:Cluster"
+                    }
+                },
+                "required": [
+                    "__self__"
+                ]
+            },
+            "outputs": {
+                "$ref": "/kubernetes/v4.4.0/schema.json#/provider",
+                "plain": true
+            }
+        },
+        "eks:index:Cluster/getK8sProviderUrn": {
+            "description": "A Kubernetes resource provider that can be used to deploy into this cluster.",
+            "inputs": {
+                "properties": {
+                    "__self__": {
+                        "$ref": "#/resources/eks:index:Cluster"
+                    }
+                },
+                "required": [
+                    "__self__"
+                ]
+            },
+            "outputs": {
+                "plain": true,
+                "properties": {
+                    "result": {
+                        "$ref": "/kubernetes/v4.4.0/schema.json#/provider"
+                    }
+                },
+                "required": [
+                    "result"
+                ]
+            }
+        },
         "eks:index:Cluster/getKubeconfig": {
             "description": "Generate a kubeconfig for cluster authentication that does not use the default AWS credential provider chain, and instead is scoped to the supported options in `KubeconfigOptions`.\n\nThe kubeconfig generated is automatically stringified for ease of use with the pulumi/kubernetes provider.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html\n- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html\n- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html",
             "inputs": {

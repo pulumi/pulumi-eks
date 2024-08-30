@@ -1,5 +1,4 @@
 import * as aws from "@pulumi/aws";
-import * as k8s from '@pulumi/kubernetes';
 import * as eks from "@pulumi/eks";
 import * as iam from "./iam";
 
@@ -43,8 +42,7 @@ const cluster2 = new eks.Cluster("example-tags-cluster2", {
 // 3. A `NodeGroupV2` resource which accepts an `eks.Cluster` as input
 
 // Create the node group using an on-demand instance and resource tags.
-new eks.NodeGroup("example-ng-tags-ondemand", {
-    cluster: cluster2,
+cluster2.createNodeGroup("example-ng-tags-ondemand", {
     instanceType: "t3.medium",
     desiredCapacity: 1,
     minSize: 1,
@@ -54,10 +52,6 @@ new eks.NodeGroup("example-ng-tags-ondemand", {
     instanceProfile: instanceProfile0,
     cloudFormationTags: { "myCloudFormationTag2": "true" },
 });
-
-const provider = new k8s.Provider('k8s-eks', {
-    kubeconfig: cluster2.kubeconfig,
-})
 
 // Create the second node group using a spot price instance, resource tags, and
 // specialized resource tags such as the autoScalingGroupTags.
@@ -83,7 +77,7 @@ const spot = new eks.NodeGroup("example-ng-tags-spot", {
         [`k8s.io/cluster-autoscaler/${clusterName}`]: "true",
     })),
 }, {
-    providers: { kubernetes: provider},
+    providers: { kubernetes: cluster2.provider},
 });
 
 const ng2 = new eks.NodeGroupV2("example-ng-tags-ng2", {

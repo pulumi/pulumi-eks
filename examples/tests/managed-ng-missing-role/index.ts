@@ -39,7 +39,7 @@ const cluster = new eks.Cluster(`${projectName}`, {
 export const kubeconfig = cluster.kubeconfig;
 
 // Create a managed node group using a cluster as input.
-new eks.ManagedNodeGroup(`${projectName}-managed-ng`, {
+eks.createManagedNodeGroup(`${projectName}-managed-ng`, {
     cluster: cluster,
     nodeRole: createRole("role0"),
 });

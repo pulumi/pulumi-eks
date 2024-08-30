@@ -1,8 +1,7 @@
 import pulumi
 import pulumi_aws as aws
 import pulumi_eks as eks
-
-from vpc import Vpc
+import pulumi_awsx as awsx
 
 project_name = pulumi.get_project()
 
@@ -10,8 +9,9 @@ project_name = pulumi.get_project()
 cluster1 = eks.Cluster(f"{project_name}-1")
 
 # Create an EKS cluster with a non-default configuration.
-# TODO specify tags: { "Name": f"{project_name}-2" }
-vpc = Vpc(f"{project_name}-2")
+vpc = awsx.ec2.Vpc(project_name,
+    tags={"Name": project_name}
+)
 
 cluster2 = eks.Cluster('eks-cluster',
                           vpc_id=vpc.vpc_id,

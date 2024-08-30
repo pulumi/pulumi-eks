@@ -38,6 +38,7 @@ const (
 	Go     Language = "go"
 	Python Language = "python"
 	Schema Language = "schema"
+	NodeJS Language = "nodejs"
 )
 
 func main() {
@@ -64,6 +65,8 @@ func main() {
 	}
 
 	switch language {
+	case NodeJS:
+		genNodejs(readSchema(schemaFile, version), outdir)
 	case DotNet:
 		genDotNet(readSchema(schemaFile, version), outdir)
 	case Go:
@@ -102,6 +105,51 @@ func generateSchema() schema.PackageSpec {
 		Repository:  "https://github.com/pulumi/pulumi-eks",
 
 		Functions: map[string]schema.FunctionSpec{
+			"eks:index:Cluster/getK8sProvider": {
+				Description: "A Kubernetes resource provider that can be used to deploy into this cluster.",
+				Inputs: &schema.ObjectTypeSpec{
+					Properties: map[string]schema.PropertySpec{
+						"__self__": {
+							TypeSpec: schema.TypeSpec{Ref: "#/resources/eks:index:Cluster"},
+						},
+					},
+					Required: []string{"__self__"},
+				},
+				ReturnType: &schema.ReturnTypeSpec{
+					TypeSpec: &schema.TypeSpec{Plain: true, Ref: k8sRef("#/provider")},
+				},
+			},
+			"eks:index:Cluster/getK8sProviderUrn": {
+				Description: "A Kubernetes resource provider that can be used to deploy into this cluster.",
+				Inputs: &schema.ObjectTypeSpec{
+					Properties: map[string]schema.PropertySpec{
+						"__self__": {
+							TypeSpec: schema.TypeSpec{Ref: "#/resources/eks:index:Cluster"},
+						},
+					},
+					Required: []string{"__self__"},
+				},
+				ReturnType: &schema.ReturnTypeSpec{
+					ObjectTypeSpec: &schema.ObjectTypeSpec{
+						Required: []string{"result"},
+						Properties: map[string]schema.PropertySpec{
+							"result": {
+								TypeSpec: schema.TypeSpec{Ref: k8sRef("#/provider")},
+							},
+						},
+					},
+					ObjectTypeSpecIsPlain: true,
+				},
+			},
+			"eks:index:Cluster/createNodeGroup": {
+				Inputs: &schema.ObjectTypeSpec{
+					Properties: nodeGroupProperties(false, false, true),
+					Required:   []string{"__self__"},
+				},
+				ReturnType: &schema.ReturnTypeSpec{
+					TypeSpec: &schema.TypeSpec{Plain: true, Ref: "#/resources/eks:index:NodeGroup"},
+				},
+			},
 			"eks:index:Cluster/getKubeconfig": {
 				Description: "Generate a kubeconfig for cluster authentication that does not use the default AWS " +
 					"credential provider chain, and instead is scoped to the supported options in " +
@@ -189,10 +237,10 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/provider")},
 							Description: "The AWS resource provider.",
 						},
-						// "provider": {
-						// 	TypeSpec:    schema.TypeSpec{Ref: k8sRef("#/provider")},
-						// 	Description: "A Kubernetes resource provider that can be used to deploy into this cluster.",
-						// },
+						"k8sProvider": {
+							TypeSpec:    schema.TypeSpec{Ref: k8sRef("#/provider")},
+							Description: "A Kubernetes resource provider that can be used to deploy into this cluster.",
+						},
 						"clusterSecurityGroup": {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
 							Description: "The security group for the EKS cluster.",
@@ -231,6 +279,7 @@ func generateSchema() schema.PackageSpec {
 						"kubeconfigJson",
 						"awsProvider",
 						// "provider",
+						"k8sProvider",
 						"clusterSecurityGroup",
 						"instanceRoles",
 						"nodeSecurityGroup",
@@ -665,7 +714,10 @@ func generateSchema() schema.PackageSpec {
 					},
 				},
 				Methods: map[string]string{
-					"getKubeconfig": "eks:index:Cluster/getKubeconfig",
+					"getKubeconfig":     "eks:index:Cluster/getKubeconfig",
+					"getK8sProvider":    "eks:index:Cluster/getK8sProvider",
+					"createNodeGroup":   "eks:index:Cluster/createNodeGroup",
+					"getK8sProviderUrn": "eks:index:Cluster/getK8sProviderUrn",
 				},
 			},
 			"eks:index:ClusterCreationRoleProvider": {
@@ -918,7 +970,7 @@ func generateSchema() schema.PackageSpec {
 						"autoScalingGroupName",
 					},
 				},
-				InputProperties: nodeGroupProperties(true /*cluster*/, false /*NodeGroupV2*/),
+				InputProperties: nodeGroupProperties(true /*cluster*/, false /*NodeGroupV2*/, false),
 				RequiredInputs:  []string{"cluster"},
 			},
 			"eks:index:NodeGroupV2": {
@@ -949,7 +1001,7 @@ func generateSchema() schema.PackageSpec {
 						"autoScalingGroup",
 					},
 				},
-				InputProperties: nodeGroupProperties(true /*cluster*/, true /*NodeGroupV2*/),
+				InputProperties: nodeGroupProperties(true /*cluster*/, true /*NodeGroupV2*/, false),
 				RequiredInputs:  []string{"cluster"},
 			},
 			"eks:index:NodeGroupSecurityGroup": {
@@ -1492,7 +1544,7 @@ func generateSchema() schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "object",
 					Description: "Describes the configuration options accepted by a cluster to create its own node groups.",
-					Properties:  nodeGroupProperties(false /*cluster*/, false /*NodeGroupV2*/),
+					Properties:  nodeGroupProperties(false /*cluster*/, false /*NodeGroupV2*/, false),
 				},
 			},
 
@@ -1704,7 +1756,7 @@ func generateSchema() schema.PackageSpec {
 }
 
 //nolint:lll
-func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
+func nodeGroupProperties(cluster, v2, self bool) map[string]schema.PropertySpec {
 	props := map[string]schema.PropertySpec{
 		"nodeSubnetIds": {
 			TypeSpec: schema.TypeSpec{
@@ -1940,6 +1992,12 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 	}
 
+	if self {
+		props["__self__"] = schema.PropertySpec{
+			TypeSpec: schema.TypeSpec{Ref: "#/resources/eks:index:Cluster"},
+		}
+	}
+
 	if cluster {
 		props["cluster"] = schema.PropertySpec{
 			TypeSpec: schema.TypeSpec{
@@ -2145,6 +2203,16 @@ func readSchema(schemaPath string, version string) *schema.Package {
 		panic(err)
 	}
 	return pkg
+}
+
+func genNodejs(pkg *schema.Package, outdir string) {
+	overlays := map[string][]byte{}
+	files, err := dotnetgen.GeneratePackage(Tool, pkg, overlays, nil)
+	if err != nil {
+		panic(err)
+	}
+	mustWriteFiles(outdir, files)
+
 }
 
 func genDotNet(pkg *schema.Package, outdir string) {

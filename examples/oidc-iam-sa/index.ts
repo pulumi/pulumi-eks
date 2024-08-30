@@ -20,7 +20,7 @@ if (!cluster?.core?.oidcProvider) {
     throw new Error("Invalid cluster OIDC provider URL");
 }
 const clusterOidcProvider = cluster.core.oidcProvider;
-export const clusterOidcProviderUrl = clusterOidcProvider.apply(p => p!.url);
+export const clusterOidcProviderUrl = clusterOidcProvider.url;
 
 // Setup Pulumi Kubernetes provider.
 const provider = new k8s.Provider("eks-k8s", {
@@ -34,8 +34,7 @@ export const appsNamespaceName = appsNamespace.metadata.name;
 // Create the new IAM policy for the Service Account using the
 // AssumeRoleWebWebIdentity action.
 const saName = "s3";
-const oidcProviderArn = clusterOidcProvider.apply(oidc => oidc?.arn!);
-const saAssumeRolePolicy = pulumi.all([clusterOidcProviderUrl, oidcProviderArn, appsNamespaceName]).apply(([url, arn, namespace]) => aws.iam.getPolicyDocument({
+const saAssumeRolePolicy = pulumi.all([clusterOidcProviderUrl, clusterOidcProvider.arn, appsNamespaceName]).apply(([url, arn, namespace]) => aws.iam.getPolicyDocument({
     statements: [{
         actions: ["sts:AssumeRoleWithWebIdentity"],
         conditions: [{

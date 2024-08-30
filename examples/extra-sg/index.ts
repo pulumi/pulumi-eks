@@ -92,17 +92,16 @@ const publicInternetEgressRule = new aws.ec2.SecurityGroupRule(
 );
 
 // Create a node group that attaches extra security groups.
-new eks.NodeGroup('example-ng', {
-    cluster: cluster,
-    instanceProfile: ngInstanceProfile,
-    extraNodeSecurityGroups: [customSecurityGroup],
-    amiId: "ami-0384725f0d30527c7",
-    instanceType: "t3.small",
+cluster.createNodeGroup("example-ng", {
+  instanceProfile: ngInstanceProfile,
+  extraNodeSecurityGroups: [customSecurityGroup],
+  amiId: "ami-0384725f0d30527c7",
+  instanceType: "t3.small",
 });
 
 // Test with Node Group V2 that we can add a plain type SG and a SG from the cluster as a
 // Pulumi input.
-new eks.NodeGroupV2("example-mng", {
+const ng = new eks.NodeGroupV2("example-mng", {
   cluster: cluster,
   instanceProfile: ngInstanceProfile,
   instanceType: "t3.small",

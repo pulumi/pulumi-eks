@@ -28,7 +28,7 @@ const awsProvider = new aws.Provider("aws-provider", {
 
 // Define the AWS provider credential opts to configure the cluster's
 // kubeconfig auth.
-const kubeconfigOpts: eks.types.input.KubeconfigOptionsArgs = {profileName: profileName};
+const kubeconfigOpts: eks.KubeconfigOptions = {profileName: profileName};
 
 // Create the cluster using the AWS provider and credential opts.
 const cluster = new eks.Cluster(`${projectName}`, {

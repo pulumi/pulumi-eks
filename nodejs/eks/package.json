@@ -1,6 +1,6 @@
 {
     "name": "@pulumi/eks",
-    "version": "${VERSION}",
+    "version": "0.0.1",
     "description": "Pulumi Amazon Web Services (AWS) EKS Components.",
     "license": "Apache-2.0",
     "keywords": [

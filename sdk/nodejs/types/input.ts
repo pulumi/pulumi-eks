@@ -455,6 +455,20 @@ export interface StorageClassArgs {
 /**
  * Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
  */
+export interface Taint {
+    /**
+     * The effect of the taint.
+     */
+    effect: string;
+    /**
+     * The value of the taint.
+     */
+    value: string;
+}
+
+/**
+ * Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
+ */
 export interface TaintArgs {
     /**
      * The effect of the taint.

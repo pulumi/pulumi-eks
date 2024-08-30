@@ -24,7 +24,7 @@ export interface NodeGroupSecurityGroupOptions {
     /**
      * The security group associated with the EKS cluster.
      */
-    clusterSecurityGroup: pulumi.Output<aws.ec2.SecurityGroup>;
+    clusterSecurityGroup: aws.ec2.SecurityGroup;
 
     /*
      * Key-value mapping of tags to apply to this security group.
@@ -34,7 +34,7 @@ export interface NodeGroupSecurityGroupOptions {
     /**
      * The security group associated with the EKS cluster.
      */
-    eksCluster: pulumi.Output<aws.eks.Cluster>;
+    eksCluster: aws.eks.Cluster;
 }
 
 export function createNodeGroupSecurityGroup(name: string, args: NodeGroupSecurityGroupOptions, parent: pulumi.ComponentResource): aws.ec2.SecurityGroup {

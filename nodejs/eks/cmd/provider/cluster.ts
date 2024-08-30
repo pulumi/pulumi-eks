@@ -36,6 +36,7 @@ const clusterProvider: pulumi.provider.Provider = {
                     defaultNodeGroup: cluster.defaultNodeGroup,
                     eksCluster: cluster.eksCluster,
                     core: cluster.core,
+                    k8sProvider: cluster.k8sProvider,
                 },
             });
         } catch (e) {

@@ -28,26 +28,26 @@ const cluster = new eks.Cluster("example-managed-nodegroups", {
 export const kubeconfig = cluster.kubeconfig;
 
 // Managed node group with parameters that cause a custom launch template to be created
-const managedNodeGroup0 = new eks.ManagedNodeGroup("example-managed-ng0", {
+const managedNodeGroup0 = eks.createManagedNodeGroup("example-managed-ng0", {
     cluster: cluster,
     nodeRole: role0,
     kubeletExtraArgs: "--max-pods=500",
     enableIMDSv2: true,
     version: cluster.eksCluster.version,
-});
+}, cluster);
 
 // Simple managed node group
-const managedNodeGroup1 = new eks.ManagedNodeGroup("example-managed-ng1", {
+const managedNodeGroup1 = eks.createManagedNodeGroup("example-managed-ng1", {
     cluster: cluster,
     nodeGroupName: "aws-managed-ng1",
     nodeRoleArn: role1.arn,
     version: cluster.eksCluster.version,
-});
+}, cluster);
 
 // Managed node group with IMDSv2 enabled
-const managedNodeGroup2 = new eks.ManagedNodeGroup("example-managed-ng2", {
+const managedNodeGroup2 = eks.createManagedNodeGroup("example-managed-ng2", {
     cluster: cluster,
     nodeRole: role2,
     version: cluster.eksCluster.version,
     enableIMDSv2: true,
-});
+}, cluster);

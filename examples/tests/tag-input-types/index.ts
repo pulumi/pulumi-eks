@@ -1,5 +1,4 @@
 import * as aws from "@pulumi/aws";
-import * as k8s from '@pulumi/kubernetes';
 import * as eks from "@pulumi/eks";
 import * as pulumi from "@pulumi/pulumi";
 import * as iam from "./iam";
@@ -29,17 +28,13 @@ const autoScalingGroupTags: pulumi.Input<{ [key: string]: pulumi.Input<string> }
     [`k8s.io/cluster-autoscaler/${clusterName}`]: "true",
     "k8s.io/cluster-autoscaler/enabled": "true",
 }));
-
-const provider = new k8s.Provider('k8s-eks', {
-    kubeconfig: cluster1.kubeconfig,
-})
 const ng = new eks.NodeGroup("test-tag-input-types-ondemand", {
     cluster: cluster1,
     instanceProfile: instanceProfile0,
     autoScalingGroupTags: autoScalingGroupTags,
     cloudFormationTags: { "myCloudFormationTag1": "true" },
 }, {
-    providers: { kubernetes: provider},
+    providers: { kubernetes: cluster1.provider},
 });
 
 export const kubeconfig = cluster1.kubeconfig;

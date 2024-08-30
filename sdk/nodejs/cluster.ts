@@ -10,7 +10,7 @@ import * as utilities from "./utilities";
 import * as pulumiAws from "@pulumi/aws";
 import * as pulumiKubernetes from "@pulumi/kubernetes";
 
-import {VpcCni} from "./index";
+import {NodeGroup, VpcCni} from "./index";
 
 /**
  * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
@@ -75,6 +75,10 @@ export class Cluster extends pulumi.ComponentResource {
      * The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      */
     public readonly instanceRoles!: pulumi.Output<pulumiAws.iam.Role[]>;
+    /**
+     * A Kubernetes resource provider that can be used to deploy into this cluster.
+     */
+    public /*out*/ readonly k8sProvider!: pulumi.Output<pulumiKubernetes.Provider>;
     /**
      * A kubeconfig that can be used to connect to the EKS cluster.
      */
@@ -154,6 +158,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["defaultNodeGroup"] = undefined /*out*/;
             resourceInputs["eksCluster"] = undefined /*out*/;
             resourceInputs["eksClusterIngressRule"] = undefined /*out*/;
+            resourceInputs["k8sProvider"] = undefined /*out*/;
             resourceInputs["kubeconfig"] = undefined /*out*/;
             resourceInputs["kubeconfigJson"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
@@ -165,12 +170,71 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["eksCluster"] = undefined /*out*/;
             resourceInputs["eksClusterIngressRule"] = undefined /*out*/;
             resourceInputs["instanceRoles"] = undefined /*out*/;
+            resourceInputs["k8sProvider"] = undefined /*out*/;
             resourceInputs["kubeconfig"] = undefined /*out*/;
             resourceInputs["kubeconfigJson"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(Cluster.__pulumiType, name, resourceInputs, opts, true /*remote*/);
+    }
+
+    createNodeGroup(args?: Cluster.CreateNodeGroupArgs): Promise<NodeGroup> {
+        args = args || {};
+        return utilities.callAsync("eks:index:Cluster/createNodeGroup", {
+            "__self__": this,
+            "amiId": args.amiId,
+            "amiType": args.amiType,
+            "autoScalingGroupTags": args.autoScalingGroupTags,
+            "bootstrapExtraArgs": args.bootstrapExtraArgs,
+            "cloudFormationTags": args.cloudFormationTags,
+            "clusterIngressRule": args.clusterIngressRule,
+            "desiredCapacity": args.desiredCapacity,
+            "enableDetailedMonitoring": args.enableDetailedMonitoring,
+            "encryptRootBlockDevice": args.encryptRootBlockDevice,
+            "extraNodeSecurityGroups": args.extraNodeSecurityGroups,
+            "gpu": args.gpu,
+            "instanceProfile": args.instanceProfile,
+            "instanceType": args.instanceType,
+            "keyName": args.keyName,
+            "kubeletExtraArgs": args.kubeletExtraArgs,
+            "labels": args.labels,
+            "maxSize": args.maxSize,
+            "minSize": args.minSize,
+            "nodeAssociatePublicIpAddress": args.nodeAssociatePublicIpAddress,
+            "nodePublicKey": args.nodePublicKey,
+            "nodeRootVolumeDeleteOnTermination": args.nodeRootVolumeDeleteOnTermination,
+            "nodeRootVolumeEncrypted": args.nodeRootVolumeEncrypted,
+            "nodeRootVolumeIops": args.nodeRootVolumeIops,
+            "nodeRootVolumeSize": args.nodeRootVolumeSize,
+            "nodeRootVolumeThroughput": args.nodeRootVolumeThroughput,
+            "nodeRootVolumeType": args.nodeRootVolumeType,
+            "nodeSecurityGroup": args.nodeSecurityGroup,
+            "nodeSubnetIds": args.nodeSubnetIds,
+            "nodeUserData": args.nodeUserData,
+            "nodeUserDataOverride": args.nodeUserDataOverride,
+            "spotPrice": args.spotPrice,
+            "taints": args.taints,
+            "version": args.version,
+        }, this, {property: "res"});
+    }
+
+    /**
+     * A Kubernetes resource provider that can be used to deploy into this cluster.
+     */
+    getK8sProvider(): Promise<pulumiKubernetes.Provider> {
+        return utilities.callAsync("eks:index:Cluster/getK8sProvider", {
+            "__self__": this,
+        }, this, {property: "res"});
+    }
+
+    /**
+     * A Kubernetes resource provider that can be used to deploy into this cluster.
+     */
+    getK8sProviderUrn(): Promise<Cluster.GetK8sProviderUrnResult> {
+        return utilities.callAsync("eks:index:Cluster/getK8sProviderUrn", {
+            "__self__": this,
+        }, this, {});
     }
 
     /**
@@ -524,6 +588,197 @@ export interface ClusterArgs {
 }
 
 export namespace Cluster {
+    /**
+     * The set of arguments for the Cluster.createNodeGroup method.
+     */
+    export interface CreateNodeGroupArgs {
+        /**
+         * The AMI ID to use for the worker nodes.
+         *
+         * Defaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.
+         *
+         * Note: `amiId` and `gpu` are mutually exclusive.
+         *
+         * See for more details:
+         * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+         */
+        amiId?: pulumi.Input<string>;
+        /**
+         * The AMI Type to use for the worker nodes. 
+         *
+         * Only applicable when setting an AMI ID that is of type `arm64`. 
+         *
+         * Note: `amiType` and `gpu` are mutually exclusive.
+         */
+        amiType?: pulumi.Input<string>;
+        /**
+         * The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
+         *
+         * Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
+         *
+         * Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
+         */
+        autoScalingGroupTags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+        /**
+         * Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+         */
+        bootstrapExtraArgs?: string;
+        /**
+         * The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
+         *
+         * Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
+         */
+        cloudFormationTags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+        /**
+         * The ingress rule that gives node group access.
+         */
+        clusterIngressRule?: pulumi.Input<pulumiAws.ec2.SecurityGroupRule>;
+        /**
+         * The number of worker nodes that should be running in the cluster. Defaults to 2.
+         */
+        desiredCapacity?: pulumi.Input<number>;
+        /**
+         * Enables/disables detailed monitoring of the EC2 instances.
+         *
+         * With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
+         * When enabled, you can also get aggregated data across groups of similar instances.
+         *
+         * Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+         * For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
+         */
+        enableDetailedMonitoring?: pulumi.Input<boolean>;
+        /**
+         * Encrypt the root block device of the nodes in the node group.
+         */
+        encryptRootBlockDevice?: pulumi.Input<boolean>;
+        /**
+         * Extra security groups to attach on all nodes in this worker node group.
+         *
+         * This additional set of security groups captures any user application rules that will be needed for the nodes.
+         */
+        extraNodeSecurityGroups?: pulumi.Input<pulumi.Input<pulumiAws.ec2.SecurityGroup>[]>;
+        /**
+         * Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
+         *
+         * Defaults to false.
+         *
+         * Note: `gpu` and `amiId` are mutually exclusive.
+         *
+         * See for more details:
+         * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+         * - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+         */
+        gpu?: pulumi.Input<boolean>;
+        /**
+         * The ingress rule that gives node group access.
+         */
+        instanceProfile?: pulumiAws.iam.InstanceProfile;
+        /**
+         * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+         */
+        instanceType?: pulumi.Input<string>;
+        /**
+         * Name of the key pair to use for SSH access to worker nodes.
+         */
+        keyName?: pulumi.Input<string>;
+        /**
+         * Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
+         */
+        kubeletExtraArgs?: string;
+        /**
+         * Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+         */
+        labels?: {[key: string]: pulumi.Input<string>};
+        /**
+         * The maximum number of worker nodes running in the cluster. Defaults to 2.
+         */
+        maxSize?: pulumi.Input<number>;
+        /**
+         * The minimum number of worker nodes running in the cluster. Defaults to 1.
+         */
+        minSize?: pulumi.Input<number>;
+        /**
+         * Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
+         */
+        nodeAssociatePublicIpAddress?: boolean;
+        /**
+         * Public key material for SSH access to worker nodes. See allowed formats at:
+         * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+         * If not provided, no SSH access is enabled on VMs.
+         */
+        nodePublicKey?: pulumi.Input<string>;
+        /**
+         * Whether the root block device should be deleted on termination of the instance. Defaults to true.
+         */
+        nodeRootVolumeDeleteOnTermination?: pulumi.Input<boolean>;
+        /**
+         * Whether to encrypt a cluster node's root volume. Defaults to false.
+         */
+        nodeRootVolumeEncrypted?: pulumi.Input<boolean>;
+        /**
+         * The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+         */
+        nodeRootVolumeIops?: pulumi.Input<number>;
+        /**
+         * The size in GiB of a cluster node's root volume. Defaults to 20.
+         */
+        nodeRootVolumeSize?: pulumi.Input<number>;
+        /**
+         * Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+         */
+        nodeRootVolumeThroughput?: pulumi.Input<number>;
+        /**
+         * Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+         */
+        nodeRootVolumeType?: pulumi.Input<string>;
+        /**
+         * The security group for the worker node group to communicate with the cluster.
+         *
+         * This security group requires specific inbound and outbound rules.
+         *
+         * See for more details:
+         * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+         *
+         * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
+         */
+        nodeSecurityGroup?: pulumi.Input<pulumiAws.ec2.SecurityGroup>;
+        /**
+         * The set of subnets to override and use for the worker node group.
+         *
+         * Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
+         */
+        nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+        /**
+         * Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node signals its readiness to the managing CloudFormation stack. This code must be a typical user data script: critically it must begin with an interpreter directive (i.e. a `#!`).
+         */
+        nodeUserData?: pulumi.Input<string>;
+        /**
+         * User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
+         *
+         * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+         */
+        nodeUserDataOverride?: pulumi.Input<string>;
+        /**
+         * Bidding price for spot instance. If set, only spot instances will be added as worker node.
+         */
+        spotPrice?: pulumi.Input<string>;
+        /**
+         * Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
+         */
+        taints?: {[key: string]: pulumi.Input<inputs.TaintArgs>};
+        /**
+         * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
+         */
+        version?: pulumi.Input<string>;
+    }
+
+    /**
+     * The results of the Cluster.getK8sProviderUrn method.
+     */
+    export interface GetK8sProviderUrnResult {
+        readonly result: pulumiKubernetes.Provider;
+    }
+
     /**
      * The set of arguments for the Cluster.getKubeconfig method.
      */

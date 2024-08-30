@@ -38,17 +38,13 @@ const myCluster = new eks.Cluster(`${projectName}`, {
 export const kubeconfig = myCluster.kubeconfig;
 export const clusterName = myCluster.core.cluster.name;
 
-const provider = new k8s.Provider('k8s-eks', {
-    kubeconfig: myCluster.kubeconfig,
-});
-
 // Create a Standard node group of t3.medium workers.
 const ngStandard = utils.createNodeGroup(`${projectName}-ng-standard`, {
     instanceType: "t3.medium",
     desiredCapacity: 3,
     cluster: myCluster,
     instanceProfile: instanceProfiles[0],
-}, provider);
+});
 
 // Create a 2xlarge node group of t3.2xlarge workers with taints on the nodes
 // dedicated for the NGINX Ingress Controller.
@@ -59,7 +55,7 @@ if (config.createNodeGroup2xlarge) {
         cluster: myCluster,
         instanceProfile: instanceProfiles[0],
         taints: {"nginx": { value: "true", effect: "NoSchedule"}},
-    }, provider);
+    });
 }
 
 // Create a 4xlarge node group of c5.4xlarge workers. This new node group will
@@ -71,12 +67,11 @@ if (config.createNodeGroup4xlarge) {
         cluster: myCluster,
         instanceProfile: instanceProfiles[0],
         taints: {"nginx": { value: "true", effect: "NoSchedule"}},
-    }, provider);
+    });
 }
 
-
 // Create a Namespace for NGINX Ingress Controller and the echoserver workload.
-const namespace = new k8s.core.v1.Namespace("apps", undefined, { provider });
+const namespace = new k8s.core.v1.Namespace("apps", undefined, { provider: myCluster.provider });
 export const namespaceName = namespace.metadata.name;
 
 // Deploy the NGINX Ingress Controller on the specified node group.
@@ -89,7 +84,7 @@ if (config.deployWorkload) {
         replicas: 3,
         namespace: namespaceName,
         ingressClass: ingressClass,
-        provider,
+        provider: myCluster.provider,
         nodeSelectorTermValues: config.nginxNodeSelectorTermValues,
     });
     nginxServiceUrl = nginxService.status.loadBalancer.ingress[0].hostname;
@@ -99,6 +94,6 @@ if (config.deployWorkload) {
         replicas: 3,
         namespace: namespaceName,
         ingressClass: ingressClass,
-        provider,
+        provider: myCluster.provider,
     });
 }

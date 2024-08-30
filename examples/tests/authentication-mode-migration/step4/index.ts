@@ -61,8 +61,7 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
     }
 });
 
-new eks.NodeGroup("example-ng-simple-ondemand", {
-    cluster,
+cluster.createNodeGroup("example-ng-simple-ondemand", {
     instanceType: "t3.medium",
     desiredCapacity: 2,
     minSize: 2,

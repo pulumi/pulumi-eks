@@ -1985,20 +1985,6 @@ export function createCluster(
     };
 }
 
-export interface ClusterData {
-    readonly clusterSecurityGroup: aws.ec2.SecurityGroup;
-    readonly core: CoreData;
-    readonly defaultNodeGroup: NodeGroupData | undefined;
-    readonly eksCluster: aws.eks.Cluster;
-    readonly eksClusterIngressRule: aws.ec2.SecurityGroupRule;
-    readonly instanceRoles: pulumi.Output<aws.iam.Role[]>;
-    readonly kubeconfig: pulumi.Output<any>;
-    readonly kubeconfigJson: pulumi.Output<string>;
-    readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
-    readonly k8sProvider: k8s.Provider;
-    readonly awsProvider: aws.Provider;
-}
-
 /**
  * This is a variant of `Cluster` that is used for the MLC `Cluster`. We don't just use `Cluster`,
  * because not all of its output properties are typed as `Output<T>`, which prevents it from being
@@ -2010,7 +1996,7 @@ export interface ClusterData {
  *
  * @internal
  */
-export class ClusterInternal extends pulumi.ComponentResource<ClusterData> {
+export class ClusterInternal extends pulumi.ComponentResource {
     public readonly clusterSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
     public readonly core!: pulumi.Output<pulumi.Unwrap<CoreData>>;
     public readonly defaultNodeGroup!: pulumi.Output<pulumi.Unwrap<NodeGroupData> | undefined>;
@@ -2022,8 +2008,8 @@ export class ClusterInternal extends pulumi.ComponentResource<ClusterData> {
     public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
     // private readonly k8sProvider!: k8s.Provider;
     public readonly k8sProvider!: pulumi.Output<k8s.Provider>;
-    public readonly awsProvider!: pulumi.Output<aws.Provider>;
-    // private readonly _k8sProvider: k8s.Provider;
+    private readonly coreData!: CoreData;
+    private readonly _k8sProvider: k8s.Provider;
 
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:Cluster";
@@ -2052,8 +2038,8 @@ export class ClusterInternal extends pulumi.ComponentResource<ClusterData> {
             );
         }
 
-        // const cluster = createCluster(name, this, args, opts);
-        const cluster = pulumi.output(this.getData());
+        const cluster = createCluster(name, this, args, opts);
+        this.coreData = cluster.core;
         this.kubeconfig = cluster.kubeconfig;
         this.kubeconfigJson = cluster.kubeconfigJson;
         this.clusterSecurityGroup = pulumi.output(cluster.clusterSecurityGroup);
@@ -2063,8 +2049,8 @@ export class ClusterInternal extends pulumi.ComponentResource<ClusterData> {
         this.defaultNodeGroup = pulumi.output(cluster.defaultNodeGroup);
         this.eksCluster = pulumi.output(cluster.eksCluster);
         this.core = pulumi.output(cluster.core);
-        this.k8sProvider = pulumi.output(cluster.k8sProvider);
-        this.awsProvider = pulumi.output(cluster.awsProvider);
+        this.k8sProvider = pulumi.output(cluster.provider);
+        this._k8sProvider = cluster.provider;
 
         this.registerOutputs({
             clusterSecurityGroup: this.clusterSecurityGroup,
@@ -2077,51 +2063,19 @@ export class ClusterInternal extends pulumi.ComponentResource<ClusterData> {
             kubeconfigJson: this.kubeconfigJson,
             nodeSecurityGroup: this.nodeSecurityGroup,
             k8sProvider: this.k8sProvider,
-            awsProvider: this.awsProvider,
         });
-    }
-
-    protected async initialize(props: {
-    name: string;
-    args: ClusterOptions;
-    opts: pulumi.ComponentResourceOptions;
-  }): Promise<ClusterData> {
-
-        const cluster = createCluster(props.name, this, props.args, props.opts);
-        const p = new aws.Provider('aws-provider');
-        return {
-            kubeconfig: cluster.kubeconfig,
-            kubeconfigJson: cluster.kubeconfigJson,
-            clusterSecurityGroup: cluster.clusterSecurityGroup,
-            instanceRoles: cluster.instanceRoles,
-            nodeSecurityGroup: cluster.nodeSecurityGroup,
-            eksClusterIngressRule: cluster.eksClusterIngressRule,
-            defaultNodeGroup: cluster.defaultNodeGroup,
-            eksCluster: cluster.eksCluster,
-            core: cluster.core,
-            k8sProvider: cluster.provider,
-            awsProvider: p,
-        };
     }
 
     // private getPromiseProvider(): Promise<pulumi.Output<k8s.Provider>> {
     //     return new Promise((resolve) => resolve(this.k8sProvider));
     // }
 
-    getK8sProviderUrn(): pulumi.Output<aws.eks.Cluster> {
-        return this.eksCluster;
-    }
-    getK8sProvider(): pulumi.Output<k8s.Provider> {
-        const data = pulumi.output(this.getData());
-        return data.k8sProvider
-        // const data = pulumi.output(this.getData());
-        // console.error('OUTPUT PROVIDER: ', data.k8sProvider);
-        // return data.k8sProvider;
+    async getK8sProvider(): Promise<k8s.Provider> {
         // return this._k8sProvider;
         // return pulumi.output(this.getPromiseProvider());
         // return pulumi.output(this._k8sProvider).apply(p => new Promise((resolve) => resolve(p)));
         // return new Promise((resolve) => this.k8sProvider.apply(resolve));
-        // return new Promise((resolve) => resolve(this._k8sProvider))
+        return new Promise((resolve) => resolve(this._k8sProvider))
     }
 
     getKubeconfig(args: KubeconfigOptions): pulumi.Output<string> {

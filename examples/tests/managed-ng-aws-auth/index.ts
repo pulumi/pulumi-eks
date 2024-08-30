@@ -9,9 +9,15 @@ const projectName = pulumi.getProject();
 const roles = iam.createRoles(projectName, 3);
 
 // Create role mappings.
-const roleMapping0: eks.types.input.RoleMappingArgs = {
+const roleMapping0: eks.RoleMapping = {
     roleArn: roles[0].arn,
     username: "roleMapping0",
+    groups: ["system:masters"],
+};
+
+const roleMapping1: eks.RoleMapping = {
+    roleArn: roles[1].arn,
+    username: "roleMapping1",
     groups: ["system:masters"],
 };
 
@@ -26,7 +32,7 @@ const cluster = new eks.Cluster(`${projectName}`, {
 export const kubeconfig = cluster.kubeconfig;
 
 // Create a managed node group using a cluster as input.
-new eks.ManagedNodeGroup(`${projectName}-managed-ng`, {
+eks.createManagedNodeGroup(`${projectName}-managed-ng`, {
     cluster: cluster,
     nodeRole: roles[2],
 });

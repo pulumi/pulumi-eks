@@ -1,5 +1,4 @@
 import * as aws from "@pulumi/aws";
-import * as k8s from '@pulumi/kubernetes';
 import * as eks from "@pulumi/eks";
 import * as kx from "@pulumi/kubernetesx";
 import * as pulumi from "@pulumi/pulumi";
@@ -33,10 +32,6 @@ const cluster = new eks.Cluster(`${projectName}`, {
 // Export the cluster kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
 
-const provider = new k8s.Provider('k8s-eks', {
-    kubeconfig,
-});
-
 // Create a random password for an example DB, and store it in a secret.
 const dbPassword = new random.RandomPassword("db-password",
     {length: 32},
@@ -44,7 +39,7 @@ const dbPassword = new random.RandomPassword("db-password",
 ).result;
 const dbPasswordSecret = new kx.Secret("db-password", {
     stringData: {"dbPassword": dbPassword},
-}, {provider});
+}, {provider: cluster.provider});
 
 /*
 // Create an Kubernetes image pull secret to use local client Docker creds (if
@@ -74,4 +69,4 @@ const podBuilder = new kx.PodBuilder({
 // Create a deployment from the pod builder.
 const deployment = new kx.Deployment("nginx", {
     spec: podBuilder.asDeploymentSpec({replicas: 1}),
-}, {provider});
+}, {provider: cluster.provider});

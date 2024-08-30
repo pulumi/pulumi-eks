@@ -1,9 +1,9 @@
 import * as aws from "@pulumi/aws";
-import * as k8s from '@pulumi/kubernetes';
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 import * as pulumi from "@pulumi/pulumi";
 import * as iam from "./iam";
+import * as secgroup from "./securitygroup";
 
 const projectName = pulumi.getProject();
 
@@ -22,16 +22,12 @@ const testCluster = new eks.Cluster(`${projectName}`, {
     instanceRole: role,
 });
 
-const provider = new k8s.Provider('k8s-eks', {
-    kubeconfig: testCluster.kubeconfig,
-});
-
 // Create a node group.
 const ng = new eks.NodeGroup(`${projectName}-ng`, {
     cluster: testCluster,
     instanceProfile: instanceProfile,
 }, {
-    providers: { kubernetes: provider},
+    providers: { kubernetes: testCluster.provider},
 });
 
 // Export the cluster kubeconfig.
