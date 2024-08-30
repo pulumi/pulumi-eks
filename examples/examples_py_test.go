@@ -149,6 +149,21 @@ func TestAccManagedNodeGroupPy(t *testing.T) {
 	programTestWithExtraOptions(t, &test, nil)
 }
 
+func TestAccManagedNodeGroupOSPy(t *testing.T) {
+	test := getPythonBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "managed-ng-os-py"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
 func getPythonBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	region := getEnvRegion(t)
 	base := getBaseOptions(t)

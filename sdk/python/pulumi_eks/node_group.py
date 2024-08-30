@@ -51,6 +51,7 @@ class NodeGroupArgs:
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
+                 operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
                  taints: Optional[Mapping[str, 'TaintArgs']] = None,
                  version: Optional[pulumi.Input[str]] = None):
@@ -133,6 +134,10 @@ class NodeGroupArgs:
         :param pulumi.Input[str] node_user_data_override: User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+        :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+               Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+               
+               Defaults to `AL2`.
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
         :param Mapping[str, 'TaintArgs'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
@@ -198,6 +203,8 @@ class NodeGroupArgs:
             pulumi.set(__self__, "node_user_data", node_user_data)
         if node_user_data_override is not None:
             pulumi.set(__self__, "node_user_data_override", node_user_data_override)
+        if operating_system is not None:
+            pulumi.set(__self__, "operating_system", operating_system)
         if spot_price is not None:
             pulumi.set(__self__, "spot_price", spot_price)
         if taints is not None:
@@ -624,6 +631,21 @@ class NodeGroupArgs:
         pulumi.set(self, "node_user_data_override", value)
 
     @property
+    @pulumi.getter(name="operatingSystem")
+    def operating_system(self) -> Optional[pulumi.Input['OperatingSystem']]:
+        """
+        The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+        Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+
+        Defaults to `AL2`.
+        """
+        return pulumi.get(self, "operating_system")
+
+    @operating_system.setter
+    def operating_system(self, value: Optional[pulumi.Input['OperatingSystem']]):
+        pulumi.set(self, "operating_system", value)
+
+    @property
     @pulumi.getter(name="spotPrice")
     def spot_price(self) -> Optional[pulumi.Input[str]]:
         """
@@ -696,6 +718,7 @@ class NodeGroup(pulumi.ComponentResource):
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
+                 operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
                  taints: Optional[Mapping[str, Union['TaintArgs', 'TaintArgsDict']]] = None,
                  version: Optional[pulumi.Input[str]] = None,
@@ -782,6 +805,10 @@ class NodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[str] node_user_data_override: User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+        :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+               Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+               
+               Defaults to `AL2`.
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
         :param Mapping[str, Union['TaintArgs', 'TaintArgsDict']] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
@@ -841,6 +868,7 @@ class NodeGroup(pulumi.ComponentResource):
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
+                 operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
                  taints: Optional[Mapping[str, Union['TaintArgs', 'TaintArgsDict']]] = None,
                  version: Optional[pulumi.Input[str]] = None,
@@ -888,6 +916,7 @@ class NodeGroup(pulumi.ComponentResource):
             __props__.__dict__["node_subnet_ids"] = node_subnet_ids
             __props__.__dict__["node_user_data"] = node_user_data
             __props__.__dict__["node_user_data_override"] = node_user_data_override
+            __props__.__dict__["operating_system"] = operating_system
             __props__.__dict__["spot_price"] = spot_price
             __props__.__dict__["taints"] = taints
             __props__.__dict__["version"] = version
