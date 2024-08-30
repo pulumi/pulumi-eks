@@ -36,7 +36,7 @@ describe("toAmiType", () => {
         expect(toAmiType("AL2023_x86_64_STANDARD")).toBe(AmiType.AL2023X86_64Standard);
         expect(toAmiType("AL2023_ARM_64_STANDARD")).toBe(AmiType.AL2023Arm64Standard);
         expect(toAmiType("BOTTLEROCKET_ARM_64")).toBe(AmiType.BottlerocketArm64);
-        expect(toAmiType("BOTTLEROCKET_X86_64")).toBe(AmiType.BottlerocketX86_64);
+        expect(toAmiType("BOTTLEROCKET_x86_64")).toBe(AmiType.BottlerocketX86_64);
         expect(toAmiType("BOTTLEROCKET_ARM_64_NVIDIA")).toBe(AmiType.BottlerocketArm64Nvidia);
         expect(toAmiType("BOTTLEROCKET_x86_64_NVIDIA")).toBe(AmiType.BottlerocketX86_64Nvidia);
     });
