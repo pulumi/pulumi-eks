@@ -882,6 +882,14 @@ func generateSchema() schema.PackageSpec {
 							"Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should " +
 							"enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.",
 					},
+					"operatingSystem": {
+						TypeSpec: schema.TypeSpec{
+							Ref: "#/types/eks:index:OperatingSystem",
+						},
+						Description: "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\n" +
+							"Valid values are `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
+							"Defaults to `AL2`.",
+					},
 				},
 				RequiredInputs: []string{"cluster"},
 			},
@@ -1637,6 +1645,83 @@ func generateSchema() schema.PackageSpec {
 					},
 				},
 			},
+			"eks:index:OperatingSystem": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "string",
+					Description: "The type of EKS optimized Operating System to use for node groups.\n\n" +
+						"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:        "AL2",
+						Value:       "AL2",
+						Description: "EKS optimized OS based on Amazon Linux 2 (AL2).",
+
+						// While it's still the default (until the next major version), we should warn users if they're
+						// explicitly picking it.
+						DeprecationMessage: "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html",
+					},
+					{
+						Name:  "AL2023",
+						Value: "AL2023",
+						Description: "EKS optimized OS based on Amazon Linux 2023 (AL2023).\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html",
+					},
+					{
+						Name:  "Bottlerocket",
+						Value: "Bottlerocket",
+						Description: "EKS optimized Container OS based on Bottlerocket.\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html",
+					},
+				},
+			},
+			"eks:index:AmiType": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type:        "string",
+					Description: "Predefined AMI types for EKS optimized AMIs. Can be used to select the latest EKS optimized AMI for a node group.",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:  "AL2X86_64",
+						Value: "AL2_x86_64",
+					},
+					{
+						Name:  "AL2X86_64GPU",
+						Value: "AL2_x86_64_GPU",
+					},
+					{
+						Name:  "AL2Arm64",
+						Value: "AL2_ARM_64",
+					},
+
+					{
+						Name:  "AL2023X86_64Standard",
+						Value: "AL2023_x86_64_STANDARD",
+					},
+					{
+						Name:  "AL2023Arm64Standard",
+						Value: "AL2023_ARM_64_STANDARD",
+					},
+
+					{
+						Name:  "BottlerocketArm64",
+						Value: "BOTTLEROCKET_ARM_64",
+					},
+					{
+						Name:  "BottlerocketX86_64",
+						Value: "BOTTLEROCKET_x86_64",
+					},
+					{
+						Name:  "BottlerocketArm64Nvidia",
+						Value: "BOTTLEROCKET_ARM_64_NVIDIA",
+					},
+					{
+						Name:  "BottlerocketX86_64Nvidia",
+						Value: "BOTTLEROCKET_x86_64_NVIDIA",
+					},
+				},
+			},
 		},
 
 		Language: map[string]schema.RawMessage{
@@ -1915,6 +2000,14 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				"When enabled, you can also get aggregated data across groups of similar instances.\n\n" +
 				"Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\n" +
 				"For more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/.",
+		},
+		"operatingSystem": {
+			TypeSpec: schema.TypeSpec{
+				Ref: "#/types/eks:index:OperatingSystem",
+			},
+			Description: "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\n" +
+				"Valid values are `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
+				"Defaults to `AL2`.",
 		},
 	}
 
