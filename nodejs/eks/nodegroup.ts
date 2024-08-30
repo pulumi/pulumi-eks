@@ -720,49 +720,38 @@ function createNodeGroupInternal(
             return getOperatingSystem(amiType, operatingSystem);
         });
 
+    const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
+    const clusterMetadata = {
+        name: eksCluster.name,
+        apiServerEndpoint: eksCluster.endpoint,
+        certificateAuthority: eksCluster.certificateAuthority.data,
+        serviceCidr,
+    };
+
     const userdata = pulumi
         .all([
             awsRegion,
-            eksCluster.name,
-            eksCluster.endpoint,
-            eksCluster.certificateAuthority,
+            clusterMetadata,
             cfnStackName,
             args.nodeUserData,
             args.nodeUserDataOverride,
             os,
         ])
-        .apply(
-            ([
-                region,
-                clusterName,
-                clusterEndpoint,
-                clusterCa,
-                stackName,
-                extraUserData,
+        .apply(([region, clusterMetadata, stackName, extraUserData, userDataOverride, os]) => {
+            const userDataArgs: SelfManagedV1NodeUserDataArgs = {
+                nodeGroupType: "self-managed-v1",
+                awsRegion: region.name,
+                kubeletExtraArgs: args.kubeletExtraArgs,
+                bootstrapExtraArgs: args.bootstrapExtraArgs,
+                labels: args.labels,
+                taints: args.taints,
                 userDataOverride,
-                os,
-            ]) => {
-                const userDataArgs: SelfManagedV1NodeUserDataArgs = {
-                    nodeGroupType: "self-managed-v1",
-                    awsRegion: region.name,
-                    kubeletExtraArgs: args.kubeletExtraArgs,
-                    bootstrapExtraArgs: args.bootstrapExtraArgs,
-                    labels: args.labels,
-                    taints: args.taints,
-                    userDataOverride,
-                    extraUserData,
-                    stackName,
-                };
+                extraUserData,
+                stackName,
+            };
 
-                const clusterMetadata = {
-                    name: clusterName,
-                    apiServerEndpoint: clusterEndpoint,
-                    certificateAuthority: clusterCa.data,
-                };
-
-                return createUserData(os, clusterMetadata, userDataArgs);
-            },
-        );
+            return createUserData(os, clusterMetadata, userDataArgs);
+        });
 
     const version = pulumi.output(args.version || core.cluster.version);
 
@@ -1101,6 +1090,8 @@ function createNodeGroupV2Internal(
             return getOperatingSystem(amiType, operatingSystem);
         });
 
+    const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
+
     const userdata = pulumi
         .all([
             eksCluster.name,
@@ -1110,6 +1101,7 @@ function createNodeGroupV2Internal(
             args.nodeUserData,
             args.nodeUserDataOverride,
             os,
+            serviceCidr,
         ])
         .apply(
             ([
@@ -1120,6 +1112,7 @@ function createNodeGroupV2Internal(
                 extraUserData,
                 userDataOverride,
                 os,
+                serviceCidr,
             ]) => {
                 const userDataArgs: SelfManagedV2NodeUserDataArgs = {
                     nodeGroupType: "self-managed-v2",
@@ -1136,6 +1129,7 @@ function createNodeGroupV2Internal(
                     name: clusterName,
                     apiServerEndpoint: clusterEndpoint,
                     certificateAuthority: clusterCa.data,
+                    serviceCidr,
                 };
 
                 return createUserData(os, clusterMetadata, userDataArgs);
@@ -1842,6 +1836,7 @@ function createMNGCustomLaunchTemplate(
           })
         : undefined;
 
+    const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
     const customUserDataArgs = {
         kubeletExtraArgs: args.kubeletExtraArgs,
         bootstrapExtraArgs: args.bootstrapExtraArgs,
@@ -1857,6 +1852,7 @@ function createMNGCustomLaunchTemplate(
                 os,
                 args.labels,
                 taints,
+                serviceCidr,
             ])
             .apply(
                 ([
@@ -1867,11 +1863,13 @@ function createMNGCustomLaunchTemplate(
                     os,
                     labels,
                     taints,
+                    serviceCidr,
                 ]) => {
                     const clusterMetadata = {
                         name: argsClusterName || clusterName,
                         apiServerEndpoint: clusterEndpoint,
                         certificateAuthority: clusterCertAuthority,
+                        serviceCidr,
                     };
 
                     const userDataArgs: ManagedNodeUserDataArgs = {
@@ -1942,6 +1940,19 @@ function createMNGCustomLaunchTemplate(
         },
         { parent, provider },
     );
+}
+
+function getClusterServiceCidr(
+    networkConfig: pulumi.Output<aws.types.output.eks.ClusterKubernetesNetworkConfig>,
+): pulumi.Output<string> {
+    return networkConfig.apply((config) => {
+        // ipFamily defaults to ipv4, so if v6 is not set we should return the v4 CIDR
+        if (config.ipFamily === "ipv6") {
+            return config.serviceIpv6Cidr;
+        } else {
+            return config.serviceIpv4Cidr;
+        }
+    });
 }
 
 /**
