@@ -305,14 +305,6 @@ export interface NodeGroupBaseOptions {
      * Defaults to `AL2`.
      */
     operatingSystem?: pulumi.Input<OperatingSystem>;
-
-    /**
-     * The configuration settings for Bottlerocket OS. Bottlerocket uses TOML for its configuration.
-     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
-     *
-     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/
-     */
-    bottlerocketSettings?: pulumi.Input<string>;
 }
 
 /**
@@ -1547,14 +1539,6 @@ export type ManagedNodeGroupOptions = Omit<
      * Defaults to `AL2`.
      */
     operatingSystem?: pulumi.Input<OperatingSystem>;
-
-    /**
-     * The configuration settings for Bottlerocket OS. Bottlerocket uses TOML for its configuration.
-     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
-     *
-     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/
-     */
-    bottlerocketSettings?: pulumi.Input<string>;
 };
 
 /**
