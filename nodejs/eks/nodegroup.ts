@@ -1744,6 +1744,8 @@ function createManagedNodeGroupInternal(
         delete nodeGroupArgs.diskSize;
     }
 
+    let amiType = args.amiType;
+
     // amiType, releaseVersion and version cannot be set if an AMI ID is set in a custom launch template.
     // The AMI ID is set in the launch template if custom user data is required.
     // See https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#mng-ami-id-conditions
@@ -1751,11 +1753,9 @@ function createManagedNodeGroupInternal(
         delete nodeGroupArgs.version;
         delete nodeGroupArgs.releaseVersion;
         delete nodeGroupArgs.amiType;
-    }
+    } else if (amiType === undefined && args.operatingSystem !== undefined) {
+        // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
 
-    let amiType = args.amiType;
-    // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
-    if (amiType === undefined && args.operatingSystem !== undefined) {
         // TODO: expose GPU support as an option for managed node groups
         amiType = determineAmiType(args.operatingSystem, undefined, args.instanceTypes);
     }

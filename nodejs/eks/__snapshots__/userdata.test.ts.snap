@@ -38,6 +38,7 @@ Content-Type: multipart/mixed; boundary="BOUNDARY"
 --BOUNDARY
 Content-Type: application/node.eks.aws
 
+---
 apiVersion: node.eks.aws/v1alpha1
 kind: NodeConfig
 spec:
@@ -51,11 +52,13 @@ spec:
 --BOUNDARY
 Content-Type: application/node.eks.aws
 
+---
 apiVersion: node.eks.aws/v1alpha1
 kind: NodeConfig
 spec:
   kubelet:
-    flags: '--max-pods=500'
+    flags:
+      - '--max-pods=500'
 
 --BOUNDARY--
 "
@@ -68,6 +71,7 @@ Content-Type: multipart/mixed; boundary="BOUNDARY"
 --BOUNDARY
 Content-Type: application/node.eks.aws
 
+---
 apiVersion: node.eks.aws/v1alpha1
 kind: NodeConfig
 spec:
@@ -79,7 +83,7 @@ spec:
     cidr: 10.100.0.0/16
 
 --BOUNDARY
-Content-Type: text/x-shellscript
+Content-Type: text/x-shellscript; charset="us-ascii"
 
 #!/bin/bash
 
@@ -96,6 +100,7 @@ Content-Type: multipart/mixed; boundary="BOUNDARY"
 --BOUNDARY
 Content-Type: application/node.eks.aws
 
+---
 apiVersion: node.eks.aws/v1alpha1
 kind: NodeConfig
 spec:
@@ -109,11 +114,13 @@ spec:
 --BOUNDARY
 Content-Type: application/node.eks.aws
 
+---
 apiVersion: node.eks.aws/v1alpha1
 kind: NodeConfig
 spec:
   kubelet:
-    flags: '--node-labels=ondemand=true'
+    flags:
+      - '--node-labels=ondemand=true'
 
 --BOUNDARY--
 "

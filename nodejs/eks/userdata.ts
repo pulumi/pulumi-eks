@@ -240,24 +240,25 @@ function createNodeadmUserData(clusterMetadata: ClusterMetadata, args: UserDataA
         },
     };
 
+    const nodeadmPrefix = "---\n";
+
     const parts = [
         {
             contentType: "application/node.eks.aws",
-            content: jsyaml.dump(baseConfig),
+            content: nodeadmPrefix + jsyaml.dump(baseConfig),
         },
     ];
 
     // nodeadm config gets iteratively merged together, so we can add a new section for the kubelet flags
     const kubeletFlags = buildKubeletFlags(args);
     if (kubeletFlags.length > 0) {
-        const flags = kubeletFlags.join(" ");
         parts.push({
             contentType: "application/node.eks.aws",
-            content: jsyaml.dump({
+            content: nodeadmPrefix + jsyaml.dump({
                 ...nodeadmSkeleton,
                 spec: {
                     kubelet: {
-                        flags: flags,
+                        flags: kubeletFlags,
                     },
                 },
             }),
@@ -267,7 +268,7 @@ function createNodeadmUserData(clusterMetadata: ClusterMetadata, args: UserDataA
     // TODO: expose extra nodeadm config options in the schema
     if (isSelfManagedNodeUserDataArgs(args) && args.extraUserData && args.extraUserData !== "") {
         parts.push({
-            contentType: "text/x-shellscript",
+            contentType: 'text/x-shellscript; charset="us-ascii"',
             content: args.extraUserData,
         });
     }
@@ -277,7 +278,7 @@ function createNodeadmUserData(clusterMetadata: ClusterMetadata, args: UserDataA
     // see: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-signal.html
     if (isSelfManagedV1NodeUserDataArgs(args)) {
         parts.push({
-            contentType: "text/x-shellscript",
+            contentType: 'text/x-shellscript; charset="us-ascii"',
             content: `#!/bin/bash
 
 /opt/aws/bin/cfn-signal --exit-code $? --stack ${args.stackName} --resource NodeGroup --region ${args.awsRegion}
