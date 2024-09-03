@@ -17,6 +17,8 @@ import * as pulumi from "@pulumi/pulumi";
 import { OperatingSystem } from "./ami";
 import { Taint } from "./nodegroup";
 import * as jsyaml from "js-yaml";
+import * as toml from "smol-toml";
+import * as ipbigint from "ip-bigint";
 
 // linux is the default user data type for AMIs that use the eks bootstrap script. (e.g. AL2)
 // nodeadm is the user data type for AMIs that use nodeadm to bootstrap the node. (e.g. AL2023)
@@ -74,6 +76,7 @@ interface BaseSelfManagedNodeUserDataArgs extends BaseUserDataArgs {
 
 export interface ManagedNodeUserDataArgs extends BaseUserDataArgs {
     nodeGroupType: "managed";
+    bottlerocketSettings: string | undefined;
 }
 
 export interface SelfManagedV1NodeUserDataArgs extends BaseSelfManagedNodeUserDataArgs {
@@ -83,6 +86,7 @@ export interface SelfManagedV1NodeUserDataArgs extends BaseSelfManagedNodeUserDa
 
 export interface SelfManagedV2NodeUserDataArgs extends BaseSelfManagedNodeUserDataArgs {
     nodeGroupType: "self-managed-v2";
+    bottlerocketSettings: string | undefined;
 }
 
 export type UserDataArgs =
@@ -145,15 +149,11 @@ export function createUserData(
 
     switch (userDataType) {
         case "linux":
-            return createLinuxUserData(clusterMetadata, userDataArgs);
+            return createLinuxUserData(clusterMetadata, userDataArgs, parent);
         case "nodeadm":
             return createNodeadmUserData(clusterMetadata, userDataArgs, parent);
         case "bottlerocket":
-            // TODO: support bottlerocket user data
-            throw new pulumi.ResourceError(
-                `Creating user data for OS '${os}' is not supported yet.`,
-                parent,
-            );
+            return createBottlerocketUserData(clusterMetadata, userDataArgs, parent);
         default:
             // ensures this switch/case is exhaustive
             const exhaustiveCheck: never = userDataType;
@@ -161,7 +161,21 @@ export function createUserData(
     }
 }
 
-function createLinuxUserData(clusterMetadata: ClusterMetadata, args: UserDataArgs): string {
+function createLinuxUserData(
+    clusterMetadata: ClusterMetadata,
+    args: UserDataArgs,
+    parent: pulumi.Resource | undefined,
+): string {
+    if (
+        (isSelfManagedV2NodeUserDataArgs(args) || isManagedNodeUserDataArgs(args)) &&
+        args.bottlerocketSettings
+    ) {
+        throw new pulumi.ResourceError(
+            "The 'bottlerocketSettings' argument is not supported for Linux based user data.",
+            parent,
+        );
+    }
+
     // build the bootstrap arguments, they can also include kubelet flags if the user has provided them
     const kubeletExtraArgs = buildKubeletFlags(args);
     let bootstrapExtraArgs = args.bootstrapExtraArgs ? " " + args.bootstrapExtraArgs : "";
@@ -216,12 +230,24 @@ ${cfnSignal}
 `;
 }
 
+// nodeadm based user data is a multi-part MIME document that contains EKS NodeConfig as yaml and optional shell scripts
+// for more details see: https://awslabs.github.io/amazon-eks-ami/nodeadm/
 function createNodeadmUserData(
     clusterMetadata: ClusterMetadata,
     args: UserDataArgs,
     parent: pulumi.Resource | undefined,
 ): string {
-    if (args.bootstrapExtraArgs) {
+    if (
+        (isSelfManagedV2NodeUserDataArgs(args) || isManagedNodeUserDataArgs(args)) &&
+        args.bottlerocketSettings
+    ) {
+        throw new pulumi.ResourceError(
+            "The 'bottlerocketSettings' argument is not supported for nodeadm based user data.",
+            parent,
+        );
+    }
+
+    if (args.bootstrapExtraArgs && args.bootstrapExtraArgs !== "") {
         throw new pulumi.ResourceError(
             "The 'bootstrapExtraArgs' argument is not supported for nodeadm based user data.",
             parent,
@@ -345,4 +371,143 @@ function buildKubeletFlags(args: UserDataArgs): string[] {
         }
     }
     return kubeletExtraArgs;
+}
+
+/**
+ * Bottlerocket uses TOML for its configuration. The base settings will get merged with user defined ones.
+ * For more details see https://bottlerocket.dev/en/os/1.20.x/api/settings/
+ */
+function createBottlerocketUserData(
+    clusterMetadata: ClusterMetadata,
+    args: UserDataArgs,
+    parent: pulumi.Resource | undefined,
+): string {
+    // Bottlerocket doesn't have a shell, thus we cannot execute any scripts on boot up and NodeGroupV1 requires that.
+    if (isSelfManagedV1NodeUserDataArgs(args)) {
+        throw new pulumi.ResourceError(
+            "The NodeGroup component is not supported with Bottlerocket AMIs. Please use the NodeGroupV2 or ManagedNodeGroup components instead.",
+            parent,
+        );
+    }
+
+    if (args.bootstrapExtraArgs && args.bootstrapExtraArgs !== "") {
+        throw new pulumi.ResourceError(
+            "The 'bootstrapExtraArgs' argument is not supported with Bottlerocket.",
+            parent,
+        );
+    }
+
+    if (args.kubeletExtraArgs && args.kubeletExtraArgs !== "") {
+        throw new pulumi.ResourceError(
+            "The 'kubeletExtraArgs' argument is not supported with Bottlerocket.",
+            parent,
+        );
+    }
+
+    if (isSelfManagedNodeUserDataArgs(args) && args.extraUserData && args.extraUserData !== "") {
+        throw new pulumi.ResourceError(
+            "Bottlerocket does not support running scripts as part of the user data. If you need to run scripts, please use a different OS.",
+            parent,
+        );
+    }
+
+    const clusterDnsIp = getClusterDnsIp(clusterMetadata.serviceCidr, parent);
+    const baseConfig = {
+        settings: {
+            kubernetes: {
+                "cluster-name": clusterMetadata.name,
+                "api-server": clusterMetadata.apiServerEndpoint,
+                "cluster-certificate": clusterMetadata.certificateAuthority,
+                "cluster-dns-ip": clusterDnsIp,
+            },
+        },
+    };
+
+    if (args.labels) {
+        Object.assign(baseConfig.settings.kubernetes, {
+            "node-labels": args.labels,
+        });
+    }
+
+    if (args.taints) {
+        const taints = {};
+        const records = Object.entries(args.taints).map(([key, taint]) => {
+            return { [key]: `${taint.value}:${taint.effect}` };
+        });
+        Object.assign(taints, ...records);
+
+        Object.assign(baseConfig.settings.kubernetes, {
+            "node-taints": taints,
+        });
+    }
+
+    const bottlerocketSettings: any = {};
+    if (args.bottlerocketSettings && args.bottlerocketSettings !== "") {
+        try {
+            Object.assign(bottlerocketSettings, toml.parse(args.bottlerocketSettings));
+        } catch (e) {
+            throw new pulumi.ResourceError(
+                `Failed to parse the Bottlerocket settings. Please ensure the settings are valid TOML: ${e.message}`,
+                parent,
+            );
+        }
+    }
+
+    if (!("settings" in bottlerocketSettings && isObject(bottlerocketSettings.settings))) {
+        bottlerocketSettings.settings = {};
+    }
+    if (
+        !(
+            "kubernetes" in bottlerocketSettings.settings &&
+            isObject(bottlerocketSettings.settings.kubernetes)
+        )
+    ) {
+        bottlerocketSettings.settings.kubernetes = {};
+    }
+
+    // merge the base settings with the user provided settings
+    bottlerocketSettings.settings.kubernetes = {
+        ...baseConfig.settings.kubernetes,
+        ...bottlerocketSettings.settings.kubernetes,
+    };
+
+    return toml.stringify(bottlerocketSettings);
+}
+
+/**
+ * Calculates the cluster DNS IP address based on the provided service CIDR. The cluster DNS IP address is the
+ * 10th IP address in the service CIDR. See: https://github.com/awslabs/amazon-eks-ami/blob/4f9b5560aee4dd9adbd4f1c711d237fd6f0b4e70/templates/al2/runtime/bootstrap.sh#L462-L485
+ *
+ * @param serviceCidr - The service CIDR to parse and calculate the cluster DNS IP from.
+ * @returns The cluster DNS IP address.
+ * @throws {pulumi.ResourceError} If the service CIDR fails to parse or the cluster DNS IP is out of range.
+ */
+function getClusterDnsIp(serviceCidr: string, parent: pulumi.Resource | undefined): string {
+    let num: bigint;
+    let version: ipbigint.IPVersion;
+
+    const [ip, prefix]: string[] = serviceCidr.split("/");
+    if (!/^[0-9]+$/.test(prefix)) {
+        throw new pulumi.ResourceError(
+            `The service CIDR of the cluster is not a valid CIDR: ${serviceCidr}`,
+            parent,
+        );
+    }
+
+    try {
+        const res = ipbigint.parseIp(ip);
+        num = res.number;
+        version = res.version;
+    } catch (e) {
+        throw new pulumi.ResourceError(
+            `The service CIDR of the cluster is not a valid CIDR: ${serviceCidr}`,
+            parent,
+        );
+    }
+
+    return ipbigint.stringifyIp({ number: num + BigInt(10), version });
+}
+
+function isObject(obj: any): obj is Record<string, any> {
+    return typeof obj === "object" && !Array.isArray(obj) && obj !== null;
 }

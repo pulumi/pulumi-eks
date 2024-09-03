@@ -305,6 +305,14 @@ export interface NodeGroupBaseOptions {
      * Defaults to `AL2`.
      */
     operatingSystem?: pulumi.Input<OperatingSystem>;
+
+    /**
+     * The configuration settings for Bottlerocket OS. Bottlerocket uses TOML for its configuration.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/
+     */
+    bottlerocketSettings?: pulumi.Input<string>;
 }
 
 /**
@@ -1091,28 +1099,30 @@ function createNodeGroupV2Internal(
         });
 
     const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
+    const clusterMetadata = {
+        name: eksCluster.name,
+        apiServerEndpoint: eksCluster.endpoint,
+        certificateAuthority: eksCluster.certificateAuthority.data,
+        serviceCidr,
+    };
 
     const userdata = pulumi
         .all([
-            eksCluster.name,
-            eksCluster.endpoint,
-            eksCluster.certificateAuthority,
+            clusterMetadata,
             name,
             args.nodeUserData,
             args.nodeUserDataOverride,
             os,
-            serviceCidr,
+            args.bottlerocketSettings,
         ])
         .apply(
             ([
-                clusterName,
-                clusterEndpoint,
-                clusterCa,
+                clusterMetadata,
                 stackName,
                 extraUserData,
                 userDataOverride,
                 os,
-                serviceCidr,
+                bottlerocketSettings,
             ]) => {
                 const userDataArgs: SelfManagedV2NodeUserDataArgs = {
                     nodeGroupType: "self-managed-v2",
@@ -1123,13 +1133,7 @@ function createNodeGroupV2Internal(
                     userDataOverride,
                     extraUserData,
                     stackName,
-                };
-
-                const clusterMetadata = {
-                    name: clusterName,
-                    apiServerEndpoint: clusterEndpoint,
-                    certificateAuthority: clusterCa.data,
-                    serviceCidr,
+                    bottlerocketSettings,
                 };
 
                 return createUserData(os, clusterMetadata, userDataArgs, parent);
@@ -1539,6 +1543,14 @@ export type ManagedNodeGroupOptions = Omit<
      * Defaults to `AL2`.
      */
     operatingSystem?: pulumi.Input<OperatingSystem>;
+
+    /**
+     * The configuration settings for Bottlerocket OS. Bottlerocket uses TOML for its configuration.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/
+     */
+    bottlerocketSettings?: pulumi.Input<string>;
 };
 
 /**
@@ -1837,6 +1849,13 @@ function createMNGCustomLaunchTemplate(
         : undefined;
 
     const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
+    const clusterMetadata = {
+        name: args.clusterName || core.cluster.name,
+        apiServerEndpoint: core.cluster.endpoint,
+        certificateAuthority: core.cluster.certificateAuthority.data,
+        serviceCidr,
+    };
+
     const customUserDataArgs = {
         kubeletExtraArgs: args.kubeletExtraArgs,
         bootstrapExtraArgs: args.bootstrapExtraArgs,
@@ -1845,32 +1864,20 @@ function createMNGCustomLaunchTemplate(
     if (requiresCustomUserData(customUserDataArgs)) {
         userData = pulumi
             .all([
-                core.cluster.name,
-                core.cluster.endpoint,
-                core.cluster.certificateAuthority.data,
-                args.clusterName,
+                clusterMetadata,
                 os,
                 args.labels,
                 taints,
-                serviceCidr,
+                args.bottlerocketSettings,
             ])
             .apply(
                 ([
-                    clusterName,
-                    clusterEndpoint,
-                    clusterCertAuthority,
-                    argsClusterName,
+                    clusterMetadata,
                     os,
                     labels,
                     taints,
-                    serviceCidr,
+                    bottlerocketSettings,
                 ]) => {
-                    const clusterMetadata = {
-                        name: argsClusterName || clusterName,
-                        apiServerEndpoint: clusterEndpoint,
-                        certificateAuthority: clusterCertAuthority,
-                        serviceCidr,
-                    };
 
                     const userDataArgs: ManagedNodeUserDataArgs = {
                         nodeGroupType: "managed",
@@ -1878,6 +1885,7 @@ function createMNGCustomLaunchTemplate(
                         bootstrapExtraArgs: args.bootstrapExtraArgs,
                         labels,
                         taints,
+                        bottlerocketSettings,
 
                         // TODO: expose this as an option for managed node groups
                         userDataOverride: undefined,
