@@ -254,14 +254,16 @@ function createNodeadmUserData(clusterMetadata: ClusterMetadata, args: UserDataA
     if (kubeletFlags.length > 0) {
         parts.push({
             contentType: "application/node.eks.aws",
-            content: nodeadmPrefix + jsyaml.dump({
-                ...nodeadmSkeleton,
-                spec: {
-                    kubelet: {
-                        flags: kubeletFlags,
+            content:
+                nodeadmPrefix +
+                jsyaml.dump({
+                    ...nodeadmSkeleton,
+                    spec: {
+                        kubelet: {
+                            flags: kubeletFlags,
+                        },
                     },
-                },
-            }),
+                }),
         });
     }
 
