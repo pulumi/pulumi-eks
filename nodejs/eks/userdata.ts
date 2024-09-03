@@ -134,6 +134,7 @@ export function createUserData(
     os: OperatingSystem,
     clusterMetadata: ClusterMetadata,
     userDataArgs: UserDataArgs,
+    parent: pulumi.Resource | undefined,
 ): string {
     // if the user has provided a custom user data script, use that
     if (userDataArgs.userDataOverride) {
@@ -146,12 +147,12 @@ export function createUserData(
         case "linux":
             return createLinuxUserData(clusterMetadata, userDataArgs);
         case "nodeadm":
-            return createNodeadmUserData(clusterMetadata, userDataArgs);
+            return createNodeadmUserData(clusterMetadata, userDataArgs, parent);
         case "bottlerocket":
             // TODO: support bottlerocket user data
             throw new pulumi.ResourceError(
                 `Creating user data for OS '${os}' is not supported yet.`,
-                undefined,
+                parent,
             );
         default:
             // ensures this switch/case is exhaustive
@@ -215,11 +216,15 @@ ${cfnSignal}
 `;
 }
 
-function createNodeadmUserData(clusterMetadata: ClusterMetadata, args: UserDataArgs): string {
+function createNodeadmUserData(
+    clusterMetadata: ClusterMetadata,
+    args: UserDataArgs,
+    parent: pulumi.Resource | undefined,
+): string {
     if (args.bootstrapExtraArgs) {
         throw new pulumi.ResourceError(
             "The 'bootstrapExtraArgs' argument is not supported for nodeadm based user data.",
-            undefined,
+            parent,
         );
     }
 

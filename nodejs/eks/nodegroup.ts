@@ -305,6 +305,14 @@ export interface NodeGroupBaseOptions {
      * Defaults to `AL2`.
      */
     operatingSystem?: pulumi.Input<OperatingSystem>;
+
+    /**
+     * The configuration settings for Bottlerocket OS. Bottlerocket uses TOML for its configuration.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/
+     */
+    bottlerocketSettings?: pulumi.Input<string>;
 }
 
 /**
@@ -717,7 +725,7 @@ function createNodeGroupInternal(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem);
+            return getOperatingSystem(amiType, operatingSystem, parent);
         });
 
     const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
@@ -750,7 +758,7 @@ function createNodeGroupInternal(
                 stackName,
             };
 
-            return createUserData(os, clusterMetadata, userDataArgs);
+            return createUserData(os, clusterMetadata, userDataArgs, parent);
         });
 
     const version = pulumi.output(args.version || core.cluster.version);
@@ -1087,7 +1095,7 @@ function createNodeGroupV2Internal(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem);
+            return getOperatingSystem(amiType, operatingSystem, parent);
         });
 
     const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
@@ -1132,7 +1140,7 @@ function createNodeGroupV2Internal(
                     serviceCidr,
                 };
 
-                return createUserData(os, clusterMetadata, userDataArgs);
+                return createUserData(os, clusterMetadata, userDataArgs, parent);
             },
         )
         .apply((x) => Buffer.from(x, "utf-8").toString("base64")); // Launch Templates require user data to be passed as base64.
@@ -1539,6 +1547,14 @@ export type ManagedNodeGroupOptions = Omit<
      * Defaults to `AL2`.
      */
     operatingSystem?: pulumi.Input<OperatingSystem>;
+
+    /**
+     * The configuration settings for Bottlerocket OS. Bottlerocket uses TOML for its configuration.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/
+     */
+    bottlerocketSettings?: pulumi.Input<string>;
 };
 
 /**
@@ -1757,7 +1773,7 @@ function createManagedNodeGroupInternal(
         // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
 
         // TODO: expose GPU support as an option for managed node groups
-        amiType = determineAmiType(args.operatingSystem, undefined, args.instanceTypes);
+        amiType = determineAmiType(args.operatingSystem, undefined, args.instanceTypes, parent);
     }
 
     // Make the aws-auth configmap a dependency of the node group.
@@ -1818,7 +1834,7 @@ function createMNGCustomLaunchTemplate(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem);
+            return getOperatingSystem(amiType, operatingSystem, parent);
         });
 
     const taints = args.taints
@@ -1883,7 +1899,7 @@ function createMNGCustomLaunchTemplate(
                         userDataOverride: undefined,
                     };
 
-                    const userData = createUserData(os, clusterMetadata, userDataArgs);
+                    const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
                     return Buffer.from(userData, "utf-8").toString("base64");
                 },
             );
@@ -1982,7 +1998,7 @@ function getRecommendedAMI(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem);
+            return getOperatingSystem(amiType, operatingSystem, parent);
         });
 
     const amiType = args.amiType
@@ -1996,7 +2012,7 @@ function getRecommendedAMI(
               }
               return resolvedType;
           })
-        : determineAmiType(os, gpu, instanceTypes);
+        : determineAmiType(os, gpu, instanceTypes, parent);
 
     // if specified use the version from the args, otherwise use the version from the cluster.
     const version = args.version ? args.version : k8sVersion;
@@ -2027,10 +2043,13 @@ const ec2InstanceRegex = /([a-z]+)([0-9]+)([a-z])?\-?([a-z]+)?\.([a-zA-Z0-9\-]+)
  *
  * See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html.
  */
-export function isGravitonInstance(instanceType: string): boolean {
+export function isGravitonInstance(
+    instanceType: string,
+    parent: pulumi.Resource | undefined,
+): boolean {
     const match = instanceType.toString().match(ec2InstanceRegex);
     if (!match) {
-        throw new pulumi.ResourceError(`Invalid EC2 instance type: ${instanceType}`, undefined);
+        throw new pulumi.ResourceError(`Invalid EC2 instance type: ${instanceType}`, parent);
     }
 
     const processorFamily = match[3];
@@ -2046,16 +2065,17 @@ function determineAmiType(
     os: pulumi.Input<OperatingSystem>,
     gpu: pulumi.Input<boolean> | undefined,
     instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined,
+    parent: pulumi.Resource | undefined,
 ): pulumi.Output<AmiType> {
     const architecture = pulumi.output(instanceTypes).apply((instanceTypes) => {
         return pulumi
             .all(instanceTypes ?? [])
-            .apply((instanceTypes) => getArchitecture(instanceTypes));
+            .apply((instanceTypes) => getArchitecture(instanceTypes, parent));
     });
 
     return pulumi
         .all([os, gpu, architecture])
-        .apply(([os, gpu, architecture]) => getAmiType(os, gpu ?? false, architecture));
+        .apply(([os, gpu, architecture]) => getAmiType(os, gpu ?? false, architecture, parent));
 }
 
 /**
@@ -2065,12 +2085,15 @@ function determineAmiType(
  * @returns The architecture of the instance types, either "arm64" or "x86_64".
  * @throws {pulumi.ResourceError} If the provided instance types do not share a common architecture.
  */
-export function getArchitecture(instanceTypes: string[]): CpuArchitecture {
+export function getArchitecture(
+    instanceTypes: string[],
+    parent: pulumi.Resource | undefined,
+): CpuArchitecture {
     let hasGravitonInstances = false;
     let hasX64Instances = false;
 
     instanceTypes.forEach((instanceType) => {
-        if (isGravitonInstance(instanceType)) {
+        if (isGravitonInstance(instanceType, parent)) {
             hasGravitonInstances = true;
         } else {
             hasX64Instances = true;
@@ -2079,7 +2102,7 @@ export function getArchitecture(instanceTypes: string[]): CpuArchitecture {
         if (hasGravitonInstances && hasX64Instances) {
             throw new pulumi.ResourceError(
                 "Cannot determine architecture of instance types. The provided instance types do not share a common architecture",
-                undefined,
+                parent,
             );
         }
     });

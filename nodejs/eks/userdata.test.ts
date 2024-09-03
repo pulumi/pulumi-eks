@@ -79,6 +79,7 @@ describe("createUserData", () => {
                     serviceCidr: "10.100.0.0/16",
                 },
                 userDataArgs,
+                undefined,
             );
             expect(userData).toMatchSnapshot();
         });
@@ -102,6 +103,7 @@ describe("createUserData", () => {
                     serviceCidr: "10.100.0.0/16",
                 },
                 userDataArgs,
+                undefined,
             );
             expect(userData).toMatchSnapshot();
         });
@@ -122,6 +124,7 @@ describe("createUserData", () => {
                     serviceCidr: "10.100.0.0/16",
                 },
                 userDataArgs,
+                undefined,
             );
 
             expect(userData).toMatchSnapshot();
@@ -147,6 +150,7 @@ describe("createUserData", () => {
                     serviceCidr: "10.100.0.0/16",
                 },
                 userDataArgs,
+                undefined,
             );
             expect(userData).toMatchSnapshot();
         });
@@ -170,6 +174,7 @@ describe("createUserData", () => {
                     serviceCidr: "10.100.0.0/16",
                 },
                 userDataArgs,
+                undefined,
             );
             expect(userData).toMatchSnapshot();
         });
@@ -190,6 +195,7 @@ describe("createUserData", () => {
                     serviceCidr: "10.100.0.0/16",
                 },
                 userDataArgs,
+                undefined,
             );
 
             expect(userData).toMatchSnapshot();
@@ -214,6 +220,7 @@ describe("createUserData", () => {
                         serviceCidr: "10.100.0.0/16",
                     },
                     userDataArgs,
+                    undefined,
                 );
             }).toThrow(
                 "The 'bootstrapExtraArgs' argument is not supported for nodeadm based user data.",
