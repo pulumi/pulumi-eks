@@ -47,6 +47,18 @@ const nodeGroupAL2023V1 = new eks.NodeGroup("al-2023-v1-ng", {
   instanceProfile: instanceProfile,
 });
 
+const nodeGroupAL2023V1Userdata = new eks.NodeGroup("al-2023-v1-userdata-ng", {
+  cluster: cluster,
+  instanceType: "t3.medium",
+  desiredCapacity: 1,
+  minSize: 1,
+  maxSize: 2,
+  operatingSystem: eks.OperatingSystem.AL2023,
+  labels: {"increased-pod-capacity": "true"},
+  kubeletExtraArgs: "--max-pods=100",
+  instanceProfile: instanceProfile,
+});
+
 const nodeGroupAL2023 = new eks.NodeGroupV2("al-2023-ng", {
   cluster: cluster,
   instanceType: "t3.medium",
@@ -55,6 +67,18 @@ const nodeGroupAL2023 = new eks.NodeGroupV2("al-2023-ng", {
   maxSize: 2,
   operatingSystem: eks.OperatingSystem.AL2023,
   labels: {"ondemand": "true"},
+  instanceProfile: instanceProfile,
+});
+
+const nodeGroupAL2023Userdata = new eks.NodeGroupV2("al-2023-userdata-ng", {
+  cluster: cluster,
+  instanceType: "t3.medium",
+  desiredCapacity: 1,
+  minSize: 1,
+  maxSize: 2,
+  operatingSystem: eks.OperatingSystem.AL2023,
+  labels: {"increased-pod-capacity": "true"},
+  kubeletExtraArgs: "--max-pods=100",
   instanceProfile: instanceProfile,
 });
 
@@ -67,4 +91,44 @@ const nodeGroupAL2023Arm = new eks.NodeGroupV2("al-2023-ng-arm", {
   operatingSystem: eks.OperatingSystem.AL2023,
   labels: {"ondemand": "true"},
   instanceProfile: instanceProfile,
+});
+
+const nodeGroupBottlerocket = new eks.NodeGroupV2("bottlerocket-ng", {
+  cluster: cluster,
+  instanceType: "t3.medium",
+  desiredCapacity: 1,
+  minSize: 1,
+  maxSize: 2,
+  operatingSystem: eks.OperatingSystem.Bottlerocket,
+  labels: {"ondemand": "true"},
+  instanceProfile: instanceProfile,
+});
+
+const nodeGroupBottlerocketArm = new eks.NodeGroupV2("bottlerocket-ng-arm", {
+  cluster: cluster,
+  instanceType: "t4g.medium",
+  desiredCapacity: 1,
+  minSize: 1,
+  maxSize: 2,
+  operatingSystem: eks.OperatingSystem.Bottlerocket,
+  labels: {"ondemand": "true"},
+  instanceProfile: instanceProfile,
+});
+
+const nodeGroupBottlerocketUserdata = new eks.NodeGroupV2("bottlerocket-userdata-ng", {
+  cluster: cluster,
+  instanceType: "t3.medium",
+  desiredCapacity: 1,
+  minSize: 1,
+  maxSize: 2,
+  operatingSystem: eks.OperatingSystem.Bottlerocket,
+  labels: {"increased-pod-capacity": "true"},
+  instanceProfile: instanceProfile,
+  bottlerocketSettings: {
+    settings: {
+      kubernetes: {
+        "max-pods": 100,
+      },
+    },
+  },
 });

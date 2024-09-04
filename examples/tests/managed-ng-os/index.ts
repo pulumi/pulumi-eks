@@ -34,8 +34,19 @@ const cluster = new eks.Cluster("managed-ng-os", {
 // Export the cluster's kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
 
+const scalingConfig = {
+  scalingConfig: {
+    minSize: 1,
+    maxSize: 1,
+    desiredSize: 1,
+  },
+}
+
+const increasedPodCapacity = 100;
+
 // Create a simple AL 2023 node group with x64 instances
 const managedNodeGroupAL2023 = eks.createManagedNodeGroup("al-2023-mng", {
+  ...scalingConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t3.medium"],
@@ -44,6 +55,7 @@ const managedNodeGroupAL2023 = eks.createManagedNodeGroup("al-2023-mng", {
 
 // Create a simple AL 2023 node group with arm instances
 const managedNodeGroupAL2023Arm = eks.createManagedNodeGroup("al-2023-arm-mng", {
+  ...scalingConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t4g.medium"],
@@ -52,34 +64,82 @@ const managedNodeGroupAL2023Arm = eks.createManagedNodeGroup("al-2023-arm-mng", 
 
 // Create an AL 2023 node group with x64 instances and custom user data
 const managedNodeGroupAL2023UserData = eks.createManagedNodeGroup("al-2023-mng-userdata", {
+  ...scalingConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t3.medium"],
   nodeRole: role,
-  kubeletExtraArgs: "--max-pods=500",
+  labels: {
+    "increased-pod-capacity": "true",
+  },
+  kubeletExtraArgs: `--max-pods=${increasedPodCapacity}`,
 });
 
 // Create an AL 2023 node group with arm instances and custom user data
 const managedNodeGroupAL2023ArmUserData = eks.createManagedNodeGroup("al-2023-arm-mng-userdata", {
+  ...scalingConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t4g.medium"],
   nodeRole: role,
-  kubeletExtraArgs: "--max-pods=500",
+  labels: {
+    "increased-pod-capacity": "true",
+  },
+  kubeletExtraArgs: `--max-pods=${increasedPodCapacity}`,
 });
 
 // Create a simple Bottlerocket node group with x64 instances
 const managedNodeGroupBottlerocket = eks.createManagedNodeGroup("bottlerocket-mng", {
+  ...scalingConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t3.medium"],
   nodeRole: role,
 });
 
-// Create a simple AL 2023 node group with arm instances
+// Create a simple Bottlerocket node group with arm instances
 const managedNodeGroupBottlerocketArm = eks.createManagedNodeGroup("bottlerocket-arm-mng", {
+  ...scalingConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t4g.medium"],
   nodeRole: role,
+});
+
+// Create a Bottlerocket node group with x64 instances and custom user data
+const managedNodeGroupBottlerocketUserData = eks.createManagedNodeGroup("bottlerocket-mng-userdata", {
+  ...scalingConfig,
+  cluster: cluster,
+  operatingSystem: eks.OperatingSystem.Bottlerocket,
+  instanceTypes: ["t3.medium"],
+  nodeRole: role,
+  labels: {
+    "increased-pod-capacity": "true",
+  },
+  bottlerocketSettings: {
+    settings: {
+      kubernetes: {
+        "max-pods": increasedPodCapacity,
+      },
+    },
+  },
+});
+
+// Create a Bottlerocket node group with arm instances and custom user data
+const managedNodeGroupBottlerocketArmUserData = eks.createManagedNodeGroup("bottlerocket-arm-mng-userdata", {
+  ...scalingConfig,
+  cluster: cluster,
+  operatingSystem: eks.OperatingSystem.Bottlerocket,
+  instanceTypes: ["t4g.medium"],
+  nodeRole: role,
+  labels: {
+    "increased-pod-capacity": "true",
+  },
+  bottlerocketSettings: {
+    settings: {
+      kubernetes: {
+        "max-pods": increasedPodCapacity,
+      },
+    },
+  },
 });
