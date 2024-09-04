@@ -158,6 +158,28 @@ func TestAccManagedNodeGroupOSPy(t *testing.T) {
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig"],
 				)
+
+				assert.NoError(t, utils.ValidateNodes(t, info.Outputs["kubeconfig"], func(nodes *corev1.NodeList) {
+					require.NotNil(t, nodes)
+					assert.NotEmpty(t, nodes.Items)
+
+					expectedNodesWithIncreasedPodCapacity := 3
+					var foundNodes = 0
+					for _, node := range nodes.Items {
+						if label, ok := node.Labels["increased-pod-capacity"]; !ok || label != "true" {
+							continue
+						} else {
+							foundNodes++
+						}
+
+						podCapacity := node.Status.Capacity[corev1.ResourcePods]
+
+						// Defined in tests/managed-ng-os
+						var desiredCapacity int64 = 100
+						assert.True(t, podCapacity.CmpInt64(desiredCapacity) == 0)
+					}
+					assert.Equal(t, expectedNodesWithIncreasedPodCapacity, foundNodes)
+				}))
 			},
 		})
 
