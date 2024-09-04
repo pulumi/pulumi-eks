@@ -66,6 +66,21 @@ namespace Pulumi.Eks
         [Input("bootstrapExtraArgs")]
         public string? BootstrapExtraArgs { get; set; }
 
+        [Input("bottlerocketSettings")]
+        private InputMap<object>? _bottlerocketSettings;
+
+        /// <summary>
+        /// The configuration settings for Bottlerocket OS.
+        /// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+        /// 
+        /// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+        /// </summary>
+        public InputMap<object> BottlerocketSettings
+        {
+            get => _bottlerocketSettings ?? (_bottlerocketSettings = new InputMap<object>());
+            set => _bottlerocketSettings = value;
+        }
+
         /// <summary>
         /// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         /// </summary>

@@ -70,6 +70,11 @@ type nodeGroupV2Args struct {
 	AutoScalingGroupTags map[string]string `pulumi:"autoScalingGroupTags"`
 	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 	BootstrapExtraArgs *string `pulumi:"bootstrapExtraArgs"`
+	// The configuration settings for Bottlerocket OS.
+	// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+	//
+	// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+	BottlerocketSettings map[string]interface{} `pulumi:"bottlerocketSettings"`
 	// The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
 	//
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
@@ -197,6 +202,11 @@ type NodeGroupV2Args struct {
 	AutoScalingGroupTags pulumi.StringMapInput
 	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 	BootstrapExtraArgs *string
+	// The configuration settings for Bottlerocket OS.
+	// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+	//
+	// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+	BottlerocketSettings pulumi.MapInput
 	// The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
 	//
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
