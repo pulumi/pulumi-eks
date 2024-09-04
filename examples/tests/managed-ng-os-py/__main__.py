@@ -45,6 +45,20 @@ mng_al2023_arm = eks.ManagedNodeGroup(f'{project_name}-al2023-arm',
                                            instance_types=["t4g.medium"],
                                            operating_system=eks.OperatingSystem.AL2023)
 
+mng_al2023_userdata = eks.ManagedNodeGroup(f'{project_name}-al2023-userdata',
+                                           cluster=cluster,
+                                           node_role=role,
+                                           instance_types=["t3.medium"],
+                                           operating_system=eks.OperatingSystem.AL2023,
+                                           kubelet_extra_args="--max-pods=500")
+
+mng_al2023_arm_userdata = eks.ManagedNodeGroup(f'{project_name}-al2023-arm-userdata',
+                                           cluster=cluster,
+                                           node_role=role,
+                                           instance_types=["t4g.medium"],
+                                           operating_system=eks.OperatingSystem.AL2023,
+                                           kubelet_extra_args="--max-pods=500")
+
 mng_bottlerocket = eks.ManagedNodeGroup(f'{project_name}-bottlerocket',
                                            cluster=cluster,
                                            node_role=role,

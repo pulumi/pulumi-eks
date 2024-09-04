@@ -717,52 +717,41 @@ function createNodeGroupInternal(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem);
+            return getOperatingSystem(amiType, operatingSystem, parent);
         });
+
+    const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
+    const clusterMetadata = {
+        name: eksCluster.name,
+        apiServerEndpoint: eksCluster.endpoint,
+        certificateAuthority: eksCluster.certificateAuthority.data,
+        serviceCidr,
+    };
 
     const userdata = pulumi
         .all([
             awsRegion,
-            eksCluster.name,
-            eksCluster.endpoint,
-            eksCluster.certificateAuthority,
+            clusterMetadata,
             cfnStackName,
             args.nodeUserData,
             args.nodeUserDataOverride,
             os,
         ])
-        .apply(
-            ([
-                region,
-                clusterName,
-                clusterEndpoint,
-                clusterCa,
-                stackName,
-                extraUserData,
+        .apply(([region, clusterMetadata, stackName, extraUserData, userDataOverride, os]) => {
+            const userDataArgs: SelfManagedV1NodeUserDataArgs = {
+                nodeGroupType: "self-managed-v1",
+                awsRegion: region.name,
+                kubeletExtraArgs: args.kubeletExtraArgs,
+                bootstrapExtraArgs: args.bootstrapExtraArgs,
+                labels: args.labels,
+                taints: args.taints,
                 userDataOverride,
-                os,
-            ]) => {
-                const userDataArgs: SelfManagedV1NodeUserDataArgs = {
-                    nodeGroupType: "self-managed-v1",
-                    awsRegion: region.name,
-                    kubeletExtraArgs: args.kubeletExtraArgs,
-                    bootstrapExtraArgs: args.bootstrapExtraArgs,
-                    labels: args.labels,
-                    taints: args.taints,
-                    userDataOverride,
-                    extraUserData,
-                    stackName,
-                };
+                extraUserData,
+                stackName,
+            };
 
-                const clusterMetadata = {
-                    name: clusterName,
-                    apiServerEndpoint: clusterEndpoint,
-                    certificateAuthority: clusterCa.data,
-                };
-
-                return createUserData(os, clusterMetadata, userDataArgs);
-            },
-        );
+            return createUserData(os, clusterMetadata, userDataArgs, parent);
+        });
 
     const version = pulumi.output(args.version || core.cluster.version);
 
@@ -1098,8 +1087,10 @@ function createNodeGroupV2Internal(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem);
+            return getOperatingSystem(amiType, operatingSystem, parent);
         });
+
+    const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
 
     const userdata = pulumi
         .all([
@@ -1110,6 +1101,7 @@ function createNodeGroupV2Internal(
             args.nodeUserData,
             args.nodeUserDataOverride,
             os,
+            serviceCidr,
         ])
         .apply(
             ([
@@ -1120,6 +1112,7 @@ function createNodeGroupV2Internal(
                 extraUserData,
                 userDataOverride,
                 os,
+                serviceCidr,
             ]) => {
                 const userDataArgs: SelfManagedV2NodeUserDataArgs = {
                     nodeGroupType: "self-managed-v2",
@@ -1136,9 +1129,10 @@ function createNodeGroupV2Internal(
                     name: clusterName,
                     apiServerEndpoint: clusterEndpoint,
                     certificateAuthority: clusterCa.data,
+                    serviceCidr,
                 };
 
-                return createUserData(os, clusterMetadata, userDataArgs);
+                return createUserData(os, clusterMetadata, userDataArgs, parent);
             },
         )
         .apply((x) => Buffer.from(x, "utf-8").toString("base64")); // Launch Templates require user data to be passed as base64.
@@ -1749,6 +1743,8 @@ function createManagedNodeGroupInternal(
         delete nodeGroupArgs.diskSize;
     }
 
+    let amiType = args.amiType;
+
     // amiType, releaseVersion and version cannot be set if an AMI ID is set in a custom launch template.
     // The AMI ID is set in the launch template if custom user data is required.
     // See https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#mng-ami-id-conditions
@@ -1756,13 +1752,11 @@ function createManagedNodeGroupInternal(
         delete nodeGroupArgs.version;
         delete nodeGroupArgs.releaseVersion;
         delete nodeGroupArgs.amiType;
-    }
+    } else if (amiType === undefined && args.operatingSystem !== undefined) {
+        // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
 
-    let amiType = args.amiType;
-    // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
-    if (amiType === undefined && args.operatingSystem !== undefined) {
         // TODO: expose GPU support as an option for managed node groups
-        amiType = determineAmiType(args.operatingSystem, undefined, args.instanceTypes);
+        amiType = determineAmiType(args.operatingSystem, undefined, args.instanceTypes, parent);
     }
 
     // Make the aws-auth configmap a dependency of the node group.
@@ -1823,7 +1817,7 @@ function createMNGCustomLaunchTemplate(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem);
+            return getOperatingSystem(amiType, operatingSystem, parent);
         });
 
     const taints = args.taints
@@ -1841,6 +1835,7 @@ function createMNGCustomLaunchTemplate(
           })
         : undefined;
 
+    const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
     const customUserDataArgs = {
         kubeletExtraArgs: args.kubeletExtraArgs,
         bootstrapExtraArgs: args.bootstrapExtraArgs,
@@ -1856,6 +1851,7 @@ function createMNGCustomLaunchTemplate(
                 os,
                 args.labels,
                 taints,
+                serviceCidr,
             ])
             .apply(
                 ([
@@ -1866,11 +1862,13 @@ function createMNGCustomLaunchTemplate(
                     os,
                     labels,
                     taints,
+                    serviceCidr,
                 ]) => {
                     const clusterMetadata = {
                         name: argsClusterName || clusterName,
                         apiServerEndpoint: clusterEndpoint,
                         certificateAuthority: clusterCertAuthority,
+                        serviceCidr,
                     };
 
                     const userDataArgs: ManagedNodeUserDataArgs = {
@@ -1884,7 +1882,7 @@ function createMNGCustomLaunchTemplate(
                         userDataOverride: undefined,
                     };
 
-                    const userData = createUserData(os, clusterMetadata, userDataArgs);
+                    const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
                     return Buffer.from(userData, "utf-8").toString("base64");
                 },
             );
@@ -1943,6 +1941,19 @@ function createMNGCustomLaunchTemplate(
     );
 }
 
+function getClusterServiceCidr(
+    networkConfig: pulumi.Output<aws.types.output.eks.ClusterKubernetesNetworkConfig>,
+): pulumi.Output<string> {
+    return networkConfig.apply((config) => {
+        // ipFamily defaults to ipv4, so if v6 is not set we should return the v4 CIDR
+        if (config.ipFamily === "ipv6") {
+            return config.serviceIpv6Cidr;
+        } else {
+            return config.serviceIpv4Cidr;
+        }
+    });
+}
+
 /**
  * getRecommendedAMI returns the recommended AMI to use for a given configuration
  * when none is provided by the user.
@@ -1970,7 +1981,7 @@ function getRecommendedAMI(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem);
+            return getOperatingSystem(amiType, operatingSystem, parent);
         });
 
     const amiType = args.amiType
@@ -1984,7 +1995,7 @@ function getRecommendedAMI(
               }
               return resolvedType;
           })
-        : determineAmiType(os, gpu, instanceTypes);
+        : determineAmiType(os, gpu, instanceTypes, parent);
 
     // if specified use the version from the args, otherwise use the version from the cluster.
     const version = args.version ? args.version : k8sVersion;
@@ -2015,10 +2026,13 @@ const ec2InstanceRegex = /([a-z]+)([0-9]+)([a-z])?\-?([a-z]+)?\.([a-zA-Z0-9\-]+)
  *
  * See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html.
  */
-export function isGravitonInstance(instanceType: string): boolean {
+export function isGravitonInstance(
+    instanceType: string,
+    parent: pulumi.Resource | undefined,
+): boolean {
     const match = instanceType.toString().match(ec2InstanceRegex);
     if (!match) {
-        throw new pulumi.ResourceError(`Invalid EC2 instance type: ${instanceType}`, undefined);
+        throw new pulumi.ResourceError(`Invalid EC2 instance type: ${instanceType}`, parent);
     }
 
     const processorFamily = match[3];
@@ -2034,16 +2048,17 @@ function determineAmiType(
     os: pulumi.Input<OperatingSystem>,
     gpu: pulumi.Input<boolean> | undefined,
     instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined,
+    parent: pulumi.Resource | undefined,
 ): pulumi.Output<AmiType> {
     const architecture = pulumi.output(instanceTypes).apply((instanceTypes) => {
         return pulumi
             .all(instanceTypes ?? [])
-            .apply((instanceTypes) => getArchitecture(instanceTypes));
+            .apply((instanceTypes) => getArchitecture(instanceTypes, parent));
     });
 
     return pulumi
         .all([os, gpu, architecture])
-        .apply(([os, gpu, architecture]) => getAmiType(os, gpu ?? false, architecture));
+        .apply(([os, gpu, architecture]) => getAmiType(os, gpu ?? false, architecture, parent));
 }
 
 /**
@@ -2053,12 +2068,15 @@ function determineAmiType(
  * @returns The architecture of the instance types, either "arm64" or "x86_64".
  * @throws {pulumi.ResourceError} If the provided instance types do not share a common architecture.
  */
-export function getArchitecture(instanceTypes: string[]): CpuArchitecture {
+export function getArchitecture(
+    instanceTypes: string[],
+    parent: pulumi.Resource | undefined,
+): CpuArchitecture {
     let hasGravitonInstances = false;
     let hasX64Instances = false;
 
     instanceTypes.forEach((instanceType) => {
-        if (isGravitonInstance(instanceType)) {
+        if (isGravitonInstance(instanceType, parent)) {
             hasGravitonInstances = true;
         } else {
             hasX64Instances = true;
@@ -2067,7 +2085,7 @@ export function getArchitecture(instanceTypes: string[]): CpuArchitecture {
         if (hasGravitonInstances && hasX64Instances) {
             throw new pulumi.ResourceError(
                 "Cannot determine architecture of instance types. The provided instance types do not share a common architecture",
-                undefined,
+                parent,
             );
         }
     });
