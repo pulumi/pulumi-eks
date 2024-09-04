@@ -188,8 +188,9 @@ export function toAmiType(str: string): AmiType | undefined {
  * @throws {pulumi.ResourceError} If the AMI type is unknown or if the specified operating system does not match the detected operating system.
  */
 export function getOperatingSystem(
-    amiType?: string,
-    operatingSystem?: OperatingSystem,
+    amiType: string | undefined,
+    operatingSystem: OperatingSystem | undefined,
+    parent: pulumi.Resource | undefined,
 ): OperatingSystem {
     if (operatingSystem && !amiType) {
         return operatingSystem;
@@ -201,7 +202,7 @@ export function getOperatingSystem(
     if (!resolvedAmiType) {
         throw new pulumi.ResourceError(
             `Cannot determine OS of unknown AMI type: ${amiType}`,
-            undefined,
+            parent,
         );
     }
 
@@ -211,7 +212,7 @@ export function getOperatingSystem(
     if (operatingSystem && operatingSystem !== resolvedOs) {
         throw new pulumi.ResourceError(
             `Operating system '${operatingSystem}' does not match the detected operating system '${resolvedOs}' of AMI type '${amiType}'.`,
-            undefined,
+            parent,
         );
     }
 
@@ -231,6 +232,7 @@ export function getAmiType(
     os: OperatingSystem,
     gpuSupport: boolean,
     architecture: CpuArchitecture,
+    parent: pulumi.Resource | undefined,
 ): AmiType {
     for (const amiType of amiTypeValues) {
         const metadata = getAmiMetadata(amiType);
@@ -245,6 +247,6 @@ export function getAmiType(
 
     throw new pulumi.ResourceError(
         `No AMI type found for OS: ${os}, GPU support: ${gpuSupport}, architecture: ${architecture}`,
-        undefined,
+        parent,
     );
 }

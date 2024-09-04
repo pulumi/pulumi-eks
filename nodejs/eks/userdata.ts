@@ -16,6 +16,7 @@ import * as pulumi from "@pulumi/pulumi";
 
 import { OperatingSystem } from "./ami";
 import { Taint } from "./nodegroup";
+import * as jsyaml from "js-yaml";
 
 // linux is the default user data type for AMIs that use the eks bootstrap script. (e.g. AL2)
 // nodeadm is the user data type for AMIs that use nodeadm to bootstrap the node. (e.g. AL2023)
@@ -36,6 +37,8 @@ export interface ClusterMetadata {
     apiServerEndpoint: string;
     // base64 encoded certificate authority data
     certificateAuthority: string;
+    // the cluster service CIDR
+    serviceCidr: string;
 }
 
 // base arguments for all types of node groups
@@ -131,18 +134,25 @@ export function createUserData(
     os: OperatingSystem,
     clusterMetadata: ClusterMetadata,
     userDataArgs: UserDataArgs,
+    parent: pulumi.Resource | undefined,
 ): string {
+    // if the user has provided a custom user data script, use that
+    if (userDataArgs.userDataOverride) {
+        return userDataArgs.userDataOverride;
+    }
+
     const userDataType = osUserDataType[os];
 
     switch (userDataType) {
         case "linux":
             return createLinuxUserData(clusterMetadata, userDataArgs);
         case "nodeadm":
+            return createNodeadmUserData(clusterMetadata, userDataArgs, parent);
         case "bottlerocket":
-            // TODO: support nodeadm and bottlerocket user data
+            // TODO: support bottlerocket user data
             throw new pulumi.ResourceError(
                 `Creating user data for OS '${os}' is not supported yet.`,
-                undefined,
+                parent,
             );
         default:
             // ensures this switch/case is exhaustive
@@ -152,11 +162,6 @@ export function createUserData(
 }
 
 function createLinuxUserData(clusterMetadata: ClusterMetadata, args: UserDataArgs): string {
-    // if the user has provided a custom user data script, use that
-    if (args.userDataOverride) {
-        return args.userDataOverride;
-    }
-
     // build the bootstrap arguments, they can also include kubelet flags if the user has provided them
     const kubeletExtraArgs = buildKubeletFlags(args);
     let bootstrapExtraArgs = args.bootstrapExtraArgs ? " " + args.bootstrapExtraArgs : "";
@@ -209,6 +214,106 @@ ${extraUserData}`;
     return `${userData}
 ${cfnSignal}
 `;
+}
+
+function createNodeadmUserData(
+    clusterMetadata: ClusterMetadata,
+    args: UserDataArgs,
+    parent: pulumi.Resource | undefined,
+): string {
+    if (args.bootstrapExtraArgs) {
+        throw new pulumi.ResourceError(
+            "The 'bootstrapExtraArgs' argument is not supported for nodeadm based user data.",
+            parent,
+        );
+    }
+
+    const nodeadmSkeleton = {
+        apiVersion: "node.eks.aws/v1alpha1",
+        kind: "NodeConfig",
+    };
+
+    const baseConfig = {
+        ...nodeadmSkeleton,
+        spec: {
+            cluster: {
+                name: clusterMetadata.name,
+                apiServerEndpoint: clusterMetadata.apiServerEndpoint,
+                certificateAuthority: clusterMetadata.certificateAuthority,
+                cidr: clusterMetadata.serviceCidr,
+            },
+        },
+    };
+
+    const nodeadmPrefix = "---\n";
+
+    const parts = [
+        {
+            contentType: "application/node.eks.aws",
+            content: nodeadmPrefix + jsyaml.dump(baseConfig),
+        },
+    ];
+
+    // nodeadm config gets iteratively merged together, so we can add a new section for the kubelet flags
+    const kubeletFlags = buildKubeletFlags(args);
+    if (kubeletFlags.length > 0) {
+        parts.push({
+            contentType: "application/node.eks.aws",
+            content:
+                nodeadmPrefix +
+                jsyaml.dump({
+                    ...nodeadmSkeleton,
+                    spec: {
+                        kubelet: {
+                            flags: kubeletFlags,
+                        },
+                    },
+                }),
+        });
+    }
+
+    // TODO: expose extra nodeadm config options in the schema
+    if (isSelfManagedNodeUserDataArgs(args) && args.extraUserData && args.extraUserData !== "") {
+        parts.push({
+            contentType: 'text/x-shellscript; charset="us-ascii"',
+            content: args.extraUserData,
+        });
+    }
+
+    // self-managed-v1 based node groups use cloudformation to bootstrap the nodes.
+    // we need to signal to CFN that the nodes have been  successfully created by using the cfn-signal script.
+    // see: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-signal.html
+    if (isSelfManagedV1NodeUserDataArgs(args)) {
+        parts.push({
+            contentType: 'text/x-shellscript; charset="us-ascii"',
+            content: `#!/bin/bash
+
+/opt/aws/bin/cfn-signal --exit-code $? --stack ${args.stackName} --resource NodeGroup --region ${args.awsRegion}
+`,
+        });
+    }
+
+    return assembleNodeadmUserData(parts);
+}
+
+function assembleNodeadmUserData(parts: { contentType: string; content: string }[]): string {
+    const boundary = "BOUNDARY";
+    const header = `MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="${boundary}"
+
+`;
+
+    let userData = header;
+    for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        userData += `--${boundary}
+Content-Type: ${part.contentType}
+
+${part.content}
+`;
+    }
+
+    return `${userData}--${boundary}--\n`;
 }
 
 /**
