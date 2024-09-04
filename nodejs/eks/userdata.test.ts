@@ -446,7 +446,7 @@ describe("createUserData", () => {
                     userDataArgs,
                     undefined,
                 );
-            }).toThrow("The service CIDR of the cluster is not a valid CIDR: NOT_A_CIDR");
+            }).toThrow("Couldn't calculate the cluster dns ip based on the service CIDR. ipaddr: the address has neither IPv6 nor IPv4 CIDR format");
         });
     });
 });
@@ -491,7 +491,7 @@ describe("getClusterDnsIp", () => {
         ["192.168.0.0"],
         ["10.0.0.0/-1"],
         ["10.0.0.0/abc"],
-    ])("Service CIDR '%s' should throw error: %s", (serviceCidr) => {
+    ])("Service CIDR '%s' should throw error", (serviceCidr) => {
         expect(() => getClusterDnsIp(serviceCidr, undefined)).toThrow(
             "Couldn't calculate the cluster dns ip based on the service CIDR. ipaddr: the address has neither IPv6 nor IPv4 CIDR format",
         );
