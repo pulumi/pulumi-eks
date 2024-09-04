@@ -890,6 +890,17 @@ func generateSchema() schema.PackageSpec {
 							"Valid values are `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
 							"Defaults to `AL2`.",
 					},
+					"bottlerocketSettings": {
+						TypeSpec: schema.TypeSpec{
+							Type: "object",
+							AdditionalProperties: &schema.TypeSpec{
+								Ref: "pulumi.json#/Any",
+							},
+						},
+						Description: "The configuration settings for Bottlerocket OS.\n" +
+							"The settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\n" +
+							"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
+					},
 				},
 				RequiredInputs: []string{"cluster"},
 			},
@@ -2038,6 +2049,18 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				},
 			},
 			Description: "The tag specifications to apply to the launch template.",
+		}
+
+		props["bottlerocketSettings"] = schema.PropertySpec{
+			TypeSpec: schema.TypeSpec{
+				Type: "object",
+				AdditionalProperties: &schema.TypeSpec{
+					Ref: "pulumi.json#/Any",
+				},
+			},
+			Description: "The configuration settings for Bottlerocket OS.\n" +
+				"The settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\n" +
+				"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
 		}
 	}
 
