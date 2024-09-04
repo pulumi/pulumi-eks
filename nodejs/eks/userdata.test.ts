@@ -446,7 +446,9 @@ describe("createUserData", () => {
                     userDataArgs,
                     undefined,
                 );
-            }).toThrow("Couldn't calculate the cluster dns ip based on the service CIDR. ipaddr: the address has neither IPv6 nor IPv4 CIDR format");
+            }).toThrow(
+                "Couldn't calculate the cluster dns ip based on the service CIDR. ipaddr: the address has neither IPv6 nor IPv4 CIDR format",
+            );
         });
     });
 });
