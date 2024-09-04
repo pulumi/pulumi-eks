@@ -50,6 +50,24 @@ const managedNodeGroupAL2023Arm = eks.createManagedNodeGroup("al-2023-arm-mng", 
   nodeRole: role,
 });
 
+// Create an AL 2023 node group with x64 instances and custom user data
+const managedNodeGroupAL2023UserData = eks.createManagedNodeGroup("al-2023-mng-userdata", {
+  cluster: cluster,
+  operatingSystem: eks.OperatingSystem.AL2023,
+  instanceTypes: ["t3.medium"],
+  nodeRole: role,
+  kubeletExtraArgs: "--max-pods=500",
+});
+
+// Create an AL 2023 node group with arm instances and custom user data
+const managedNodeGroupAL2023ArmUserData = eks.createManagedNodeGroup("al-2023-arm-mng-userdata", {
+  cluster: cluster,
+  operatingSystem: eks.OperatingSystem.AL2023,
+  instanceTypes: ["t4g.medium"],
+  nodeRole: role,
+  kubeletExtraArgs: "--max-pods=500",
+});
+
 // Create a simple Bottlerocket node group with x64 instances
 const managedNodeGroupBottlerocket = eks.createManagedNodeGroup("bottlerocket-mng", {
   cluster: cluster,

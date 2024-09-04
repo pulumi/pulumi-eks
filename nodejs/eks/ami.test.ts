@@ -46,29 +46,29 @@ describe("toAmiType", () => {
 });
 describe("getOperatingSystem", () => {
     test("should return the provided operating system if available", () => {
-        const operatingSystem = getOperatingSystem(undefined, OperatingSystem.AL2023);
+        const operatingSystem = getOperatingSystem(undefined, OperatingSystem.AL2023, undefined);
         expect(operatingSystem).toBe(OperatingSystem.AL2023);
     });
 
     test("should return the default operating system if no AMI type or operating system is provided", () => {
-        const operatingSystem = getOperatingSystem();
+        const operatingSystem = getOperatingSystem(undefined, undefined, undefined);
         expect(operatingSystem).toBe(DEFAULT_OS);
     });
 
     test("should resolve the operating system based on the provided AMI type", () => {
-        const operatingSystem = getOperatingSystem("AL2023_ARM_64_STANDARD");
+        const operatingSystem = getOperatingSystem("AL2023_ARM_64_STANDARD", undefined, undefined);
         expect(operatingSystem).toBe(OperatingSystem.AL2023);
     });
 
     test("should throw an error for unknown AMI type", () => {
         expect(() => {
-            getOperatingSystem("unknown-ami-type");
+            getOperatingSystem("unknown-ami-type", undefined, undefined);
         }).toThrow("Cannot determine OS of unknown AMI type: unknown-ami-type");
     });
 
     test("should throw an error if the operating system does not match the AMI type", () => {
         expect(() => {
-            getOperatingSystem("AL2023_ARM_64_STANDARD", OperatingSystem.Bottlerocket);
+            getOperatingSystem("AL2023_ARM_64_STANDARD", OperatingSystem.Bottlerocket, undefined);
         }).toThrow(
             "Operating system 'Bottlerocket' does not match the detected operating system 'AL2023' of AMI type 'AL2023_ARM_64_STANDARD'.",
         );
@@ -76,32 +76,34 @@ describe("getOperatingSystem", () => {
 });
 describe("getAmiType", () => {
     test("should return the correct AmiType for the specified criteria", () => {
-        expect(getAmiType(OperatingSystem.AL2, false, "x86_64")).toBe(AmiType.AL2X86_64);
-        expect(getAmiType(OperatingSystem.AL2, true, "x86_64")).toBe(AmiType.AL2X86_64GPU);
-        expect(getAmiType(OperatingSystem.AL2, false, "arm64")).toBe(AmiType.AL2Arm64);
-        expect(getAmiType(OperatingSystem.AL2023, false, "x86_64")).toBe(
+        expect(getAmiType(OperatingSystem.AL2, false, "x86_64", undefined)).toBe(AmiType.AL2X86_64);
+        expect(getAmiType(OperatingSystem.AL2, true, "x86_64", undefined)).toBe(
+            AmiType.AL2X86_64GPU,
+        );
+        expect(getAmiType(OperatingSystem.AL2, false, "arm64", undefined)).toBe(AmiType.AL2Arm64);
+        expect(getAmiType(OperatingSystem.AL2023, false, "x86_64", undefined)).toBe(
             AmiType.AL2023X86_64Standard,
         );
-        expect(getAmiType(OperatingSystem.AL2023, false, "arm64")).toBe(
+        expect(getAmiType(OperatingSystem.AL2023, false, "arm64", undefined)).toBe(
             AmiType.AL2023Arm64Standard,
         );
-        expect(getAmiType(OperatingSystem.Bottlerocket, false, "arm64")).toBe(
+        expect(getAmiType(OperatingSystem.Bottlerocket, false, "arm64", undefined)).toBe(
             AmiType.BottlerocketArm64,
         );
-        expect(getAmiType(OperatingSystem.Bottlerocket, false, "x86_64")).toBe(
+        expect(getAmiType(OperatingSystem.Bottlerocket, false, "x86_64", undefined)).toBe(
             AmiType.BottlerocketX86_64,
         );
-        expect(getAmiType(OperatingSystem.Bottlerocket, true, "arm64")).toBe(
+        expect(getAmiType(OperatingSystem.Bottlerocket, true, "arm64", undefined)).toBe(
             AmiType.BottlerocketArm64Nvidia,
         );
-        expect(getAmiType(OperatingSystem.Bottlerocket, true, "x86_64")).toBe(
+        expect(getAmiType(OperatingSystem.Bottlerocket, true, "x86_64", undefined)).toBe(
             AmiType.BottlerocketX86_64Nvidia,
         );
     });
 
     test("should throw an error if no AMI type is found for the specified criteria", () => {
         expect(() => {
-            getAmiType(OperatingSystem.AL2, true, "arm64");
+            getAmiType(OperatingSystem.AL2, true, "arm64", undefined);
         }).toThrow("No AMI type found for OS: AL2, GPU support: true, architecture: arm64");
     });
 });

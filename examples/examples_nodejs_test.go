@@ -880,3 +880,22 @@ func TestAccManagedNodeGroupOS(t *testing.T) {
 
 	programTestWithExtraOptions(t, &test, nil)
 }
+
+// TestAccManagedNodeGroupOS tests that the OS of the self managed node group instances can be customized.
+func TestAccSelfManagedNodeGroupOS(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "self-managed-ng-os"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
