@@ -59,6 +59,7 @@ mng_al2023_userdata = eks.ManagedNodeGroup(f'{project_name}-al2023-userdata',
                                            instance_types=["t3.medium"],
                                            scaling_config=scaling_config,
                                            operating_system=eks.OperatingSystem.AL2023,
+                                           labels={ "increased-pod-capacity": "true" },
                                            kubelet_extra_args="--max-pods=100")
 
 mng_al2023_arm_userdata = eks.ManagedNodeGroup(f'{project_name}-al2023-arm-userdata',
@@ -67,6 +68,7 @@ mng_al2023_arm_userdata = eks.ManagedNodeGroup(f'{project_name}-al2023-arm-userd
                                            instance_types=["t4g.medium"],
                                            scaling_config=scaling_config,
                                            operating_system=eks.OperatingSystem.AL2023,
+                                           labels={ "increased-pod-capacity": "true" },
                                            kubelet_extra_args="--max-pods=100")
 
 mng_bottlerocket = eks.ManagedNodeGroup(f'{project_name}-bottlerocket',
@@ -89,4 +91,5 @@ mng_bottlerocket_userdata = eks.ManagedNodeGroup(f'{project_name}-bottlerocket-u
                                            instance_types=["t3.medium"],
                                            scaling_config=scaling_config,
                                            operating_system=eks.OperatingSystem.BOTTLEROCKET,
+                                           labels={ "increased-pod-capacity": "true" },
                                            bottlerocket_settings={ "settings": { "kubernetes": { "max-pods": 100 } } })
