@@ -51,6 +51,11 @@ type managedNodeGroupArgs struct {
 	//
 	// Note that this field conflicts with `launchTemplate`.
 	BootstrapExtraArgs *string `pulumi:"bootstrapExtraArgs"`
+	// The configuration settings for Bottlerocket OS.
+	// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+	//
+	// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+	BottlerocketSettings map[string]interface{} `pulumi:"bottlerocketSettings"`
 	// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
 	CapacityType *string `pulumi:"capacityType"`
 	// The target EKS cluster.
@@ -129,6 +134,11 @@ type ManagedNodeGroupArgs struct {
 	//
 	// Note that this field conflicts with `launchTemplate`.
 	BootstrapExtraArgs *string
+	// The configuration settings for Bottlerocket OS.
+	// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+	//
+	// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+	BottlerocketSettings pulumi.MapInput
 	// Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
 	CapacityType pulumi.StringPtrInput
 	// The target EKS cluster.

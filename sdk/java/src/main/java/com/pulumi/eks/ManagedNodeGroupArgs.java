@@ -16,6 +16,7 @@ import com.pulumi.eks.enums.OperatingSystem;
 import com.pulumi.eks.inputs.CoreDataArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
+import java.lang.Object;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,27 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
      */
     public Optional<String> bootstrapExtraArgs() {
         return Optional.ofNullable(this.bootstrapExtraArgs);
+    }
+
+    /**
+     * The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     * 
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     * 
+     */
+    @Import(name="bottlerocketSettings")
+    private @Nullable Output<Map<String,Object>> bottlerocketSettings;
+
+    /**
+     * @return The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     * 
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     * 
+     */
+    public Optional<Output<Map<String,Object>>> bottlerocketSettings() {
+        return Optional.ofNullable(this.bottlerocketSettings);
     }
 
     /**
@@ -439,6 +461,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     private ManagedNodeGroupArgs(ManagedNodeGroupArgs $) {
         this.amiType = $.amiType;
         this.bootstrapExtraArgs = $.bootstrapExtraArgs;
+        this.bottlerocketSettings = $.bottlerocketSettings;
         this.capacityType = $.capacityType;
         this.cluster = $.cluster;
         this.clusterName = $.clusterName;
@@ -513,6 +536,33 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         public Builder bootstrapExtraArgs(@Nullable String bootstrapExtraArgs) {
             $.bootstrapExtraArgs = bootstrapExtraArgs;
             return this;
+        }
+
+        /**
+         * @param bottlerocketSettings The configuration settings for Bottlerocket OS.
+         * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+         * 
+         * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder bottlerocketSettings(@Nullable Output<Map<String,Object>> bottlerocketSettings) {
+            $.bottlerocketSettings = bottlerocketSettings;
+            return this;
+        }
+
+        /**
+         * @param bottlerocketSettings The configuration settings for Bottlerocket OS.
+         * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+         * 
+         * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder bottlerocketSettings(Map<String,Object> bottlerocketSettings) {
+            return bottlerocketSettings(Output.of(bottlerocketSettings));
         }
 
         /**
