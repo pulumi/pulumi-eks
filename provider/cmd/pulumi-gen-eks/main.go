@@ -891,8 +891,13 @@ func generateSchema() schema.PackageSpec {
 							"Defaults to `AL2`.",
 					},
 					"bottlerocketSettings": {
-						TypeSpec: schema.TypeSpec{Type: "string"},
-						Description: "The configuration settings for Bottlerocket OS. Bottlerocket uses TOML for its configuration.\n" +
+						TypeSpec: schema.TypeSpec{
+							Type: "object",
+							AdditionalProperties: &schema.TypeSpec{
+								Ref: "pulumi.json#/Any",
+							},
+						},
+						Description: "The configuration settings for Bottlerocket OS.\n" +
 							"The settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\n" +
 							"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
 					},
@@ -2047,8 +2052,13 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		}
 
 		props["bottlerocketSettings"] = schema.PropertySpec{
-			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "The configuration settings for Bottlerocket OS. Bottlerocket uses TOML for its configuration.\n" +
+			TypeSpec: schema.TypeSpec{
+				Type: "object",
+				AdditionalProperties: &schema.TypeSpec{
+					Ref: "pulumi.json#/Any",
+				},
+			},
+			Description: "The configuration settings for Bottlerocket OS.\n" +
 				"The settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\n" +
 				"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
 		}

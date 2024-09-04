@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import * as pulumi from "@pulumi/pulumi";
+
 import { OperatingSystem } from "./ami";
 import {
     createUserData,
+    getClusterDnsIp,
     ManagedNodeUserDataArgs,
     requiresCustomUserData,
     SelfManagedV1NodeUserDataArgs,
@@ -22,37 +25,37 @@ import {
 } from "./userdata";
 
 describe("requiresCustomUserData", () => {
-    it("should return true if both bootstrapExtraArgs or kubeletExtraArgs is defined", () => {
+    it("should return true if all args are defined", () => {
         const args = {
             bootstrapExtraArgs: "--arg1 value1",
             kubeletExtraArgs: "--arg2 value2",
+            bottlerocketSettings: pulumi.output({
+                settings: {
+                    kubernetes: {
+                        "max-pods": 500,
+                    },
+                },
+            }),
         };
         const result = requiresCustomUserData(args);
         expect(result).toBe(true);
     });
 
-    it("should return false if both bootstrapExtraArgs and kubeletExtraArgs are undefined", () => {
+    it("should return false if all args are undefined", () => {
         const args = {
             bootstrapExtraArgs: undefined,
             kubeletExtraArgs: undefined,
+            bottlerocketSettings: undefined,
         };
         const result = requiresCustomUserData(args);
         expect(result).toBe(false);
     });
 
-    it("should return true if bootstrapExtraArgs is defined and kubeletExtraArgs is undefined", () => {
+    it("should return true if any of the args is defined", () => {
         const args = {
             bootstrapExtraArgs: "--arg1 value1",
             kubeletExtraArgs: undefined,
-        };
-        const result = requiresCustomUserData(args);
-        expect(result).toBe(true);
-    });
-
-    it("should return true if kubeletExtraArgs is defined and bootstrapExtraArgs is undefined", () => {
-        const args = {
-            bootstrapExtraArgs: undefined,
-            kubeletExtraArgs: "--arg2 value2",
+            bottlerocketSettings: undefined,
         };
         const result = requiresCustomUserData(args);
         expect(result).toBe(true);
@@ -338,6 +341,69 @@ describe("createUserData", () => {
             }).toThrow("The 'bootstrapExtraArgs' argument is not supported with Bottlerocket.");
         });
 
+        it("should allow overwriting base configuration", () => {
+            const userDataArgs: ManagedNodeUserDataArgs = {
+                nodeGroupType: "managed",
+                bottlerocketSettings: {
+                    settings: {
+                        kubernetes: {
+                            "cluster-dns-ip": "127.0.0.1",
+                        },
+                    },
+                },
+            } as ManagedNodeUserDataArgs;
+
+            const userData = createUserData(
+                OperatingSystem.Bottlerocket,
+                {
+                    name: "example-managed-nodegroups-eksCluster-b27184c",
+                    apiServerEndpoint:
+                        "https://CE21F68965F7FB2C00423B4483130C27.gr7.us-west-2.eks.amazonaws.com",
+                    certificateAuthority:
+                        "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQWNzUG82b0t1S293RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBMk1ETXhPVEl3TWpoYUZ3MHpOREEyTURFeE9USTFNamhhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURqU0VRWFFkcjhmcDNOc2JYRG5RZTY1VGVGb1RkTUFiSVhzVjJua0t4V3dzdTM3dUJJSDBDSHV4b2gKYU9ZY1IzNmd5OVA2K0ZZSndhc3pyRGMvL0M1dGtsV0JLaGpySkRKbk5mcU0vUVBqOXRoK3dHWE4xeW5zR2VKbQpPVTZ4ek8yd290Uk1aYlBHTmx2UnlQQWtHMFZrM3Z0dEVINU8rcGl1NU44MkFnY3hWOGpWN3M0RHA3Qnd1L0xVCjFPRXRaN0RoVy9vWllPdTltRVJkK29CMkg4OS9ERDhZclBrejlvVlZCOEQycXp2UlRGUEhiR1VwaHNKK1VkZmcKNndhdjQySlRHS1RJRjc1OHRtbWZpL2lyaEJGMUlDcHI4bDJLVG9jNElKMWdVM0loS1lDOStHYlB2Y2VRK2ZwNgpTMlBTZStzVElGS2thY3JtRnNWM0hETEFvenJ6QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJSZWpnZC84THN3eHpDTVpGQWRsUUdvM1lYdnp6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRRGE4TU5VQnNvbQpWYmx2dzRaaTYxaUxFZEVKTkxkMG5TNnIxQTVidjZLZHFjd0VNN0VDVldyTlB3TFVWYklaOTEzeEMxNnN1M2szCnZkTWllWEhkSDNPZTdkTzZ3RXNxbzdyTDdYc0FUblRlZEQ4OFRyVU13TjFVcEY1VHRjMUlRaHVaM1pnUnJmVUUKV09RZnFrcU8waVljNUl0ZUZvV1Q1ZHlseHd0eWpwMDhCZmFNVGZvc2cvYW1BUnhvRnptVGV6dkRSTnlEVllwdwovVWRFR0FmT0lBY3ZJNy9oNmhTay8wMkFTOGRXSm0xZWlMZ3p0czhCUGZJME1KaFFjdjlhL1dZc3I4aDREaTFpCmNsNlhnb0hWZ3VzZ1UwQVQ3SHdqelQ4WFN0N0xzb08rMFlTUTZOck9wZTlwL283N0FwaGFEQ3hIZHhJZlF1LysKRGttNUJhR05VaWFxCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                    serviceCidr: "10.100.0.0/16",
+                },
+                userDataArgs,
+                undefined,
+            );
+
+            expect(userData).toMatchSnapshot();
+        });
+
+        it("should allow adding additional configuration", () => {
+            const userDataArgs: ManagedNodeUserDataArgs = {
+                nodeGroupType: "managed",
+                bottlerocketSettings: {
+                    settings: {
+                        kubernetes: {
+                            "max-pods": 1500,
+                        },
+                        "host-containers": {
+                            admin: {
+                                enabled: true,
+                            },
+                        },
+                    },
+                },
+            } as ManagedNodeUserDataArgs;
+
+            const userData = createUserData(
+                OperatingSystem.Bottlerocket,
+                {
+                    name: "example-managed-nodegroups-eksCluster-b27184c",
+                    apiServerEndpoint:
+                        "https://CE21F68965F7FB2C00423B4483130C27.gr7.us-west-2.eks.amazonaws.com",
+                    certificateAuthority:
+                        "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQWNzUG82b0t1S293RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBMk1ETXhPVEl3TWpoYUZ3MHpOREEyTURFeE9USTFNamhhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURqU0VRWFFkcjhmcDNOc2JYRG5RZTY1VGVGb1RkTUFiSVhzVjJua0t4V3dzdTM3dUJJSDBDSHV4b2gKYU9ZY1IzNmd5OVA2K0ZZSndhc3pyRGMvL0M1dGtsV0JLaGpySkRKbk5mcU0vUVBqOXRoK3dHWE4xeW5zR2VKbQpPVTZ4ek8yd290Uk1aYlBHTmx2UnlQQWtHMFZrM3Z0dEVINU8rcGl1NU44MkFnY3hWOGpWN3M0RHA3Qnd1L0xVCjFPRXRaN0RoVy9vWllPdTltRVJkK29CMkg4OS9ERDhZclBrejlvVlZCOEQycXp2UlRGUEhiR1VwaHNKK1VkZmcKNndhdjQySlRHS1RJRjc1OHRtbWZpL2lyaEJGMUlDcHI4bDJLVG9jNElKMWdVM0loS1lDOStHYlB2Y2VRK2ZwNgpTMlBTZStzVElGS2thY3JtRnNWM0hETEFvenJ6QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJSZWpnZC84THN3eHpDTVpGQWRsUUdvM1lYdnp6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRRGE4TU5VQnNvbQpWYmx2dzRaaTYxaUxFZEVKTkxkMG5TNnIxQTVidjZLZHFjd0VNN0VDVldyTlB3TFVWYklaOTEzeEMxNnN1M2szCnZkTWllWEhkSDNPZTdkTzZ3RXNxbzdyTDdYc0FUblRlZEQ4OFRyVU13TjFVcEY1VHRjMUlRaHVaM1pnUnJmVUUKV09RZnFrcU8waVljNUl0ZUZvV1Q1ZHlseHd0eWpwMDhCZmFNVGZvc2cvYW1BUnhvRnptVGV6dkRSTnlEVllwdwovVWRFR0FmT0lBY3ZJNy9oNmhTay8wMkFTOGRXSm0xZWlMZ3p0czhCUGZJME1KaFFjdjlhL1dZc3I4aDREaTFpCmNsNlhnb0hWZ3VzZ1UwQVQ3SHdqelQ4WFN0N0xzb08rMFlTUTZOck9wZTlwL283N0FwaGFEQ3hIZHhJZlF1LysKRGttNUJhR05VaWFxCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                    serviceCidr: "10.100.0.0/16",
+                },
+                userDataArgs,
+                undefined,
+            );
+
+            expect(userData).toMatchSnapshot();
+        });
+
         it("should throw an error if kubeletExtraArgs are specified", () => {
             const userDataArgs: ManagedNodeUserDataArgs = {
                 nodeGroupType: "managed",
@@ -382,28 +448,52 @@ describe("createUserData", () => {
                 );
             }).toThrow("The service CIDR of the cluster is not a valid CIDR: NOT_A_CIDR");
         });
+    });
+});
 
-        it("should throw an error if bottlerocketSettings are invalid TOML", () => {
-            const userDataArgs: ManagedNodeUserDataArgs = {
-                nodeGroupType: "managed",
-                bottlerocketSettings: "nope this is not TOML"
-            } as ManagedNodeUserDataArgs;
+describe("getClusterDnsIp", () => {
+    test.each([
+        ["10.100.0.0/16", "10.100.0.10"],
+        ["172.20.0.0/16", "172.20.0.10"],
+        ["192.168.0.0/24", "192.168.0.10"],
+        ["192.0.2.0/24", "192.0.2.10"],
+        ["203.0.113.0/24", "203.0.113.10"],
+        ["10.0.0.0/8", "10.0.0.10"],
+        ["172.16.0.0/12", "172.16.0.10"],
+        ["198.51.100.0/24", "198.51.100.10"],
+        ["192.88.99.0/24", "192.88.99.10"],
+        ["169.254.0.0/16", "169.254.0.10"],
+        ["11.0.0.0/24", "11.0.0.10"],
+        ["1.1.1.0/24", "1.1.1.10"],
+        ["8.8.8.0/24", "8.8.8.10"],
+        ["203.0.113.100/27", "203.0.113.106"],
+        ["2001:db8::/32", "2001:db8::a"],
+        ["fd00::/64", "fd00::a"],
+        ["2001:db8:85a3::/64", "2001:db8:85a3::a"],
+        ["2001:db8:1234::/48", "2001:db8:1234::a"],
+        ["2001:0db8:abcd::/48", "2001:db8:abcd::a"],
+        ["fd12:3456:789a::/64", "fd12:3456:789a::a"],
+        ["2001:470:ee34::/48", "2001:470:ee34::a"],
+        ["2607:f8b0:4005::/48", "2607:f8b0:4005::a"],
+        ["2001:0db8:abcd:0012::/64", "2001:db8:abcd:12::a"],
+        ["fe80::/64", "fe80::a"],
+        ["fdff:ffff:ffff::/48", "fdff:ffff:ffff::a"],
+        ["2001:db8:1234:5678::/64", "2001:db8:1234:5678::a"],
+    ])("Service CIDR %s should yield cluster dns IP %s", (serviceCidr, expected) => {
+        expect(getClusterDnsIp(serviceCidr, undefined)).toBe(expected);
+    });
 
-            expect(() => {
-                createUserData(
-                    OperatingSystem.Bottlerocket,
-                    {
-                        name: "example-managed-nodegroups-eksCluster-b27184c",
-                        apiServerEndpoint:
-                            "https://CE21F68965F7FB2C00423B4483130C27.gr7.us-west-2.eks.amazonaws.com",
-                        certificateAuthority:
-                            "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQWNzUG82b0t1S293RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBMk1ETXhPVEl3TWpoYUZ3MHpOREEyTURFeE9USTFNamhhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURqU0VRWFFkcjhmcDNOc2JYRG5RZTY1VGVGb1RkTUFiSVhzVjJua0t4V3dzdTM3dUJJSDBDSHV4b2gKYU9ZY1IzNmd5OVA2K0ZZSndhc3pyRGMvL0M1dGtsV0JLaGpySkRKbk5mcU0vUVBqOXRoK3dHWE4xeW5zR2VKbQpPVTZ4ek8yd290Uk1aYlBHTmx2UnlQQWtHMFZrM3Z0dEVINU8rcGl1NU44MkFnY3hWOGpWN3M0RHA3Qnd1L0xVCjFPRXRaN0RoVy9vWllPdTltRVJkK29CMkg4OS9ERDhZclBrejlvVlZCOEQycXp2UlRGUEhiR1VwaHNKK1VkZmcKNndhdjQySlRHS1RJRjc1OHRtbWZpL2lyaEJGMUlDcHI4bDJLVG9jNElKMWdVM0loS1lDOStHYlB2Y2VRK2ZwNgpTMlBTZStzVElGS2thY3JtRnNWM0hETEFvenJ6QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJSZWpnZC84THN3eHpDTVpGQWRsUUdvM1lYdnp6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRRGE4TU5VQnNvbQpWYmx2dzRaaTYxaUxFZEVKTkxkMG5TNnIxQTVidjZLZHFjd0VNN0VDVldyTlB3TFVWYklaOTEzeEMxNnN1M2szCnZkTWllWEhkSDNPZTdkTzZ3RXNxbzdyTDdYc0FUblRlZEQ4OFRyVU13TjFVcEY1VHRjMUlRaHVaM1pnUnJmVUUKV09RZnFrcU8waVljNUl0ZUZvV1Q1ZHlseHd0eWpwMDhCZmFNVGZvc2cvYW1BUnhvRnptVGV6dkRSTnlEVllwdwovVWRFR0FmT0lBY3ZJNy9oNmhTay8wMkFTOGRXSm0xZWlMZ3p0czhCUGZJME1KaFFjdjlhL1dZc3I4aDREaTFpCmNsNlhnb0hWZ3VzZ1UwQVQ3SHdqelQ4WFN0N0xzb08rMFlTUTZOck9wZTlwL283N0FwaGFEQ3hIZHhJZlF1LysKRGttNUJhR05VaWFxCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
-                        serviceCidr: "10.100.0.0/16",
-                    },
-                    userDataArgs,
-                    undefined,
-                );
-            }).toThrow("Failed to parse the Bottlerocket settings. Please ensure the settings are valid TOML: Invalid TOML document: incomplete key-value: cannot find end of key\n\n1:  nope this is not TOML\n    ^\n");
-        });
+    test.each([
+        ["NOT_A_CIDR"],
+        ["300.0.0.0/24"],
+        ["192.168.0.0/33"],
+        ["::1/129"],
+        ["192.168.0.0"],
+        ["10.0.0.0/-1"],
+        ["10.0.0.0/abc"],
+    ])("Service CIDR '%s' should throw error: %s", (serviceCidr) => {
+        expect(() => getClusterDnsIp(serviceCidr, undefined)).toThrow(
+            "Couldn't calculate the cluster dns ip based on the service CIDR. ipaddr: the address has neither IPv6 nor IPv4 CIDR format",
+        );
     });
 });

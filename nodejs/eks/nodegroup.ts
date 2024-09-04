@@ -307,12 +307,12 @@ export interface NodeGroupBaseOptions {
     operatingSystem?: pulumi.Input<OperatingSystem>;
 
     /**
-     * The configuration settings for Bottlerocket OS. Bottlerocket uses TOML for its configuration.
+     * The configuration settings for Bottlerocket OS.
      * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
      *
      * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/
      */
-    bottlerocketSettings?: pulumi.Input<string>;
+    bottlerocketSettings?: pulumi.Input<object>;
 }
 
 /**
@@ -1550,7 +1550,7 @@ export type ManagedNodeGroupOptions = Omit<
      *
      * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/
      */
-    bottlerocketSettings?: pulumi.Input<string>;
+    bottlerocketSettings?: pulumi.Input<object>;
 };
 
 /**
@@ -1746,6 +1746,7 @@ function createManagedNodeGroupInternal(
     const customUserDataArgs = {
         kubeletExtraArgs: args.kubeletExtraArgs,
         bootstrapExtraArgs: args.bootstrapExtraArgs,
+        bottlerocketSettings: args.bottlerocketSettings,
     };
 
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
@@ -1813,6 +1814,7 @@ function requiresCustomLaunchTemplate(args: Omit<ManagedNodeGroupOptions, "clust
         requiresCustomUserData({
             kubeletExtraArgs: args.kubeletExtraArgs,
             bootstrapExtraArgs: args.bootstrapExtraArgs,
+            bottlerocketSettings: args.bottlerocketSettings,
         }) || args.enableIMDSv2 !== undefined
     );
 }
@@ -1859,42 +1861,28 @@ function createMNGCustomLaunchTemplate(
     const customUserDataArgs = {
         kubeletExtraArgs: args.kubeletExtraArgs,
         bootstrapExtraArgs: args.bootstrapExtraArgs,
+        bottlerocketSettings: args.bottlerocketSettings,
     };
     let userData: pulumi.Output<string> | undefined;
     if (requiresCustomUserData(customUserDataArgs)) {
         userData = pulumi
-            .all([
-                clusterMetadata,
-                os,
-                args.labels,
-                taints,
-                args.bottlerocketSettings,
-            ])
-            .apply(
-                ([
-                    clusterMetadata,
-                    os,
+            .all([clusterMetadata, os, args.labels, taints, args.bottlerocketSettings])
+            .apply(([clusterMetadata, os, labels, taints, bottlerocketSettings]) => {
+                const userDataArgs: ManagedNodeUserDataArgs = {
+                    nodeGroupType: "managed",
+                    kubeletExtraArgs: args.kubeletExtraArgs,
+                    bootstrapExtraArgs: args.bootstrapExtraArgs,
                     labels,
                     taints,
                     bottlerocketSettings,
-                ]) => {
 
-                    const userDataArgs: ManagedNodeUserDataArgs = {
-                        nodeGroupType: "managed",
-                        kubeletExtraArgs: args.kubeletExtraArgs,
-                        bootstrapExtraArgs: args.bootstrapExtraArgs,
-                        labels,
-                        taints,
-                        bottlerocketSettings,
+                    // TODO: expose this as an option for managed node groups
+                    userDataOverride: undefined,
+                };
 
-                        // TODO: expose this as an option for managed node groups
-                        userDataOverride: undefined,
-                    };
-
-                    const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
-                    return Buffer.from(userData, "utf-8").toString("base64");
-                },
-            );
+                const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
+                return Buffer.from(userData, "utf-8").toString("base64");
+            });
     }
 
     // Turn on/off IMDSv2 based on the user input. Different AMIs have different defaults built in.

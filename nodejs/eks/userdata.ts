@@ -17,8 +17,8 @@ import * as pulumi from "@pulumi/pulumi";
 import { OperatingSystem } from "./ami";
 import { Taint } from "./nodegroup";
 import * as jsyaml from "js-yaml";
-import * as toml from "smol-toml";
-import * as ipbigint from "ip-bigint";
+import * as toml from "@iarna/toml";
+import * as ipaddr from "ipaddr.js";
 
 // linux is the default user data type for AMIs that use the eks bootstrap script. (e.g. AL2)
 // nodeadm is the user data type for AMIs that use nodeadm to bootstrap the node. (e.g. AL2023)
@@ -74,9 +74,13 @@ interface BaseSelfManagedNodeUserDataArgs extends BaseUserDataArgs {
     extraUserData: string | undefined;
 }
 
+type CustomUserDataArgs = Pick<UserDataArgs, "bootstrapExtraArgs" | "kubeletExtraArgs"> & {
+    bottlerocketSettings: pulumi.Input<object> | undefined;
+};
+
 export interface ManagedNodeUserDataArgs extends BaseUserDataArgs {
     nodeGroupType: "managed";
-    bottlerocketSettings: string | undefined;
+    bottlerocketSettings: object | undefined;
 }
 
 export interface SelfManagedV1NodeUserDataArgs extends BaseSelfManagedNodeUserDataArgs {
@@ -86,7 +90,7 @@ export interface SelfManagedV1NodeUserDataArgs extends BaseSelfManagedNodeUserDa
 
 export interface SelfManagedV2NodeUserDataArgs extends BaseSelfManagedNodeUserDataArgs {
     nodeGroupType: "self-managed-v2";
-    bottlerocketSettings: string | undefined;
+    bottlerocketSettings: object | undefined;
 }
 
 export type UserDataArgs =
@@ -119,10 +123,12 @@ export function isSelfManagedNodeUserDataArgs(
 /**
  * If the user specifies either kubeletExtraArgs or bootstrapExtraArgs, we need to create a base64 encoded user data script.
  */
-export function requiresCustomUserData(
-    args: Pick<UserDataArgs, "bootstrapExtraArgs" | "kubeletExtraArgs">,
-): boolean {
-    return args.kubeletExtraArgs !== undefined || args.bootstrapExtraArgs !== undefined;
+export function requiresCustomUserData(args: CustomUserDataArgs): boolean {
+    return (
+        args.kubeletExtraArgs !== undefined ||
+        args.bootstrapExtraArgs !== undefined ||
+        args.bottlerocketSettings !== undefined
+    );
 }
 
 /**
@@ -441,17 +447,7 @@ function createBottlerocketUserData(
         });
     }
 
-    const bottlerocketSettings: any = {};
-    if (args.bottlerocketSettings && args.bottlerocketSettings !== "") {
-        try {
-            Object.assign(bottlerocketSettings, toml.parse(args.bottlerocketSettings));
-        } catch (e) {
-            throw new pulumi.ResourceError(
-                `Failed to parse the Bottlerocket settings. Please ensure the settings are valid TOML: ${e.message}`,
-                parent,
-            );
-        }
-    }
+    const bottlerocketSettings: any = args.bottlerocketSettings ?? {};
 
     if (!("settings" in bottlerocketSettings && isObject(bottlerocketSettings.settings))) {
         bottlerocketSettings.settings = {};
@@ -478,34 +474,43 @@ function createBottlerocketUserData(
  * Calculates the cluster DNS IP address based on the provided service CIDR. The cluster DNS IP address is the
  * 10th IP address in the service CIDR. See: https://github.com/awslabs/amazon-eks-ami/blob/4f9b5560aee4dd9adbd4f1c711d237fd6f0b4e70/templates/al2/runtime/bootstrap.sh#L462-L485
  *
+ * The calculation is done by round tripping the network address of the CIDR to a big integer, adding 10 to it, and then converting it back.
+ * This way the calculation is safe for both IPv4 and IPv6.
+ *
  * @param serviceCidr - The service CIDR to parse and calculate the cluster DNS IP from.
  * @returns The cluster DNS IP address.
  * @throws {pulumi.ResourceError} If the service CIDR fails to parse or the cluster DNS IP is out of range.
  */
-function getClusterDnsIp(serviceCidr: string, parent: pulumi.Resource | undefined): string {
-    let num: bigint;
-    let version: ipbigint.IPVersion;
-
-    const [ip, prefix]: string[] = serviceCidr.split("/");
-    if (!/^[0-9]+$/.test(prefix)) {
-        throw new pulumi.ResourceError(
-            `The service CIDR of the cluster is not a valid CIDR: ${serviceCidr}`,
-            parent,
-        );
-    }
-
+export function getClusterDnsIp(serviceCidr: string, parent: pulumi.Resource | undefined): string {
     try {
-        const res = ipbigint.parseIp(ip);
-        num = res.number;
-        version = res.version;
+        const [ip, _] = ipaddr.parseCIDR(serviceCidr);
+        let networkAddress: ipaddr.IPv4 | ipaddr.IPv6;
+        if (ip.kind() === "ipv6") {
+            networkAddress = ipaddr.IPv6.networkAddressFromCIDR(serviceCidr);
+        } else {
+            networkAddress = ipaddr.IPv4.networkAddressFromCIDR(serviceCidr);
+        }
+
+        const networkAddressHex = networkAddress
+            .toByteArray()
+            .map((byte) => byte.toString(16).padStart(2, "0"))
+            .join("");
+        const clusterDnsIpDec = BigInt(`0x${networkAddressHex}`) + BigInt(10);
+
+        // pad the hex string to the correct length (v4 has 8 nibbles and v6 32)
+        const clusterDnsIpHex = clusterDnsIpDec
+            .toString(16)
+            .padStart(ip.kind() === "ipv6" ? 32 : 8, "0");
+
+        const newBuf = Buffer.from(clusterDnsIpHex, "hex");
+        const clusterDnsIp = ipaddr.fromByteArray(Array.from(newBuf));
+        return clusterDnsIp.toString();
     } catch (e) {
         throw new pulumi.ResourceError(
-            `The service CIDR of the cluster is not a valid CIDR: ${serviceCidr}`,
+            `Couldn't calculate the cluster dns ip based on the service CIDR. ${e.message}`,
             parent,
         );
     }
-
-    return ipbigint.stringifyIp({ number: num + BigInt(10), version });
 }
 
 function isObject(obj: any): obj is Record<string, any> {
