@@ -876,27 +876,7 @@ func TestAccManagedNodeGroupOS(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 
-				assert.NoError(t, utils.ValidateNodes(t, info.Outputs["kubeconfig"], func(nodes *corev1.NodeList) {
-					require.NotNil(t, nodes)
-					assert.NotEmpty(t, nodes.Items)
-
-					expectedNodesWithIncreasedPodCapacity := 4
-					var foundNodes = 0
-					for _, node := range nodes.Items {
-						if label, ok := node.Labels["increased-pod-capacity"]; !ok || label != "true" {
-							continue
-						} else {
-							foundNodes++
-						}
-
-						podCapacity := node.Status.Capacity[corev1.ResourcePods]
-
-						// Defined in tests/managed-ng-os
-						var desiredCapacity int64 = 100
-						assert.True(t, podCapacity.CmpInt64(desiredCapacity) == 0)
-					}
-					assert.Equal(t, expectedNodesWithIncreasedPodCapacity, foundNodes)
-				}))
+				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
 			},
 		})
 
@@ -917,27 +897,7 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 
-				assert.NoError(t, utils.ValidateNodes(t, info.Outputs["kubeconfig"], func(nodes *corev1.NodeList) {
-					require.NotNil(t, nodes)
-					assert.NotEmpty(t, nodes.Items)
-
-					expectedNodesWithIncreasedPodCapacity := 3
-					var foundNodes = 0
-					for _, node := range nodes.Items {
-						if label, ok := node.Labels["increased-pod-capacity"]; !ok || label != "true" {
-							continue
-						} else {
-							foundNodes++
-						}
-
-						podCapacity := node.Status.Capacity[corev1.ResourcePods]
-
-						// Defined in tests/self-managed-ng-os
-						var desiredCapacity int64 = 100
-						assert.True(t, podCapacity.CmpInt64(desiredCapacity) == 0)
-					}
-					assert.Equal(t, expectedNodesWithIncreasedPodCapacity, foundNodes)
-				}))
+				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 3, 100, "increased-pod-capacity"))
 			},
 		})
 
