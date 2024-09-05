@@ -60,6 +60,27 @@ namespace Pulumi.Eks.Inputs
         [Input("bootstrapExtraArgs")]
         public string? BootstrapExtraArgs { get; set; }
 
+        [Input("bottlerocketSettings")]
+        private InputMap<object>? _bottlerocketSettings;
+
+        /// <summary>
+        /// The configuration settings for Bottlerocket OS.
+        /// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+        /// 
+        /// This includes:
+        ///   - settings.kubernetes.api-server
+        ///   - settings.kubernetes.cluster-certificate
+        ///   - settings.kubernetes.cluster-name
+        ///   - settings.kubernetes.cluster-dns-ip
+        /// 
+        /// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+        /// </summary>
+        public InputMap<object> BottlerocketSettings
+        {
+            get => _bottlerocketSettings ?? (_bottlerocketSettings = new InputMap<object>());
+            set => _bottlerocketSettings = value;
+        }
+
         [Input("cloudFormationTags")]
         private InputMap<string>? _cloudFormationTags;
 

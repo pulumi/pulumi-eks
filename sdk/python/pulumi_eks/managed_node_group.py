@@ -55,6 +55,12 @@ class ManagedNodeGroupArgs:
         :param pulumi.Input[Mapping[str, Any]] bottlerocket_settings: The configuration settings for Bottlerocket OS.
                The settings will get merged with the base settings the provider uses to configure Bottlerocket.
                
+               This includes:
+                 - settings.kubernetes.api-server
+                 - settings.kubernetes.cluster-certificate
+                 - settings.kubernetes.cluster-name
+                 - settings.kubernetes.cluster-dns-ip
+               
                For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
@@ -196,6 +202,12 @@ class ManagedNodeGroupArgs:
         """
         The configuration settings for Bottlerocket OS.
         The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+
+        This includes:
+          - settings.kubernetes.api-server
+          - settings.kubernetes.cluster-certificate
+          - settings.kubernetes.cluster-name
+          - settings.kubernetes.cluster-dns-ip
 
         For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
         """
@@ -525,6 +537,12 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                Note that this field conflicts with `launchTemplate`.
         :param pulumi.Input[Mapping[str, Any]] bottlerocket_settings: The configuration settings for Bottlerocket OS.
                The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+               
+               This includes:
+                 - settings.kubernetes.api-server
+                 - settings.kubernetes.cluster-certificate
+                 - settings.kubernetes.cluster-name
+                 - settings.kubernetes.cluster-dns-ip
                
                For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.

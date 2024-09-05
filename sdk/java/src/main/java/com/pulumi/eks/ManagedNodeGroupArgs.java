@@ -67,6 +67,12 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
      * The configuration settings for Bottlerocket OS.
      * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
      * 
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
+     * 
      * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
      * 
      */
@@ -76,6 +82,12 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     /**
      * @return The configuration settings for Bottlerocket OS.
      * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     * 
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
      * 
      * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
      * 
@@ -542,6 +554,12 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          * @param bottlerocketSettings The configuration settings for Bottlerocket OS.
          * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
          * 
+         * This includes:
+         *   - settings.kubernetes.api-server
+         *   - settings.kubernetes.cluster-certificate
+         *   - settings.kubernetes.cluster-name
+         *   - settings.kubernetes.cluster-dns-ip
+         * 
          * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
          * 
          * @return builder
@@ -555,6 +573,12 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         /**
          * @param bottlerocketSettings The configuration settings for Bottlerocket OS.
          * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+         * 
+         * This includes:
+         *   - settings.kubernetes.api-server
+         *   - settings.kubernetes.cluster-certificate
+         *   - settings.kubernetes.cluster-name
+         *   - settings.kubernetes.cluster-dns-ip
          * 
          * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
          * 

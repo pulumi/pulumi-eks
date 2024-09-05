@@ -83,6 +83,12 @@ class NodeGroupV2Args:
         :param pulumi.Input[Mapping[str, Any]] bottlerocket_settings: The configuration settings for Bottlerocket OS.
                The settings will get merged with the base settings the provider uses to configure Bottlerocket.
                
+               This includes:
+                 - settings.kubernetes.api-server
+                 - settings.kubernetes.cluster-certificate
+                 - settings.kubernetes.cluster-name
+                 - settings.kubernetes.cluster-dns-ip
+               
                For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cloud_formation_tags: The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
                
@@ -308,6 +314,12 @@ class NodeGroupV2Args:
         """
         The configuration settings for Bottlerocket OS.
         The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+
+        This includes:
+          - settings.kubernetes.api-server
+          - settings.kubernetes.cluster-certificate
+          - settings.kubernetes.cluster-name
+          - settings.kubernetes.cluster-dns-ip
 
         For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
         """
@@ -806,6 +818,12 @@ class NodeGroupV2(pulumi.ComponentResource):
         :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         :param pulumi.Input[Mapping[str, Any]] bottlerocket_settings: The configuration settings for Bottlerocket OS.
                The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+               
+               This includes:
+                 - settings.kubernetes.api-server
+                 - settings.kubernetes.cluster-certificate
+                 - settings.kubernetes.cluster-name
+                 - settings.kubernetes.cluster-dns-ip
                
                For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cloud_formation_tags: The tags to apply to the CloudFormation Stack of the Worker NodeGroup.

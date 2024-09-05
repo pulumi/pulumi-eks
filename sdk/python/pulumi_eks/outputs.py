@@ -208,6 +208,8 @@ class ClusterNodeGroupOptions(dict):
             suggest = "auto_scaling_group_tags"
         elif key == "bootstrapExtraArgs":
             suggest = "bootstrap_extra_args"
+        elif key == "bottlerocketSettings":
+            suggest = "bottlerocket_settings"
         elif key == "cloudFormationTags":
             suggest = "cloud_formation_tags"
         elif key == "clusterIngressRule":
@@ -277,6 +279,7 @@ class ClusterNodeGroupOptions(dict):
                  ami_type: Optional[str] = None,
                  auto_scaling_group_tags: Optional[Mapping[str, str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
+                 bottlerocket_settings: Optional[Mapping[str, Any]] = None,
                  cloud_formation_tags: Optional[Mapping[str, str]] = None,
                  cluster_ingress_rule: Optional['pulumi_aws.ec2.SecurityGroupRule'] = None,
                  desired_capacity: Optional[int] = None,
@@ -328,6 +331,16 @@ class ClusterNodeGroupOptions(dict):
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
         :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+        :param Mapping[str, Any] bottlerocket_settings: The configuration settings for Bottlerocket OS.
+               The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+               
+               This includes:
+                 - settings.kubernetes.api-server
+                 - settings.kubernetes.cluster-certificate
+                 - settings.kubernetes.cluster-name
+                 - settings.kubernetes.cluster-dns-ip
+               
+               For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
         :param Mapping[str, str] cloud_formation_tags: The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
@@ -401,6 +414,8 @@ class ClusterNodeGroupOptions(dict):
             pulumi.set(__self__, "auto_scaling_group_tags", auto_scaling_group_tags)
         if bootstrap_extra_args is not None:
             pulumi.set(__self__, "bootstrap_extra_args", bootstrap_extra_args)
+        if bottlerocket_settings is not None:
+            pulumi.set(__self__, "bottlerocket_settings", bottlerocket_settings)
         if cloud_formation_tags is not None:
             pulumi.set(__self__, "cloud_formation_tags", cloud_formation_tags)
         if cluster_ingress_rule is not None:
@@ -508,6 +523,23 @@ class ClusterNodeGroupOptions(dict):
         Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         """
         return pulumi.get(self, "bootstrap_extra_args")
+
+    @property
+    @pulumi.getter(name="bottlerocketSettings")
+    def bottlerocket_settings(self) -> Optional[Mapping[str, Any]]:
+        """
+        The configuration settings for Bottlerocket OS.
+        The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+
+        This includes:
+          - settings.kubernetes.api-server
+          - settings.kubernetes.cluster-certificate
+          - settings.kubernetes.cluster-name
+          - settings.kubernetes.cluster-dns-ip
+
+        For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+        """
+        return pulumi.get(self, "bottlerocket_settings")
 
     @property
     @pulumi.getter(name="cloudFormationTags")
