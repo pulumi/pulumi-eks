@@ -467,7 +467,19 @@ function createBottlerocketUserData(
         ...bottlerocketSettings.settings.kubernetes,
     };
 
-    return toml.stringify(bottlerocketSettings);
+    return toml.stringify(normalizeProperties(bottlerocketSettings));
+}
+
+function normalizeProperties(obj: any): any {
+    if (!isObject(obj)) {
+        return obj;
+    }
+
+    return Object.fromEntries(
+        Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => {
+            return [key, normalizeProperties(value)];
+        })
+    )
 }
 
 /**
