@@ -829,6 +829,59 @@ function createNodeGroupInternal(
             }
         });
 
+    const amiInfo = pulumi.output(amiId).apply((id) =>
+        aws.ec2.getAmi(
+            {
+                owners: ["self", "amazon"],
+                filters: [
+                    {
+                        name: "image-id",
+                        values: [id],
+                    },
+                ],
+            },
+            { parent },
+        ),
+    );
+
+    const { rootBlockDevice, ebsBlockDevices } = pulumi
+        .all([os, amiInfo])
+        .apply(([os, amiInfo]) => {
+            if (os !== OperatingSystem.Bottlerocket) {
+                return {
+                    rootBlockDevice: {
+                        encrypted: args.nodeRootVolumeEncrypted ?? false,
+                        volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
+                        volumeType: args.nodeRootVolumeType ?? "gp2",
+                        iops: args.nodeRootVolumeIops,
+                        throughput: args.nodeRootVolumeThroughput,
+                        deleteOnTermination: args.nodeRootVolumeDeleteOnTermination ?? true,
+                    },
+                    ebsBlockDevices: [],
+                };
+            }
+
+            // Bottlerocket has two block devices, the root device stores the OS itself and the other is for data like images, logs, persistent storage
+            // We need to allow users to configure the block device for data
+            const deviceName = amiInfo.blockDeviceMappings.find(
+                (bdm) => bdm.deviceName !== amiInfo.rootDeviceName,
+            )?.deviceName;
+            return {
+                rootBlockDevice: {},
+                ebsBlockDevices: [
+                    {
+                        deviceName: deviceName ?? amiInfo.rootDeviceName,
+                        encrypted: args.nodeRootVolumeEncrypted,
+                        volumeSize: args.nodeRootVolumeSize,
+                        volumeType: args.nodeRootVolumeType,
+                        iops: args.nodeRootVolumeIops,
+                        throughput: args.nodeRootVolumeThroughput,
+                        deleteOnTermination: args.nodeRootVolumeDeleteOnTermination,
+                    },
+                ],
+            };
+        });
+
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(
         `${name}-nodeLaunchConfiguration`,
         {
@@ -841,14 +894,8 @@ function createNodeGroupInternal(
                 .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
                 .apply(([sg, extraSG]) => [sg, ...extraSG]),
             spotPrice: args.spotPrice,
-            rootBlockDevice: {
-                encrypted: args.nodeRootVolumeEncrypted ?? false,
-                volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
-                volumeType: args.nodeRootVolumeType ?? "gp2",
-                iops: args.nodeRootVolumeIops,
-                throughput: args.nodeRootVolumeThroughput,
-                deleteOnTermination: args.nodeRootVolumeDeleteOnTermination ?? true,
-            },
+            rootBlockDevice,
+            ebsBlockDevices,
             userData: args.nodeUserDataOverride || userdata,
             enableMonitoring: args.enableDetailedMonitoring,
         },
@@ -1218,8 +1265,7 @@ function createNodeGroupV2Internal(
           }
         : undefined;
 
-    // TODO[pulumi/pulumi-eks#1195] This wrongly assumes an AMI only has a single block device. Bottlerocket has two
-    const device = pulumi.output(amiId).apply((id) =>
+    const amiInfo = pulumi.output(amiId).apply((id) =>
         aws.ec2.getAmi(
             {
                 owners: ["self", "amazon"],
@@ -1232,7 +1278,20 @@ function createNodeGroupV2Internal(
             },
             { parent },
         ),
-    ).blockDeviceMappings[0].deviceName;
+    );
+
+    const deviceName = pulumi.all([os, amiInfo]).apply(([os, amiInfo]) => {
+        if (os !== OperatingSystem.Bottlerocket) {
+            return amiInfo.blockDeviceMappings[0].deviceName;
+        }
+
+        // Bottlerocket has two block devices, the root device stores the OS itself and the other is for data like images, logs, persistent storage
+        // We need to allow users to configure the block device for data
+        const deviceName = amiInfo.blockDeviceMappings.find(
+            (bdm) => bdm.deviceName !== amiInfo.rootDeviceName,
+        )?.deviceName;
+        return deviceName ?? amiInfo.rootDeviceName;
+    });
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
@@ -1244,7 +1303,7 @@ function createNodeGroupV2Internal(
             instanceMarketOptions: marketOptions,
             blockDeviceMappings: [
                 {
-                    deviceName: device,
+                    deviceName: deviceName,
                     ebs: {
                         encrypted: args.nodeRootVolumeEncrypted ?? false ? "true" : "false",
                         volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
