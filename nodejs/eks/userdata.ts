@@ -227,7 +227,9 @@ ${extraUserData}
     // self-managed-v1 based node groups use cloudformation to bootstrap the nodes.
     // we need to signal to CFN that the nodes have been  successfully created by using the cfn-signal script.
     // see: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-signal.html
-    return !isSelfManagedV1NodeUserDataArgs(args) ? userData : `${userData}/opt/aws/bin/cfn-signal --exit-code $? --stack ${args.stackName} --resource NodeGroup --region ${args.awsRegion}\n`
+    return !isSelfManagedV1NodeUserDataArgs(args)
+        ? userData
+        : `${userData}/opt/aws/bin/cfn-signal --exit-code $? --stack ${args.stackName} --resource NodeGroup --region ${args.awsRegion}\n`;
 }
 
 // nodeadm based user data is a multi-part MIME document that contains EKS NodeConfig as yaml and optional shell scripts
