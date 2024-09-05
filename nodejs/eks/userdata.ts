@@ -221,18 +221,13 @@ chmod +x /opt/user-data
 
     // We always add extraUserData to the user data script, even if it's empty. This is for backwards compatibility.
     const userData = `${baseUserData}
-${extraUserData}`;
+${extraUserData}
+`;
 
     // self-managed-v1 based node groups use cloudformation to bootstrap the nodes.
     // we need to signal to CFN that the nodes have been  successfully created by using the cfn-signal script.
     // see: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-signal.html
-    const cfnSignal = isSelfManagedV1NodeUserDataArgs(args)
-        ? `/opt/aws/bin/cfn-signal --exit-code $? --stack ${args.stackName} --resource NodeGroup --region ${args.awsRegion}`
-        : "";
-
-    return `${userData}
-${cfnSignal}
-`;
+    return !isSelfManagedV1NodeUserDataArgs(args) ? userData : `${userData}/opt/aws/bin/cfn-signal --exit-code $? --stack ${args.stackName} --resource NodeGroup --region ${args.awsRegion}\n`
 }
 
 // nodeadm based user data is a multi-part MIME document that contains EKS NodeConfig as yaml and optional shell scripts
