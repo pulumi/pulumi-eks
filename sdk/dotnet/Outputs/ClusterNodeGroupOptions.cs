@@ -48,6 +48,19 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly string? BootstrapExtraArgs;
         /// <summary>
+        /// The configuration settings for Bottlerocket OS.
+        /// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+        /// 
+        /// This includes:
+        ///   - settings.kubernetes.api-server
+        ///   - settings.kubernetes.cluster-certificate
+        ///   - settings.kubernetes.cluster-name
+        ///   - settings.kubernetes.cluster-dns-ip
+        /// 
+        /// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+        /// </summary>
+        public readonly ImmutableDictionary<string, object>? BottlerocketSettings;
+        /// <summary>
         /// The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
         /// 
         /// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
@@ -212,6 +225,8 @@ namespace Pulumi.Eks.Outputs
 
             string? bootstrapExtraArgs,
 
+            ImmutableDictionary<string, object>? bottlerocketSettings,
+
             ImmutableDictionary<string, string>? cloudFormationTags,
 
             Pulumi.Aws.Ec2.SecurityGroupRule? clusterIngressRule,
@@ -276,6 +291,7 @@ namespace Pulumi.Eks.Outputs
             AmiType = amiType;
             AutoScalingGroupTags = autoScalingGroupTags;
             BootstrapExtraArgs = bootstrapExtraArgs;
+            BottlerocketSettings = bottlerocketSettings;
             CloudFormationTags = cloudFormationTags;
             ClusterIngressRule = clusterIngressRule;
             DesiredCapacity = desiredCapacity;

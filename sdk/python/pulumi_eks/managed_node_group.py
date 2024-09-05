@@ -23,6 +23,7 @@ class ManagedNodeGroupArgs:
                  cluster: pulumi.Input[Union['Cluster', 'CoreDataArgs']],
                  ami_type: Optional[pulumi.Input[str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
+                 bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
@@ -51,6 +52,16 @@ class ManagedNodeGroupArgs:
         :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
                
                Note that this field conflicts with `launchTemplate`.
+        :param pulumi.Input[Mapping[str, Any]] bottlerocket_settings: The configuration settings for Bottlerocket OS.
+               The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+               
+               This includes:
+                 - settings.kubernetes.api-server
+                 - settings.kubernetes.cluster-certificate
+                 - settings.kubernetes.cluster-name
+                 - settings.kubernetes.cluster-dns-ip
+               
+               For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
@@ -102,6 +113,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "ami_type", ami_type)
         if bootstrap_extra_args is not None:
             pulumi.set(__self__, "bootstrap_extra_args", bootstrap_extra_args)
+        if bottlerocket_settings is not None:
+            pulumi.set(__self__, "bottlerocket_settings", bottlerocket_settings)
         if capacity_type is not None:
             pulumi.set(__self__, "capacity_type", capacity_type)
         if cluster_name is not None:
@@ -182,6 +195,27 @@ class ManagedNodeGroupArgs:
     @bootstrap_extra_args.setter
     def bootstrap_extra_args(self, value: Optional[str]):
         pulumi.set(self, "bootstrap_extra_args", value)
+
+    @property
+    @pulumi.getter(name="bottlerocketSettings")
+    def bottlerocket_settings(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
+        """
+        The configuration settings for Bottlerocket OS.
+        The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+
+        This includes:
+          - settings.kubernetes.api-server
+          - settings.kubernetes.cluster-certificate
+          - settings.kubernetes.cluster-name
+          - settings.kubernetes.cluster-dns-ip
+
+        For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+        """
+        return pulumi.get(self, "bottlerocket_settings")
+
+    @bottlerocket_settings.setter
+    def bottlerocket_settings(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
+        pulumi.set(self, "bottlerocket_settings", value)
 
     @property
     @pulumi.getter(name="capacityType")
@@ -465,6 +499,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
+                 bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
@@ -500,6 +535,16 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
                
                Note that this field conflicts with `launchTemplate`.
+        :param pulumi.Input[Mapping[str, Any]] bottlerocket_settings: The configuration settings for Bottlerocket OS.
+               The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+               
+               This includes:
+                 - settings.kubernetes.api-server
+                 - settings.kubernetes.cluster-certificate
+                 - settings.kubernetes.cluster-name
+                 - settings.kubernetes.cluster-dns-ip
+               
+               For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]] cluster: The target EKS cluster.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
@@ -576,6 +621,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
+                 bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
@@ -611,6 +657,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
 
             __props__.__dict__["ami_type"] = ami_type
             __props__.__dict__["bootstrap_extra_args"] = bootstrap_extra_args
+            __props__.__dict__["bottlerocket_settings"] = bottlerocket_settings
             __props__.__dict__["capacity_type"] = capacity_type
             if cluster is None and not opts.urn:
                 raise TypeError("Missing required property 'cluster'")
