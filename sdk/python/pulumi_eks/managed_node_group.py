@@ -21,6 +21,7 @@ __all__ = ['ManagedNodeGroupArgs', 'ManagedNodeGroup']
 class ManagedNodeGroupArgs:
     def __init__(__self__, *,
                  cluster: pulumi.Input[Union['Cluster', 'CoreDataArgs']],
+                 ami_id: Optional[pulumi.Input[str]] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
                  bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
@@ -29,6 +30,7 @@ class ManagedNodeGroupArgs:
                  disk_size: Optional[pulumi.Input[int]] = None,
                  enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
+                 gpu: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  kubelet_extra_args: Optional[str] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -44,11 +46,21 @@ class ManagedNodeGroupArgs:
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  taints: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.NodeGroupTaintArgs']]]] = None,
+                 user_data: Optional[pulumi.Input[str]] = None,
                  version: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a ManagedNodeGroup resource.
         :param pulumi.Input[Union['Cluster', 'CoreDataArgs']] cluster: The target EKS cluster.
-        :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+        :param pulumi.Input[str] ami_id: The AMI ID to use for the worker nodes.
+               Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+               
+               Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+               
+               See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+        :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+               Note: `amiType` and `amiId` are mutually exclusive.
+               
+               See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
         :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
                
                Note that this field conflicts with `launchTemplate`.
@@ -70,6 +82,12 @@ class ManagedNodeGroupArgs:
                
                Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
+        :param pulumi.Input[bool] gpu: Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+               Defaults to false.
+               
+               Note: `gpu` and `amiId` are mutually exclusive.
+               
+               See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
                Note that this field conflicts with `launchTemplate`.
@@ -107,8 +125,13 @@ class ManagedNodeGroupArgs:
                This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of resource tags.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.NodeGroupTaintArgs']]] taints: The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
+        :param pulumi.Input[str] user_data: User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+               
+               See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
         """
         pulumi.set(__self__, "cluster", cluster)
+        if ami_id is not None:
+            pulumi.set(__self__, "ami_id", ami_id)
         if ami_type is not None:
             pulumi.set(__self__, "ami_type", ami_type)
         if bootstrap_extra_args is not None:
@@ -125,6 +148,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "enable_imd_sv2", enable_imd_sv2)
         if force_update_version is not None:
             pulumi.set(__self__, "force_update_version", force_update_version)
+        if gpu is not None:
+            pulumi.set(__self__, "gpu", gpu)
         if instance_types is not None:
             pulumi.set(__self__, "instance_types", instance_types)
         if kubelet_extra_args is not None:
@@ -155,6 +180,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "tags", tags)
         if taints is not None:
             pulumi.set(__self__, "taints", taints)
+        if user_data is not None:
+            pulumi.set(__self__, "user_data", user_data)
         if version is not None:
             pulumi.set(__self__, "version", version)
 
@@ -171,10 +198,30 @@ class ManagedNodeGroupArgs:
         pulumi.set(self, "cluster", value)
 
     @property
+    @pulumi.getter(name="amiId")
+    def ami_id(self) -> Optional[pulumi.Input[str]]:
+        """
+        The AMI ID to use for the worker nodes.
+        Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+
+        Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+
+        See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+        """
+        return pulumi.get(self, "ami_id")
+
+    @ami_id.setter
+    def ami_id(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "ami_id", value)
+
+    @property
     @pulumi.getter(name="amiType")
     def ami_type(self) -> Optional[pulumi.Input[str]]:
         """
-        Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+        Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+        Note: `amiType` and `amiId` are mutually exclusive.
+
+        See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
         """
         return pulumi.get(self, "ami_type")
 
@@ -279,6 +326,23 @@ class ManagedNodeGroupArgs:
     @force_update_version.setter
     def force_update_version(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "force_update_version", value)
+
+    @property
+    @pulumi.getter
+    def gpu(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+        Defaults to false.
+
+        Note: `gpu` and `amiId` are mutually exclusive.
+
+        See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+        """
+        return pulumi.get(self, "gpu")
+
+    @gpu.setter
+    def gpu(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "gpu", value)
 
     @property
     @pulumi.getter(name="instanceTypes")
@@ -483,6 +547,20 @@ class ManagedNodeGroupArgs:
         pulumi.set(self, "taints", value)
 
     @property
+    @pulumi.getter(name="userData")
+    def user_data(self) -> Optional[pulumi.Input[str]]:
+        """
+        User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+
+        See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
+        """
+        return pulumi.get(self, "user_data")
+
+    @user_data.setter
+    def user_data(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "user_data", value)
+
+    @property
     @pulumi.getter
     def version(self) -> Optional[pulumi.Input[str]]:
         return pulumi.get(self, "version")
@@ -497,6 +575,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 ami_id: Optional[pulumi.Input[str]] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
                  bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
@@ -506,6 +585,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  disk_size: Optional[pulumi.Input[int]] = None,
                  enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
+                 gpu: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  kubelet_extra_args: Optional[str] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -521,6 +601,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  taints: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupTaintArgs']]]]] = None,
+                 user_data: Optional[pulumi.Input[str]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
@@ -531,7 +612,16 @@ class ManagedNodeGroup(pulumi.ComponentResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+        :param pulumi.Input[str] ami_id: The AMI ID to use for the worker nodes.
+               Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+               
+               Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+               
+               See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+        :param pulumi.Input[str] ami_type: Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+               Note: `amiType` and `amiId` are mutually exclusive.
+               
+               See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
         :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
                
                Note that this field conflicts with `launchTemplate`.
@@ -554,6 +644,12 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                
                Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.
         :param pulumi.Input[bool] force_update_version: Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
+        :param pulumi.Input[bool] gpu: Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+               Defaults to false.
+               
+               Note: `gpu` and `amiId` are mutually exclusive.
+               
+               See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
                Note that this field conflicts with `launchTemplate`.
@@ -591,6 +687,9 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of resource tags.
         :param pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupTaintArgs']]]] taints: The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
+        :param pulumi.Input[str] user_data: User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+               
+               See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
         """
         ...
     @overload
@@ -619,6 +718,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 ami_id: Optional[pulumi.Input[str]] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  bootstrap_extra_args: Optional[str] = None,
                  bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
@@ -628,6 +728,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  disk_size: Optional[pulumi.Input[int]] = None,
                  enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
+                 gpu: Optional[pulumi.Input[bool]] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  kubelet_extra_args: Optional[str] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -643,6 +744,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  taints: Optional[pulumi.Input[Sequence[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupTaintArgs']]]]] = None,
+                 user_data: Optional[pulumi.Input[str]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
@@ -655,6 +757,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = ManagedNodeGroupArgs.__new__(ManagedNodeGroupArgs)
 
+            __props__.__dict__["ami_id"] = ami_id
             __props__.__dict__["ami_type"] = ami_type
             __props__.__dict__["bootstrap_extra_args"] = bootstrap_extra_args
             __props__.__dict__["bottlerocket_settings"] = bottlerocket_settings
@@ -666,6 +769,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["disk_size"] = disk_size
             __props__.__dict__["enable_imd_sv2"] = enable_imd_sv2
             __props__.__dict__["force_update_version"] = force_update_version
+            __props__.__dict__["gpu"] = gpu
             __props__.__dict__["instance_types"] = instance_types
             __props__.__dict__["kubelet_extra_args"] = kubelet_extra_args
             __props__.__dict__["labels"] = labels
@@ -681,6 +785,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["subnet_ids"] = subnet_ids
             __props__.__dict__["tags"] = tags
             __props__.__dict__["taints"] = taints
+            __props__.__dict__["user_data"] = user_data
             __props__.__dict__["version"] = version
             __props__.__dict__["node_group"] = None
         super(ManagedNodeGroup, __self__).__init__(

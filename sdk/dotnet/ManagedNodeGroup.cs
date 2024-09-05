@@ -53,7 +53,21 @@ namespace Pulumi.Eks
     public sealed class ManagedNodeGroupArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
-        /// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+        /// The AMI ID to use for the worker nodes.
+        /// Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+        /// 
+        /// Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+        /// 
+        /// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+        /// </summary>
+        [Input("amiId")]
+        public Input<string>? AmiId { get; set; }
+
+        /// <summary>
+        /// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+        /// Note: `amiType` and `amiId` are mutually exclusive.
+        /// 
+        /// See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
         /// </summary>
         [Input("amiType")]
         public Input<string>? AmiType { get; set; }
@@ -125,6 +139,17 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("forceUpdateVersion")]
         public Input<bool>? ForceUpdateVersion { get; set; }
+
+        /// <summary>
+        /// Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+        /// Defaults to false.
+        /// 
+        /// Note: `gpu` and `amiId` are mutually exclusive.
+        /// 
+        /// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+        /// </summary>
+        [Input("gpu")]
+        public Input<bool>? Gpu { get; set; }
 
         [Input("instanceTypes")]
         private InputList<string>? _instanceTypes;
@@ -267,6 +292,14 @@ namespace Pulumi.Eks
             get => _taints ?? (_taints = new InputList<Pulumi.Aws.Eks.Inputs.NodeGroupTaintArgs>());
             set => _taints = value;
         }
+
+        /// <summary>
+        /// User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+        /// 
+        /// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
+        /// </summary>
+        [Input("userData")]
+        public Input<string>? UserData { get; set; }
 
         [Input("version")]
         public Input<string>? Version { get; set; }
