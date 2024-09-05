@@ -1695,7 +1695,7 @@ export type ManagedNodeGroupOptions = Omit<
     /**
      * User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping.
      * If omitted, the provider will configure the user data.
-     * 
+     *
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data
      */
     userData?: pulumi.Input<string>;
@@ -1713,9 +1713,9 @@ export type ManagedNodeGroupOptions = Omit<
     /**
      * The AMI ID to use for the worker nodes.
      * Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
-     * 
-     * Note: `amiId` and `gpu` are mutually exclusive.
-     * 
+     *
+     * Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+     *
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
      */
     amiId?: pulumi.Input<string>;
@@ -1843,9 +1843,18 @@ function createManagedNodeGroupInternal(
         );
     }
 
-    if (args.amiId && args.gpu) {
-        throw new pulumi.ResourceError("amiId and gpu are mutually exclusive", parent);
-    }
+    const amiIdMutuallyExclusive: (keyof Omit<ManagedNodeGroupOptions, "cluster">)[] = [
+        "gpu",
+        "amiType",
+    ];
+    amiIdMutuallyExclusive.forEach((key) => {
+        if (args.amiId && args[key]) {
+            throw new pulumi.ResourceError(
+                `amiId and ${key} are mutually exclusive to create a managed node group`,
+                parent,
+            );
+        }
+    });
 
     let roleArn: pulumi.Input<string>;
     if (args.nodeRoleArn) {
@@ -1910,7 +1919,7 @@ function createManagedNodeGroupInternal(
     // If neither of these are provided, we can use the default launch template for managed node groups.
     if (args.launchTemplate && requiresCustomLaunchTemplate(args)) {
         throw new pulumi.ResourceError(
-            "If you provide a custom launch template, you cannot provide kubeletExtraArgs, bootstrapExtraArgs, enableIMDSv2 or userData. Please include these in the launch template that you are providing.",
+            "If you provide a custom launch template, you cannot provide kubeletExtraArgs, bootstrapExtraArgs, enableIMDSv2, userData or amiId. Please include these in the launch template that you are providing.",
             parent,
         );
     }
@@ -1924,7 +1933,7 @@ function createManagedNodeGroupInternal(
     if (requiresCustomUserData(customUserDataArgs) && args.userData) {
         throw new pulumi.ResourceError(
             "If you provide a custom userData, you cannot provide kubeletExtraArgs, bootstrapExtraArgs or bottlerocketSettings. Please include these in the userData that you are providing.",
-            parent
+            parent,
         );
     }
 
@@ -1993,7 +2002,10 @@ function requiresCustomLaunchTemplate(args: Omit<ManagedNodeGroupOptions, "clust
             kubeletExtraArgs: args.kubeletExtraArgs,
             bootstrapExtraArgs: args.bootstrapExtraArgs,
             bottlerocketSettings: args.bottlerocketSettings,
-        }) || args.enableIMDSv2 !== undefined || args.userData !== undefined
+        }) ||
+        args.enableIMDSv2 !== undefined ||
+        args.userData !== undefined ||
+        args.amiId !== undefined
     );
 }
 
@@ -2044,21 +2056,30 @@ function createMNGCustomLaunchTemplate(
     let userData: pulumi.Output<string> | undefined;
     if (requiresCustomUserData(customUserDataArgs) || args.userData) {
         userData = pulumi
-            .all([clusterMetadata, os, args.labels, taints, args.bottlerocketSettings, args.userData])
-            .apply(([clusterMetadata, os, labels, taints, bottlerocketSettings, userDataOverride]) => {
-                const userDataArgs: ManagedNodeUserDataArgs = {
-                    nodeGroupType: "managed",
-                    kubeletExtraArgs: args.kubeletExtraArgs,
-                    bootstrapExtraArgs: args.bootstrapExtraArgs,
-                    labels,
-                    taints,
-                    bottlerocketSettings,
-                    userDataOverride: userDataOverride,
-                };
+            .all([
+                clusterMetadata,
+                os,
+                args.labels,
+                taints,
+                args.bottlerocketSettings,
+                args.userData,
+            ])
+            .apply(
+                ([clusterMetadata, os, labels, taints, bottlerocketSettings, userDataOverride]) => {
+                    const userDataArgs: ManagedNodeUserDataArgs = {
+                        nodeGroupType: "managed",
+                        kubeletExtraArgs: args.kubeletExtraArgs,
+                        bootstrapExtraArgs: args.bootstrapExtraArgs,
+                        labels,
+                        taints,
+                        bottlerocketSettings,
+                        userDataOverride: userDataOverride,
+                    };
 
-                const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
-                return Buffer.from(userData, "utf-8").toString("base64");
-            });
+                    const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
+                    return Buffer.from(userData, "utf-8").toString("base64");
+                },
+            );
     }
 
     // Turn on/off IMDSv2 based on the user input. Different AMIs have different defaults built in.
@@ -2107,7 +2128,9 @@ function createMNGCustomLaunchTemplate(
             metadataOptions,
             // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
             // nodes failing to join the cluster.
-            imageId: userData ? getRecommendedAMI(args, core.cluster.version, parent) : undefined,
+            imageId: userData
+                ? args.amiId ?? getRecommendedAMI(args, core.cluster.version, parent)
+                : undefined,
         },
         { parent, provider },
     );
