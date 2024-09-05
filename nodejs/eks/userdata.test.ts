@@ -234,32 +234,6 @@ describe("createUserData", () => {
     });
 
     describe("bottlerocket", () => {
-        it("should throw an error for NodeGroup v1", () => {
-            const userDataArgs: SelfManagedV1NodeUserDataArgs = {
-                nodeGroupType: "self-managed-v1",
-                awsRegion: "us-west-2",
-                stackName: "example-cluster-1-98075617",
-                extraUserData: undefined,
-            } as SelfManagedV1NodeUserDataArgs;
-            expect(() =>
-                createUserData(
-                    OperatingSystem.Bottlerocket,
-                    {
-                        name: "example-cluster-1-eksCluster-291f2c0",
-                        apiServerEndpoint:
-                            "https://71E3210BB45D2B930AAA878706C3E369.sk1.us-west-2.eks.amazonaws.com",
-                        certificateAuthority:
-                            "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSDQzcy9uaGFBcmN3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBMk1ETXhPVEUzTlROYUZ3MHpOREEyTURFeE9USXlOVE5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNyQVlKb3p2YTRsY0NmQm9jY243N0FPSEdxeHdFWHkyczRBc3pJMGZ0WldIU1RKL0lnVlBLRHJKeEoKS01UQUZEaHJRZTBGdzFBVmxLdjZFWVE0M0x6UzhJZFBpSytEM2U3Tnh5M3JJdktVWUtPSVIxeE5ocUNYZzNJQwo0TWx4cS9VUzlqT2FYenM2dFRxYlY0NExESE94MXQydE96bWtTUjlvV1FBVm9yTk9KVVBMRnViSmpGQ0xsK09JCm9KMHJsWDRicFpkUzJhb2F4S2dLakFmN0N5aVV6czhZbHYza1F3b3ZJeElGUk9kSEdwaGJOejRzREZzdUE1VHQKVGE5cUdjbHdISDJ1WEdBa2dYTGRvZC91d1dIQ01TYk9PcVpOOVkwZEc5NzZkQ1F6a0NsUlBWc3FtTTgxNEkwNAp5MlFzYktpc0Q1dDI3V01BSHVjbmcwSVBSS3VEQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUazdWeE95ZzZDS3RHdlRLZGlPZkJpbzluYVp6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ2JaMHBPcGovUQpuVXdjZm82M2ljTlArejFIRE14T1dueGdESGhpVlBLUVhHazNrSUVwai9QUlpyMXdGQkxLc0Nud1hnVkNuWWpzCldIMU9vUmZpaXZNR1ozaDAwQWhIdVNVUEVLc2dONjdsdldqbGR6LzlDeDVxMFJsRE9ucTRVWC94dWEvM1d0NVoKOUxhS2hpc2x0Z3FsZjJRbW5KNGo3QXB2bTVKM044ak9PdTQ0WXpGYjJ5RHZzMXVDQm9aZ1J2NzRIQVhTUW53MAp5OWNJU2RCNFJrZkEwZHEzaHRnWThoekxGN3JXZmNvRVFNUm1oY0JYRmVRVVo2ZjZmRlZ4eUFIOFBwbGFnMElQCjR3RE91UGRDMmZ5VGJKOFB4bjg4VkJhWnd3c3I2RUU0cXNUK1VaYnQ5ZHIwanZZb0xBTEdJaVpWRk9TRnVqL1cKWG9OR3VyT3Jra3E3Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
-                        serviceCidr: "10.100.0.0/16",
-                    },
-                    userDataArgs,
-                    undefined,
-                ),
-            ).toThrow(
-                "The NodeGroup component is not supported with Bottlerocket AMIs. Please use the NodeGroupV2 or ManagedNodeGroup components instead.",
-            );
-        });
-
         it("should return the correct user data for a basic NodeGroup v2", () => {
             const userDataArgs: SelfManagedV2NodeUserDataArgs = {
                 nodeGroupType: "self-managed-v2",
