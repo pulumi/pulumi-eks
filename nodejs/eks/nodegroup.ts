@@ -847,7 +847,8 @@ function createNodeGroupInternal(
     const { rootBlockDevice, ebsBlockDevices } = pulumi
         .all([os, amiInfo])
         .apply(([os, amiInfo]) => {
-            if (os !== OperatingSystem.Bottlerocket) {
+            if (os === OperatingSystem.AL2) {
+                // Old behavior to stay backwards compatible
                 return {
                     rootBlockDevice: {
                         encrypted: args.nodeRootVolumeEncrypted ?? false,
@@ -856,6 +857,19 @@ function createNodeGroupInternal(
                         iops: args.nodeRootVolumeIops,
                         throughput: args.nodeRootVolumeThroughput,
                         deleteOnTermination: args.nodeRootVolumeDeleteOnTermination ?? true,
+                    },
+                    ebsBlockDevices: [],
+                };
+            } else if (os !== OperatingSystem.Bottlerocket) {
+                // New behavior, do not overwrite default values of the AMI
+                return {
+                    rootBlockDevice: {
+                        encrypted: args.nodeRootVolumeEncrypted,
+                        volumeSize: args.nodeRootVolumeSize,
+                        volumeType: args.nodeRootVolumeType,
+                        iops: args.nodeRootVolumeIops,
+                        throughput: args.nodeRootVolumeThroughput,
+                        deleteOnTermination: args.nodeRootVolumeDeleteOnTermination,
                     },
                     ebsBlockDevices: [],
                 };
@@ -1293,6 +1307,44 @@ function createNodeGroupV2Internal(
         return deviceName ?? amiInfo.rootDeviceName;
     });
 
+    const ebsSettings = os.apply((os) => {
+        // Old behavior to stay backwards compatible
+        if (os === OperatingSystem.AL2) {
+            return {
+                encrypted: pulumi
+                    .output(args.nodeRootVolumeEncrypted)
+                    .apply((val) => (val === true ?? false ? "true" : "false")),
+                volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
+                volumeType: args.nodeRootVolumeType ?? "gp2",
+                iops: args.nodeRootVolumeIops,
+                throughput: args.nodeRootVolumeThroughput,
+                deleteOnTermination: pulumi
+                    .output(args.nodeRootVolumeDeleteOnTermination)
+                    .apply((val) => (val ?? true ? "true" : "false")),
+            };
+        }
+
+        // New behavior, do not overwrite default values of the AMI
+        return {
+            encrypted:
+                args.nodeRootVolumeEncrypted === undefined
+                    ? undefined
+                    : pulumi
+                          .output(args.nodeRootVolumeEncrypted)
+                          .apply((val) => (val ? "true" : "false")),
+            volumeSize: args.nodeRootVolumeSize,
+            volumeType: args.nodeRootVolumeType,
+            iops: args.nodeRootVolumeIops,
+            throughput: args.nodeRootVolumeThroughput,
+            deleteOnTermination:
+                args.nodeRootVolumeDeleteOnTermination === undefined
+                    ? undefined
+                    : pulumi
+                          .output(args.nodeRootVolumeDeleteOnTermination)
+                          .apply((val) => (val ? "true" : "false")),
+        };
+    });
+
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
         {
@@ -1304,15 +1356,7 @@ function createNodeGroupV2Internal(
             blockDeviceMappings: [
                 {
                     deviceName: deviceName,
-                    ebs: {
-                        encrypted: args.nodeRootVolumeEncrypted ?? false ? "true" : "false",
-                        volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
-                        volumeType: args.nodeRootVolumeType ?? "gp2",
-                        iops: args.nodeRootVolumeIops,
-                        throughput: args.nodeRootVolumeThroughput,
-                        deleteOnTermination:
-                            args.nodeRootVolumeDeleteOnTermination ?? true ? "true" : "false",
-                    },
+                    ebs: ebsSettings,
                 },
             ],
             networkInterfaces: [
