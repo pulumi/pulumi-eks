@@ -1298,7 +1298,6 @@ ${customUserData}
     const asGroup = new aws.autoscaling.Group(
         name,
         {
-            name: name,
             minSize: args?.minSize ?? 1,
             maxSize: args?.maxSize ?? 2,
             desiredCapacity: args?.desiredCapacity ?? 2,
