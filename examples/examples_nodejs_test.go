@@ -269,6 +269,12 @@ func TestAccTags(t *testing.T) {
 					info.Outputs["kubeconfig1"],
 					info.Outputs["kubeconfig2"],
 				)
+				for _, r := range info.Deployment.Resources {
+					if r.Type == "aws:autoscaling/group:Group" {
+						assert.NotEqualf(t, "example-ng-tags-ng2", string(r.ID),
+							"aws.autoscaling.Group should have an autonamed random suffix")
+					}
+				}
 			},
 		})
 
