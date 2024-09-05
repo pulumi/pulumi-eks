@@ -222,6 +222,13 @@
                     "plain": true,
                     "description": "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters."
                 },
+                "bottlerocketSettings": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "The configuration settings for Bottlerocket OS.\nThe settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\nThis includes:\n  - settings.kubernetes.api-server\n  - settings.kubernetes.cluster-certificate\n  - settings.kubernetes.cluster-name\n  - settings.kubernetes.cluster-dns-ip\n\nFor an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/."
+                },
                 "cloudFormationTags": {
                     "type": "object",
                     "additionalProperties": {
@@ -1269,7 +1276,7 @@
                     "additionalProperties": {
                         "$ref": "pulumi.json#/Any"
                     },
-                    "description": "The configuration settings for Bottlerocket OS.\nThe settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\nFor an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/."
+                    "description": "The configuration settings for Bottlerocket OS.\nThe settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\nThis includes:\n  - settings.kubernetes.api-server\n  - settings.kubernetes.cluster-certificate\n  - settings.kubernetes.cluster-name\n  - settings.kubernetes.cluster-dns-ip\n\nFor an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/."
                 },
                 "capacityType": {
                     "type": "string",
@@ -1437,6 +1444,13 @@
                     "type": "string",
                     "plain": true,
                     "description": "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters."
+                },
+                "bottlerocketSettings": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "The configuration settings for Bottlerocket OS.\nThe settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\nThis includes:\n  - settings.kubernetes.api-server\n  - settings.kubernetes.cluster-certificate\n  - settings.kubernetes.cluster-name\n  - settings.kubernetes.cluster-dns-ip\n\nFor an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/."
                 },
                 "cloudFormationTags": {
                     "type": "object",
@@ -1691,7 +1705,7 @@
                     "additionalProperties": {
                         "$ref": "pulumi.json#/Any"
                     },
-                    "description": "The configuration settings for Bottlerocket OS.\nThe settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\nFor an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/."
+                    "description": "The configuration settings for Bottlerocket OS.\nThe settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\nThis includes:\n  - settings.kubernetes.api-server\n  - settings.kubernetes.cluster-certificate\n  - settings.kubernetes.cluster-name\n  - settings.kubernetes.cluster-dns-ip\n\nFor an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/."
                 },
                 "cloudFormationTags": {
                     "type": "object",
