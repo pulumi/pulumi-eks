@@ -881,13 +881,15 @@ func TestAccManagedNodeGroupOS(t *testing.T) {
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig"],
 				)
+
+				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
 			},
 		})
 
 	programTestWithExtraOptions(t, &test, nil)
 }
 
-// TestAccManagedNodeGroupOS tests that the OS of the self managed node group instances can be customized.
+// TestAccSelfManagedNodeGroupOS tests that the OS of the self managed node group instances can be customized.
 func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
@@ -900,6 +902,8 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig"],
 				)
+
+				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
 			},
 		})
 

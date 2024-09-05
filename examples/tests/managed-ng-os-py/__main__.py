@@ -32,41 +32,64 @@ cluster = eks.Cluster(project_name,
 # Export the cluster's kubeconfig.
 pulumi.export("kubeconfig", cluster.kubeconfig)
 
+scaling_config = aws.eks.NodeGroupScalingConfigArgs(
+    desired_size=1,
+    min_size=1,
+    max_size=1,
+)
+
 
 mng_al2023 = eks.ManagedNodeGroup(f'{project_name}-al2023',
                                            cluster=cluster,
                                            node_role=role,
                                            instance_types=["t3.medium"],
+                                           scaling_config=scaling_config,
                                            operating_system=eks.OperatingSystem.AL2023)
 
 mng_al2023_arm = eks.ManagedNodeGroup(f'{project_name}-al2023-arm',
                                            cluster=cluster,
                                            node_role=role,
                                            instance_types=["t4g.medium"],
+                                           scaling_config=scaling_config,
                                            operating_system=eks.OperatingSystem.AL2023)
 
 mng_al2023_userdata = eks.ManagedNodeGroup(f'{project_name}-al2023-userdata',
                                            cluster=cluster,
                                            node_role=role,
                                            instance_types=["t3.medium"],
+                                           scaling_config=scaling_config,
                                            operating_system=eks.OperatingSystem.AL2023,
-                                           kubelet_extra_args="--max-pods=500")
+                                           labels={ "increased-pod-capacity": "true" },
+                                           kubelet_extra_args="--max-pods=100")
 
 mng_al2023_arm_userdata = eks.ManagedNodeGroup(f'{project_name}-al2023-arm-userdata',
                                            cluster=cluster,
                                            node_role=role,
                                            instance_types=["t4g.medium"],
+                                           scaling_config=scaling_config,
                                            operating_system=eks.OperatingSystem.AL2023,
-                                           kubelet_extra_args="--max-pods=500")
+                                           labels={ "increased-pod-capacity": "true" },
+                                           kubelet_extra_args="--max-pods=100")
 
 mng_bottlerocket = eks.ManagedNodeGroup(f'{project_name}-bottlerocket',
                                            cluster=cluster,
                                            node_role=role,
                                            instance_types=["t3.medium"],
+                                           scaling_config=scaling_config,
                                            operating_system=eks.OperatingSystem.BOTTLEROCKET)
 
 mng_bottlerocket_arm = eks.ManagedNodeGroup(f'{project_name}-bottlerocket-arm',
                                            cluster=cluster,
                                            node_role=role,
                                            instance_types=["t4g.medium"],
+                                           scaling_config=scaling_config,
                                            operating_system=eks.OperatingSystem.BOTTLEROCKET)
+
+mng_bottlerocket_userdata = eks.ManagedNodeGroup(f'{project_name}-bottlerocket-userdata',
+                                           cluster=cluster,
+                                           node_role=role,
+                                           instance_types=["t3.medium"],
+                                           scaling_config=scaling_config,
+                                           operating_system=eks.OperatingSystem.BOTTLEROCKET,
+                                           labels={ "increased-pod-capacity": "true" },
+                                           bottlerocket_settings={ "settings": { "kubernetes": { "max-pods": 100 } } })

@@ -322,6 +322,17 @@ type ClusterNodeGroupOptions struct {
 	AutoScalingGroupTags map[string]string `pulumi:"autoScalingGroupTags"`
 	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 	BootstrapExtraArgs *string `pulumi:"bootstrapExtraArgs"`
+	// The configuration settings for Bottlerocket OS.
+	// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+	//
+	// This includes:
+	//   - settings.kubernetes.api-server
+	//   - settings.kubernetes.cluster-certificate
+	//   - settings.kubernetes.cluster-name
+	//   - settings.kubernetes.cluster-dns-ip
+	//
+	// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+	BottlerocketSettings map[string]interface{} `pulumi:"bottlerocketSettings"`
 	// The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
 	//
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
@@ -454,6 +465,17 @@ type ClusterNodeGroupOptionsArgs struct {
 	AutoScalingGroupTags pulumi.StringMapInput `pulumi:"autoScalingGroupTags"`
 	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 	BootstrapExtraArgs *string `pulumi:"bootstrapExtraArgs"`
+	// The configuration settings for Bottlerocket OS.
+	// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+	//
+	// This includes:
+	//   - settings.kubernetes.api-server
+	//   - settings.kubernetes.cluster-certificate
+	//   - settings.kubernetes.cluster-name
+	//   - settings.kubernetes.cluster-dns-ip
+	//
+	// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+	BottlerocketSettings pulumi.MapInput `pulumi:"bottlerocketSettings"`
 	// The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
 	//
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
@@ -661,6 +683,20 @@ func (o ClusterNodeGroupOptionsOutput) AutoScalingGroupTags() pulumi.StringMapOu
 // Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 func (o ClusterNodeGroupOptionsOutput) BootstrapExtraArgs() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.BootstrapExtraArgs }).(pulumi.StringPtrOutput)
+}
+
+// The configuration settings for Bottlerocket OS.
+// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+//
+// This includes:
+//   - settings.kubernetes.api-server
+//   - settings.kubernetes.cluster-certificate
+//   - settings.kubernetes.cluster-name
+//   - settings.kubernetes.cluster-dns-ip
+//
+// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+func (o ClusterNodeGroupOptionsOutput) BottlerocketSettings() pulumi.MapOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) map[string]interface{} { return v.BottlerocketSettings }).(pulumi.MapOutput)
 }
 
 // The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
@@ -924,6 +960,25 @@ func (o ClusterNodeGroupOptionsPtrOutput) BootstrapExtraArgs() pulumi.StringPtrO
 		}
 		return v.BootstrapExtraArgs
 	}).(pulumi.StringPtrOutput)
+}
+
+// The configuration settings for Bottlerocket OS.
+// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+//
+// This includes:
+//   - settings.kubernetes.api-server
+//   - settings.kubernetes.cluster-certificate
+//   - settings.kubernetes.cluster-name
+//   - settings.kubernetes.cluster-dns-ip
+//
+// For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+func (o ClusterNodeGroupOptionsPtrOutput) BottlerocketSettings() pulumi.MapOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) map[string]interface{} {
+		if v == nil {
+			return nil
+		}
+		return v.BottlerocketSettings
+	}).(pulumi.MapOutput)
 }
 
 // The tags to apply to the CloudFormation Stack of the Worker NodeGroup.

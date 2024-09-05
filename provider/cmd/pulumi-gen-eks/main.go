@@ -890,6 +890,21 @@ func generateSchema() schema.PackageSpec {
 							"Valid values are `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
 							"Defaults to `AL2`.",
 					},
+					"bottlerocketSettings": {
+						TypeSpec: schema.TypeSpec{
+							Type: "object",
+							AdditionalProperties: &schema.TypeSpec{
+								Ref: "pulumi.json#/Any",
+							},
+						},
+						Description: "The configuration settings for Bottlerocket OS.\n" +
+							"The settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\nThis includes:\n" +
+							"  - settings.kubernetes.api-server\n" +
+							"  - settings.kubernetes.cluster-certificate\n" +
+							"  - settings.kubernetes.cluster-name\n" +
+							"  - settings.kubernetes.cluster-dns-ip\n\n" +
+							"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
+					},
 				},
 				RequiredInputs: []string{"cluster"},
 			},
@@ -2012,6 +2027,21 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			Description: "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\n" +
 				"Valid values are `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
 				"Defaults to `AL2`.",
+		},
+		"bottlerocketSettings": {
+			TypeSpec: schema.TypeSpec{
+				Type: "object",
+				AdditionalProperties: &schema.TypeSpec{
+					Ref: "pulumi.json#/Any",
+				},
+			},
+			Description: "The configuration settings for Bottlerocket OS.\n" +
+				"The settings will get merged with the base settings the provider uses to configure Bottlerocket.\n\nThis includes:\n" +
+				"  - settings.kubernetes.api-server\n" +
+				"  - settings.kubernetes.cluster-certificate\n" +
+				"  - settings.kubernetes.cluster-name\n" +
+				"  - settings.kubernetes.cluster-dns-ip\n\n" +
+				"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
 		},
 	}
 

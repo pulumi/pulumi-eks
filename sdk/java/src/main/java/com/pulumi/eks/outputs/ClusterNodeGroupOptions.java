@@ -11,6 +11,7 @@ import com.pulumi.eks.enums.OperatingSystem;
 import com.pulumi.eks.outputs.Taint;
 import java.lang.Boolean;
 import java.lang.Integer;
+import java.lang.Object;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,20 @@ public final class ClusterNodeGroupOptions {
      * 
      */
     private @Nullable String bootstrapExtraArgs;
+    /**
+     * @return The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     * 
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
+     * 
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     * 
+     */
+    private @Nullable Map<String,Object> bottlerocketSettings;
     /**
      * @return The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
      * 
@@ -283,6 +298,22 @@ public final class ClusterNodeGroupOptions {
      */
     public Optional<String> bootstrapExtraArgs() {
         return Optional.ofNullable(this.bootstrapExtraArgs);
+    }
+    /**
+     * @return The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     * 
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
+     * 
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     * 
+     */
+    public Map<String,Object> bottlerocketSettings() {
+        return this.bottlerocketSettings == null ? Map.of() : this.bottlerocketSettings;
     }
     /**
      * @return The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
@@ -542,6 +573,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable String amiType;
         private @Nullable Map<String,String> autoScalingGroupTags;
         private @Nullable String bootstrapExtraArgs;
+        private @Nullable Map<String,Object> bottlerocketSettings;
         private @Nullable Map<String,String> cloudFormationTags;
         private @Nullable SecurityGroupRule clusterIngressRule;
         private @Nullable Integer desiredCapacity;
@@ -579,6 +611,7 @@ public final class ClusterNodeGroupOptions {
     	      this.amiType = defaults.amiType;
     	      this.autoScalingGroupTags = defaults.autoScalingGroupTags;
     	      this.bootstrapExtraArgs = defaults.bootstrapExtraArgs;
+    	      this.bottlerocketSettings = defaults.bottlerocketSettings;
     	      this.cloudFormationTags = defaults.cloudFormationTags;
     	      this.clusterIngressRule = defaults.clusterIngressRule;
     	      this.desiredCapacity = defaults.desiredCapacity;
@@ -629,6 +662,11 @@ public final class ClusterNodeGroupOptions {
         @CustomType.Setter
         public Builder bootstrapExtraArgs(@Nullable String bootstrapExtraArgs) {
             this.bootstrapExtraArgs = bootstrapExtraArgs;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder bottlerocketSettings(@Nullable Map<String,Object> bottlerocketSettings) {
+            this.bottlerocketSettings = bottlerocketSettings;
             return this;
         }
         @CustomType.Setter
@@ -793,6 +831,7 @@ public final class ClusterNodeGroupOptions {
             _resultValue.amiType = amiType;
             _resultValue.autoScalingGroupTags = autoScalingGroupTags;
             _resultValue.bootstrapExtraArgs = bootstrapExtraArgs;
+            _resultValue.bottlerocketSettings = bottlerocketSettings;
             _resultValue.cloudFormationTags = cloudFormationTags;
             _resultValue.clusterIngressRule = clusterIngressRule;
             _resultValue.desiredCapacity = desiredCapacity;
