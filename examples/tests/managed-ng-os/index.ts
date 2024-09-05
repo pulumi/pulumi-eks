@@ -104,12 +104,12 @@ const managedNodeGroupBottlerocket = eks.createManagedNodeGroup("bottlerocket-mn
   nodeRole: role,
 });
 
-// Create a Bottlerocket node group with GPU support
+// Create a Bottlerocket node group with GPU support (it's the cheapest GPU instance type)
 const managedNodeGroupBottlerocketGpu = eks.createManagedNodeGroup("bottlerocket-mng-gpu", {
   ...scalingConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.Bottlerocket,
-  instanceTypes: ["t3.medium"],
+  instanceTypes: ["g5g.xlarge"],
   nodeRole: role,
   gpu: true,
 });

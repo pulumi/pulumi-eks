@@ -884,6 +884,22 @@ func TestAccManagedNodeGroupOS(t *testing.T) {
 
 				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 5, 100, "increased-pod-capacity"))
 				assert.NoError(t, utils.ValidateNodeStorage(t, info.Outputs["kubeconfig"], 4, 100*1_000_000_000, "increased-storage-capacity"))
+
+				assert.NoError(t, utils.ValidateNodes(t, info.Outputs["kubeconfig"], func(nodes *corev1.NodeList) {
+					require.NotNil(t, nodes)
+					assert.NotEmpty(t, nodes.Items)
+
+					var foundNodes = 0
+					for _, node := range nodes.Items {
+						if gpus, ok := node.Status.Capacity["nvidia.com/gpu"]; !ok {
+							continue
+						} else {
+							assert.True(t, gpus.CmpInt64(1) == 0)
+							foundNodes++
+						}
+					}
+					assert.Equal(t, 1, foundNodes, "Expected %s nodes with GPU")
+				}))
 			},
 		})
 
