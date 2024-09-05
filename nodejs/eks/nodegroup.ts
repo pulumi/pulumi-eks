@@ -894,6 +894,17 @@ function createNodeGroupInternal(
                     },
                 ],
             };
+        })
+        .apply(({ rootBlockDevice, ebsBlockDevices }) => {
+            // if no ebs settings are specified, we cannot set the blockDevice props because that would end up as a validation error
+            return {
+                rootBlockDevice: Object.values(rootBlockDevice).every((v) => v === undefined)
+                    ? {}
+                    : rootBlockDevice,
+                ebsBlockDevices: ebsBlockDevices.filter((bd) =>
+                    Object.values(bd).some((v) => v !== undefined),
+                ),
+            };
         });
 
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(
@@ -1353,12 +1364,15 @@ function createNodeGroupV2Internal(
             iamInstanceProfile: { arn: instanceProfileArn },
             keyName: keyName,
             instanceMarketOptions: marketOptions,
-            blockDeviceMappings: [
-                {
-                    deviceName: deviceName,
-                    ebs: ebsSettings,
-                },
-            ],
+            // if no ebs settings are specified, we cannot set the blockDeviceMappings because that would end up as a validation error
+            blockDeviceMappings: Object.values(ebsSettings).every((v) => v === undefined)
+                ? undefined
+                : [
+                      {
+                          deviceName: deviceName,
+                          ebs: ebsSettings,
+                      },
+                  ],
             networkInterfaces: [
                 {
                     associatePublicIpAddress: String(nodeAssociatePublicIpAddress),
