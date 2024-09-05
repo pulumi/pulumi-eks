@@ -305,6 +305,19 @@ export interface NodeGroupBaseOptions {
      * Defaults to `AL2`.
      */
     operatingSystem?: pulumi.Input<OperatingSystem>;
+
+    /**
+     * The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     */
+    bottlerocketSettings?: pulumi.Input<object>;
 }
 
 /**
@@ -736,22 +749,34 @@ function createNodeGroupInternal(
             args.nodeUserData,
             args.nodeUserDataOverride,
             os,
+            args.bottlerocketSettings,
         ])
-        .apply(([region, clusterMetadata, stackName, extraUserData, userDataOverride, os]) => {
-            const userDataArgs: SelfManagedV1NodeUserDataArgs = {
-                nodeGroupType: "self-managed-v1",
-                awsRegion: region.name,
-                kubeletExtraArgs: args.kubeletExtraArgs,
-                bootstrapExtraArgs: args.bootstrapExtraArgs,
-                labels: args.labels,
-                taints: args.taints,
-                userDataOverride,
-                extraUserData,
+        .apply(
+            ([
+                region,
+                clusterMetadata,
                 stackName,
-            };
+                extraUserData,
+                userDataOverride,
+                os,
+                bottlerocketSettings,
+            ]) => {
+                const userDataArgs: SelfManagedV1NodeUserDataArgs = {
+                    nodeGroupType: "self-managed-v1",
+                    awsRegion: region.name,
+                    kubeletExtraArgs: args.kubeletExtraArgs,
+                    bootstrapExtraArgs: args.bootstrapExtraArgs,
+                    labels: args.labels,
+                    taints: args.taints,
+                    userDataOverride,
+                    extraUserData,
+                    stackName,
+                    bottlerocketSettings,
+                };
 
-            return createUserData(os, clusterMetadata, userDataArgs, parent);
-        });
+                return createUserData(os, clusterMetadata, userDataArgs, parent);
+            },
+        );
 
     const version = pulumi.output(args.version || core.cluster.version);
 
@@ -1091,28 +1116,30 @@ function createNodeGroupV2Internal(
         });
 
     const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
+    const clusterMetadata = {
+        name: eksCluster.name,
+        apiServerEndpoint: eksCluster.endpoint,
+        certificateAuthority: eksCluster.certificateAuthority.data,
+        serviceCidr,
+    };
 
     const userdata = pulumi
         .all([
-            eksCluster.name,
-            eksCluster.endpoint,
-            eksCluster.certificateAuthority,
+            clusterMetadata,
             name,
             args.nodeUserData,
             args.nodeUserDataOverride,
             os,
-            serviceCidr,
+            args.bottlerocketSettings,
         ])
         .apply(
             ([
-                clusterName,
-                clusterEndpoint,
-                clusterCa,
+                clusterMetadata,
                 stackName,
                 extraUserData,
                 userDataOverride,
                 os,
-                serviceCidr,
+                bottlerocketSettings,
             ]) => {
                 const userDataArgs: SelfManagedV2NodeUserDataArgs = {
                     nodeGroupType: "self-managed-v2",
@@ -1123,13 +1150,7 @@ function createNodeGroupV2Internal(
                     userDataOverride,
                     extraUserData,
                     stackName,
-                };
-
-                const clusterMetadata = {
-                    name: clusterName,
-                    apiServerEndpoint: clusterEndpoint,
-                    certificateAuthority: clusterCa.data,
-                    serviceCidr,
+                    bottlerocketSettings,
                 };
 
                 return createUserData(os, clusterMetadata, userDataArgs, parent);
@@ -1197,7 +1218,7 @@ function createNodeGroupV2Internal(
           }
         : undefined;
 
-    // TODO: This wrongly assumes an AMI only has a single block device. Bottlerocket has two
+    // TODO[pulumi/pulumi-eks#1195] This wrongly assumes an AMI only has a single block device. Bottlerocket has two
     const device = pulumi.output(amiId).apply((id) =>
         aws.ec2.getAmi(
             {
@@ -1538,6 +1559,19 @@ export type ManagedNodeGroupOptions = Omit<
      * Defaults to `AL2`.
      */
     operatingSystem?: pulumi.Input<OperatingSystem>;
+
+    /**
+     * The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     */
+    bottlerocketSettings?: pulumi.Input<object>;
 };
 
 /**
@@ -1733,6 +1767,7 @@ function createManagedNodeGroupInternal(
     const customUserDataArgs = {
         kubeletExtraArgs: args.kubeletExtraArgs,
         bootstrapExtraArgs: args.bootstrapExtraArgs,
+        bottlerocketSettings: args.bottlerocketSettings,
     };
 
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
@@ -1755,7 +1790,7 @@ function createManagedNodeGroupInternal(
     } else if (amiType === undefined && args.operatingSystem !== undefined) {
         // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
 
-        // TODO: expose GPU support as an option for managed node groups
+        // TODO[pulumi/pulumi-eks#1195]: expose GPU support as an option for managed node groups
         amiType = determineAmiType(args.operatingSystem, undefined, args.instanceTypes, parent);
     }
 
@@ -1800,6 +1835,7 @@ function requiresCustomLaunchTemplate(args: Omit<ManagedNodeGroupOptions, "clust
         requiresCustomUserData({
             kubeletExtraArgs: args.kubeletExtraArgs,
             bootstrapExtraArgs: args.bootstrapExtraArgs,
+            bottlerocketSettings: args.bottlerocketSettings,
         }) || args.enableIMDSv2 !== undefined
     );
 }
@@ -1836,56 +1872,38 @@ function createMNGCustomLaunchTemplate(
         : undefined;
 
     const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
+    const clusterMetadata = {
+        name: args.clusterName || core.cluster.name,
+        apiServerEndpoint: core.cluster.endpoint,
+        certificateAuthority: core.cluster.certificateAuthority.data,
+        serviceCidr,
+    };
+
     const customUserDataArgs = {
         kubeletExtraArgs: args.kubeletExtraArgs,
         bootstrapExtraArgs: args.bootstrapExtraArgs,
+        bottlerocketSettings: args.bottlerocketSettings,
     };
     let userData: pulumi.Output<string> | undefined;
     if (requiresCustomUserData(customUserDataArgs)) {
         userData = pulumi
-            .all([
-                core.cluster.name,
-                core.cluster.endpoint,
-                core.cluster.certificateAuthority.data,
-                args.clusterName,
-                os,
-                args.labels,
-                taints,
-                serviceCidr,
-            ])
-            .apply(
-                ([
-                    clusterName,
-                    clusterEndpoint,
-                    clusterCertAuthority,
-                    argsClusterName,
-                    os,
+            .all([clusterMetadata, os, args.labels, taints, args.bottlerocketSettings])
+            .apply(([clusterMetadata, os, labels, taints, bottlerocketSettings]) => {
+                const userDataArgs: ManagedNodeUserDataArgs = {
+                    nodeGroupType: "managed",
+                    kubeletExtraArgs: args.kubeletExtraArgs,
+                    bootstrapExtraArgs: args.bootstrapExtraArgs,
                     labels,
                     taints,
-                    serviceCidr,
-                ]) => {
-                    const clusterMetadata = {
-                        name: argsClusterName || clusterName,
-                        apiServerEndpoint: clusterEndpoint,
-                        certificateAuthority: clusterCertAuthority,
-                        serviceCidr,
-                    };
+                    bottlerocketSettings,
 
-                    const userDataArgs: ManagedNodeUserDataArgs = {
-                        nodeGroupType: "managed",
-                        kubeletExtraArgs: args.kubeletExtraArgs,
-                        bootstrapExtraArgs: args.bootstrapExtraArgs,
-                        labels,
-                        taints,
+                    // TODO[pulumi/pulumi-eks#1195]: expose this as an option for managed node groups
+                    userDataOverride: undefined,
+                };
 
-                        // TODO: expose this as an option for managed node groups
-                        userDataOverride: undefined,
-                    };
-
-                    const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
-                    return Buffer.from(userData, "utf-8").toString("base64");
-                },
-            );
+                const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
+                return Buffer.from(userData, "utf-8").toString("base64");
+            });
     }
 
     // Turn on/off IMDSv2 based on the user input. Different AMIs have different defaults built in.
@@ -1932,7 +1950,7 @@ function createMNGCustomLaunchTemplate(
             blockDeviceMappings,
             userData,
             metadataOptions,
-            // TODO: expose amiID as an option for managed node groups
+            // TODO[pulumi/pulumi-eks#1195] expose amiID as an option for managed node groups
             // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
             // nodes failing to join the cluster.
             imageId: userData ? getRecommendedAMI(args, core.cluster.version, parent) : undefined,
@@ -1968,7 +1986,7 @@ function getRecommendedAMI(
     k8sVersion: pulumi.Output<string>,
     parent: pulumi.Resource | undefined,
 ): pulumi.Input<string> {
-    // TODO: Add gpu argument to ManagedNodeGroupOptions
+    // TODO[pulumi/pulumi-eks#1195]: Add gpu argument to ManagedNodeGroupOptions
     const gpu = "gpu" in args ? args.gpu : undefined;
 
     let instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined;

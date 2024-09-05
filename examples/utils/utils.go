@@ -12,6 +12,7 @@ import (
 	"sync/atomic"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 	appsv1 "k8s.io/api/apps/v1"
@@ -721,6 +722,32 @@ func ValidateNodes(t *testing.T, kubeconfig any, validateFn func(*corev1.NodeLis
 	validateFn(nodes)
 
 	return nil
+}
+
+// ValidateNodePodCapacity validates the pod capacity of certain nodes.
+// It checks if the number of nodes with a specific label matches the expected number,
+// and if the pod capacity of each of those nodes matches the expected pod capacity.
+func ValidateNodePodCapacity(t *testing.T, kubeconfig any, expectedNodes int, expectedCapacity int64, nodeLabel string) error {
+	return ValidateNodes(t, kubeconfig, func(nodes *corev1.NodeList) {
+		require.NotNil(t, nodes)
+		assert.NotEmpty(t, nodes.Items)
+
+		var foundNodes = 0
+		for _, node := range nodes.Items {
+			if label, ok := node.Labels[nodeLabel]; !ok || label != "true" {
+				continue
+			} else {
+				foundNodes++
+			}
+
+			podCapacity := node.Status.Capacity[corev1.ResourcePods]
+
+			// Defined in tests/self-managed-ng-os
+			var desiredCapacity int64 = 100
+			assert.True(t, podCapacity.CmpInt64(desiredCapacity) == 0)
+		}
+		assert.Equal(t, expectedNodes, foundNodes)
+	})
 }
 
 func clientSetFromKubeconfig(kubeconfig any) (*kubernetes.Clientset, error) {
