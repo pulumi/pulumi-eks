@@ -59,6 +59,7 @@ interface BaseUserDataArgs {
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
      */
     userDataOverride: string | undefined;
+    bottlerocketSettings: object | undefined;
 }
 
 // common arguments of self-managed node groups
@@ -80,7 +81,6 @@ type CustomUserDataArgs = Pick<UserDataArgs, "bootstrapExtraArgs" | "kubeletExtr
 
 export interface ManagedNodeUserDataArgs extends BaseUserDataArgs {
     nodeGroupType: "managed";
-    bottlerocketSettings: object | undefined;
 }
 
 export interface SelfManagedV1NodeUserDataArgs extends BaseSelfManagedNodeUserDataArgs {
@@ -90,7 +90,6 @@ export interface SelfManagedV1NodeUserDataArgs extends BaseSelfManagedNodeUserDa
 
 export interface SelfManagedV2NodeUserDataArgs extends BaseSelfManagedNodeUserDataArgs {
     nodeGroupType: "self-managed-v2";
-    bottlerocketSettings: object | undefined;
 }
 
 export type UserDataArgs =
@@ -304,7 +303,7 @@ function createNodeadmUserData(
         });
     }
 
-    // TODO: expose extra nodeadm config options in the schema
+    // TODO[pulumi/pulumi-eks#1195] expose extra nodeadm config options in the schema
     if (isSelfManagedNodeUserDataArgs(args) && args.extraUserData && args.extraUserData !== "") {
         parts.push({
             contentType: 'text/x-shellscript; charset="us-ascii"',
@@ -388,14 +387,6 @@ function createBottlerocketUserData(
     args: UserDataArgs,
     parent: pulumi.Resource | undefined,
 ): string {
-    // Bottlerocket doesn't have a shell, thus we cannot execute any scripts on boot up and NodeGroupV1 requires that.
-    if (isSelfManagedV1NodeUserDataArgs(args)) {
-        throw new pulumi.ResourceError(
-            "The NodeGroup component is not supported with Bottlerocket AMIs. Please use the NodeGroupV2 or ManagedNodeGroup components instead.",
-            parent,
-        );
-    }
-
     if (args.bootstrapExtraArgs && args.bootstrapExtraArgs !== "") {
         throw new pulumi.ResourceError(
             "The 'bootstrapExtraArgs' argument is not supported with Bottlerocket.",
@@ -461,6 +452,19 @@ function createBottlerocketUserData(
         bottlerocketSettings.settings.kubernetes = {};
     }
 
+    if (isSelfManagedV1NodeUserDataArgs(args)) {
+        if (!("cloudformation" in bottlerocketSettings.settings)) {
+            bottlerocketSettings.settings.cloudformation = {};
+        }
+
+        bottlerocketSettings.settings.cloudformation = {
+            "should-signal": true,
+            "stack-name": args.stackName,
+            "logical-resource-id": "NodeGroup",
+            ...bottlerocketSettings.settings.cloudformation,
+        };
+    }
+
     // merge the base settings with the user provided settings
     bottlerocketSettings.settings.kubernetes = {
         ...baseConfig.settings.kubernetes,
@@ -476,10 +480,12 @@ function normalizeProperties(obj: any): any {
     }
 
     return Object.fromEntries(
-        Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => {
-            return [key, normalizeProperties(value)];
-        })
-    )
+        Object.entries(obj)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => {
+                return [key, normalizeProperties(value)];
+            }),
+    );
 }
 
 /**

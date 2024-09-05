@@ -22,7 +22,9 @@ import {
     requiresCustomUserData,
     SelfManagedV1NodeUserDataArgs,
     SelfManagedV2NodeUserDataArgs,
+    UserDataArgs,
 } from "./userdata";
+import { cloudformation } from "@pulumi/aws";
 
 describe("requiresCustomUserData", () => {
     it("should return true if all args are defined", () => {
@@ -368,6 +370,66 @@ describe("createUserData", () => {
             );
 
             expect(userData).toMatchSnapshot();
+        });
+
+        it("TOML formatting should be stable", () => {
+            const userDataArgs1: ManagedNodeUserDataArgs = {
+                nodeGroupType: "managed",
+                bottlerocketSettings: {
+                    settings: {
+                        kubernetes: {
+                            "eviction-hard": "15%",
+                            "max-pods": 1500,
+                        },
+                        "host-containers": {
+                            admin: {
+                                enabled: true,
+                            },
+                        },
+                        cloudformation: {
+                            "stack-name": "example",
+                        },
+                    },
+                },
+            } as ManagedNodeUserDataArgs;
+
+            // same as above, with keys in a different order
+            const userDataArgs2: ManagedNodeUserDataArgs = {
+                nodeGroupType: "managed",
+                bottlerocketSettings: {
+                    settings: {
+                        cloudformation: {
+                            "stack-name": "example",
+                        },
+                        "host-containers": {
+                            admin: {
+                                enabled: true,
+                            },
+                        },
+                        kubernetes: {
+                            "max-pods": 1500,
+                            "eviction-hard": "15%",
+                        },
+                    },
+                },
+            } as ManagedNodeUserDataArgs;
+
+            const create = (args: UserDataArgs) =>
+                createUserData(
+                    OperatingSystem.Bottlerocket,
+                    {
+                        name: "example-managed-nodegroups-eksCluster-b27184c",
+                        apiServerEndpoint:
+                            "https://CE21F68965F7FB2C00423B4483130C27.gr7.us-west-2.eks.amazonaws.com",
+                        certificateAuthority:
+                            "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQWNzUG82b0t1S293RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBMk1ETXhPVEl3TWpoYUZ3MHpOREEyTURFeE9USTFNamhhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURqU0VRWFFkcjhmcDNOc2JYRG5RZTY1VGVGb1RkTUFiSVhzVjJua0t4V3dzdTM3dUJJSDBDSHV4b2gKYU9ZY1IzNmd5OVA2K0ZZSndhc3pyRGMvL0M1dGtsV0JLaGpySkRKbk5mcU0vUVBqOXRoK3dHWE4xeW5zR2VKbQpPVTZ4ek8yd290Uk1aYlBHTmx2UnlQQWtHMFZrM3Z0dEVINU8rcGl1NU44MkFnY3hWOGpWN3M0RHA3Qnd1L0xVCjFPRXRaN0RoVy9vWllPdTltRVJkK29CMkg4OS9ERDhZclBrejlvVlZCOEQycXp2UlRGUEhiR1VwaHNKK1VkZmcKNndhdjQySlRHS1RJRjc1OHRtbWZpL2lyaEJGMUlDcHI4bDJLVG9jNElKMWdVM0loS1lDOStHYlB2Y2VRK2ZwNgpTMlBTZStzVElGS2thY3JtRnNWM0hETEFvenJ6QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJSZWpnZC84THN3eHpDTVpGQWRsUUdvM1lYdnp6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRRGE4TU5VQnNvbQpWYmx2dzRaaTYxaUxFZEVKTkxkMG5TNnIxQTVidjZLZHFjd0VNN0VDVldyTlB3TFVWYklaOTEzeEMxNnN1M2szCnZkTWllWEhkSDNPZTdkTzZ3RXNxbzdyTDdYc0FUblRlZEQ4OFRyVU13TjFVcEY1VHRjMUlRaHVaM1pnUnJmVUUKV09RZnFrcU8waVljNUl0ZUZvV1Q1ZHlseHd0eWpwMDhCZmFNVGZvc2cvYW1BUnhvRnptVGV6dkRSTnlEVllwdwovVWRFR0FmT0lBY3ZJNy9oNmhTay8wMkFTOGRXSm0xZWlMZ3p0czhCUGZJME1KaFFjdjlhL1dZc3I4aDREaTFpCmNsNlhnb0hWZ3VzZ1UwQVQ3SHdqelQ4WFN0N0xzb08rMFlTUTZOck9wZTlwL283N0FwaGFEQ3hIZHhJZlF1LysKRGttNUJhR05VaWFxCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        serviceCidr: "10.100.0.0/16",
+                    },
+                    args,
+                    undefined,
+                );
+
+            expect(create(userDataArgs1)).toEqual(create(userDataArgs2));
         });
 
         it("should allow adding additional configuration", () => {

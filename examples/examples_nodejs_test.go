@@ -897,7 +897,7 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 
-				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 3, 100, "increased-pod-capacity"))
+				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
 			},
 		})
 
