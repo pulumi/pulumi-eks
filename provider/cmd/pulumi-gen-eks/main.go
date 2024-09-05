@@ -731,7 +731,7 @@ func generateSchema() schema.PackageSpec {
 					"amiType": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "Type of Amazon Machine Image (AMI) associated with the EKS Node Group. " +
-							"Defaults to `AL2_x86_64`. See the AWS documentation " +
+							"Defaults to `AL2_x86_64`.\nNote: `amiType` and `amiId` are mutually exclusive.\n\nSee the AWS documentation " +
 							"(https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) " +
 							"for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.",
 					},
@@ -922,7 +922,7 @@ func generateSchema() schema.PackageSpec {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "The AMI ID to use for the worker nodes.\nDefaults to the latest recommended " +
 							"EKS Optimized AMI from the AWS Systems Manager Parameter Store.\n\n" +
-							"Note: `amiId` and `gpu` are mutually exclusive.\n\n" +
+							"Note: `amiId` is mutually exclusive with `gpu` and `amiType`.\n\n" +
 							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.",
 					},
 				},
