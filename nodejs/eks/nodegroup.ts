@@ -1838,7 +1838,7 @@ function createManagedNodeGroupInternal(
 
     if (args.nodeRole && args.nodeRoleArn) {
         throw new pulumi.ResourceError(
-            "nodeRole and nodeRoleArn are mutually exclusive to create a managed node group",
+            "You cannot specify both nodeRole and nodeRoleArn when creating a managed node group.",
             parent,
         );
     }
@@ -1850,7 +1850,7 @@ function createManagedNodeGroupInternal(
     amiIdMutuallyExclusive.forEach((key) => {
         if (args.amiId && args[key]) {
             throw new pulumi.ResourceError(
-                `amiId and ${key} are mutually exclusive to create a managed node group`,
+                `You cannot specify both amiId and ${key} when creating a managed node group.`,
                 parent,
             );
         }
