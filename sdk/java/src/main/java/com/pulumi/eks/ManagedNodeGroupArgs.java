@@ -30,14 +30,45 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     public static final ManagedNodeGroupArgs Empty = new ManagedNodeGroupArgs();
 
     /**
-     * Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+     * The AMI ID to use for the worker nodes.
+     * Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+     * 
+     * Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+     * 
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+     * 
+     */
+    @Import(name="amiId")
+    private @Nullable Output<String> amiId;
+
+    /**
+     * @return The AMI ID to use for the worker nodes.
+     * Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+     * 
+     * Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+     * 
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+     * 
+     */
+    public Optional<Output<String>> amiId() {
+        return Optional.ofNullable(this.amiId);
+    }
+
+    /**
+     * Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+     * Note: `amiType` and `amiId` are mutually exclusive.
+     * 
+     * See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
      * 
      */
     @Import(name="amiType")
     private @Nullable Output<String> amiType;
 
     /**
-     * @return Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+     * @return Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+     * Note: `amiType` and `amiId` are mutually exclusive.
+     * 
+     * See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
      * 
      */
     public Optional<Output<String>> amiType() {
@@ -190,6 +221,31 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
      */
     public Optional<Output<Boolean>> forceUpdateVersion() {
         return Optional.ofNullable(this.forceUpdateVersion);
+    }
+
+    /**
+     * Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+     * Defaults to false.
+     * 
+     * Note: `gpu` and `amiId` are mutually exclusive.
+     * 
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+     * 
+     */
+    @Import(name="gpu")
+    private @Nullable Output<Boolean> gpu;
+
+    /**
+     * @return Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+     * Defaults to false.
+     * 
+     * Note: `gpu` and `amiId` are mutually exclusive.
+     * 
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+     * 
+     */
+    public Optional<Output<Boolean>> gpu() {
+        return Optional.ofNullable(this.gpu);
     }
 
     /**
@@ -461,6 +517,25 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         return Optional.ofNullable(this.taints);
     }
 
+    /**
+     * User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+     * 
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
+     * 
+     */
+    @Import(name="userData")
+    private @Nullable Output<String> userData;
+
+    /**
+     * @return User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+     * 
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
+     * 
+     */
+    public Optional<Output<String>> userData() {
+        return Optional.ofNullable(this.userData);
+    }
+
     @Import(name="version")
     private @Nullable Output<String> version;
 
@@ -471,6 +546,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     private ManagedNodeGroupArgs() {}
 
     private ManagedNodeGroupArgs(ManagedNodeGroupArgs $) {
+        this.amiId = $.amiId;
         this.amiType = $.amiType;
         this.bootstrapExtraArgs = $.bootstrapExtraArgs;
         this.bottlerocketSettings = $.bottlerocketSettings;
@@ -480,6 +556,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         this.diskSize = $.diskSize;
         this.enableIMDSv2 = $.enableIMDSv2;
         this.forceUpdateVersion = $.forceUpdateVersion;
+        this.gpu = $.gpu;
         this.instanceTypes = $.instanceTypes;
         this.kubeletExtraArgs = $.kubeletExtraArgs;
         this.labels = $.labels;
@@ -495,6 +572,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         this.subnetIds = $.subnetIds;
         this.tags = $.tags;
         this.taints = $.taints;
+        this.userData = $.userData;
         this.version = $.version;
     }
 
@@ -517,7 +595,41 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         }
 
         /**
-         * @param amiType Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+         * @param amiId The AMI ID to use for the worker nodes.
+         * Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+         * 
+         * Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+         * 
+         * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder amiId(@Nullable Output<String> amiId) {
+            $.amiId = amiId;
+            return this;
+        }
+
+        /**
+         * @param amiId The AMI ID to use for the worker nodes.
+         * Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+         * 
+         * Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+         * 
+         * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder amiId(String amiId) {
+            return amiId(Output.of(amiId));
+        }
+
+        /**
+         * @param amiType Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+         * Note: `amiType` and `amiId` are mutually exclusive.
+         * 
+         * See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
          * 
          * @return builder
          * 
@@ -528,7 +640,10 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         }
 
         /**
-         * @param amiType Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+         * @param amiType Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+         * Note: `amiType` and `amiId` are mutually exclusive.
+         * 
+         * See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
          * 
          * @return builder
          * 
@@ -726,6 +841,37 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          */
         public Builder forceUpdateVersion(Boolean forceUpdateVersion) {
             return forceUpdateVersion(Output.of(forceUpdateVersion));
+        }
+
+        /**
+         * @param gpu Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+         * Defaults to false.
+         * 
+         * Note: `gpu` and `amiId` are mutually exclusive.
+         * 
+         * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder gpu(@Nullable Output<Boolean> gpu) {
+            $.gpu = gpu;
+            return this;
+        }
+
+        /**
+         * @param gpu Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+         * Defaults to false.
+         * 
+         * Note: `gpu` and `amiId` are mutually exclusive.
+         * 
+         * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder gpu(Boolean gpu) {
+            return gpu(Output.of(gpu));
         }
 
         /**
@@ -1111,6 +1257,31 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          */
         public Builder taints(NodeGroupTaintArgs... taints) {
             return taints(List.of(taints));
+        }
+
+        /**
+         * @param userData User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+         * 
+         * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder userData(@Nullable Output<String> userData) {
+            $.userData = userData;
+            return this;
+        }
+
+        /**
+         * @param userData User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+         * 
+         * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder userData(String userData) {
+            return userData(Output.of(userData));
         }
 
         public Builder version(@Nullable Output<String> version) {
