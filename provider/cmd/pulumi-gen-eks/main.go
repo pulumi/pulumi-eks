@@ -419,7 +419,16 @@ func generateSchema() schema.PackageSpec {
 						},
 						Description: "The security group to use for the cluster API endpoint. If not provided, a new " +
 							"security group will be created with full internet egress and ingress from node groups.\n\n" +
+							"See clusterSecurityGroupDefault for using the EKS-created security group instead.\n\n" +
 							"Note: The security group resource should not contain any inline ingress or egress rules.",
+					},
+					"clusterSecurityGroupDefault": {
+						TypeSpec: schema.TypeSpec{
+							Plain: true,
+							Type:  "boolean",
+						},
+						Description: "Use the default security group created by EKS instead of creating one.\n\n" +
+							"Add full internet ingress and egress rules from node groups to this security group.\n",
 					},
 					"clusterSecurityGroupTags": {
 						TypeSpec: schema.TypeSpec{
