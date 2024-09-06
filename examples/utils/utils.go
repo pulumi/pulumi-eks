@@ -88,7 +88,7 @@ func eksSmokeTest(t *testing.T, clientset *kubernetes.Clientset, desiredNodeCoun
 	wg.Add(3)
 	defer wg.Wait()
 
-	if authenticationMode == "CONFIG_MAP" || authenticationMode == "API_AND_CONFIG_MAP"{
+	if authenticationMode == "CONFIG_MAP" || authenticationMode == "API_AND_CONFIG_MAP" {
 		go wgWrapper(&wg, func() { assertEKSConfigMapReady(t, clientset) })
 	} else {
 		go wgWrapper(&wg, func() { assertEKSConfigMapRemoved(t, clientset) })
@@ -598,7 +598,7 @@ func mapClusterToAuthenticationMode(resources []apitype.ResourceV3) (clusterAuth
 	for _, res := range resources {
 		if res.Type.String() == "aws:eks/cluster:Cluster" {
 			clusterName := res.Outputs["name"].(string)
-			
+
 			var authenticationMode string
 			if ac, ok := res.Inputs["accessConfig"]; ok {
 				if accessConfig, ok := ac.(map[string]interface{}); ok {
@@ -607,7 +607,7 @@ func mapClusterToAuthenticationMode(resources []apitype.ResourceV3) (clusterAuth
 					}
 				}
 			}
-			
+
 			if authenticationMode == "" {
 				// EKS defaults to "CONFIG_MAP" if not specified.
 				authenticationMode = "CONFIG_MAP"
@@ -741,12 +741,32 @@ func ValidateNodePodCapacity(t *testing.T, kubeconfig any, expectedNodes int, ex
 			}
 
 			podCapacity := node.Status.Capacity[corev1.ResourcePods]
-
-			// Defined in tests/self-managed-ng-os
-			var desiredCapacity int64 = 100
-			assert.True(t, podCapacity.CmpInt64(desiredCapacity) == 0)
+			assert.True(t, podCapacity.CmpInt64(expectedCapacity) == 0)
 		}
-		assert.Equal(t, expectedNodes, foundNodes)
+		assert.Equal(t, expectedNodes, foundNodes, "Expected number of nodes with label %s", nodeLabel)
+	})
+}
+
+// ValidateNodeStorage validates the storage capacity of certain nodes.
+// It checks if the number of nodes with a specific label matches the expected number,
+// and if the pod capacity of each of those nodes matches the expected storage capacity.
+func ValidateNodeStorage(t *testing.T, kubeconfig any, expectedNodes int, expectedCapacity int64, nodeLabel string) error {
+	return ValidateNodes(t, kubeconfig, func(nodes *corev1.NodeList) {
+		require.NotNil(t, nodes)
+		assert.NotEmpty(t, nodes.Items)
+
+		var foundNodes = 0
+		for _, node := range nodes.Items {
+			if label, ok := node.Labels[nodeLabel]; !ok || label != "true" {
+				continue
+			} else {
+				foundNodes++
+			}
+
+			podCapacity := node.Status.Capacity[corev1.ResourceEphemeralStorage]
+			assert.True(t, podCapacity.CmpInt64(expectedCapacity) >= 0)
+		}
+		assert.Equal(t, expectedNodes, foundNodes, "Expected number of nodes with label %s", nodeLabel)
 	})
 }
 
