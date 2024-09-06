@@ -58,6 +58,12 @@ const cluster4 = new eks.Cluster(`${projectName}-4`, {
     instanceType: "t4g.small",
 })
 
+// Create an EKS cluster that uses the default EKS-provided security group.
+const cluster5 = new eks.Cluster(`${projectName}-5`, {
+    nodeAmiId: "ami-0384725f0d30527c7",
+    clusterSecurityGroupDefault: true,
+});
+
 //////////////////////////
 ///     EKS Addons     ///
 //////////////////////////
@@ -88,6 +94,8 @@ export const kubeconfig1: pulumi.Output<any> = cluster1.kubeconfig;
 export const kubeconfig2: pulumi.Output<any> = cluster2.kubeconfig;
 export const kubeconfig3: pulumi.Output<any> = cluster3.kubeconfig;
 export const kubeconfig4: pulumi.Output<any> = cluster4.kubeconfig;
+export const kubeconfig5: pulumi.Output<any> = cluster5.kubeconfig;
+export const cluster5sg: pulumi.Output<any> = cluster5.clusterSecurityGroup;
 
 // export the IAM Role ARN of the cluster
 export const iamRoleArn: pulumi.Output<string> = cluster1.core.clusterIamRole.arn;

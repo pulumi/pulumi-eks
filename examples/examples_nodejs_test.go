@@ -101,8 +101,10 @@ func TestAccCluster(t *testing.T) {
 						require.NotNil(t, node.ObjectMeta.Labels)
 						assert.Equal(t, "arm64", node.ObjectMeta.Labels["kubernetes.io/arch"])
 					}
-
 				}))
+
+				// Ensure that cluster5 exports a security group.
+				assert.NotEmpty(t, info.Outputs["cluster5sg"].(string))
 			},
 		})
 
