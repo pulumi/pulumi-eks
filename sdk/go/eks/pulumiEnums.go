@@ -193,10 +193,16 @@ type AuthenticationMode string
 
 const (
 	// Only aws-auth ConfigMap will be used for authenticating to the Kubernetes API.
+	//
+	// Deprecated: The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.
+	// For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.
 	AuthenticationModeConfigMap = AuthenticationMode("CONFIG_MAP")
 	// Only Access Entries will be used for authenticating to the Kubernetes API.
 	AuthenticationModeApi = AuthenticationMode("API")
 	// Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.
+	//
+	// Deprecated: The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.
+	// For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.
 	AuthenticationModeApiAndConfigMap = AuthenticationMode("API_AND_CONFIG_MAP")
 )
 

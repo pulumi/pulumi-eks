@@ -1624,6 +1624,8 @@ func generateSchema() schema.PackageSpec {
 						Name:        "ConfigMap",
 						Value:       "CONFIG_MAP",
 						Description: "Only aws-auth ConfigMap will be used for authenticating to the Kubernetes API.",
+						DeprecationMessage: "The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.\n" +
+							"For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.",
 					},
 					{
 						Name:        "Api",
@@ -1634,6 +1636,8 @@ func generateSchema() schema.PackageSpec {
 						Name:        "ApiAndConfigMap",
 						Value:       "API_AND_CONFIG_MAP",
 						Description: "Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.",
+						DeprecationMessage: "The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.\n" +
+							"For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.",
 					},
 				},
 			},

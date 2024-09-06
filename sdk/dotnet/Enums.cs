@@ -72,6 +72,8 @@ namespace Pulumi.Eks
         /// <summary>
         /// Only aws-auth ConfigMap will be used for authenticating to the Kubernetes API.
         /// </summary>
+        [Obsolete(@"The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.
+For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.")]
         public static AuthenticationMode ConfigMap { get; } = new AuthenticationMode("CONFIG_MAP");
         /// <summary>
         /// Only Access Entries will be used for authenticating to the Kubernetes API.
@@ -80,6 +82,8 @@ namespace Pulumi.Eks
         /// <summary>
         /// Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.
         /// </summary>
+        [Obsolete(@"The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.
+For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.")]
         public static AuthenticationMode ApiAndConfigMap { get; } = new AuthenticationMode("API_AND_CONFIG_MAP");
 
         public static bool operator ==(AuthenticationMode left, AuthenticationMode right) => left.Equals(right);
