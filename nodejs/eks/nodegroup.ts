@@ -829,6 +829,79 @@ function createNodeGroupInternal(
             }
         });
 
+    const amiInfo = pulumi.output(amiId).apply((id) =>
+        aws.ec2.getAmi(
+            {
+                owners: ["self", "amazon"],
+                filters: [
+                    {
+                        name: "image-id",
+                        values: [id],
+                    },
+                ],
+            },
+            { parent },
+        ),
+    );
+
+    const { rootBlockDevice, ebsBlockDevices } = pulumi
+        .all([os, amiInfo])
+        .apply(([os, amiInfo]) => {
+            if (os === OperatingSystem.AL2) {
+                // Old behavior to stay backwards compatible
+                return {
+                    rootBlockDevice: {
+                        encrypted: args.nodeRootVolumeEncrypted ?? false,
+                        volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
+                        volumeType: args.nodeRootVolumeType ?? "gp2",
+                        iops: args.nodeRootVolumeIops,
+                        throughput: args.nodeRootVolumeThroughput,
+                        deleteOnTermination: args.nodeRootVolumeDeleteOnTermination ?? true,
+                    },
+                    ebsBlockDevices: [],
+                };
+            } else if (os !== OperatingSystem.Bottlerocket) {
+                // New behavior, do not overwrite default values of the AMI
+                return {
+                    rootBlockDevice: {
+                        encrypted: args.nodeRootVolumeEncrypted,
+                        volumeSize: args.nodeRootVolumeSize,
+                        volumeType: args.nodeRootVolumeType,
+                        iops: args.nodeRootVolumeIops,
+                        throughput: args.nodeRootVolumeThroughput,
+                        deleteOnTermination: args.nodeRootVolumeDeleteOnTermination,
+                    },
+                    ebsBlockDevices: [],
+                };
+            }
+
+            // Bottlerocket has two block devices, the root device stores the OS itself and the other is for data like images, logs, persistent storage
+            // We need to allow users to configure the block device for data
+            const deviceName = amiInfo.blockDeviceMappings.find(
+                (bdm) => bdm.deviceName !== amiInfo.rootDeviceName,
+            )?.deviceName;
+            return {
+                rootBlockDevice: {} as aws.types.input.ec2.LaunchConfigurationEbsBlockDevice,
+
+                // if no ebs settings are specified, we cannot set the blockDevice props because that would end up as a validation error
+                ebsBlockDevices: [
+                    {
+                        deviceName,
+                        encrypted: args.nodeRootVolumeEncrypted,
+                        volumeSize: args.nodeRootVolumeSize,
+                        volumeType: args.nodeRootVolumeType,
+                        iops: args.nodeRootVolumeIops,
+                        throughput: args.nodeRootVolumeThroughput,
+                        deleteOnTermination: args.nodeRootVolumeDeleteOnTermination,
+                    },
+                ]
+                    .filter((bd) => Object.values(bd).some((v) => v !== undefined))
+                    .map((bd) => {
+                        return { ...bd, deviceName: bd.deviceName ?? amiInfo.rootDeviceName };
+                    }),
+            };
+        });
+
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(
         `${name}-nodeLaunchConfiguration`,
         {
@@ -841,14 +914,8 @@ function createNodeGroupInternal(
                 .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
                 .apply(([sg, extraSG]) => [sg, ...extraSG]),
             spotPrice: args.spotPrice,
-            rootBlockDevice: {
-                encrypted: args.nodeRootVolumeEncrypted ?? false,
-                volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
-                volumeType: args.nodeRootVolumeType ?? "gp2",
-                iops: args.nodeRootVolumeIops,
-                throughput: args.nodeRootVolumeThroughput,
-                deleteOnTermination: args.nodeRootVolumeDeleteOnTermination ?? true,
-            },
+            rootBlockDevice,
+            ebsBlockDevices,
             userData: args.nodeUserDataOverride || userdata,
             enableMonitoring: args.enableDetailedMonitoring,
         },
@@ -1218,8 +1285,7 @@ function createNodeGroupV2Internal(
           }
         : undefined;
 
-    // TODO[pulumi/pulumi-eks#1195] This wrongly assumes an AMI only has a single block device. Bottlerocket has two
-    const device = pulumi.output(amiId).apply((id) =>
+    const amiInfo = pulumi.output(amiId).apply((id) =>
         aws.ec2.getAmi(
             {
                 owners: ["self", "amazon"],
@@ -1232,7 +1298,73 @@ function createNodeGroupV2Internal(
             },
             { parent },
         ),
-    ).blockDeviceMappings[0].deviceName;
+    );
+
+    const deviceName = pulumi.all([os, amiInfo]).apply(([os, amiInfo]) => {
+        if (os !== OperatingSystem.Bottlerocket) {
+            return amiInfo.blockDeviceMappings[0].deviceName;
+        }
+
+        // Bottlerocket has two block devices, the root device stores the OS itself and the other is for data like images, logs, persistent storage
+        // We need to allow users to configure the block device for data
+        const deviceName = amiInfo.blockDeviceMappings.find(
+            (bdm) => bdm.deviceName !== amiInfo.rootDeviceName,
+        )?.deviceName;
+        return deviceName ?? amiInfo.rootDeviceName;
+    });
+
+    const blockDeviceMappings = os.apply((os) => {
+        // Old behavior to stay backwards compatible
+        if (os === OperatingSystem.AL2) {
+            return [
+                {
+                    deviceName: deviceName,
+                    ebs: {
+                        encrypted: pulumi
+                            .output(args.nodeRootVolumeEncrypted)
+                            .apply((val) => (val ? "true" : "false")),
+                        volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
+                        volumeType: args.nodeRootVolumeType ?? "gp2",
+                        iops: args.nodeRootVolumeIops,
+                        throughput: args.nodeRootVolumeThroughput,
+                        deleteOnTermination: pulumi
+                            .output(args.nodeRootVolumeDeleteOnTermination)
+                            .apply((val) => (val ?? true ? "true" : "false")),
+                    },
+                },
+            ];
+        }
+
+        // New behavior, do not overwrite default values of the AMI
+        const ebs = {
+            encrypted:
+                args.nodeRootVolumeEncrypted === undefined
+                    ? undefined
+                    : pulumi
+                          .output(args.nodeRootVolumeEncrypted)
+                          .apply((val) => (val ? "true" : "false")),
+            volumeSize: args.nodeRootVolumeSize,
+            volumeType: args.nodeRootVolumeType,
+            iops: args.nodeRootVolumeIops,
+            throughput: args.nodeRootVolumeThroughput,
+            deleteOnTermination:
+                args.nodeRootVolumeDeleteOnTermination === undefined
+                    ? undefined
+                    : pulumi
+                          .output(args.nodeRootVolumeDeleteOnTermination)
+                          .apply((val) => (val ? "true" : "false")),
+        };
+
+        // if no ebs settings are specified, we cannot set the blockDeviceMappings because that would end up as a validation error
+        return Object.values(ebs).every((v) => v === undefined)
+            ? []
+            : [
+                  {
+                      deviceName: deviceName,
+                      ebs: ebs,
+                  },
+              ];
+    });
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
@@ -1242,20 +1374,7 @@ function createNodeGroupV2Internal(
             iamInstanceProfile: { arn: instanceProfileArn },
             keyName: keyName,
             instanceMarketOptions: marketOptions,
-            blockDeviceMappings: [
-                {
-                    deviceName: device,
-                    ebs: {
-                        encrypted: args.nodeRootVolumeEncrypted ?? false ? "true" : "false",
-                        volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
-                        volumeType: args.nodeRootVolumeType ?? "gp2",
-                        iops: args.nodeRootVolumeIops,
-                        throughput: args.nodeRootVolumeThroughput,
-                        deleteOnTermination:
-                            args.nodeRootVolumeDeleteOnTermination ?? true ? "true" : "false",
-                    },
-                },
-            ],
+            blockDeviceMappings,
             networkInterfaces: [
                 {
                     associatePublicIpAddress: String(nodeAssociatePublicIpAddress),

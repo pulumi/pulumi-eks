@@ -69,8 +69,10 @@ const managedNodeGroupAL2023UserData = eks.createManagedNodeGroup("al-2023-mng-u
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t3.medium"],
   nodeRole: role,
+  diskSize: 100,
   labels: {
     "increased-pod-capacity": "true",
+    "increased-storage-capacity": "true",
   },
   kubeletExtraArgs: `--max-pods=${increasedPodCapacity}`,
 });
@@ -82,8 +84,10 @@ const managedNodeGroupAL2023ArmUserData = eks.createManagedNodeGroup("al-2023-ar
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t4g.medium"],
   nodeRole: role,
+  diskSize: 100,
   labels: {
     "increased-pod-capacity": "true",
+    "increased-storage-capacity": "true",
   },
   kubeletExtraArgs: `--max-pods=${increasedPodCapacity}`,
 });
@@ -113,8 +117,10 @@ const managedNodeGroupBottlerocketUserData = eks.createManagedNodeGroup("bottler
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t3.medium"],
   nodeRole: role,
+  diskSize: 100,
   labels: {
     "increased-pod-capacity": "true",
+    "increased-storage-capacity": "true",
   },
   bottlerocketSettings: {
     settings: {
@@ -132,8 +138,10 @@ const managedNodeGroupBottlerocketArmUserData = eks.createManagedNodeGroup("bott
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t4g.medium"],
   nodeRole: role,
+  diskSize: 100,
   labels: {
     "increased-pod-capacity": "true",
+    "increased-storage-capacity": "true",
   },
   bottlerocketSettings: {
     settings: {
