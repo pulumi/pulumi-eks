@@ -927,7 +927,7 @@ func generateSchema() schema.PackageSpec {
 					},
 					"nodeadmExtraOptions": {
 						TypeSpec: schema.TypeSpec{
-							Type: "array",
+							Type:  "array",
 							Items: &schema.TypeSpec{Ref: "#/types/eks:index:NodeadmOptions"},
 						},
 						Description: "Extra nodeadm configuration sections to be added to the nodeadm user data. " +
@@ -2096,7 +2096,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"nodeadmExtraOptions": {
 			TypeSpec: schema.TypeSpec{
-				Type: "array",
+				Type:  "array",
 				Items: &schema.TypeSpec{Ref: "#/types/eks:index:NodeadmOptions"},
 			},
 			Description: "Extra nodeadm configuration sections to be added to the nodeadm user data. " +
