@@ -1691,6 +1691,34 @@ export type ManagedNodeGroupOptions = Omit<
      * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
      */
     bottlerocketSettings?: pulumi.Input<object>;
+
+    /**
+     * User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping.
+     * If omitted, the provider will configure the user data.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data
+     */
+    userData?: pulumi.Input<string>;
+
+    /**
+     * Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+     * Defaults to false.
+     *
+     * Note: `gpu` and `amiId` are mutually exclusive.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+     */
+    gpu?: pulumi.Input<boolean>;
+
+    /**
+     * The AMI ID to use for the worker nodes.
+     * Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+     *
+     * Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+     */
+    amiId?: pulumi.Input<string>;
 };
 
 /**
@@ -1810,10 +1838,23 @@ function createManagedNodeGroupInternal(
 
     if (args.nodeRole && args.nodeRoleArn) {
         throw new pulumi.ResourceError(
-            "nodeRole and nodeRoleArn are mutually exclusive to create a managed node group",
+            "You cannot specify both nodeRole and nodeRoleArn when creating a managed node group.",
             parent,
         );
     }
+
+    const amiIdMutuallyExclusive: (keyof Omit<ManagedNodeGroupOptions, "cluster">)[] = [
+        "gpu",
+        "amiType",
+    ];
+    amiIdMutuallyExclusive.forEach((key) => {
+        if (args.amiId && args[key]) {
+            throw new pulumi.ResourceError(
+                `You cannot specify both amiId and ${key} when creating a managed node group.`,
+                parent,
+            );
+        }
+    });
 
     let roleArn: pulumi.Input<string>;
     if (args.nodeRoleArn) {
@@ -1878,7 +1919,7 @@ function createManagedNodeGroupInternal(
     // If neither of these are provided, we can use the default launch template for managed node groups.
     if (args.launchTemplate && requiresCustomLaunchTemplate(args)) {
         throw new pulumi.ResourceError(
-            "If you provide a custom launch template, you cannot provide kubeletExtraArgs, bootstrapExtraArgs or enableIMDSv2. Please include these in the launch template that you are providing.",
+            "If you provide a custom launch template, you cannot provide kubeletExtraArgs, bootstrapExtraArgs, enableIMDSv2, userData or amiId. Please include these in the launch template that you are providing.",
             parent,
         );
     }
@@ -1889,8 +1930,15 @@ function createManagedNodeGroupInternal(
         bottlerocketSettings: args.bottlerocketSettings,
     };
 
+    if (requiresCustomUserData(customUserDataArgs) && args.userData) {
+        throw new pulumi.ResourceError(
+            "If you provide a custom userData, you cannot provide kubeletExtraArgs, bootstrapExtraArgs or bottlerocketSettings. Please include these in the userData that you are providing.",
+            parent,
+        );
+    }
+
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
-    if (requiresCustomUserData(customUserDataArgs) || args.enableIMDSv2) {
+    if (requiresCustomLaunchTemplate(args)) {
         launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
 
         // Disk size is specified in the launch template.
@@ -1902,15 +1950,14 @@ function createManagedNodeGroupInternal(
     // amiType, releaseVersion and version cannot be set if an AMI ID is set in a custom launch template.
     // The AMI ID is set in the launch template if custom user data is required.
     // See https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#mng-ami-id-conditions
-    if (requiresCustomUserData(customUserDataArgs)) {
+    if (requiresCustomUserData(customUserDataArgs) || args.userData) {
         delete nodeGroupArgs.version;
         delete nodeGroupArgs.releaseVersion;
         delete nodeGroupArgs.amiType;
     } else if (amiType === undefined && args.operatingSystem !== undefined) {
         // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
 
-        // TODO[pulumi/pulumi-eks#1195]: expose GPU support as an option for managed node groups
-        amiType = determineAmiType(args.operatingSystem, undefined, args.instanceTypes, parent);
+        amiType = determineAmiType(args.operatingSystem, args.gpu, args.instanceTypes, parent);
     }
 
     // Make the aws-auth configmap a dependency of the node group.
@@ -1955,7 +2002,10 @@ function requiresCustomLaunchTemplate(args: Omit<ManagedNodeGroupOptions, "clust
             kubeletExtraArgs: args.kubeletExtraArgs,
             bootstrapExtraArgs: args.bootstrapExtraArgs,
             bottlerocketSettings: args.bottlerocketSettings,
-        }) || args.enableIMDSv2 !== undefined
+        }) ||
+        args.enableIMDSv2 !== undefined ||
+        args.userData !== undefined ||
+        args.amiId !== undefined
     );
 }
 
@@ -2004,25 +2054,32 @@ function createMNGCustomLaunchTemplate(
         bottlerocketSettings: args.bottlerocketSettings,
     };
     let userData: pulumi.Output<string> | undefined;
-    if (requiresCustomUserData(customUserDataArgs)) {
+    if (requiresCustomUserData(customUserDataArgs) || args.userData) {
         userData = pulumi
-            .all([clusterMetadata, os, args.labels, taints, args.bottlerocketSettings])
-            .apply(([clusterMetadata, os, labels, taints, bottlerocketSettings]) => {
-                const userDataArgs: ManagedNodeUserDataArgs = {
-                    nodeGroupType: "managed",
-                    kubeletExtraArgs: args.kubeletExtraArgs,
-                    bootstrapExtraArgs: args.bootstrapExtraArgs,
-                    labels,
-                    taints,
-                    bottlerocketSettings,
+            .all([
+                clusterMetadata,
+                os,
+                args.labels,
+                taints,
+                args.bottlerocketSettings,
+                args.userData,
+            ])
+            .apply(
+                ([clusterMetadata, os, labels, taints, bottlerocketSettings, userDataOverride]) => {
+                    const userDataArgs: ManagedNodeUserDataArgs = {
+                        nodeGroupType: "managed",
+                        kubeletExtraArgs: args.kubeletExtraArgs,
+                        bootstrapExtraArgs: args.bootstrapExtraArgs,
+                        labels,
+                        taints,
+                        bottlerocketSettings,
+                        userDataOverride: userDataOverride,
+                    };
 
-                    // TODO[pulumi/pulumi-eks#1195]: expose this as an option for managed node groups
-                    userDataOverride: undefined,
-                };
-
-                const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
-                return Buffer.from(userData, "utf-8").toString("base64");
-            });
+                    const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
+                    return Buffer.from(userData, "utf-8").toString("base64");
+                },
+            );
     }
 
     // Turn on/off IMDSv2 based on the user input. Different AMIs have different defaults built in.
@@ -2069,10 +2126,11 @@ function createMNGCustomLaunchTemplate(
             blockDeviceMappings,
             userData,
             metadataOptions,
-            // TODO[pulumi/pulumi-eks#1195] expose amiID as an option for managed node groups
             // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
             // nodes failing to join the cluster.
-            imageId: userData ? getRecommendedAMI(args, core.cluster.version, parent) : undefined,
+            imageId: userData
+                ? args.amiId ?? getRecommendedAMI(args, core.cluster.version, parent)
+                : undefined,
         },
         { parent, provider },
     );
@@ -2105,9 +2163,6 @@ function getRecommendedAMI(
     k8sVersion: pulumi.Output<string>,
     parent: pulumi.Resource | undefined,
 ): pulumi.Input<string> {
-    // TODO[pulumi/pulumi-eks#1195]: Add gpu argument to ManagedNodeGroupOptions
-    const gpu = "gpu" in args ? args.gpu : undefined;
-
     let instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined;
     if ("instanceType" in args && args.instanceType) {
         instanceTypes = [args.instanceType];
@@ -2132,7 +2187,7 @@ function getRecommendedAMI(
               }
               return resolvedType;
           })
-        : determineAmiType(os, gpu, instanceTypes, parent);
+        : determineAmiType(os, args.gpu, instanceTypes, parent);
 
     // if specified use the version from the args, otherwise use the version from the cluster.
     const version = args.version ? args.version : k8sVersion;
