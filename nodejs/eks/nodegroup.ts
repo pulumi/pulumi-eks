@@ -1322,7 +1322,7 @@ function createNodeGroupV2Internal(
                     ebs: {
                         encrypted: pulumi
                             .output(args.nodeRootVolumeEncrypted)
-                            .apply((val) => (val === true ?? false ? "true" : "false")),
+                            .apply((val) => (val ? "true" : "false")),
                         volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
                         volumeType: args.nodeRootVolumeType ?? "gp2",
                         iops: args.nodeRootVolumeIops,
