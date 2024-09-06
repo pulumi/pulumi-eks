@@ -511,8 +511,11 @@ export function createCore(
     }
 
     // Create the EKS cluster security group
-    let eksClusterSecurityGroup: aws.ec2.SecurityGroup;
-    if (args.clusterSecurityGroup) {
+    let eksClusterSecurityGroup: aws.ec2.SecurityGroup | undefined;
+
+    if (args.clusterSecurityGroupDefault) {
+        // This will use an EKS-provisioned SG instead of managing one here.
+    } else if (args.clusterSecurityGroup) {
         eksClusterSecurityGroup = args.clusterSecurityGroup;
     } else {
         eksClusterSecurityGroup = new aws.ec2.SecurityGroup(
@@ -532,19 +535,7 @@ export function createCore(
             { parent, provider },
         );
 
-        const eksClusterInternetEgressRule = new aws.ec2.SecurityGroupRule(
-            `${name}-eksClusterInternetEgressRule`,
-            {
-                description: "Allow internet access.",
-                type: "egress",
-                fromPort: 0,
-                toPort: 0,
-                protocol: "-1", // all
-                cidrBlocks: ["0.0.0.0/0"],
-                securityGroupId: eksClusterSecurityGroup.id,
-            },
-            { parent, provider },
-        );
+        createEksClusterInternetEgressRule(name, eksClusterSecurityGroup.id, { parent, provider });
     }
 
     // Create the cluster encryption provider for using envelope encryption on
@@ -588,7 +579,7 @@ export function createCore(
             name: args.name,
             roleArn: eksRole.apply((r) => r.arn),
             vpcConfig: {
-                securityGroupIds: [eksClusterSecurityGroup.id],
+                securityGroupIds: eksClusterSecurityGroup ? [eksClusterSecurityGroup.id] : undefined,
                 subnetIds: clusterSubnetIds,
                 endpointPrivateAccess: args.endpointPrivateAccess,
                 endpointPublicAccess: args.endpointPublicAccess,
@@ -626,6 +617,10 @@ export function createCore(
             ignoreChanges: ["accessConfig.bootstrapClusterCreatorAdminPermissions"],
         },
     );
+
+    if (args.clusterSecurityGroupDefault) {
+        createEksClusterInternetEgressRule(name, eksCluster.vpcConfig.clusterSecurityGroupId, { parent, provider });
+    }
 
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
@@ -1053,7 +1048,8 @@ export function createCore(
         subnetIds: args.subnetIds ? pulumi.output(args.subnetIds) : pulumi.output(clusterSubnetIds),
         publicSubnetIds: args.publicSubnetIds ? pulumi.output(args.publicSubnetIds) : undefined,
         privateSubnetIds: args.privateSubnetIds ? pulumi.output(args.privateSubnetIds) : undefined,
-        clusterSecurityGroup: eksClusterSecurityGroup,
+        clusterSecurityGroup: eksClusterSecurityGroup ||
+            aws.ec2.SecurityGroup.get("eks-sg", eksCluster.vpcConfig.clusterSecurityGroupId),
         cluster: eksCluster,
         endpoint: endpoint,
         nodeGroupOptions: nodeGroupOptions,
@@ -1072,6 +1068,26 @@ export function createCore(
         clusterIamRole: eksRole,
         accessEntries: accessEntries ? pulumi.output(accessEntries) : undefined,
     };
+}
+
+function createEksClusterInternetEgressRule(
+    name: string,
+    eksClusterSecurityGroupId: pulumi.Output<string>,
+    opts: pulumi.ResourceOptions,
+) {
+    new aws.ec2.SecurityGroupRule(
+        `${name}-eksClusterInternetEgressRule`,
+        {
+            description: "Allow internet access.",
+            type: "egress",
+            fromPort: 0,
+            toPort: 0,
+            protocol: "-1", // all
+            cidrBlocks: ["0.0.0.0/0"],
+            securityGroupId: eksClusterSecurityGroupId,
+        },
+        opts,
+    );
 }
 
 /**
@@ -1323,9 +1339,18 @@ export interface ClusterOptions {
      * The security group to use for the cluster API endpoint.  If not provided, a new security group will be created
      * with full internet egress and ingress from node groups.
      *
+     * See clusterSecurityGroupDefault for using the EKS-created security group instead.
+     *
      * Note: The security group resource should not contain any inline ingress or egress rules.
      */
     clusterSecurityGroup?: aws.ec2.SecurityGroup;
+
+    /**
+     * Use the default security group created by EKS instead of creating one.
+     *
+     * Add full internet ingress and egress rules from node groups to this security group.
+     */
+    clusterSecurityGroupDefault?: boolean;
 
     /**
      * The tags to apply to the cluster security group.
