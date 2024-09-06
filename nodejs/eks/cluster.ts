@@ -579,7 +579,9 @@ export function createCore(
             name: args.name,
             roleArn: eksRole.apply((r) => r.arn),
             vpcConfig: {
-                securityGroupIds: eksClusterSecurityGroup ? [eksClusterSecurityGroup.id] : undefined,
+                securityGroupIds: eksClusterSecurityGroup
+                    ? [eksClusterSecurityGroup.id]
+                    : undefined,
                 subnetIds: clusterSubnetIds,
                 endpointPrivateAccess: args.endpointPrivateAccess,
                 endpointPublicAccess: args.endpointPublicAccess,
@@ -1044,7 +1046,8 @@ export function createCore(
         subnetIds: args.subnetIds ? pulumi.output(args.subnetIds) : pulumi.output(clusterSubnetIds),
         publicSubnetIds: args.publicSubnetIds ? pulumi.output(args.publicSubnetIds) : undefined,
         privateSubnetIds: args.privateSubnetIds ? pulumi.output(args.privateSubnetIds) : undefined,
-        clusterSecurityGroup: eksClusterSecurityGroup ||
+        clusterSecurityGroup:
+            eksClusterSecurityGroup ||
             aws.ec2.SecurityGroup.get("eks-sg", eksCluster.vpcConfig.clusterSecurityGroupId),
         cluster: eksCluster,
         endpoint: endpoint,
@@ -1071,7 +1074,7 @@ function createEksClusterInternetEgressRule(
     eksClusterSecurityGroupId: pulumi.Output<string>,
     opts: pulumi.ResourceOptions,
 ) {
-    new aws.ec2.SecurityGroupRule(
+    const sgr = new aws.ec2.SecurityGroupRule(
         `${name}-eksClusterInternetEgressRule`,
         {
             description: "Allow internet access.",
