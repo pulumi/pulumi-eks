@@ -159,8 +159,8 @@ func TestAccManagedNodeGroupOSPy(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 
-				// expect 3 nodes with increased pod capacity of 100
-				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 3, 100, "increased-pod-capacity"))
+				// expect 4 nodes with increased pod capacity of 100
+				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
 			},
 		})
 

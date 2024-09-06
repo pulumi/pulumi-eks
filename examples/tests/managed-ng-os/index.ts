@@ -165,6 +165,24 @@ const managedNodeGroupBottlerocketArmUserData = eks.createManagedNodeGroup("bott
   },
 });
 
+const managedNodeGroupAL2023NodeadmExtraOptions = eks.createManagedNodeGroup("al-2023-mng-extra-options", {
+  ...scalingConfig,
+  operatingSystem: eks.OperatingSystem.AL2023,
+  cluster: cluster,
+  instanceTypes: ["t3.medium"],
+  nodeRole: role,
+  nodeadmExtraOptions: [
+    {
+      contentType: "application/node.eks.aws",
+      content: userdata.customFlags(`--max-pods=${increasedPodCapacity} --node-labels=increased-pod-capacity=true`),
+    },
+    {
+      contentType: `text/x-shellscript; charset="us-ascii"`,
+      content: `#!/bin/bash\necho "Hello Pulumi!"`,
+    },
+  ]
+});
+
 // Create a simple AL2023 node group with a custom user data and a custom AMI
 const amiId = pulumi.interpolate`/aws/service/eks/optimized-ami/${cluster.core.cluster.version}/amazon-linux-2023/x86_64/standard/recommended/image_id`.apply(name =>
   aws.ssm.getParameter({ name }, { async: true })
