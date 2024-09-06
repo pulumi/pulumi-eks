@@ -881,10 +881,12 @@ function createNodeGroupInternal(
                 (bdm) => bdm.deviceName !== amiInfo.rootDeviceName,
             )?.deviceName;
             return {
-                rootBlockDevice: {},
+                rootBlockDevice: {} as aws.types.input.ec2.LaunchConfigurationEbsBlockDevice,
+
+                // if no ebs settings are specified, we cannot set the blockDevice props because that would end up as a validation error
                 ebsBlockDevices: [
                     {
-                        deviceName: deviceName ?? amiInfo.rootDeviceName,
+                        deviceName,
                         encrypted: args.nodeRootVolumeEncrypted,
                         volumeSize: args.nodeRootVolumeSize,
                         volumeType: args.nodeRootVolumeType,
@@ -892,18 +894,11 @@ function createNodeGroupInternal(
                         throughput: args.nodeRootVolumeThroughput,
                         deleteOnTermination: args.nodeRootVolumeDeleteOnTermination,
                     },
-                ],
-            };
-        })
-        .apply(({ rootBlockDevice, ebsBlockDevices }) => {
-            // if no ebs settings are specified, we cannot set the blockDevice props because that would end up as a validation error
-            return {
-                rootBlockDevice: Object.values(rootBlockDevice).every((v) => v === undefined)
-                    ? {}
-                    : rootBlockDevice,
-                ebsBlockDevices: ebsBlockDevices.filter((bd) =>
-                    Object.values(bd).some((v) => v !== undefined),
-                ),
+                ]
+                    .filter((bd) => Object.values(bd).some((v) => v !== undefined))
+                    .map((bd) => {
+                        return { ...bd, deviceName: bd.deviceName ?? amiInfo.rootDeviceName };
+                    }),
             };
         });
 
@@ -1318,25 +1313,30 @@ function createNodeGroupV2Internal(
         return deviceName ?? amiInfo.rootDeviceName;
     });
 
-    const ebsSettings = os.apply((os) => {
+    const blockDeviceMappings = os.apply((os) => {
         // Old behavior to stay backwards compatible
         if (os === OperatingSystem.AL2) {
-            return {
-                encrypted: pulumi
-                    .output(args.nodeRootVolumeEncrypted)
-                    .apply((val) => (val === true ?? false ? "true" : "false")),
-                volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
-                volumeType: args.nodeRootVolumeType ?? "gp2",
-                iops: args.nodeRootVolumeIops,
-                throughput: args.nodeRootVolumeThroughput,
-                deleteOnTermination: pulumi
-                    .output(args.nodeRootVolumeDeleteOnTermination)
-                    .apply((val) => (val ?? true ? "true" : "false")),
-            };
+            return [
+                {
+                    deviceName: deviceName,
+                    ebs: {
+                        encrypted: pulumi
+                            .output(args.nodeRootVolumeEncrypted)
+                            .apply((val) => (val === true ?? false ? "true" : "false")),
+                        volumeSize: args.nodeRootVolumeSize ?? 20, // GiB
+                        volumeType: args.nodeRootVolumeType ?? "gp2",
+                        iops: args.nodeRootVolumeIops,
+                        throughput: args.nodeRootVolumeThroughput,
+                        deleteOnTermination: pulumi
+                            .output(args.nodeRootVolumeDeleteOnTermination)
+                            .apply((val) => (val ?? true ? "true" : "false")),
+                    },
+                },
+            ];
         }
 
         // New behavior, do not overwrite default values of the AMI
-        return {
+        const ebs = {
             encrypted:
                 args.nodeRootVolumeEncrypted === undefined
                     ? undefined
@@ -1354,6 +1354,16 @@ function createNodeGroupV2Internal(
                           .output(args.nodeRootVolumeDeleteOnTermination)
                           .apply((val) => (val ? "true" : "false")),
         };
+
+        // if no ebs settings are specified, we cannot set the blockDeviceMappings because that would end up as a validation error
+        return Object.values(ebs).every((v) => v === undefined)
+            ? []
+            : [
+                  {
+                      deviceName: deviceName,
+                      ebs: ebs,
+                  },
+              ];
     });
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
@@ -1364,15 +1374,7 @@ function createNodeGroupV2Internal(
             iamInstanceProfile: { arn: instanceProfileArn },
             keyName: keyName,
             instanceMarketOptions: marketOptions,
-            // if no ebs settings are specified, we cannot set the blockDeviceMappings because that would end up as a validation error
-            blockDeviceMappings: Object.values(ebsSettings).every((v) => v === undefined)
-                ? undefined
-                : [
-                      {
-                          deviceName: deviceName,
-                          ebs: ebsSettings,
-                      },
-                  ],
+            blockDeviceMappings,
             networkInterfaces: [
                 {
                     associatePublicIpAddress: String(nodeAssociatePublicIpAddress),
