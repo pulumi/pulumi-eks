@@ -33,6 +33,7 @@ import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { InputTags } from "./utils";
 import {
     createUserData,
+    customUserDataArgs,
     ManagedNodeUserDataArgs,
     requiresCustomUserData,
     SelfManagedV1NodeUserDataArgs,
@@ -53,6 +54,16 @@ export interface Taint {
      */
     effect: "NoSchedule" | "NoExecute" | "PreferNoSchedule";
 }
+
+/**
+ * MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
+ *
+ * See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+ */
+export type NodeadmOptions = {
+    content: pulumi.Input<string>;
+    contentType: pulumi.Input<string>;
+};
 
 /**
  * NodeGroupArgs represents the common configuration settings for NodeGroups.
@@ -318,6 +329,22 @@ export interface NodeGroupBaseOptions {
      * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
      */
     bottlerocketSettings?: pulumi.Input<object>;
+
+    /**
+     * Extra nodeadm configuration sections to be added to the nodeadm user data.
+     * This can be shell scripts, nodeadm NodeConfig or any other user data compatible script.
+     * When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+     *
+     * The base settings are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     *
+     * Note: This is only applicable when using AL2023.
+     * See for more details: [Amazon EKS AMI - Nodeadm](https://awslabs.github.io/amazon-eks-ami/nodeadm/).
+     */
+    nodeadmExtraOptions?: pulumi.Input<pulumi.Input<NodeadmOptions>[]>;
 }
 
 /**
@@ -741,6 +768,12 @@ function createNodeGroupInternal(
         serviceCidr,
     };
 
+    const nodeadmExtraOptions = pulumi
+        .output(args.nodeadmExtraOptions)
+        .apply((nodeadmExtraOptions) => {
+            return nodeadmExtraOptions ? pulumi.all(nodeadmExtraOptions) : undefined;
+        });
+
     const userdata = pulumi
         .all([
             awsRegion,
@@ -750,6 +783,7 @@ function createNodeGroupInternal(
             args.nodeUserDataOverride,
             os,
             args.bottlerocketSettings,
+            nodeadmExtraOptions,
         ])
         .apply(
             ([
@@ -760,6 +794,7 @@ function createNodeGroupInternal(
                 userDataOverride,
                 os,
                 bottlerocketSettings,
+                nodeadmExtraOptions,
             ]) => {
                 const userDataArgs: SelfManagedV1NodeUserDataArgs = {
                     nodeGroupType: "self-managed-v1",
@@ -772,6 +807,7 @@ function createNodeGroupInternal(
                     extraUserData,
                     stackName,
                     bottlerocketSettings,
+                    nodeadmExtraOptions,
                 };
 
                 return createUserData(os, clusterMetadata, userDataArgs, parent);
@@ -1190,6 +1226,12 @@ function createNodeGroupV2Internal(
         serviceCidr,
     };
 
+    const nodeadmExtraOptions = pulumi
+        .output(args.nodeadmExtraOptions)
+        .apply((nodeadmExtraOptions) => {
+            return nodeadmExtraOptions ? pulumi.all(nodeadmExtraOptions) : undefined;
+        });
+
     const userdata = pulumi
         .all([
             clusterMetadata,
@@ -1198,6 +1240,7 @@ function createNodeGroupV2Internal(
             args.nodeUserDataOverride,
             os,
             args.bottlerocketSettings,
+            nodeadmExtraOptions,
         ])
         .apply(
             ([
@@ -1207,6 +1250,7 @@ function createNodeGroupV2Internal(
                 userDataOverride,
                 os,
                 bottlerocketSettings,
+                nodeadmExtraOptions,
             ]) => {
                 const userDataArgs: SelfManagedV2NodeUserDataArgs = {
                     nodeGroupType: "self-managed-v2",
@@ -1218,6 +1262,7 @@ function createNodeGroupV2Internal(
                     extraUserData,
                     stackName,
                     bottlerocketSettings,
+                    nodeadmExtraOptions,
                 };
 
                 return createUserData(os, clusterMetadata, userDataArgs, parent);
@@ -1719,6 +1764,22 @@ export type ManagedNodeGroupOptions = Omit<
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
      */
     amiId?: pulumi.Input<string>;
+
+    /**
+     * Extra nodeadm configuration sections to be added to the nodeadm user data.
+     * This can be shell scripts, nodeadm NodeConfig or any other user data compatible script.
+     * When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+     *
+     * The base settings are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     *
+     * Note: This is only applicable when using AL2023.
+     * See for more details: [Amazon EKS AMI - Nodeadm](https://awslabs.github.io/amazon-eks-ami/nodeadm/).
+     */
+    nodeadmExtraOptions?: pulumi.Input<pulumi.Input<NodeadmOptions>[]>;
 };
 
 /**
@@ -1914,25 +1975,30 @@ function createManagedNodeGroupInternal(
         delete (<any>nodeGroupArgs).cluster;
     }
 
-    // Create a custom launch template for the managed node group if the user specifies either kubeletExtraArgs or bootstrapExtraArgs.
-    // If the user sepcifies a custom LaunchTemplate, we throw an error and suggest that the user include this in the launch template that they are providing.
+    // Create a custom launch template for the managed node group if the user specifies any of the advanced options.
+    // If the user specifies a custom LaunchTemplate, we throw an error and suggest that the user should include those in the launch template that they are providing.
     // If neither of these are provided, we can use the default launch template for managed node groups.
     if (args.launchTemplate && requiresCustomLaunchTemplate(args)) {
         throw new pulumi.ResourceError(
-            "If you provide a custom launch template, you cannot provide kubeletExtraArgs, bootstrapExtraArgs, enableIMDSv2, userData or amiId. Please include these in the launch template that you are providing.",
+            `If you provide a custom launch template, you cannot provide any of ${customLaunchTemplateArgs.join(
+                ", ",
+            )}. Please include these in the launch template that you are providing.`,
             parent,
         );
     }
 
-    const customUserDataArgs = {
+    const userDataArgs = {
         kubeletExtraArgs: args.kubeletExtraArgs,
         bootstrapExtraArgs: args.bootstrapExtraArgs,
         bottlerocketSettings: args.bottlerocketSettings,
+        nodeadmExtraOptions: args.nodeadmExtraOptions,
     };
 
-    if (requiresCustomUserData(customUserDataArgs) && args.userData) {
+    if (requiresCustomUserData(userDataArgs) && args.userData) {
         throw new pulumi.ResourceError(
-            "If you provide a custom userData, you cannot provide kubeletExtraArgs, bootstrapExtraArgs or bottlerocketSettings. Please include these in the userData that you are providing.",
+            `If you provide custom userData, you cannot provide any of ${customUserDataArgs.join(
+                ", ",
+            )}. Please include these in the userData that you are providing.`,
             parent,
         );
     }
@@ -1950,7 +2016,7 @@ function createManagedNodeGroupInternal(
     // amiType, releaseVersion and version cannot be set if an AMI ID is set in a custom launch template.
     // The AMI ID is set in the launch template if custom user data is required.
     // See https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#mng-ami-id-conditions
-    if (requiresCustomUserData(customUserDataArgs) || args.userData) {
+    if (requiresCustomUserData(userDataArgs) || args.userData) {
         delete nodeGroupArgs.version;
         delete nodeGroupArgs.releaseVersion;
         delete nodeGroupArgs.amiType;
@@ -1996,17 +2062,15 @@ function createManagedNodeGroupInternal(
     return nodeGroup;
 }
 
+const customLaunchTemplateArgs: (keyof Omit<ManagedNodeGroupOptions, "cluster">)[] = [
+    ...customUserDataArgs,
+    "enableIMDSv2",
+    "userData",
+    "amiId",
+];
+
 function requiresCustomLaunchTemplate(args: Omit<ManagedNodeGroupOptions, "cluster">): boolean {
-    return (
-        requiresCustomUserData({
-            kubeletExtraArgs: args.kubeletExtraArgs,
-            bootstrapExtraArgs: args.bootstrapExtraArgs,
-            bottlerocketSettings: args.bottlerocketSettings,
-        }) ||
-        args.enableIMDSv2 !== undefined ||
-        args.userData !== undefined ||
-        args.amiId !== undefined
-    );
+    return customLaunchTemplateArgs.some((key) => args[key] !== undefined);
 }
 
 /**
@@ -2052,7 +2116,15 @@ function createMNGCustomLaunchTemplate(
         kubeletExtraArgs: args.kubeletExtraArgs,
         bootstrapExtraArgs: args.bootstrapExtraArgs,
         bottlerocketSettings: args.bottlerocketSettings,
+        nodeadmExtraOptions: args.nodeadmExtraOptions,
     };
+
+    const nodeadmExtraOptions = pulumi
+        .output(args.nodeadmExtraOptions)
+        .apply((nodeadmExtraOptions) => {
+            return nodeadmExtraOptions ? pulumi.all(nodeadmExtraOptions) : undefined;
+        });
+
     let userData: pulumi.Output<string> | undefined;
     if (requiresCustomUserData(customUserDataArgs) || args.userData) {
         userData = pulumi
@@ -2063,9 +2135,18 @@ function createMNGCustomLaunchTemplate(
                 taints,
                 args.bottlerocketSettings,
                 args.userData,
+                nodeadmExtraOptions,
             ])
             .apply(
-                ([clusterMetadata, os, labels, taints, bottlerocketSettings, userDataOverride]) => {
+                ([
+                    clusterMetadata,
+                    os,
+                    labels,
+                    taints,
+                    bottlerocketSettings,
+                    userDataOverride,
+                    nodeadmExtraOptions,
+                ]) => {
                     const userDataArgs: ManagedNodeUserDataArgs = {
                         nodeGroupType: "managed",
                         kubeletExtraArgs: args.kubeletExtraArgs,
@@ -2073,7 +2154,8 @@ function createMNGCustomLaunchTemplate(
                         labels,
                         taints,
                         bottlerocketSettings,
-                        userDataOverride: userDataOverride,
+                        userDataOverride,
+                        nodeadmExtraOptions,
                     };
 
                     const userData = createUserData(os, clusterMetadata, userDataArgs, parent);
