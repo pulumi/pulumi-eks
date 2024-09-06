@@ -95,7 +95,7 @@ export const kubeconfig2: pulumi.Output<any> = cluster2.kubeconfig;
 export const kubeconfig3: pulumi.Output<any> = cluster3.kubeconfig;
 export const kubeconfig4: pulumi.Output<any> = cluster4.kubeconfig;
 export const kubeconfig5: pulumi.Output<any> = cluster5.kubeconfig;
-export const cluster5sg: pulumi.Output<any> = cluster5.clusterSecurityGroup;
+export const cluster5sg: pulumi.Output<any> = cluster5.clusterSecurityGroup.arn;
 
 // export the IAM Role ARN of the cluster
 export const iamRoleArn: pulumi.Output<string> = cluster1.core.clusterIamRole.arn;

@@ -618,10 +618,6 @@ export function createCore(
         },
     );
 
-    if (args.clusterSecurityGroupDefault) {
-        createEksClusterInternetEgressRule(name, eksCluster.vpcConfig.clusterSecurityGroupId, { parent, provider });
-    }
-
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
     // there is time for the cluster API server to become completely available.  Ideally we

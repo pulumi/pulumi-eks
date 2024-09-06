@@ -104,7 +104,9 @@ func TestAccCluster(t *testing.T) {
 				}))
 
 				// Ensure that cluster5 exports a security group.
-				assert.NotEmpty(t, info.Outputs["cluster5sg"].(string))
+				// E.g. arn:aws:ec2:us-west-2:616138583583:security-group/sg-0843702f3863a7e61
+				assert.Containsf(t, info.Outputs["cluster5sg"].(string), "arn:aws:ec2")
+				assert.Containsf(t, info.Outputs["cluster5sg"].(string), "security-group/sg")
 			},
 		})
 
