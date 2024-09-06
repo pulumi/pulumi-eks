@@ -888,7 +888,12 @@
                 },
                 "clusterSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                    "description": "The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.\n\nNote: The security group resource should not contain any inline ingress or egress rules."
+                    "description": "The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.\n\nSee clusterSecurityGroupDefault for using the EKS-created security group instead.\n\nNote: The security group resource should not contain any inline ingress or egress rules."
+                },
+                "clusterSecurityGroupDefault": {
+                    "type": "boolean",
+                    "plain": true,
+                    "description": "Use the default security group created by EKS instead of creating one.\n\nAdd full internet ingress and egress rules from node groups to this security group.\n"
                 },
                 "clusterSecurityGroupTags": {
                     "type": "object",

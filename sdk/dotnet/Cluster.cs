@@ -169,10 +169,20 @@ namespace Pulumi.Eks
         /// <summary>
         /// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
         /// 
+        /// See clusterSecurityGroupDefault for using the EKS-created security group instead.
+        /// 
         /// Note: The security group resource should not contain any inline ingress or egress rules.
         /// </summary>
         [Input("clusterSecurityGroup")]
         public Input<Pulumi.Aws.Ec2.SecurityGroup>? ClusterSecurityGroup { get; set; }
+
+        /// <summary>
+        /// Use the default security group created by EKS instead of creating one.
+        /// 
+        /// Add full internet ingress and egress rules from node groups to this security group.
+        /// </summary>
+        [Input("clusterSecurityGroupDefault")]
+        public bool? ClusterSecurityGroupDefault { get; set; }
 
         [Input("clusterSecurityGroupTags")]
         private InputMap<string>? _clusterSecurityGroupTags;

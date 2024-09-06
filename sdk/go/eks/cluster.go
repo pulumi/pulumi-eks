@@ -101,8 +101,14 @@ type clusterArgs struct {
 	AuthenticationMode *AuthenticationMode `pulumi:"authenticationMode"`
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
+	// See clusterSecurityGroupDefault for using the EKS-created security group instead.
+	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
 	ClusterSecurityGroup *ec2.SecurityGroup `pulumi:"clusterSecurityGroup"`
+	// Use the default security group created by EKS instead of creating one.
+	//
+	// Add full internet ingress and egress rules from node groups to this security group.
+	ClusterSecurityGroupDefault *bool `pulumi:"clusterSecurityGroupDefault"`
 	// The tags to apply to the cluster security group.
 	ClusterSecurityGroupTags map[string]string `pulumi:"clusterSecurityGroupTags"`
 	// The tags to apply to the EKS cluster.
@@ -329,8 +335,14 @@ type ClusterArgs struct {
 	AuthenticationMode *AuthenticationMode
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
+	// See clusterSecurityGroupDefault for using the EKS-created security group instead.
+	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
 	ClusterSecurityGroup ec2.SecurityGroupInput
+	// Use the default security group created by EKS instead of creating one.
+	//
+	// Add full internet ingress and egress rules from node groups to this security group.
+	ClusterSecurityGroupDefault *bool
 	// The tags to apply to the cluster security group.
 	ClusterSecurityGroupTags pulumi.StringMapInput
 	// The tags to apply to the EKS cluster.

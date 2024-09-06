@@ -77,6 +77,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      * 
+     * See clusterSecurityGroupDefault for using the EKS-created security group instead.
+     * 
      * Note: The security group resource should not contain any inline ingress or egress rules.
      * 
      */
@@ -86,11 +88,32 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     /**
      * @return The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      * 
+     * See clusterSecurityGroupDefault for using the EKS-created security group instead.
+     * 
      * Note: The security group resource should not contain any inline ingress or egress rules.
      * 
      */
     public Optional<Output<SecurityGroup>> clusterSecurityGroup() {
         return Optional.ofNullable(this.clusterSecurityGroup);
+    }
+
+    /**
+     * Use the default security group created by EKS instead of creating one.
+     * 
+     * Add full internet ingress and egress rules from node groups to this security group.
+     * 
+     */
+    @Import(name="clusterSecurityGroupDefault")
+    private @Nullable Boolean clusterSecurityGroupDefault;
+
+    /**
+     * @return Use the default security group created by EKS instead of creating one.
+     * 
+     * Add full internet ingress and egress rules from node groups to this security group.
+     * 
+     */
+    public Optional<Boolean> clusterSecurityGroupDefault() {
+        return Optional.ofNullable(this.clusterSecurityGroupDefault);
     }
 
     /**
@@ -1036,6 +1059,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.accessEntries = $.accessEntries;
         this.authenticationMode = $.authenticationMode;
         this.clusterSecurityGroup = $.clusterSecurityGroup;
+        this.clusterSecurityGroupDefault = $.clusterSecurityGroupDefault;
         this.clusterSecurityGroupTags = $.clusterSecurityGroupTags;
         this.clusterTags = $.clusterTags;
         this.createOidcProvider = $.createOidcProvider;
@@ -1134,6 +1158,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         /**
          * @param clusterSecurityGroup The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
          * 
+         * See clusterSecurityGroupDefault for using the EKS-created security group instead.
+         * 
          * Note: The security group resource should not contain any inline ingress or egress rules.
          * 
          * @return builder
@@ -1147,6 +1173,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         /**
          * @param clusterSecurityGroup The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
          * 
+         * See clusterSecurityGroupDefault for using the EKS-created security group instead.
+         * 
          * Note: The security group resource should not contain any inline ingress or egress rules.
          * 
          * @return builder
@@ -1154,6 +1182,19 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder clusterSecurityGroup(SecurityGroup clusterSecurityGroup) {
             return clusterSecurityGroup(Output.of(clusterSecurityGroup));
+        }
+
+        /**
+         * @param clusterSecurityGroupDefault Use the default security group created by EKS instead of creating one.
+         * 
+         * Add full internet ingress and egress rules from node groups to this security group.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterSecurityGroupDefault(@Nullable Boolean clusterSecurityGroupDefault) {
+            $.clusterSecurityGroupDefault = clusterSecurityGroupDefault;
+            return this;
         }
 
         /**

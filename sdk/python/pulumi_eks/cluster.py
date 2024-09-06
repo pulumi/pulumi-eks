@@ -23,6 +23,7 @@ class ClusterArgs:
                  access_entries: Optional[Mapping[str, 'AccessEntryArgs']] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
+                 cluster_security_group_default: Optional[bool] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
@@ -82,7 +83,12 @@ class ClusterArgs:
                https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
+               See clusterSecurityGroupDefault for using the EKS-created security group instead.
+               
                Note: The security group resource should not contain any inline ingress or egress rules.
+        :param bool cluster_security_group_default: Use the default security group created by EKS instead of creating one.
+               
+               Add full internet ingress and egress rules from node groups to this security group.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_security_group_tags: The tags to apply to the cluster security group.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_tags: The tags to apply to the EKS cluster.
         :param pulumi.Input[bool] create_oidc_provider: Indicates whether an IAM OIDC Provider is created for the EKS cluster.
@@ -253,6 +259,8 @@ class ClusterArgs:
             pulumi.set(__self__, "authentication_mode", authentication_mode)
         if cluster_security_group is not None:
             pulumi.set(__self__, "cluster_security_group", cluster_security_group)
+        if cluster_security_group_default is not None:
+            pulumi.set(__self__, "cluster_security_group_default", cluster_security_group_default)
         if cluster_security_group_tags is not None:
             pulumi.set(__self__, "cluster_security_group_tags", cluster_security_group_tags)
         if cluster_tags is not None:
@@ -384,6 +392,8 @@ class ClusterArgs:
         """
         The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 
+        See clusterSecurityGroupDefault for using the EKS-created security group instead.
+
         Note: The security group resource should not contain any inline ingress or egress rules.
         """
         return pulumi.get(self, "cluster_security_group")
@@ -391,6 +401,20 @@ class ClusterArgs:
     @cluster_security_group.setter
     def cluster_security_group(self, value: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]):
         pulumi.set(self, "cluster_security_group", value)
+
+    @property
+    @pulumi.getter(name="clusterSecurityGroupDefault")
+    def cluster_security_group_default(self) -> Optional[bool]:
+        """
+        Use the default security group created by EKS instead of creating one.
+
+        Add full internet ingress and egress rules from node groups to this security group.
+        """
+        return pulumi.get(self, "cluster_security_group_default")
+
+    @cluster_security_group_default.setter
+    def cluster_security_group_default(self, value: Optional[bool]):
+        pulumi.set(self, "cluster_security_group_default", value)
 
     @property
     @pulumi.getter(name="clusterSecurityGroupTags")
@@ -1081,6 +1105,7 @@ class Cluster(pulumi.ComponentResource):
                  access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
+                 cluster_security_group_default: Optional[bool] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
@@ -1162,7 +1187,12 @@ class Cluster(pulumi.ComponentResource):
                https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
+               See clusterSecurityGroupDefault for using the EKS-created security group instead.
+               
                Note: The security group resource should not contain any inline ingress or egress rules.
+        :param bool cluster_security_group_default: Use the default security group created by EKS instead of creating one.
+               
+               Add full internet ingress and egress rules from node groups to this security group.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_security_group_tags: The tags to apply to the cluster security group.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_tags: The tags to apply to the EKS cluster.
         :param pulumi.Input[bool] create_oidc_provider: Indicates whether an IAM OIDC Provider is created for the EKS cluster.
@@ -1372,6 +1402,7 @@ class Cluster(pulumi.ComponentResource):
                  access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
+                 cluster_security_group_default: Optional[bool] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
@@ -1433,6 +1464,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["access_entries"] = access_entries
             __props__.__dict__["authentication_mode"] = authentication_mode
             __props__.__dict__["cluster_security_group"] = cluster_security_group
+            __props__.__dict__["cluster_security_group_default"] = cluster_security_group_default
             __props__.__dict__["cluster_security_group_tags"] = cluster_security_group_tags
             __props__.__dict__["cluster_tags"] = cluster_tags
             __props__.__dict__["create_oidc_provider"] = create_oidc_provider
