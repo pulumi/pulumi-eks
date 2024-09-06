@@ -21,6 +21,7 @@ __all__ = [
     'CreationRoleProviderArgs',
     'FargateProfileArgs',
     'KubeconfigOptionsArgs',
+    'NodeadmOptionsArgs',
     'RoleMappingArgs',
     'StorageClassArgs',
     'TaintArgs',
@@ -211,6 +212,7 @@ class ClusterNodeGroupOptionsArgs:
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
+                 nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
                  taints: Optional[Mapping[str, 'TaintArgs']] = None,
@@ -303,6 +305,15 @@ class ClusterNodeGroupOptionsArgs:
         :param pulumi.Input[str] node_user_data_override: User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+        :param pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]] nodeadm_extra_options: Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+               The base settings are:
+                 - cluster.name
+                 - cluster.apiServerEndpoint
+                 - cluster.certificateAuthority
+                 - cluster.cidr
+               
+               Note: This is only applicable when using AL2023.
+               See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
                Valid values are `AL2`, `AL2023` and `Bottlerocket`.
                
@@ -373,6 +384,8 @@ class ClusterNodeGroupOptionsArgs:
             pulumi.set(__self__, "node_user_data", node_user_data)
         if node_user_data_override is not None:
             pulumi.set(__self__, "node_user_data_override", node_user_data_override)
+        if nodeadm_extra_options is not None:
+            pulumi.set(__self__, "nodeadm_extra_options", nodeadm_extra_options)
         if operating_system is not None:
             pulumi.set(__self__, "operating_system", operating_system)
         if spot_price is not None:
@@ -808,6 +821,26 @@ class ClusterNodeGroupOptionsArgs:
     @node_user_data_override.setter
     def node_user_data_override(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "node_user_data_override", value)
+
+    @property
+    @pulumi.getter(name="nodeadmExtraOptions")
+    def nodeadm_extra_options(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]]:
+        """
+        Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+        The base settings are:
+          - cluster.name
+          - cluster.apiServerEndpoint
+          - cluster.certificateAuthority
+          - cluster.cidr
+
+        Note: This is only applicable when using AL2023.
+        See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        """
+        return pulumi.get(self, "nodeadm_extra_options")
+
+    @nodeadm_extra_options.setter
+    def nodeadm_extra_options(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]]):
+        pulumi.set(self, "nodeadm_extra_options", value)
 
     @property
     @pulumi.getter(name="operatingSystem")
@@ -1333,6 +1366,46 @@ class KubeconfigOptionsArgs:
     @role_arn.setter
     def role_arn(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "role_arn", value)
+
+
+@pulumi.input_type
+class NodeadmOptionsArgs:
+    def __init__(__self__, *,
+                 content: pulumi.Input[str],
+                 content_type: pulumi.Input[str]):
+        """
+        MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
+
+        See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        :param pulumi.Input[str] content: The ARN of the access policy to associate with the principal
+        :param pulumi.Input[str] content_type: The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
+        """
+        pulumi.set(__self__, "content", content)
+        pulumi.set(__self__, "content_type", content_type)
+
+    @property
+    @pulumi.getter
+    def content(self) -> pulumi.Input[str]:
+        """
+        The ARN of the access policy to associate with the principal
+        """
+        return pulumi.get(self, "content")
+
+    @content.setter
+    def content(self, value: pulumi.Input[str]):
+        pulumi.set(self, "content", value)
+
+    @property
+    @pulumi.getter(name="contentType")
+    def content_type(self) -> pulumi.Input[str]:
+        """
+        The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
+        """
+        return pulumi.get(self, "content_type")
+
+    @content_type.setter
+    def content_type(self, value: pulumi.Input[str]):
+        pulumi.set(self, "content_type", value)
 
 
 @pulumi.input_type

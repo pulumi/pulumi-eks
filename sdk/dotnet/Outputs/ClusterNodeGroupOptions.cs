@@ -196,6 +196,18 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly string? NodeUserDataOverride;
         /// <summary>
+        /// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+        /// The base settings are:
+        ///   - cluster.name
+        ///   - cluster.apiServerEndpoint
+        ///   - cluster.certificateAuthority
+        ///   - cluster.cidr
+        /// 
+        /// Note: This is only applicable when using AL2023.
+        /// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        /// </summary>
+        public readonly ImmutableArray<Outputs.NodeadmOptions> NodeadmExtraOptions;
+        /// <summary>
         /// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
         /// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
         /// 
@@ -279,6 +291,8 @@ namespace Pulumi.Eks.Outputs
 
             string? nodeUserDataOverride,
 
+            ImmutableArray<Outputs.NodeadmOptions> nodeadmExtraOptions,
+
             Pulumi.Eks.OperatingSystem? operatingSystem,
 
             string? spotPrice,
@@ -318,6 +332,7 @@ namespace Pulumi.Eks.Outputs
             NodeSubnetIds = nodeSubnetIds;
             NodeUserData = nodeUserData;
             NodeUserDataOverride = nodeUserDataOverride;
+            NodeadmExtraOptions = nodeadmExtraOptions;
             OperatingSystem = operatingSystem;
             SpotPrice = spotPrice;
             Taints = taints;

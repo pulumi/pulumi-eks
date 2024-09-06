@@ -52,6 +52,7 @@ class NodeGroupArgs:
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
+                 nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
                  taints: Optional[Mapping[str, 'TaintArgs']] = None,
@@ -145,6 +146,15 @@ class NodeGroupArgs:
         :param pulumi.Input[str] node_user_data_override: User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+        :param pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]] nodeadm_extra_options: Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+               The base settings are:
+                 - cluster.name
+                 - cluster.apiServerEndpoint
+                 - cluster.certificateAuthority
+                 - cluster.cidr
+               
+               Note: This is only applicable when using AL2023.
+               See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
                Valid values are `AL2`, `AL2023` and `Bottlerocket`.
                
@@ -216,6 +226,8 @@ class NodeGroupArgs:
             pulumi.set(__self__, "node_user_data", node_user_data)
         if node_user_data_override is not None:
             pulumi.set(__self__, "node_user_data_override", node_user_data_override)
+        if nodeadm_extra_options is not None:
+            pulumi.set(__self__, "nodeadm_extra_options", nodeadm_extra_options)
         if operating_system is not None:
             pulumi.set(__self__, "operating_system", operating_system)
         if spot_price is not None:
@@ -665,6 +677,26 @@ class NodeGroupArgs:
         pulumi.set(self, "node_user_data_override", value)
 
     @property
+    @pulumi.getter(name="nodeadmExtraOptions")
+    def nodeadm_extra_options(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]]:
+        """
+        Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+        The base settings are:
+          - cluster.name
+          - cluster.apiServerEndpoint
+          - cluster.certificateAuthority
+          - cluster.cidr
+
+        Note: This is only applicable when using AL2023.
+        See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        """
+        return pulumi.get(self, "nodeadm_extra_options")
+
+    @nodeadm_extra_options.setter
+    def nodeadm_extra_options(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]]):
+        pulumi.set(self, "nodeadm_extra_options", value)
+
+    @property
     @pulumi.getter(name="operatingSystem")
     def operating_system(self) -> Optional[pulumi.Input['OperatingSystem']]:
         """
@@ -753,6 +785,7 @@ class NodeGroup(pulumi.ComponentResource):
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
+                 nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
                  taints: Optional[Mapping[str, Union['TaintArgs', 'TaintArgsDict']]] = None,
@@ -850,6 +883,15 @@ class NodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[str] node_user_data_override: User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+        :param pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]] nodeadm_extra_options: Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+               The base settings are:
+                 - cluster.name
+                 - cluster.apiServerEndpoint
+                 - cluster.certificateAuthority
+                 - cluster.cidr
+               
+               Note: This is only applicable when using AL2023.
+               See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
                Valid values are `AL2`, `AL2023` and `Bottlerocket`.
                
@@ -914,6 +956,7 @@ class NodeGroup(pulumi.ComponentResource):
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
+                 nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
                  taints: Optional[Mapping[str, Union['TaintArgs', 'TaintArgsDict']]] = None,
@@ -963,6 +1006,7 @@ class NodeGroup(pulumi.ComponentResource):
             __props__.__dict__["node_subnet_ids"] = node_subnet_ids
             __props__.__dict__["node_user_data"] = node_user_data
             __props__.__dict__["node_user_data_override"] = node_user_data_override
+            __props__.__dict__["nodeadm_extra_options"] = nodeadm_extra_options
             __props__.__dict__["operating_system"] = operating_system
             __props__.__dict__["spot_price"] = spot_price
             __props__.__dict__["taints"] = taints

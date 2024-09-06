@@ -292,6 +292,26 @@ namespace Pulumi.Eks.Inputs
         [Input("nodeUserDataOverride")]
         public Input<string>? NodeUserDataOverride { get; set; }
 
+        [Input("nodeadmExtraOptions")]
+        private InputList<Inputs.NodeadmOptionsArgs>? _nodeadmExtraOptions;
+
+        /// <summary>
+        /// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+        /// The base settings are:
+        ///   - cluster.name
+        ///   - cluster.apiServerEndpoint
+        ///   - cluster.certificateAuthority
+        ///   - cluster.cidr
+        /// 
+        /// Note: This is only applicable when using AL2023.
+        /// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        /// </summary>
+        public InputList<Inputs.NodeadmOptionsArgs> NodeadmExtraOptions
+        {
+            get => _nodeadmExtraOptions ?? (_nodeadmExtraOptions = new InputList<Inputs.NodeadmOptionsArgs>());
+            set => _nodeadmExtraOptions = value;
+        }
+
         /// <summary>
         /// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
         /// Valid values are `AL2`, `AL2023` and `Bottlerocket`.

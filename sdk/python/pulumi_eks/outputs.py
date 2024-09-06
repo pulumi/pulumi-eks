@@ -20,6 +20,7 @@ __all__ = [
     'ClusterNodeGroupOptions',
     'CoreData',
     'NodeGroupData',
+    'NodeadmOptions',
     'Taint',
 ]
 
@@ -258,6 +259,8 @@ class ClusterNodeGroupOptions(dict):
             suggest = "node_user_data"
         elif key == "nodeUserDataOverride":
             suggest = "node_user_data_override"
+        elif key == "nodeadmExtraOptions":
+            suggest = "nodeadm_extra_options"
         elif key == "operatingSystem":
             suggest = "operating_system"
         elif key == "spotPrice":
@@ -306,6 +309,7 @@ class ClusterNodeGroupOptions(dict):
                  node_subnet_ids: Optional[Sequence[str]] = None,
                  node_user_data: Optional[str] = None,
                  node_user_data_override: Optional[str] = None,
+                 nodeadm_extra_options: Optional[Sequence['outputs.NodeadmOptions']] = None,
                  operating_system: Optional['OperatingSystem'] = None,
                  spot_price: Optional[str] = None,
                  taints: Optional[Mapping[str, 'outputs.Taint']] = None,
@@ -398,6 +402,15 @@ class ClusterNodeGroupOptions(dict):
         :param str node_user_data_override: User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+        :param Sequence['NodeadmOptions'] nodeadm_extra_options: Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+               The base settings are:
+                 - cluster.name
+                 - cluster.apiServerEndpoint
+                 - cluster.certificateAuthority
+                 - cluster.cidr
+               
+               Note: This is only applicable when using AL2023.
+               See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
         :param 'OperatingSystem' operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
                Valid values are `AL2`, `AL2023` and `Bottlerocket`.
                
@@ -468,6 +481,8 @@ class ClusterNodeGroupOptions(dict):
             pulumi.set(__self__, "node_user_data", node_user_data)
         if node_user_data_override is not None:
             pulumi.set(__self__, "node_user_data_override", node_user_data_override)
+        if nodeadm_extra_options is not None:
+            pulumi.set(__self__, "nodeadm_extra_options", nodeadm_extra_options)
         if operating_system is not None:
             pulumi.set(__self__, "operating_system", operating_system)
         if spot_price is not None:
@@ -779,6 +794,22 @@ class ClusterNodeGroupOptions(dict):
         See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
         """
         return pulumi.get(self, "node_user_data_override")
+
+    @property
+    @pulumi.getter(name="nodeadmExtraOptions")
+    def nodeadm_extra_options(self) -> Optional[Sequence['outputs.NodeadmOptions']]:
+        """
+        Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+        The base settings are:
+          - cluster.name
+          - cluster.apiServerEndpoint
+          - cluster.certificateAuthority
+          - cluster.cidr
+
+        Note: This is only applicable when using AL2023.
+        See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        """
+        return pulumi.get(self, "nodeadm_extra_options")
 
     @property
     @pulumi.getter(name="operatingSystem")
@@ -1179,6 +1210,60 @@ class NodeGroupData(dict):
         The security group for the node group to communicate with the cluster.
         """
         return pulumi.get(self, "node_security_group")
+
+
+@pulumi.output_type
+class NodeadmOptions(dict):
+    """
+    MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
+
+    See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+    """
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "contentType":
+            suggest = "content_type"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in NodeadmOptions. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        NodeadmOptions.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        NodeadmOptions.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 content: str,
+                 content_type: str):
+        """
+        MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
+
+        See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        :param str content: The ARN of the access policy to associate with the principal
+        :param str content_type: The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
+        """
+        pulumi.set(__self__, "content", content)
+        pulumi.set(__self__, "content_type", content_type)
+
+    @property
+    @pulumi.getter
+    def content(self) -> str:
+        """
+        The ARN of the access policy to associate with the principal
+        """
+        return pulumi.get(self, "content")
+
+    @property
+    @pulumi.getter(name="contentType")
+    def content_type(self) -> str:
+        """
+        The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
+        """
+        return pulumi.get(self, "content_type")
 
 
 @pulumi.output_type

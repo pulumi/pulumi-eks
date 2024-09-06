@@ -416,6 +416,16 @@ type ClusterNodeGroupOptions struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
 	NodeUserDataOverride *string `pulumi:"nodeUserDataOverride"`
+	// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+	// The base settings are:
+	//   - cluster.name
+	//   - cluster.apiServerEndpoint
+	//   - cluster.certificateAuthority
+	//   - cluster.cidr
+	//
+	// Note: This is only applicable when using AL2023.
+	// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+	NodeadmExtraOptions []NodeadmOptions `pulumi:"nodeadmExtraOptions"`
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 	//
@@ -559,6 +569,16 @@ type ClusterNodeGroupOptionsArgs struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
 	NodeUserDataOverride pulumi.StringPtrInput `pulumi:"nodeUserDataOverride"`
+	// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+	// The base settings are:
+	//   - cluster.name
+	//   - cluster.apiServerEndpoint
+	//   - cluster.certificateAuthority
+	//   - cluster.cidr
+	//
+	// Note: This is only applicable when using AL2023.
+	// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+	NodeadmExtraOptions NodeadmOptionsArrayInput `pulumi:"nodeadmExtraOptions"`
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 	//
@@ -858,6 +878,19 @@ func (o ClusterNodeGroupOptionsOutput) NodeUserData() pulumi.StringPtrOutput {
 // See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
 func (o ClusterNodeGroupOptionsOutput) NodeUserDataOverride() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.NodeUserDataOverride }).(pulumi.StringPtrOutput)
+}
+
+// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+// The base settings are:
+//   - cluster.name
+//   - cluster.apiServerEndpoint
+//   - cluster.certificateAuthority
+//   - cluster.cidr
+//
+// Note: This is only applicable when using AL2023.
+// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+func (o ClusterNodeGroupOptionsOutput) NodeadmExtraOptions() NodeadmOptionsArrayOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) []NodeadmOptions { return v.NodeadmExtraOptions }).(NodeadmOptionsArrayOutput)
 }
 
 // The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
@@ -1270,6 +1303,24 @@ func (o ClusterNodeGroupOptionsPtrOutput) NodeUserDataOverride() pulumi.StringPt
 		}
 		return v.NodeUserDataOverride
 	}).(pulumi.StringPtrOutput)
+}
+
+// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+// The base settings are:
+//   - cluster.name
+//   - cluster.apiServerEndpoint
+//   - cluster.certificateAuthority
+//   - cluster.cidr
+//
+// Note: This is only applicable when using AL2023.
+// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+func (o ClusterNodeGroupOptionsPtrOutput) NodeadmExtraOptions() NodeadmOptionsArrayOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) []NodeadmOptions {
+		if v == nil {
+			return nil
+		}
+		return v.NodeadmExtraOptions
+	}).(NodeadmOptionsArrayOutput)
 }
 
 // The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
@@ -2202,6 +2253,121 @@ func (o NodeGroupDataPtrOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
 		}
 		return v.NodeSecurityGroup
 	}).(ec2.SecurityGroupOutput)
+}
+
+// MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
+//
+// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+type NodeadmOptions struct {
+	// The ARN of the access policy to associate with the principal
+	Content string `pulumi:"content"`
+	// The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
+	ContentType string `pulumi:"contentType"`
+}
+
+// NodeadmOptionsInput is an input type that accepts NodeadmOptionsArgs and NodeadmOptionsOutput values.
+// You can construct a concrete instance of `NodeadmOptionsInput` via:
+//
+//	NodeadmOptionsArgs{...}
+type NodeadmOptionsInput interface {
+	pulumi.Input
+
+	ToNodeadmOptionsOutput() NodeadmOptionsOutput
+	ToNodeadmOptionsOutputWithContext(context.Context) NodeadmOptionsOutput
+}
+
+// MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
+//
+// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+type NodeadmOptionsArgs struct {
+	// The ARN of the access policy to associate with the principal
+	Content pulumi.StringInput `pulumi:"content"`
+	// The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
+	ContentType pulumi.StringInput `pulumi:"contentType"`
+}
+
+func (NodeadmOptionsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*NodeadmOptions)(nil)).Elem()
+}
+
+func (i NodeadmOptionsArgs) ToNodeadmOptionsOutput() NodeadmOptionsOutput {
+	return i.ToNodeadmOptionsOutputWithContext(context.Background())
+}
+
+func (i NodeadmOptionsArgs) ToNodeadmOptionsOutputWithContext(ctx context.Context) NodeadmOptionsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NodeadmOptionsOutput)
+}
+
+// NodeadmOptionsArrayInput is an input type that accepts NodeadmOptionsArray and NodeadmOptionsArrayOutput values.
+// You can construct a concrete instance of `NodeadmOptionsArrayInput` via:
+//
+//	NodeadmOptionsArray{ NodeadmOptionsArgs{...} }
+type NodeadmOptionsArrayInput interface {
+	pulumi.Input
+
+	ToNodeadmOptionsArrayOutput() NodeadmOptionsArrayOutput
+	ToNodeadmOptionsArrayOutputWithContext(context.Context) NodeadmOptionsArrayOutput
+}
+
+type NodeadmOptionsArray []NodeadmOptionsInput
+
+func (NodeadmOptionsArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]NodeadmOptions)(nil)).Elem()
+}
+
+func (i NodeadmOptionsArray) ToNodeadmOptionsArrayOutput() NodeadmOptionsArrayOutput {
+	return i.ToNodeadmOptionsArrayOutputWithContext(context.Background())
+}
+
+func (i NodeadmOptionsArray) ToNodeadmOptionsArrayOutputWithContext(ctx context.Context) NodeadmOptionsArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NodeadmOptionsArrayOutput)
+}
+
+// MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
+//
+// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+type NodeadmOptionsOutput struct{ *pulumi.OutputState }
+
+func (NodeadmOptionsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*NodeadmOptions)(nil)).Elem()
+}
+
+func (o NodeadmOptionsOutput) ToNodeadmOptionsOutput() NodeadmOptionsOutput {
+	return o
+}
+
+func (o NodeadmOptionsOutput) ToNodeadmOptionsOutputWithContext(ctx context.Context) NodeadmOptionsOutput {
+	return o
+}
+
+// The ARN of the access policy to associate with the principal
+func (o NodeadmOptionsOutput) Content() pulumi.StringOutput {
+	return o.ApplyT(func(v NodeadmOptions) string { return v.Content }).(pulumi.StringOutput)
+}
+
+// The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
+func (o NodeadmOptionsOutput) ContentType() pulumi.StringOutput {
+	return o.ApplyT(func(v NodeadmOptions) string { return v.ContentType }).(pulumi.StringOutput)
+}
+
+type NodeadmOptionsArrayOutput struct{ *pulumi.OutputState }
+
+func (NodeadmOptionsArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]NodeadmOptions)(nil)).Elem()
+}
+
+func (o NodeadmOptionsArrayOutput) ToNodeadmOptionsArrayOutput() NodeadmOptionsArrayOutput {
+	return o
+}
+
+func (o NodeadmOptionsArrayOutput) ToNodeadmOptionsArrayOutputWithContext(ctx context.Context) NodeadmOptionsArrayOutput {
+	return o
+}
+
+func (o NodeadmOptionsArrayOutput) Index(i pulumi.IntInput) NodeadmOptionsOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) NodeadmOptions {
+		return vs[0].([]NodeadmOptions)[vs[1].(int)]
+	}).(NodeadmOptionsOutput)
 }
 
 // Describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -3416,6 +3582,8 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*FargateProfilePtrInput)(nil)).Elem(), FargateProfileArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*KubeconfigOptionsInput)(nil)).Elem(), KubeconfigOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*KubeconfigOptionsPtrInput)(nil)).Elem(), KubeconfigOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeadmOptionsInput)(nil)).Elem(), NodeadmOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeadmOptionsArrayInput)(nil)).Elem(), NodeadmOptionsArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*RoleMappingInput)(nil)).Elem(), RoleMappingArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*RoleMappingArrayInput)(nil)).Elem(), RoleMappingArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*StorageClassInput)(nil)).Elem(), StorageClassArgs{})
@@ -3441,6 +3609,8 @@ func init() {
 	pulumi.RegisterOutputType(KubeconfigOptionsPtrOutput{})
 	pulumi.RegisterOutputType(NodeGroupDataOutput{})
 	pulumi.RegisterOutputType(NodeGroupDataPtrOutput{})
+	pulumi.RegisterOutputType(NodeadmOptionsOutput{})
+	pulumi.RegisterOutputType(NodeadmOptionsArrayOutput{})
 	pulumi.RegisterOutputType(RoleMappingOutput{})
 	pulumi.RegisterOutputType(RoleMappingArrayOutput{})
 	pulumi.RegisterOutputType(StorageClassOutput{})

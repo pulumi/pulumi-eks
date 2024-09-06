@@ -117,6 +117,16 @@ type managedNodeGroupArgs struct {
 	//
 	// Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
 	NodeRoleArn *string `pulumi:"nodeRoleArn"`
+	// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+	// The base settings are:
+	//   - cluster.name
+	//   - cluster.apiServerEndpoint
+	//   - cluster.certificateAuthority
+	//   - cluster.cidr
+	//
+	// Note: This is only applicable when using AL2023.
+	// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+	NodeadmExtraOptions []NodeadmOptions `pulumi:"nodeadmExtraOptions"`
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 	//
@@ -227,6 +237,16 @@ type ManagedNodeGroupArgs struct {
 	//
 	// Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
 	NodeRoleArn pulumi.StringPtrInput
+	// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+	// The base settings are:
+	//   - cluster.name
+	//   - cluster.apiServerEndpoint
+	//   - cluster.certificateAuthority
+	//   - cluster.cidr
+	//
+	// Note: This is only applicable when using AL2023.
+	// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+	NodeadmExtraOptions NodeadmOptionsArrayInput
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 	//
