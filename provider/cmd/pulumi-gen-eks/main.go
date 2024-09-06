@@ -933,14 +933,16 @@ func generateSchema() schema.PackageSpec {
 						Description: "Extra nodeadm configuration sections to be added to the nodeadm user data. " +
 							"This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. " +
 							"When configuring additional nodeadm NodeConfig sections, they'll be merged with the base " +
-							"settings the provider sets.\n" +
-							"The base settings are:\n" +
+							"settings the provider sets. You can overwrite base settings or provide additional settings this way.\n" +
+							"The base settings the provider sets are:\n" +
 							"  - cluster.name\n" +
 							"  - cluster.apiServerEndpoint\n" +
 							"  - cluster.certificateAuthority\n" +
 							"  - cluster.cidr\n\n" +
 							"Note: This is only applicable when using AL2023.\n" +
-							"See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.",
+							"See for more details:\n" +
+							"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n" +
+							"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/",
 					},
 				},
 				RequiredInputs: []string{"cluster"},

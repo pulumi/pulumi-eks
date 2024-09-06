@@ -222,15 +222,17 @@ namespace Pulumi.Eks
         private InputList<Inputs.NodeadmOptionsArgs>? _nodeadmExtraOptions;
 
         /// <summary>
-        /// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
-        /// The base settings are:
+        /// Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+        /// The base settings the provider sets are:
         ///   - cluster.name
         ///   - cluster.apiServerEndpoint
         ///   - cluster.certificateAuthority
         ///   - cluster.cidr
         /// 
         /// Note: This is only applicable when using AL2023.
-        /// See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        /// See for more details:
+        ///   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+        ///   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
         /// </summary>
         public InputList<Inputs.NodeadmOptionsArgs> NodeadmExtraOptions
         {

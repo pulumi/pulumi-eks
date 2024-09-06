@@ -355,7 +355,7 @@
                     "items": {
                         "$ref": "#/types/eks:index:NodeadmOptions"
                     },
-                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.\nThe base settings are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/."
+                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.\nThe base settings the provider sets are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details:\n  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/"
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
@@ -1387,7 +1387,7 @@
                     "items": {
                         "$ref": "#/types/eks:index:NodeadmOptions"
                     },
-                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.\nThe base settings are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/."
+                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.\nThe base settings the provider sets are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details:\n  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/"
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
@@ -1633,7 +1633,7 @@
                     "items": {
                         "$ref": "#/types/eks:index:NodeadmOptions"
                     },
-                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.\nThe base settings are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/."
+                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.\nThe base settings the provider sets are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details:\n  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/"
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
@@ -1906,7 +1906,7 @@
                     "items": {
                         "$ref": "#/types/eks:index:NodeadmOptions"
                     },
-                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.\nThe base settings are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/."
+                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.\nThe base settings the provider sets are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details:\n  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/"
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",

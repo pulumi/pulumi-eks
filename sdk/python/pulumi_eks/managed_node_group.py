@@ -104,15 +104,17 @@ class ManagedNodeGroupArgs:
         :param pulumi.Input[str] node_role_arn: Amazon Resource Name (ARN) of the IAM Role that provides permissions for the EKS Node Group.
                
                Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
-        :param pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]] nodeadm_extra_options: Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
-               The base settings are:
+        :param pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]] nodeadm_extra_options: Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+               The base settings the provider sets are:
                  - cluster.name
                  - cluster.apiServerEndpoint
                  - cluster.certificateAuthority
                  - cluster.cidr
                
                Note: This is only applicable when using AL2023.
-               See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+               See for more details:
+                 - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+                 - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
                Valid values are `AL2`, `AL2023` and `Bottlerocket`.
                
@@ -463,15 +465,17 @@ class ManagedNodeGroupArgs:
     @pulumi.getter(name="nodeadmExtraOptions")
     def nodeadm_extra_options(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]]:
         """
-        Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
-        The base settings are:
+        Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+        The base settings the provider sets are:
           - cluster.name
           - cluster.apiServerEndpoint
           - cluster.certificateAuthority
           - cluster.cidr
 
         Note: This is only applicable when using AL2023.
-        See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        See for more details:
+          - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+          - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
         """
         return pulumi.get(self, "nodeadm_extra_options")
 
@@ -698,15 +702,17 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[str] node_role_arn: Amazon Resource Name (ARN) of the IAM Role that provides permissions for the EKS Node Group.
                
                Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
-        :param pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]] nodeadm_extra_options: Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
-               The base settings are:
+        :param pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]] nodeadm_extra_options: Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+               The base settings the provider sets are:
                  - cluster.name
                  - cluster.apiServerEndpoint
                  - cluster.certificateAuthority
                  - cluster.cidr
                
                Note: This is only applicable when using AL2023.
-               See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+               See for more details:
+                 - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+                 - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
                Valid values are `AL2`, `AL2023` and `Bottlerocket`.
                
