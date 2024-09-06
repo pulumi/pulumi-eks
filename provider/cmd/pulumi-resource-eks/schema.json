@@ -350,6 +350,13 @@
                     "type": "string",
                     "description": "User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html"
                 },
+                "nodeadmExtraOptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/eks:index:NodeadmOptions"
+                    },
+                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.\nThe base settings are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/."
+                },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
                     "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2`."
@@ -581,6 +588,24 @@
                 "extraNodeSecurityGroups",
                 "cfnStack",
                 "autoScalingGroupName"
+            ]
+        },
+        "eks:index:NodeadmOptions": {
+            "description": "MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.\n\nSee for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "description": "The ARN of the access policy to associate with the principal"
+                },
+                "contentType": {
+                    "type": "string",
+                    "description": "The MIME type of the content. Examples are `text/x-shellscript; charset=\"us-ascii\"` for shell scripts, and `application/node.eks.aws` nodeadm configuration."
+                }
+            },
+            "type": "object",
+            "required": [
+                "content",
+                "contentType"
             ]
         },
         "eks:index:OperatingSystem": {
@@ -1357,6 +1382,13 @@
                     "type": "string",
                     "description": "Amazon Resource Name (ARN) of the IAM Role that provides permissions for the EKS Node Group.\n\nNote, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used."
                 },
+                "nodeadmExtraOptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/eks:index:NodeadmOptions"
+                    },
+                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.\nThe base settings are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/."
+                },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
                     "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2`."
@@ -1595,6 +1627,13 @@
                 "nodeUserDataOverride": {
                     "type": "string",
                     "description": "User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html"
+                },
+                "nodeadmExtraOptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/eks:index:NodeadmOptions"
+                    },
+                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.\nThe base settings are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/."
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
@@ -1861,6 +1900,13 @@
                 "nodeUserDataOverride": {
                     "type": "string",
                     "description": "User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html"
+                },
+                "nodeadmExtraOptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/eks:index:NodeadmOptions"
+                    },
+                    "description": "Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.\nThe base settings are:\n  - cluster.name\n  - cluster.apiServerEndpoint\n  - cluster.certificateAuthority\n  - cluster.cidr\n\nNote: This is only applicable when using AL2023.\nSee for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/."
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
