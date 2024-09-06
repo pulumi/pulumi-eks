@@ -45,7 +45,17 @@ func NewManagedNodeGroup(ctx *pulumi.Context,
 }
 
 type managedNodeGroupArgs struct {
-	// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+	// The AMI ID to use for the worker nodes.
+	// Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+	//
+	// Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+	//
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+	AmiId *string `pulumi:"amiId"`
+	// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+	// Note: `amiType` and `amiId` are mutually exclusive.
+	//
+	// See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
 	AmiType *string `pulumi:"amiType"`
 	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 	//
@@ -77,6 +87,13 @@ type managedNodeGroupArgs struct {
 	EnableIMDSv2 *bool `pulumi:"enableIMDSv2"`
 	// Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
 	ForceUpdateVersion *bool `pulumi:"forceUpdateVersion"`
+	// Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+	// Defaults to false.
+	//
+	// Note: `gpu` and `amiId` are mutually exclusive.
+	//
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+	Gpu *bool `pulumi:"gpu"`
 	// Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
 	InstanceTypes []string `pulumi:"instanceTypes"`
 	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
@@ -128,13 +145,27 @@ type managedNodeGroupArgs struct {
 	// Key-value mapping of resource tags.
 	Tags map[string]string `pulumi:"tags"`
 	// The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
-	Taints  []eks.NodeGroupTaint `pulumi:"taints"`
-	Version *string              `pulumi:"version"`
+	Taints []eks.NodeGroupTaint `pulumi:"taints"`
+	// User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+	//
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
+	UserData *string `pulumi:"userData"`
+	Version  *string `pulumi:"version"`
 }
 
 // The set of arguments for constructing a ManagedNodeGroup resource.
 type ManagedNodeGroupArgs struct {
-	// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+	// The AMI ID to use for the worker nodes.
+	// Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+	//
+	// Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+	//
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+	AmiId pulumi.StringPtrInput
+	// Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+	// Note: `amiType` and `amiId` are mutually exclusive.
+	//
+	// See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
 	AmiType pulumi.StringPtrInput
 	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
 	//
@@ -166,6 +197,13 @@ type ManagedNodeGroupArgs struct {
 	EnableIMDSv2 *bool
 	// Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
 	ForceUpdateVersion pulumi.BoolPtrInput
+	// Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+	// Defaults to false.
+	//
+	// Note: `gpu` and `amiId` are mutually exclusive.
+	//
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+	Gpu pulumi.BoolPtrInput
 	// Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
 	InstanceTypes pulumi.StringArrayInput
 	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
@@ -217,8 +255,12 @@ type ManagedNodeGroupArgs struct {
 	// Key-value mapping of resource tags.
 	Tags pulumi.StringMapInput
 	// The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
-	Taints  eks.NodeGroupTaintArrayInput
-	Version pulumi.StringPtrInput
+	Taints eks.NodeGroupTaintArrayInput
+	// User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+	//
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
+	UserData pulumi.StringPtrInput
+	Version  pulumi.StringPtrInput
 }
 
 func (ManagedNodeGroupArgs) ElementType() reflect.Type {

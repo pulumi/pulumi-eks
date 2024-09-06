@@ -731,7 +731,7 @@ func generateSchema() schema.PackageSpec {
 					"amiType": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "Type of Amazon Machine Image (AMI) associated with the EKS Node Group. " +
-							"Defaults to `AL2_x86_64`. See the AWS documentation " +
+							"Defaults to `AL2_x86_64`.\nNote: `amiType` and `amiId` are mutually exclusive.\n\nSee the AWS documentation " +
 							"(https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) " +
 							"for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.",
 					},
@@ -904,6 +904,26 @@ func generateSchema() schema.PackageSpec {
 							"  - settings.kubernetes.cluster-name\n" +
 							"  - settings.kubernetes.cluster-dns-ip\n\n" +
 							"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
+					},
+					"userData": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "User specified code to run on node startup. This is expected to handle " +
+							"the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.\n\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.",
+					},
+					"gpu": {
+						TypeSpec: schema.TypeSpec{Type: "boolean"},
+						Description: "Use the latest recommended EKS Optimized AMI with GPU support for the " +
+							"worker nodes.\nDefaults to false.\n\n" +
+							"Note: `gpu` and `amiId` are mutually exclusive.\n\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.",
+					},
+					"amiId": {
+						TypeSpec: schema.TypeSpec{Type: "string"},
+						Description: "The AMI ID to use for the worker nodes.\nDefaults to the latest recommended " +
+							"EKS Optimized AMI from the AWS Systems Manager Parameter Store.\n\n" +
+							"Note: `amiId` is mutually exclusive with `gpu` and `amiType`.\n\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.",
 					},
 				},
 				RequiredInputs: []string{"cluster"},
