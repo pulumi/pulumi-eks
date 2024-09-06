@@ -883,6 +883,7 @@ func TestAccManagedNodeGroupOS(t *testing.T) {
 				)
 
 				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
+				assert.NoError(t, utils.ValidateNodeStorage(t, info.Outputs["kubeconfig"], 4, 100*1_000_000_000, "increased-storage-capacity"))
 			},
 		})
 
@@ -904,6 +905,7 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 				)
 
 				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
+				assert.NoError(t, utils.ValidateNodeStorage(t, info.Outputs["kubeconfig"], 4, 100*1_000_000_000, "increased-storage-capacity"))
 			},
 		})
 

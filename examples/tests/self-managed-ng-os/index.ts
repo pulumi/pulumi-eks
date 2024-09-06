@@ -51,6 +51,16 @@ const nodeGroupAL2023V1 = new eks.NodeGroup("al-2023-v1-ng", {
   instanceProfile: instanceProfile,
 });
 
+const nodeGroupAL2023V1Storage = new eks.NodeGroup("al-2023-v1-storage-ng", {
+  ...capacity,
+  cluster: cluster,
+  instanceType: "t3.medium",
+  operatingSystem: eks.OperatingSystem.AL2023,
+  instanceProfile: instanceProfile,
+  labels: {"increased-storage-capacity": "true"},
+  nodeRootVolumeSize: 100,
+});
+
 const nodeGroupAL2023V1Userdata = new eks.NodeGroup("al-2023-v1-userdata-ng", {
   ...capacity,
   cluster: cluster,
@@ -67,6 +77,16 @@ const nodeGroupBottlerocketV1 = new eks.NodeGroup("bottlerocket-v1-ng", {
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceProfile: instanceProfile,
+});
+
+const nodeGroupBottlerocketV1Storage = new eks.NodeGroup("bottlerocket-v1-storage-ng", {
+  ...capacity,
+  cluster: cluster,
+  instanceType: "t3.medium",
+  operatingSystem: eks.OperatingSystem.Bottlerocket,
+  instanceProfile: instanceProfile,
+  labels: {"increased-storage-capacity": "true"},
+  nodeRootVolumeSize: 100,
 });
 
 const nodeGroupBottlerocketV1Userdata = new eks.NodeGroup("bottlerocket-v1-userdata-ng", {
@@ -91,6 +111,16 @@ const nodeGroupAL2023 = new eks.NodeGroupV2("al-2023-ng", {
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
   labels: {"ondemand": "true"},
+  instanceProfile: instanceProfile,
+});
+
+const nodeGroupAL2023Storage = new eks.NodeGroupV2("al-2023-storage-ng", {
+  ...capacity,
+  cluster: cluster,
+  instanceType: "t3.medium",
+  operatingSystem: eks.OperatingSystem.AL2023,
+  nodeRootVolumeSize: 100,
+  labels: {"increased-storage-capacity": "true"},
   instanceProfile: instanceProfile,
 });
 
@@ -119,6 +149,16 @@ const nodeGroupBottlerocket = new eks.NodeGroupV2("bottlerocket-ng", {
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   labels: {"ondemand": "true"},
+  instanceProfile: instanceProfile,
+});
+
+const nodeGroupBottlerocketStorage = new eks.NodeGroupV2("bottlerocket-storage-ng", {
+  ...capacity,
+  cluster: cluster,
+  instanceType: "t3.medium",
+  operatingSystem: eks.OperatingSystem.Bottlerocket,
+  labels: {"increased-storage-capacity": "true"},
+  nodeRootVolumeSize: 100,
   instanceProfile: instanceProfile,
 });
 
