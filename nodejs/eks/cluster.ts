@@ -639,7 +639,7 @@ export function createCore(
                 })
                 .apply((addonVersion) => addonVersion.version);
 
-            const kubeProxyAddon = new aws.eks.Addon("kube-proxy", {
+            const kubeProxyAddon = new aws.eks.Addon(`${name}-kube-proxy`, {
                 clusterName: eksCluster.name,
                 addonName: "kube-proxy",
                 resolveConflictsOnCreate: "OVERWRITE",
@@ -662,7 +662,7 @@ export function createCore(
                 })
                 .apply((addonVersion) => addonVersion.version);
 
-            const corednsAddon = new aws.eks.Addon("coredns", {
+            const corednsAddon = new aws.eks.Addon(`${name}-coredns`, {
                 clusterName: eksCluster.name,
                 addonName: "coredns",
                 addonVersion: corednsVersion,
