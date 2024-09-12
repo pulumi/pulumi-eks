@@ -627,6 +627,52 @@ export function createCore(
         },
     );
 
+    const addonsToRemove = pulumi.output(args.defaultAddonsToRemove);
+    const fargate = pulumi.output(args.fargate);
+    pulumi.all([addonsToRemove, fargate]).apply(([toRemove, fargate]) => {
+        if (!toRemove?.includes("kube-proxy")) {
+            const kubeProxyVersion = aws.eks
+                .getAddonVersionOutput({
+                    addonName: "kube-proxy",
+                    kubernetesVersion: eksCluster.version,
+                    mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                })
+                .apply((addonVersion) => addonVersion.version);
+
+            const kubeProxyAddon = new aws.eks.Addon("kube-proxy", {
+                clusterName: eksCluster.name,
+                addonName: "kube-proxy",
+                resolveConflictsOnCreate: "OVERWRITE",
+                resolveConflictsOnUpdate: "PRESERVE",
+                addonVersion: kubeProxyVersion,
+            });
+        }
+        if (!toRemove?.includes("coredns")) {
+            let configurationValues: string | undefined = undefined;
+            if (fargate) {
+                configurationValues = JSON.stringify({
+                    computeType: "Fargate",
+                });
+            }
+            const corednsVersion = aws.eks
+                .getAddonVersionOutput({
+                    addonName: "coredns",
+                    kubernetesVersion: eksCluster.version,
+                    mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                })
+                .apply((addonVersion) => addonVersion.version);
+
+            const corednsAddon = new aws.eks.Addon("coredns", {
+                clusterName: eksCluster.name,
+                addonName: "coredns",
+                addonVersion: corednsVersion,
+                resolveConflictsOnCreate: "OVERWRITE",
+                resolveConflictsOnUpdate: "PRESERVE",
+                configurationValues,
+            });
+        }
+    });
+
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
     // there is time for the cluster API server to become completely available.  Ideally we
@@ -965,64 +1011,6 @@ export function createCore(
                     },
                     { parent, dependsOn: eksNodeAccess ? [eksNodeAccess] : undefined, provider },
                 );
-
-                // Once the FargateProfile has been created, try to patch/remove the CoreDNS computeType annotation.  See
-                // https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-coredns.
-                pulumi.all([result.id, selectors, kubeconfig]).apply(([_, sels, kconfig]) => {
-                    // Only patch CoreDNS if there is a selector in the FargateProfile which causes
-                    // `kube-system` pods to launch in Fargate.
-                    if (sels.findIndex((s) => s.namespace === "kube-system") !== -1) {
-                        // Only do the imperative patching during deployments, not previews.
-                        if (!pulumi.runtime.isDryRun()) {
-                            // Write the kubeconfig to a tmp file and use it to patch the `coredns`
-                            // deployment that AWS deployed already as part of cluster creation.
-                            const tmpKubeconfig = tmp.fileSync();
-                            fs.writeFileSync(tmpKubeconfig.fd, JSON.stringify(kconfig));
-
-                            // Determine if the CoreDNS deployment has a computeType annotation.
-                            const cmdGetAnnos = `kubectl get deployment coredns -n kube-system -o jsonpath='{.spec.template.metadata.annotations}'`;
-                            const getAnnosOutput = childProcess.execSync(cmdGetAnnos, {
-                                env: {
-                                    ...process.env,
-                                    KUBECONFIG: tmpKubeconfig.name,
-                                },
-                            });
-                            const getAnnosOutputStr = getAnnosOutput.toString();
-                            // See if getAnnosOutputStr contains the annotation we're looking for.
-                            if (!getAnnosOutputStr.includes("eks.amazonaws.com/compute-type")) {
-                                // No need to patch the deployment object since the annotation is not present. However, we need to re-create the CoreDNS pods since
-                                // the existing pods were created before the FargateProfile was created, and therefore will not have been scheduled by fargate-scheduler.
-                                // See: https://github.com/pulumi/pulumi-eks/issues/1030.
-                                const cmd = `kubectl rollout restart deployment coredns -n kube-system`;
-
-                                childProcess.execSync(cmd, {
-                                    env: {
-                                        ...process.env,
-                                        KUBECONFIG: tmpKubeconfig.name,
-                                    },
-                                });
-
-                                return;
-                            }
-
-                            const patch = [
-                                {
-                                    op: "remove",
-                                    path: "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type",
-                                },
-                            ];
-                            const cmd = `kubectl patch deployment coredns -n kube-system --type json -p='${JSON.stringify(
-                                patch,
-                            )}'`;
-                            childProcess.execSync(cmd, {
-                                env: {
-                                    ...process.env,
-                                    KUBECONFIG: tmpKubeconfig.name,
-                                },
-                            });
-                        }
-                    }
-                });
             }
             return result;
         });
