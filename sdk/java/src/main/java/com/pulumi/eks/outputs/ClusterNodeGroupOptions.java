@@ -8,6 +8,7 @@ import com.pulumi.aws.ec2.SecurityGroupRule;
 import com.pulumi.aws.iam.InstanceProfile;
 import com.pulumi.core.annotations.CustomType;
 import com.pulumi.eks.enums.OperatingSystem;
+import com.pulumi.eks.outputs.NodeadmOptions;
 import com.pulumi.eks.outputs.Taint;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -231,6 +232,21 @@ public final class ClusterNodeGroupOptions {
      * 
      */
     private @Nullable String nodeUserDataOverride;
+    /**
+     * @return Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they&#39;ll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+     * The base settings the provider sets are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     * 
+     * Note: This is only applicable when using AL2023.
+     * See for more details:
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+     * 
+     */
+    private @Nullable List<NodeadmOptions> nodeadmExtraOptions;
     /**
      * @return The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
      * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
@@ -529,6 +545,23 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.nodeUserDataOverride);
     }
     /**
+     * @return Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they&#39;ll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+     * The base settings the provider sets are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     * 
+     * Note: This is only applicable when using AL2023.
+     * See for more details:
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+     * 
+     */
+    public List<NodeadmOptions> nodeadmExtraOptions() {
+        return this.nodeadmExtraOptions == null ? List.of() : this.nodeadmExtraOptions;
+    }
+    /**
      * @return The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
      * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
      * 
@@ -600,6 +633,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable List<String> nodeSubnetIds;
         private @Nullable String nodeUserData;
         private @Nullable String nodeUserDataOverride;
+        private @Nullable List<NodeadmOptions> nodeadmExtraOptions;
         private @Nullable OperatingSystem operatingSystem;
         private @Nullable String spotPrice;
         private @Nullable Map<String,Taint> taints;
@@ -638,6 +672,7 @@ public final class ClusterNodeGroupOptions {
     	      this.nodeSubnetIds = defaults.nodeSubnetIds;
     	      this.nodeUserData = defaults.nodeUserData;
     	      this.nodeUserDataOverride = defaults.nodeUserDataOverride;
+    	      this.nodeadmExtraOptions = defaults.nodeadmExtraOptions;
     	      this.operatingSystem = defaults.operatingSystem;
     	      this.spotPrice = defaults.spotPrice;
     	      this.taints = defaults.taints;
@@ -806,6 +841,14 @@ public final class ClusterNodeGroupOptions {
             return this;
         }
         @CustomType.Setter
+        public Builder nodeadmExtraOptions(@Nullable List<NodeadmOptions> nodeadmExtraOptions) {
+            this.nodeadmExtraOptions = nodeadmExtraOptions;
+            return this;
+        }
+        public Builder nodeadmExtraOptions(NodeadmOptions... nodeadmExtraOptions) {
+            return nodeadmExtraOptions(List.of(nodeadmExtraOptions));
+        }
+        @CustomType.Setter
         public Builder operatingSystem(@Nullable OperatingSystem operatingSystem) {
             this.operatingSystem = operatingSystem;
             return this;
@@ -858,6 +901,7 @@ public final class ClusterNodeGroupOptions {
             _resultValue.nodeSubnetIds = nodeSubnetIds;
             _resultValue.nodeUserData = nodeUserData;
             _resultValue.nodeUserDataOverride = nodeUserDataOverride;
+            _resultValue.nodeadmExtraOptions = nodeadmExtraOptions;
             _resultValue.operatingSystem = operatingSystem;
             _resultValue.spotPrice = spotPrice;
             _resultValue.taints = taints;

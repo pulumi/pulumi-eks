@@ -28,7 +28,11 @@ spec:
 --BOUNDARY
 Content-Type: application/node.eks.aws
 
----
+${customFlags(kubeletFlags)}`.apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
+}
+
+export function customFlags(kubeletFlags: string): string {
+    return `---
 apiVersion: node.eks.aws/v1alpha1
 kind: NodeConfig
 spec:
@@ -37,5 +41,5 @@ spec:
       - '${kubeletFlags}'
 
 --BOUNDARY--
-`.apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
+`;
 }
