@@ -1,3 +1,4 @@
+
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
@@ -186,4 +187,22 @@ const managedNodeGroupAL2023CustomUserData = eks.createManagedNodeGroup("al-2023
   diskSize: 100,
   userData: customUserData,
   amiId,
+});
+
+const managedNodeGroupAL2023NodeadmExtraOptions = eks.createManagedNodeGroup("al-2023-mng-extra-options", {
+  ...scalingConfig,
+  operatingSystem: eks.OperatingSystem.AL2023,
+  cluster: cluster,
+  instanceTypes: ["t3.medium"],
+  nodeRole: role,
+  nodeadmExtraOptions: [
+    {
+      contentType: "application/node.eks.aws",
+      content: userdata.customFlags(`--max-pods=${increasedPodCapacity} --node-labels=increased-pod-capacity=true`),
+    },
+    {
+      contentType: `text/x-shellscript; charset="us-ascii"`,
+      content: `#!/bin/bash\necho "Hello Pulumi!"`,
+    },
+  ]
 });
