@@ -14,6 +14,7 @@ import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.Cluster;
 import com.pulumi.eks.enums.OperatingSystem;
 import com.pulumi.eks.inputs.CoreDataArgs;
+import com.pulumi.eks.inputs.NodeadmOptionsArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.Object;
@@ -383,6 +384,41 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     }
 
     /**
+     * Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they&#39;ll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+     * The base settings the provider sets are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     * 
+     * Note: This is only applicable when using AL2023.
+     * See for more details:
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+     * 
+     */
+    @Import(name="nodeadmExtraOptions")
+    private @Nullable Output<List<NodeadmOptionsArgs>> nodeadmExtraOptions;
+
+    /**
+     * @return Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they&#39;ll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+     * The base settings the provider sets are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     * 
+     * Note: This is only applicable when using AL2023.
+     * See for more details:
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+     * 
+     */
+    public Optional<Output<List<NodeadmOptionsArgs>>> nodeadmExtraOptions() {
+        return Optional.ofNullable(this.nodeadmExtraOptions);
+    }
+
+    /**
      * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
      * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
      * 
@@ -565,6 +601,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         this.nodeGroupNamePrefix = $.nodeGroupNamePrefix;
         this.nodeRole = $.nodeRole;
         this.nodeRoleArn = $.nodeRoleArn;
+        this.nodeadmExtraOptions = $.nodeadmExtraOptions;
         this.operatingSystem = $.operatingSystem;
         this.releaseVersion = $.releaseVersion;
         this.remoteAccess = $.remoteAccess;
@@ -1053,6 +1090,67 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          */
         public Builder nodeRoleArn(String nodeRoleArn) {
             return nodeRoleArn(Output.of(nodeRoleArn));
+        }
+
+        /**
+         * @param nodeadmExtraOptions Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they&#39;ll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+         * The base settings the provider sets are:
+         *   - cluster.name
+         *   - cluster.apiServerEndpoint
+         *   - cluster.certificateAuthority
+         *   - cluster.cidr
+         * 
+         * Note: This is only applicable when using AL2023.
+         * See for more details:
+         *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+         *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeadmExtraOptions(@Nullable Output<List<NodeadmOptionsArgs>> nodeadmExtraOptions) {
+            $.nodeadmExtraOptions = nodeadmExtraOptions;
+            return this;
+        }
+
+        /**
+         * @param nodeadmExtraOptions Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they&#39;ll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+         * The base settings the provider sets are:
+         *   - cluster.name
+         *   - cluster.apiServerEndpoint
+         *   - cluster.certificateAuthority
+         *   - cluster.cidr
+         * 
+         * Note: This is only applicable when using AL2023.
+         * See for more details:
+         *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+         *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeadmExtraOptions(List<NodeadmOptionsArgs> nodeadmExtraOptions) {
+            return nodeadmExtraOptions(Output.of(nodeadmExtraOptions));
+        }
+
+        /**
+         * @param nodeadmExtraOptions Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they&#39;ll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+         * The base settings the provider sets are:
+         *   - cluster.name
+         *   - cluster.apiServerEndpoint
+         *   - cluster.certificateAuthority
+         *   - cluster.cidr
+         * 
+         * Note: This is only applicable when using AL2023.
+         * See for more details:
+         *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+         *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeadmExtraOptions(NodeadmOptionsArgs... nodeadmExtraOptions) {
+            return nodeadmExtraOptions(List.of(nodeadmExtraOptions));
         }
 
         /**

@@ -71,6 +71,27 @@ mng_al2023_arm_userdata = eks.ManagedNodeGroup(f'{project_name}-al2023-arm-userd
                                            labels={ "increased-pod-capacity": "true" },
                                            kubelet_extra_args="--max-pods=100")
 
+nodeadm_extra_config = """---
+apiVersion: node.eks.aws/v1alpha1
+kind: NodeConfig
+spec:
+  kubelet:
+    flags:
+      - '--max-pods=100 --node-labels=increased-pod-capacity=true'
+"""
+mng_al2023_arm_nodeadm = eks.ManagedNodeGroup(f'{project_name}-al2023-arm-nodeadm',
+                                           cluster=cluster,
+                                           node_role=role,
+                                           instance_types=["t4g.medium"],
+                                           scaling_config=scaling_config,
+                                           operating_system=eks.OperatingSystem.AL2023,
+                                           nodeadm_extra_options=[
+                                               eks.NodeadmOptionsArgs(
+                                                   content_type="application/node.eks.aws",
+                                                   content=nodeadm_extra_config
+                                                )
+                                           ])
+
 mng_bottlerocket = eks.ManagedNodeGroup(f'{project_name}-bottlerocket',
                                            cluster=cluster,
                                            node_role=role,

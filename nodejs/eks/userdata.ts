@@ -15,7 +15,7 @@
 import * as pulumi from "@pulumi/pulumi";
 
 import { OperatingSystem } from "./ami";
-import { Taint } from "./nodegroup";
+import { NodeadmOptions, Taint } from "./nodegroup";
 import * as jsyaml from "js-yaml";
 import * as toml from "@iarna/toml";
 import * as ipaddr from "ipaddr.js";
@@ -60,6 +60,12 @@ interface BaseUserDataArgs {
      */
     userDataOverride: string | undefined;
     bottlerocketSettings: object | undefined;
+    nodeadmExtraOptions:
+        | {
+              content: string;
+              contentType: string;
+          }[]
+        | undefined;
 }
 
 // common arguments of self-managed node groups
@@ -77,6 +83,7 @@ interface BaseSelfManagedNodeUserDataArgs extends BaseUserDataArgs {
 
 type CustomUserDataArgs = Pick<UserDataArgs, "bootstrapExtraArgs" | "kubeletExtraArgs"> & {
     bottlerocketSettings: pulumi.Input<object> | undefined;
+    nodeadmExtraOptions: pulumi.Input<pulumi.Input<NodeadmOptions>[]> | undefined;
 };
 
 export interface ManagedNodeUserDataArgs extends BaseUserDataArgs {
@@ -119,15 +126,18 @@ export function isSelfManagedNodeUserDataArgs(
     return args.nodeGroupType === "self-managed-v1" || args.nodeGroupType === "self-managed-v2";
 }
 
+export const customUserDataArgs: (keyof CustomUserDataArgs)[] = [
+    "bootstrapExtraArgs",
+    "kubeletExtraArgs",
+    "bottlerocketSettings",
+    "nodeadmExtraOptions",
+];
+
 /**
- * If the user specifies either kubeletExtraArgs or bootstrapExtraArgs, we need to create a base64 encoded user data script.
+ If the user specifies any of the customUserDataArgs, we need to create a base64 encoded user data script.
  */
 export function requiresCustomUserData(args: CustomUserDataArgs): boolean {
-    return (
-        args.kubeletExtraArgs !== undefined ||
-        args.bootstrapExtraArgs !== undefined ||
-        args.bottlerocketSettings !== undefined
-    );
+    return customUserDataArgs.some((key) => args[key] !== undefined);
 }
 
 /**
@@ -298,6 +308,13 @@ function createNodeadmUserData(
                     },
                 }),
         });
+    }
+
+    // add extra nodeadm options if provided
+    if (args.nodeadmExtraOptions) {
+        for (const option of args.nodeadmExtraOptions) {
+            parts.push(option);
+        }
     }
 
     // TODO[pulumi/pulumi-eks#1195] expose extra nodeadm config options in the schema
