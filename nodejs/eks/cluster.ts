@@ -279,7 +279,8 @@ export interface ClusterCreationRoleProviderOptions {
  */
 export class ClusterCreationRoleProvider
     extends pulumi.ComponentResource
-    implements CreationRoleProvider {
+    implements CreationRoleProvider
+{
     public readonly role: aws.iam.Role;
     public readonly provider: pulumi.ProviderResource;
 
@@ -607,12 +608,12 @@ export function createCore(
             kubernetesNetworkConfig,
             accessConfig: args.authenticationMode
                 ? {
-                    authenticationMode: args.authenticationMode,
-                    // Explicitely grants the principal creating the cluster admin access to the cluster.
-                    // This is the default behavior of EKS when no accessConfig is provided.
-                    // It is required for this component because it deploys charts to the cluster.
-                    bootstrapClusterCreatorAdminPermissions: true,
-                }
+                      authenticationMode: args.authenticationMode,
+                      // Explicitely grants the principal creating the cluster admin access to the cluster.
+                      // This is the default behavior of EKS when no accessConfig is provided.
+                      // It is required for this component because it deploys charts to the cluster.
+                      bootstrapClusterCreatorAdminPermissions: true,
+                  }
                 : undefined,
         },
         {
@@ -898,10 +899,16 @@ export function createCore(
     }
 
     // Create the VPC CNI addon
-    const vpcCni = args.useDefaultVpcCni ? undefined : new VpcCniAddon(`${name}-vpc-cni`, {
-        ...args.vpcCniOptions,
-        clusterName: eksCluster.name
-    }, { parent, dependsOn: authDependencies, providers: { kubernetes: k8sProvider } });
+    const vpcCni = args.useDefaultVpcCni
+        ? undefined
+        : new VpcCniAddon(
+              `${name}-vpc-cni`,
+              {
+                  ...args.vpcCniOptions,
+                  clusterName: eksCluster.name,
+              },
+              { parent, dependsOn: authDependencies, providers: { kubernetes: k8sProvider } },
+          );
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi
         .output(args.fargate)
@@ -1599,7 +1606,7 @@ export interface FargateProfile {
  * ClusterNodeGroupOptions describes the configuration options accepted by a cluster
  * to create its own node groups. It's a subset of NodeGroupOptions.
  */
-export interface ClusterNodeGroupOptions extends NodeGroupBaseOptions { }
+export interface ClusterNodeGroupOptions extends NodeGroupBaseOptions {}
 
 export interface AccessEntry {
     /**

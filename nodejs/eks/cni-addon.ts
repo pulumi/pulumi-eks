@@ -239,6 +239,7 @@ export class VpcCniAddon extends pulumi.ComponentResource {
         }
 
         const { env, initEnv } = computeEnv(args);
+        // todo: this should fetch the latest version of the addon
         this.addon = new aws.eks.Addon(
             name,
             {
@@ -253,7 +254,7 @@ export class VpcCniAddon extends pulumi.ComponentResource {
                     env: env,
                     init: {
                         env: initEnv,
-                    }
+                    },
                 }),
             },
             { parent: this, provider: opts?.provider },
@@ -267,7 +268,10 @@ export class VpcCniAddon extends pulumi.ComponentResource {
     }
 
     // create a SSA patch to set options that are not configurable via the addon
-    private createDaemonSetPatch(args: VpcCniAddonOptions, addon: aws.eks.Addon): k8s.apps.v1.DaemonSetPatch {
+    private createDaemonSetPatch(
+        args: VpcCniAddonOptions,
+        addon: aws.eks.Addon,
+    ): k8s.apps.v1.DaemonSetPatch {
         const containers: k8s.types.input.core.v1.ContainerPatch[] = [];
         const initContainers: k8s.types.input.core.v1.ContainerPatch[] = [];
 
@@ -275,9 +279,11 @@ export class VpcCniAddon extends pulumi.ComponentResource {
             containers.push({
                 name: "aws-node",
                 image: args.image,
-                securityContext: args.securityContextPrivileged ? {
-                    privileged: args.securityContextPrivileged,
-                } : undefined,
+                securityContext: args.securityContextPrivileged
+                    ? {
+                          privileged: args.securityContextPrivileged,
+                      }
+                    : undefined,
             });
         }
 
@@ -295,29 +301,36 @@ export class VpcCniAddon extends pulumi.ComponentResource {
             });
         }
 
-        return new k8s.apps.v1.DaemonSetPatch("sec-context", {
-            metadata: {
-                name: "aws-node",
-                namespace: "kube-system",
-                annotations: {
-                    "pulumi.com/patchForce": "true",
+        return new k8s.apps.v1.DaemonSetPatch(
+            "sec-context",
+            {
+                metadata: {
+                    name: "aws-node",
+                    namespace: "kube-system",
+                    annotations: {
+                        "pulumi.com/patchForce": "true",
+                    },
+                },
+                spec: {
+                    template: {
+                        spec: {
+                            containers: containers.length > 0 ? containers : undefined,
+                            initContainers: initContainers.length > 0 ? initContainers : undefined,
+                        },
+                    },
                 },
             },
-            spec: {
-                template: {
-                    spec: {
-                        containers: containers.length > 0 ? containers : undefined,
-                        initContainers: initContainers.length > 0 ? initContainers : undefined,
-                    },
-                }
-            }
-        }, { parent: this, dependsOn: [addon] });
+            { parent: this, dependsOn: [addon] },
+        );
     }
 }
 
-function computeEnv(args: VpcCniAddonOptions): { env: { [key: string]: string }, initEnv: { [key: string]: string } } {
-    const env: { name: string, value: string }[] = [];
-    const initEnv: { name: string, value: string }[] = [];
+function computeEnv(args: VpcCniAddonOptions): {
+    env: { [key: string]: string };
+    initEnv: { [key: string]: string };
+} {
+    const env: { name: string; value: string }[] = [];
+    const initEnv: { name: string; value: string }[] = [];
     if (args.nodePortSupport) {
         env.push({
             name: "AWS_VPC_CNI_NODE_PORT_SUPPORT",
@@ -382,7 +395,6 @@ function computeEnv(args: VpcCniAddonOptions): { env: { [key: string]: string },
     } else {
         env.push({ name: "AWS_VPC_ENI_MTU", value: "9001" });
     }
-
 
     if (args.eniConfigLabelDef) {
         env.push({
