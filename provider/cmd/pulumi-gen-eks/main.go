@@ -925,6 +925,25 @@ func generateSchema() schema.PackageSpec {
 							"Note: `amiId` is mutually exclusive with `gpu` and `amiType`.\n\n" +
 							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.",
 					},
+					"nodeadmExtraOptions": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "array",
+							Items: &schema.TypeSpec{Ref: "#/types/eks:index:NodeadmOptions"},
+						},
+						Description: "Extra nodeadm configuration sections to be added to the nodeadm user data. " +
+							"This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. " +
+							"When configuring additional nodeadm NodeConfig sections, they'll be merged with the base " +
+							"settings the provider sets. You can overwrite base settings or provide additional settings this way.\n" +
+							"The base settings the provider sets are:\n" +
+							"  - cluster.name\n" +
+							"  - cluster.apiServerEndpoint\n" +
+							"  - cluster.certificateAuthority\n" +
+							"  - cluster.cidr\n\n" +
+							"Note: This is only applicable when using AL2023.\n" +
+							"See for more details:\n" +
+							"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n" +
+							"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/",
+					},
 				},
 				RequiredInputs: []string{"cluster"},
 			},
@@ -1757,6 +1776,24 @@ func generateSchema() schema.PackageSpec {
 					},
 				},
 			},
+			"eks:index:NodeadmOptions": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Description: "MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.\n\n" +
+						"See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.",
+					Properties: map[string]schema.PropertySpec{
+						"content": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The ARN of the access policy to associate with the principal",
+						},
+						"contentType": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The MIME type of the content. Examples are `text/x-shellscript; charset=\"us-ascii\"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.",
+						},
+					},
+					Required: []string{"content", "contentType"},
+				},
+			},
 		},
 
 		Language: map[string]schema.RawMessage{
@@ -2058,6 +2095,25 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				"  - settings.kubernetes.cluster-name\n" +
 				"  - settings.kubernetes.cluster-dns-ip\n\n" +
 				"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
+		},
+		"nodeadmExtraOptions": {
+			TypeSpec: schema.TypeSpec{
+				Type:  "array",
+				Items: &schema.TypeSpec{Ref: "#/types/eks:index:NodeadmOptions"},
+			},
+			Description: "Extra nodeadm configuration sections to be added to the nodeadm user data. " +
+				"This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. " +
+				"When configuring additional nodeadm NodeConfig sections, they'll be merged with the base " +
+				"settings the provider sets. You can overwrite base settings or provide additional settings this way.\n" +
+				"The base settings the provider sets are:\n" +
+				"  - cluster.name\n" +
+				"  - cluster.apiServerEndpoint\n" +
+				"  - cluster.certificateAuthority\n" +
+				"  - cluster.cidr\n\n" +
+				"Note: This is only applicable when using AL2023.\n" +
+				"See for more details:\n" +
+				"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n" +
+				"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/",
 		},
 	}
 
