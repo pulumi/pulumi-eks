@@ -7,16 +7,30 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import java.lang.Boolean;
 import java.lang.Integer;
-import java.lang.Object;
 import java.lang.String;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
 
-public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
+public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
 
-    public static final VpcCniArgs Empty = new VpcCniArgs();
+    public static final VpcCniAddonArgs Empty = new VpcCniAddonArgs();
+
+    /**
+     * The name of the EKS cluster.
+     * 
+     */
+    @Import(name="clusterName", required=true)
+    private Output<String> clusterName;
+
+    /**
+     * @return The name of the EKS cluster.
+     * 
+     */
+    public Output<String> clusterName() {
+        return this.clusterName;
+    }
 
     /**
      * Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
@@ -95,21 +109,6 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<Boolean>> disableTcpEarlyDemux() {
         return Optional.ofNullable(this.disableTcpEarlyDemux);
-    }
-
-    /**
-     * VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-     * 
-     */
-    @Import(name="enableIpv6")
-    private @Nullable Output<Boolean> enableIpv6;
-
-    /**
-     * @return VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-     * 
-     */
-    public Optional<Output<Boolean>> enableIpv6() {
-        return Optional.ofNullable(this.enableIpv6);
     }
 
     /**
@@ -237,21 +236,6 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<String>> initImage() {
         return Optional.ofNullable(this.initImage);
-    }
-
-    /**
-     * The kubeconfig to use when setting the VPC CNI options.
-     * 
-     */
-    @Import(name="kubeconfig", required=true)
-    private Output<Object> kubeconfig;
-
-    /**
-     * @return The kubeconfig to use when setting the VPC CNI options.
-     * 
-     */
-    public Output<Object> kubeconfig() {
-        return this.kubeconfig;
     }
 
     /**
@@ -419,15 +403,15 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
         return Optional.ofNullable(this.warmPrefixTarget);
     }
 
-    private VpcCniArgs() {}
+    private VpcCniAddonArgs() {}
 
-    private VpcCniArgs(VpcCniArgs $) {
+    private VpcCniAddonArgs(VpcCniAddonArgs $) {
+        this.clusterName = $.clusterName;
         this.cniConfigureRpfilter = $.cniConfigureRpfilter;
         this.cniCustomNetworkCfg = $.cniCustomNetworkCfg;
         this.cniExternalSnat = $.cniExternalSnat;
         this.customNetworkConfig = $.customNetworkConfig;
         this.disableTcpEarlyDemux = $.disableTcpEarlyDemux;
-        this.enableIpv6 = $.enableIpv6;
         this.enablePodEni = $.enablePodEni;
         this.enablePrefixDelegation = $.enablePrefixDelegation;
         this.eniConfigLabelDef = $.eniConfigLabelDef;
@@ -435,7 +419,6 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
         this.externalSnat = $.externalSnat;
         this.image = $.image;
         this.initImage = $.initImage;
-        this.kubeconfig = $.kubeconfig;
         this.logFile = $.logFile;
         this.logLevel = $.logLevel;
         this.nodeAgentImage = $.nodeAgentImage;
@@ -450,19 +433,40 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
     public static Builder builder() {
         return new Builder();
     }
-    public static Builder builder(VpcCniArgs defaults) {
+    public static Builder builder(VpcCniAddonArgs defaults) {
         return new Builder(defaults);
     }
 
     public static final class Builder {
-        private VpcCniArgs $;
+        private VpcCniAddonArgs $;
 
         public Builder() {
-            $ = new VpcCniArgs();
+            $ = new VpcCniAddonArgs();
         }
 
-        public Builder(VpcCniArgs defaults) {
-            $ = new VpcCniArgs(Objects.requireNonNull(defaults));
+        public Builder(VpcCniAddonArgs defaults) {
+            $ = new VpcCniAddonArgs(Objects.requireNonNull(defaults));
+        }
+
+        /**
+         * @param clusterName The name of the EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterName(Output<String> clusterName) {
+            $.clusterName = clusterName;
+            return this;
+        }
+
+        /**
+         * @param clusterName The name of the EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterName(String clusterName) {
+            return clusterName(Output.of(clusterName));
         }
 
         /**
@@ -572,27 +576,6 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder disableTcpEarlyDemux(Boolean disableTcpEarlyDemux) {
             return disableTcpEarlyDemux(Output.of(disableTcpEarlyDemux));
-        }
-
-        /**
-         * @param enableIpv6 VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder enableIpv6(@Nullable Output<Boolean> enableIpv6) {
-            $.enableIpv6 = enableIpv6;
-            return this;
-        }
-
-        /**
-         * @param enableIpv6 VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder enableIpv6(Boolean enableIpv6) {
-            return enableIpv6(Output.of(enableIpv6));
         }
 
         /**
@@ -762,27 +745,6 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder initImage(String initImage) {
             return initImage(Output.of(initImage));
-        }
-
-        /**
-         * @param kubeconfig The kubeconfig to use when setting the VPC CNI options.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder kubeconfig(Output<Object> kubeconfig) {
-            $.kubeconfig = kubeconfig;
-            return this;
-        }
-
-        /**
-         * @param kubeconfig The kubeconfig to use when setting the VPC CNI options.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder kubeconfig(Object kubeconfig) {
-            return kubeconfig(Output.of(kubeconfig));
         }
 
         /**
@@ -1004,8 +966,8 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
             return warmPrefixTarget(Output.of(warmPrefixTarget));
         }
 
-        public VpcCniArgs build() {
-            $.kubeconfig = Objects.requireNonNull($.kubeconfig, "expected parameter 'kubeconfig' to be non-null");
+        public VpcCniAddonArgs build() {
+            $.clusterName = Objects.requireNonNull($.clusterName, "expected parameter 'clusterName' to be non-null");
             return $;
         }
     }

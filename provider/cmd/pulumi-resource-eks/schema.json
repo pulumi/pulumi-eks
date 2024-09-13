@@ -484,7 +484,7 @@
                     "description": "A map of tags assigned to the EKS cluster."
                 },
                 "vpcCni": {
-                    "$ref": "#/resources/eks:index:VpcCni",
+                    "$ref": "#/resources/eks:index:VpcCniAddon",
                     "description": "The VPC CNI for the cluster."
                 },
                 "vpcId": {
@@ -785,10 +785,6 @@
                 "disableTcpEarlyDemux": {
                     "type": "boolean",
                     "description": "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency."
-                },
-                "enableIpv6": {
-                    "type": "boolean",
-                    "description": "VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances."
                 },
                 "enablePodEni": {
                     "type": "boolean",
@@ -1937,9 +1933,13 @@
             ],
             "isComponent": true
         },
-        "eks:index:VpcCni": {
-            "description": "VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.",
+        "eks:index:VpcCniAddon": {
+            "description": "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\nFor more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
             "inputProperties": {
+                "clusterName": {
+                    "type": "string",
+                    "description": "The name of the EKS cluster."
+                },
                 "cniConfigureRpfilter": {
                     "type": "boolean",
                     "description": "Specifies whether ipamd should configure rp filter for primary interface. Default is `false`."
@@ -1959,10 +1959,6 @@
                 "disableTcpEarlyDemux": {
                     "type": "boolean",
                     "description": "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency."
-                },
-                "enableIpv6": {
-                    "type": "boolean",
-                    "description": "VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances."
                 },
                 "enablePodEni": {
                     "type": "boolean",
@@ -1991,10 +1987,6 @@
                 "initImage": {
                     "type": "string",
                     "description": "Specifies the init container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI init container image in ECR."
-                },
-                "kubeconfig": {
-                    "$ref": "pulumi.json#/Any",
-                    "description": "The kubeconfig to use when setting the VPC CNI options."
                 },
                 "logFile": {
                     "type": "string",
@@ -2034,7 +2026,7 @@
                 }
             },
             "requiredInputs": [
-                "kubeconfig"
+                "clusterName"
             ]
         }
     },

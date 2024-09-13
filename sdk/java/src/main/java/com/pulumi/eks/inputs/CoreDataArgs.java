@@ -12,7 +12,7 @@ import com.pulumi.aws.iam.OpenIdConnectProvider;
 import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.eks.VpcCni;
+import com.pulumi.eks.VpcCniAddon;
 import com.pulumi.eks.inputs.AccessEntryArgs;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
 import com.pulumi.kubernetes.core.v1.ConfigMap;
@@ -283,13 +283,13 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="vpcCni")
-    private @Nullable Output<VpcCni> vpcCni;
+    private @Nullable Output<VpcCniAddon> vpcCni;
 
     /**
      * @return The VPC CNI for the cluster.
      * 
      */
-    public Optional<Output<VpcCni>> vpcCni() {
+    public Optional<Output<VpcCniAddon>> vpcCni() {
         return Optional.ofNullable(this.vpcCni);
     }
 
@@ -745,7 +745,7 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder vpcCni(@Nullable Output<VpcCni> vpcCni) {
+        public Builder vpcCni(@Nullable Output<VpcCniAddon> vpcCni) {
             $.vpcCni = vpcCni;
             return this;
         }
@@ -756,7 +756,7 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder vpcCni(VpcCni vpcCni) {
+        public Builder vpcCni(VpcCniAddon vpcCni) {
             return vpcCni(Output.of(vpcCni));
         }
 

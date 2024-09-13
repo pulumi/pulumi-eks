@@ -10,25 +10,26 @@ using Pulumi.Serialization;
 namespace Pulumi.Eks
 {
     /// <summary>
-    /// VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
+    /// VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
+    /// For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
     /// </summary>
-    [EksResourceType("eks:index:VpcCni")]
-    public partial class VpcCni : global::Pulumi.CustomResource
+    [EksResourceType("eks:index:VpcCniAddon")]
+    public partial class VpcCniAddon : global::Pulumi.CustomResource
     {
         /// <summary>
-        /// Create a VpcCni resource with the given unique name, arguments, and options.
+        /// Create a VpcCniAddon resource with the given unique name, arguments, and options.
         /// </summary>
         ///
         /// <param name="name">The unique name of the resource</param>
         /// <param name="args">The arguments used to populate this resource's properties</param>
         /// <param name="options">A bag of options that control this resource's behavior</param>
-        public VpcCni(string name, VpcCniArgs args, CustomResourceOptions? options = null)
-            : base("eks:index:VpcCni", name, args ?? new VpcCniArgs(), MakeResourceOptions(options, ""))
+        public VpcCniAddon(string name, VpcCniAddonArgs args, CustomResourceOptions? options = null)
+            : base("eks:index:VpcCniAddon", name, args ?? new VpcCniAddonArgs(), MakeResourceOptions(options, ""))
         {
         }
 
-        private VpcCni(string name, Input<string> id, CustomResourceOptions? options = null)
-            : base("eks:index:VpcCni", name, null, MakeResourceOptions(options, id))
+        private VpcCniAddon(string name, Input<string> id, CustomResourceOptions? options = null)
+            : base("eks:index:VpcCniAddon", name, null, MakeResourceOptions(options, id))
         {
         }
 
@@ -44,21 +45,27 @@ namespace Pulumi.Eks
             return merged;
         }
         /// <summary>
-        /// Get an existing VpcCni resource's state with the given name, ID, and optional extra
+        /// Get an existing VpcCniAddon resource's state with the given name, ID, and optional extra
         /// properties used to qualify the lookup.
         /// </summary>
         ///
         /// <param name="name">The unique name of the resulting resource.</param>
         /// <param name="id">The unique provider ID of the resource to lookup.</param>
         /// <param name="options">A bag of options that control this resource's behavior</param>
-        public static VpcCni Get(string name, Input<string> id, CustomResourceOptions? options = null)
+        public static VpcCniAddon Get(string name, Input<string> id, CustomResourceOptions? options = null)
         {
-            return new VpcCni(name, id, options);
+            return new VpcCniAddon(name, id, options);
         }
     }
 
-    public sealed class VpcCniArgs : global::Pulumi.ResourceArgs
+    public sealed class VpcCniAddonArgs : global::Pulumi.ResourceArgs
     {
+        /// <summary>
+        /// The name of the EKS cluster.
+        /// </summary>
+        [Input("clusterName", required: true)]
+        public Input<string> ClusterName { get; set; } = null!;
+
         /// <summary>
         /// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         /// </summary>
@@ -90,12 +97,6 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("disableTcpEarlyDemux")]
         public Input<bool>? DisableTcpEarlyDemux { get; set; }
-
-        /// <summary>
-        /// VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-        /// </summary>
-        [Input("enableIpv6")]
-        public Input<bool>? EnableIpv6 { get; set; }
 
         /// <summary>
         /// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
@@ -149,12 +150,6 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("initImage")]
         public Input<string>? InitImage { get; set; }
-
-        /// <summary>
-        /// The kubeconfig to use when setting the VPC CNI options.
-        /// </summary>
-        [Input("kubeconfig", required: true)]
-        public Input<object> Kubeconfig { get; set; } = null!;
 
         /// <summary>
         /// Specifies the file path used for logs.
@@ -225,9 +220,9 @@ namespace Pulumi.Eks
         [Input("warmPrefixTarget")]
         public Input<int>? WarmPrefixTarget { get; set; }
 
-        public VpcCniArgs()
+        public VpcCniAddonArgs()
         {
         }
-        public static new VpcCniArgs Empty => new VpcCniArgs();
+        public static new VpcCniAddonArgs Empty => new VpcCniAddonArgs();
     }
 }

@@ -9,18 +9,17 @@ import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 
-__all__ = ['VpcCniArgs', 'VpcCni']
+__all__ = ['VpcCniAddonArgs', 'VpcCniAddon']
 
 @pulumi.input_type
-class VpcCniArgs:
+class VpcCniAddonArgs:
     def __init__(__self__, *,
-                 kubeconfig: Any,
+                 cluster_name: pulumi.Input[str],
                  cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
-                 enable_ipv6: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
@@ -38,8 +37,8 @@ class VpcCniArgs:
                  warm_ip_target: Optional[pulumi.Input[int]] = None,
                  warm_prefix_target: Optional[pulumi.Input[int]] = None):
         """
-        The set of arguments for constructing a VpcCni resource.
-        :param Any kubeconfig: The kubeconfig to use when setting the VPC CNI options.
+        The set of arguments for constructing a VpcCniAddon resource.
+        :param pulumi.Input[str] cluster_name: The name of the EKS cluster.
         :param pulumi.Input[bool] cni_configure_rpfilter: Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         :param pulumi.Input[bool] cni_custom_network_cfg: Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
         :param pulumi.Input[bool] cni_external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
@@ -47,7 +46,6 @@ class VpcCniArgs:
                
                Defaults to false.
         :param pulumi.Input[bool] disable_tcp_early_demux: Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
-        :param pulumi.Input[bool] enable_ipv6: VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
         :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         :param pulumi.Input[bool] enable_prefix_delegation: IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
@@ -91,7 +89,7 @@ class VpcCniArgs:
         :param pulumi.Input[int] warm_ip_target: Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
         :param pulumi.Input[int] warm_prefix_target: WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
         """
-        pulumi.set(__self__, "kubeconfig", kubeconfig)
+        pulumi.set(__self__, "cluster_name", cluster_name)
         if cni_configure_rpfilter is not None:
             pulumi.set(__self__, "cni_configure_rpfilter", cni_configure_rpfilter)
         if cni_custom_network_cfg is not None:
@@ -102,8 +100,6 @@ class VpcCniArgs:
             pulumi.set(__self__, "custom_network_config", custom_network_config)
         if disable_tcp_early_demux is not None:
             pulumi.set(__self__, "disable_tcp_early_demux", disable_tcp_early_demux)
-        if enable_ipv6 is not None:
-            pulumi.set(__self__, "enable_ipv6", enable_ipv6)
         if enable_pod_eni is not None:
             pulumi.set(__self__, "enable_pod_eni", enable_pod_eni)
         if enable_prefix_delegation is not None:
@@ -138,16 +134,16 @@ class VpcCniArgs:
             pulumi.set(__self__, "warm_prefix_target", warm_prefix_target)
 
     @property
-    @pulumi.getter
-    def kubeconfig(self) -> Any:
+    @pulumi.getter(name="clusterName")
+    def cluster_name(self) -> pulumi.Input[str]:
         """
-        The kubeconfig to use when setting the VPC CNI options.
+        The name of the EKS cluster.
         """
-        return pulumi.get(self, "kubeconfig")
+        return pulumi.get(self, "cluster_name")
 
-    @kubeconfig.setter
-    def kubeconfig(self, value: Any):
-        pulumi.set(self, "kubeconfig", value)
+    @cluster_name.setter
+    def cluster_name(self, value: pulumi.Input[str]):
+        pulumi.set(self, "cluster_name", value)
 
     @property
     @pulumi.getter(name="cniConfigureRpfilter")
@@ -210,18 +206,6 @@ class VpcCniArgs:
     @disable_tcp_early_demux.setter
     def disable_tcp_early_demux(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "disable_tcp_early_demux", value)
-
-    @property
-    @pulumi.getter(name="enableIpv6")
-    def enable_ipv6(self) -> Optional[pulumi.Input[bool]]:
-        """
-        VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-        """
-        return pulumi.get(self, "enable_ipv6")
-
-    @enable_ipv6.setter
-    def enable_ipv6(self, value: Optional[pulumi.Input[bool]]):
-        pulumi.set(self, "enable_ipv6", value)
 
     @property
     @pulumi.getter(name="enablePodEni")
@@ -442,17 +426,17 @@ class VpcCniArgs:
         pulumi.set(self, "warm_prefix_target", value)
 
 
-class VpcCni(pulumi.CustomResource):
+class VpcCniAddon(pulumi.CustomResource):
     @overload
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 cluster_name: Optional[pulumi.Input[str]] = None,
                  cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
-                 enable_ipv6: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
@@ -460,7 +444,6 @@ class VpcCni(pulumi.CustomResource):
                  external_snat: Optional[pulumi.Input[bool]] = None,
                  image: Optional[pulumi.Input[str]] = None,
                  init_image: Optional[pulumi.Input[str]] = None,
-                 kubeconfig: Optional[Any] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
                  node_agent_image: Optional[pulumi.Input[str]] = None,
@@ -472,10 +455,12 @@ class VpcCni(pulumi.CustomResource):
                  warm_prefix_target: Optional[pulumi.Input[int]] = None,
                  __props__=None):
         """
-        VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
+        VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
+        For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
+        :param pulumi.Input[str] cluster_name: The name of the EKS cluster.
         :param pulumi.Input[bool] cni_configure_rpfilter: Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         :param pulumi.Input[bool] cni_custom_network_cfg: Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
         :param pulumi.Input[bool] cni_external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
@@ -483,7 +468,6 @@ class VpcCni(pulumi.CustomResource):
                
                Defaults to false.
         :param pulumi.Input[bool] disable_tcp_early_demux: Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
-        :param pulumi.Input[bool] enable_ipv6: VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
         :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         :param pulumi.Input[bool] enable_prefix_delegation: IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
@@ -502,7 +486,6 @@ class VpcCni(pulumi.CustomResource):
         :param pulumi.Input[str] init_image: Specifies the init container image to use in the AWS CNI cluster DaemonSet.
                
                Defaults to the official AWS CNI init container image in ECR.
-        :param Any kubeconfig: The kubeconfig to use when setting the VPC CNI options.
         :param pulumi.Input[str] log_file: Specifies the file path used for logs.
                
                Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -532,18 +515,19 @@ class VpcCni(pulumi.CustomResource):
     @overload
     def __init__(__self__,
                  resource_name: str,
-                 args: VpcCniArgs,
+                 args: VpcCniAddonArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
+        VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
+        For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
 
         :param str resource_name: The name of the resource.
-        :param VpcCniArgs args: The arguments to use to populate this resource's properties.
+        :param VpcCniAddonArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
         """
         ...
     def __init__(__self__, resource_name: str, *args, **kwargs):
-        resource_args, opts = _utilities.get_resource_args_opts(VpcCniArgs, pulumi.ResourceOptions, *args, **kwargs)
+        resource_args, opts = _utilities.get_resource_args_opts(VpcCniAddonArgs, pulumi.ResourceOptions, *args, **kwargs)
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
@@ -552,12 +536,12 @@ class VpcCni(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 cluster_name: Optional[pulumi.Input[str]] = None,
                  cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
-                 enable_ipv6: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
@@ -565,7 +549,6 @@ class VpcCni(pulumi.CustomResource):
                  external_snat: Optional[pulumi.Input[bool]] = None,
                  image: Optional[pulumi.Input[str]] = None,
                  init_image: Optional[pulumi.Input[str]] = None,
-                 kubeconfig: Optional[Any] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
                  node_agent_image: Optional[pulumi.Input[str]] = None,
@@ -582,14 +565,16 @@ class VpcCni(pulumi.CustomResource):
         if opts.id is None:
             if __props__ is not None:
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
-            __props__ = VpcCniArgs.__new__(VpcCniArgs)
+            __props__ = VpcCniAddonArgs.__new__(VpcCniAddonArgs)
 
+            if cluster_name is None and not opts.urn:
+                raise TypeError("Missing required property 'cluster_name'")
+            __props__.__dict__["cluster_name"] = cluster_name
             __props__.__dict__["cni_configure_rpfilter"] = cni_configure_rpfilter
             __props__.__dict__["cni_custom_network_cfg"] = cni_custom_network_cfg
             __props__.__dict__["cni_external_snat"] = cni_external_snat
             __props__.__dict__["custom_network_config"] = custom_network_config
             __props__.__dict__["disable_tcp_early_demux"] = disable_tcp_early_demux
-            __props__.__dict__["enable_ipv6"] = enable_ipv6
             __props__.__dict__["enable_pod_eni"] = enable_pod_eni
             __props__.__dict__["enable_prefix_delegation"] = enable_prefix_delegation
             __props__.__dict__["eni_config_label_def"] = eni_config_label_def
@@ -597,9 +582,6 @@ class VpcCni(pulumi.CustomResource):
             __props__.__dict__["external_snat"] = external_snat
             __props__.__dict__["image"] = image
             __props__.__dict__["init_image"] = init_image
-            if kubeconfig is None and not opts.urn:
-                raise TypeError("Missing required property 'kubeconfig'")
-            __props__.__dict__["kubeconfig"] = kubeconfig
             __props__.__dict__["log_file"] = log_file
             __props__.__dict__["log_level"] = log_level
             __props__.__dict__["node_agent_image"] = node_agent_image
@@ -609,8 +591,8 @@ class VpcCni(pulumi.CustomResource):
             __props__.__dict__["warm_eni_target"] = warm_eni_target
             __props__.__dict__["warm_ip_target"] = warm_ip_target
             __props__.__dict__["warm_prefix_target"] = warm_prefix_target
-        super(VpcCni, __self__).__init__(
-            'eks:index:VpcCni',
+        super(VpcCniAddon, __self__).__init__(
+            'eks:index:VpcCniAddon',
             resource_name,
             __props__,
             opts)
@@ -618,9 +600,9 @@ class VpcCni(pulumi.CustomResource):
     @staticmethod
     def get(resource_name: str,
             id: pulumi.Input[str],
-            opts: Optional[pulumi.ResourceOptions] = None) -> 'VpcCni':
+            opts: Optional[pulumi.ResourceOptions] = None) -> 'VpcCniAddon':
         """
-        Get an existing VpcCni resource's state with the given name, id, and optional extra
+        Get an existing VpcCniAddon resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
 
         :param str resource_name: The unique name of the resulting resource.
@@ -629,7 +611,7 @@ class VpcCni(pulumi.CustomResource):
         """
         opts = pulumi.ResourceOptions.merge(opts, pulumi.ResourceOptions(id=id))
 
-        __props__ = VpcCniArgs.__new__(VpcCniArgs)
+        __props__ = VpcCniAddonArgs.__new__(VpcCniAddonArgs)
 
-        return VpcCni(resource_name, opts=opts, __props__=__props__)
+        return VpcCniAddon(resource_name, opts=opts, __props__=__props__)
 

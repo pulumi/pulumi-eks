@@ -101,21 +101,6 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-     * 
-     */
-    @Import(name="enableIpv6")
-    private @Nullable Output<Boolean> enableIpv6;
-
-    /**
-     * @return VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-     * 
-     */
-    public Optional<Output<Boolean>> enableIpv6() {
-        return Optional.ofNullable(this.enableIpv6);
-    }
-
-    /**
      * Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
      * 
      */
@@ -415,7 +400,6 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
         this.cniExternalSnat = $.cniExternalSnat;
         this.customNetworkConfig = $.customNetworkConfig;
         this.disableTcpEarlyDemux = $.disableTcpEarlyDemux;
-        this.enableIpv6 = $.enableIpv6;
         this.enablePodEni = $.enablePodEni;
         this.enablePrefixDelegation = $.enablePrefixDelegation;
         this.eniConfigLabelDef = $.eniConfigLabelDef;
@@ -559,27 +543,6 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder disableTcpEarlyDemux(Boolean disableTcpEarlyDemux) {
             return disableTcpEarlyDemux(Output.of(disableTcpEarlyDemux));
-        }
-
-        /**
-         * @param enableIpv6 VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder enableIpv6(@Nullable Output<Boolean> enableIpv6) {
-            $.enableIpv6 = enableIpv6;
-            return this;
-        }
-
-        /**
-         * @param enableIpv6 VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder enableIpv6(Boolean enableIpv6) {
-            return enableIpv6(Output.of(enableIpv6));
         }
 
         /**

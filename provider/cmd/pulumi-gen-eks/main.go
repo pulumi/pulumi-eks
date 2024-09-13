@@ -1063,17 +1063,13 @@ func generateSchema() schema.PackageSpec {
 					"eksCluster",
 				},
 			},
-			// The TypeScript library exports this at the top-level index.ts, so we expose it here. Although, it's not
-			// super useful on its own, so we could consider *not* exposing it to the other languages.
-			// Note that this is a _custom_ resource (not a component), implemented in the provider plugin.
-			// Previously it was implemented as a dynamic provider.
-			"eks:index:VpcCni": {
+			"eks:index:VpcCniAddon": {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
-					Description: "VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by " +
-						"applying its YAML chart.",
+					Description: "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\n" +
+						"For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
 				},
-				InputProperties: vpcCniProperties(true /*kubeconfig*/),
-				RequiredInputs:  []string{"kubeconfig"},
+				InputProperties: vpcCniProperties(true /*clusterName*/),
+				RequiredInputs:  []string{"clusterName"},
 			},
 			"eks:index:Addon": {
 				IsComponent: true,
@@ -1203,7 +1199,7 @@ func generateSchema() schema.PackageSpec {
 							Description: "The kubeconfig file for the cluster.",
 						},
 						"vpcCni": {
-							TypeSpec:    schema.TypeSpec{Ref: "#/resources/eks:index:VpcCni"},
+							TypeSpec:    schema.TypeSpec{Ref: "#/resources/eks:index:VpcCniAddon"},
 							Description: "The VPC CNI for the cluster.",
 						},
 						"tags": {
@@ -1568,7 +1564,7 @@ func generateSchema() schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "object",
 					Description: "Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.",
-					Properties:  vpcCniProperties(false /*kubeconfig*/),
+					Properties:  vpcCniProperties(false /*clusterName*/),
 				},
 			},
 
@@ -2156,7 +2152,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 
 // vpcCniProperties returns a map of properties that can be used by either the VpcCni resource or VpcCniOptions type.
 // When kubeconfig is set to true, the kubeconfig property is included in the map (for the VpcCni resource).
-func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
+func vpcCniProperties(clusterName bool) map[string]schema.PropertySpec {
 	props := map[string]schema.PropertySpec{
 		"nodePortSupport": {
 			TypeSpec: schema.TypeSpec{Type: "boolean"},
@@ -2197,12 +2193,6 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 		"enablePrefixDelegation": {
 			TypeSpec:    schema.TypeSpec{Type: "boolean"},
 			Description: "IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.",
-		},
-		"enableIpv6": {
-			TypeSpec: schema.TypeSpec{Type: "boolean"},
-			Description: "VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it " +
-				"in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set " +
-				"to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.",
 		},
 		"logLevel": {
 			TypeSpec: schema.TypeSpec{Type: "string"}, // TODO consider typing this as an enum
@@ -2292,10 +2282,10 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 		},
 	}
 
-	if kubeconfig {
-		props["kubeconfig"] = schema.PropertySpec{
-			TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
-			Description: "The kubeconfig to use when setting the VPC CNI options.",
+	if clusterName {
+		props["clusterName"] = schema.PropertySpec{
+			TypeSpec:    schema.TypeSpec{Type: "string"},
+			Description: "The name of the EKS cluster.",
 		}
 	}
 

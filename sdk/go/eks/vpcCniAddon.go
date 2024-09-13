@@ -12,54 +12,57 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
-type VpcCni struct {
+// VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
+// For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
+type VpcCniAddon struct {
 	pulumi.CustomResourceState
 }
 
-// NewVpcCni registers a new resource with the given unique name, arguments, and options.
-func NewVpcCni(ctx *pulumi.Context,
-	name string, args *VpcCniArgs, opts ...pulumi.ResourceOption) (*VpcCni, error) {
+// NewVpcCniAddon registers a new resource with the given unique name, arguments, and options.
+func NewVpcCniAddon(ctx *pulumi.Context,
+	name string, args *VpcCniAddonArgs, opts ...pulumi.ResourceOption) (*VpcCniAddon, error) {
 	if args == nil {
 		return nil, errors.New("missing one or more required arguments")
 	}
 
-	if args.Kubeconfig == nil {
-		return nil, errors.New("invalid value for required argument 'Kubeconfig'")
+	if args.ClusterName == nil {
+		return nil, errors.New("invalid value for required argument 'ClusterName'")
 	}
 	opts = utilities.PkgResourceDefaultOpts(opts)
-	var resource VpcCni
-	err := ctx.RegisterResource("eks:index:VpcCni", name, args, &resource, opts...)
+	var resource VpcCniAddon
+	err := ctx.RegisterResource("eks:index:VpcCniAddon", name, args, &resource, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return &resource, nil
 }
 
-// GetVpcCni gets an existing VpcCni resource's state with the given name, ID, and optional
+// GetVpcCniAddon gets an existing VpcCniAddon resource's state with the given name, ID, and optional
 // state properties that are used to uniquely qualify the lookup (nil if not required).
-func GetVpcCni(ctx *pulumi.Context,
-	name string, id pulumi.IDInput, state *VpcCniState, opts ...pulumi.ResourceOption) (*VpcCni, error) {
-	var resource VpcCni
-	err := ctx.ReadResource("eks:index:VpcCni", name, id, state, &resource, opts...)
+func GetVpcCniAddon(ctx *pulumi.Context,
+	name string, id pulumi.IDInput, state *VpcCniAddonState, opts ...pulumi.ResourceOption) (*VpcCniAddon, error) {
+	var resource VpcCniAddon
+	err := ctx.ReadResource("eks:index:VpcCniAddon", name, id, state, &resource, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return &resource, nil
 }
 
-// Input properties used for looking up and filtering VpcCni resources.
-type vpcCniState struct {
+// Input properties used for looking up and filtering VpcCniAddon resources.
+type vpcCniAddonState struct {
 }
 
-type VpcCniState struct {
+type VpcCniAddonState struct {
 }
 
-func (VpcCniState) ElementType() reflect.Type {
-	return reflect.TypeOf((*vpcCniState)(nil)).Elem()
+func (VpcCniAddonState) ElementType() reflect.Type {
+	return reflect.TypeOf((*vpcCniAddonState)(nil)).Elem()
 }
 
-type vpcCniArgs struct {
+type vpcCniAddonArgs struct {
+	// The name of the EKS cluster.
+	ClusterName string `pulumi:"clusterName"`
 	// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
 	CniConfigureRpfilter *bool `pulumi:"cniConfigureRpfilter"`
 	// Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
@@ -72,8 +75,6 @@ type vpcCniArgs struct {
 	CustomNetworkConfig *bool `pulumi:"customNetworkConfig"`
 	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
 	DisableTcpEarlyDemux *bool `pulumi:"disableTcpEarlyDemux"`
-	// VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-	EnableIpv6 *bool `pulumi:"enableIpv6"`
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni *bool `pulumi:"enablePodEni"`
 	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
@@ -99,8 +100,6 @@ type vpcCniArgs struct {
 	//
 	// Defaults to the official AWS CNI init container image in ECR.
 	InitImage *string `pulumi:"initImage"`
-	// The kubeconfig to use when setting the VPC CNI options.
-	Kubeconfig interface{} `pulumi:"kubeconfig"`
 	// Specifies the file path used for logs.
 	//
 	// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -136,8 +135,10 @@ type vpcCniArgs struct {
 	WarmPrefixTarget *int `pulumi:"warmPrefixTarget"`
 }
 
-// The set of arguments for constructing a VpcCni resource.
-type VpcCniArgs struct {
+// The set of arguments for constructing a VpcCniAddon resource.
+type VpcCniAddonArgs struct {
+	// The name of the EKS cluster.
+	ClusterName pulumi.StringInput
 	// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
 	CniConfigureRpfilter pulumi.BoolPtrInput
 	// Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
@@ -150,8 +151,6 @@ type VpcCniArgs struct {
 	CustomNetworkConfig pulumi.BoolPtrInput
 	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
 	DisableTcpEarlyDemux pulumi.BoolPtrInput
-	// VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
-	EnableIpv6 pulumi.BoolPtrInput
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni pulumi.BoolPtrInput
 	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
@@ -177,8 +176,6 @@ type VpcCniArgs struct {
 	//
 	// Defaults to the official AWS CNI init container image in ECR.
 	InitImage pulumi.StringPtrInput
-	// The kubeconfig to use when setting the VPC CNI options.
-	Kubeconfig pulumi.Input
 	// Specifies the file path used for logs.
 	//
 	// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -214,138 +211,138 @@ type VpcCniArgs struct {
 	WarmPrefixTarget pulumi.IntPtrInput
 }
 
-func (VpcCniArgs) ElementType() reflect.Type {
-	return reflect.TypeOf((*vpcCniArgs)(nil)).Elem()
+func (VpcCniAddonArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*vpcCniAddonArgs)(nil)).Elem()
 }
 
-type VpcCniInput interface {
+type VpcCniAddonInput interface {
 	pulumi.Input
 
-	ToVpcCniOutput() VpcCniOutput
-	ToVpcCniOutputWithContext(ctx context.Context) VpcCniOutput
+	ToVpcCniAddonOutput() VpcCniAddonOutput
+	ToVpcCniAddonOutputWithContext(ctx context.Context) VpcCniAddonOutput
 }
 
-func (*VpcCni) ElementType() reflect.Type {
-	return reflect.TypeOf((**VpcCni)(nil)).Elem()
+func (*VpcCniAddon) ElementType() reflect.Type {
+	return reflect.TypeOf((**VpcCniAddon)(nil)).Elem()
 }
 
-func (i *VpcCni) ToVpcCniOutput() VpcCniOutput {
-	return i.ToVpcCniOutputWithContext(context.Background())
+func (i *VpcCniAddon) ToVpcCniAddonOutput() VpcCniAddonOutput {
+	return i.ToVpcCniAddonOutputWithContext(context.Background())
 }
 
-func (i *VpcCni) ToVpcCniOutputWithContext(ctx context.Context) VpcCniOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(VpcCniOutput)
+func (i *VpcCniAddon) ToVpcCniAddonOutputWithContext(ctx context.Context) VpcCniAddonOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(VpcCniAddonOutput)
 }
 
-// VpcCniArrayInput is an input type that accepts VpcCniArray and VpcCniArrayOutput values.
-// You can construct a concrete instance of `VpcCniArrayInput` via:
+// VpcCniAddonArrayInput is an input type that accepts VpcCniAddonArray and VpcCniAddonArrayOutput values.
+// You can construct a concrete instance of `VpcCniAddonArrayInput` via:
 //
-//	VpcCniArray{ VpcCniArgs{...} }
-type VpcCniArrayInput interface {
+//	VpcCniAddonArray{ VpcCniAddonArgs{...} }
+type VpcCniAddonArrayInput interface {
 	pulumi.Input
 
-	ToVpcCniArrayOutput() VpcCniArrayOutput
-	ToVpcCniArrayOutputWithContext(context.Context) VpcCniArrayOutput
+	ToVpcCniAddonArrayOutput() VpcCniAddonArrayOutput
+	ToVpcCniAddonArrayOutputWithContext(context.Context) VpcCniAddonArrayOutput
 }
 
-type VpcCniArray []VpcCniInput
+type VpcCniAddonArray []VpcCniAddonInput
 
-func (VpcCniArray) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]*VpcCni)(nil)).Elem()
+func (VpcCniAddonArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]*VpcCniAddon)(nil)).Elem()
 }
 
-func (i VpcCniArray) ToVpcCniArrayOutput() VpcCniArrayOutput {
-	return i.ToVpcCniArrayOutputWithContext(context.Background())
+func (i VpcCniAddonArray) ToVpcCniAddonArrayOutput() VpcCniAddonArrayOutput {
+	return i.ToVpcCniAddonArrayOutputWithContext(context.Background())
 }
 
-func (i VpcCniArray) ToVpcCniArrayOutputWithContext(ctx context.Context) VpcCniArrayOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(VpcCniArrayOutput)
+func (i VpcCniAddonArray) ToVpcCniAddonArrayOutputWithContext(ctx context.Context) VpcCniAddonArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(VpcCniAddonArrayOutput)
 }
 
-// VpcCniMapInput is an input type that accepts VpcCniMap and VpcCniMapOutput values.
-// You can construct a concrete instance of `VpcCniMapInput` via:
+// VpcCniAddonMapInput is an input type that accepts VpcCniAddonMap and VpcCniAddonMapOutput values.
+// You can construct a concrete instance of `VpcCniAddonMapInput` via:
 //
-//	VpcCniMap{ "key": VpcCniArgs{...} }
-type VpcCniMapInput interface {
+//	VpcCniAddonMap{ "key": VpcCniAddonArgs{...} }
+type VpcCniAddonMapInput interface {
 	pulumi.Input
 
-	ToVpcCniMapOutput() VpcCniMapOutput
-	ToVpcCniMapOutputWithContext(context.Context) VpcCniMapOutput
+	ToVpcCniAddonMapOutput() VpcCniAddonMapOutput
+	ToVpcCniAddonMapOutputWithContext(context.Context) VpcCniAddonMapOutput
 }
 
-type VpcCniMap map[string]VpcCniInput
+type VpcCniAddonMap map[string]VpcCniAddonInput
 
-func (VpcCniMap) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]*VpcCni)(nil)).Elem()
+func (VpcCniAddonMap) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]*VpcCniAddon)(nil)).Elem()
 }
 
-func (i VpcCniMap) ToVpcCniMapOutput() VpcCniMapOutput {
-	return i.ToVpcCniMapOutputWithContext(context.Background())
+func (i VpcCniAddonMap) ToVpcCniAddonMapOutput() VpcCniAddonMapOutput {
+	return i.ToVpcCniAddonMapOutputWithContext(context.Background())
 }
 
-func (i VpcCniMap) ToVpcCniMapOutputWithContext(ctx context.Context) VpcCniMapOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(VpcCniMapOutput)
+func (i VpcCniAddonMap) ToVpcCniAddonMapOutputWithContext(ctx context.Context) VpcCniAddonMapOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(VpcCniAddonMapOutput)
 }
 
-type VpcCniOutput struct{ *pulumi.OutputState }
+type VpcCniAddonOutput struct{ *pulumi.OutputState }
 
-func (VpcCniOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((**VpcCni)(nil)).Elem()
+func (VpcCniAddonOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**VpcCniAddon)(nil)).Elem()
 }
 
-func (o VpcCniOutput) ToVpcCniOutput() VpcCniOutput {
+func (o VpcCniAddonOutput) ToVpcCniAddonOutput() VpcCniAddonOutput {
 	return o
 }
 
-func (o VpcCniOutput) ToVpcCniOutputWithContext(ctx context.Context) VpcCniOutput {
+func (o VpcCniAddonOutput) ToVpcCniAddonOutputWithContext(ctx context.Context) VpcCniAddonOutput {
 	return o
 }
 
-type VpcCniArrayOutput struct{ *pulumi.OutputState }
+type VpcCniAddonArrayOutput struct{ *pulumi.OutputState }
 
-func (VpcCniArrayOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]*VpcCni)(nil)).Elem()
+func (VpcCniAddonArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]*VpcCniAddon)(nil)).Elem()
 }
 
-func (o VpcCniArrayOutput) ToVpcCniArrayOutput() VpcCniArrayOutput {
+func (o VpcCniAddonArrayOutput) ToVpcCniAddonArrayOutput() VpcCniAddonArrayOutput {
 	return o
 }
 
-func (o VpcCniArrayOutput) ToVpcCniArrayOutputWithContext(ctx context.Context) VpcCniArrayOutput {
+func (o VpcCniAddonArrayOutput) ToVpcCniAddonArrayOutputWithContext(ctx context.Context) VpcCniAddonArrayOutput {
 	return o
 }
 
-func (o VpcCniArrayOutput) Index(i pulumi.IntInput) VpcCniOutput {
-	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *VpcCni {
-		return vs[0].([]*VpcCni)[vs[1].(int)]
-	}).(VpcCniOutput)
+func (o VpcCniAddonArrayOutput) Index(i pulumi.IntInput) VpcCniAddonOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *VpcCniAddon {
+		return vs[0].([]*VpcCniAddon)[vs[1].(int)]
+	}).(VpcCniAddonOutput)
 }
 
-type VpcCniMapOutput struct{ *pulumi.OutputState }
+type VpcCniAddonMapOutput struct{ *pulumi.OutputState }
 
-func (VpcCniMapOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]*VpcCni)(nil)).Elem()
+func (VpcCniAddonMapOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]*VpcCniAddon)(nil)).Elem()
 }
 
-func (o VpcCniMapOutput) ToVpcCniMapOutput() VpcCniMapOutput {
+func (o VpcCniAddonMapOutput) ToVpcCniAddonMapOutput() VpcCniAddonMapOutput {
 	return o
 }
 
-func (o VpcCniMapOutput) ToVpcCniMapOutputWithContext(ctx context.Context) VpcCniMapOutput {
+func (o VpcCniAddonMapOutput) ToVpcCniAddonMapOutputWithContext(ctx context.Context) VpcCniAddonMapOutput {
 	return o
 }
 
-func (o VpcCniMapOutput) MapIndex(k pulumi.StringInput) VpcCniOutput {
-	return pulumi.All(o, k).ApplyT(func(vs []interface{}) *VpcCni {
-		return vs[0].(map[string]*VpcCni)[vs[1].(string)]
-	}).(VpcCniOutput)
+func (o VpcCniAddonMapOutput) MapIndex(k pulumi.StringInput) VpcCniAddonOutput {
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) *VpcCniAddon {
+		return vs[0].(map[string]*VpcCniAddon)[vs[1].(string)]
+	}).(VpcCniAddonOutput)
 }
 
 func init() {
-	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniInput)(nil)).Elem(), &VpcCni{})
-	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniArrayInput)(nil)).Elem(), VpcCniArray{})
-	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniMapInput)(nil)).Elem(), VpcCniMap{})
-	pulumi.RegisterOutputType(VpcCniOutput{})
-	pulumi.RegisterOutputType(VpcCniArrayOutput{})
-	pulumi.RegisterOutputType(VpcCniMapOutput{})
+	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniAddonInput)(nil)).Elem(), &VpcCniAddon{})
+	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniAddonArrayInput)(nil)).Elem(), VpcCniAddonArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*VpcCniAddonMapInput)(nil)).Elem(), VpcCniAddonMap{})
+	pulumi.RegisterOutputType(VpcCniAddonOutput{})
+	pulumi.RegisterOutputType(VpcCniAddonArrayOutput{})
+	pulumi.RegisterOutputType(VpcCniAddonMapOutput{})
 }
