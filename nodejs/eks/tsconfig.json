@@ -15,32 +15,9 @@
         "strictNullChecks": true,
         "allowSyntheticDefaultImports": true
     },
-    "files": [
-        "ami.ts",
-        "authenticationMode.ts",
-        "addon.ts",
-        "cluster.ts",
-        "cni.ts",
-        "nodegroup.ts",
-        "dashboard.ts",
-        "randomSuffix.ts",
-        "securitygroup.ts",
-        "index.ts",
-        "servicerole.ts",
-        "storageclass.ts",
-        "userdata.ts",
-
-        "cmd/provider/cluster.ts",
-        "cmd/provider/cni.ts",
-        "cmd/provider/index.ts",
-        "cmd/provider/nodegroup.ts",
-        "cmd/provider/randomSuffix.ts",
-        "cmd/provider/securitygroup.ts",
-
-        "ami.test.ts",
-        "authenticationMode.test.ts",
-        "dependencies.test.ts",
-        "nodegroup.test.ts",
-        "userdata.test.ts"
+    "include": ["./**/*.ts"],
+    "exclude": [
+        "node_modules",
+        "bin"
     ]
 }
