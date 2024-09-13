@@ -65,6 +65,7 @@ export class NodeGroup extends pulumi.ComponentResource {
             resourceInputs["amiType"] = args ? args.amiType : undefined;
             resourceInputs["autoScalingGroupTags"] = args ? args.autoScalingGroupTags : undefined;
             resourceInputs["bootstrapExtraArgs"] = args ? args.bootstrapExtraArgs : undefined;
+            resourceInputs["bottlerocketSettings"] = args ? args.bottlerocketSettings : undefined;
             resourceInputs["cloudFormationTags"] = args ? args.cloudFormationTags : undefined;
             resourceInputs["cluster"] = args ? args.cluster : undefined;
             resourceInputs["clusterIngressRule"] = args ? args.clusterIngressRule : undefined;
@@ -92,6 +93,8 @@ export class NodeGroup extends pulumi.ComponentResource {
             resourceInputs["nodeSubnetIds"] = args ? args.nodeSubnetIds : undefined;
             resourceInputs["nodeUserData"] = args ? args.nodeUserData : undefined;
             resourceInputs["nodeUserDataOverride"] = args ? args.nodeUserDataOverride : undefined;
+            resourceInputs["nodeadmExtraOptions"] = args ? args.nodeadmExtraOptions : undefined;
+            resourceInputs["operatingSystem"] = args ? args.operatingSystem : undefined;
             resourceInputs["spotPrice"] = args ? args.spotPrice : undefined;
             resourceInputs["taints"] = args ? args.taints : undefined;
             resourceInputs["version"] = args ? args.version : undefined;
@@ -143,6 +146,19 @@ export interface NodeGroupArgs {
      * Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
      */
     bootstrapExtraArgs?: string;
+    /**
+     * The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     *
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     */
+    bottlerocketSettings?: pulumi.Input<{[key: string]: any}>;
     /**
      * The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
      *
@@ -282,6 +298,27 @@ export interface NodeGroupArgs {
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
      */
     nodeUserDataOverride?: pulumi.Input<string>;
+    /**
+     * Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+     * The base settings the provider sets are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     *
+     * Note: This is only applicable when using AL2023.
+     * See for more details:
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+     */
+    nodeadmExtraOptions?: pulumi.Input<pulumi.Input<inputs.NodeadmOptionsArgs>[]>;
+    /**
+     * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     *
+     * Defaults to `AL2`.
+     */
+    operatingSystem?: pulumi.Input<enums.OperatingSystem>;
     /**
      * Bidding price for spot instance. If set, only spot instances will be added as worker node.
      */

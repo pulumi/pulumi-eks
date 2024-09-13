@@ -98,6 +98,19 @@ export interface ClusterNodeGroupOptions {
      */
     bootstrapExtraArgs?: string;
     /**
+     * The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     *
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     */
+    bottlerocketSettings?: {[key: string]: any};
+    /**
      * The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
      *
      * Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
@@ -233,6 +246,27 @@ export interface ClusterNodeGroupOptions {
      */
     nodeUserDataOverride?: string;
     /**
+     * Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+     * The base settings the provider sets are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     *
+     * Note: This is only applicable when using AL2023.
+     * See for more details:
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+     */
+    nodeadmExtraOptions?: outputs.NodeadmOptions[];
+    /**
+     * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     *
+     * Defaults to `AL2`.
+     */
+    operatingSystem?: enums.OperatingSystem;
+    /**
      * Bidding price for spot instance. If set, only spot instances will be added as worker node.
      */
     spotPrice?: string;
@@ -339,6 +373,22 @@ export interface NodeGroupData {
      * The security group for the node group to communicate with the cluster.
      */
     nodeSecurityGroup: pulumiAws.ec2.SecurityGroup;
+}
+
+/**
+ * MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
+ *
+ * See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+ */
+export interface NodeadmOptions {
+    /**
+     * The ARN of the access policy to associate with the principal
+     */
+    content: string;
+    /**
+     * The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
+     */
+    contentType: string;
 }
 
 /**

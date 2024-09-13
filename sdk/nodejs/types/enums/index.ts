@@ -27,9 +27,29 @@ export const AccessEntryType = {
  */
 export type AccessEntryType = (typeof AccessEntryType)[keyof typeof AccessEntryType];
 
+export const AmiType = {
+    AL2X86_64: "AL2_x86_64",
+    AL2X86_64GPU: "AL2_x86_64_GPU",
+    AL2Arm64: "AL2_ARM_64",
+    AL2023X86_64Standard: "AL2023_x86_64_STANDARD",
+    AL2023Arm64Standard: "AL2023_ARM_64_STANDARD",
+    BottlerocketArm64: "BOTTLEROCKET_ARM_64",
+    BottlerocketX86_64: "BOTTLEROCKET_x86_64",
+    BottlerocketArm64Nvidia: "BOTTLEROCKET_ARM_64_NVIDIA",
+    BottlerocketX86_64Nvidia: "BOTTLEROCKET_x86_64_NVIDIA",
+} as const;
+
+/**
+ * Predefined AMI types for EKS optimized AMIs. Can be used to select the latest EKS optimized AMI for a node group.
+ */
+export type AmiType = (typeof AmiType)[keyof typeof AmiType];
+
 export const AuthenticationMode = {
     /**
      * Only aws-auth ConfigMap will be used for authenticating to the Kubernetes API.
+     *
+     * @deprecated The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.
+For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.
      */
     ConfigMap: "CONFIG_MAP",
     /**
@@ -38,6 +58,9 @@ export const AuthenticationMode = {
     Api: "API",
     /**
      * Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.
+     *
+     * @deprecated The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.
+For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.
      */
     ApiAndConfigMap: "API_AND_CONFIG_MAP",
 } as const;
@@ -49,3 +72,31 @@ export const AuthenticationMode = {
  * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
  */
 export type AuthenticationMode = (typeof AuthenticationMode)[keyof typeof AuthenticationMode];
+
+export const OperatingSystem = {
+    /**
+     * EKS optimized OS based on Amazon Linux 2 (AL2).
+     *
+     * @deprecated Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html
+     */
+    AL2: "AL2",
+    /**
+     * EKS optimized OS based on Amazon Linux 2023 (AL2023).
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+     */
+    AL2023: "AL2023",
+    /**
+     * EKS optimized Container OS based on Bottlerocket.
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html
+     */
+    Bottlerocket: "Bottlerocket",
+} as const;
+
+/**
+ * The type of EKS optimized Operating System to use for node groups.
+ *
+ * See for more details:
+ * https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html
+ */
+export type OperatingSystem = (typeof OperatingSystem)[keyof typeof OperatingSystem];

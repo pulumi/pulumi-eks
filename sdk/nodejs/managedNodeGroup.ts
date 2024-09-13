@@ -52,14 +52,17 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
             if ((!args || args.cluster === undefined) && !opts.urn) {
                 throw new Error("Missing required property 'cluster'");
             }
+            resourceInputs["amiId"] = args ? args.amiId : undefined;
             resourceInputs["amiType"] = args ? args.amiType : undefined;
             resourceInputs["bootstrapExtraArgs"] = args ? args.bootstrapExtraArgs : undefined;
+            resourceInputs["bottlerocketSettings"] = args ? args.bottlerocketSettings : undefined;
             resourceInputs["capacityType"] = args ? args.capacityType : undefined;
             resourceInputs["cluster"] = args ? args.cluster : undefined;
             resourceInputs["clusterName"] = args ? args.clusterName : undefined;
             resourceInputs["diskSize"] = args ? args.diskSize : undefined;
             resourceInputs["enableIMDSv2"] = args ? args.enableIMDSv2 : undefined;
             resourceInputs["forceUpdateVersion"] = args ? args.forceUpdateVersion : undefined;
+            resourceInputs["gpu"] = args ? args.gpu : undefined;
             resourceInputs["instanceTypes"] = args ? args.instanceTypes : undefined;
             resourceInputs["kubeletExtraArgs"] = args ? args.kubeletExtraArgs : undefined;
             resourceInputs["labels"] = args ? args.labels : undefined;
@@ -68,12 +71,15 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
             resourceInputs["nodeGroupNamePrefix"] = args ? args.nodeGroupNamePrefix : undefined;
             resourceInputs["nodeRole"] = args ? args.nodeRole : undefined;
             resourceInputs["nodeRoleArn"] = args ? args.nodeRoleArn : undefined;
+            resourceInputs["nodeadmExtraOptions"] = args ? args.nodeadmExtraOptions : undefined;
+            resourceInputs["operatingSystem"] = args ? args.operatingSystem : undefined;
             resourceInputs["releaseVersion"] = args ? args.releaseVersion : undefined;
             resourceInputs["remoteAccess"] = args ? args.remoteAccess : undefined;
             resourceInputs["scalingConfig"] = args ? args.scalingConfig : undefined;
             resourceInputs["subnetIds"] = args ? args.subnetIds : undefined;
             resourceInputs["tags"] = args ? args.tags : undefined;
             resourceInputs["taints"] = args ? args.taints : undefined;
+            resourceInputs["userData"] = args ? args.userData : undefined;
             resourceInputs["version"] = args ? args.version : undefined;
             resourceInputs["nodeGroup"] = undefined /*out*/;
         } else {
@@ -89,7 +95,19 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
  */
 export interface ManagedNodeGroupArgs {
     /**
-     * Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`. See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
+     * The AMI ID to use for the worker nodes.
+     * Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+     *
+     * Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+     */
+    amiId?: pulumi.Input<string>;
+    /**
+     * Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
+     * Note: `amiType` and `amiId` are mutually exclusive.
+     *
+     * See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
      */
     amiType?: pulumi.Input<string>;
     /**
@@ -98,6 +116,19 @@ export interface ManagedNodeGroupArgs {
      * Note that this field conflicts with `launchTemplate`.
      */
     bootstrapExtraArgs?: string;
+    /**
+     * The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     *
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     */
+    bottlerocketSettings?: pulumi.Input<{[key: string]: any}>;
     /**
      * Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
      */
@@ -125,6 +156,15 @@ export interface ManagedNodeGroupArgs {
      * Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
      */
     forceUpdateVersion?: pulumi.Input<boolean>;
+    /**
+     * Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+     * Defaults to false.
+     *
+     * Note: `gpu` and `amiId` are mutually exclusive.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+     */
+    gpu?: pulumi.Input<boolean>;
     /**
      * Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
      */
@@ -165,6 +205,27 @@ export interface ManagedNodeGroupArgs {
      */
     nodeRoleArn?: pulumi.Input<string>;
     /**
+     * Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+     * The base settings the provider sets are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     *
+     * Note: This is only applicable when using AL2023.
+     * See for more details:
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+     *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+     */
+    nodeadmExtraOptions?: pulumi.Input<pulumi.Input<inputs.NodeadmOptionsArgs>[]>;
+    /**
+     * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     *
+     * Defaults to `AL2`.
+     */
+    operatingSystem?: pulumi.Input<enums.OperatingSystem>;
+    /**
      * AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
      */
     releaseVersion?: pulumi.Input<string>;
@@ -200,5 +261,11 @@ export interface ManagedNodeGroupArgs {
      * The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
      */
     taints?: pulumi.Input<pulumi.Input<pulumiAws.types.input.eks.NodeGroupTaint>[]>;
+    /**
+     * User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
+     */
+    userData?: pulumi.Input<string>;
     version?: pulumi.Input<string>;
 }
