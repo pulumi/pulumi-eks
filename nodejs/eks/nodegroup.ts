@@ -2219,9 +2219,6 @@ function createMNGCustomLaunchTemplate(
             imageId: userData
                 ? args.amiId ?? getRecommendedAMI(args, core.cluster.version, parent)
                 : undefined,
-            imageId: userData
-                ? args.amiId ?? getRecommendedAMI(args, core.cluster.version, parent)
-                : undefined,
         },
         { parent, provider },
     );
