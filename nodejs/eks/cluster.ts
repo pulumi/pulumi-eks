@@ -505,6 +505,7 @@ export function createCore(
                         arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSClusterPolicy`,
                     },
                 ],
+                tags: args.tags,
             },
             { parent, provider },
         ).role;
@@ -782,6 +783,7 @@ export function createCore(
                         arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly`,
                     },
                 ],
+                tags: args.tags,
             },
             { parent, provider },
         ).role;
@@ -928,6 +930,7 @@ export function createCore(
                                     arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy`,
                                 },
                             ],
+                            tags: args.tags,
                         },
                         { parent, provider },
                     ).role.apply((r) => r.arn);

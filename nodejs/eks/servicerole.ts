@@ -40,6 +40,11 @@ export interface ServiceRoleArgs {
      * One or more managed policy ARNs to attach to this role.
      */
     readonly managedPolicyArns?: { id: string; arn: pulumi.Input<string> }[];
+
+    /**
+     * Tags to apply to the role.
+     */
+    readonly tags?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
 }
 
 /**
@@ -79,6 +84,7 @@ export class ServiceRole extends pulumi.ComponentResource {
             {
                 description: args.description,
                 assumeRolePolicy: assumeRolePolicy,
+                tags: args.tags,
             },
             { parent: this },
         );
