@@ -1,5 +1,4 @@
-import * as pulumi from "@pulumi/pulumi";
-import * as aws from "@pulumi/aws";
+
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
@@ -206,27 +205,4 @@ const managedNodeGroupAL2023NodeadmExtraOptions = eks.createManagedNodeGroup("al
       content: `#!/bin/bash\necho "Hello Pulumi!"`,
     },
   ]
-});
-
-// Create a simple AL2023 node group with a custom user data and a custom AMI
-const amiId = pulumi.interpolate`/aws/service/eks/optimized-ami/${cluster.core.cluster.version}/amazon-linux-2023/x86_64/standard/recommended/image_id`.apply(name =>
-  aws.ssm.getParameter({ name }, { async: true })
-).apply(result => result.value);
-
-const customUserData = userdata.createUserData({
-  name: cluster.core.cluster.name,
-  endpoint: cluster.core.cluster.endpoint,
-  certificateAuthority: cluster.core.cluster.certificateAuthority.data,
-  serviceCidr: cluster.core.cluster.kubernetesNetworkConfig.serviceIpv4Cidr,
-}, `--max-pods=${increasedPodCapacity} --node-labels=increased-pod-capacity=true`);
-
-const managedNodeGroupAL2023CustomUserData = eks.createManagedNodeGroup("al-2023-mng-custom-userdata", {
-  ...scalingConfig,
-  operatingSystem: eks.OperatingSystem.AL2023,
-  cluster: cluster,
-  instanceTypes: ["t3.medium"],
-  nodeRole: role,
-  diskSize: 100,
-  userData: customUserData,
-  amiId,
 });
