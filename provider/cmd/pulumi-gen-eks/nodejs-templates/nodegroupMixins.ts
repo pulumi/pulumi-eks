@@ -4,6 +4,8 @@ import * as aws from '@pulumi/aws';
 import { Cluster } from './cluster';
 import { ManagedNodeGroup } from './managedNodeGroup';
 import { ComponentResource, ProviderResource, ResourceTransformArgs, ResourceTransformResult } from '@pulumi/pulumi';
+import { OperatingSystem } from './types/enums';
+import { NodeadmOptionsArgs } from './types/input';
 
 /**
  * ManagedNodeGroupOptions describes the configuration options accepted by an
@@ -102,6 +104,74 @@ export type ManagedNodeGroupOptions = Omit<
      *   - maxSize: 2
      */
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>;
+
+    /**
+     * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the
+     * instance types and gpu configuration. Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     *
+     * Defaults to `AL2`.
+     */
+    operatingSystem?: pulumi.Input<OperatingSystem>;
+
+    /**
+     * The configuration settings for Bottlerocket OS.
+     * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+     * This includes:
+     *   - settings.kubernetes.api-server
+     *   - settings.kubernetes.cluster-certificate
+     *   - settings.kubernetes.cluster-name
+     *   - settings.kubernetes.cluster-dns-ip
+     *
+     * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+     */
+    bottlerocketSettings?: pulumi.Input<object>;
+
+    /**
+     * User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping.
+     * If omitted, the provider will configure the user data.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data
+     */
+    userData?: pulumi.Input<string>;
+
+    /**
+     * Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
+     * Defaults to false.
+     *
+     * Note: `gpu` and `amiId` are mutually exclusive.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+     */
+    gpu?: pulumi.Input<boolean>;
+
+    /**
+     * The AMI ID to use for the worker nodes.
+     * Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
+     *
+     * Note: `amiId` is mutually exclusive with `gpu` and `amiType`.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+     */
+    amiId?: pulumi.Input<string>;
+
+    /**
+     * Extra nodeadm configuration sections to be added to the nodeadm user data.
+     * This can be shell scripts, nodeadm NodeConfig or any other user data compatible script.
+     * When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets.
+     * You can overwrite base settings or provide additional settings this way.
+     *
+     * The base settings are:
+     *   - cluster.name
+     *   - cluster.apiServerEndpoint
+     *   - cluster.certificateAuthority
+     *   - cluster.cidr
+     *
+     * Note: This is only applicable when using AL2023.
+     * See for more details:
+     * - [Amazon EKS AMI - Nodeadm](https://awslabs.github.io/amazon-eks-ami/nodeadm/).
+     * - [Amazon EKS AMI - Nodeadm Configuration](https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/).
+     */
+    nodeadmExtraOptions?: pulumi.Input<pulumi.Input<NodeadmOptionsArgs>[]>;
 }
 
 /**
