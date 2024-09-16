@@ -766,6 +766,10 @@
         "eks:index:VpcCniOptions": {
             "description": "Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.",
             "properties": {
+                "addonVersion": {
+                    "type": "string",
+                    "description": "The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used."
+                },
                 "cniConfigureRpfilter": {
                     "type": "boolean",
                     "description": "Specifies whether ipamd should configure rp filter for primary interface. Default is `false`."
@@ -1936,9 +1940,17 @@
         "eks:index:VpcCniAddon": {
             "description": "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\nFor more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
             "inputProperties": {
+                "addonVersion": {
+                    "type": "string",
+                    "description": "The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used."
+                },
                 "clusterName": {
                     "type": "string",
                     "description": "The name of the EKS cluster."
+                },
+                "clusterVersion": {
+                    "type": "string",
+                    "description": "The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified."
                 },
                 "cniConfigureRpfilter": {
                     "type": "boolean",

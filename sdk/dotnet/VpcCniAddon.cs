@@ -61,10 +61,22 @@ namespace Pulumi.Eks
     public sealed class VpcCniAddonArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
+        /// The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+        /// </summary>
+        [Input("addonVersion")]
+        public Input<string>? AddonVersion { get; set; }
+
+        /// <summary>
         /// The name of the EKS cluster.
         /// </summary>
         [Input("clusterName", required: true)]
         public Input<string> ClusterName { get; set; } = null!;
+
+        /// <summary>
+        /// The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+        /// </summary>
+        [Input("clusterVersion")]
+        public Input<string>? ClusterVersion { get; set; }
 
         /// <summary>
         /// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.

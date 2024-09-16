@@ -22,6 +22,21 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
     public static final VpcCniOptionsArgs Empty = new VpcCniOptionsArgs();
 
     /**
+     * The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+     * 
+     */
+    @Import(name="addonVersion")
+    private @Nullable Output<String> addonVersion;
+
+    /**
+     * @return The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+     * 
+     */
+    public Optional<Output<String>> addonVersion() {
+        return Optional.ofNullable(this.addonVersion);
+    }
+
+    /**
      * Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
      * 
      */
@@ -395,6 +410,7 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
     private VpcCniOptionsArgs() {}
 
     private VpcCniOptionsArgs(VpcCniOptionsArgs $) {
+        this.addonVersion = $.addonVersion;
         this.cniConfigureRpfilter = $.cniConfigureRpfilter;
         this.cniCustomNetworkCfg = $.cniCustomNetworkCfg;
         this.cniExternalSnat = $.cniExternalSnat;
@@ -434,6 +450,27 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder(VpcCniOptionsArgs defaults) {
             $ = new VpcCniOptionsArgs(Objects.requireNonNull(defaults));
+        }
+
+        /**
+         * @param addonVersion The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder addonVersion(@Nullable Output<String> addonVersion) {
+            $.addonVersion = addonVersion;
+            return this;
+        }
+
+        /**
+         * @param addonVersion The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder addonVersion(String addonVersion) {
+            return addonVersion(Output.of(addonVersion));
         }
 
         /**

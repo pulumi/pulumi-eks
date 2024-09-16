@@ -20,6 +20,16 @@ export interface VpcCniAddonOptions {
     clusterName: pulumi.Input<string>;
 
     /**
+     * The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+     */
+    clusterVersion?: pulumi.Input<string>;
+
+    /**
+     * The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+     */
+    addonVersion?: pulumi.Input<string>;
+
+    /**
      * Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires
      * additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
      *
@@ -239,7 +249,26 @@ export class VpcCniAddon extends pulumi.ComponentResource {
         }
 
         const { env, initEnv } = computeEnv(args);
-        // todo: this should fetch the latest version of the addon
+
+        let addonVersion: pulumi.Input<string>;
+        if (args.addonVersion) {
+            addonVersion = args.addonVersion;
+        } else if (args.clusterVersion) {
+            addonVersion = aws.eks.getAddonVersionOutput(
+                {
+                    addonName: "vpc-cni",
+                    kubernetesVersion: args.clusterVersion,
+                    mostRecent: true,
+                },
+                { parent: this },
+            ).version;
+        } else {
+            throw new pulumi.ResourceError(
+                "You need to specify either `addonVersion` or `clusterVersion` to determine the version of the vpc-cni addon to use.",
+                this,
+            );
+        }
+
         this.addon = new aws.eks.Addon(
             name,
             {
@@ -257,11 +286,11 @@ export class VpcCniAddon extends pulumi.ComponentResource {
                     },
                 }),
             },
-            { parent: this, provider: opts?.provider },
+            { parent: this },
         );
 
         if (args.image || args.initImage || args.nodeAgentImage || args.securityContextPrivileged) {
-            this.createDaemonSetPatch(args, this.addon);
+            this.createDaemonSetPatch(name, args, this.addon);
         }
 
         this.registerOutputs({ addon: this.addon });
@@ -269,6 +298,7 @@ export class VpcCniAddon extends pulumi.ComponentResource {
 
     // create a SSA patch to set options that are not configurable via the addon
     private createDaemonSetPatch(
+        name: string,
         args: VpcCniAddonOptions,
         addon: aws.eks.Addon,
     ): k8s.apps.v1.DaemonSetPatch {
@@ -302,7 +332,7 @@ export class VpcCniAddon extends pulumi.ComponentResource {
         }
 
         return new k8s.apps.v1.DaemonSetPatch(
-            "sec-context",
+            name,
             {
                 metadata: {
                     name: "aws-node",

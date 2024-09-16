@@ -2927,6 +2927,8 @@ func (o UserMappingArrayOutput) Index(i pulumi.IntInput) UserMappingOutput {
 
 // Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
 type VpcCniOptions struct {
+	// The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+	AddonVersion *string `pulumi:"addonVersion"`
 	// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
 	CniConfigureRpfilter *bool `pulumi:"cniConfigureRpfilter"`
 	// Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
@@ -3012,6 +3014,8 @@ type VpcCniOptionsInput interface {
 
 // Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
 type VpcCniOptionsArgs struct {
+	// The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+	AddonVersion pulumi.StringPtrInput `pulumi:"addonVersion"`
 	// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
 	CniConfigureRpfilter pulumi.BoolPtrInput `pulumi:"cniConfigureRpfilter"`
 	// Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
@@ -3160,6 +3164,11 @@ func (o VpcCniOptionsOutput) ToVpcCniOptionsPtrOutputWithContext(ctx context.Con
 	return o.ApplyTWithContext(ctx, func(_ context.Context, v VpcCniOptions) *VpcCniOptions {
 		return &v
 	}).(VpcCniOptionsPtrOutput)
+}
+
+// The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+func (o VpcCniOptionsOutput) AddonVersion() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *string { return v.AddonVersion }).(pulumi.StringPtrOutput)
 }
 
 // Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
@@ -3317,6 +3326,16 @@ func (o VpcCniOptionsPtrOutput) Elem() VpcCniOptionsOutput {
 		var ret VpcCniOptions
 		return ret
 	}).(VpcCniOptionsOutput)
+}
+
+// The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+func (o VpcCniOptionsPtrOutput) AddonVersion() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.AddonVersion
+	}).(pulumi.StringPtrOutput)
 }
 
 // Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.

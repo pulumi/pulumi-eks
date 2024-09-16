@@ -61,8 +61,12 @@ func (VpcCniAddonState) ElementType() reflect.Type {
 }
 
 type vpcCniAddonArgs struct {
+	// The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+	AddonVersion *string `pulumi:"addonVersion"`
 	// The name of the EKS cluster.
 	ClusterName string `pulumi:"clusterName"`
+	// The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+	ClusterVersion *string `pulumi:"clusterVersion"`
 	// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
 	CniConfigureRpfilter *bool `pulumi:"cniConfigureRpfilter"`
 	// Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
@@ -137,8 +141,12 @@ type vpcCniAddonArgs struct {
 
 // The set of arguments for constructing a VpcCniAddon resource.
 type VpcCniAddonArgs struct {
+	// The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+	AddonVersion pulumi.StringPtrInput
 	// The name of the EKS cluster.
 	ClusterName pulumi.StringInput
+	// The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+	ClusterVersion pulumi.StringPtrInput
 	// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
 	CniConfigureRpfilter pulumi.BoolPtrInput
 	// Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`

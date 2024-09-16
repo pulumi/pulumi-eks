@@ -16,6 +16,12 @@ namespace Pulumi.Eks.Inputs
     public sealed class VpcCniOptionsArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
+        /// The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+        /// </summary>
+        [Input("addonVersion")]
+        public Input<string>? AddonVersion { get; set; }
+
+        /// <summary>
         /// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         /// </summary>
         [Input("cniConfigureRpfilter")]

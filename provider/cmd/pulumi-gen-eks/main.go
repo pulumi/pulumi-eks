@@ -1068,7 +1068,7 @@ func generateSchema() schema.PackageSpec {
 					Description: "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\n" +
 						"For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
 				},
-				InputProperties: vpcCniProperties(true /*clusterName*/),
+				InputProperties: vpcCniProperties(false /*cluster*/),
 				RequiredInputs:  []string{"clusterName"},
 			},
 			"eks:index:Addon": {
@@ -1564,7 +1564,7 @@ func generateSchema() schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "object",
 					Description: "Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.",
-					Properties:  vpcCniProperties(false /*clusterName*/),
+					Properties:  vpcCniProperties(true /*cluster*/),
 				},
 			},
 
@@ -2152,7 +2152,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 
 // vpcCniProperties returns a map of properties that can be used by either the VpcCni resource or VpcCniOptions type.
 // When kubeconfig is set to true, the kubeconfig property is included in the map (for the VpcCni resource).
-func vpcCniProperties(clusterName bool) map[string]schema.PropertySpec {
+func vpcCniProperties(cluster bool) map[string]schema.PropertySpec {
 	props := map[string]schema.PropertySpec{
 		"nodePortSupport": {
 			TypeSpec: schema.TypeSpec{Type: "boolean"},
@@ -2282,10 +2282,19 @@ func vpcCniProperties(clusterName bool) map[string]schema.PropertySpec {
 		},
 	}
 
-	if clusterName {
+	props["addonVersion"] = schema.PropertySpec{
+		TypeSpec:    schema.TypeSpec{Type: "string"},
+		Description: "The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.",
+	}
+
+	if !cluster {
 		props["clusterName"] = schema.PropertySpec{
 			TypeSpec:    schema.TypeSpec{Type: "string"},
 			Description: "The name of the EKS cluster.",
+		}
+		props["clusterVersion"] = schema.PropertySpec{
+			TypeSpec:    schema.TypeSpec{Type: "string"},
+			Description: "The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.",
 		}
 	}
 

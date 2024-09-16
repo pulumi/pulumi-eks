@@ -906,6 +906,7 @@ export function createCore(
               {
                   ...args.vpcCniOptions,
                   clusterName: eksCluster.name,
+                  clusterVersion: eksCluster.version,
               },
               { parent, dependsOn: authDependencies, providers: { kubernetes: k8sProvider } },
           );

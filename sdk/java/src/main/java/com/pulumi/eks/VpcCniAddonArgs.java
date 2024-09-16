@@ -18,6 +18,21 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
     public static final VpcCniAddonArgs Empty = new VpcCniAddonArgs();
 
     /**
+     * The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+     * 
+     */
+    @Import(name="addonVersion")
+    private @Nullable Output<String> addonVersion;
+
+    /**
+     * @return The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+     * 
+     */
+    public Optional<Output<String>> addonVersion() {
+        return Optional.ofNullable(this.addonVersion);
+    }
+
+    /**
      * The name of the EKS cluster.
      * 
      */
@@ -30,6 +45,21 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Output<String> clusterName() {
         return this.clusterName;
+    }
+
+    /**
+     * The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+     * 
+     */
+    @Import(name="clusterVersion")
+    private @Nullable Output<String> clusterVersion;
+
+    /**
+     * @return The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+     * 
+     */
+    public Optional<Output<String>> clusterVersion() {
+        return Optional.ofNullable(this.clusterVersion);
     }
 
     /**
@@ -406,7 +436,9 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
     private VpcCniAddonArgs() {}
 
     private VpcCniAddonArgs(VpcCniAddonArgs $) {
+        this.addonVersion = $.addonVersion;
         this.clusterName = $.clusterName;
+        this.clusterVersion = $.clusterVersion;
         this.cniConfigureRpfilter = $.cniConfigureRpfilter;
         this.cniCustomNetworkCfg = $.cniCustomNetworkCfg;
         this.cniExternalSnat = $.cniExternalSnat;
@@ -449,6 +481,27 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
+         * @param addonVersion The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder addonVersion(@Nullable Output<String> addonVersion) {
+            $.addonVersion = addonVersion;
+            return this;
+        }
+
+        /**
+         * @param addonVersion The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder addonVersion(String addonVersion) {
+            return addonVersion(Output.of(addonVersion));
+        }
+
+        /**
          * @param clusterName The name of the EKS cluster.
          * 
          * @return builder
@@ -467,6 +520,27 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder clusterName(String clusterName) {
             return clusterName(Output.of(clusterName));
+        }
+
+        /**
+         * @param clusterVersion The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterVersion(@Nullable Output<String> clusterVersion) {
+            $.clusterVersion = clusterVersion;
+            return this;
+        }
+
+        /**
+         * @param clusterVersion The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterVersion(String clusterVersion) {
+            return clusterVersion(Output.of(clusterVersion));
         }
 
         /**

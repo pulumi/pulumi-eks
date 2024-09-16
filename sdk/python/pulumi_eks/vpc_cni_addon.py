@@ -15,6 +15,8 @@ __all__ = ['VpcCniAddonArgs', 'VpcCniAddon']
 class VpcCniAddonArgs:
     def __init__(__self__, *,
                  cluster_name: pulumi.Input[str],
+                 addon_version: Optional[pulumi.Input[str]] = None,
+                 cluster_version: Optional[pulumi.Input[str]] = None,
                  cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
@@ -39,6 +41,8 @@ class VpcCniAddonArgs:
         """
         The set of arguments for constructing a VpcCniAddon resource.
         :param pulumi.Input[str] cluster_name: The name of the EKS cluster.
+        :param pulumi.Input[str] addon_version: The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+        :param pulumi.Input[str] cluster_version: The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
         :param pulumi.Input[bool] cni_configure_rpfilter: Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         :param pulumi.Input[bool] cni_custom_network_cfg: Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
         :param pulumi.Input[bool] cni_external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
@@ -90,6 +94,10 @@ class VpcCniAddonArgs:
         :param pulumi.Input[int] warm_prefix_target: WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
         """
         pulumi.set(__self__, "cluster_name", cluster_name)
+        if addon_version is not None:
+            pulumi.set(__self__, "addon_version", addon_version)
+        if cluster_version is not None:
+            pulumi.set(__self__, "cluster_version", cluster_version)
         if cni_configure_rpfilter is not None:
             pulumi.set(__self__, "cni_configure_rpfilter", cni_configure_rpfilter)
         if cni_custom_network_cfg is not None:
@@ -144,6 +152,30 @@ class VpcCniAddonArgs:
     @cluster_name.setter
     def cluster_name(self, value: pulumi.Input[str]):
         pulumi.set(self, "cluster_name", value)
+
+    @property
+    @pulumi.getter(name="addonVersion")
+    def addon_version(self) -> Optional[pulumi.Input[str]]:
+        """
+        The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+        """
+        return pulumi.get(self, "addon_version")
+
+    @addon_version.setter
+    def addon_version(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "addon_version", value)
+
+    @property
+    @pulumi.getter(name="clusterVersion")
+    def cluster_version(self) -> Optional[pulumi.Input[str]]:
+        """
+        The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+        """
+        return pulumi.get(self, "cluster_version")
+
+    @cluster_version.setter
+    def cluster_version(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "cluster_version", value)
 
     @property
     @pulumi.getter(name="cniConfigureRpfilter")
@@ -431,7 +463,9 @@ class VpcCniAddon(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 addon_version: Optional[pulumi.Input[str]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
+                 cluster_version: Optional[pulumi.Input[str]] = None,
                  cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
@@ -460,7 +494,9 @@ class VpcCniAddon(pulumi.CustomResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
+        :param pulumi.Input[str] addon_version: The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
         :param pulumi.Input[str] cluster_name: The name of the EKS cluster.
+        :param pulumi.Input[str] cluster_version: The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
         :param pulumi.Input[bool] cni_configure_rpfilter: Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         :param pulumi.Input[bool] cni_custom_network_cfg: Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
         :param pulumi.Input[bool] cni_external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
@@ -536,7 +572,9 @@ class VpcCniAddon(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 addon_version: Optional[pulumi.Input[str]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
+                 cluster_version: Optional[pulumi.Input[str]] = None,
                  cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
@@ -567,9 +605,11 @@ class VpcCniAddon(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = VpcCniAddonArgs.__new__(VpcCniAddonArgs)
 
+            __props__.__dict__["addon_version"] = addon_version
             if cluster_name is None and not opts.urn:
                 raise TypeError("Missing required property 'cluster_name'")
             __props__.__dict__["cluster_name"] = cluster_name
+            __props__.__dict__["cluster_version"] = cluster_version
             __props__.__dict__["cni_configure_rpfilter"] = cni_configure_rpfilter
             __props__.__dict__["cni_custom_network_cfg"] = cni_custom_network_cfg
             __props__.__dict__["cni_external_snat"] = cni_external_snat
