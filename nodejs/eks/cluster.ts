@@ -624,23 +624,34 @@ export function createCore(
         },
     );
 
-    pulumi.output(args.fargate).apply(fargate => {
+    pulumi.output(args.fargate).apply((fargate) => {
         if (args.kubeProxyAddonOptions?.enabled ?? true) {
             const kubeProxyVersion: pulumi.Output<string> = args.kubeProxyAddonOptions?.version
                 ? pulumi.output(args.kubeProxyAddonOptions?.version)
-                : aws.eks.getAddonVersionOutput({
-                    addonName: "kube-proxy",
-                    kubernetesVersion: eksCluster.version,
-                    mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
-                }).apply((addonVersion) => addonVersion.version);
+                : aws.eks
+                      .getAddonVersionOutput(
+                          {
+                              addonName: "kube-proxy",
+                              kubernetesVersion: eksCluster.version,
+                              mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                          },
+                          { parent, provider },
+                      )
+                      .apply((addonVersion) => addonVersion.version);
 
-            const kubeProxyAddon = new aws.eks.Addon(`${name}-kube-proxy`, {
-                clusterName: eksCluster.name,
-                addonName: "kube-proxy",
-                resolveConflictsOnCreate: args.kubeProxyAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
-                resolveConflictsOnUpdate: args.kubeProxyAddonOptions?.resolveConflictsOnUpdate ?? "PRESERVE",
-                addonVersion: kubeProxyVersion,
-            }, { parent, provider });
+            const kubeProxyAddon = new aws.eks.Addon(
+                `${name}-kube-proxy`,
+                {
+                    clusterName: eksCluster.name,
+                    addonName: "kube-proxy",
+                    resolveConflictsOnCreate:
+                        args.kubeProxyAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
+                    resolveConflictsOnUpdate:
+                        args.kubeProxyAddonOptions?.resolveConflictsOnUpdate ?? "PRESERVE",
+                    addonVersion: kubeProxyVersion,
+                },
+                { parent, provider },
+            );
         }
 
         if (args.corednsAddonOptions?.enabled ?? true) {
@@ -653,20 +664,31 @@ export function createCore(
 
             const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
                 ? pulumi.output(args.corednsAddonOptions.version)
-                : aws.eks.getAddonVersionOutput({
-                    addonName: "coredns",
-                    kubernetesVersion: eksCluster.version,
-                    mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
-                }).apply((addonVersion) => addonVersion.version);
+                : aws.eks
+                      .getAddonVersionOutput(
+                          {
+                              addonName: "coredns",
+                              kubernetesVersion: eksCluster.version,
+                              mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                          },
+                          { parent, provider },
+                      )
+                      .apply((addonVersion) => addonVersion.version);
 
-            const corednsAddon = new aws.eks.Addon(`${name}-coredns`, {
-                clusterName: eksCluster.name,
-                addonName: "coredns",
-                addonVersion: corednsVersion,
-                resolveConflictsOnCreate: args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
-                resolveConflictsOnUpdate: args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "PRESERVE",
-                configurationValues,
-            }, { parent, provider });
+            const corednsAddon = new aws.eks.Addon(
+                `${name}-coredns`,
+                {
+                    clusterName: eksCluster.name,
+                    addonName: "coredns",
+                    addonVersion: corednsVersion,
+                    resolveConflictsOnCreate:
+                        args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
+                    resolveConflictsOnUpdate:
+                        args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "PRESERVE",
+                    configurationValues,
+                },
+                { parent, provider },
+            );
         }
     });
 
@@ -1101,6 +1123,7 @@ function createHttpAgent(proxy?: string): http.Agent {
     });
 }
 
+/* tslint:disable-next-line */ // Generating the enum object for ResolveConflictsOnCreate like codegen does
 export const ResolveConflictsOnCreate = {
     /**
      * If the self-managed version of the add-on is installed on your cluster, Amazon EKS doesn't change the value. Creation of the add-on might fail.
@@ -1115,8 +1138,10 @@ export const ResolveConflictsOnCreate = {
 /**
  * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
  */
-export type ResolveConflictsOnCreate = (typeof ResolveConflictsOnCreate)[keyof typeof ResolveConflictsOnCreate];
+export type ResolveConflictsOnCreate =
+    (typeof ResolveConflictsOnCreate)[keyof typeof ResolveConflictsOnCreate];
 
+/* tslint:disable-next-line */ // Generating the enum object for ResolveConflictsOnUpdate like codegen does
 export const ResolveConflictsOnUpdate = {
     /**
      * Amazon EKS doesn't change the value. The update might fail.
@@ -1135,7 +1160,8 @@ export const ResolveConflictsOnUpdate = {
 /**
  * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
  */
-export type ResolveConflictsOnUpdate = (typeof ResolveConflictsOnUpdate)[keyof typeof ResolveConflictsOnUpdate];
+export type ResolveConflictsOnUpdate =
+    (typeof ResolveConflictsOnUpdate)[keyof typeof ResolveConflictsOnUpdate];
 
 export interface CoreDnsAddonOptions {
     /**
