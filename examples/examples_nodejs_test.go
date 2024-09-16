@@ -39,6 +39,19 @@ import (
 
 func TestAccCluster(t *testing.T) {
 
+	eksClient := createEksClient(t)
+	addonInfo, err := utils.FindDefaultAddonVersion(eksClient, "vpc-cni")
+	latestVer, err := utils.FindMostRecentAddonVersion(eksClient, "1.30", "vpc-cni")
+	if err != nil {
+		t.Fatalf("Error finding addon version: %v", err)
+	}
+	if (addonInfo == "") {
+		t.Fatalf("No addon version found")
+	}
+	if (latestVer == "") {
+		t.Fatalf("No addon version found")
+	}
+
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:           path.Join(getCwd(t), "./cluster"),
@@ -56,41 +69,42 @@ func TestAccCluster(t *testing.T) {
 				// let's test there's a iamRoleArn specified for the cluster
 				assert.NotEmpty(t, info.Outputs["iamRoleArn"])
 
-				// TODO flostadler: Fix this test, it'll need to test the new addon
-				// assert.NoError(t, utils.ValidateDaemonSet(t, info.Outputs["kubeconfig2"], "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
-				// 	// The exact image names/versions are obtained from the manifest in `nodejs/eks/cni/aws-k8s-cni.yaml`.
+				region := getEnvRegion(t)
+				eksClient := createEksClient(t)
+				assert.NoError(t, utils.ValidateDaemonSet(t, info.Outputs["kubeconfig2"], "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
+					var initContainerFound bool
+					for _, ic := range ds.Spec.Template.Spec.InitContainers {
+						if ic.Name != "aws-vpc-cni-init" {
+							continue
+						}
 
-				// 	var initContainerFound bool
-				// 	for _, ic := range ds.Spec.Template.Spec.InitContainers {
-				// 		if ic.Name != "aws-vpc-cni-init" {
-				// 			continue
-				// 		}
+						initContainerFound = true
 
-				// 		initContainerFound = true
-				// 		assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni-init:v1.16.0", ic.Image)
+						var tcpEarly bool
+						for _, env := range ic.Env {
+							if env.Name == "DISABLE_TCP_EARLY_DEMUX" {
+								tcpEarly = env.Value == "true"
+							}
+						}
+						assert.True(t, tcpEarly)
+					}
+					assert.True(t, initContainerFound)
 
-				// 		var tcpEarly bool
-				// 		for _, env := range ic.Env {
-				// 			if env.Name == "DISABLE_TCP_EARLY_DEMUX" {
-				// 				tcpEarly = env.Value == "true"
-				// 			}
-				// 		}
-				// 		assert.True(t, tcpEarly)
-				// 	}
-				// 	assert.True(t, initContainerFound)
+					var awsNodeContainerFound bool
+					var awsNodeAgentContainerFound bool
+					for _, c := range ds.Spec.Template.Spec.Containers {
+						switch c.Name {
+						case "aws-node":
+							awsNodeContainerFound = true
+						case "aws-eks-nodeagent":
+							awsNodeAgentContainerFound = true
+						}
+					}
+					assert.True(t, awsNodeContainerFound)
+					assert.True(t, awsNodeAgentContainerFound)
+				}))
 
-				// 	var awsNodeContainerFound bool
-				// 	for _, c := range ds.Spec.Template.Spec.Containers {
-				// 		switch c.Name {
-				// 		case "aws-node":
-				// 			awsNodeContainerFound = true
-				// 			assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.16.0", c.Image)
-				// 		case "aws-eks-nodeagent":
-				// 			assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon/aws-network-policy-agent:v1.0.7", c.Image)
-				// 		}
-				// 	}
-				// 	assert.True(t, awsNodeContainerFound)
-				// }))
+				utils.GetInstalledAddon(t, eksClient, region, "vpc-cni")
 
 				// Ensure that cluster 4 only has ARM64 nodes.
 				assert.NoError(t, utils.ValidateNodes(t, info.Outputs["kubeconfig4"], func(nodes *corev1.NodeList) {
@@ -924,6 +938,75 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 
 				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
 				assert.NoError(t, utils.ValidateNodeStorage(t, info.Outputs["kubeconfig"], 4, 100*1_000_000_000, "increased-storage-capacity"))
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
+func TestAccClusterAddons(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// region := getEnvRegion(t)
+	eksClient := createEksClient(t)
+	defaultVpcCniVersion, err := utils.FindDefaultAddonVersion(eksClient, "vpc-cni")
+	require.NoError(t, err)
+
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "cluster-addons"),
+			Config: map[string]string{
+				"vpcCniVersion": defaultVpcCniVersion,
+			},
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+
+				clusterName := info.Outputs["clusterName"].(string);
+				// clusterVersion := info.Outputs["clusterVersion"].(string);
+				
+				assert.NoError(t, utils.ValidateDaemonSet(t, info.Outputs["kubeconfig"], "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
+					var initContainerFound bool
+					for _, ic := range ds.Spec.Template.Spec.InitContainers {
+						if ic.Name != "aws-vpc-cni-init" {
+							continue
+						}
+
+						initContainerFound = true
+
+						var tcpEarly bool
+						for _, env := range ic.Env {
+							// set in the vpcCniOptions of the cluster
+							if env.Name == "DISABLE_TCP_EARLY_DEMUX" {
+								tcpEarly = env.Value == "true"
+							}
+						}
+						assert.True(t, tcpEarly, "expected DISABLE_TCP_EARLY_DEMUX to be set to true")
+					}
+					assert.True(t, initContainerFound)
+
+					var awsNodeContainerFound bool
+					var awsNodeAgentContainerFound bool
+					for _, c := range ds.Spec.Template.Spec.Containers {
+						switch c.Name {
+						case "aws-node":
+							awsNodeContainerFound = true
+						case "aws-eks-nodeagent":
+							awsNodeAgentContainerFound = true
+						}
+					}
+					assert.True(t, awsNodeContainerFound)
+					assert.True(t, awsNodeAgentContainerFound)
+				}))
+
+				addon, err := utils.GetInstalledAddon(t, eksClient, clusterName, "vpc-cni")
+				require.NoError(t, err)
+
+				assert.Equal(t, defaultVpcCniVersion, *addon.AddonVersion, "expected vpc-cni version to be %s", defaultVpcCniVersion)
 			},
 		})
 

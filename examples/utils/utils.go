@@ -11,9 +11,13 @@ import (
 
 	"sync/atomic"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
+	eksTypes "github.com/aws/aws-sdk-go-v2/service/eks/types"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/mod/semver"
 	"gopkg.in/yaml.v2"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -801,4 +805,91 @@ func EnsureKubeconfigFails(t *testing.T, kubeconfig any) {
 	if err == nil {
 		t.Errorf("expected kubeconfig to fail, but it succeeded to return the server version")
 	}
+}
+
+type addonInfo struct {
+	AddonVersion string
+	ClusterVersion string
+}
+
+func FindDefaultAddonVersion(eksClient *eks.Client, addonName string) (string, error) {
+	input := &eks.DescribeAddonVersionsInput{
+		AddonName:         aws.String(addonName),
+	}
+
+	var newestDefaultAddon *addonInfo
+
+	pages := eks.NewDescribeAddonVersionsPaginator(eksClient, input)
+	for pages.HasMorePages() {
+		page, err := pages.NextPage(context.TODO())
+
+		if err != nil {
+			return "", err
+		}
+
+		for _, addon := range page.Addons {
+			for _, versionInfo := range addon.AddonVersions {
+				for _, compatibility := range versionInfo.Compatibilities {
+					if compatibility.DefaultVersion && versionInfo.AddonVersion != nil && compatibility.ClusterVersion != nil {
+						if newestDefaultAddon == nil || semver.Compare(newestDefaultAddon.ClusterVersion, *compatibility.ClusterVersion) < 0 {
+							newestDefaultAddon = &addonInfo{
+								AddonVersion: *versionInfo.AddonVersion,
+								ClusterVersion: *compatibility.ClusterVersion,
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if newestDefaultAddon == nil {
+		return "", fmt.Errorf("unable to find newest default version of addon %s", addonName)
+	}
+
+	return newestDefaultAddon.AddonVersion, nil
+}
+
+func FindMostRecentAddonVersion(eksClient *eks.Client, kubernetesVersion, addonName string) (string, error) {
+	input := &eks.DescribeAddonVersionsInput{
+		AddonName:         aws.String(addonName),
+		KubernetesVersion: aws.String(kubernetesVersion),
+	}
+
+	var addonVersion *string
+
+	pages := eks.NewDescribeAddonVersionsPaginator(eksClient, input)
+	for pages.HasMorePages() {
+		page, err := pages.NextPage(context.TODO())
+
+		if err != nil {
+			return "", err
+		}
+
+		for _, addon := range page.Addons {
+			for _, versionInfo := range addon.AddonVersions {
+				if addonVersion == nil || semver.Compare(*addonVersion, *versionInfo.AddonVersion) < 0 {
+					addonVersion = versionInfo.AddonVersion
+				}
+			}
+		}
+	}
+
+	if addonVersion == nil {
+		return "", fmt.Errorf("unable to find most recent version of addon %s for kubernetes version %s", addonName, kubernetesVersion)
+	}
+
+	return *addonVersion, nil
+}
+
+func GetInstalledAddon(t *testing.T, eksClient *eks.Client, clusterName, addonName string) (*eksTypes.Addon, error) {
+	resp, err := eksClient.DescribeAddon(context.TODO(), &eks.DescribeAddonInput{
+		ClusterName: aws.String(clusterName),
+		AddonName:   aws.String(addonName),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Addon, nil
 }
