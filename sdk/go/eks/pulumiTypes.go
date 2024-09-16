@@ -1597,6 +1597,241 @@ func (o CoreDataOutput) VpcId() pulumi.StringOutput {
 	return o.ApplyT(func(v CoreData) string { return v.VpcId }).(pulumi.StringOutput)
 }
 
+type CoreDnsAddonOptions struct {
+	// Whether or not to create the Addon in the cluster
+	Enabled *bool `pulumi:"enabled"`
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+	ResolveConflictsOnUpdate *ResolveConflictsOnUpdate `pulumi:"resolveConflictsOnUpdate"`
+	// The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+	Version *string `pulumi:"version"`
+}
+
+// Defaults sets the appropriate defaults for CoreDnsAddonOptions
+func (val *CoreDnsAddonOptions) Defaults() *CoreDnsAddonOptions {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if tmp.Enabled == nil {
+		enabled_ := true
+		tmp.Enabled = &enabled_
+	}
+	if tmp.ResolveConflictsOnCreate == nil {
+		resolveConflictsOnCreate_ := ResolveConflictsOnCreate("OVERWRITE")
+		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
+	}
+	if tmp.ResolveConflictsOnUpdate == nil {
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("PRESERVE")
+		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
+	}
+	return &tmp
+}
+
+// CoreDnsAddonOptionsInput is an input type that accepts CoreDnsAddonOptionsArgs and CoreDnsAddonOptionsOutput values.
+// You can construct a concrete instance of `CoreDnsAddonOptionsInput` via:
+//
+//	CoreDnsAddonOptionsArgs{...}
+type CoreDnsAddonOptionsInput interface {
+	pulumi.Input
+
+	ToCoreDnsAddonOptionsOutput() CoreDnsAddonOptionsOutput
+	ToCoreDnsAddonOptionsOutputWithContext(context.Context) CoreDnsAddonOptionsOutput
+}
+
+type CoreDnsAddonOptionsArgs struct {
+	// Whether or not to create the Addon in the cluster
+	Enabled *bool `pulumi:"enabled"`
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+	ResolveConflictsOnUpdate *ResolveConflictsOnUpdate `pulumi:"resolveConflictsOnUpdate"`
+	// The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+	Version pulumi.StringPtrInput `pulumi:"version"`
+}
+
+// Defaults sets the appropriate defaults for CoreDnsAddonOptionsArgs
+func (val *CoreDnsAddonOptionsArgs) Defaults() *CoreDnsAddonOptionsArgs {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if tmp.Enabled == nil {
+		enabled_ := true
+		tmp.Enabled = &enabled_
+	}
+	if tmp.ResolveConflictsOnCreate == nil {
+		resolveConflictsOnCreate_ := ResolveConflictsOnCreate("OVERWRITE")
+		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
+	}
+	if tmp.ResolveConflictsOnUpdate == nil {
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("PRESERVE")
+		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
+	}
+	return &tmp
+}
+func (CoreDnsAddonOptionsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*CoreDnsAddonOptions)(nil)).Elem()
+}
+
+func (i CoreDnsAddonOptionsArgs) ToCoreDnsAddonOptionsOutput() CoreDnsAddonOptionsOutput {
+	return i.ToCoreDnsAddonOptionsOutputWithContext(context.Background())
+}
+
+func (i CoreDnsAddonOptionsArgs) ToCoreDnsAddonOptionsOutputWithContext(ctx context.Context) CoreDnsAddonOptionsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(CoreDnsAddonOptionsOutput)
+}
+
+func (i CoreDnsAddonOptionsArgs) ToCoreDnsAddonOptionsPtrOutput() CoreDnsAddonOptionsPtrOutput {
+	return i.ToCoreDnsAddonOptionsPtrOutputWithContext(context.Background())
+}
+
+func (i CoreDnsAddonOptionsArgs) ToCoreDnsAddonOptionsPtrOutputWithContext(ctx context.Context) CoreDnsAddonOptionsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(CoreDnsAddonOptionsOutput).ToCoreDnsAddonOptionsPtrOutputWithContext(ctx)
+}
+
+// CoreDnsAddonOptionsPtrInput is an input type that accepts CoreDnsAddonOptionsArgs, CoreDnsAddonOptionsPtr and CoreDnsAddonOptionsPtrOutput values.
+// You can construct a concrete instance of `CoreDnsAddonOptionsPtrInput` via:
+//
+//	        CoreDnsAddonOptionsArgs{...}
+//
+//	or:
+//
+//	        nil
+type CoreDnsAddonOptionsPtrInput interface {
+	pulumi.Input
+
+	ToCoreDnsAddonOptionsPtrOutput() CoreDnsAddonOptionsPtrOutput
+	ToCoreDnsAddonOptionsPtrOutputWithContext(context.Context) CoreDnsAddonOptionsPtrOutput
+}
+
+type coreDnsAddonOptionsPtrType CoreDnsAddonOptionsArgs
+
+func CoreDnsAddonOptionsPtr(v *CoreDnsAddonOptionsArgs) CoreDnsAddonOptionsPtrInput {
+	return (*coreDnsAddonOptionsPtrType)(v)
+}
+
+func (*coreDnsAddonOptionsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**CoreDnsAddonOptions)(nil)).Elem()
+}
+
+func (i *coreDnsAddonOptionsPtrType) ToCoreDnsAddonOptionsPtrOutput() CoreDnsAddonOptionsPtrOutput {
+	return i.ToCoreDnsAddonOptionsPtrOutputWithContext(context.Background())
+}
+
+func (i *coreDnsAddonOptionsPtrType) ToCoreDnsAddonOptionsPtrOutputWithContext(ctx context.Context) CoreDnsAddonOptionsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(CoreDnsAddonOptionsPtrOutput)
+}
+
+type CoreDnsAddonOptionsOutput struct{ *pulumi.OutputState }
+
+func (CoreDnsAddonOptionsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*CoreDnsAddonOptions)(nil)).Elem()
+}
+
+func (o CoreDnsAddonOptionsOutput) ToCoreDnsAddonOptionsOutput() CoreDnsAddonOptionsOutput {
+	return o
+}
+
+func (o CoreDnsAddonOptionsOutput) ToCoreDnsAddonOptionsOutputWithContext(ctx context.Context) CoreDnsAddonOptionsOutput {
+	return o
+}
+
+func (o CoreDnsAddonOptionsOutput) ToCoreDnsAddonOptionsPtrOutput() CoreDnsAddonOptionsPtrOutput {
+	return o.ToCoreDnsAddonOptionsPtrOutputWithContext(context.Background())
+}
+
+func (o CoreDnsAddonOptionsOutput) ToCoreDnsAddonOptionsPtrOutputWithContext(ctx context.Context) CoreDnsAddonOptionsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v CoreDnsAddonOptions) *CoreDnsAddonOptions {
+		return &v
+	}).(CoreDnsAddonOptionsPtrOutput)
+}
+
+// Whether or not to create the Addon in the cluster
+func (o CoreDnsAddonOptionsOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v CoreDnsAddonOptions) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
+}
+
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+func (o CoreDnsAddonOptionsOutput) ResolveConflictsOnCreate() ResolveConflictsOnCreatePtrOutput {
+	return o.ApplyT(func(v CoreDnsAddonOptions) *ResolveConflictsOnCreate { return v.ResolveConflictsOnCreate }).(ResolveConflictsOnCreatePtrOutput)
+}
+
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+func (o CoreDnsAddonOptionsOutput) ResolveConflictsOnUpdate() ResolveConflictsOnUpdatePtrOutput {
+	return o.ApplyT(func(v CoreDnsAddonOptions) *ResolveConflictsOnUpdate { return v.ResolveConflictsOnUpdate }).(ResolveConflictsOnUpdatePtrOutput)
+}
+
+// The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+func (o CoreDnsAddonOptionsOutput) Version() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v CoreDnsAddonOptions) *string { return v.Version }).(pulumi.StringPtrOutput)
+}
+
+type CoreDnsAddonOptionsPtrOutput struct{ *pulumi.OutputState }
+
+func (CoreDnsAddonOptionsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**CoreDnsAddonOptions)(nil)).Elem()
+}
+
+func (o CoreDnsAddonOptionsPtrOutput) ToCoreDnsAddonOptionsPtrOutput() CoreDnsAddonOptionsPtrOutput {
+	return o
+}
+
+func (o CoreDnsAddonOptionsPtrOutput) ToCoreDnsAddonOptionsPtrOutputWithContext(ctx context.Context) CoreDnsAddonOptionsPtrOutput {
+	return o
+}
+
+func (o CoreDnsAddonOptionsPtrOutput) Elem() CoreDnsAddonOptionsOutput {
+	return o.ApplyT(func(v *CoreDnsAddonOptions) CoreDnsAddonOptions {
+		if v != nil {
+			return *v
+		}
+		var ret CoreDnsAddonOptions
+		return ret
+	}).(CoreDnsAddonOptionsOutput)
+}
+
+// Whether or not to create the Addon in the cluster
+func (o CoreDnsAddonOptionsPtrOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *CoreDnsAddonOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.Enabled
+	}).(pulumi.BoolPtrOutput)
+}
+
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+func (o CoreDnsAddonOptionsPtrOutput) ResolveConflictsOnCreate() ResolveConflictsOnCreatePtrOutput {
+	return o.ApplyT(func(v *CoreDnsAddonOptions) *ResolveConflictsOnCreate {
+		if v == nil {
+			return nil
+		}
+		return v.ResolveConflictsOnCreate
+	}).(ResolveConflictsOnCreatePtrOutput)
+}
+
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+func (o CoreDnsAddonOptionsPtrOutput) ResolveConflictsOnUpdate() ResolveConflictsOnUpdatePtrOutput {
+	return o.ApplyT(func(v *CoreDnsAddonOptions) *ResolveConflictsOnUpdate {
+		if v == nil {
+			return nil
+		}
+		return v.ResolveConflictsOnUpdate
+	}).(ResolveConflictsOnUpdatePtrOutput)
+}
+
+// The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+func (o CoreDnsAddonOptionsPtrOutput) Version() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *CoreDnsAddonOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Version
+	}).(pulumi.StringPtrOutput)
+}
+
 // Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
 //
 // Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
@@ -1930,6 +2165,241 @@ func (o FargateProfilePtrOutput) SubnetIds() pulumi.StringArrayOutput {
 		}
 		return v.SubnetIds
 	}).(pulumi.StringArrayOutput)
+}
+
+type KubeProxyAddonOptions struct {
+	// Whether or not to create the `kube-proxy` Addon in the cluster
+	Enabled *bool `pulumi:"enabled"`
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+	ResolveConflictsOnUpdate *ResolveConflictsOnUpdate `pulumi:"resolveConflictsOnUpdate"`
+	// The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+	Version *string `pulumi:"version"`
+}
+
+// Defaults sets the appropriate defaults for KubeProxyAddonOptions
+func (val *KubeProxyAddonOptions) Defaults() *KubeProxyAddonOptions {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if tmp.Enabled == nil {
+		enabled_ := true
+		tmp.Enabled = &enabled_
+	}
+	if tmp.ResolveConflictsOnCreate == nil {
+		resolveConflictsOnCreate_ := ResolveConflictsOnCreate("OVERWRITE")
+		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
+	}
+	if tmp.ResolveConflictsOnUpdate == nil {
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("PRESERVE")
+		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
+	}
+	return &tmp
+}
+
+// KubeProxyAddonOptionsInput is an input type that accepts KubeProxyAddonOptionsArgs and KubeProxyAddonOptionsOutput values.
+// You can construct a concrete instance of `KubeProxyAddonOptionsInput` via:
+//
+//	KubeProxyAddonOptionsArgs{...}
+type KubeProxyAddonOptionsInput interface {
+	pulumi.Input
+
+	ToKubeProxyAddonOptionsOutput() KubeProxyAddonOptionsOutput
+	ToKubeProxyAddonOptionsOutputWithContext(context.Context) KubeProxyAddonOptionsOutput
+}
+
+type KubeProxyAddonOptionsArgs struct {
+	// Whether or not to create the `kube-proxy` Addon in the cluster
+	Enabled *bool `pulumi:"enabled"`
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+	ResolveConflictsOnUpdate *ResolveConflictsOnUpdate `pulumi:"resolveConflictsOnUpdate"`
+	// The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+	Version pulumi.StringPtrInput `pulumi:"version"`
+}
+
+// Defaults sets the appropriate defaults for KubeProxyAddonOptionsArgs
+func (val *KubeProxyAddonOptionsArgs) Defaults() *KubeProxyAddonOptionsArgs {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if tmp.Enabled == nil {
+		enabled_ := true
+		tmp.Enabled = &enabled_
+	}
+	if tmp.ResolveConflictsOnCreate == nil {
+		resolveConflictsOnCreate_ := ResolveConflictsOnCreate("OVERWRITE")
+		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
+	}
+	if tmp.ResolveConflictsOnUpdate == nil {
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("PRESERVE")
+		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
+	}
+	return &tmp
+}
+func (KubeProxyAddonOptionsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*KubeProxyAddonOptions)(nil)).Elem()
+}
+
+func (i KubeProxyAddonOptionsArgs) ToKubeProxyAddonOptionsOutput() KubeProxyAddonOptionsOutput {
+	return i.ToKubeProxyAddonOptionsOutputWithContext(context.Background())
+}
+
+func (i KubeProxyAddonOptionsArgs) ToKubeProxyAddonOptionsOutputWithContext(ctx context.Context) KubeProxyAddonOptionsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(KubeProxyAddonOptionsOutput)
+}
+
+func (i KubeProxyAddonOptionsArgs) ToKubeProxyAddonOptionsPtrOutput() KubeProxyAddonOptionsPtrOutput {
+	return i.ToKubeProxyAddonOptionsPtrOutputWithContext(context.Background())
+}
+
+func (i KubeProxyAddonOptionsArgs) ToKubeProxyAddonOptionsPtrOutputWithContext(ctx context.Context) KubeProxyAddonOptionsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(KubeProxyAddonOptionsOutput).ToKubeProxyAddonOptionsPtrOutputWithContext(ctx)
+}
+
+// KubeProxyAddonOptionsPtrInput is an input type that accepts KubeProxyAddonOptionsArgs, KubeProxyAddonOptionsPtr and KubeProxyAddonOptionsPtrOutput values.
+// You can construct a concrete instance of `KubeProxyAddonOptionsPtrInput` via:
+//
+//	        KubeProxyAddonOptionsArgs{...}
+//
+//	or:
+//
+//	        nil
+type KubeProxyAddonOptionsPtrInput interface {
+	pulumi.Input
+
+	ToKubeProxyAddonOptionsPtrOutput() KubeProxyAddonOptionsPtrOutput
+	ToKubeProxyAddonOptionsPtrOutputWithContext(context.Context) KubeProxyAddonOptionsPtrOutput
+}
+
+type kubeProxyAddonOptionsPtrType KubeProxyAddonOptionsArgs
+
+func KubeProxyAddonOptionsPtr(v *KubeProxyAddonOptionsArgs) KubeProxyAddonOptionsPtrInput {
+	return (*kubeProxyAddonOptionsPtrType)(v)
+}
+
+func (*kubeProxyAddonOptionsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**KubeProxyAddonOptions)(nil)).Elem()
+}
+
+func (i *kubeProxyAddonOptionsPtrType) ToKubeProxyAddonOptionsPtrOutput() KubeProxyAddonOptionsPtrOutput {
+	return i.ToKubeProxyAddonOptionsPtrOutputWithContext(context.Background())
+}
+
+func (i *kubeProxyAddonOptionsPtrType) ToKubeProxyAddonOptionsPtrOutputWithContext(ctx context.Context) KubeProxyAddonOptionsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(KubeProxyAddonOptionsPtrOutput)
+}
+
+type KubeProxyAddonOptionsOutput struct{ *pulumi.OutputState }
+
+func (KubeProxyAddonOptionsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*KubeProxyAddonOptions)(nil)).Elem()
+}
+
+func (o KubeProxyAddonOptionsOutput) ToKubeProxyAddonOptionsOutput() KubeProxyAddonOptionsOutput {
+	return o
+}
+
+func (o KubeProxyAddonOptionsOutput) ToKubeProxyAddonOptionsOutputWithContext(ctx context.Context) KubeProxyAddonOptionsOutput {
+	return o
+}
+
+func (o KubeProxyAddonOptionsOutput) ToKubeProxyAddonOptionsPtrOutput() KubeProxyAddonOptionsPtrOutput {
+	return o.ToKubeProxyAddonOptionsPtrOutputWithContext(context.Background())
+}
+
+func (o KubeProxyAddonOptionsOutput) ToKubeProxyAddonOptionsPtrOutputWithContext(ctx context.Context) KubeProxyAddonOptionsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v KubeProxyAddonOptions) *KubeProxyAddonOptions {
+		return &v
+	}).(KubeProxyAddonOptionsPtrOutput)
+}
+
+// Whether or not to create the `kube-proxy` Addon in the cluster
+func (o KubeProxyAddonOptionsOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v KubeProxyAddonOptions) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
+}
+
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+func (o KubeProxyAddonOptionsOutput) ResolveConflictsOnCreate() ResolveConflictsOnCreatePtrOutput {
+	return o.ApplyT(func(v KubeProxyAddonOptions) *ResolveConflictsOnCreate { return v.ResolveConflictsOnCreate }).(ResolveConflictsOnCreatePtrOutput)
+}
+
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+func (o KubeProxyAddonOptionsOutput) ResolveConflictsOnUpdate() ResolveConflictsOnUpdatePtrOutput {
+	return o.ApplyT(func(v KubeProxyAddonOptions) *ResolveConflictsOnUpdate { return v.ResolveConflictsOnUpdate }).(ResolveConflictsOnUpdatePtrOutput)
+}
+
+// The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+func (o KubeProxyAddonOptionsOutput) Version() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v KubeProxyAddonOptions) *string { return v.Version }).(pulumi.StringPtrOutput)
+}
+
+type KubeProxyAddonOptionsPtrOutput struct{ *pulumi.OutputState }
+
+func (KubeProxyAddonOptionsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**KubeProxyAddonOptions)(nil)).Elem()
+}
+
+func (o KubeProxyAddonOptionsPtrOutput) ToKubeProxyAddonOptionsPtrOutput() KubeProxyAddonOptionsPtrOutput {
+	return o
+}
+
+func (o KubeProxyAddonOptionsPtrOutput) ToKubeProxyAddonOptionsPtrOutputWithContext(ctx context.Context) KubeProxyAddonOptionsPtrOutput {
+	return o
+}
+
+func (o KubeProxyAddonOptionsPtrOutput) Elem() KubeProxyAddonOptionsOutput {
+	return o.ApplyT(func(v *KubeProxyAddonOptions) KubeProxyAddonOptions {
+		if v != nil {
+			return *v
+		}
+		var ret KubeProxyAddonOptions
+		return ret
+	}).(KubeProxyAddonOptionsOutput)
+}
+
+// Whether or not to create the `kube-proxy` Addon in the cluster
+func (o KubeProxyAddonOptionsPtrOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *KubeProxyAddonOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.Enabled
+	}).(pulumi.BoolPtrOutput)
+}
+
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+func (o KubeProxyAddonOptionsPtrOutput) ResolveConflictsOnCreate() ResolveConflictsOnCreatePtrOutput {
+	return o.ApplyT(func(v *KubeProxyAddonOptions) *ResolveConflictsOnCreate {
+		if v == nil {
+			return nil
+		}
+		return v.ResolveConflictsOnCreate
+	}).(ResolveConflictsOnCreatePtrOutput)
+}
+
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+func (o KubeProxyAddonOptionsPtrOutput) ResolveConflictsOnUpdate() ResolveConflictsOnUpdatePtrOutput {
+	return o.ApplyT(func(v *KubeProxyAddonOptions) *ResolveConflictsOnUpdate {
+		if v == nil {
+			return nil
+		}
+		return v.ResolveConflictsOnUpdate
+	}).(ResolveConflictsOnUpdatePtrOutput)
+}
+
+// The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+func (o KubeProxyAddonOptionsPtrOutput) Version() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubeProxyAddonOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Version
+	}).(pulumi.StringPtrOutput)
 }
 
 // Represents the AWS credentials to scope a given kubeconfig when using a non-default credential chain.
@@ -3584,10 +4054,14 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsPtrInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CoreDataInput)(nil)).Elem(), CoreDataArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*CoreDnsAddonOptionsInput)(nil)).Elem(), CoreDnsAddonOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*CoreDnsAddonOptionsPtrInput)(nil)).Elem(), CoreDnsAddonOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CreationRoleProviderInput)(nil)).Elem(), CreationRoleProviderArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CreationRoleProviderPtrInput)(nil)).Elem(), CreationRoleProviderArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*FargateProfileInput)(nil)).Elem(), FargateProfileArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*FargateProfilePtrInput)(nil)).Elem(), FargateProfileArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*KubeProxyAddonOptionsInput)(nil)).Elem(), KubeProxyAddonOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*KubeProxyAddonOptionsPtrInput)(nil)).Elem(), KubeProxyAddonOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*KubeconfigOptionsInput)(nil)).Elem(), KubeconfigOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*KubeconfigOptionsPtrInput)(nil)).Elem(), KubeconfigOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*NodeadmOptionsInput)(nil)).Elem(), NodeadmOptionsArgs{})
@@ -3609,10 +4083,14 @@ func init() {
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsOutput{})
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsPtrOutput{})
 	pulumi.RegisterOutputType(CoreDataOutput{})
+	pulumi.RegisterOutputType(CoreDnsAddonOptionsOutput{})
+	pulumi.RegisterOutputType(CoreDnsAddonOptionsPtrOutput{})
 	pulumi.RegisterOutputType(CreationRoleProviderOutput{})
 	pulumi.RegisterOutputType(CreationRoleProviderPtrOutput{})
 	pulumi.RegisterOutputType(FargateProfileOutput{})
 	pulumi.RegisterOutputType(FargateProfilePtrOutput{})
+	pulumi.RegisterOutputType(KubeProxyAddonOptionsOutput{})
+	pulumi.RegisterOutputType(KubeProxyAddonOptionsPtrOutput{})
 	pulumi.RegisterOutputType(KubeconfigOptionsOutput{})
 	pulumi.RegisterOutputType(KubeconfigOptionsPtrOutput{})
 	pulumi.RegisterOutputType(NodeGroupDataOutput{})

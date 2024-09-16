@@ -57,9 +57,11 @@ cluster3 = eks.Cluster(
     f"{project_name}-3",
     vpc_id=vpc.vpc_id,
     public_subnet_ids=vpc.public_subnet_ids,
-    default_addons_to_remove=["coredns"],
     node_group_options=eks.ClusterNodeGroupOptionsArgs(
         desired_capacity=1, min_size=1, max_size=1, instance_type="t3.small"
+    ),
+    coredns_addon_options=eks.CoreDnsAddonOptionsArgs(
+        enabled=False,
     ),
     authentication_mode=eks.AuthenticationMode.API_AND_CONFIG_MAP,
     access_entries={

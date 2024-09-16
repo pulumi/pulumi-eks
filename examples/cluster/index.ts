@@ -56,7 +56,9 @@ const cluster4 = new eks.Cluster(`${projectName}-4`, {
     publicSubnetIds: vpc.publicSubnetIds,
     nodeAmiId: "ami-0350263ff18287b83",
     instanceType: "t4g.small",
-    defaultAddonsToRemove: ['coredns'],
+    corednsAddonOptions: {
+        enabled: false,
+    },
 })
 
 //////////////////////////

@@ -663,6 +663,20 @@ func generateSchema() schema.PackageSpec {
 						Description: "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\n" +
 							"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
 					},
+					"corednsAddonOptions": {
+						TypeSpec: schema.TypeSpec{
+							Plain: true,
+							Ref:   "#/types/eks:index:CoreDnsAddonOptions",
+						},
+						Description: "Options for managing the `coredns` addon.",
+					},
+					"kubeProxyAddonOptions": {
+						TypeSpec: schema.TypeSpec{
+							Plain: true,
+							Ref:   "#/types/eks:index:KubeProxyAddonOptions",
+						},
+						Description: "Options for managing the `kube-proxy` addon.",
+					},
 				},
 				Methods: map[string]string{
 					"getKubeconfig": "eks:index:Cluster/getKubeconfig",
@@ -1796,6 +1810,108 @@ func generateSchema() schema.PackageSpec {
 						},
 					},
 					Required: []string{"content", "contentType"},
+				},
+			},
+			"eks:index:ResolveConflictsOnUpdate": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "string",
+					Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. " +
+						"Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:        "None",
+						Value:       "NONE",
+						Description: "Amazon EKS doesn't change the value. The update might fail.",
+					},
+					{
+						Name:        "Overwrite",
+						Value:       "OVERWRITE",
+						Description: "Amazon EKS overwrites the changed value back to the Amazon EKS default value.",
+					},
+					{
+						Name:        "Preserve",
+						Value:       "PRESERVE",
+						Description: "Amazon EKS preserves the value. If you choose this option, we recommend that you test any field and value changes on a non-production cluster before updating the add-on on your production cluster.",
+					},
+				},
+			},
+			"eks:index:ResolveConflictsOnCreate": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "string",
+					Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. " +
+						"Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:        "None",
+						Value:       "NONE",
+						Description: "If the self-managed version of the add-on is installed on your cluster, Amazon EKS doesn't change the value. Creation of the add-on might fail.",
+					},
+					{
+						Name:  "Overwrite",
+						Value: "OVERWRITE",
+						Description: "If the self-managed version of the add-on is installed on your cluster and the Amazon EKS default value is different than the existing value, " +
+							"Amazon EKS changes the value to the Amazon EKS default value.",
+					},
+				},
+			},
+			"eks:index:CoreDnsAddonOptions": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Properties: map[string]schema.PropertySpec{
+						"enabled": {
+							TypeSpec:    schema.TypeSpec{Type: "boolean", Plain: true},
+							Default:     true,
+							Description: "Whether or not to create the Addon in the cluster",
+						},
+						"version": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+							Description: "The version of the EKS add-on. The version must " +
+								"match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).",
+						},
+						"resolveConflictsOnCreate": {
+							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnCreate"},
+							Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. " +
+								"Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+							Default: "OVERWRITE",
+						},
+						"resolveConflictsOnUpdate": {
+							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnUpdate"},
+							Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. " +
+								"Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+							Default: "PRESERVE",
+						},
+					},
+				},
+			},
+			"eks:index:KubeProxyAddonOptions": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Properties: map[string]schema.PropertySpec{
+						"enabled": {
+							TypeSpec:    schema.TypeSpec{Type: "boolean", Plain: true},
+							Default:     true,
+							Description: "Whether or not to create the `kube-proxy` Addon in the cluster",
+						},
+						"version": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+							Description: "The version of the EKS add-on. The version must " +
+								"match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).",
+						},
+						"resolveConflictsOnCreate": {
+							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnCreate"},
+							Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. " +
+								"Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+							Default: "OVERWRITE",
+						},
+						"resolveConflictsOnUpdate": {
+							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnUpdate"},
+							Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. " +
+								"Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+							Default: "PRESERVE",
+						},
+					},
 				},
 			},
 		},

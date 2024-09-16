@@ -186,4 +186,82 @@ See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.ht
 
         public override string ToString() => _value;
     }
+
+    /// <summary>
+    /// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+    /// </summary>
+    [EnumType]
+    public readonly struct ResolveConflictsOnCreate : IEquatable<ResolveConflictsOnCreate>
+    {
+        private readonly string _value;
+
+        private ResolveConflictsOnCreate(string value)
+        {
+            _value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        /// <summary>
+        /// If the self-managed version of the add-on is installed on your cluster, Amazon EKS doesn't change the value. Creation of the add-on might fail.
+        /// </summary>
+        public static ResolveConflictsOnCreate None { get; } = new ResolveConflictsOnCreate("NONE");
+        /// <summary>
+        /// If the self-managed version of the add-on is installed on your cluster and the Amazon EKS default value is different than the existing value, Amazon EKS changes the value to the Amazon EKS default value.
+        /// </summary>
+        public static ResolveConflictsOnCreate Overwrite { get; } = new ResolveConflictsOnCreate("OVERWRITE");
+
+        public static bool operator ==(ResolveConflictsOnCreate left, ResolveConflictsOnCreate right) => left.Equals(right);
+        public static bool operator !=(ResolveConflictsOnCreate left, ResolveConflictsOnCreate right) => !left.Equals(right);
+
+        public static explicit operator string(ResolveConflictsOnCreate value) => value._value;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override bool Equals(object? obj) => obj is ResolveConflictsOnCreate other && Equals(other);
+        public bool Equals(ResolveConflictsOnCreate other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override int GetHashCode() => _value?.GetHashCode() ?? 0;
+
+        public override string ToString() => _value;
+    }
+
+    /// <summary>
+    /// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+    /// </summary>
+    [EnumType]
+    public readonly struct ResolveConflictsOnUpdate : IEquatable<ResolveConflictsOnUpdate>
+    {
+        private readonly string _value;
+
+        private ResolveConflictsOnUpdate(string value)
+        {
+            _value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        /// <summary>
+        /// Amazon EKS doesn't change the value. The update might fail.
+        /// </summary>
+        public static ResolveConflictsOnUpdate None { get; } = new ResolveConflictsOnUpdate("NONE");
+        /// <summary>
+        /// Amazon EKS overwrites the changed value back to the Amazon EKS default value.
+        /// </summary>
+        public static ResolveConflictsOnUpdate Overwrite { get; } = new ResolveConflictsOnUpdate("OVERWRITE");
+        /// <summary>
+        /// Amazon EKS preserves the value. If you choose this option, we recommend that you test any field and value changes on a non-production cluster before updating the add-on on your production cluster.
+        /// </summary>
+        public static ResolveConflictsOnUpdate Preserve { get; } = new ResolveConflictsOnUpdate("PRESERVE");
+
+        public static bool operator ==(ResolveConflictsOnUpdate left, ResolveConflictsOnUpdate right) => left.Equals(right);
+        public static bool operator !=(ResolveConflictsOnUpdate left, ResolveConflictsOnUpdate right) => !left.Equals(right);
+
+        public static explicit operator string(ResolveConflictsOnUpdate value) => value._value;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override bool Equals(object? obj) => obj is ResolveConflictsOnUpdate other && Equals(other);
+        public bool Equals(ResolveConflictsOnUpdate other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override int GetHashCode() => _value?.GetHashCode() ?? 0;
+
+        public override string ToString() => _value;
+    }
 }
