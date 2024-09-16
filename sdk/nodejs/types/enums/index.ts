@@ -19,6 +19,22 @@ export const AccessEntryType = {
      * For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
      */
     EC2Windows: "EC2_WINDOWS",
+    /**
+     * @deprecated Use `Standard` instead`
+     */
+    STANDARD: "STANDARD",
+    /**
+     * @deprecated Use `FargateLinux` instead`
+     */
+    FARGATE_LINUX: "FARGATE_LINUX",
+    /**
+     * @deprecated Use `EC2Linux` instead`
+     */
+    EC2_LINUX: "EC2_LINUX",
+    /**
+     * @deprecated Use `EC2Windows` instead`
+     */
+    EC2_WINDOWS: "EC2_WINDOWS",
 } as const;
 
 /**
@@ -63,6 +79,18 @@ For more information and instructions how to upgrade, see https://docs.aws.amazo
 For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.
      */
     ApiAndConfigMap: "API_AND_CONFIG_MAP",
+    /**
+     * @deprecated Use `ConfigMap` instead
+     */
+    CONFIG_MAP: "CONFIG_MAP",
+    /**
+     * @deprecated Use `Api` instead
+     */
+    API: "API",
+    /**
+     * @deprecated Use `ApiAndConfigMap` instead
+     */
+    API_AND_CONFIG_MAP: "API_AND_CONFIG_MAP",
 } as const;
 
 /**

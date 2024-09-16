@@ -2362,6 +2362,55 @@ func genNodejs(pkg *schema.Package, templateDir, outdir string) {
 		"nodegroupMixins.ts":    mustLoadFile(filepath.Join(templateDir, "nodegroupMixins.ts")),
 		"storageclassMixins.ts": mustLoadFile(filepath.Join(templateDir, "storageclassMixins.ts")),
 	}
+	// Need to add the old enum types from `nodejs/eks` for backwards compatibility.
+	// Marking as deprecated so that users know to use the new names
+	for _, typ := range pkg.Types {
+		if enum, ok := typ.(*schema.EnumType); ok {
+			switch enum.Token {
+			case "eks:index:AuthenticationMode":
+				enum.Elements = append(enum.Elements,
+					&schema.Enum{
+						Name:               "CONFIG_MAP",
+						Value:              "CONFIG_MAP",
+						DeprecationMessage: "Use `ConfigMap` instead",
+					},
+					&schema.Enum{
+						Name:               "API",
+						Value:              "API",
+						DeprecationMessage: "Use `Api` instead",
+					},
+					&schema.Enum{
+						Name:               "API_AND_CONFIG_MAP",
+						Value:              "API_AND_CONFIG_MAP",
+						DeprecationMessage: "Use `ApiAndConfigMap` instead",
+					},
+				)
+			case "eks:index:AccessEntryType":
+				enum.Elements = append(enum.Elements,
+					&schema.Enum{
+						Value:              "STANDARD",
+						DeprecationMessage: "Use `Standard` instead`",
+						Name:               "STANDARD",
+					},
+					&schema.Enum{
+						Value:              "FARGATE_LINUX",
+						DeprecationMessage: "Use `FargateLinux` instead`",
+						Name:               "FARGATE_LINUX",
+					},
+					&schema.Enum{
+						Value:              "EC2_LINUX",
+						DeprecationMessage: "Use `EC2Linux` instead`",
+						Name:               "EC2_LINUX",
+					},
+					&schema.Enum{
+						Value:              "EC2_WINDOWS",
+						DeprecationMessage: "Use `EC2Windows` instead`",
+						Name:               "EC2_WINDOWS",
+					},
+				)
+			}
+		}
+	}
 	files, err := nodejsgen.GeneratePackage(Tool, pkg, overlays, nil, false)
 	if err != nil {
 		panic(err)
