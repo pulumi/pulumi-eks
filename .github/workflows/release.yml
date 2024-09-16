@@ -675,7 +675,6 @@ jobs:
       - prerequisites
       - build_sdk
     runs-on: ubuntu-latest
-    if: github.event_name == 'repository_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     env:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
