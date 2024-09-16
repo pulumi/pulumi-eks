@@ -273,6 +273,7 @@ export class VpcCniAddon extends pulumi.ComponentResource {
             name,
             {
                 clusterName: args.clusterName,
+                addonVersion: addonVersion,
                 addonName: "vpc-cni",
                 // this makes sure adoption of existing resources works and doesn't fail
                 resolveConflictsOnCreate: "OVERWRITE",
