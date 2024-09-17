@@ -1880,7 +1880,7 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnUpdate"},
 							Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. " +
 								"Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
-							Default: "PRESERVE",
+							Default: "OVERWRITE",
 						},
 					},
 				},
@@ -1909,7 +1909,7 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnUpdate"},
 							Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. " +
 								"Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
-							Default: "PRESERVE",
+							Default: "OVERWRITE",
 						},
 					},
 				},

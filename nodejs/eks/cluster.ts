@@ -647,7 +647,7 @@ export function createCore(
                     resolveConflictsOnCreate:
                         args.kubeProxyAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
                     resolveConflictsOnUpdate:
-                        args.kubeProxyAddonOptions?.resolveConflictsOnUpdate ?? "PRESERVE",
+                        args.kubeProxyAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
                     addonVersion: kubeProxyVersion,
                 },
                 { parent, provider },
@@ -684,7 +684,7 @@ export function createCore(
                     resolveConflictsOnCreate:
                         args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
                     resolveConflictsOnUpdate:
-                        args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "PRESERVE",
+                        args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
                     configurationValues,
                 },
                 { parent, provider },

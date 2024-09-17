@@ -1623,7 +1623,7 @@ func (val *CoreDnsAddonOptions) Defaults() *CoreDnsAddonOptions {
 		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
 	}
 	if tmp.ResolveConflictsOnUpdate == nil {
-		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("PRESERVE")
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("OVERWRITE")
 		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
 	}
 	return &tmp
@@ -1666,7 +1666,7 @@ func (val *CoreDnsAddonOptionsArgs) Defaults() *CoreDnsAddonOptionsArgs {
 		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
 	}
 	if tmp.ResolveConflictsOnUpdate == nil {
-		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("PRESERVE")
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("OVERWRITE")
 		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
 	}
 	return &tmp
@@ -2193,7 +2193,7 @@ func (val *KubeProxyAddonOptions) Defaults() *KubeProxyAddonOptions {
 		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
 	}
 	if tmp.ResolveConflictsOnUpdate == nil {
-		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("PRESERVE")
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("OVERWRITE")
 		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
 	}
 	return &tmp
@@ -2236,7 +2236,7 @@ func (val *KubeProxyAddonOptionsArgs) Defaults() *KubeProxyAddonOptionsArgs {
 		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
 	}
 	if tmp.ResolveConflictsOnUpdate == nil {
-		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("PRESERVE")
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("OVERWRITE")
 		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
 	}
 	return &tmp

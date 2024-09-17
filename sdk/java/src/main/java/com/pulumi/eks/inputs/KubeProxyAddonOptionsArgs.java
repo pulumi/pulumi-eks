@@ -163,7 +163,7 @@ public final class KubeProxyAddonOptionsArgs extends com.pulumi.resources.Resour
         public KubeProxyAddonOptionsArgs build() {
             $.enabled = Codegen.booleanProp("enabled").arg($.enabled).def(true).getNullable();
             $.resolveConflictsOnCreate = Codegen.objectProp("resolveConflictsOnCreate", ResolveConflictsOnCreate.class).arg($.resolveConflictsOnCreate).def(ResolveConflictsOnCreate.Overwrite).getNullable();
-            $.resolveConflictsOnUpdate = Codegen.objectProp("resolveConflictsOnUpdate", ResolveConflictsOnUpdate.class).arg($.resolveConflictsOnUpdate).def(ResolveConflictsOnUpdate.Preserve).getNullable();
+            $.resolveConflictsOnUpdate = Codegen.objectProp("resolveConflictsOnUpdate", ResolveConflictsOnUpdate.class).arg($.resolveConflictsOnUpdate).def(ResolveConflictsOnUpdate.Overwrite).getNullable();
             return $;
         }
     }

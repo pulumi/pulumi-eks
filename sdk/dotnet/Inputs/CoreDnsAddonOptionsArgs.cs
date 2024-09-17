@@ -40,7 +40,7 @@ namespace Pulumi.Eks.Inputs
         {
             Enabled = true;
             ResolveConflictsOnCreate = Pulumi.Eks.ResolveConflictsOnCreate.Overwrite;
-            ResolveConflictsOnUpdate = Pulumi.Eks.ResolveConflictsOnUpdate.Preserve;
+            ResolveConflictsOnUpdate = Pulumi.Eks.ResolveConflictsOnUpdate.Overwrite;
         }
         public static new CoreDnsAddonOptionsArgs Empty => new CoreDnsAddonOptionsArgs();
     }

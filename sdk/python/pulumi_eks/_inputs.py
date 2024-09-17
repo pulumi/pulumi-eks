@@ -1245,7 +1245,7 @@ class CoreDnsAddonOptionsArgs:
         if resolve_conflicts_on_create is not None:
             pulumi.set(__self__, "resolve_conflicts_on_create", resolve_conflicts_on_create)
         if resolve_conflicts_on_update is None:
-            resolve_conflicts_on_update = 'PRESERVE'
+            resolve_conflicts_on_update = 'OVERWRITE'
         if resolve_conflicts_on_update is not None:
             pulumi.set(__self__, "resolve_conflicts_on_update", resolve_conflicts_on_update)
         if version is not None:
@@ -1410,7 +1410,7 @@ class KubeProxyAddonOptionsArgs:
         if resolve_conflicts_on_create is not None:
             pulumi.set(__self__, "resolve_conflicts_on_create", resolve_conflicts_on_create)
         if resolve_conflicts_on_update is None:
-            resolve_conflicts_on_update = 'PRESERVE'
+            resolve_conflicts_on_update = 'OVERWRITE'
         if resolve_conflicts_on_update is not None:
             pulumi.set(__self__, "resolve_conflicts_on_update", resolve_conflicts_on_update)
         if version is not None:
