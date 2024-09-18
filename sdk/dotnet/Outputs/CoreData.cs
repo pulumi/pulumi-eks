@@ -78,7 +78,7 @@ namespace Pulumi.Eks.Outputs
         /// <summary>
         /// The VPC CNI for the cluster.
         /// </summary>
-        public readonly Pulumi.Eks.VpcCni? VpcCni;
+        public readonly Pulumi.Eks.VpcCniAddon? VpcCni;
         /// <summary>
         /// ID of the cluster's VPC.
         /// </summary>
@@ -126,7 +126,7 @@ namespace Pulumi.Eks.Outputs
 
             ImmutableDictionary<string, string>? tags,
 
-            Pulumi.Eks.VpcCni? vpcCni,
+            Pulumi.Eks.VpcCniAddon? vpcCni,
 
             string vpcId)
         {

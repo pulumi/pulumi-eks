@@ -7,28 +7,29 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.Utilities;
-import com.pulumi.eks.VpcCniArgs;
+import com.pulumi.eks.VpcCniAddonArgs;
 import javax.annotation.Nullable;
 
 /**
- * VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
+ * VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
+ * For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
  * 
  */
-@ResourceType(type="eks:index:VpcCni")
-public class VpcCni extends com.pulumi.resources.CustomResource {
+@ResourceType(type="eks:index:VpcCniAddon")
+public class VpcCniAddon extends com.pulumi.resources.CustomResource {
     /**
      *
      * @param name The _unique_ name of the resulting resource.
      */
-    public VpcCni(String name) {
-        this(name, VpcCniArgs.Empty);
+    public VpcCniAddon(String name) {
+        this(name, VpcCniAddonArgs.Empty);
     }
     /**
      *
      * @param name The _unique_ name of the resulting resource.
      * @param args The arguments to use to populate this resource's properties.
      */
-    public VpcCni(String name, VpcCniArgs args) {
+    public VpcCniAddon(String name, VpcCniAddonArgs args) {
         this(name, args, null);
     }
     /**
@@ -37,12 +38,12 @@ public class VpcCni extends com.pulumi.resources.CustomResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param options A bag of options that control this resource's behavior.
      */
-    public VpcCni(String name, VpcCniArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        super("eks:index:VpcCni", name, args == null ? VpcCniArgs.Empty : args, makeResourceOptions(options, Codegen.empty()));
+    public VpcCniAddon(String name, VpcCniAddonArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        super("eks:index:VpcCniAddon", name, args == null ? VpcCniAddonArgs.Empty : args, makeResourceOptions(options, Codegen.empty()));
     }
 
-    private VpcCni(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        super("eks:index:VpcCni", name, null, makeResourceOptions(options, id));
+    private VpcCniAddon(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        super("eks:index:VpcCniAddon", name, null, makeResourceOptions(options, id));
     }
 
     private static com.pulumi.resources.CustomResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.CustomResourceOptions options, @Nullable Output<String> id) {
@@ -60,7 +61,7 @@ public class VpcCni extends com.pulumi.resources.CustomResource {
      * @param id The _unique_ provider ID of the resource to lookup.
      * @param options Optional settings to control the behavior of the CustomResource.
      */
-    public static VpcCni get(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        return new VpcCni(name, id, options);
+    public static VpcCniAddon get(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        return new VpcCniAddon(name, id, options);
     }
 }

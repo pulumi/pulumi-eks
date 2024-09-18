@@ -10,7 +10,7 @@ from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 from . import outputs
 from ._enums import *
-from .vpc_cni import VpcCni
+from .vpc_cni_addon import VpcCniAddon
 import pulumi_aws
 import pulumi_kubernetes
 
@@ -927,7 +927,7 @@ class CoreData(dict):
                  public_subnet_ids: Optional[Sequence[str]] = None,
                  storage_classes: Optional[Mapping[str, 'pulumi_kubernetes.storage.v1.StorageClass']] = None,
                  tags: Optional[Mapping[str, str]] = None,
-                 vpc_cni: Optional['VpcCni'] = None):
+                 vpc_cni: Optional['VpcCniAddon'] = None):
         """
         Defines the core set of data associated with an EKS cluster, including the network in which it runs.
         :param 'pulumi_aws.iam.Role' cluster_iam_role: The IAM Role attached to the EKS Cluster
@@ -944,7 +944,7 @@ class CoreData(dict):
         :param Sequence[str] public_subnet_ids: List of subnet IDs for the public subnets.
         :param Mapping[str, 'pulumi_kubernetes.storage.v1.StorageClass'] storage_classes: The storage class used for persistent storage by the cluster.
         :param Mapping[str, str] tags: A map of tags assigned to the EKS cluster.
-        :param 'VpcCni' vpc_cni: The VPC CNI for the cluster.
+        :param 'VpcCniAddon' vpc_cni: The VPC CNI for the cluster.
         """
         pulumi.set(__self__, "cluster", cluster)
         pulumi.set(__self__, "cluster_iam_role", cluster_iam_role)
@@ -1131,7 +1131,7 @@ class CoreData(dict):
 
     @property
     @pulumi.getter(name="vpcCni")
-    def vpc_cni(self) -> Optional['VpcCni']:
+    def vpc_cni(self) -> Optional['VpcCniAddon']:
         """
         The VPC CNI for the cluster.
         """
