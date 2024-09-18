@@ -16,13 +16,10 @@ import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 
-import * as childProcess from "child_process";
-import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
 import * as HttpsProxyAgent from "https-proxy-agent";
 import * as process from "process";
-import * as tmp from "tmp";
 import * as url from "url";
 
 import {
@@ -33,7 +30,6 @@ import {
     validateAuthenticationMode,
 } from "./authenticationMode";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
-import { VpcCni, VpcCniOptions } from "./cni";
 import { assertCompatibleAWSCLIExists, assertCompatibleKubectlVersionExists } from "./dependencies";
 import {
     computeWorkerSubnets,
@@ -45,7 +41,7 @@ import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import { InputTags, UserStorageClasses } from "./utils";
-import cluster from "cluster";
+import { VpcCniAddon, VpcCniAddonOptions } from "./cni-addon";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -150,7 +146,7 @@ export interface CoreData {
     eksNodeAccess?: k8s.core.v1.ConfigMap;
     storageClasses?: UserStorageClasses;
     kubeconfig?: pulumi.Output<any>;
-    vpcCni?: VpcCni;
+    vpcCni?: VpcCniAddon;
     tags?: InputTags;
     nodeSecurityGroupTags?: InputTags;
     fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined>;
@@ -625,6 +621,76 @@ export function createCore(
         },
     );
 
+    if (args.kubeProxyAddonOptions?.enabled ?? true) {
+        const kubeProxyVersion: pulumi.Output<string> = args.kubeProxyAddonOptions?.version
+            ? pulumi.output(args.kubeProxyAddonOptions?.version)
+            : aws.eks
+                  .getAddonVersionOutput(
+                      {
+                          addonName: "kube-proxy",
+                          kubernetesVersion: eksCluster.version,
+                          mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                      },
+                      { parent, provider },
+                  )
+                  .apply((addonVersion) => addonVersion.version);
+
+        const kubeProxyAddon = new aws.eks.Addon(
+            `${name}-kube-proxy`,
+            {
+                clusterName: eksCluster.name,
+                addonName: "kube-proxy",
+                preserve: true,
+                tags: args.tags,
+                resolveConflictsOnCreate:
+                    args.kubeProxyAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
+                resolveConflictsOnUpdate:
+                    args.kubeProxyAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
+                addonVersion: kubeProxyVersion,
+            },
+            { parent, provider },
+        );
+    }
+
+    if (args.corednsAddonOptions?.enabled ?? true) {
+        const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
+            ? pulumi.output(args.corednsAddonOptions.version)
+            : aws.eks
+                  .getAddonVersionOutput(
+                      {
+                          addonName: "coredns",
+                          kubernetesVersion: eksCluster.version,
+                          mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                      },
+                      { parent, provider },
+                  )
+                  .apply((addonVersion) => addonVersion.version);
+
+        const corednsAddon = new aws.eks.Addon(
+            `${name}-coredns`,
+            {
+                clusterName: eksCluster.name,
+                addonName: "coredns",
+                tags: args.tags,
+                preserve: true,
+                addonVersion: corednsVersion,
+                resolveConflictsOnCreate:
+                    args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
+                resolveConflictsOnUpdate:
+                    args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
+                configurationValues: pulumi.output(args.fargate).apply((fargate) => {
+                    if (fargate) {
+                        return JSON.stringify({
+                            computeType: "Fargate",
+                        });
+                    }
+                    return undefined;
+                }) as any,
+            },
+            { parent, provider },
+        );
+    }
+
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
     // there is time for the cluster API server to become completely available.  Ideally we
@@ -897,16 +963,26 @@ export function createCore(
         }
     }
 
-    // Create the VPC CNI management resource.
-    let vpcCni: VpcCni | undefined;
-    if (!args.useDefaultVpcCni) {
-        vpcCni = new VpcCni(
-            `${name}-vpc-cni`,
-            kubeconfig.apply(JSON.stringify),
-            args.vpcCniOptions,
-            { parent, dependsOn: authDependencies },
-        );
-    }
+    // Create the VPC CNI addon
+    const vpcCni = args.useDefaultVpcCni
+        ? undefined
+        : new VpcCniAddon(
+              `${name}-vpc-cni`,
+              {
+                  ...args.vpcCniOptions,
+                  clusterName: eksCluster.name,
+                  clusterVersion: eksCluster.version,
+                  tags: args.tags,
+              },
+              {
+                  parent,
+                  dependsOn: authDependencies,
+                  providers: {
+                      ...(provider ? { aws: provider } : {}),
+                      kubernetes: k8sProvider,
+                  },
+              },
+          );
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi
         .output(args.fargate)
@@ -963,64 +1039,6 @@ export function createCore(
                     },
                     { parent, dependsOn: eksNodeAccess ? [eksNodeAccess] : undefined, provider },
                 );
-
-                // Once the FargateProfile has been created, try to patch/remove the CoreDNS computeType annotation.  See
-                // https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-coredns.
-                pulumi.all([result.id, selectors, kubeconfig]).apply(([_, sels, kconfig]) => {
-                    // Only patch CoreDNS if there is a selector in the FargateProfile which causes
-                    // `kube-system` pods to launch in Fargate.
-                    if (sels.findIndex((s) => s.namespace === "kube-system") !== -1) {
-                        // Only do the imperative patching during deployments, not previews.
-                        if (!pulumi.runtime.isDryRun()) {
-                            // Write the kubeconfig to a tmp file and use it to patch the `coredns`
-                            // deployment that AWS deployed already as part of cluster creation.
-                            const tmpKubeconfig = tmp.fileSync();
-                            fs.writeFileSync(tmpKubeconfig.fd, JSON.stringify(kconfig));
-
-                            // Determine if the CoreDNS deployment has a computeType annotation.
-                            const cmdGetAnnos = `kubectl get deployment coredns -n kube-system -o jsonpath='{.spec.template.metadata.annotations}'`;
-                            const getAnnosOutput = childProcess.execSync(cmdGetAnnos, {
-                                env: {
-                                    ...process.env,
-                                    KUBECONFIG: tmpKubeconfig.name,
-                                },
-                            });
-                            const getAnnosOutputStr = getAnnosOutput.toString();
-                            // See if getAnnosOutputStr contains the annotation we're looking for.
-                            if (!getAnnosOutputStr.includes("eks.amazonaws.com/compute-type")) {
-                                // No need to patch the deployment object since the annotation is not present. However, we need to re-create the CoreDNS pods since
-                                // the existing pods were created before the FargateProfile was created, and therefore will not have been scheduled by fargate-scheduler.
-                                // See: https://github.com/pulumi/pulumi-eks/issues/1030.
-                                const cmd = `kubectl rollout restart deployment coredns -n kube-system`;
-
-                                childProcess.execSync(cmd, {
-                                    env: {
-                                        ...process.env,
-                                        KUBECONFIG: tmpKubeconfig.name,
-                                    },
-                                });
-
-                                return;
-                            }
-
-                            const patch = [
-                                {
-                                    op: "remove",
-                                    path: "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type",
-                                },
-                            ];
-                            const cmd = `kubectl patch deployment coredns -n kube-system --type json -p='${JSON.stringify(
-                                patch,
-                            )}'`;
-                            childProcess.execSync(cmd, {
-                                env: {
-                                    ...process.env,
-                                    KUBECONFIG: tmpKubeconfig.name,
-                                },
-                            });
-                        }
-                    }
-                });
             }
             return result;
         });
@@ -1112,6 +1130,84 @@ function createHttpAgent(proxy?: string): http.Agent {
         // available since its already been "accepted." Disable caching.
         maxCachedSessions: 0,
     });
+}
+
+/* tslint:disable-next-line */ // Generating the enum object for ResolveConflictsOnCreate like codegen does
+export const ResolveConflictsOnCreate = {
+    /**
+     * If the self-managed version of the add-on is installed on your cluster, Amazon EKS doesn't change the value. Creation of the add-on might fail.
+     */
+    None: "NONE",
+    /**
+     * If the self-managed version of the add-on is installed on your cluster and the Amazon EKS default value is different than the existing value, Amazon EKS changes the value to the Amazon EKS default value.
+     */
+    Overwrite: "OVERWRITE",
+} as const;
+
+/**
+ * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+ */
+export type ResolveConflictsOnCreate =
+    (typeof ResolveConflictsOnCreate)[keyof typeof ResolveConflictsOnCreate];
+
+/* tslint:disable-next-line */ // Generating the enum object for ResolveConflictsOnUpdate like codegen does
+export const ResolveConflictsOnUpdate = {
+    /**
+     * Amazon EKS doesn't change the value. The update might fail.
+     */
+    None: "NONE",
+    /**
+     * Amazon EKS overwrites the changed value back to the Amazon EKS default value.
+     */
+    Overwrite: "OVERWRITE",
+    /**
+     * Amazon EKS preserves the value. If you choose this option, we recommend that you test any field and value changes on a non-production cluster before updating the add-on on your production cluster.
+     */
+    Preserve: "PRESERVE",
+} as const;
+
+/**
+ * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+ */
+export type ResolveConflictsOnUpdate =
+    (typeof ResolveConflictsOnUpdate)[keyof typeof ResolveConflictsOnUpdate];
+
+export interface CoreDnsAddonOptions {
+    /**
+     * Whether or not to create the Addon in the cluster
+     */
+    enabled?: boolean;
+    /**
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+     */
+    resolveConflictsOnCreate?: ResolveConflictsOnCreate;
+    /**
+     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+     */
+    resolveConflictsOnUpdate?: ResolveConflictsOnUpdate;
+    /**
+     * The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+     */
+    version?: pulumi.Input<string>;
+}
+
+export interface KubeProxyAddonOptionsArgs {
+    /**
+     * Whether or not to create the `kube-proxy` Addon in the cluster
+     */
+    enabled?: boolean;
+    /**
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+     */
+    resolveConflictsOnCreate?: ResolveConflictsOnCreate;
+    /**
+     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+     */
+    resolveConflictsOnUpdate?: ResolveConflictsOnUpdate;
+    /**
+     * The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+     */
+    version?: pulumi.Input<string>;
 }
 
 /**
@@ -1223,7 +1319,7 @@ export interface ClusterOptions {
      * The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
      * for the VpcCniOptions type.
      */
-    vpcCniOptions?: VpcCniOptions;
+    vpcCniOptions?: Omit<VpcCniAddonOptions, "clusterName">;
 
     /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
@@ -1437,6 +1533,16 @@ export interface ClusterOptions {
      * Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
      */
     defaultAddonsToRemove?: pulumi.Input<pulumi.Input<string>[]>;
+
+    /**
+     * Options for managing the `coredns` addon.
+     */
+    corednsAddonOptions?: CoreDnsAddonOptions;
+
+    /**
+     * Options for managing the `kube-proxy` addon.
+     */
+    kubeProxyAddonOptions?: KubeProxyAddonOptionsArgs;
 
     /**
      * Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`.

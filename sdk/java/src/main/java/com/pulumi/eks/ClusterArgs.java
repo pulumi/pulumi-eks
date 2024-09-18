@@ -11,8 +11,10 @@ import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.enums.AuthenticationMode;
 import com.pulumi.eks.inputs.AccessEntryArgs;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
+import com.pulumi.eks.inputs.CoreDnsAddonOptionsArgs;
 import com.pulumi.eks.inputs.CreationRoleProviderArgs;
 import com.pulumi.eks.inputs.FargateProfileArgs;
+import com.pulumi.eks.inputs.KubeProxyAddonOptionsArgs;
 import com.pulumi.eks.inputs.KubeconfigOptionsArgs;
 import com.pulumi.eks.inputs.RoleMappingArgs;
 import com.pulumi.eks.inputs.StorageClassArgs;
@@ -121,6 +123,21 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<Map<String,String>>> clusterTags() {
         return Optional.ofNullable(this.clusterTags);
+    }
+
+    /**
+     * Options for managing the `coredns` addon.
+     * 
+     */
+    @Import(name="corednsAddonOptions")
+    private @Nullable CoreDnsAddonOptionsArgs corednsAddonOptions;
+
+    /**
+     * @return Options for managing the `coredns` addon.
+     * 
+     */
+    public Optional<CoreDnsAddonOptionsArgs> corednsAddonOptions() {
+        return Optional.ofNullable(this.corednsAddonOptions);
     }
 
     /**
@@ -421,6 +438,21 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<String>> ipFamily() {
         return Optional.ofNullable(this.ipFamily);
+    }
+
+    /**
+     * Options for managing the `kube-proxy` addon.
+     * 
+     */
+    @Import(name="kubeProxyAddonOptions")
+    private @Nullable KubeProxyAddonOptionsArgs kubeProxyAddonOptions;
+
+    /**
+     * @return Options for managing the `kube-proxy` addon.
+     * 
+     */
+    public Optional<KubeProxyAddonOptionsArgs> kubeProxyAddonOptions() {
+        return Optional.ofNullable(this.kubeProxyAddonOptions);
     }
 
     /**
@@ -1038,6 +1070,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.clusterSecurityGroup = $.clusterSecurityGroup;
         this.clusterSecurityGroupTags = $.clusterSecurityGroupTags;
         this.clusterTags = $.clusterTags;
+        this.corednsAddonOptions = $.corednsAddonOptions;
         this.createOidcProvider = $.createOidcProvider;
         this.creationRoleProvider = $.creationRoleProvider;
         this.defaultAddonsToRemove = $.defaultAddonsToRemove;
@@ -1054,6 +1087,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.instanceRoles = $.instanceRoles;
         this.instanceType = $.instanceType;
         this.ipFamily = $.ipFamily;
+        this.kubeProxyAddonOptions = $.kubeProxyAddonOptions;
         this.kubernetesServiceIpAddressRange = $.kubernetesServiceIpAddressRange;
         this.maxSize = $.maxSize;
         this.minSize = $.minSize;
@@ -1196,6 +1230,17 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder clusterTags(Map<String,String> clusterTags) {
             return clusterTags(Output.of(clusterTags));
+        }
+
+        /**
+         * @param corednsAddonOptions Options for managing the `coredns` addon.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder corednsAddonOptions(@Nullable CoreDnsAddonOptionsArgs corednsAddonOptions) {
+            $.corednsAddonOptions = corednsAddonOptions;
+            return this;
         }
 
         /**
@@ -1632,6 +1677,17 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder ipFamily(String ipFamily) {
             return ipFamily(Output.of(ipFamily));
+        }
+
+        /**
+         * @param kubeProxyAddonOptions Options for managing the `kube-proxy` addon.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder kubeProxyAddonOptions(@Nullable KubeProxyAddonOptionsArgs kubeProxyAddonOptions) {
+            $.kubeProxyAddonOptions = kubeProxyAddonOptions;
+            return this;
         }
 
         /**

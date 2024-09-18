@@ -166,7 +166,7 @@ namespace Pulumi.Eks.Inputs
         /// The VPC CNI for the cluster.
         /// </summary>
         [Input("vpcCni")]
-        public Input<Pulumi.Eks.VpcCni>? VpcCni { get; set; }
+        public Input<Pulumi.Eks.VpcCniAddon>? VpcCni { get; set; }
 
         /// <summary>
         /// ID of the cluster's VPC.

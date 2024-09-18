@@ -38,6 +38,9 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
 const cluster3 = new eks.Cluster(`${projectName}-3`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
+    corednsAddonOptions: {
+        enabled: false,
+    },
     nodeGroupOptions: {
         amiId: "ami-0384725f0d30527c7",
         desiredCapacity: 1,

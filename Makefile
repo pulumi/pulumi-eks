@@ -131,7 +131,6 @@ nodejs/eks/bin: nodejs/eks/node_modules ${EKS_SRC}
 	@cd nodejs/eks && \
 		yarn tsc && \
 		sed -e 's/\$${VERSION}/$(VERSION_GENERIC)/g' < package.json > bin/package.json && \
-		cp -R cni bin/ && \
 		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
 	@touch nodejs/eks/bin
 

@@ -11,7 +11,7 @@ from . import _utilities
 from . import outputs
 from ._enums import *
 from ._inputs import *
-from .vpc_cni import VpcCni
+from .vpc_cni_addon import VpcCniAddon
 import pulumi_aws
 import pulumi_kubernetes
 
@@ -25,6 +25,7 @@ class ClusterArgs:
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 coredns_addon_options: Optional['CoreDnsAddonOptionsArgs'] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional['CreationRoleProviderArgs'] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
@@ -41,6 +42,7 @@ class ClusterArgs:
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  ip_family: Optional[pulumi.Input[str]] = None,
+                 kube_proxy_addon_options: Optional['KubeProxyAddonOptionsArgs'] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
@@ -85,6 +87,7 @@ class ClusterArgs:
                Note: The security group resource should not contain any inline ingress or egress rules.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_security_group_tags: The tags to apply to the cluster security group.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_tags: The tags to apply to the EKS cluster.
+        :param 'CoreDnsAddonOptionsArgs' coredns_addon_options: Options for managing the `coredns` addon.
         :param pulumi.Input[bool] create_oidc_provider: Indicates whether an IAM OIDC Provider is created for the EKS cluster.
                
                The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -131,6 +134,7 @@ class ClusterArgs:
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
         :param pulumi.Input[str] ip_family: The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
                You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+        :param 'KubeProxyAddonOptionsArgs' kube_proxy_addon_options: Options for managing the `kube-proxy` addon.
         :param pulumi.Input[str] kubernetes_service_ip_address_range: The CIDR block to assign Kubernetes service IP addresses from. If you don't
                specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
                172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
@@ -257,6 +261,8 @@ class ClusterArgs:
             pulumi.set(__self__, "cluster_security_group_tags", cluster_security_group_tags)
         if cluster_tags is not None:
             pulumi.set(__self__, "cluster_tags", cluster_tags)
+        if coredns_addon_options is not None:
+            pulumi.set(__self__, "coredns_addon_options", coredns_addon_options)
         if create_oidc_provider is not None:
             pulumi.set(__self__, "create_oidc_provider", create_oidc_provider)
         if creation_role_provider is not None:
@@ -289,6 +295,8 @@ class ClusterArgs:
             pulumi.set(__self__, "instance_type", instance_type)
         if ip_family is not None:
             pulumi.set(__self__, "ip_family", ip_family)
+        if kube_proxy_addon_options is not None:
+            pulumi.set(__self__, "kube_proxy_addon_options", kube_proxy_addon_options)
         if kubernetes_service_ip_address_range is not None:
             pulumi.set(__self__, "kubernetes_service_ip_address_range", kubernetes_service_ip_address_range)
         if max_size is not None:
@@ -415,6 +423,18 @@ class ClusterArgs:
     @cluster_tags.setter
     def cluster_tags(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]):
         pulumi.set(self, "cluster_tags", value)
+
+    @property
+    @pulumi.getter(name="corednsAddonOptions")
+    def coredns_addon_options(self) -> Optional['CoreDnsAddonOptionsArgs']:
+        """
+        Options for managing the `coredns` addon.
+        """
+        return pulumi.get(self, "coredns_addon_options")
+
+    @coredns_addon_options.setter
+    def coredns_addon_options(self, value: Optional['CoreDnsAddonOptionsArgs']):
+        pulumi.set(self, "coredns_addon_options", value)
 
     @property
     @pulumi.getter(name="createOidcProvider")
@@ -637,6 +657,18 @@ class ClusterArgs:
     @ip_family.setter
     def ip_family(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "ip_family", value)
+
+    @property
+    @pulumi.getter(name="kubeProxyAddonOptions")
+    def kube_proxy_addon_options(self) -> Optional['KubeProxyAddonOptionsArgs']:
+        """
+        Options for managing the `kube-proxy` addon.
+        """
+        return pulumi.get(self, "kube_proxy_addon_options")
+
+    @kube_proxy_addon_options.setter
+    def kube_proxy_addon_options(self, value: Optional['KubeProxyAddonOptionsArgs']):
+        pulumi.set(self, "kube_proxy_addon_options", value)
 
     @property
     @pulumi.getter(name="kubernetesServiceIpAddressRange")
@@ -1083,6 +1115,7 @@ class Cluster(pulumi.ComponentResource):
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 coredns_addon_options: Optional[Union['CoreDnsAddonOptionsArgs', 'CoreDnsAddonOptionsArgsDict']] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
@@ -1099,6 +1132,7 @@ class Cluster(pulumi.ComponentResource):
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  ip_family: Optional[pulumi.Input[str]] = None,
+                 kube_proxy_addon_options: Optional[Union['KubeProxyAddonOptionsArgs', 'KubeProxyAddonOptionsArgsDict']] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
@@ -1165,6 +1199,7 @@ class Cluster(pulumi.ComponentResource):
                Note: The security group resource should not contain any inline ingress or egress rules.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_security_group_tags: The tags to apply to the cluster security group.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_tags: The tags to apply to the EKS cluster.
+        :param Union['CoreDnsAddonOptionsArgs', 'CoreDnsAddonOptionsArgsDict'] coredns_addon_options: Options for managing the `coredns` addon.
         :param pulumi.Input[bool] create_oidc_provider: Indicates whether an IAM OIDC Provider is created for the EKS cluster.
                
                The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -1211,6 +1246,7 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
         :param pulumi.Input[str] ip_family: The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
                You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+        :param Union['KubeProxyAddonOptionsArgs', 'KubeProxyAddonOptionsArgsDict'] kube_proxy_addon_options: Options for managing the `kube-proxy` addon.
         :param pulumi.Input[str] kubernetes_service_ip_address_range: The CIDR block to assign Kubernetes service IP addresses from. If you don't
                specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
                172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
@@ -1374,6 +1410,7 @@ class Cluster(pulumi.ComponentResource):
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 coredns_addon_options: Optional[Union['CoreDnsAddonOptionsArgs', 'CoreDnsAddonOptionsArgsDict']] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
@@ -1390,6 +1427,7 @@ class Cluster(pulumi.ComponentResource):
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  ip_family: Optional[pulumi.Input[str]] = None,
+                 kube_proxy_addon_options: Optional[Union['KubeProxyAddonOptionsArgs', 'KubeProxyAddonOptionsArgsDict']] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[str]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
@@ -1435,6 +1473,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["cluster_security_group"] = cluster_security_group
             __props__.__dict__["cluster_security_group_tags"] = cluster_security_group_tags
             __props__.__dict__["cluster_tags"] = cluster_tags
+            __props__.__dict__["coredns_addon_options"] = coredns_addon_options
             __props__.__dict__["create_oidc_provider"] = create_oidc_provider
             __props__.__dict__["creation_role_provider"] = creation_role_provider
             __props__.__dict__["default_addons_to_remove"] = default_addons_to_remove
@@ -1451,6 +1490,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["instance_roles"] = instance_roles
             __props__.__dict__["instance_type"] = instance_type
             __props__.__dict__["ip_family"] = ip_family
+            __props__.__dict__["kube_proxy_addon_options"] = kube_proxy_addon_options
             __props__.__dict__["kubernetes_service_ip_address_range"] = kubernetes_service_ip_address_range
             __props__.__dict__["max_size"] = max_size
             __props__.__dict__["min_size"] = min_size

@@ -669,6 +669,20 @@ func generateSchema() schema.PackageSpec {
 						Description: "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\n" +
 							"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
 					},
+					"corednsAddonOptions": {
+						TypeSpec: schema.TypeSpec{
+							Plain: true,
+							Ref:   "#/types/eks:index:CoreDnsAddonOptions",
+						},
+						Description: "Options for managing the `coredns` addon.",
+					},
+					"kubeProxyAddonOptions": {
+						TypeSpec: schema.TypeSpec{
+							Plain: true,
+							Ref:   "#/types/eks:index:KubeProxyAddonOptions",
+						},
+						Description: "Options for managing the `kube-proxy` addon.",
+					},
 				},
 				Methods: map[string]string{
 					"getKubeconfig": "eks:index:Cluster/getKubeconfig",
@@ -1069,17 +1083,13 @@ func generateSchema() schema.PackageSpec {
 					"eksCluster",
 				},
 			},
-			// The TypeScript library exports this at the top-level index.ts, so we expose it here. Although, it's not
-			// super useful on its own, so we could consider *not* exposing it to the other languages.
-			// Note that this is a _custom_ resource (not a component), implemented in the provider plugin.
-			// Previously it was implemented as a dynamic provider.
-			"eks:index:VpcCni": {
+			"eks:index:VpcCniAddon": {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
-					Description: "VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by " +
-						"applying its YAML chart.",
+					Description: "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\n" +
+						"For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
 				},
-				InputProperties: vpcCniProperties(true /*kubeconfig*/),
-				RequiredInputs:  []string{"kubeconfig"},
+				InputProperties: vpcCniProperties(false /*cluster*/),
+				RequiredInputs:  []string{"clusterName"},
 			},
 			"eks:index:Addon": {
 				IsComponent: true,
@@ -1209,7 +1219,7 @@ func generateSchema() schema.PackageSpec {
 							Description: "The kubeconfig file for the cluster.",
 						},
 						"vpcCni": {
-							TypeSpec:    schema.TypeSpec{Ref: "#/resources/eks:index:VpcCni"},
+							TypeSpec:    schema.TypeSpec{Ref: "#/resources/eks:index:VpcCniAddon"},
 							Description: "The VPC CNI for the cluster.",
 						},
 						"tags": {
@@ -1574,7 +1584,7 @@ func generateSchema() schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "object",
 					Description: "Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.",
-					Properties:  vpcCniProperties(false /*kubeconfig*/),
+					Properties:  vpcCniProperties(true /*cluster*/),
 				},
 			},
 
@@ -1802,6 +1812,108 @@ func generateSchema() schema.PackageSpec {
 						},
 					},
 					Required: []string{"content", "contentType"},
+				},
+			},
+			"eks:index:ResolveConflictsOnUpdate": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "string",
+					Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. " +
+						"Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:        "None",
+						Value:       "NONE",
+						Description: "Amazon EKS doesn't change the value. The update might fail.",
+					},
+					{
+						Name:        "Overwrite",
+						Value:       "OVERWRITE",
+						Description: "Amazon EKS overwrites the changed value back to the Amazon EKS default value.",
+					},
+					{
+						Name:        "Preserve",
+						Value:       "PRESERVE",
+						Description: "Amazon EKS preserves the value. If you choose this option, we recommend that you test any field and value changes on a non-production cluster before updating the add-on on your production cluster.",
+					},
+				},
+			},
+			"eks:index:ResolveConflictsOnCreate": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "string",
+					Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. " +
+						"Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:        "None",
+						Value:       "NONE",
+						Description: "If the self-managed version of the add-on is installed on your cluster, Amazon EKS doesn't change the value. Creation of the add-on might fail.",
+					},
+					{
+						Name:  "Overwrite",
+						Value: "OVERWRITE",
+						Description: "If the self-managed version of the add-on is installed on your cluster and the Amazon EKS default value is different than the existing value, " +
+							"Amazon EKS changes the value to the Amazon EKS default value.",
+					},
+				},
+			},
+			"eks:index:CoreDnsAddonOptions": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Properties: map[string]schema.PropertySpec{
+						"enabled": {
+							TypeSpec:    schema.TypeSpec{Type: "boolean", Plain: true},
+							Default:     true,
+							Description: "Whether or not to create the Addon in the cluster",
+						},
+						"version": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+							Description: "The version of the EKS add-on. The version must " +
+								"match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).",
+						},
+						"resolveConflictsOnCreate": {
+							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnCreate"},
+							Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. " +
+								"Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+							Default: "OVERWRITE",
+						},
+						"resolveConflictsOnUpdate": {
+							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnUpdate"},
+							Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. " +
+								"Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+							Default: "OVERWRITE",
+						},
+					},
+				},
+			},
+			"eks:index:KubeProxyAddonOptions": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Properties: map[string]schema.PropertySpec{
+						"enabled": {
+							TypeSpec:    schema.TypeSpec{Type: "boolean", Plain: true},
+							Default:     true,
+							Description: "Whether or not to create the `kube-proxy` Addon in the cluster",
+						},
+						"version": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+							Description: "The version of the EKS add-on. The version must " +
+								"match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).",
+						},
+						"resolveConflictsOnCreate": {
+							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnCreate"},
+							Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. " +
+								"Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+							Default: "OVERWRITE",
+						},
+						"resolveConflictsOnUpdate": {
+							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnUpdate"},
+							Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. " +
+								"Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+							Default: "OVERWRITE",
+						},
+					},
 				},
 			},
 		},
@@ -2184,7 +2296,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 
 // vpcCniProperties returns a map of properties that can be used by either the VpcCni resource or VpcCniOptions type.
 // When kubeconfig is set to true, the kubeconfig property is included in the map (for the VpcCni resource).
-func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
+func vpcCniProperties(cluster bool) map[string]schema.PropertySpec {
 	props := map[string]schema.PropertySpec{
 		"nodePortSupport": {
 			TypeSpec: schema.TypeSpec{Type: "boolean"},
@@ -2226,12 +2338,6 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 			TypeSpec:    schema.TypeSpec{Type: "boolean"},
 			Description: "IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.",
 		},
-		"enableIpv6": {
-			TypeSpec: schema.TypeSpec{Type: "boolean"},
-			Description: "VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it " +
-				"in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set " +
-				"to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.",
-		},
 		"logLevel": {
 			TypeSpec: schema.TypeSpec{Type: "string"}, // TODO consider typing this as an enum
 			Description: "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nValid " +
@@ -2241,21 +2347,6 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 			TypeSpec: schema.TypeSpec{Type: "string"},
 			Description: "Specifies the file path used for logs.\n\nDefaults to \"stdout\" to emit " +
 				"Pod logs for `kubectl logs`.",
-		},
-		"image": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.\n\n" +
-				"Defaults to the official AWS CNI image in ECR.",
-		},
-		"nodeAgentImage": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.\n\n" +
-				"Defaults to the official AWS CNI nodeagent image in ECR.",
-		},
-		"initImage": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "Specifies the init container image to use in the AWS CNI cluster DaemonSet.\n\n" +
-				"Defaults to the official AWS CNI init container image in ECR.",
 		},
 		"vethPrefix": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
@@ -2318,12 +2409,73 @@ func vpcCniProperties(kubeconfig bool) map[string]schema.PropertySpec {
 			Description: "Pass privilege to containers securityContext. This is required when SELinux is enabled. " +
 				"This value will not be passed to the CNI config by default",
 		},
+		"configurationValues": {
+			TypeSpec: schema.TypeSpec{
+				Type:                 "object",
+				AdditionalProperties: &schema.TypeSpec{Ref: "pulumi.json#/Any"},
+			},
+			Description: "Custom configuration values for the vpc-cni addon. This object must match the schema derived from " +
+				"[describe-addon-configuration]" +
+				"(https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).",
+		},
+		"resolveConflictsOnCreate": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.\n" +
+				"Valid values are NONE and OVERWRITE.\n\nFor more details see the " +
+				"[CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).",
+		},
+		"resolveConflictsOnUpdate": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the" +
+				"Amazon EKS default value.\nValid values are NONE, OVERWRITE, and PRESERVE.\n\nFor more details see the " +
+				"[UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).",
+		},
+		"serviceAccountRoleArn": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. " +
+				"The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM " +
+				"role, then the add-on uses the permissions assigned to the node IAM role.\n\nFor more information, see " +
+				"[Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the " +
+				"Amazon EKS User Guide.\n\nNote: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) " +
+				"provider created for your cluster. For more information, see " +
+				"[Enabling IAM roles for service accounts on your cluster]" +
+				"(https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) " +
+				"in the Amazon EKS User Guide.",
+		},
+		"addonVersion": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "The version of the addon to use. If not specified, the latest version of the addon for the " +
+				"cluster's Kubernetes version will be used.",
+		},
+		"enableNetworkPolicy": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod " +
+				"communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.\n\n" +
+				"See for more information: " +
+				"[Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).",
+		},
 	}
 
-	if kubeconfig {
-		props["kubeconfig"] = schema.PropertySpec{
-			TypeSpec:    schema.TypeSpec{Ref: "pulumi.json#/Any"},
-			Description: "The kubeconfig to use when setting the VPC CNI options.",
+	if !cluster {
+		props["clusterName"] = schema.PropertySpec{
+			TypeSpec:    schema.TypeSpec{Type: "string"},
+			Description: "The name of the EKS cluster.",
+		}
+		props["clusterVersion"] = schema.PropertySpec{
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "The Kubernetes version of the cluster. This is used to determine the addon version to use if " +
+				"`addonVersion` is not specified.",
+		}
+		props["tags"] = schema.PropertySpec{
+			TypeSpec: schema.TypeSpec{
+				Type: "array",
+				Items: &schema.TypeSpec{
+					Type:                 "object",
+					AdditionalProperties: &schema.TypeSpec{Type: "string"},
+				},
+			},
+			Description: "Key-value map of resource tags. If configured with a provider default_tags configuration " +
+				"block present, tags with matching keys will overwrite those defined at the provider-level.",
 		}
 	}
 

@@ -14,7 +14,7 @@ from .node_group import *
 from .node_group_security_group import *
 from .node_group_v2 import *
 from .provider import *
-from .vpc_cni import *
+from .vpc_cni_addon import *
 from ._inputs import *
 from . import outputs
 _utilities.register(
@@ -32,7 +32,7 @@ _utilities.register(
    "eks:index:NodeGroup": "NodeGroup",
    "eks:index:NodeGroupSecurityGroup": "NodeGroupSecurityGroup",
    "eks:index:NodeGroupV2": "NodeGroupV2",
-   "eks:index:VpcCni": "VpcCni"
+   "eks:index:VpcCniAddon": "VpcCniAddon"
   }
  }
 ]

@@ -9,6 +9,8 @@ __all__ = [
     'AmiType',
     'AuthenticationMode',
     'OperatingSystem',
+    'ResolveConflictsOnCreate',
+    'ResolveConflictsOnUpdate',
 ]
 
 
@@ -91,4 +93,36 @@ class OperatingSystem(str, Enum):
     """
     EKS optimized Container OS based on Bottlerocket.
     See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html
+    """
+
+
+class ResolveConflictsOnCreate(str, Enum):
+    """
+    How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+    """
+    NONE = "NONE"
+    """
+    If the self-managed version of the add-on is installed on your cluster, Amazon EKS doesn't change the value. Creation of the add-on might fail.
+    """
+    OVERWRITE = "OVERWRITE"
+    """
+    If the self-managed version of the add-on is installed on your cluster and the Amazon EKS default value is different than the existing value, Amazon EKS changes the value to the Amazon EKS default value.
+    """
+
+
+class ResolveConflictsOnUpdate(str, Enum):
+    """
+    How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+    """
+    NONE = "NONE"
+    """
+    Amazon EKS doesn't change the value. The update might fail.
+    """
+    OVERWRITE = "OVERWRITE"
+    """
+    Amazon EKS overwrites the changed value back to the Amazon EKS default value.
+    """
+    PRESERVE = "PRESERVE"
+    """
+    Amazon EKS preserves the value. If you choose this option, we recommend that you test any field and value changes on a non-production cluster before updating the add-on on your production cluster.
     """

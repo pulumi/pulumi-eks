@@ -30,9 +30,6 @@ const cluster = new eks.Cluster("managed-ng-os", {
       type: eks.AccessEntryType.EC2_LINUX,
     }
   },
-
-  // Needed for AL2023 until the CNI is managed with an addon because our custom CNI is too old
-  useDefaultVpcCni: true,
 });
 
 // Export the cluster's kubeconfig.

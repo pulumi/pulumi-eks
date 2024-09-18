@@ -36,7 +36,7 @@ export {
     NodeGroupOptions,
     NodeGroupData,
 } from "./nodegroup";
-export { VpcCni, VpcCniOptions } from "./cni";
+export { VpcCniAddon, VpcCniAddonOptions } from "./cni-addon";
 export { NodeGroupSecurityGroup } from "./securitygroup";
 export { StorageClass, EBSVolumeType } from "./storageclass";
 export { InputTags, UserStorageClasses } from "./utils";

@@ -11,7 +11,7 @@ import com.pulumi.aws.eks.outputs.ClusterEncryptionConfig;
 import com.pulumi.aws.iam.OpenIdConnectProvider;
 import com.pulumi.aws.iam.Role;
 import com.pulumi.core.annotations.CustomType;
-import com.pulumi.eks.VpcCni;
+import com.pulumi.eks.VpcCniAddon;
 import com.pulumi.eks.outputs.AccessEntry;
 import com.pulumi.eks.outputs.ClusterNodeGroupOptions;
 import com.pulumi.kubernetes.core.v1.ConfigMap;
@@ -102,7 +102,7 @@ public final class CoreData {
      * @return The VPC CNI for the cluster.
      * 
      */
-    private @Nullable VpcCni vpcCni;
+    private @Nullable VpcCniAddon vpcCni;
     /**
      * @return ID of the cluster&#39;s VPC.
      * 
@@ -226,7 +226,7 @@ public final class CoreData {
      * @return The VPC CNI for the cluster.
      * 
      */
-    public Optional<VpcCni> vpcCni() {
+    public Optional<VpcCniAddon> vpcCni() {
         return Optional.ofNullable(this.vpcCni);
     }
     /**
@@ -266,7 +266,7 @@ public final class CoreData {
         private @Nullable Map<String,StorageClass> storageClasses;
         private List<String> subnetIds;
         private @Nullable Map<String,String> tags;
-        private @Nullable VpcCni vpcCni;
+        private @Nullable VpcCniAddon vpcCni;
         private String vpcId;
         public Builder() {}
         public Builder(CoreData defaults) {
@@ -411,7 +411,7 @@ public final class CoreData {
             return this;
         }
         @CustomType.Setter
-        public Builder vpcCni(@Nullable VpcCni vpcCni) {
+        public Builder vpcCni(@Nullable VpcCniAddon vpcCni) {
             this.vpcCni = vpcCni;
             return this;
         }
