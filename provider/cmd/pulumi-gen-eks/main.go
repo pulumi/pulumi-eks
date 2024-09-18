@@ -2204,21 +2204,6 @@ func vpcCniProperties(cluster bool) map[string]schema.PropertySpec {
 			Description: "Specifies the file path used for logs.\n\nDefaults to \"stdout\" to emit " +
 				"Pod logs for `kubectl logs`.",
 		},
-		"image": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.\n\n" +
-				"Defaults to the official AWS CNI image in ECR.",
-		},
-		"nodeAgentImage": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.\n\n" +
-				"Defaults to the official AWS CNI nodeagent image in ECR.",
-		},
-		"initImage": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "Specifies the init container image to use in the AWS CNI cluster DaemonSet.\n\n" +
-				"Defaults to the official AWS CNI init container image in ECR.",
-		},
 		"vethPrefix": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
 			Description: "Specifies the veth prefix used to generate the host-side veth device name " +

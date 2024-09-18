@@ -1763,11 +1763,8 @@ class VpcCniOptionsArgs:
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
                  eni_mtu: Optional[pulumi.Input[int]] = None,
                  external_snat: Optional[pulumi.Input[bool]] = None,
-                 image: Optional[pulumi.Input[str]] = None,
-                 init_image: Optional[pulumi.Input[str]] = None,
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
-                 node_agent_image: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
                  resolve_conflicts_on_create: Optional[pulumi.Input[str]] = None,
                  resolve_conflicts_on_update: Optional[pulumi.Input[str]] = None,
@@ -1803,12 +1800,6 @@ class VpcCniOptionsArgs:
         :param pulumi.Input[bool] external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
                
                Defaults to false.
-        :param pulumi.Input[str] image: Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-               
-               Defaults to the official AWS CNI image in ECR.
-        :param pulumi.Input[str] init_image: Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-               
-               Defaults to the official AWS CNI init container image in ECR.
         :param pulumi.Input[str] log_file: Specifies the file path used for logs.
                
                Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -1816,9 +1807,6 @@ class VpcCniOptionsArgs:
                
                Defaults to "DEBUG"
                Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
-        :param pulumi.Input[str] node_agent_image: Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-               
-               Defaults to the official AWS CNI nodeagent image in ECR.
         :param pulumi.Input[bool] node_port_support: Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
                
                Defaults to true.
@@ -1873,16 +1861,10 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "eni_mtu", eni_mtu)
         if external_snat is not None:
             pulumi.set(__self__, "external_snat", external_snat)
-        if image is not None:
-            pulumi.set(__self__, "image", image)
-        if init_image is not None:
-            pulumi.set(__self__, "init_image", init_image)
         if log_file is not None:
             pulumi.set(__self__, "log_file", log_file)
         if log_level is not None:
             pulumi.set(__self__, "log_level", log_level)
-        if node_agent_image is not None:
-            pulumi.set(__self__, "node_agent_image", node_agent_image)
         if node_port_support is not None:
             pulumi.set(__self__, "node_port_support", node_port_support)
         if resolve_conflicts_on_create is not None:
@@ -2070,34 +2052,6 @@ class VpcCniOptionsArgs:
         pulumi.set(self, "external_snat", value)
 
     @property
-    @pulumi.getter
-    def image(self) -> Optional[pulumi.Input[str]]:
-        """
-        Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-
-        Defaults to the official AWS CNI image in ECR.
-        """
-        return pulumi.get(self, "image")
-
-    @image.setter
-    def image(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "image", value)
-
-    @property
-    @pulumi.getter(name="initImage")
-    def init_image(self) -> Optional[pulumi.Input[str]]:
-        """
-        Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-
-        Defaults to the official AWS CNI init container image in ECR.
-        """
-        return pulumi.get(self, "init_image")
-
-    @init_image.setter
-    def init_image(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "init_image", value)
-
-    @property
     @pulumi.getter(name="logFile")
     def log_file(self) -> Optional[pulumi.Input[str]]:
         """
@@ -2125,20 +2079,6 @@ class VpcCniOptionsArgs:
     @log_level.setter
     def log_level(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "log_level", value)
-
-    @property
-    @pulumi.getter(name="nodeAgentImage")
-    def node_agent_image(self) -> Optional[pulumi.Input[str]]:
-        """
-        Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-
-        Defaults to the official AWS CNI nodeagent image in ECR.
-        """
-        return pulumi.get(self, "node_agent_image")
-
-    @node_agent_image.setter
-    def node_agent_image(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "node_agent_image", value)
 
     @property
     @pulumi.getter(name="nodePortSupport")

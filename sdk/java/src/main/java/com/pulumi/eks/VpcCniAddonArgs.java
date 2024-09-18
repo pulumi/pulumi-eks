@@ -268,44 +268,6 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI image in ECR.
-     * 
-     */
-    @Import(name="image")
-    private @Nullable Output<String> image;
-
-    /**
-     * @return Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI image in ECR.
-     * 
-     */
-    public Optional<Output<String>> image() {
-        return Optional.ofNullable(this.image);
-    }
-
-    /**
-     * Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI init container image in ECR.
-     * 
-     */
-    @Import(name="initImage")
-    private @Nullable Output<String> initImage;
-
-    /**
-     * @return Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI init container image in ECR.
-     * 
-     */
-    public Optional<Output<String>> initImage() {
-        return Optional.ofNullable(this.initImage);
-    }
-
-    /**
      * Specifies the file path used for logs.
      * 
      * Defaults to &#34;stdout&#34; to emit Pod logs for `kubectl logs`.
@@ -343,25 +305,6 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<String>> logLevel() {
         return Optional.ofNullable(this.logLevel);
-    }
-
-    /**
-     * Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI nodeagent image in ECR.
-     * 
-     */
-    @Import(name="nodeAgentImage")
-    private @Nullable Output<String> nodeAgentImage;
-
-    /**
-     * @return Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI nodeagent image in ECR.
-     * 
-     */
-    public Optional<Output<String>> nodeAgentImage() {
-        return Optional.ofNullable(this.nodeAgentImage);
     }
 
     /**
@@ -568,11 +511,8 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
         this.eniConfigLabelDef = $.eniConfigLabelDef;
         this.eniMtu = $.eniMtu;
         this.externalSnat = $.externalSnat;
-        this.image = $.image;
-        this.initImage = $.initImage;
         this.logFile = $.logFile;
         this.logLevel = $.logLevel;
-        this.nodeAgentImage = $.nodeAgentImage;
         this.nodePortSupport = $.nodePortSupport;
         this.resolveConflictsOnCreate = $.resolveConflictsOnCreate;
         this.resolveConflictsOnUpdate = $.resolveConflictsOnUpdate;
@@ -941,56 +881,6 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param image Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder image(@Nullable Output<String> image) {
-            $.image = image;
-            return this;
-        }
-
-        /**
-         * @param image Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder image(String image) {
-            return image(Output.of(image));
-        }
-
-        /**
-         * @param initImage Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI init container image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder initImage(@Nullable Output<String> initImage) {
-            $.initImage = initImage;
-            return this;
-        }
-
-        /**
-         * @param initImage Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI init container image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder initImage(String initImage) {
-            return initImage(Output.of(initImage));
-        }
-
-        /**
          * @param logFile Specifies the file path used for logs.
          * 
          * Defaults to &#34;stdout&#34; to emit Pod logs for `kubectl logs`.
@@ -1040,31 +930,6 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder logLevel(String logLevel) {
             return logLevel(Output.of(logLevel));
-        }
-
-        /**
-         * @param nodeAgentImage Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI nodeagent image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeAgentImage(@Nullable Output<String> nodeAgentImage) {
-            $.nodeAgentImage = nodeAgentImage;
-            return this;
-        }
-
-        /**
-         * @param nodeAgentImage Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI nodeagent image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeAgentImage(String nodeAgentImage) {
-            return nodeAgentImage(Output.of(nodeAgentImage));
         }
 
         /**

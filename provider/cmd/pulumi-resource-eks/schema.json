@@ -821,14 +821,6 @@
                     "type": "boolean",
                     "description": "Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.\n\nDefaults to false."
                 },
-                "image": {
-                    "type": "string",
-                    "description": "Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI image in ECR."
-                },
-                "initImage": {
-                    "type": "string",
-                    "description": "Specifies the init container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI init container image in ECR."
-                },
                 "logFile": {
                     "type": "string",
                     "description": "Specifies the file path used for logs.\n\nDefaults to \"stdout\" to emit Pod logs for `kubectl logs`."
@@ -836,10 +828,6 @@
                 "logLevel": {
                     "type": "string",
                     "description": "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nValid values: \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", or \"FATAL\"."
-                },
-                "nodeAgentImage": {
-                    "type": "string",
-                    "description": "Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI nodeagent image in ECR."
                 },
                 "nodePortSupport": {
                     "type": "boolean",
@@ -2026,14 +2014,6 @@
                     "type": "boolean",
                     "description": "Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.\n\nDefaults to false."
                 },
-                "image": {
-                    "type": "string",
-                    "description": "Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI image in ECR."
-                },
-                "initImage": {
-                    "type": "string",
-                    "description": "Specifies the init container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI init container image in ECR."
-                },
                 "logFile": {
                     "type": "string",
                     "description": "Specifies the file path used for logs.\n\nDefaults to \"stdout\" to emit Pod logs for `kubectl logs`."
@@ -2041,10 +2021,6 @@
                 "logLevel": {
                     "type": "string",
                     "description": "Specifies the log level used for logs.\n\nDefaults to \"DEBUG\"\nValid values: \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", or \"FATAL\"."
-                },
-                "nodeAgentImage": {
-                    "type": "string",
-                    "description": "Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.\n\nDefaults to the official AWS CNI nodeagent image in ECR."
                 },
                 "nodePortSupport": {
                     "type": "boolean",

@@ -2964,14 +2964,6 @@ type VpcCniOptions struct {
 	//
 	// Defaults to false.
 	ExternalSnat *bool `pulumi:"externalSnat"`
-	// Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-	//
-	// Defaults to the official AWS CNI image in ECR.
-	Image *string `pulumi:"image"`
-	// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-	//
-	// Defaults to the official AWS CNI init container image in ECR.
-	InitImage *string `pulumi:"initImage"`
 	// Specifies the file path used for logs.
 	//
 	// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -2981,10 +2973,6 @@ type VpcCniOptions struct {
 	// Defaults to "DEBUG"
 	// Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
 	LogLevel *string `pulumi:"logLevel"`
-	// Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-	//
-	// Defaults to the official AWS CNI nodeagent image in ECR.
-	NodeAgentImage *string `pulumi:"nodeAgentImage"`
 	// Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
 	//
 	// Defaults to true.
@@ -3073,14 +3061,6 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to false.
 	ExternalSnat pulumi.BoolPtrInput `pulumi:"externalSnat"`
-	// Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-	//
-	// Defaults to the official AWS CNI image in ECR.
-	Image pulumi.StringPtrInput `pulumi:"image"`
-	// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-	//
-	// Defaults to the official AWS CNI init container image in ECR.
-	InitImage pulumi.StringPtrInput `pulumi:"initImage"`
 	// Specifies the file path used for logs.
 	//
 	// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -3090,10 +3070,6 @@ type VpcCniOptionsArgs struct {
 	// Defaults to "DEBUG"
 	// Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
 	LogLevel pulumi.StringPtrInput `pulumi:"logLevel"`
-	// Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-	//
-	// Defaults to the official AWS CNI nodeagent image in ECR.
-	NodeAgentImage pulumi.StringPtrInput `pulumi:"nodeAgentImage"`
 	// Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
 	//
 	// Defaults to true.
@@ -3286,20 +3262,6 @@ func (o VpcCniOptionsOutput) ExternalSnat() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.ExternalSnat }).(pulumi.BoolPtrOutput)
 }
 
-// Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-//
-// Defaults to the official AWS CNI image in ECR.
-func (o VpcCniOptionsOutput) Image() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v VpcCniOptions) *string { return v.Image }).(pulumi.StringPtrOutput)
-}
-
-// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-//
-// Defaults to the official AWS CNI init container image in ECR.
-func (o VpcCniOptionsOutput) InitImage() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v VpcCniOptions) *string { return v.InitImage }).(pulumi.StringPtrOutput)
-}
-
 // Specifies the file path used for logs.
 //
 // Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -3313,13 +3275,6 @@ func (o VpcCniOptionsOutput) LogFile() pulumi.StringPtrOutput {
 // Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
 func (o VpcCniOptionsOutput) LogLevel() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *string { return v.LogLevel }).(pulumi.StringPtrOutput)
-}
-
-// Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-//
-// Defaults to the official AWS CNI nodeagent image in ECR.
-func (o VpcCniOptionsOutput) NodeAgentImage() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v VpcCniOptions) *string { return v.NodeAgentImage }).(pulumi.StringPtrOutput)
 }
 
 // Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
@@ -3550,30 +3505,6 @@ func (o VpcCniOptionsPtrOutput) ExternalSnat() pulumi.BoolPtrOutput {
 	}).(pulumi.BoolPtrOutput)
 }
 
-// Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-//
-// Defaults to the official AWS CNI image in ECR.
-func (o VpcCniOptionsPtrOutput) Image() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *VpcCniOptions) *string {
-		if v == nil {
-			return nil
-		}
-		return v.Image
-	}).(pulumi.StringPtrOutput)
-}
-
-// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-//
-// Defaults to the official AWS CNI init container image in ECR.
-func (o VpcCniOptionsPtrOutput) InitImage() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *VpcCniOptions) *string {
-		if v == nil {
-			return nil
-		}
-		return v.InitImage
-	}).(pulumi.StringPtrOutput)
-}
-
 // Specifies the file path used for logs.
 //
 // Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -3596,18 +3527,6 @@ func (o VpcCniOptionsPtrOutput) LogLevel() pulumi.StringPtrOutput {
 			return nil
 		}
 		return v.LogLevel
-	}).(pulumi.StringPtrOutput)
-}
-
-// Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-//
-// Defaults to the official AWS CNI nodeagent image in ECR.
-func (o VpcCniOptionsPtrOutput) NodeAgentImage() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *VpcCniOptions) *string {
-		if v == nil {
-			return nil
-		}
-		return v.NodeAgentImage
 	}).(pulumi.StringPtrOutput)
 }
 

@@ -168,22 +168,6 @@ namespace Pulumi.Eks
         public Input<bool>? ExternalSnat { get; set; }
 
         /// <summary>
-        /// Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-        /// 
-        /// Defaults to the official AWS CNI image in ECR.
-        /// </summary>
-        [Input("image")]
-        public Input<string>? Image { get; set; }
-
-        /// <summary>
-        /// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-        /// 
-        /// Defaults to the official AWS CNI init container image in ECR.
-        /// </summary>
-        [Input("initImage")]
-        public Input<string>? InitImage { get; set; }
-
-        /// <summary>
         /// Specifies the file path used for logs.
         /// 
         /// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -199,14 +183,6 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("logLevel")]
         public Input<string>? LogLevel { get; set; }
-
-        /// <summary>
-        /// Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-        /// 
-        /// Defaults to the official AWS CNI nodeagent image in ECR.
-        /// </summary>
-        [Input("nodeAgentImage")]
-        public Input<string>? NodeAgentImage { get; set; }
 
         /// <summary>
         /// Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
