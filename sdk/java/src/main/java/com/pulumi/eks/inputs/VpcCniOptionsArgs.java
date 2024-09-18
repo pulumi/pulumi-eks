@@ -357,14 +357,20 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+     * Valid values are NONE and OVERWRITE.
+     * 
+     * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
      * 
      */
     @Import(name="resolveConflictsOnCreate")
     private @Nullable Output<String> resolveConflictsOnCreate;
 
     /**
-     * @return How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+     * @return How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+     * Valid values are NONE and OVERWRITE.
+     * 
+     * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
      * 
      */
     public Optional<Output<String>> resolveConflictsOnCreate() {
@@ -372,14 +378,20 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+     * How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
+     * Valid values are NONE, OVERWRITE, and PRESERVE.
+     * 
+     * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
      * 
      */
     @Import(name="resolveConflictsOnUpdate")
     private @Nullable Output<String> resolveConflictsOnUpdate;
 
     /**
-     * @return How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+     * @return How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
+     * Valid values are NONE, OVERWRITE, and PRESERVE.
+     * 
+     * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
      * 
      */
     public Optional<Output<String>> resolveConflictsOnUpdate() {
@@ -402,18 +414,22 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+     * The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
      * 
-     *                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+     * For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+     * 
+     * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
      * 
      */
     @Import(name="serviceAccountRoleArn")
     private @Nullable Output<String> serviceAccountRoleArn;
 
     /**
-     * @return The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+     * @return The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
      * 
-     *                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+     * For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+     * 
+     * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
      * 
      */
     public Optional<Output<String>> serviceAccountRoleArn() {
@@ -990,7 +1006,10 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+         * Valid values are NONE and OVERWRITE.
+         * 
+         * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
          * 
          * @return builder
          * 
@@ -1001,7 +1020,10 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+         * Valid values are NONE and OVERWRITE.
+         * 
+         * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
          * 
          * @return builder
          * 
@@ -1011,7 +1033,10 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
+         * Valid values are NONE, OVERWRITE, and PRESERVE.
+         * 
+         * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
          * 
          * @return builder
          * 
@@ -1022,7 +1047,10 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
+         * Valid values are NONE, OVERWRITE, and PRESERVE.
+         * 
+         * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
          * 
          * @return builder
          * 
@@ -1053,9 +1081,11 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param serviceAccountRoleArn The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+         * @param serviceAccountRoleArn The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
          * 
-         *                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+         * For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+         * 
+         * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
          * 
          * @return builder
          * 
@@ -1066,9 +1096,11 @@ public final class VpcCniOptionsArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param serviceAccountRoleArn The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+         * @param serviceAccountRoleArn The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
          * 
-         *                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+         * For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+         * 
+         * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
          * 
          * @return builder
          * 

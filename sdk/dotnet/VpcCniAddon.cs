@@ -217,13 +217,19 @@ namespace Pulumi.Eks
         public Input<bool>? NodePortSupport { get; set; }
 
         /// <summary>
-        /// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+        /// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+        /// Valid values are NONE and OVERWRITE.
+        /// 
+        /// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
         /// </summary>
         [Input("resolveConflictsOnCreate")]
         public Input<string>? ResolveConflictsOnCreate { get; set; }
 
         /// <summary>
-        /// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+        /// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
+        /// Valid values are NONE, OVERWRITE, and PRESERVE.
+        /// 
+        /// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
         /// </summary>
         [Input("resolveConflictsOnUpdate")]
         public Input<string>? ResolveConflictsOnUpdate { get; set; }
@@ -235,9 +241,11 @@ namespace Pulumi.Eks
         public Input<bool>? SecurityContextPrivileged { get; set; }
 
         /// <summary>
-        /// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+        /// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
         /// 
-        /// 						Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+        /// For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+        /// 
+        /// Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
         /// </summary>
         [Input("serviceAccountRoleArn")]
         public Input<string>? ServiceAccountRoleArn { get; set; }

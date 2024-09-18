@@ -2989,15 +2989,23 @@ type VpcCniOptions struct {
 	//
 	// Defaults to true.
 	NodePortSupport *bool `pulumi:"nodePortSupport"`
-	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+	// Valid values are NONE and OVERWRITE.
+	//
+	// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
 	ResolveConflictsOnCreate *string `pulumi:"resolveConflictsOnCreate"`
-	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
+	// Valid values are NONE, OVERWRITE, and PRESERVE.
+	//
+	// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
 	ResolveConflictsOnUpdate *string `pulumi:"resolveConflictsOnUpdate"`
 	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 	SecurityContextPrivileged *bool `pulumi:"securityContextPrivileged"`
-	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
 	//
-	//                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+	// For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+	//
+	// Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
 	ServiceAccountRoleArn *string `pulumi:"serviceAccountRoleArn"`
 	// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
 	//
@@ -3090,15 +3098,23 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to true.
 	NodePortSupport pulumi.BoolPtrInput `pulumi:"nodePortSupport"`
-	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+	// Valid values are NONE and OVERWRITE.
+	//
+	// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
 	ResolveConflictsOnCreate pulumi.StringPtrInput `pulumi:"resolveConflictsOnCreate"`
-	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
+	// Valid values are NONE, OVERWRITE, and PRESERVE.
+	//
+	// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
 	ResolveConflictsOnUpdate pulumi.StringPtrInput `pulumi:"resolveConflictsOnUpdate"`
 	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 	SecurityContextPrivileged pulumi.BoolPtrInput `pulumi:"securityContextPrivileged"`
-	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
 	//
-	//                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+	// For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+	//
+	// Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
 	ServiceAccountRoleArn pulumi.StringPtrInput `pulumi:"serviceAccountRoleArn"`
 	// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
 	//
@@ -3313,12 +3329,18 @@ func (o VpcCniOptionsOutput) NodePortSupport() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.NodePortSupport }).(pulumi.BoolPtrOutput)
 }
 
-// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+// Valid values are NONE and OVERWRITE.
+//
+// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
 func (o VpcCniOptionsOutput) ResolveConflictsOnCreate() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *string { return v.ResolveConflictsOnCreate }).(pulumi.StringPtrOutput)
 }
 
-// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
+// Valid values are NONE, OVERWRITE, and PRESERVE.
+//
+// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
 func (o VpcCniOptionsOutput) ResolveConflictsOnUpdate() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *string { return v.ResolveConflictsOnUpdate }).(pulumi.StringPtrOutput)
 }
@@ -3328,9 +3350,11 @@ func (o VpcCniOptionsOutput) SecurityContextPrivileged() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.SecurityContextPrivileged }).(pulumi.BoolPtrOutput)
 }
 
-// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
 //
-//	Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+// For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+//
+// Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
 func (o VpcCniOptionsOutput) ServiceAccountRoleArn() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *string { return v.ServiceAccountRoleArn }).(pulumi.StringPtrOutput)
 }
@@ -3599,7 +3623,10 @@ func (o VpcCniOptionsPtrOutput) NodePortSupport() pulumi.BoolPtrOutput {
 	}).(pulumi.BoolPtrOutput)
 }
 
-// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+// Valid values are NONE and OVERWRITE.
+//
+// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
 func (o VpcCniOptionsPtrOutput) ResolveConflictsOnCreate() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *VpcCniOptions) *string {
 		if v == nil {
@@ -3609,7 +3636,10 @@ func (o VpcCniOptionsPtrOutput) ResolveConflictsOnCreate() pulumi.StringPtrOutpu
 	}).(pulumi.StringPtrOutput)
 }
 
-// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
+// Valid values are NONE, OVERWRITE, and PRESERVE.
+//
+// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
 func (o VpcCniOptionsPtrOutput) ResolveConflictsOnUpdate() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *VpcCniOptions) *string {
 		if v == nil {
@@ -3629,9 +3659,11 @@ func (o VpcCniOptionsPtrOutput) SecurityContextPrivileged() pulumi.BoolPtrOutput
 	}).(pulumi.BoolPtrOutput)
 }
 
-// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
 //
-//	Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+// For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+//
+// Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
 func (o VpcCniOptionsPtrOutput) ServiceAccountRoleArn() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *VpcCniOptions) *string {
 		if v == nil {
