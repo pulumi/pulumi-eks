@@ -624,73 +624,73 @@ export function createCore(
         },
     );
 
-    pulumi.output(args.fargate).apply((fargate) => {
-        if (args.kubeProxyAddonOptions?.enabled ?? true) {
-            const kubeProxyVersion: pulumi.Output<string> = args.kubeProxyAddonOptions?.version
-                ? pulumi.output(args.kubeProxyAddonOptions?.version)
-                : aws.eks
-                      .getAddonVersionOutput(
-                          {
-                              addonName: "kube-proxy",
-                              kubernetesVersion: eksCluster.version,
-                              mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
-                          },
-                          { parent, provider },
-                      )
-                      .apply((addonVersion) => addonVersion.version);
+    if (args.kubeProxyAddonOptions?.enabled ?? true) {
+        const kubeProxyVersion: pulumi.Output<string> = args.kubeProxyAddonOptions?.version
+            ? pulumi.output(args.kubeProxyAddonOptions?.version)
+            : aws.eks
+                  .getAddonVersionOutput(
+                      {
+                          addonName: "kube-proxy",
+                          kubernetesVersion: eksCluster.version,
+                          mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                      },
+                      { parent, provider },
+                  )
+                  .apply((addonVersion) => addonVersion.version);
 
-            const kubeProxyAddon = new aws.eks.Addon(
-                `${name}-kube-proxy`,
-                {
-                    clusterName: eksCluster.name,
-                    addonName: "kube-proxy",
-                    resolveConflictsOnCreate:
-                        args.kubeProxyAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
-                    resolveConflictsOnUpdate:
-                        args.kubeProxyAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
-                    addonVersion: kubeProxyVersion,
-                },
-                { parent, provider },
-            );
-        }
+        const kubeProxyAddon = new aws.eks.Addon(
+            `${name}-kube-proxy`,
+            {
+                clusterName: eksCluster.name,
+                addonName: "kube-proxy",
+                preserve: true,
+                resolveConflictsOnCreate:
+                    args.kubeProxyAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
+                resolveConflictsOnUpdate:
+                    args.kubeProxyAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
+                addonVersion: kubeProxyVersion,
+            },
+            { parent, provider },
+        );
+    }
 
-        if (args.corednsAddonOptions?.enabled ?? true) {
-            let configurationValues: string | undefined = undefined;
-            if (fargate) {
-                configurationValues = JSON.stringify({
-                    computeType: "Fargate",
-                });
-            }
+    if (args.corednsAddonOptions?.enabled ?? true) {
+        const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
+            ? pulumi.output(args.corednsAddonOptions.version)
+            : aws.eks
+                  .getAddonVersionOutput(
+                      {
+                          addonName: "coredns",
+                          kubernetesVersion: eksCluster.version,
+                          mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                      },
+                      { parent, provider },
+                  )
+                  .apply((addonVersion) => addonVersion.version);
 
-            const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
-                ? pulumi.output(args.corednsAddonOptions.version)
-                : aws.eks
-                      .getAddonVersionOutput(
-                          {
-                              addonName: "coredns",
-                              kubernetesVersion: eksCluster.version,
-                              mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
-                          },
-                          { parent, provider },
-                      )
-                      .apply((addonVersion) => addonVersion.version);
-
-            const corednsAddon = new aws.eks.Addon(
-                `${name}-coredns`,
-                {
-                    clusterName: eksCluster.name,
-                    addonName: "coredns",
-                    addonVersion: corednsVersion,
-                    resolveConflictsOnCreate:
-                        args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
-                    resolveConflictsOnUpdate:
-                        args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
-                    configurationValues,
-                },
-                { parent, provider },
-            );
-        }
-    });
+        const corednsAddon = new aws.eks.Addon(
+            `${name}-coredns`,
+            {
+                clusterName: eksCluster.name,
+                addonName: "coredns",
+                preserve: true,
+                addonVersion: corednsVersion,
+                resolveConflictsOnCreate:
+                    args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
+                resolveConflictsOnUpdate:
+                    args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
+                configurationValues: pulumi.output(args.fargate).apply((fargate) => {
+                    if (fargate) {
+                        return JSON.stringify({
+                            computeType: "Fargate",
+                        });
+                    }
+                    return undefined;
+                }) as any,
+            },
+            { parent, provider },
+        );
+    }
 
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
