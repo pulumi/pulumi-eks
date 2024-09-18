@@ -399,13 +399,360 @@ func (in *operatingSystemPtr) ToOperatingSystemPtrOutputWithContext(ctx context.
 	return pulumi.ToOutputWithContext(ctx, in).(OperatingSystemPtrOutput)
 }
 
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+type ResolveConflictsOnCreate string
+
+const (
+	// If the self-managed version of the add-on is installed on your cluster, Amazon EKS doesn't change the value. Creation of the add-on might fail.
+	ResolveConflictsOnCreateNone = ResolveConflictsOnCreate("NONE")
+	// If the self-managed version of the add-on is installed on your cluster and the Amazon EKS default value is different than the existing value, Amazon EKS changes the value to the Amazon EKS default value.
+	ResolveConflictsOnCreateOverwrite = ResolveConflictsOnCreate("OVERWRITE")
+)
+
+func (ResolveConflictsOnCreate) ElementType() reflect.Type {
+	return reflect.TypeOf((*ResolveConflictsOnCreate)(nil)).Elem()
+}
+
+func (e ResolveConflictsOnCreate) ToResolveConflictsOnCreateOutput() ResolveConflictsOnCreateOutput {
+	return pulumi.ToOutput(e).(ResolveConflictsOnCreateOutput)
+}
+
+func (e ResolveConflictsOnCreate) ToResolveConflictsOnCreateOutputWithContext(ctx context.Context) ResolveConflictsOnCreateOutput {
+	return pulumi.ToOutputWithContext(ctx, e).(ResolveConflictsOnCreateOutput)
+}
+
+func (e ResolveConflictsOnCreate) ToResolveConflictsOnCreatePtrOutput() ResolveConflictsOnCreatePtrOutput {
+	return e.ToResolveConflictsOnCreatePtrOutputWithContext(context.Background())
+}
+
+func (e ResolveConflictsOnCreate) ToResolveConflictsOnCreatePtrOutputWithContext(ctx context.Context) ResolveConflictsOnCreatePtrOutput {
+	return ResolveConflictsOnCreate(e).ToResolveConflictsOnCreateOutputWithContext(ctx).ToResolveConflictsOnCreatePtrOutputWithContext(ctx)
+}
+
+func (e ResolveConflictsOnCreate) ToStringOutput() pulumi.StringOutput {
+	return pulumi.ToOutput(pulumi.String(e)).(pulumi.StringOutput)
+}
+
+func (e ResolveConflictsOnCreate) ToStringOutputWithContext(ctx context.Context) pulumi.StringOutput {
+	return pulumi.ToOutputWithContext(ctx, pulumi.String(e)).(pulumi.StringOutput)
+}
+
+func (e ResolveConflictsOnCreate) ToStringPtrOutput() pulumi.StringPtrOutput {
+	return pulumi.String(e).ToStringPtrOutputWithContext(context.Background())
+}
+
+func (e ResolveConflictsOnCreate) ToStringPtrOutputWithContext(ctx context.Context) pulumi.StringPtrOutput {
+	return pulumi.String(e).ToStringOutputWithContext(ctx).ToStringPtrOutputWithContext(ctx)
+}
+
+type ResolveConflictsOnCreateOutput struct{ *pulumi.OutputState }
+
+func (ResolveConflictsOnCreateOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*ResolveConflictsOnCreate)(nil)).Elem()
+}
+
+func (o ResolveConflictsOnCreateOutput) ToResolveConflictsOnCreateOutput() ResolveConflictsOnCreateOutput {
+	return o
+}
+
+func (o ResolveConflictsOnCreateOutput) ToResolveConflictsOnCreateOutputWithContext(ctx context.Context) ResolveConflictsOnCreateOutput {
+	return o
+}
+
+func (o ResolveConflictsOnCreateOutput) ToResolveConflictsOnCreatePtrOutput() ResolveConflictsOnCreatePtrOutput {
+	return o.ToResolveConflictsOnCreatePtrOutputWithContext(context.Background())
+}
+
+func (o ResolveConflictsOnCreateOutput) ToResolveConflictsOnCreatePtrOutputWithContext(ctx context.Context) ResolveConflictsOnCreatePtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v ResolveConflictsOnCreate) *ResolveConflictsOnCreate {
+		return &v
+	}).(ResolveConflictsOnCreatePtrOutput)
+}
+
+func (o ResolveConflictsOnCreateOutput) ToStringOutput() pulumi.StringOutput {
+	return o.ToStringOutputWithContext(context.Background())
+}
+
+func (o ResolveConflictsOnCreateOutput) ToStringOutputWithContext(ctx context.Context) pulumi.StringOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, e ResolveConflictsOnCreate) string {
+		return string(e)
+	}).(pulumi.StringOutput)
+}
+
+func (o ResolveConflictsOnCreateOutput) ToStringPtrOutput() pulumi.StringPtrOutput {
+	return o.ToStringPtrOutputWithContext(context.Background())
+}
+
+func (o ResolveConflictsOnCreateOutput) ToStringPtrOutputWithContext(ctx context.Context) pulumi.StringPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, e ResolveConflictsOnCreate) *string {
+		v := string(e)
+		return &v
+	}).(pulumi.StringPtrOutput)
+}
+
+type ResolveConflictsOnCreatePtrOutput struct{ *pulumi.OutputState }
+
+func (ResolveConflictsOnCreatePtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**ResolveConflictsOnCreate)(nil)).Elem()
+}
+
+func (o ResolveConflictsOnCreatePtrOutput) ToResolveConflictsOnCreatePtrOutput() ResolveConflictsOnCreatePtrOutput {
+	return o
+}
+
+func (o ResolveConflictsOnCreatePtrOutput) ToResolveConflictsOnCreatePtrOutputWithContext(ctx context.Context) ResolveConflictsOnCreatePtrOutput {
+	return o
+}
+
+func (o ResolveConflictsOnCreatePtrOutput) Elem() ResolveConflictsOnCreateOutput {
+	return o.ApplyT(func(v *ResolveConflictsOnCreate) ResolveConflictsOnCreate {
+		if v != nil {
+			return *v
+		}
+		var ret ResolveConflictsOnCreate
+		return ret
+	}).(ResolveConflictsOnCreateOutput)
+}
+
+func (o ResolveConflictsOnCreatePtrOutput) ToStringPtrOutput() pulumi.StringPtrOutput {
+	return o.ToStringPtrOutputWithContext(context.Background())
+}
+
+func (o ResolveConflictsOnCreatePtrOutput) ToStringPtrOutputWithContext(ctx context.Context) pulumi.StringPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, e *ResolveConflictsOnCreate) *string {
+		if e == nil {
+			return nil
+		}
+		v := string(*e)
+		return &v
+	}).(pulumi.StringPtrOutput)
+}
+
+// ResolveConflictsOnCreateInput is an input type that accepts values of the ResolveConflictsOnCreate enum
+// A concrete instance of `ResolveConflictsOnCreateInput` can be one of the following:
+//
+//	ResolveConflictsOnCreateNone
+//	ResolveConflictsOnCreateOverwrite
+type ResolveConflictsOnCreateInput interface {
+	pulumi.Input
+
+	ToResolveConflictsOnCreateOutput() ResolveConflictsOnCreateOutput
+	ToResolveConflictsOnCreateOutputWithContext(context.Context) ResolveConflictsOnCreateOutput
+}
+
+var resolveConflictsOnCreatePtrType = reflect.TypeOf((**ResolveConflictsOnCreate)(nil)).Elem()
+
+type ResolveConflictsOnCreatePtrInput interface {
+	pulumi.Input
+
+	ToResolveConflictsOnCreatePtrOutput() ResolveConflictsOnCreatePtrOutput
+	ToResolveConflictsOnCreatePtrOutputWithContext(context.Context) ResolveConflictsOnCreatePtrOutput
+}
+
+type resolveConflictsOnCreatePtr string
+
+func ResolveConflictsOnCreatePtr(v string) ResolveConflictsOnCreatePtrInput {
+	return (*resolveConflictsOnCreatePtr)(&v)
+}
+
+func (*resolveConflictsOnCreatePtr) ElementType() reflect.Type {
+	return resolveConflictsOnCreatePtrType
+}
+
+func (in *resolveConflictsOnCreatePtr) ToResolveConflictsOnCreatePtrOutput() ResolveConflictsOnCreatePtrOutput {
+	return pulumi.ToOutput(in).(ResolveConflictsOnCreatePtrOutput)
+}
+
+func (in *resolveConflictsOnCreatePtr) ToResolveConflictsOnCreatePtrOutputWithContext(ctx context.Context) ResolveConflictsOnCreatePtrOutput {
+	return pulumi.ToOutputWithContext(ctx, in).(ResolveConflictsOnCreatePtrOutput)
+}
+
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+type ResolveConflictsOnUpdate string
+
+const (
+	// Amazon EKS doesn't change the value. The update might fail.
+	ResolveConflictsOnUpdateNone = ResolveConflictsOnUpdate("NONE")
+	// Amazon EKS overwrites the changed value back to the Amazon EKS default value.
+	ResolveConflictsOnUpdateOverwrite = ResolveConflictsOnUpdate("OVERWRITE")
+	// Amazon EKS preserves the value. If you choose this option, we recommend that you test any field and value changes on a non-production cluster before updating the add-on on your production cluster.
+	ResolveConflictsOnUpdatePreserve = ResolveConflictsOnUpdate("PRESERVE")
+)
+
+func (ResolveConflictsOnUpdate) ElementType() reflect.Type {
+	return reflect.TypeOf((*ResolveConflictsOnUpdate)(nil)).Elem()
+}
+
+func (e ResolveConflictsOnUpdate) ToResolveConflictsOnUpdateOutput() ResolveConflictsOnUpdateOutput {
+	return pulumi.ToOutput(e).(ResolveConflictsOnUpdateOutput)
+}
+
+func (e ResolveConflictsOnUpdate) ToResolveConflictsOnUpdateOutputWithContext(ctx context.Context) ResolveConflictsOnUpdateOutput {
+	return pulumi.ToOutputWithContext(ctx, e).(ResolveConflictsOnUpdateOutput)
+}
+
+func (e ResolveConflictsOnUpdate) ToResolveConflictsOnUpdatePtrOutput() ResolveConflictsOnUpdatePtrOutput {
+	return e.ToResolveConflictsOnUpdatePtrOutputWithContext(context.Background())
+}
+
+func (e ResolveConflictsOnUpdate) ToResolveConflictsOnUpdatePtrOutputWithContext(ctx context.Context) ResolveConflictsOnUpdatePtrOutput {
+	return ResolveConflictsOnUpdate(e).ToResolveConflictsOnUpdateOutputWithContext(ctx).ToResolveConflictsOnUpdatePtrOutputWithContext(ctx)
+}
+
+func (e ResolveConflictsOnUpdate) ToStringOutput() pulumi.StringOutput {
+	return pulumi.ToOutput(pulumi.String(e)).(pulumi.StringOutput)
+}
+
+func (e ResolveConflictsOnUpdate) ToStringOutputWithContext(ctx context.Context) pulumi.StringOutput {
+	return pulumi.ToOutputWithContext(ctx, pulumi.String(e)).(pulumi.StringOutput)
+}
+
+func (e ResolveConflictsOnUpdate) ToStringPtrOutput() pulumi.StringPtrOutput {
+	return pulumi.String(e).ToStringPtrOutputWithContext(context.Background())
+}
+
+func (e ResolveConflictsOnUpdate) ToStringPtrOutputWithContext(ctx context.Context) pulumi.StringPtrOutput {
+	return pulumi.String(e).ToStringOutputWithContext(ctx).ToStringPtrOutputWithContext(ctx)
+}
+
+type ResolveConflictsOnUpdateOutput struct{ *pulumi.OutputState }
+
+func (ResolveConflictsOnUpdateOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*ResolveConflictsOnUpdate)(nil)).Elem()
+}
+
+func (o ResolveConflictsOnUpdateOutput) ToResolveConflictsOnUpdateOutput() ResolveConflictsOnUpdateOutput {
+	return o
+}
+
+func (o ResolveConflictsOnUpdateOutput) ToResolveConflictsOnUpdateOutputWithContext(ctx context.Context) ResolveConflictsOnUpdateOutput {
+	return o
+}
+
+func (o ResolveConflictsOnUpdateOutput) ToResolveConflictsOnUpdatePtrOutput() ResolveConflictsOnUpdatePtrOutput {
+	return o.ToResolveConflictsOnUpdatePtrOutputWithContext(context.Background())
+}
+
+func (o ResolveConflictsOnUpdateOutput) ToResolveConflictsOnUpdatePtrOutputWithContext(ctx context.Context) ResolveConflictsOnUpdatePtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v ResolveConflictsOnUpdate) *ResolveConflictsOnUpdate {
+		return &v
+	}).(ResolveConflictsOnUpdatePtrOutput)
+}
+
+func (o ResolveConflictsOnUpdateOutput) ToStringOutput() pulumi.StringOutput {
+	return o.ToStringOutputWithContext(context.Background())
+}
+
+func (o ResolveConflictsOnUpdateOutput) ToStringOutputWithContext(ctx context.Context) pulumi.StringOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, e ResolveConflictsOnUpdate) string {
+		return string(e)
+	}).(pulumi.StringOutput)
+}
+
+func (o ResolveConflictsOnUpdateOutput) ToStringPtrOutput() pulumi.StringPtrOutput {
+	return o.ToStringPtrOutputWithContext(context.Background())
+}
+
+func (o ResolveConflictsOnUpdateOutput) ToStringPtrOutputWithContext(ctx context.Context) pulumi.StringPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, e ResolveConflictsOnUpdate) *string {
+		v := string(e)
+		return &v
+	}).(pulumi.StringPtrOutput)
+}
+
+type ResolveConflictsOnUpdatePtrOutput struct{ *pulumi.OutputState }
+
+func (ResolveConflictsOnUpdatePtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**ResolveConflictsOnUpdate)(nil)).Elem()
+}
+
+func (o ResolveConflictsOnUpdatePtrOutput) ToResolveConflictsOnUpdatePtrOutput() ResolveConflictsOnUpdatePtrOutput {
+	return o
+}
+
+func (o ResolveConflictsOnUpdatePtrOutput) ToResolveConflictsOnUpdatePtrOutputWithContext(ctx context.Context) ResolveConflictsOnUpdatePtrOutput {
+	return o
+}
+
+func (o ResolveConflictsOnUpdatePtrOutput) Elem() ResolveConflictsOnUpdateOutput {
+	return o.ApplyT(func(v *ResolveConflictsOnUpdate) ResolveConflictsOnUpdate {
+		if v != nil {
+			return *v
+		}
+		var ret ResolveConflictsOnUpdate
+		return ret
+	}).(ResolveConflictsOnUpdateOutput)
+}
+
+func (o ResolveConflictsOnUpdatePtrOutput) ToStringPtrOutput() pulumi.StringPtrOutput {
+	return o.ToStringPtrOutputWithContext(context.Background())
+}
+
+func (o ResolveConflictsOnUpdatePtrOutput) ToStringPtrOutputWithContext(ctx context.Context) pulumi.StringPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, e *ResolveConflictsOnUpdate) *string {
+		if e == nil {
+			return nil
+		}
+		v := string(*e)
+		return &v
+	}).(pulumi.StringPtrOutput)
+}
+
+// ResolveConflictsOnUpdateInput is an input type that accepts values of the ResolveConflictsOnUpdate enum
+// A concrete instance of `ResolveConflictsOnUpdateInput` can be one of the following:
+//
+//	ResolveConflictsOnUpdateNone
+//	ResolveConflictsOnUpdateOverwrite
+//	ResolveConflictsOnUpdatePreserve
+type ResolveConflictsOnUpdateInput interface {
+	pulumi.Input
+
+	ToResolveConflictsOnUpdateOutput() ResolveConflictsOnUpdateOutput
+	ToResolveConflictsOnUpdateOutputWithContext(context.Context) ResolveConflictsOnUpdateOutput
+}
+
+var resolveConflictsOnUpdatePtrType = reflect.TypeOf((**ResolveConflictsOnUpdate)(nil)).Elem()
+
+type ResolveConflictsOnUpdatePtrInput interface {
+	pulumi.Input
+
+	ToResolveConflictsOnUpdatePtrOutput() ResolveConflictsOnUpdatePtrOutput
+	ToResolveConflictsOnUpdatePtrOutputWithContext(context.Context) ResolveConflictsOnUpdatePtrOutput
+}
+
+type resolveConflictsOnUpdatePtr string
+
+func ResolveConflictsOnUpdatePtr(v string) ResolveConflictsOnUpdatePtrInput {
+	return (*resolveConflictsOnUpdatePtr)(&v)
+}
+
+func (*resolveConflictsOnUpdatePtr) ElementType() reflect.Type {
+	return resolveConflictsOnUpdatePtrType
+}
+
+func (in *resolveConflictsOnUpdatePtr) ToResolveConflictsOnUpdatePtrOutput() ResolveConflictsOnUpdatePtrOutput {
+	return pulumi.ToOutput(in).(ResolveConflictsOnUpdatePtrOutput)
+}
+
+func (in *resolveConflictsOnUpdatePtr) ToResolveConflictsOnUpdatePtrOutputWithContext(ctx context.Context) ResolveConflictsOnUpdatePtrOutput {
+	return pulumi.ToOutputWithContext(ctx, in).(ResolveConflictsOnUpdatePtrOutput)
+}
+
 func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*AccessEntryTypeInput)(nil)).Elem(), AccessEntryType("STANDARD"))
 	pulumi.RegisterInputType(reflect.TypeOf((*AccessEntryTypePtrInput)(nil)).Elem(), AccessEntryType("STANDARD"))
 	pulumi.RegisterInputType(reflect.TypeOf((*OperatingSystemInput)(nil)).Elem(), OperatingSystem("AL2"))
 	pulumi.RegisterInputType(reflect.TypeOf((*OperatingSystemPtrInput)(nil)).Elem(), OperatingSystem("AL2"))
+	pulumi.RegisterInputType(reflect.TypeOf((*ResolveConflictsOnCreateInput)(nil)).Elem(), ResolveConflictsOnCreate("NONE"))
+	pulumi.RegisterInputType(reflect.TypeOf((*ResolveConflictsOnCreatePtrInput)(nil)).Elem(), ResolveConflictsOnCreate("NONE"))
+	pulumi.RegisterInputType(reflect.TypeOf((*ResolveConflictsOnUpdateInput)(nil)).Elem(), ResolveConflictsOnUpdate("NONE"))
+	pulumi.RegisterInputType(reflect.TypeOf((*ResolveConflictsOnUpdatePtrInput)(nil)).Elem(), ResolveConflictsOnUpdate("NONE"))
 	pulumi.RegisterOutputType(AccessEntryTypeOutput{})
 	pulumi.RegisterOutputType(AccessEntryTypePtrOutput{})
 	pulumi.RegisterOutputType(OperatingSystemOutput{})
 	pulumi.RegisterOutputType(OperatingSystemPtrOutput{})
+	pulumi.RegisterOutputType(ResolveConflictsOnCreateOutput{})
+	pulumi.RegisterOutputType(ResolveConflictsOnCreatePtrOutput{})
+	pulumi.RegisterOutputType(ResolveConflictsOnUpdateOutput{})
+	pulumi.RegisterOutputType(ResolveConflictsOnUpdatePtrOutput{})
 }

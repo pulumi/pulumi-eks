@@ -199,6 +199,12 @@ namespace Pulumi.Eks
         }
 
         /// <summary>
+        /// Options for managing the `coredns` addon.
+        /// </summary>
+        [Input("corednsAddonOptions")]
+        public Inputs.CoreDnsAddonOptionsArgs? CorednsAddonOptions { get; set; }
+
+        /// <summary>
         /// Indicates whether an IAM OIDC Provider is created for the EKS cluster.
         /// 
         /// The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -341,6 +347,12 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("ipFamily")]
         public Input<string>? IpFamily { get; set; }
+
+        /// <summary>
+        /// Options for managing the `kube-proxy` addon.
+        /// </summary>
+        [Input("kubeProxyAddonOptions")]
+        public Inputs.KubeProxyAddonOptionsArgs? KubeProxyAddonOptions { get; set; }
 
         /// <summary>
         /// The CIDR block to assign Kubernetes service IP addresses from. If you don't
