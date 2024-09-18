@@ -1754,8 +1754,10 @@ class VpcCniOptionsArgs:
                  cni_configure_rpfilter: Optional[pulumi.Input[bool]] = None,
                  cni_custom_network_cfg: Optional[pulumi.Input[bool]] = None,
                  cni_external_snat: Optional[pulumi.Input[bool]] = None,
+                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  custom_network_config: Optional[pulumi.Input[bool]] = None,
                  disable_tcp_early_demux: Optional[pulumi.Input[bool]] = None,
+                 enable_network_policy: Optional[pulumi.Input[bool]] = None,
                  enable_pod_eni: Optional[pulumi.Input[bool]] = None,
                  enable_prefix_delegation: Optional[pulumi.Input[bool]] = None,
                  eni_config_label_def: Optional[pulumi.Input[str]] = None,
@@ -1767,7 +1769,10 @@ class VpcCniOptionsArgs:
                  log_level: Optional[pulumi.Input[str]] = None,
                  node_agent_image: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
+                 resolve_conflicts_on_create: Optional[pulumi.Input[str]] = None,
+                 resolve_conflicts_on_update: Optional[pulumi.Input[str]] = None,
                  security_context_privileged: Optional[pulumi.Input[bool]] = None,
+                 service_account_role_arn: Optional[pulumi.Input[str]] = None,
                  veth_prefix: Optional[pulumi.Input[str]] = None,
                  warm_eni_target: Optional[pulumi.Input[int]] = None,
                  warm_ip_target: Optional[pulumi.Input[int]] = None,
@@ -1778,10 +1783,14 @@ class VpcCniOptionsArgs:
         :param pulumi.Input[bool] cni_configure_rpfilter: Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         :param pulumi.Input[bool] cni_custom_network_cfg: Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
         :param pulumi.Input[bool] cni_external_snat: Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
+        :param pulumi.Input[Mapping[str, Any]] configuration_values: Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
         :param pulumi.Input[bool] custom_network_config: Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
                
                Defaults to false.
         :param pulumi.Input[bool] disable_tcp_early_demux: Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        :param pulumi.Input[bool] enable_network_policy: Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+               
+               See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
         :param pulumi.Input[bool] enable_pod_eni: Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         :param pulumi.Input[bool] enable_prefix_delegation: IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
         :param pulumi.Input[str] eni_config_label_def: Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
@@ -1813,7 +1822,12 @@ class VpcCniOptionsArgs:
         :param pulumi.Input[bool] node_port_support: Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
                
                Defaults to true.
+        :param pulumi.Input[str] resolve_conflicts_on_create: How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+        :param pulumi.Input[str] resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
         :param pulumi.Input[bool] security_context_privileged: Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+        :param pulumi.Input[str] service_account_role_arn: The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+               
+               						Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
         :param pulumi.Input[str] veth_prefix: Specifies the veth prefix used to generate the host-side veth device name for the CNI.
                
                The prefix can be at most 4 characters long.
@@ -1833,10 +1847,14 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "cni_custom_network_cfg", cni_custom_network_cfg)
         if cni_external_snat is not None:
             pulumi.set(__self__, "cni_external_snat", cni_external_snat)
+        if configuration_values is not None:
+            pulumi.set(__self__, "configuration_values", configuration_values)
         if custom_network_config is not None:
             pulumi.set(__self__, "custom_network_config", custom_network_config)
         if disable_tcp_early_demux is not None:
             pulumi.set(__self__, "disable_tcp_early_demux", disable_tcp_early_demux)
+        if enable_network_policy is not None:
+            pulumi.set(__self__, "enable_network_policy", enable_network_policy)
         if enable_pod_eni is not None:
             pulumi.set(__self__, "enable_pod_eni", enable_pod_eni)
         if enable_prefix_delegation is not None:
@@ -1859,8 +1877,14 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "node_agent_image", node_agent_image)
         if node_port_support is not None:
             pulumi.set(__self__, "node_port_support", node_port_support)
+        if resolve_conflicts_on_create is not None:
+            pulumi.set(__self__, "resolve_conflicts_on_create", resolve_conflicts_on_create)
+        if resolve_conflicts_on_update is not None:
+            pulumi.set(__self__, "resolve_conflicts_on_update", resolve_conflicts_on_update)
         if security_context_privileged is not None:
             pulumi.set(__self__, "security_context_privileged", security_context_privileged)
+        if service_account_role_arn is not None:
+            pulumi.set(__self__, "service_account_role_arn", service_account_role_arn)
         if veth_prefix is not None:
             pulumi.set(__self__, "veth_prefix", veth_prefix)
         if warm_eni_target is not None:
@@ -1919,6 +1943,18 @@ class VpcCniOptionsArgs:
         pulumi.set(self, "cni_external_snat", value)
 
     @property
+    @pulumi.getter(name="configurationValues")
+    def configuration_values(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
+        """
+        Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        """
+        return pulumi.get(self, "configuration_values")
+
+    @configuration_values.setter
+    def configuration_values(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
+        pulumi.set(self, "configuration_values", value)
+
+    @property
     @pulumi.getter(name="customNetworkConfig")
     def custom_network_config(self) -> Optional[pulumi.Input[bool]]:
         """
@@ -1943,6 +1979,20 @@ class VpcCniOptionsArgs:
     @disable_tcp_early_demux.setter
     def disable_tcp_early_demux(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "disable_tcp_early_demux", value)
+
+    @property
+    @pulumi.getter(name="enableNetworkPolicy")
+    def enable_network_policy(self) -> Optional[pulumi.Input[bool]]:
+        """
+        Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+
+        See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+        """
+        return pulumi.get(self, "enable_network_policy")
+
+    @enable_network_policy.setter
+    def enable_network_policy(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "enable_network_policy", value)
 
     @property
     @pulumi.getter(name="enablePodEni")
@@ -2097,6 +2147,30 @@ class VpcCniOptionsArgs:
         pulumi.set(self, "node_port_support", value)
 
     @property
+    @pulumi.getter(name="resolveConflictsOnCreate")
+    def resolve_conflicts_on_create(self) -> Optional[pulumi.Input[str]]:
+        """
+        How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+        """
+        return pulumi.get(self, "resolve_conflicts_on_create")
+
+    @resolve_conflicts_on_create.setter
+    def resolve_conflicts_on_create(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "resolve_conflicts_on_create", value)
+
+    @property
+    @pulumi.getter(name="resolveConflictsOnUpdate")
+    def resolve_conflicts_on_update(self) -> Optional[pulumi.Input[str]]:
+        """
+        How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+        """
+        return pulumi.get(self, "resolve_conflicts_on_update")
+
+    @resolve_conflicts_on_update.setter
+    def resolve_conflicts_on_update(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "resolve_conflicts_on_update", value)
+
+    @property
     @pulumi.getter(name="securityContextPrivileged")
     def security_context_privileged(self) -> Optional[pulumi.Input[bool]]:
         """
@@ -2107,6 +2181,20 @@ class VpcCniOptionsArgs:
     @security_context_privileged.setter
     def security_context_privileged(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "security_context_privileged", value)
+
+    @property
+    @pulumi.getter(name="serviceAccountRoleArn")
+    def service_account_role_arn(self) -> Optional[pulumi.Input[str]]:
+        """
+        The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+
+        						Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+        """
+        return pulumi.get(self, "service_account_role_arn")
+
+    @service_account_role_arn.setter
+    def service_account_role_arn(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "service_account_role_arn", value)
 
     @property
     @pulumi.getter(name="vethPrefix")

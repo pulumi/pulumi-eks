@@ -2935,12 +2935,18 @@ type VpcCniOptions struct {
 	CniCustomNetworkCfg *bool `pulumi:"cniCustomNetworkCfg"`
 	// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
 	CniExternalSnat *bool `pulumi:"cniExternalSnat"`
+	// Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+	ConfigurationValues map[string]interface{} `pulumi:"configurationValues"`
 	// Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
 	//
 	// Defaults to false.
 	CustomNetworkConfig *bool `pulumi:"customNetworkConfig"`
 	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
 	DisableTcpEarlyDemux *bool `pulumi:"disableTcpEarlyDemux"`
+	// Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+	//
+	// See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+	EnableNetworkPolicy *bool `pulumi:"enableNetworkPolicy"`
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni *bool `pulumi:"enablePodEni"`
 	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
@@ -2983,8 +2989,16 @@ type VpcCniOptions struct {
 	//
 	// Defaults to true.
 	NodePortSupport *bool `pulumi:"nodePortSupport"`
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+	ResolveConflictsOnCreate *string `pulumi:"resolveConflictsOnCreate"`
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+	ResolveConflictsOnUpdate *string `pulumi:"resolveConflictsOnUpdate"`
 	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 	SecurityContextPrivileged *bool `pulumi:"securityContextPrivileged"`
+	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+	//
+	//                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+	ServiceAccountRoleArn *string `pulumi:"serviceAccountRoleArn"`
 	// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
 	//
 	// The prefix can be at most 4 characters long.
@@ -3022,12 +3036,18 @@ type VpcCniOptionsArgs struct {
 	CniCustomNetworkCfg pulumi.BoolPtrInput `pulumi:"cniCustomNetworkCfg"`
 	// Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
 	CniExternalSnat pulumi.BoolPtrInput `pulumi:"cniExternalSnat"`
+	// Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+	ConfigurationValues pulumi.MapInput `pulumi:"configurationValues"`
 	// Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
 	//
 	// Defaults to false.
 	CustomNetworkConfig pulumi.BoolPtrInput `pulumi:"customNetworkConfig"`
 	// Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
 	DisableTcpEarlyDemux pulumi.BoolPtrInput `pulumi:"disableTcpEarlyDemux"`
+	// Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+	//
+	// See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+	EnableNetworkPolicy pulumi.BoolPtrInput `pulumi:"enableNetworkPolicy"`
 	// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
 	EnablePodEni pulumi.BoolPtrInput `pulumi:"enablePodEni"`
 	// IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
@@ -3070,8 +3090,16 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to true.
 	NodePortSupport pulumi.BoolPtrInput `pulumi:"nodePortSupport"`
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+	ResolveConflictsOnCreate pulumi.StringPtrInput `pulumi:"resolveConflictsOnCreate"`
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+	ResolveConflictsOnUpdate pulumi.StringPtrInput `pulumi:"resolveConflictsOnUpdate"`
 	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 	SecurityContextPrivileged pulumi.BoolPtrInput `pulumi:"securityContextPrivileged"`
+	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+	//
+	//                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+	ServiceAccountRoleArn pulumi.StringPtrInput `pulumi:"serviceAccountRoleArn"`
 	// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
 	//
 	// The prefix can be at most 4 characters long.
@@ -3186,6 +3214,11 @@ func (o VpcCniOptionsOutput) CniExternalSnat() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.CniExternalSnat }).(pulumi.BoolPtrOutput)
 }
 
+// Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+func (o VpcCniOptionsOutput) ConfigurationValues() pulumi.MapOutput {
+	return o.ApplyT(func(v VpcCniOptions) map[string]interface{} { return v.ConfigurationValues }).(pulumi.MapOutput)
+}
+
 // Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
 //
 // Defaults to false.
@@ -3196,6 +3229,13 @@ func (o VpcCniOptionsOutput) CustomNetworkConfig() pulumi.BoolPtrOutput {
 // Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
 func (o VpcCniOptionsOutput) DisableTcpEarlyDemux() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.DisableTcpEarlyDemux }).(pulumi.BoolPtrOutput)
+}
+
+// Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+//
+// See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+func (o VpcCniOptionsOutput) EnableNetworkPolicy() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *bool { return v.EnableNetworkPolicy }).(pulumi.BoolPtrOutput)
 }
 
 // Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
@@ -3273,9 +3313,26 @@ func (o VpcCniOptionsOutput) NodePortSupport() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.NodePortSupport }).(pulumi.BoolPtrOutput)
 }
 
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+func (o VpcCniOptionsOutput) ResolveConflictsOnCreate() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *string { return v.ResolveConflictsOnCreate }).(pulumi.StringPtrOutput)
+}
+
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+func (o VpcCniOptionsOutput) ResolveConflictsOnUpdate() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *string { return v.ResolveConflictsOnUpdate }).(pulumi.StringPtrOutput)
+}
+
 // Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 func (o VpcCniOptionsOutput) SecurityContextPrivileged() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.SecurityContextPrivileged }).(pulumi.BoolPtrOutput)
+}
+
+// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+//
+//	Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+func (o VpcCniOptionsOutput) ServiceAccountRoleArn() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *string { return v.ServiceAccountRoleArn }).(pulumi.StringPtrOutput)
 }
 
 // Specifies the veth prefix used to generate the host-side veth device name for the CNI.
@@ -3368,6 +3425,16 @@ func (o VpcCniOptionsPtrOutput) CniExternalSnat() pulumi.BoolPtrOutput {
 	}).(pulumi.BoolPtrOutput)
 }
 
+// Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+func (o VpcCniOptionsPtrOutput) ConfigurationValues() pulumi.MapOutput {
+	return o.ApplyT(func(v *VpcCniOptions) map[string]interface{} {
+		if v == nil {
+			return nil
+		}
+		return v.ConfigurationValues
+	}).(pulumi.MapOutput)
+}
+
 // Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
 //
 // Defaults to false.
@@ -3387,6 +3454,18 @@ func (o VpcCniOptionsPtrOutput) DisableTcpEarlyDemux() pulumi.BoolPtrOutput {
 			return nil
 		}
 		return v.DisableTcpEarlyDemux
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+//
+// See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+func (o VpcCniOptionsPtrOutput) EnableNetworkPolicy() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.EnableNetworkPolicy
 	}).(pulumi.BoolPtrOutput)
 }
 
@@ -3520,6 +3599,26 @@ func (o VpcCniOptionsPtrOutput) NodePortSupport() pulumi.BoolPtrOutput {
 	}).(pulumi.BoolPtrOutput)
 }
 
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+func (o VpcCniOptionsPtrOutput) ResolveConflictsOnCreate() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.ResolveConflictsOnCreate
+	}).(pulumi.StringPtrOutput)
+}
+
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+func (o VpcCniOptionsPtrOutput) ResolveConflictsOnUpdate() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.ResolveConflictsOnUpdate
+	}).(pulumi.StringPtrOutput)
+}
+
 // Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 func (o VpcCniOptionsPtrOutput) SecurityContextPrivileged() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *VpcCniOptions) *bool {
@@ -3528,6 +3627,18 @@ func (o VpcCniOptionsPtrOutput) SecurityContextPrivileged() pulumi.BoolPtrOutput
 		}
 		return v.SecurityContextPrivileged
 	}).(pulumi.BoolPtrOutput)
+}
+
+// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+//
+//	Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+func (o VpcCniOptionsPtrOutput) ServiceAccountRoleArn() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.ServiceAccountRoleArn
+	}).(pulumi.StringPtrOutput)
 }
 
 // Specifies the veth prefix used to generate the host-side veth device name for the CNI.

@@ -39,6 +39,18 @@ namespace Pulumi.Eks.Inputs
         [Input("cniExternalSnat")]
         public Input<bool>? CniExternalSnat { get; set; }
 
+        [Input("configurationValues")]
+        private InputMap<object>? _configurationValues;
+
+        /// <summary>
+        /// Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        /// </summary>
+        public InputMap<object> ConfigurationValues
+        {
+            get => _configurationValues ?? (_configurationValues = new InputMap<object>());
+            set => _configurationValues = value;
+        }
+
         /// <summary>
         /// Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
         /// 
@@ -52,6 +64,14 @@ namespace Pulumi.Eks.Inputs
         /// </summary>
         [Input("disableTcpEarlyDemux")]
         public Input<bool>? DisableTcpEarlyDemux { get; set; }
+
+        /// <summary>
+        /// Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+        /// 
+        /// See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+        /// </summary>
+        [Input("enableNetworkPolicy")]
+        public Input<bool>? EnableNetworkPolicy { get; set; }
 
         /// <summary>
         /// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
@@ -140,10 +160,30 @@ namespace Pulumi.Eks.Inputs
         public Input<bool>? NodePortSupport { get; set; }
 
         /// <summary>
+        /// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+        /// </summary>
+        [Input("resolveConflictsOnCreate")]
+        public Input<string>? ResolveConflictsOnCreate { get; set; }
+
+        /// <summary>
+        /// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+        /// </summary>
+        [Input("resolveConflictsOnUpdate")]
+        public Input<string>? ResolveConflictsOnUpdate { get; set; }
+
+        /// <summary>
         /// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
         /// </summary>
         [Input("securityContextPrivileged")]
         public Input<bool>? SecurityContextPrivileged { get; set; }
+
+        /// <summary>
+        /// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+        /// 
+        /// 						Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+        /// </summary>
+        [Input("serviceAccountRoleArn")]
+        public Input<string>? ServiceAccountRoleArn { get; set; }
 
         /// <summary>
         /// Specifies the veth prefix used to generate the host-side veth device name for the CNI.

@@ -7,7 +7,10 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import java.lang.Boolean;
 import java.lang.Integer;
+import java.lang.Object;
 import java.lang.String;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -108,6 +111,21 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     * 
+     */
+    @Import(name="configurationValues")
+    private @Nullable Output<Map<String,Object>> configurationValues;
+
+    /**
+     * @return Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     * 
+     */
+    public Optional<Output<Map<String,Object>>> configurationValues() {
+        return Optional.ofNullable(this.configurationValues);
+    }
+
+    /**
      * Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster&#39;s `resourcesVpcConfig`.
      * 
      * Defaults to false.
@@ -139,6 +157,25 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<Boolean>> disableTcpEarlyDemux() {
         return Optional.ofNullable(this.disableTcpEarlyDemux);
+    }
+
+    /**
+     * Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+     * 
+     * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+     * 
+     */
+    @Import(name="enableNetworkPolicy")
+    private @Nullable Output<Boolean> enableNetworkPolicy;
+
+    /**
+     * @return Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+     * 
+     * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+     * 
+     */
+    public Optional<Output<Boolean>> enableNetworkPolicy() {
+        return Optional.ofNullable(this.enableNetworkPolicy);
     }
 
     /**
@@ -347,6 +384,36 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+     * 
+     */
+    @Import(name="resolveConflictsOnCreate")
+    private @Nullable Output<String> resolveConflictsOnCreate;
+
+    /**
+     * @return How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+     * 
+     */
+    public Optional<Output<String>> resolveConflictsOnCreate() {
+        return Optional.ofNullable(this.resolveConflictsOnCreate);
+    }
+
+    /**
+     * How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+     * 
+     */
+    @Import(name="resolveConflictsOnUpdate")
+    private @Nullable Output<String> resolveConflictsOnUpdate;
+
+    /**
+     * @return How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+     * 
+     */
+    public Optional<Output<String>> resolveConflictsOnUpdate() {
+        return Optional.ofNullable(this.resolveConflictsOnUpdate);
+    }
+
+    /**
      * Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
      * 
      */
@@ -359,6 +426,40 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<Boolean>> securityContextPrivileged() {
         return Optional.ofNullable(this.securityContextPrivileged);
+    }
+
+    /**
+     * The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+     * 
+     *                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+     * 
+     */
+    @Import(name="serviceAccountRoleArn")
+    private @Nullable Output<String> serviceAccountRoleArn;
+
+    /**
+     * @return The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+     * 
+     *                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+     * 
+     */
+    public Optional<Output<String>> serviceAccountRoleArn() {
+        return Optional.ofNullable(this.serviceAccountRoleArn);
+    }
+
+    /**
+     * Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+     * 
+     */
+    @Import(name="tags")
+    private @Nullable Output<List<Map<String,String>>> tags;
+
+    /**
+     * @return Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+     * 
+     */
+    public Optional<Output<List<Map<String,String>>>> tags() {
+        return Optional.ofNullable(this.tags);
     }
 
     /**
@@ -442,8 +543,10 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
         this.cniConfigureRpfilter = $.cniConfigureRpfilter;
         this.cniCustomNetworkCfg = $.cniCustomNetworkCfg;
         this.cniExternalSnat = $.cniExternalSnat;
+        this.configurationValues = $.configurationValues;
         this.customNetworkConfig = $.customNetworkConfig;
         this.disableTcpEarlyDemux = $.disableTcpEarlyDemux;
+        this.enableNetworkPolicy = $.enableNetworkPolicy;
         this.enablePodEni = $.enablePodEni;
         this.enablePrefixDelegation = $.enablePrefixDelegation;
         this.eniConfigLabelDef = $.eniConfigLabelDef;
@@ -455,7 +558,11 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
         this.logLevel = $.logLevel;
         this.nodeAgentImage = $.nodeAgentImage;
         this.nodePortSupport = $.nodePortSupport;
+        this.resolveConflictsOnCreate = $.resolveConflictsOnCreate;
+        this.resolveConflictsOnUpdate = $.resolveConflictsOnUpdate;
         this.securityContextPrivileged = $.securityContextPrivileged;
+        this.serviceAccountRoleArn = $.serviceAccountRoleArn;
+        this.tags = $.tags;
         this.vethPrefix = $.vethPrefix;
         this.warmEniTarget = $.warmEniTarget;
         this.warmIpTarget = $.warmIpTarget;
@@ -607,6 +714,27 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
+         * @param configurationValues Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder configurationValues(@Nullable Output<Map<String,Object>> configurationValues) {
+            $.configurationValues = configurationValues;
+            return this;
+        }
+
+        /**
+         * @param configurationValues Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder configurationValues(Map<String,Object> configurationValues) {
+            return configurationValues(Output.of(configurationValues));
+        }
+
+        /**
          * @param customNetworkConfig Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster&#39;s `resourcesVpcConfig`.
          * 
          * Defaults to false.
@@ -650,6 +778,31 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder disableTcpEarlyDemux(Boolean disableTcpEarlyDemux) {
             return disableTcpEarlyDemux(Output.of(disableTcpEarlyDemux));
+        }
+
+        /**
+         * @param enableNetworkPolicy Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+         * 
+         * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder enableNetworkPolicy(@Nullable Output<Boolean> enableNetworkPolicy) {
+            $.enableNetworkPolicy = enableNetworkPolicy;
+            return this;
+        }
+
+        /**
+         * @param enableNetworkPolicy Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+         * 
+         * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder enableNetworkPolicy(Boolean enableNetworkPolicy) {
+            return enableNetworkPolicy(Output.of(enableNetworkPolicy));
         }
 
         /**
@@ -924,6 +1077,48 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
+         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder resolveConflictsOnCreate(@Nullable Output<String> resolveConflictsOnCreate) {
+            $.resolveConflictsOnCreate = resolveConflictsOnCreate;
+            return this;
+        }
+
+        /**
+         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder resolveConflictsOnCreate(String resolveConflictsOnCreate) {
+            return resolveConflictsOnCreate(Output.of(resolveConflictsOnCreate));
+        }
+
+        /**
+         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder resolveConflictsOnUpdate(@Nullable Output<String> resolveConflictsOnUpdate) {
+            $.resolveConflictsOnUpdate = resolveConflictsOnUpdate;
+            return this;
+        }
+
+        /**
+         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder resolveConflictsOnUpdate(String resolveConflictsOnUpdate) {
+            return resolveConflictsOnUpdate(Output.of(resolveConflictsOnUpdate));
+        }
+
+        /**
          * @param securityContextPrivileged Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
          * 
          * @return builder
@@ -942,6 +1137,62 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder securityContextPrivileged(Boolean securityContextPrivileged) {
             return securityContextPrivileged(Output.of(securityContextPrivileged));
+        }
+
+        /**
+         * @param serviceAccountRoleArn The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+         * 
+         *                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder serviceAccountRoleArn(@Nullable Output<String> serviceAccountRoleArn) {
+            $.serviceAccountRoleArn = serviceAccountRoleArn;
+            return this;
+        }
+
+        /**
+         * @param serviceAccountRoleArn The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
+         * 
+         *                         Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder serviceAccountRoleArn(String serviceAccountRoleArn) {
+            return serviceAccountRoleArn(Output.of(serviceAccountRoleArn));
+        }
+
+        /**
+         * @param tags Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder tags(@Nullable Output<List<Map<String,String>>> tags) {
+            $.tags = tags;
+            return this;
+        }
+
+        /**
+         * @param tags Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder tags(List<Map<String,String>> tags) {
+            return tags(Output.of(tags));
+        }
+
+        /**
+         * @param tags Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder tags(Map<String,String>... tags) {
+            return tags(List.of(tags));
         }
 
         /**
