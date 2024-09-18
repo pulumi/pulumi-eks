@@ -35,8 +35,8 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 		r = &NodeGroupSecurityGroup{}
 	case "eks:index:NodeGroupV2":
 		r = &NodeGroupV2{}
-	case "eks:index:VpcCni":
-		r = &VpcCni{}
+	case "eks:index:VpcCniAddon":
+		r = &VpcCniAddon{}
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", typ)
 	}

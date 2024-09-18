@@ -15,6 +15,7 @@
 package example
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -22,6 +23,9 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -156,4 +160,24 @@ func programTestWithExtraOptions(
 	if !errors.Is(err, integration.ErrTestFailed) {
 		assert.NoError(t, err)
 	}
+}
+
+func loadAwsDefaultConfig(t *testing.T) aws.Config {
+	loadOpts := []func(*config.LoadOptions) error{}
+	if p, ok := os.LookupEnv("AWS_PROFILE"); ok {
+		loadOpts = append(loadOpts, config.WithSharedConfigProfile(p))
+	}
+	if r, ok := os.LookupEnv("AWS_REGION"); ok {
+		loadOpts = append(loadOpts, config.WithRegion(r))
+	}
+	cfg, err := config.LoadDefaultConfig(context.TODO(), loadOpts...)
+	require.NoError(t, err, "failed to load AWS config")
+
+	return cfg
+}
+
+func createEksClient(t *testing.T) *eks.Client {
+	client := eks.NewFromConfig(loadAwsDefaultConfig(t))
+	require.NotNil(t, client, "failed to create EKS client")
+	return client
 }

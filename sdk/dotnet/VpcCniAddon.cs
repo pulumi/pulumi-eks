@@ -10,25 +10,26 @@ using Pulumi.Serialization;
 namespace Pulumi.Eks
 {
     /// <summary>
-    /// VpcCni manages the configuration of the Amazon VPC CNI plugin for Kubernetes by applying its YAML chart.
+    /// VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
+    /// For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
     /// </summary>
-    [EksResourceType("eks:index:VpcCni")]
-    public partial class VpcCni : global::Pulumi.CustomResource
+    [EksResourceType("eks:index:VpcCniAddon")]
+    public partial class VpcCniAddon : global::Pulumi.CustomResource
     {
         /// <summary>
-        /// Create a VpcCni resource with the given unique name, arguments, and options.
+        /// Create a VpcCniAddon resource with the given unique name, arguments, and options.
         /// </summary>
         ///
         /// <param name="name">The unique name of the resource</param>
         /// <param name="args">The arguments used to populate this resource's properties</param>
         /// <param name="options">A bag of options that control this resource's behavior</param>
-        public VpcCni(string name, VpcCniArgs args, CustomResourceOptions? options = null)
-            : base("eks:index:VpcCni", name, args ?? new VpcCniArgs(), MakeResourceOptions(options, ""))
+        public VpcCniAddon(string name, VpcCniAddonArgs args, CustomResourceOptions? options = null)
+            : base("eks:index:VpcCniAddon", name, args ?? new VpcCniAddonArgs(), MakeResourceOptions(options, ""))
         {
         }
 
-        private VpcCni(string name, Input<string> id, CustomResourceOptions? options = null)
-            : base("eks:index:VpcCni", name, null, MakeResourceOptions(options, id))
+        private VpcCniAddon(string name, Input<string> id, CustomResourceOptions? options = null)
+            : base("eks:index:VpcCniAddon", name, null, MakeResourceOptions(options, id))
         {
         }
 
@@ -44,21 +45,39 @@ namespace Pulumi.Eks
             return merged;
         }
         /// <summary>
-        /// Get an existing VpcCni resource's state with the given name, ID, and optional extra
+        /// Get an existing VpcCniAddon resource's state with the given name, ID, and optional extra
         /// properties used to qualify the lookup.
         /// </summary>
         ///
         /// <param name="name">The unique name of the resulting resource.</param>
         /// <param name="id">The unique provider ID of the resource to lookup.</param>
         /// <param name="options">A bag of options that control this resource's behavior</param>
-        public static VpcCni Get(string name, Input<string> id, CustomResourceOptions? options = null)
+        public static VpcCniAddon Get(string name, Input<string> id, CustomResourceOptions? options = null)
         {
-            return new VpcCni(name, id, options);
+            return new VpcCniAddon(name, id, options);
         }
     }
 
-    public sealed class VpcCniArgs : global::Pulumi.ResourceArgs
+    public sealed class VpcCniAddonArgs : global::Pulumi.ResourceArgs
     {
+        /// <summary>
+        /// The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+        /// </summary>
+        [Input("addonVersion")]
+        public Input<string>? AddonVersion { get; set; }
+
+        /// <summary>
+        /// The name of the EKS cluster.
+        /// </summary>
+        [Input("clusterName", required: true)]
+        public Input<string> ClusterName { get; set; } = null!;
+
+        /// <summary>
+        /// The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+        /// </summary>
+        [Input("clusterVersion")]
+        public Input<string>? ClusterVersion { get; set; }
+
         /// <summary>
         /// Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         /// </summary>
@@ -77,6 +96,18 @@ namespace Pulumi.Eks
         [Input("cniExternalSnat")]
         public Input<bool>? CniExternalSnat { get; set; }
 
+        [Input("configurationValues")]
+        private InputMap<object>? _configurationValues;
+
+        /// <summary>
+        /// Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        /// </summary>
+        public InputMap<object> ConfigurationValues
+        {
+            get => _configurationValues ?? (_configurationValues = new InputMap<object>());
+            set => _configurationValues = value;
+        }
+
         /// <summary>
         /// Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
         /// 
@@ -92,10 +123,12 @@ namespace Pulumi.Eks
         public Input<bool>? DisableTcpEarlyDemux { get; set; }
 
         /// <summary>
-        /// VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+        /// Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+        /// 
+        /// See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
         /// </summary>
-        [Input("enableIpv6")]
-        public Input<bool>? EnableIpv6 { get; set; }
+        [Input("enableNetworkPolicy")]
+        public Input<bool>? EnableNetworkPolicy { get; set; }
 
         /// <summary>
         /// Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
@@ -135,28 +168,6 @@ namespace Pulumi.Eks
         public Input<bool>? ExternalSnat { get; set; }
 
         /// <summary>
-        /// Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-        /// 
-        /// Defaults to the official AWS CNI image in ECR.
-        /// </summary>
-        [Input("image")]
-        public Input<string>? Image { get; set; }
-
-        /// <summary>
-        /// Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-        /// 
-        /// Defaults to the official AWS CNI init container image in ECR.
-        /// </summary>
-        [Input("initImage")]
-        public Input<string>? InitImage { get; set; }
-
-        /// <summary>
-        /// The kubeconfig to use when setting the VPC CNI options.
-        /// </summary>
-        [Input("kubeconfig", required: true)]
-        public Input<object> Kubeconfig { get; set; } = null!;
-
-        /// <summary>
         /// Specifies the file path used for logs.
         /// 
         /// Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -174,14 +185,6 @@ namespace Pulumi.Eks
         public Input<string>? LogLevel { get; set; }
 
         /// <summary>
-        /// Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-        /// 
-        /// Defaults to the official AWS CNI nodeagent image in ECR.
-        /// </summary>
-        [Input("nodeAgentImage")]
-        public Input<string>? NodeAgentImage { get; set; }
-
-        /// <summary>
         /// Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
         /// 
         /// Defaults to true.
@@ -190,10 +193,50 @@ namespace Pulumi.Eks
         public Input<bool>? NodePortSupport { get; set; }
 
         /// <summary>
+        /// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+        /// Valid values are NONE and OVERWRITE.
+        /// 
+        /// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+        /// </summary>
+        [Input("resolveConflictsOnCreate")]
+        public Input<string>? ResolveConflictsOnCreate { get; set; }
+
+        /// <summary>
+        /// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
+        /// Valid values are NONE, OVERWRITE, and PRESERVE.
+        /// 
+        /// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+        /// </summary>
+        [Input("resolveConflictsOnUpdate")]
+        public Input<string>? ResolveConflictsOnUpdate { get; set; }
+
+        /// <summary>
         /// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
         /// </summary>
         [Input("securityContextPrivileged")]
         public Input<bool>? SecurityContextPrivileged { get; set; }
+
+        /// <summary>
+        /// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
+        /// 
+        /// For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+        /// 
+        /// Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
+        /// </summary>
+        [Input("serviceAccountRoleArn")]
+        public Input<string>? ServiceAccountRoleArn { get; set; }
+
+        [Input("tags")]
+        private InputList<ImmutableDictionary<string, string>>? _tags;
+
+        /// <summary>
+        /// Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+        /// </summary>
+        public InputList<ImmutableDictionary<string, string>> Tags
+        {
+            get => _tags ?? (_tags = new InputList<ImmutableDictionary<string, string>>());
+            set => _tags = value;
+        }
 
         /// <summary>
         /// Specifies the veth prefix used to generate the host-side veth device name for the CNI.
@@ -225,9 +268,9 @@ namespace Pulumi.Eks
         [Input("warmPrefixTarget")]
         public Input<int>? WarmPrefixTarget { get; set; }
 
-        public VpcCniArgs()
+        public VpcCniAddonArgs()
         {
         }
-        public static new VpcCniArgs Empty => new VpcCniArgs();
+        public static new VpcCniAddonArgs Empty => new VpcCniAddonArgs();
     }
 }
