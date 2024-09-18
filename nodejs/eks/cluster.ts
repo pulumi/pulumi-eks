@@ -909,7 +909,14 @@ export function createCore(
                   clusterVersion: eksCluster.version,
                   tags: args.tags,
               },
-              { parent, dependsOn: authDependencies, providers: { kubernetes: k8sProvider } },
+              {
+                  parent,
+                  dependsOn: authDependencies,
+                  providers: {
+                      ...(provider ? { aws: provider } : {}),
+                      kubernetes: k8sProvider,
+                  },
+              },
           );
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi
