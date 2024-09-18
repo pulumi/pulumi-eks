@@ -972,7 +972,7 @@ func TestAccClusterAddons(t *testing.T) {
 							info.Outputs["kubeconfig"],
 						)
 
-						/ options are set in tests/cluster-addons
+						// options are set in tests/cluster-addons
 						utils.ValidateVpcCni(t, eksClient, utils.VpcCniValidation{
 							ClusterName:          info.Outputs["clusterName"].(string),
 							Kubeconfig:           info.Outputs["kubeconfig"],
