@@ -11,7 +11,7 @@ from . import _utilities
 from . import outputs
 from ._enums import *
 from ._inputs import *
-from .vpc_cni import VpcCni
+from .vpc_cni_addon import VpcCniAddon
 import pulumi_aws
 import pulumi_kubernetes
 

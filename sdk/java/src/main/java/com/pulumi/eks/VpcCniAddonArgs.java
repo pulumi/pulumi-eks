@@ -9,14 +9,61 @@ import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.Object;
 import java.lang.String;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
 
-public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
+public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
 
-    public static final VpcCniArgs Empty = new VpcCniArgs();
+    public static final VpcCniAddonArgs Empty = new VpcCniAddonArgs();
+
+    /**
+     * The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+     * 
+     */
+    @Import(name="addonVersion")
+    private @Nullable Output<String> addonVersion;
+
+    /**
+     * @return The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+     * 
+     */
+    public Optional<Output<String>> addonVersion() {
+        return Optional.ofNullable(this.addonVersion);
+    }
+
+    /**
+     * The name of the EKS cluster.
+     * 
+     */
+    @Import(name="clusterName", required=true)
+    private Output<String> clusterName;
+
+    /**
+     * @return The name of the EKS cluster.
+     * 
+     */
+    public Output<String> clusterName() {
+        return this.clusterName;
+    }
+
+    /**
+     * The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+     * 
+     */
+    @Import(name="clusterVersion")
+    private @Nullable Output<String> clusterVersion;
+
+    /**
+     * @return The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+     * 
+     */
+    public Optional<Output<String>> clusterVersion() {
+        return Optional.ofNullable(this.clusterVersion);
+    }
 
     /**
      * Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
@@ -64,6 +111,21 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     * 
+     */
+    @Import(name="configurationValues")
+    private @Nullable Output<Map<String,Object>> configurationValues;
+
+    /**
+     * @return Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     * 
+     */
+    public Optional<Output<Map<String,Object>>> configurationValues() {
+        return Optional.ofNullable(this.configurationValues);
+    }
+
+    /**
      * Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster&#39;s `resourcesVpcConfig`.
      * 
      * Defaults to false.
@@ -98,18 +160,22 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+     * Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+     * 
+     * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
      * 
      */
-    @Import(name="enableIpv6")
-    private @Nullable Output<Boolean> enableIpv6;
+    @Import(name="enableNetworkPolicy")
+    private @Nullable Output<Boolean> enableNetworkPolicy;
 
     /**
-     * @return VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+     * @return Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+     * 
+     * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
      * 
      */
-    public Optional<Output<Boolean>> enableIpv6() {
-        return Optional.ofNullable(this.enableIpv6);
+    public Optional<Output<Boolean>> enableNetworkPolicy() {
+        return Optional.ofNullable(this.enableNetworkPolicy);
     }
 
     /**
@@ -202,59 +268,6 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI image in ECR.
-     * 
-     */
-    @Import(name="image")
-    private @Nullable Output<String> image;
-
-    /**
-     * @return Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI image in ECR.
-     * 
-     */
-    public Optional<Output<String>> image() {
-        return Optional.ofNullable(this.image);
-    }
-
-    /**
-     * Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI init container image in ECR.
-     * 
-     */
-    @Import(name="initImage")
-    private @Nullable Output<String> initImage;
-
-    /**
-     * @return Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI init container image in ECR.
-     * 
-     */
-    public Optional<Output<String>> initImage() {
-        return Optional.ofNullable(this.initImage);
-    }
-
-    /**
-     * The kubeconfig to use when setting the VPC CNI options.
-     * 
-     */
-    @Import(name="kubeconfig", required=true)
-    private Output<Object> kubeconfig;
-
-    /**
-     * @return The kubeconfig to use when setting the VPC CNI options.
-     * 
-     */
-    public Output<Object> kubeconfig() {
-        return this.kubeconfig;
-    }
-
-    /**
      * Specifies the file path used for logs.
      * 
      * Defaults to &#34;stdout&#34; to emit Pod logs for `kubectl logs`.
@@ -295,25 +308,6 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI nodeagent image in ECR.
-     * 
-     */
-    @Import(name="nodeAgentImage")
-    private @Nullable Output<String> nodeAgentImage;
-
-    /**
-     * @return Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-     * 
-     * Defaults to the official AWS CNI nodeagent image in ECR.
-     * 
-     */
-    public Optional<Output<String>> nodeAgentImage() {
-        return Optional.ofNullable(this.nodeAgentImage);
-    }
-
-    /**
      * Specifies whether NodePort services are enabled on a worker node&#39;s primary network interface. This requires additional iptables rules and that the kernel&#39;s reverse path filter on the primary interface is set to loose.
      * 
      * Defaults to true.
@@ -333,6 +327,48 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+     * Valid values are NONE and OVERWRITE.
+     * 
+     * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+     * 
+     */
+    @Import(name="resolveConflictsOnCreate")
+    private @Nullable Output<String> resolveConflictsOnCreate;
+
+    /**
+     * @return How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+     * Valid values are NONE and OVERWRITE.
+     * 
+     * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+     * 
+     */
+    public Optional<Output<String>> resolveConflictsOnCreate() {
+        return Optional.ofNullable(this.resolveConflictsOnCreate);
+    }
+
+    /**
+     * How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
+     * Valid values are NONE, OVERWRITE, and PRESERVE.
+     * 
+     * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+     * 
+     */
+    @Import(name="resolveConflictsOnUpdate")
+    private @Nullable Output<String> resolveConflictsOnUpdate;
+
+    /**
+     * @return How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
+     * Valid values are NONE, OVERWRITE, and PRESERVE.
+     * 
+     * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+     * 
+     */
+    public Optional<Output<String>> resolveConflictsOnUpdate() {
+        return Optional.ofNullable(this.resolveConflictsOnUpdate);
+    }
+
+    /**
      * Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
      * 
      */
@@ -345,6 +381,44 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<Boolean>> securityContextPrivileged() {
         return Optional.ofNullable(this.securityContextPrivileged);
+    }
+
+    /**
+     * The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
+     * 
+     * For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+     * 
+     * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
+     * 
+     */
+    @Import(name="serviceAccountRoleArn")
+    private @Nullable Output<String> serviceAccountRoleArn;
+
+    /**
+     * @return The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
+     * 
+     * For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+     * 
+     * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
+     * 
+     */
+    public Optional<Output<String>> serviceAccountRoleArn() {
+        return Optional.ofNullable(this.serviceAccountRoleArn);
+    }
+
+    /**
+     * Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+     * 
+     */
+    @Import(name="tags")
+    private @Nullable Output<List<Map<String,String>>> tags;
+
+    /**
+     * @return Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+     * 
+     */
+    public Optional<Output<List<Map<String,String>>>> tags() {
+        return Optional.ofNullable(this.tags);
     }
 
     /**
@@ -419,28 +493,32 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
         return Optional.ofNullable(this.warmPrefixTarget);
     }
 
-    private VpcCniArgs() {}
+    private VpcCniAddonArgs() {}
 
-    private VpcCniArgs(VpcCniArgs $) {
+    private VpcCniAddonArgs(VpcCniAddonArgs $) {
+        this.addonVersion = $.addonVersion;
+        this.clusterName = $.clusterName;
+        this.clusterVersion = $.clusterVersion;
         this.cniConfigureRpfilter = $.cniConfigureRpfilter;
         this.cniCustomNetworkCfg = $.cniCustomNetworkCfg;
         this.cniExternalSnat = $.cniExternalSnat;
+        this.configurationValues = $.configurationValues;
         this.customNetworkConfig = $.customNetworkConfig;
         this.disableTcpEarlyDemux = $.disableTcpEarlyDemux;
-        this.enableIpv6 = $.enableIpv6;
+        this.enableNetworkPolicy = $.enableNetworkPolicy;
         this.enablePodEni = $.enablePodEni;
         this.enablePrefixDelegation = $.enablePrefixDelegation;
         this.eniConfigLabelDef = $.eniConfigLabelDef;
         this.eniMtu = $.eniMtu;
         this.externalSnat = $.externalSnat;
-        this.image = $.image;
-        this.initImage = $.initImage;
-        this.kubeconfig = $.kubeconfig;
         this.logFile = $.logFile;
         this.logLevel = $.logLevel;
-        this.nodeAgentImage = $.nodeAgentImage;
         this.nodePortSupport = $.nodePortSupport;
+        this.resolveConflictsOnCreate = $.resolveConflictsOnCreate;
+        this.resolveConflictsOnUpdate = $.resolveConflictsOnUpdate;
         this.securityContextPrivileged = $.securityContextPrivileged;
+        this.serviceAccountRoleArn = $.serviceAccountRoleArn;
+        this.tags = $.tags;
         this.vethPrefix = $.vethPrefix;
         this.warmEniTarget = $.warmEniTarget;
         this.warmIpTarget = $.warmIpTarget;
@@ -450,19 +528,82 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
     public static Builder builder() {
         return new Builder();
     }
-    public static Builder builder(VpcCniArgs defaults) {
+    public static Builder builder(VpcCniAddonArgs defaults) {
         return new Builder(defaults);
     }
 
     public static final class Builder {
-        private VpcCniArgs $;
+        private VpcCniAddonArgs $;
 
         public Builder() {
-            $ = new VpcCniArgs();
+            $ = new VpcCniAddonArgs();
         }
 
-        public Builder(VpcCniArgs defaults) {
-            $ = new VpcCniArgs(Objects.requireNonNull(defaults));
+        public Builder(VpcCniAddonArgs defaults) {
+            $ = new VpcCniAddonArgs(Objects.requireNonNull(defaults));
+        }
+
+        /**
+         * @param addonVersion The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder addonVersion(@Nullable Output<String> addonVersion) {
+            $.addonVersion = addonVersion;
+            return this;
+        }
+
+        /**
+         * @param addonVersion The version of the addon to use. If not specified, the latest version of the addon for the cluster&#39;s Kubernetes version will be used.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder addonVersion(String addonVersion) {
+            return addonVersion(Output.of(addonVersion));
+        }
+
+        /**
+         * @param clusterName The name of the EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterName(Output<String> clusterName) {
+            $.clusterName = clusterName;
+            return this;
+        }
+
+        /**
+         * @param clusterName The name of the EKS cluster.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterName(String clusterName) {
+            return clusterName(Output.of(clusterName));
+        }
+
+        /**
+         * @param clusterVersion The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterVersion(@Nullable Output<String> clusterVersion) {
+            $.clusterVersion = clusterVersion;
+            return this;
+        }
+
+        /**
+         * @param clusterVersion The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterVersion(String clusterVersion) {
+            return clusterVersion(Output.of(clusterVersion));
         }
 
         /**
@@ -529,6 +670,27 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
+         * @param configurationValues Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder configurationValues(@Nullable Output<Map<String,Object>> configurationValues) {
+            $.configurationValues = configurationValues;
+            return this;
+        }
+
+        /**
+         * @param configurationValues Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder configurationValues(Map<String,Object> configurationValues) {
+            return configurationValues(Output.of(configurationValues));
+        }
+
+        /**
          * @param customNetworkConfig Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster&#39;s `resourcesVpcConfig`.
          * 
          * Defaults to false.
@@ -575,24 +737,28 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param enableIpv6 VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+         * @param enableNetworkPolicy Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+         * 
+         * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
          * 
          * @return builder
          * 
          */
-        public Builder enableIpv6(@Nullable Output<Boolean> enableIpv6) {
-            $.enableIpv6 = enableIpv6;
+        public Builder enableNetworkPolicy(@Nullable Output<Boolean> enableNetworkPolicy) {
+            $.enableNetworkPolicy = enableNetworkPolicy;
             return this;
         }
 
         /**
-         * @param enableIpv6 VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+         * @param enableNetworkPolicy Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+         * 
+         * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
          * 
          * @return builder
          * 
          */
-        public Builder enableIpv6(Boolean enableIpv6) {
-            return enableIpv6(Output.of(enableIpv6));
+        public Builder enableNetworkPolicy(Boolean enableNetworkPolicy) {
+            return enableNetworkPolicy(Output.of(enableNetworkPolicy));
         }
 
         /**
@@ -715,77 +881,6 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param image Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder image(@Nullable Output<String> image) {
-            $.image = image;
-            return this;
-        }
-
-        /**
-         * @param image Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder image(String image) {
-            return image(Output.of(image));
-        }
-
-        /**
-         * @param initImage Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI init container image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder initImage(@Nullable Output<String> initImage) {
-            $.initImage = initImage;
-            return this;
-        }
-
-        /**
-         * @param initImage Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI init container image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder initImage(String initImage) {
-            return initImage(Output.of(initImage));
-        }
-
-        /**
-         * @param kubeconfig The kubeconfig to use when setting the VPC CNI options.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder kubeconfig(Output<Object> kubeconfig) {
-            $.kubeconfig = kubeconfig;
-            return this;
-        }
-
-        /**
-         * @param kubeconfig The kubeconfig to use when setting the VPC CNI options.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder kubeconfig(Object kubeconfig) {
-            return kubeconfig(Output.of(kubeconfig));
-        }
-
-        /**
          * @param logFile Specifies the file path used for logs.
          * 
          * Defaults to &#34;stdout&#34; to emit Pod logs for `kubectl logs`.
@@ -838,31 +933,6 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param nodeAgentImage Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI nodeagent image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeAgentImage(@Nullable Output<String> nodeAgentImage) {
-            $.nodeAgentImage = nodeAgentImage;
-            return this;
-        }
-
-        /**
-         * @param nodeAgentImage Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-         * 
-         * Defaults to the official AWS CNI nodeagent image in ECR.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nodeAgentImage(String nodeAgentImage) {
-            return nodeAgentImage(Output.of(nodeAgentImage));
-        }
-
-        /**
          * @param nodePortSupport Specifies whether NodePort services are enabled on a worker node&#39;s primary network interface. This requires additional iptables rules and that the kernel&#39;s reverse path filter on the primary interface is set to loose.
          * 
          * Defaults to true.
@@ -888,6 +958,60 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
+         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+         * Valid values are NONE and OVERWRITE.
+         * 
+         * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder resolveConflictsOnCreate(@Nullable Output<String> resolveConflictsOnCreate) {
+            $.resolveConflictsOnCreate = resolveConflictsOnCreate;
+            return this;
+        }
+
+        /**
+         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+         * Valid values are NONE and OVERWRITE.
+         * 
+         * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder resolveConflictsOnCreate(String resolveConflictsOnCreate) {
+            return resolveConflictsOnCreate(Output.of(resolveConflictsOnCreate));
+        }
+
+        /**
+         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
+         * Valid values are NONE, OVERWRITE, and PRESERVE.
+         * 
+         * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder resolveConflictsOnUpdate(@Nullable Output<String> resolveConflictsOnUpdate) {
+            $.resolveConflictsOnUpdate = resolveConflictsOnUpdate;
+            return this;
+        }
+
+        /**
+         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
+         * Valid values are NONE, OVERWRITE, and PRESERVE.
+         * 
+         * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder resolveConflictsOnUpdate(String resolveConflictsOnUpdate) {
+            return resolveConflictsOnUpdate(Output.of(resolveConflictsOnUpdate));
+        }
+
+        /**
          * @param securityContextPrivileged Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
          * 
          * @return builder
@@ -906,6 +1030,66 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder securityContextPrivileged(Boolean securityContextPrivileged) {
             return securityContextPrivileged(Output.of(securityContextPrivileged));
+        }
+
+        /**
+         * @param serviceAccountRoleArn The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
+         * 
+         * For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+         * 
+         * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder serviceAccountRoleArn(@Nullable Output<String> serviceAccountRoleArn) {
+            $.serviceAccountRoleArn = serviceAccountRoleArn;
+            return this;
+        }
+
+        /**
+         * @param serviceAccountRoleArn The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on&#39;s service account. The role must be assigned the IAM permissions required by the add-on. If you don&#39;t specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
+         * 
+         * For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+         * 
+         * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder serviceAccountRoleArn(String serviceAccountRoleArn) {
+            return serviceAccountRoleArn(Output.of(serviceAccountRoleArn));
+        }
+
+        /**
+         * @param tags Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder tags(@Nullable Output<List<Map<String,String>>> tags) {
+            $.tags = tags;
+            return this;
+        }
+
+        /**
+         * @param tags Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder tags(List<Map<String,String>> tags) {
+            return tags(Output.of(tags));
+        }
+
+        /**
+         * @param tags Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder tags(Map<String,String>... tags) {
+            return tags(List.of(tags));
         }
 
         /**
@@ -1004,8 +1188,8 @@ public final class VpcCniArgs extends com.pulumi.resources.ResourceArgs {
             return warmPrefixTarget(Output.of(warmPrefixTarget));
         }
 
-        public VpcCniArgs build() {
-            $.kubeconfig = Objects.requireNonNull($.kubeconfig, "expected parameter 'kubeconfig' to be non-null");
+        public VpcCniAddonArgs build() {
+            $.clusterName = Objects.requireNonNull($.clusterName, "expected parameter 'clusterName' to be non-null");
             return $;
         }
     }

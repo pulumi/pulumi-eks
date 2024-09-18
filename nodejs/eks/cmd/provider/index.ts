@@ -15,9 +15,9 @@
 import * as pulumi from "@pulumi/pulumi";
 import { readFileSync } from "fs";
 import { ClusterInternal } from "../../cluster";
-import { VpcCni } from "../../cni";
+import { VpcCniAddon } from "../../cni-addon";
 import { clusterCreationRoleProviderProviderFactory, clusterProviderFactory } from "./cluster";
-import { vpcCniProviderFactory } from "./cni";
+import { cniAddonProviderFactory } from "./cni-addon";
 import {
     managedNodeGroupProviderFactory,
     nodeGroupProviderFactory,
@@ -39,7 +39,7 @@ class Provider implements pulumi.provider.Provider {
         "eks:index:NodeGroupV2": nodeGroupV2ProviderFactory,
         "eks:index:NodeGroupSecurityGroup": nodeGroupSecurityGroupProviderFactory,
         "eks:index:RandomSuffix": randomSuffixProviderFactory,
-        "eks:index:VpcCni": vpcCniProviderFactory,
+        "eks:index:VpcCniAddon": cniAddonProviderFactory,
         "eks:index:Addon": managedAddonProviderFactory,
     };
 
@@ -51,8 +51,8 @@ class Provider implements pulumi.provider.Provider {
                 switch (type) {
                     case "eks:index:Cluster":
                         return new ClusterInternal(name, undefined, { urn });
-                    case "eks:index:VpcCni":
-                        return new VpcCni(name, undefined, undefined, { urn });
+                    case "eks:index:VpcCniAddon":
+                        return new VpcCniAddon(name, undefined, { urn });
                     default:
                         throw new Error(`unknown resource type ${type}`);
                 }

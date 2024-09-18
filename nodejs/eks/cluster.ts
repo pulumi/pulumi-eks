@@ -30,7 +30,6 @@ import {
     validateAuthenticationMode,
 } from "./authenticationMode";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
-import { VpcCni, VpcCniOptions } from "./cni";
 import { createDashboard } from "./dashboard";
 import { assertCompatibleAWSCLIExists, assertCompatibleKubectlVersionExists } from "./dependencies";
 import {
@@ -44,7 +43,7 @@ import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import { InputTags, UserStorageClasses } from "./utils";
-import cluster from "cluster";
+import { VpcCniAddon, VpcCniAddonOptions } from "./cni-addon";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -149,7 +148,7 @@ export interface CoreData {
     eksNodeAccess?: k8s.core.v1.ConfigMap;
     storageClasses?: UserStorageClasses;
     kubeconfig?: pulumi.Output<any>;
-    vpcCni?: VpcCni;
+    vpcCni?: VpcCniAddon;
     tags?: InputTags;
     nodeSecurityGroupTags?: InputTags;
     fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined>;
@@ -966,16 +965,26 @@ export function createCore(
         }
     }
 
-    // Create the VPC CNI management resource.
-    let vpcCni: VpcCni | undefined;
-    if (!args.useDefaultVpcCni) {
-        vpcCni = new VpcCni(
-            `${name}-vpc-cni`,
-            kubeconfig.apply(JSON.stringify),
-            args.vpcCniOptions,
-            { parent, dependsOn: authDependencies },
-        );
-    }
+    // Create the VPC CNI addon
+    const vpcCni = args.useDefaultVpcCni
+        ? undefined
+        : new VpcCniAddon(
+              `${name}-vpc-cni`,
+              {
+                  ...args.vpcCniOptions,
+                  clusterName: eksCluster.name,
+                  clusterVersion: eksCluster.version,
+                  tags: args.tags,
+              },
+              {
+                  parent,
+                  dependsOn: authDependencies,
+                  providers: {
+                      ...(provider ? { aws: provider } : {}),
+                      kubernetes: k8sProvider,
+                  },
+              },
+          );
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi
         .output(args.fargate)
@@ -1312,7 +1321,7 @@ export interface ClusterOptions {
      * The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation
      * for the VpcCniOptions type.
      */
-    vpcCniOptions?: VpcCniOptions;
+    vpcCniOptions?: Omit<VpcCniAddonOptions, "clusterName">;
 
     /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.

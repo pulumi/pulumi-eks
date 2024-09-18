@@ -11,9 +11,13 @@ import (
 
 	"sync/atomic"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
+	eksTypes "github.com/aws/aws-sdk-go-v2/service/eks/types"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/mod/semver"
 	"gopkg.in/yaml.v2"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -411,6 +415,82 @@ func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod metav1.Object
 	return false, o
 }
 
+type VpcCniValidation struct {
+	Kubeconfig interface{}
+	ExpectedAddonVersion string
+	ClusterName string
+	ExpectedInitEnvVars map[string]string
+	ExpectedEnvVars map[string]string
+	SecurityContextPrivileged *bool
+	NetworkPoliciesEnabled *bool
+}
+
+func ValidateVpcCni(t *testing.T, eksClient *eks.Client, args VpcCniValidation) {
+	assert.NoError(t, ValidateDaemonSet(t, args.Kubeconfig, "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
+		var initContainerFound bool
+		for _, ic := range ds.Spec.Template.Spec.InitContainers {
+			if ic.Name != "aws-vpc-cni-init" {
+				continue
+			}
+
+			initContainerFound = true
+
+			validateEnvVariables(t, ic, args.ExpectedInitEnvVars)
+		}
+		assert.True(t, initContainerFound)
+
+		var awsNodeContainerFound bool
+		var awsNodeAgentContainerFound bool
+		for _, c := range ds.Spec.Template.Spec.Containers {
+			switch c.Name {
+			case "aws-node":
+				awsNodeContainerFound = true
+				validateEnvVariables(t, c, args.ExpectedEnvVars)
+				if args.SecurityContextPrivileged != nil {
+					assert.NotNil(t, c.SecurityContext, "expected SecurityContext to be set")
+					assert.NotNil(t, c.SecurityContext.Privileged, "expected SecurityContext.Privileged to be set")
+					assert.Equal(t, *args.SecurityContextPrivileged, *c.SecurityContext.Privileged, "expected privileged security context for aws-node container to be %t", *args.SecurityContextPrivileged)
+				}
+			case "aws-eks-nodeagent":
+				awsNodeAgentContainerFound = true
+				if args.NetworkPoliciesEnabled != nil {
+					assert.NotNil(t, c.Args, "expected args to be set for aws-eks-nodeagent container")
+					assert.Contains(t, c.Args, fmt.Sprintf("--enable-network-policy=%t", *args.NetworkPoliciesEnabled), fmt.Sprintf("expected --enable-network-policy to be set to %t", *args.NetworkPoliciesEnabled))
+				}
+			}
+		}
+		assert.True(t, awsNodeContainerFound)
+		assert.True(t, awsNodeAgentContainerFound)
+	}))
+
+	addon, err := GetInstalledAddon(t, eksClient, args.ClusterName, "vpc-cni")
+	require.NoError(t, err)
+
+	assert.Equal(t, args.ExpectedAddonVersion, *addon.AddonVersion, "expected vpc-cni version to be %s", args.ExpectedAddonVersion)
+}
+
+func validateEnvVariables(t *testing.T, container corev1.Container, expectedEnvVars map[string]string) {
+	if len(expectedEnvVars) == 0 {
+		return
+	}
+
+	setEnvVars := make(map[string]bool)
+	for name := range expectedEnvVars {
+		setEnvVars[name] = false
+	}
+
+	for _, env := range container.Env {
+		if _, ok := expectedEnvVars[env.Name]; ok {
+			setEnvVars[env.Name] = true
+			assert.Equal(t, expectedEnvVars[env.Name], env.Value, "expected env %s of container %s to be %s", env.Name, container.Name, expectedEnvVars)
+		}
+	}
+
+	for env, set := range setEnvVars {
+		assert.True(t, set, "expected env %s to be set", env)
+	}
+}
+
 func ValidateDaemonSet(t *testing.T, kubeconfig interface{}, namespace, name string, validateFn func(*appsv1.DaemonSet)) error {
 	clientSet, err := clientSetFromKubeconfig(kubeconfig)
 	if err != nil {
@@ -801,4 +881,93 @@ func EnsureKubeconfigFails(t *testing.T, kubeconfig any) {
 	if err == nil {
 		t.Errorf("expected kubeconfig to fail, but it succeeded to return the server version")
 	}
+}
+
+type addonInfo struct {
+	AddonVersion string
+	ClusterVersion string
+}
+
+func FindDefaultAddonVersion(eksClient *eks.Client, addonName string) (string, error) {
+	addon, err := findAddonVersion(eksClient, addonName, func (currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo {
+		if compatibility.DefaultVersion && versionInfo.AddonVersion != nil && compatibility.ClusterVersion != nil {
+			if currentAddon == nil || semver.Compare(currentAddon.ClusterVersion, *compatibility.ClusterVersion) < 0 {
+				return &addonInfo{
+					AddonVersion: *versionInfo.AddonVersion,
+					ClusterVersion: *compatibility.ClusterVersion,
+				}
+			}
+		}
+		return currentAddon
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if addon == nil {
+		return "", fmt.Errorf("unable to find newest default version of addon %s", addonName)
+	}
+
+	return addon.AddonVersion, nil
+}
+
+func FindMostRecentAddonVersion(eksClient *eks.Client, addonName string) (string, error) {
+	addon, err := findAddonVersion(eksClient, addonName, func (currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo {
+		if currentAddon == nil || semver.Compare(currentAddon.AddonVersion, *versionInfo.AddonVersion) < 0 {
+			return &addonInfo{
+				AddonVersion: *versionInfo.AddonVersion,
+			}
+		}
+		return currentAddon
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if addon == nil {
+		return "", fmt.Errorf("unable to find most recent version of addon %s", addonName)
+	}
+
+	return addon.AddonVersion, nil
+}
+
+func findAddonVersion(eksClient *eks.Client, addonName string, selector func (currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo) (*addonInfo, error) {
+	input := &eks.DescribeAddonVersionsInput{
+		AddonName:         aws.String(addonName),
+	}
+
+	var currentAddon *addonInfo
+
+	pages := eks.NewDescribeAddonVersionsPaginator(eksClient, input)
+	for pages.HasMorePages() {
+		page, err := pages.NextPage(context.TODO())
+
+		if err != nil {
+			return nil, err
+		}
+
+		for _, addon := range page.Addons {
+			for _, versionInfo := range addon.AddonVersions {
+				for _, compatibility := range versionInfo.Compatibilities {
+					currentAddon = selector(currentAddon, versionInfo, compatibility)
+				}
+			}
+		}
+	}
+
+	return currentAddon, nil
+}
+
+func GetInstalledAddon(t *testing.T, eksClient *eks.Client, clusterName, addonName string) (*eksTypes.Addon, error) {
+	resp, err := eksClient.DescribeAddon(context.TODO(), &eks.DescribeAddonInput{
+		ClusterName: aws.String(clusterName),
+		AddonName:   aws.String(addonName),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Addon, nil
 }
