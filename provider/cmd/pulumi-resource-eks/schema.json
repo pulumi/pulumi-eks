@@ -505,6 +505,35 @@
                 "clusterIamRole"
             ]
         },
+        "eks:index:CoreDnsAddonOptions": {
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "plain": true,
+                    "description": "Whether or not to create the Addon in the cluster",
+                    "default": true
+                },
+                "resolveConflictsOnCreate": {
+                    "type": "string",
+                    "$ref": "#/types/eks:index:ResolveConflictsOnCreate",
+                    "plain": true,
+                    "description": "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+                    "default": "OVERWRITE"
+                },
+                "resolveConflictsOnUpdate": {
+                    "type": "string",
+                    "$ref": "#/types/eks:index:ResolveConflictsOnUpdate",
+                    "plain": true,
+                    "description": "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+                    "default": "OVERWRITE"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html)."
+                }
+            },
+            "type": "object"
+        },
         "eks:index:CreationRoleProvider": {
             "description": "Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html\n\nNote: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.",
             "properties": {
@@ -543,6 +572,35 @@
                         "type": "string"
                     },
                     "description": "Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster."
+                }
+            },
+            "type": "object"
+        },
+        "eks:index:KubeProxyAddonOptions": {
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "plain": true,
+                    "description": "Whether or not to create the `kube-proxy` Addon in the cluster",
+                    "default": true
+                },
+                "resolveConflictsOnCreate": {
+                    "type": "string",
+                    "$ref": "#/types/eks:index:ResolveConflictsOnCreate",
+                    "plain": true,
+                    "description": "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+                    "default": "OVERWRITE"
+                },
+                "resolveConflictsOnUpdate": {
+                    "type": "string",
+                    "$ref": "#/types/eks:index:ResolveConflictsOnUpdate",
+                    "plain": true,
+                    "description": "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+                    "default": "OVERWRITE"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html)."
                 }
             },
             "type": "object"
@@ -629,6 +687,43 @@
                     "name": "Bottlerocket",
                     "description": "EKS optimized Container OS based on Bottlerocket.\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html",
                     "value": "Bottlerocket"
+                }
+            ]
+        },
+        "eks:index:ResolveConflictsOnCreate": {
+            "description": "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+            "type": "string",
+            "enum": [
+                {
+                    "name": "None",
+                    "description": "If the self-managed version of the add-on is installed on your cluster, Amazon EKS doesn't change the value. Creation of the add-on might fail.",
+                    "value": "NONE"
+                },
+                {
+                    "name": "Overwrite",
+                    "description": "If the self-managed version of the add-on is installed on your cluster and the Amazon EKS default value is different than the existing value, Amazon EKS changes the value to the Amazon EKS default value.",
+                    "value": "OVERWRITE"
+                }
+            ]
+        },
+        "eks:index:ResolveConflictsOnUpdate": {
+            "description": "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+            "type": "string",
+            "enum": [
+                {
+                    "name": "None",
+                    "description": "Amazon EKS doesn't change the value. The update might fail.",
+                    "value": "NONE"
+                },
+                {
+                    "name": "Overwrite",
+                    "description": "Amazon EKS overwrites the changed value back to the Amazon EKS default value.",
+                    "value": "OVERWRITE"
+                },
+                {
+                    "name": "Preserve",
+                    "description": "Amazon EKS preserves the value. If you choose this option, we recommend that you test any field and value changes on a non-production cluster before updating the add-on on your production cluster.",
+                    "value": "PRESERVE"
                 }
             ]
         },
@@ -1006,6 +1101,11 @@
                     },
                     "description": "The tags to apply to the EKS cluster."
                 },
+                "corednsAddonOptions": {
+                    "$ref": "#/types/eks:index:CoreDnsAddonOptions",
+                    "plain": true,
+                    "description": "Options for managing the `coredns` addon."
+                },
                 "createOidcProvider": {
                     "type": "boolean",
                     "description": "Indicates whether an IAM OIDC Provider is created for the EKS cluster.\n\nThe OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.\n\nSee for more details:\n - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html\n - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html\n - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/\n - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts"
@@ -1087,6 +1187,11 @@
                     "type": "string",
                     "description": "The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.\nYou can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.",
                     "replaceOnChanges": true
+                },
+                "kubeProxyAddonOptions": {
+                    "$ref": "#/types/eks:index:KubeProxyAddonOptions",
+                    "plain": true,
+                    "description": "Options for managing the `kube-proxy` addon."
                 },
                 "kubernetesServiceIpAddressRange": {
                     "type": "string",

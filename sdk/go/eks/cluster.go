@@ -79,6 +79,12 @@ func NewCluster(ctx *pulumi.Context,
 		args = &ClusterArgs{}
 	}
 
+	if args.CorednsAddonOptions != nil {
+		args.CorednsAddonOptions = args.CorednsAddonOptions.Defaults()
+	}
+	if args.KubeProxyAddonOptions != nil {
+		args.KubeProxyAddonOptions = args.KubeProxyAddonOptions.Defaults()
+	}
 	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource Cluster
 	err := ctx.RegisterRemoteComponentResource("eks:index:Cluster", name, args, &resource, opts...)
@@ -107,6 +113,8 @@ type clusterArgs struct {
 	ClusterSecurityGroupTags map[string]string `pulumi:"clusterSecurityGroupTags"`
 	// The tags to apply to the EKS cluster.
 	ClusterTags map[string]string `pulumi:"clusterTags"`
+	// Options for managing the `coredns` addon.
+	CorednsAddonOptions *CoreDnsAddonOptions `pulumi:"corednsAddonOptions"`
 	// Indicates whether an IAM OIDC Provider is created for the EKS cluster.
 	//
 	// The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -169,6 +177,8 @@ type clusterArgs struct {
 	// The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
 	// You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
 	IpFamily *string `pulumi:"ipFamily"`
+	// Options for managing the `kube-proxy` addon.
+	KubeProxyAddonOptions *KubeProxyAddonOptions `pulumi:"kubeProxyAddonOptions"`
 	// The CIDR block to assign Kubernetes service IP addresses from. If you don't
 	// specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
 	// 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
@@ -335,6 +345,8 @@ type ClusterArgs struct {
 	ClusterSecurityGroupTags pulumi.StringMapInput
 	// The tags to apply to the EKS cluster.
 	ClusterTags pulumi.StringMapInput
+	// Options for managing the `coredns` addon.
+	CorednsAddonOptions *CoreDnsAddonOptionsArgs
 	// Indicates whether an IAM OIDC Provider is created for the EKS cluster.
 	//
 	// The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -397,6 +409,8 @@ type ClusterArgs struct {
 	// The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
 	// You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
 	IpFamily pulumi.StringPtrInput
+	// Options for managing the `kube-proxy` addon.
+	KubeProxyAddonOptions *KubeProxyAddonOptionsArgs
 	// The CIDR block to assign Kubernetes service IP addresses from. If you don't
 	// specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
 	// 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
