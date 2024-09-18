@@ -782,6 +782,13 @@
                     "type": "boolean",
                     "description": "Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`"
                 },
+                "configurationValues": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html)."
+                },
                 "customNetworkConfig": {
                     "type": "boolean",
                     "description": "Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.\n\nDefaults to false."
@@ -789,6 +796,10 @@
                 "disableTcpEarlyDemux": {
                     "type": "boolean",
                     "description": "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency."
+                },
+                "enableNetworkPolicy": {
+                    "type": "boolean",
+                    "description": "Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.\n\nSee for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)."
                 },
                 "enablePodEni": {
                     "type": "boolean",
@@ -834,9 +845,21 @@
                     "type": "boolean",
                     "description": "Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.\n\nDefaults to true."
                 },
+                "resolveConflictsOnCreate": {
+                    "type": "string",
+                    "description": "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs."
+                },
+                "resolveConflictsOnUpdate": {
+                    "type": "string",
+                    "description": "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs."
+                },
                 "securityContextPrivileged": {
                     "type": "boolean",
                     "description": "Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default"
+                },
+                "serviceAccountRoleArn": {
+                    "type": "string",
+                    "description": "The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.\n\n\t\t\t\t\t\tNote: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide."
                 },
                 "vethPrefix": {
                     "type": "string",
@@ -1964,6 +1987,13 @@
                     "type": "boolean",
                     "description": "Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`"
                 },
+                "configurationValues": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html)."
+                },
                 "customNetworkConfig": {
                     "type": "boolean",
                     "description": "Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.\n\nDefaults to false."
@@ -1971,6 +2001,10 @@
                 "disableTcpEarlyDemux": {
                     "type": "boolean",
                     "description": "Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency."
+                },
+                "enableNetworkPolicy": {
+                    "type": "boolean",
+                    "description": "Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.\n\nSee for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)."
                 },
                 "enablePodEni": {
                     "type": "boolean",
@@ -2016,9 +2050,31 @@
                     "type": "boolean",
                     "description": "Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.\n\nDefaults to true."
                 },
+                "resolveConflictsOnCreate": {
+                    "type": "string",
+                    "description": "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs."
+                },
+                "resolveConflictsOnUpdate": {
+                    "type": "string",
+                    "description": "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs."
+                },
                 "securityContextPrivileged": {
                     "type": "boolean",
                     "description": "Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default"
+                },
+                "serviceAccountRoleArn": {
+                    "type": "string",
+                    "description": "The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.\n\n\t\t\t\t\t\tNote: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide."
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "description": "Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level."
                 },
                 "vethPrefix": {
                     "type": "string",

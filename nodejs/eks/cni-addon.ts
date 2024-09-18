@@ -15,6 +15,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
+import * as deepmerge from "deepmerge";
 
 export interface VpcCniAddonOptions {
     clusterName: pulumi.Input<string>;
@@ -23,6 +24,50 @@ export interface VpcCniAddonOptions {
      * The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
      */
     clusterVersion?: pulumi.Input<string>;
+
+    /**
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+     */
+    resolveConflictsOnCreate?: pulumi.Input<string>;
+
+    /**
+     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+     */
+    resolveConflictsOnUpdate?: pulumi.Input<string>;
+
+    /**
+     * The Amazon Resource Name (ARN) of an
+     * existing IAM role to bind to the add-on's service account. The role must be
+     * assigned the IAM permissions required by the add-on. If you don't specify
+     * an existing IAM role, then the add-on uses the permissions assigned to the node
+     * IAM role. For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html)
+     * in the Amazon EKS User Guide.
+     *
+     * > **Note:** To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC)
+     * provider created for your cluster. For more information, [see Enabling IAM roles
+     * for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html)
+     * in the Amazon EKS User Guide.
+     */
+    serviceAccountRoleArn?: pulumi.Input<string>;
+
+    /**
+     * Key-value map of resource tags. If configured with a provider `defaultTags` configuration block present, tags with matching keys will overwrite those defined at the provider-level.
+     */
+    tags?: pulumi.Input<{
+        [key: string]: pulumi.Input<string>;
+    }>;
+
+    /**
+     * Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     */
+    configurationValues?: pulumi.Input<object>;
+
+    /**
+     * Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+     *
+     * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+     */
+    enableNetworkPolicy?: pulumi.Input<boolean>;
 
     /**
      * The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
@@ -102,27 +147,6 @@ export interface VpcCniAddonOptions {
      * Defaults to "stdout" to emit Pod logs for `kubectl logs`.
      */
     logFile?: pulumi.Input<string>;
-
-    /**
-     * Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-     *
-     * Defaults to the official AWS CNI image in ECR.
-     */
-    image?: pulumi.Input<string>;
-
-    /**
-     * Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-     *
-     * Defaults to the official AWS CNI image in ECR.
-     */
-    nodeAgentImage?: pulumi.Input<string>;
-
-    /**
-     * Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-     *
-     * Defaults to the official AWS CNI init container image in ECR.
-     */
-    initImage?: pulumi.Input<string>;
 
     /**
      * Specifies the veth prefix used to generate the host-side veth device
@@ -269,28 +293,46 @@ export class VpcCniAddon extends pulumi.ComponentResource {
             );
         }
 
+        const baseSettings = {
+            env: env,
+            init: {
+                env: initEnv,
+            },
+        };
+
+        if (args.enableNetworkPolicy) {
+            Object.assign(baseSettings, {
+                enableNetworkPolicy: pulumi
+                    .output(args.enableNetworkPolicy)
+                    .apply((val) => (val ? "true" : "false")),
+            });
+        }
+
+        const configurationValues = pulumi
+            .output(args.configurationValues ?? {})
+            .apply((config) => {
+                return deepmerge(baseSettings, config);
+            });
+
         this.addon = new aws.eks.Addon(
             name,
             {
                 clusterName: args.clusterName,
                 addonVersion: addonVersion,
                 addonName: "vpc-cni",
-                // this makes sure adoption of existing resources works and doesn't fail
-                resolveConflictsOnCreate: "OVERWRITE",
-                // do not overwrite existing configuration when updating the vpc-cni
-                resolveConflictsOnUpdate: "PRESERVE",
+                // OVERWRITE makes sure adoption of existing resources works and doesn't fail
+                resolveConflictsOnCreate: args.resolveConflictsOnCreate ?? "OVERWRITE",
+                // OVERWRITE makes sure updates to the addon do not fail
+                resolveConflictsOnUpdate: args.resolveConflictsOnUpdate ?? "OVERWRITE",
                 preserve: true,
-                configurationValues: pulumi.jsonStringify({
-                    env: env,
-                    init: {
-                        env: initEnv,
-                    },
-                }),
+                configurationValues: pulumi.jsonStringify(configurationValues),
+                serviceAccountRoleArn: args.serviceAccountRoleArn,
+                tags: args.tags,
             },
             { parent: this },
         );
 
-        if (args.image || args.initImage || args.nodeAgentImage || args.securityContextPrivileged) {
+        if (args.securityContextPrivileged) {
             this.createDaemonSetPatch(name, args, this.addon);
         }
 
@@ -304,31 +346,13 @@ export class VpcCniAddon extends pulumi.ComponentResource {
         addon: aws.eks.Addon,
     ): k8s.apps.v1.DaemonSetPatch {
         const containers: k8s.types.input.core.v1.ContainerPatch[] = [];
-        const initContainers: k8s.types.input.core.v1.ContainerPatch[] = [];
 
-        if (args.image || args.securityContextPrivileged) {
+        if (args.securityContextPrivileged) {
             containers.push({
                 name: "aws-node",
-                image: args.image,
-                securityContext: args.securityContextPrivileged
-                    ? {
-                          privileged: args.securityContextPrivileged,
-                      }
-                    : undefined,
-            });
-        }
-
-        if (args.nodeAgentImage) {
-            containers.push({
-                name: "aws-eks-nodeagent",
-                image: args.nodeAgentImage,
-            });
-        }
-
-        if (args.initImage) {
-            initContainers.push({
-                name: "aws-vpc-cni-init",
-                image: args.initImage,
+                securityContext: {
+                    privileged: args.securityContextPrivileged,
+                },
             });
         }
 
@@ -346,12 +370,15 @@ export class VpcCniAddon extends pulumi.ComponentResource {
                     template: {
                         spec: {
                             containers: containers.length > 0 ? containers : undefined,
-                            initContainers: initContainers.length > 0 ? initContainers : undefined,
                         },
                     },
                 },
             },
-            { parent: this, dependsOn: [addon] },
+            {
+                parent: this,
+                dependsOn: [addon],
+                retainOnDelete: true,
+            },
         );
     }
 }

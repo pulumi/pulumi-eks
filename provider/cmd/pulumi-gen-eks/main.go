@@ -2280,11 +2280,51 @@ func vpcCniProperties(cluster bool) map[string]schema.PropertySpec {
 			Description: "Pass privilege to containers securityContext. This is required when SELinux is enabled. " +
 				"This value will not be passed to the CNI config by default",
 		},
-	}
-
-	props["addonVersion"] = schema.PropertySpec{
-		TypeSpec:    schema.TypeSpec{Type: "string"},
-		Description: "The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.",
+		"configurationValues": {
+			TypeSpec: schema.TypeSpec{
+				Type:                 "object",
+				AdditionalProperties: &schema.TypeSpec{Ref: "pulumi.json#/Any"},
+			},
+			Description: "Custom configuration values for the vpc-cni addon. This object must match the schema derived from " +
+				"[describe-addon-configuration]" +
+				"(https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).",
+		},
+		"resolveConflictsOnCreate": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.\n" +
+				"Valid values are NONE and OVERWRITE.\n\nFor more details see the " +
+				"[CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).",
+		},
+		"resolveConflictsOnUpdate": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the" +
+				"Amazon EKS default value.\nValid values are NONE, OVERWRITE, and PRESERVE.\n\nFor more details see the " +
+				"[UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).",
+		},
+		"serviceAccountRoleArn": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. " +
+				"The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM " +
+				"role, then the add-on uses the permissions assigned to the node IAM role.\n\nFor more information, see " +
+				"[Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the " +
+				"Amazon EKS User Guide.\n\nNote: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) " +
+				"provider created for your cluster. For more information, see " +
+				"[Enabling IAM roles for service accounts on your cluster]" +
+				"(https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) " +
+				"in the Amazon EKS User Guide.",
+		},
+		"addonVersion": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "The version of the addon to use. If not specified, the latest version of the addon for the " +
+				"cluster's Kubernetes version will be used.",
+		},
+		"enableNetworkPolicy": {
+			TypeSpec: schema.TypeSpec{Type: "boolean"},
+			Description: "Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod " +
+				"communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.\n\n" +
+				"See for more information: " +
+				"[Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).",
+		},
 	}
 
 	if !cluster {
@@ -2293,8 +2333,20 @@ func vpcCniProperties(cluster bool) map[string]schema.PropertySpec {
 			Description: "The name of the EKS cluster.",
 		}
 		props["clusterVersion"] = schema.PropertySpec{
-			TypeSpec:    schema.TypeSpec{Type: "string"},
-			Description: "The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.",
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "The Kubernetes version of the cluster. This is used to determine the addon version to use if " +
+				"`addonVersion` is not specified.",
+		}
+		props["tags"] = schema.PropertySpec{
+			TypeSpec: schema.TypeSpec{
+				Type: "array",
+				Items: &schema.TypeSpec{
+					Type:                 "object",
+					AdditionalProperties: &schema.TypeSpec{Type: "string"},
+				},
+			},
+			Description: "Key-value map of resource tags. If configured with a provider default_tags configuration " +
+				"block present, tags with matching keys will overwrite those defined at the provider-level.",
 		}
 	}
 
