@@ -253,7 +253,7 @@ export interface VpcCniAddonOptions {
  * For more information about supported add-ons, see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
  */
 export class VpcCniAddon extends pulumi.ComponentResource {
-    public readonly addon: pulumi.Input<aws.eks.Addon>;
+    public readonly addon: pulumi.Output<aws.eks.Addon>;
 
     constructor(name: string, args?: VpcCniAddonOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:VpcCniAddon";
@@ -314,7 +314,7 @@ export class VpcCniAddon extends pulumi.ComponentResource {
                 return deepmerge(baseSettings, config);
             });
 
-        this.addon = new aws.eks.Addon(
+        const addon = new aws.eks.Addon(
             name,
             {
                 clusterName: args.clusterName,
@@ -331,9 +331,10 @@ export class VpcCniAddon extends pulumi.ComponentResource {
             },
             { parent: this },
         );
+        this.addon = pulumi.output(addon);
 
         if (args.securityContextPrivileged) {
-            this.createDaemonSetPatch(name, args, this.addon);
+            this.createDaemonSetPatch(name, args, addon);
         }
 
         this.registerOutputs({ addon: this.addon });
