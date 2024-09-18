@@ -10,61 +10,74 @@ project_name = pulumi.get_project()
 cluster1 = eks.Cluster(f"{project_name}-1")
 
 # Create an EKS cluster with a non-default configuration.
-vpc = awsx.ec2.Vpc(project_name,
-    tags={"Name": project_name}
-)
+vpc = awsx.ec2.Vpc(project_name, tags={"Name": project_name})
 
-cluster2 = eks.Cluster('eks-cluster',
-                          vpc_id=vpc.vpc_id,
-                          public_subnet_ids=vpc.public_subnet_ids,
-                          public_access_cidrs=['0.0.0.0/0'],
-                          desired_capacity=2,
-                          min_size=2,
-                          max_size=2,
-                          instance_type='t3.micro',
-                          # set storage class.
-                          storage_classes={"gp2": eks.StorageClassArgs(
-                              type='gp2', allow_volume_expansion=True, default=True, encrypted=True,)},
-                          enabled_cluster_log_types=[
-                              "api",
-                              "audit",
-                              "authenticator",
-                          ],)
+cluster2 = eks.Cluster(
+    "eks-cluster",
+    vpc_id=vpc.vpc_id,
+    public_subnet_ids=vpc.public_subnet_ids,
+    public_access_cidrs=["0.0.0.0/0"],
+    desired_capacity=2,
+    min_size=2,
+    max_size=2,
+    instance_type="t3.micro",
+    # set storage class.
+    storage_classes={
+        "gp2": eks.StorageClassArgs(
+            type="gp2",
+            allow_volume_expansion=True,
+            default=True,
+            encrypted=True,
+        )
+    },
+    enabled_cluster_log_types=[
+        "api",
+        "audit",
+        "authenticator",
+    ],
+)
 
 iam_role = aws.iam.Role(
     f"{project_name}-role",
-    assume_role_policy=pulumi.Output.json_dumps({
-        "Version": "2012-10-17",
-        "Statement": [{
-            "Action": "sts:AssumeRole",
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "ec2.amazonaws.com"
-            }
-        }]
-    })
+    assume_role_policy=pulumi.Output.json_dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Action": "sts:AssumeRole",
+                    "Effect": "Allow",
+                    "Principal": {"Service": "ec2.amazonaws.com"},
+                }
+            ],
+        }
+    ),
 )
 
-cluster3 = eks.Cluster(f"{project_name}-3",
-                            vpc_id=vpc.vpc_id,
-                            public_subnet_ids=vpc.public_subnet_ids,
-                            node_group_options=eks.ClusterNodeGroupOptionsArgs(
-                                desired_capacity=1,
-                                min_size=1,
-                                max_size=1,
-                                instance_type="t3.small"
-                            ),
-                            authentication_mode=eks.AuthenticationMode.API_AND_CONFIG_MAP,
-                            access_entries={
-                                f'{project_name}-role': eks.AccessEntryArgs(
-                                    principal_arn=iam_role.arn, kubernetes_groups=["test-group"], access_policies={
-                                        'view': eks.AccessPolicyAssociationArgs(
-                                            policy_arn="arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy",
-                                            access_scope=aws.eks.AccessPolicyAssociationAccessScopeArgs(namespaces=["default", "application"], type="namespace")
-                                        )
-                                    }
-                                )
-                            }
+cluster3 = eks.Cluster(
+    f"{project_name}-3",
+    vpc_id=vpc.vpc_id,
+    public_subnet_ids=vpc.public_subnet_ids,
+    node_group_options=eks.ClusterNodeGroupOptionsArgs(
+        desired_capacity=1, min_size=1, max_size=1, instance_type="t3.small"
+    ),
+    coredns_addon_options=eks.CoreDnsAddonOptionsArgs(
+        enabled=False,
+    ),
+    authentication_mode=eks.AuthenticationMode.API_AND_CONFIG_MAP,
+    access_entries={
+        f"{project_name}-role": eks.AccessEntryArgs(
+            principal_arn=iam_role.arn,
+            kubernetes_groups=["test-group"],
+            access_policies={
+                "view": eks.AccessPolicyAssociationArgs(
+                    policy_arn="arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy",
+                    access_scope=aws.eks.AccessPolicyAssociationAccessScopeArgs(
+                        namespaces=["default", "application"], type="namespace"
+                    ),
+                )
+            },
+        )
+    },
 )
 
 ##########################
@@ -82,18 +95,18 @@ coredns = eks.Addon(
     addon_version=coredns_version.version,
     resolve_conflicts_on_update="PRESERVE",
     configuration_values={
-    "replicaCount": 4,
-    "resources": {
-      "limits": {
-        "cpu": "100m",
-        "memory": "150Mi",
-      },
-      "requests": {
-        "cpu": "100m",
-        "memory": "150Mi",
-      },
+        "replicaCount": 4,
+        "resources": {
+            "limits": {
+                "cpu": "100m",
+                "memory": "150Mi",
+            },
+            "requests": {
+                "cpu": "100m",
+                "memory": "150Mi",
+            },
+        },
     },
-  },
 )
 
 
