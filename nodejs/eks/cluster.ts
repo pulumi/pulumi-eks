@@ -644,6 +644,7 @@ export function createCore(
                 clusterName: eksCluster.name,
                 addonName: "kube-proxy",
                 preserve: true,
+                tags: args.tags,
                 resolveConflictsOnCreate:
                     args.kubeProxyAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
                 resolveConflictsOnUpdate:
@@ -673,6 +674,7 @@ export function createCore(
             {
                 clusterName: eksCluster.name,
                 addonName: "coredns",
+                tags: args.tags,
                 preserve: true,
                 addonVersion: corednsVersion,
                 resolveConflictsOnCreate:
