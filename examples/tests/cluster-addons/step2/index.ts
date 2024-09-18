@@ -5,9 +5,6 @@ import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 import * as iam from "./iam";
 
-const config = new pulumi.Config();
-const vpcCniVersion = config.require("defaultVpcCniVersion");
-
 // IAM roles for the node groups.
 const role = iam.createRole("cluster-addons");
 
@@ -25,7 +22,6 @@ const cluster = new eks.Cluster("cluster-addons", {
   publicSubnetIds: eksVpc.publicSubnetIds,
   privateSubnetIds: eksVpc.privateSubnetIds,
   vpcCniOptions: {
-    addonVersion: vpcCniVersion,
     disableTcpEarlyDemux: true,
     logLevel: "INFO",
     securityContextPrivileged: true,

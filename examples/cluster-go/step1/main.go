@@ -120,7 +120,6 @@ func main() {
 			IpFamily:         pulumi.StringPtr("ipv6"),
 			VpcId:            vpc.ID().ToStringOutput(),
 			SubnetIds:        pulumi.StringArray(subnetIDs),
-			UseDefaultVpcCni: func() *bool { t := true; return &t }(),
 			NodeGroupOptions: &eks.ClusterNodeGroupOptionsArgs{
 				DesiredCapacity: pulumi.IntPtr(2),
 				MinSize:         pulumi.IntPtr(2),

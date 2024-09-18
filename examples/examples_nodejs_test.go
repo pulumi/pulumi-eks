@@ -22,36 +22,26 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"testing"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/utils/ptr"
 
 	"github.com/pulumi/providertest/pulumitest"
+	"github.com/pulumi/providertest/pulumitest/optnewstack"
 	"github.com/pulumi/providertest/pulumitest/opttest"
 	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto/optup"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAccCluster(t *testing.T) {
-
-	eksClient := createEksClient(t)
-	addonInfo, err := utils.FindDefaultAddonVersion(eksClient, "vpc-cni")
-	latestVer, err := utils.FindMostRecentAddonVersion(eksClient, "1.30", "vpc-cni")
-	if err != nil {
-		t.Fatalf("Error finding addon version: %v", err)
-	}
-	if (addonInfo == "") {
-		t.Fatalf("No addon version found")
-	}
-	if (latestVer == "") {
-		t.Fatalf("No addon version found")
-	}
-
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir:           path.Join(getCwd(t), "./cluster"),
@@ -68,43 +58,6 @@ func TestAccCluster(t *testing.T) {
 
 				// let's test there's a iamRoleArn specified for the cluster
 				assert.NotEmpty(t, info.Outputs["iamRoleArn"])
-
-				region := getEnvRegion(t)
-				eksClient := createEksClient(t)
-				assert.NoError(t, utils.ValidateDaemonSet(t, info.Outputs["kubeconfig2"], "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
-					var initContainerFound bool
-					for _, ic := range ds.Spec.Template.Spec.InitContainers {
-						if ic.Name != "aws-vpc-cni-init" {
-							continue
-						}
-
-						initContainerFound = true
-
-						var tcpEarly bool
-						for _, env := range ic.Env {
-							if env.Name == "DISABLE_TCP_EARLY_DEMUX" {
-								tcpEarly = env.Value == "true"
-							}
-						}
-						assert.True(t, tcpEarly)
-					}
-					assert.True(t, initContainerFound)
-
-					var awsNodeContainerFound bool
-					var awsNodeAgentContainerFound bool
-					for _, c := range ds.Spec.Template.Spec.Containers {
-						switch c.Name {
-						case "aws-node":
-							awsNodeContainerFound = true
-						case "aws-eks-nodeagent":
-							awsNodeAgentContainerFound = true
-						}
-					}
-					assert.True(t, awsNodeContainerFound)
-					assert.True(t, awsNodeAgentContainerFound)
-				}))
-
-				utils.GetInstalledAddon(t, eksClient, region, "vpc-cni")
 
 				// Ensure that cluster 4 only has ARM64 nodes.
 				assert.NoError(t, utils.ValidateNodes(t, info.Outputs["kubeconfig4"], func(nodes *corev1.NodeList) {
@@ -689,42 +642,32 @@ func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 
 // TestAccCNIAcrossUpdates tests that the CNI manifest is reapplied when the EKS provider changes its base manifest.
 func TestAccCNIAcrossUpdates(t *testing.T) {
-	t.Skip("TODO flostadler: Fix this test, it'll need to test updating from the old self managed version to the new addon")
-	t.Log("Running `pulumi up` with v2.1.0 of the EKS provider")
-	pt := pulumitest.NewPulumiTest(t, "ensure-cni-upgrade", opttest.AttachDownloadedPlugin("eks", "2.1.0"))
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	cwd, err := os.Getwd()
+	require.NoError(t, err)
+
+	region := getEnvRegion(t)
+	eksClient := createEksClient(t)
+	mostRecentVpcCniVersion, err := utils.FindMostRecentAddonVersion(eksClient, "vpc-cni")
+	require.NoError(t, err)
+
+	t.Log("Running `pulumi up` with v2.7.9 of the EKS provider")
+
+	pt := pulumitest.NewPulumiTest(t, "ensure-cni-upgrade", opttest.DownloadProviderVersion("eks", "2.7.9"), opttest.NewStackOptions(optnewstack.DisableAutoDestroy()))
+	pt.SetConfig("aws:region", region)
 	result := pt.Up()
 
 	t.Log("Ensuring a kubeconfig output is present")
 	kcfg, ok := result.Outputs["kubeconfig"]
 	require.True(t, ok)
 
-	t.Log("Validating that the v1.11.0 CNI manifest is applied correctly")
+	t.Log("Validating that the v1.16.0 CNI manifest is applied correctly")
 	var awsNodeContainerFound bool
 	assert.NoError(t, utils.ValidateDaemonSet(t, kcfg.Value, "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
-		for _, c := range ds.Spec.Template.Spec.Containers {
-			switch c.Name {
-			case "aws-node":
-				awsNodeContainerFound = true
-				assert.Equal(t, "602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon-k8s-cni:v1.11.0", c.Image)
-			}
-		}
-	}))
-	assert.True(t, awsNodeContainerFound)
-
-	t.Log("Running `pulumi up` with the latest version of the EKS provider")
-	pt = pt.CopyToTempDir(opttest.Defaults())
-
-	prevResult := pt.Preview()
-	assert.Equal(t, 1, len(prevResult.ChangeSummary))
-
-	result = pt.Up()
-	kcfg, ok = result.Outputs["kubeconfig"]
-	require.True(t, ok)
-
-	t.Log("Validating that the CNI manifests has been updated to the latest v1.16.0 version")
-	awsNodeContainerFound = false
-	assert.NoError(t, utils.ValidateDaemonSet(t, kcfg.Value, "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
-		// The exact image names/versions are obtained from the manifest in `nodejs/eks/cni/aws-k8s-cni.yaml`.
+		// The exact image names/versions are obtained from the manifest for v2.7.9 https://github.com/pulumi/pulumi-eks/blob/9d80b5df0dc491f3dd09c159a0183e40e8350bba/nodejs/eks/cni/aws-k8s-cni.yaml
 		for _, c := range ds.Spec.Template.Spec.Containers {
 			switch c.Name {
 			case "aws-node":
@@ -736,6 +679,38 @@ func TestAccCNIAcrossUpdates(t *testing.T) {
 		}
 	}))
 	assert.True(t, awsNodeContainerFound)
+	state := pt.ExportStack()
+
+	t.Log("Running `pulumi up` with the latest version of the EKS provider")
+	pt = pt.CopyToTempDir(
+		opttest.Defaults(),
+		opttest.NewStackOptions(optnewstack.EnableAutoDestroy()),
+		opttest.DownloadProviderVersion("eks", "2.7.9"),
+		opttest.LocalProviderPath("eks", filepath.Join(cwd, "..", "bin")),
+		opttest.YarnLink("@pulumi/eks"),
+	)
+	pt.SetConfig("aws:region", region)
+	pt.ImportStack(state)
+
+	prevResult := pt.Preview()
+	assert.NotContains(t, prevResult.ChangeSummary, apitype.OpReplace, "Expected no resources to be replaced")
+
+	result = pt.Up()
+
+	t.Log("Validating that the CNI manifests has been updated to the latest version")
+
+	utils.ValidateVpcCni(t, eksClient, utils.VpcCniValidation{
+		ClusterName:          result.Outputs["clusterName"].Value.(string),
+		Kubeconfig:           result.Outputs["kubeconfig"].Value,
+		ExpectedAddonVersion: mostRecentVpcCniVersion,
+		ExpectedInitEnvVars: map[string]string{
+			"DISABLE_TCP_EARLY_DEMUX": "true",
+		},
+		ExpectedEnvVars: map[string]string{
+			"AWS_VPC_K8S_CNI_LOGLEVEL": "INFO",
+		},
+		SecurityContextPrivileged: ptr.To(true),
+	})
 
 	t.Log("Ensuring that re-running `pulumi up` results in no changes and no spurious diffs")
 	pt.Up(optup.ExpectNoChanges())
@@ -944,21 +919,24 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 	programTestWithExtraOptions(t, &test, nil)
 }
 
+// TestAccClusterAddons tests that the cluster addons are applied correctly and can be updated.
 func TestAccClusterAddons(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// region := getEnvRegion(t)
 	eksClient := createEksClient(t)
 	defaultVpcCniVersion, err := utils.FindDefaultAddonVersion(eksClient, "vpc-cni")
+	require.NoError(t, err)
+	mostRecentVpcCniVersion, err := utils.FindMostRecentAddonVersion(eksClient, "vpc-cni")
 	require.NoError(t, err)
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "tests", "cluster-addons"),
 			Config: map[string]string{
-				"vpcCniVersion": defaultVpcCniVersion,
+				"defaultVpcCniVersion": defaultVpcCniVersion,
+				"latestVpcCniVersion":  mostRecentVpcCniVersion,
 			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
@@ -966,47 +944,52 @@ func TestAccClusterAddons(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 
-				clusterName := info.Outputs["clusterName"].(string);
-				// clusterVersion := info.Outputs["clusterVersion"].(string);
-				
-				assert.NoError(t, utils.ValidateDaemonSet(t, info.Outputs["kubeconfig"], "kube-system", "aws-node", func(ds *appsv1.DaemonSet) {
-					var initContainerFound bool
-					for _, ic := range ds.Spec.Template.Spec.InitContainers {
-						if ic.Name != "aws-vpc-cni-init" {
-							continue
-						}
+				// options are set in tests/cluster-addons
+				utils.ValidateVpcCni(t, eksClient, utils.VpcCniValidation{
+					ClusterName:          info.Outputs["clusterName"].(string),
+					Kubeconfig:           info.Outputs["kubeconfig"],
+					ExpectedAddonVersion: defaultVpcCniVersion,
+					ExpectedInitEnvVars: map[string]string{
+						"DISABLE_TCP_EARLY_DEMUX": "true",
+					},
+					ExpectedEnvVars: map[string]string{
+						"AWS_VPC_K8S_CNI_LOGLEVEL":          "INFO",
+						"POD_SECURITY_GROUP_ENFORCING_MODE": "standard",
+						"ENABLE_POD_ENI":                    "true",
+					},
+					SecurityContextPrivileged: ptr.To(true),
+					NetworkPoliciesEnabled:    ptr.To(true),
+				})
+			},
+			// step2 doesn't specify a vpcCniVersion, so it should use the most recent for the cluster's version
+			EditDirs: []integration.EditDir{
+				{
+					Dir:      path.Join(getCwd(t), "tests", "cluster-addons", "step2"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
 
-						initContainerFound = true
-
-						var tcpEarly bool
-						for _, env := range ic.Env {
-							// set in the vpcCniOptions of the cluster
-							if env.Name == "DISABLE_TCP_EARLY_DEMUX" {
-								tcpEarly = env.Value == "true"
-							}
-						}
-						assert.True(t, tcpEarly, "expected DISABLE_TCP_EARLY_DEMUX to be set to true")
-					}
-					assert.True(t, initContainerFound)
-
-					var awsNodeContainerFound bool
-					var awsNodeAgentContainerFound bool
-					for _, c := range ds.Spec.Template.Spec.Containers {
-						switch c.Name {
-						case "aws-node":
-							awsNodeContainerFound = true
-						case "aws-eks-nodeagent":
-							awsNodeAgentContainerFound = true
-						}
-					}
-					assert.True(t, awsNodeContainerFound)
-					assert.True(t, awsNodeAgentContainerFound)
-				}))
-
-				addon, err := utils.GetInstalledAddon(t, eksClient, clusterName, "vpc-cni")
-				require.NoError(t, err)
-
-				assert.Equal(t, defaultVpcCniVersion, *addon.AddonVersion, "expected vpc-cni version to be %s", defaultVpcCniVersion)
+						/ options are set in tests/cluster-addons
+						utils.ValidateVpcCni(t, eksClient, utils.VpcCniValidation{
+							ClusterName:          info.Outputs["clusterName"].(string),
+							Kubeconfig:           info.Outputs["kubeconfig"],
+							ExpectedAddonVersion: mostRecentVpcCniVersion,
+							ExpectedInitEnvVars: map[string]string{
+								"DISABLE_TCP_EARLY_DEMUX": "true",
+							},
+							ExpectedEnvVars: map[string]string{
+								"AWS_VPC_K8S_CNI_LOGLEVEL":          "INFO",
+								"POD_SECURITY_GROUP_ENFORCING_MODE": "standard",
+								"ENABLE_POD_ENI":                    "true",
+							},
+							SecurityContextPrivileged: ptr.To(true),
+							NetworkPoliciesEnabled:    ptr.To(true),
+						})
+					},
+				},
 			},
 		})
 
