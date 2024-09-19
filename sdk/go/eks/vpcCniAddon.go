@@ -28,6 +28,14 @@ func NewVpcCniAddon(ctx *pulumi.Context,
 	if args.ClusterName == nil {
 		return nil, errors.New("invalid value for required argument 'ClusterName'")
 	}
+	if args.ResolveConflictsOnCreate == nil {
+		resolveConflictsOnCreate_ := ResolveConflictsOnCreate("OVERWRITE")
+		args.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
+	}
+	if args.ResolveConflictsOnUpdate == nil {
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("OVERWRITE")
+		args.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
+	}
 	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource VpcCniAddon
 	err := ctx.RegisterResource("eks:index:VpcCniAddon", name, args, &resource, opts...)
@@ -115,16 +123,10 @@ type vpcCniAddonArgs struct {
 	//
 	// Defaults to true.
 	NodePortSupport *bool `pulumi:"nodePortSupport"`
-	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-	// Valid values are NONE and OVERWRITE.
-	//
-	// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
-	ResolveConflictsOnCreate *string `pulumi:"resolveConflictsOnCreate"`
-	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-	// Valid values are NONE, OVERWRITE, and PRESERVE.
-	//
-	// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
-	ResolveConflictsOnUpdate *string `pulumi:"resolveConflictsOnUpdate"`
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+	ResolveConflictsOnUpdate *ResolveConflictsOnUpdate `pulumi:"resolveConflictsOnUpdate"`
 	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 	SecurityContextPrivileged *bool `pulumi:"securityContextPrivileged"`
 	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
@@ -207,16 +209,10 @@ type VpcCniAddonArgs struct {
 	//
 	// Defaults to true.
 	NodePortSupport pulumi.BoolPtrInput
-	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-	// Valid values are NONE and OVERWRITE.
-	//
-	// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
-	ResolveConflictsOnCreate pulumi.StringPtrInput
-	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-	// Valid values are NONE, OVERWRITE, and PRESERVE.
-	//
-	// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
-	ResolveConflictsOnUpdate pulumi.StringPtrInput
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+	ResolveConflictsOnCreate *ResolveConflictsOnCreate
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+	ResolveConflictsOnUpdate *ResolveConflictsOnUpdate
 	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 	SecurityContextPrivileged pulumi.BoolPtrInput
 	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.

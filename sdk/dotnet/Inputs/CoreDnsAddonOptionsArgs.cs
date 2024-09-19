@@ -12,8 +12,20 @@ namespace Pulumi.Eks.Inputs
 
     public sealed class CoreDnsAddonOptionsArgs : global::Pulumi.ResourceArgs
     {
+        [Input("configurationValues")]
+        private InputMap<object>? _configurationValues;
+
         /// <summary>
-        /// Whether or not to create the Addon in the cluster
+        /// Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        /// </summary>
+        public InputMap<object> ConfigurationValues
+        {
+            get => _configurationValues ?? (_configurationValues = new InputMap<object>());
+            set => _configurationValues = value;
+        }
+
+        /// <summary>
+        /// Whether or not to create the `coredns` Addon in the cluster
         /// </summary>
         [Input("enabled")]
         public bool? Enabled { get; set; }

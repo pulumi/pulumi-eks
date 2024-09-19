@@ -136,22 +136,16 @@ namespace Pulumi.Eks.Inputs
         public Input<bool>? NodePortSupport { get; set; }
 
         /// <summary>
-        /// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-        /// Valid values are NONE and OVERWRITE.
-        /// 
-        /// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+        /// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
         /// </summary>
         [Input("resolveConflictsOnCreate")]
-        public Input<string>? ResolveConflictsOnCreate { get; set; }
+        public Pulumi.Eks.ResolveConflictsOnCreate? ResolveConflictsOnCreate { get; set; }
 
         /// <summary>
-        /// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-        /// Valid values are NONE, OVERWRITE, and PRESERVE.
-        /// 
-        /// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+        /// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
         /// </summary>
         [Input("resolveConflictsOnUpdate")]
-        public Input<string>? ResolveConflictsOnUpdate { get; set; }
+        public Pulumi.Eks.ResolveConflictsOnUpdate? ResolveConflictsOnUpdate { get; set; }
 
         /// <summary>
         /// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
@@ -201,6 +195,8 @@ namespace Pulumi.Eks.Inputs
 
         public VpcCniOptionsArgs()
         {
+            ResolveConflictsOnCreate = Pulumi.Eks.ResolveConflictsOnCreate.Overwrite;
+            ResolveConflictsOnUpdate = Pulumi.Eks.ResolveConflictsOnUpdate.Overwrite;
         }
         public static new VpcCniOptionsArgs Empty => new VpcCniOptionsArgs();
     }
