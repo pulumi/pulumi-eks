@@ -15,7 +15,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import { Cluster } from "./cluster";
-import * as deepmerge from "deepmerge";
 
 /**
  * AddonOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes. This is obtained from
@@ -57,9 +56,6 @@ export class Addon extends pulumi.ComponentResource {
     }
 }
 
-export type ConfigurationValue = string | number | boolean | undefined | ConfigurationValues;
-export type ConfigurationValues = { [key: string]: pulumi.Input<ConfigurationValue> };
-
 // Sorts the keys of an object to ensure the output is deterministic.
 function stringifyReplacer(key: string, value: any) {
     return value instanceof Object &&
@@ -74,21 +70,10 @@ function stringifyReplacer(key: string, value: any) {
 }
 
 /**
- * Deeply merges the provided configuration values with the optional base settings and json stringifies it. Returns undefined if no values and base settings are provided.
- * If a key exists in both the base settings and the provided values, the value from the provided values will be used.
+ * Creates the json based addon configuration with deterministic ordering of keys. Returns undefined if no values are provided.
  */
-export function createAddonConfiguration(
+export function stringifyAddonConfiguration(
     values: pulumi.Input<object> | undefined,
-    baseSettings?: ConfigurationValues,
 ): pulumi.Output<string> | undefined {
-    if (!values && !baseSettings) {
-        return undefined;
-    }
-
-    const merged = pulumi.all([values, baseSettings]).apply(([values, base]) => {
-        return deepmerge(base ?? {}, values ?? {});
-    });
-
-    // We need to sort the keys to ensure the output is deterministic.
-    return pulumi.jsonStringify(merged, stringifyReplacer);
+    return values ? pulumi.jsonStringify(values, stringifyReplacer) : undefined;
 }

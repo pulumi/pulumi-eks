@@ -13,59 +13,20 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { createAddonConfiguration, ConfigurationValues } from "./addon";
+import { stringifyAddonConfiguration } from "./addon";
 
-describe("createAddonConfiguration", () => {
-    it("should return undefined if both values and baseSettings are undefined", async () => {
-        const result = createAddonConfiguration(undefined, undefined);
+describe("stringifyAddonConfiguration", () => {
+    it("should return undefined if the configuration values are undefined", async () => {
+        const result = stringifyAddonConfiguration(undefined);
         expect(result).toBeUndefined();
     });
 
-    it("should return JSON stringified values if baseSettings is undefined", async () => {
+    it("should return JSON stringified configuration values", async () => {
         const values = { key1: "value1", key2: 2 };
-        const result = createAddonConfiguration(values, undefined);
+        const result = stringifyAddonConfiguration(values);
         expect(result).toBeDefined();
         await promisify(result).then((r) => {
             expect(JSON.parse(r)).toStrictEqual(values);
-        });
-    });
-
-    it("should return JSON stringified baseSettings if values is undefined", async () => {
-        const baseSettings = { key1: "value1", key2: 2 };
-        const result = createAddonConfiguration(undefined, baseSettings);
-        expect(result).toBeDefined();
-        await promisify(result).then((r) => {
-            expect(JSON.parse(r)).toStrictEqual(baseSettings);
-        });
-    });
-
-    it("should deeply merge values and baseSettings", async () => {
-        const values = { deeply: { nested: { key1: "val1" } }, nested: { key1: "other-val1" } };
-        const baseSettings: ConfigurationValues = {
-            deeply: { nested: { key2: "val2" } },
-            nested: { key2: "other-val2" },
-        };
-        const expectedMerged = {
-            deeply: { nested: { key2: "val2", key1: "val1" } },
-            nested: { key2: "other-val2", key1: "other-val1" },
-        };
-
-        const result = createAddonConfiguration(values, baseSettings);
-        expect(result).toBeDefined();
-        await promisify(result).then((r) => {
-            expect(JSON.parse(r)).toStrictEqual(expectedMerged);
-        });
-    });
-
-    it("should allow overwriting baseSettings", async () => {
-        const values = { key1: "newValue1", key3: true };
-        const baseSettings: ConfigurationValues = { key1: "will be overwritten", key2: 2 };
-        const expectedMerged = { key1: "newValue1", key2: 2, key3: true };
-
-        const result = createAddonConfiguration(values, baseSettings);
-        expect(result).toBeDefined();
-        await promisify(result).then((r) => {
-            expect(JSON.parse(r)).toStrictEqual(expectedMerged);
         });
     });
 
@@ -77,20 +38,13 @@ describe("createAddonConfiguration", () => {
                 deeply: new Promise((resolve) => resolve({ nested: { input: "input1" } })),
             }),
         );
-        const baseSettings: ConfigurationValues = {
-            deeply: new Promise((resolve) =>
-                resolve({ nested: { key1: "val1", input: "will be overwritten" } }),
-            ),
-            nested: new Promise((resolve) => resolve({ key2: "other-val2", key1: "other-val1" })),
-        };
         const expectedMerged = {
             regular: "someVal",
             input: "input1",
-            deeply: { nested: { key1: "val1", input: "input1" } },
-            nested: { key2: "other-val2", key1: "other-val1" },
+            deeply: { nested: { input: "input1" } },
         };
 
-        const result = createAddonConfiguration(values, baseSettings);
+        const result = stringifyAddonConfiguration(values);
         expect(result).toBeDefined();
         await promisify(result).then((r) => {
             expect(JSON.parse(r)).toStrictEqual(expectedMerged);
@@ -111,7 +65,7 @@ describe("createAddonConfiguration", () => {
             nestedInput: { existing: true },
         };
 
-        const result = createAddonConfiguration(values);
+        const result = stringifyAddonConfiguration(values);
         expect(result).toBeDefined();
         await promisify(result).then((r) => {
             expect(JSON.parse(r)).toStrictEqual(expectedMerged);
@@ -134,8 +88,8 @@ describe("createAddonConfiguration", () => {
             a: "aVal",
         };
 
-        const result = createAddonConfiguration(values);
-        const reverseResult = createAddonConfiguration(reverse);
+        const result = stringifyAddonConfiguration(values);
+        const reverseResult = stringifyAddonConfiguration(reverse);
         expect(result).toBeDefined();
         expect(reverseResult).toBeDefined();
         await promisify(pulumi.all([result, reverseResult])).then(([result, reverseResult]) => {
@@ -202,8 +156,8 @@ describe("createAddonConfiguration", () => {
             ),
         };
 
-        const result = createAddonConfiguration(values);
-        const reverseResult = createAddonConfiguration(reverse);
+        const result = stringifyAddonConfiguration(values);
+        const reverseResult = stringifyAddonConfiguration(reverse);
         expect(result).toBeDefined();
         expect(reverseResult).toBeDefined();
         await promisify(pulumi.all([result, reverseResult])).then(([result, reverseResult]) => {

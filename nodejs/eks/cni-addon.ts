@@ -15,7 +15,8 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
-import { ConfigurationValues, createAddonConfiguration } from "./addon";
+import { stringifyAddonConfiguration } from "./addon";
+import { isObject } from "./utilities";
 
 export interface VpcCniAddonOptions extends CniEnvVariables {
     clusterName: pulumi.Input<string>;
@@ -287,18 +288,11 @@ export class VpcCniAddon extends pulumi.ComponentResource {
             );
         }
 
-        const baseSettings = {
-            env: env,
-            init: {
-                env: initEnv,
-            },
-        };
-
-        if (args.enableNetworkPolicy) {
-            Object.assign(baseSettings, {
-                enableNetworkPolicy: pulumi.output(args.enableNetworkPolicy).apply(stringifyBool),
-            });
-        }
+        const configurationValues = pulumi
+            .all([env, initEnv, args.enableNetworkPolicy, args.configurationValues ?? {}])
+            .apply(([env, initEnv, enableNetworkPolicy, configurationValues]) =>
+                mergeConfigurationValues(env, initEnv, enableNetworkPolicy, configurationValues),
+            );
 
         const addon = new aws.eks.Addon(
             name,
@@ -311,10 +305,7 @@ export class VpcCniAddon extends pulumi.ComponentResource {
                 // OVERWRITE makes sure updates to the addon do not fail
                 resolveConflictsOnUpdate: args.resolveConflictsOnUpdate ?? "OVERWRITE",
                 preserve: true,
-                configurationValues: createAddonConfiguration(
-                    args.configurationValues,
-                    baseSettings,
-                ),
+                configurationValues: stringifyAddonConfiguration(configurationValues),
                 serviceAccountRoleArn: args.serviceAccountRoleArn,
                 tags: args.tags,
             },
@@ -374,8 +365,8 @@ export class VpcCniAddon extends pulumi.ComponentResource {
 }
 
 export type ComputedEnv = {
-    env: ConfigurationValues;
-    initEnv: ConfigurationValues;
+    env: Record<string, pulumi.Output<string>>;
+    initEnv: Record<string, pulumi.Output<string>>;
 };
 
 export function computeEnv(args: CniEnvVariables): ComputedEnv {
@@ -540,6 +531,47 @@ export function computeEnv(args: CniEnvVariables): ComputedEnv {
             return acc;
         }, {}),
     };
+}
+
+/**
+ * Merges the provided configuration values with the given environment variables, network policy flag, and init container environment variables.
+ */
+export function mergeConfigurationValues(
+    env: Record<string, string>,
+    initEnv: Record<string, string>,
+    enableNetworkPolicy: boolean | undefined,
+    configurationValues: object | undefined,
+): object {
+    const config = {};
+    Object.assign(config, configurationValues);
+
+    if (!("enableNetworkPolicy" in config) && enableNetworkPolicy !== undefined) {
+        Object.assign(config, { enableNetworkPolicy: stringifyBool(enableNetworkPolicy) });
+    }
+
+    if ("env" in config && isObject(config.env)) {
+        config.env = { ...env, ...config.env };
+    } else {
+        Object.assign(config, { env });
+    }
+
+    if (
+        "init" in config &&
+        isObject(config.init) &&
+        "env" in config.init &&
+        isObject(config.init.env)
+    ) {
+        config.init.env = { ...initEnv, ...config.init.env };
+    } else if (initEnv && "init" in config && isObject(config.init)) {
+        config.init = {
+            env: initEnv,
+            ...config.init,
+        };
+    } else {
+        Object.assign(config, { init: { env: initEnv } });
+    }
+
+    return config;
 }
 
 function stringifyBool(val: boolean): string {

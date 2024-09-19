@@ -44,7 +44,7 @@ import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import { InputTags, UserStorageClasses } from "./utils";
 import { VpcCniAddon, VpcCniAddonOptions } from "./cni-addon";
-import { createAddonConfiguration } from "./addon";
+import { stringifyAddonConfiguration } from "./addon";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -647,7 +647,7 @@ export function createCore(
                 resolveConflictsOnUpdate:
                     args.kubeProxyAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
                 addonVersion: kubeProxyVersion,
-                configurationValues: createAddonConfiguration(
+                configurationValues: stringifyAddonConfiguration(
                     args.kubeProxyAddonOptions?.configurationValues,
                 ),
             },
@@ -669,11 +669,18 @@ export function createCore(
                   )
                   .apply((addonVersion) => addonVersion.version);
 
-        const baseSettings = {
-            computeType: pulumi
-                .output(args.fargate)
-                .apply((fargate) => (fargate ? "Fargate" : undefined)),
-        };
+        const configurationValues = pulumi
+            .all([args.fargate, args.corednsAddonOptions?.configurationValues])
+            .apply(([fargate, configurationValues]) => {
+                if (fargate) {
+                    return {
+                        computeType: "Fargate",
+                        ...configurationValues,
+                    };
+                } else {
+                    return configurationValues;
+                }
+            });
 
         const corednsAddon = new aws.eks.Addon(
             `${name}-coredns`,
@@ -687,10 +694,7 @@ export function createCore(
                     args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
                 resolveConflictsOnUpdate:
                     args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
-                configurationValues: createAddonConfiguration(
-                    args.corednsAddonOptions?.configurationValues,
-                    baseSettings,
-                ),
+                configurationValues: stringifyAddonConfiguration(configurationValues),
             },
             { parent, provider },
         );
