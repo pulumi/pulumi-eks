@@ -8,8 +8,9 @@ import * as enums from "../types/enums";
 
 import * as pulumiAws from "@pulumi/aws";
 import * as pulumiKubernetes from "@pulumi/kubernetes";
+import * as utilities from "../utilities";
 
-import {VpcCni} from "..";
+import {VpcCniAddon} from "..";
 
 /**
  * Access entries allow an IAM principal to access your cluster.
@@ -346,11 +347,41 @@ export interface CoreDataArgs {
     /**
      * The VPC CNI for the cluster.
      */
-    vpcCni?: pulumi.Input<VpcCni>;
+    vpcCni?: pulumi.Input<VpcCniAddon>;
     /**
      * ID of the cluster's VPC.
      */
     vpcId: pulumi.Input<string>;
+}
+
+export interface CoreDnsAddonOptionsArgs {
+    /**
+     * Whether or not to create the Addon in the cluster
+     */
+    enabled?: boolean;
+    /**
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+     */
+    resolveConflictsOnCreate?: enums.ResolveConflictsOnCreate;
+    /**
+     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+     */
+    resolveConflictsOnUpdate?: enums.ResolveConflictsOnUpdate;
+    /**
+     * The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+     */
+    version?: pulumi.Input<string>;
+}
+/**
+ * coreDnsAddonOptionsArgsProvideDefaults sets the appropriate defaults for CoreDnsAddonOptionsArgs
+ */
+export function coreDnsAddonOptionsArgsProvideDefaults(val: CoreDnsAddonOptionsArgs): CoreDnsAddonOptionsArgs {
+    return {
+        ...val,
+        enabled: (val.enabled) ?? true,
+        resolveConflictsOnCreate: (val.resolveConflictsOnCreate) ?? "OVERWRITE",
+        resolveConflictsOnUpdate: (val.resolveConflictsOnUpdate) ?? "OVERWRITE",
+    };
 }
 
 /**
@@ -379,6 +410,36 @@ export interface FargateProfileArgs {
      * Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
      */
     subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+}
+
+export interface KubeProxyAddonOptionsArgs {
+    /**
+     * Whether or not to create the `kube-proxy` Addon in the cluster
+     */
+    enabled?: boolean;
+    /**
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+     */
+    resolveConflictsOnCreate?: enums.ResolveConflictsOnCreate;
+    /**
+     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+     */
+    resolveConflictsOnUpdate?: enums.ResolveConflictsOnUpdate;
+    /**
+     * The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+     */
+    version?: pulumi.Input<string>;
+}
+/**
+ * kubeProxyAddonOptionsArgsProvideDefaults sets the appropriate defaults for KubeProxyAddonOptionsArgs
+ */
+export function kubeProxyAddonOptionsArgsProvideDefaults(val: KubeProxyAddonOptionsArgs): KubeProxyAddonOptionsArgs {
+    return {
+        ...val,
+        enabled: (val.enabled) ?? true,
+        resolveConflictsOnCreate: (val.resolveConflictsOnCreate) ?? "OVERWRITE",
+        resolveConflictsOnUpdate: (val.resolveConflictsOnUpdate) ?? "OVERWRITE",
+    };
 }
 
 /**
@@ -539,6 +600,10 @@ export interface UserMappingArgs {
  */
 export interface VpcCniOptionsArgs {
     /**
+     * The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+     */
+    addonVersion?: pulumi.Input<string>;
+    /**
      * Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
      */
     cniConfigureRpfilter?: pulumi.Input<boolean>;
@@ -551,6 +616,10 @@ export interface VpcCniOptionsArgs {
      */
     cniExternalSnat?: pulumi.Input<boolean>;
     /**
+     * Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     */
+    configurationValues?: pulumi.Input<{[key: string]: any}>;
+    /**
      * Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
      *
      * Defaults to false.
@@ -561,9 +630,11 @@ export interface VpcCniOptionsArgs {
      */
     disableTcpEarlyDemux?: pulumi.Input<boolean>;
     /**
-     * VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode. IPv6 is only supported in Prefix Delegation mode, so ENABLE_PREFIX_DELEGATION needs to set to true if VPC CNI is configured to operate in IPv6 mode. Prefix delegation is only supported on nitro instances.
+     * Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+     *
+     * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
      */
-    enableIpv6?: pulumi.Input<boolean>;
+    enableNetworkPolicy?: pulumi.Input<boolean>;
     /**
      * Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
      */
@@ -592,18 +663,6 @@ export interface VpcCniOptionsArgs {
      */
     externalSnat?: pulumi.Input<boolean>;
     /**
-     * Specifies the aws-node container image to use in the AWS CNI cluster DaemonSet.
-     *
-     * Defaults to the official AWS CNI image in ECR.
-     */
-    image?: pulumi.Input<string>;
-    /**
-     * Specifies the init container image to use in the AWS CNI cluster DaemonSet.
-     *
-     * Defaults to the official AWS CNI init container image in ECR.
-     */
-    initImage?: pulumi.Input<string>;
-    /**
      * Specifies the file path used for logs.
      *
      * Defaults to "stdout" to emit Pod logs for `kubectl logs`.
@@ -617,21 +676,37 @@ export interface VpcCniOptionsArgs {
      */
     logLevel?: pulumi.Input<string>;
     /**
-     * Specifies the aws-eks-nodeagent container image to use in the AWS CNI cluster DaemonSet.
-     *
-     * Defaults to the official AWS CNI nodeagent image in ECR.
-     */
-    nodeAgentImage?: pulumi.Input<string>;
-    /**
      * Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
      *
      * Defaults to true.
      */
     nodePortSupport?: pulumi.Input<boolean>;
     /**
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
+     * Valid values are NONE and OVERWRITE.
+     *
+     * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+     */
+    resolveConflictsOnCreate?: pulumi.Input<string>;
+    /**
+     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
+     * Valid values are NONE, OVERWRITE, and PRESERVE.
+     *
+     * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+     */
+    resolveConflictsOnUpdate?: pulumi.Input<string>;
+    /**
      * Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
      */
     securityContextPrivileged?: pulumi.Input<boolean>;
+    /**
+     * The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
+     *
+     * For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+     *
+     * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
+     */
+    serviceAccountRoleArn?: pulumi.Input<string>;
     /**
      * Specifies the veth prefix used to generate the host-side veth device name for the CNI.
      *

@@ -46,10 +46,10 @@ export const Provider: typeof import("./provider").Provider = null as any;
 utilities.lazyLoad(exports, ["Provider"], () => require("./provider"));
 
 export * from "./storageclassMixins";
-export { VpcCniArgs } from "./vpcCni";
-export type VpcCni = import("./vpcCni").VpcCni;
-export const VpcCni: typeof import("./vpcCni").VpcCni = null as any;
-utilities.lazyLoad(exports, ["VpcCni"], () => require("./vpcCni"));
+export { VpcCniAddonArgs } from "./vpcCniAddon";
+export type VpcCniAddon = import("./vpcCniAddon").VpcCniAddon;
+export const VpcCniAddon: typeof import("./vpcCniAddon").VpcCniAddon = null as any;
+utilities.lazyLoad(exports, ["VpcCniAddon"], () => require("./vpcCniAddon"));
 
 
 // Export enums:
@@ -80,8 +80,8 @@ const _module = {
                 return new NodeGroupSecurityGroup(name, <any>undefined, { urn })
             case "eks:index:NodeGroupV2":
                 return new NodeGroupV2(name, <any>undefined, { urn })
-            case "eks:index:VpcCni":
-                return new VpcCni(name, <any>undefined, { urn })
+            case "eks:index:VpcCniAddon":
+                return new VpcCniAddon(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }

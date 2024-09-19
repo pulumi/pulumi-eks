@@ -8,8 +8,9 @@ import * as enums from "../types/enums";
 
 import * as pulumiAws from "@pulumi/aws";
 import * as pulumiKubernetes from "@pulumi/kubernetes";
+import * as utilities from "../utilities";
 
-import {VpcCni} from "..";
+import {VpcCniAddon} from "..";
 
 /**
  * Access entries allow an IAM principal to access your cluster.
@@ -346,7 +347,7 @@ export interface CoreData {
     /**
      * The VPC CNI for the cluster.
      */
-    vpcCni?: VpcCni;
+    vpcCni?: VpcCniAddon;
     /**
      * ID of the cluster's VPC.
      */

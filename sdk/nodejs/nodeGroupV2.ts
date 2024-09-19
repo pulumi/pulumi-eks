@@ -10,7 +10,7 @@ import * as utilities from "./utilities";
 import * as pulumiAws from "@pulumi/aws";
 import * as pulumiKubernetes from "@pulumi/kubernetes";
 
-import {Cluster, VpcCni} from "./index";
+import {Cluster, VpcCniAddon} from "./index";
 
 /**
  * NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.

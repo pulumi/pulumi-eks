@@ -10,7 +10,7 @@ import * as utilities from "./utilities";
 import * as pulumiAws from "@pulumi/aws";
 import * as pulumiKubernetes from "@pulumi/kubernetes";
 
-import {VpcCni} from "./index";
+import {VpcCniAddon} from "./index";
 
 /**
  * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
@@ -104,6 +104,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["clusterSecurityGroup"] = args ? args.clusterSecurityGroup : undefined;
             resourceInputs["clusterSecurityGroupTags"] = args ? args.clusterSecurityGroupTags : undefined;
             resourceInputs["clusterTags"] = args ? args.clusterTags : undefined;
+            resourceInputs["corednsAddonOptions"] = args ? (args.corednsAddonOptions ? inputs.coreDnsAddonOptionsArgsProvideDefaults(args.corednsAddonOptions) : undefined) : undefined;
             resourceInputs["createOidcProvider"] = args ? args.createOidcProvider : undefined;
             resourceInputs["creationRoleProvider"] = args ? args.creationRoleProvider : undefined;
             resourceInputs["defaultAddonsToRemove"] = args ? args.defaultAddonsToRemove : undefined;
@@ -120,6 +121,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["instanceRoles"] = args ? args.instanceRoles : undefined;
             resourceInputs["instanceType"] = args ? args.instanceType : undefined;
             resourceInputs["ipFamily"] = args ? args.ipFamily : undefined;
+            resourceInputs["kubeProxyAddonOptions"] = args ? (args.kubeProxyAddonOptions ? inputs.kubeProxyAddonOptionsArgsProvideDefaults(args.kubeProxyAddonOptions) : undefined) : undefined;
             resourceInputs["kubernetesServiceIpAddressRange"] = args ? args.kubernetesServiceIpAddressRange : undefined;
             resourceInputs["maxSize"] = args ? args.maxSize : undefined;
             resourceInputs["minSize"] = args ? args.minSize : undefined;
@@ -226,6 +228,10 @@ export interface ClusterArgs {
      */
     clusterTags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
+     * Options for managing the `coredns` addon.
+     */
+    corednsAddonOptions?: inputs.CoreDnsAddonOptionsArgs;
+    /**
      * Indicates whether an IAM OIDC Provider is created for the EKS cluster.
      *
      * The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -319,6 +325,10 @@ export interface ClusterArgs {
      * You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
      */
     ipFamily?: pulumi.Input<string>;
+    /**
+     * Options for managing the `kube-proxy` addon.
+     */
+    kubeProxyAddonOptions?: inputs.KubeProxyAddonOptionsArgs;
     /**
      * The CIDR block to assign Kubernetes service IP addresses from. If you don't
      * specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or

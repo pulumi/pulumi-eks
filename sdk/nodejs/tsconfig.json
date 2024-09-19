@@ -30,6 +30,6 @@
         "types/input.ts",
         "types/output.ts",
         "utilities.ts",
-        "vpcCni.ts"
+        "vpcCniAddon.ts"
     ]
 }

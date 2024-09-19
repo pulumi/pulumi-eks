@@ -10,7 +10,7 @@ import * as utilities from "./utilities";
 import * as pulumiAws from "@pulumi/aws";
 import * as pulumiKubernetes from "@pulumi/kubernetes";
 
-import {Cluster, VpcCni} from "./index";
+import {Cluster, VpcCniAddon} from "./index";
 
 /**
  * ManagedNodeGroup is a component that wraps creating an AWS managed node group.
