@@ -31,7 +31,7 @@ import {
 } from "./authenticationMode";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
 import { createDashboard } from "./dashboard";
-import { assertCompatibleAWSCLIExists, assertCompatibleKubectlVersionExists } from "./dependencies";
+import { assertCompatibleAWSCLIExists } from "./dependencies";
 import {
     computeWorkerSubnets,
     createNodeGroup,
@@ -399,9 +399,6 @@ export function createCore(
     // Check to ensure that a compatible version of aws CLI is installed, as we'll need it in order
     // to retrieve a token to login to the EKS cluster later.
     assertCompatibleAWSCLIExists();
-    // Check to ensure that a compatible kubectl is installed, as we'll need it in order to deploy
-    // k8s resources later.
-    assertCompatibleKubectlVersionExists();
 
     const args = validateAuthenticationMode(rawArgs);
 

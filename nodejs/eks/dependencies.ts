@@ -16,53 +16,8 @@ import * as childProcess from "child_process";
 import * as semver from "semver";
 import * as which from "which";
 
-const minKubectlVersion = "1.24.0";
 const minAWSCLIV1Version = "1.24.0";
 const minAWSCLIV2Version = "2.7.0";
-
-interface KubectlVersion {
-    clientVersion: {
-        major: string;
-        minor: string;
-        gitVersion: string;
-    };
-}
-
-export function assertCompatibleKubectlVersionExists() {
-    try {
-        which.sync("kubectl");
-    } catch (err) {
-        throw new Error(
-            "kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.",
-        );
-    }
-
-    const kubectlVersionJson = childProcess.execSync(
-        `kubectl version --client=true --output=json`,
-        {
-            stdio: ["pipe", "pipe", "ignore"],
-            encoding: "utf8",
-        },
-    );
-
-    let kctlVersion: KubectlVersion;
-    try {
-        kctlVersion = JSON.parse(kubectlVersionJson);
-    } catch (err) {
-        throw new Error(
-            `Failed to parse kubectl version JSON output. Received: ${kubectlVersionJson}`,
-        );
-    }
-    const kcVersion = semver.clean(kctlVersion.clientVersion.gitVersion, {
-        loose: true,
-    });
-    if (semver.lt(kcVersion!, minKubectlVersion)) {
-        throw new Error(
-            `At least v${minKubectlVersion} of kubectl is required.` +
-                ` Current version is: ${kcVersion}. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for instructions on installing the latest.`,
-        );
-    }
-}
 
 export function assertCompatibleAWSCLIExists() {
     try {
