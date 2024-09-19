@@ -654,44 +654,43 @@ export function createCore(
         );
     }
 
-    if (args.corednsAddonOptions?.enabled ?? true) {
-        const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
-            ? pulumi.output(args.corednsAddonOptions.version)
-            : aws.eks
-                  .getAddonVersionOutput(
-                      {
-                          addonName: "coredns",
-                          kubernetesVersion: eksCluster.version,
-                          mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
-                      },
-                      { parent, provider },
-                  )
-                  .apply((addonVersion) => addonVersion.version);
+    // We can only enable the coredns addon if using we have a node group to place it on
+    // This means we are either using the default node group or the cluster is a fargate cluster
+    pulumi.output(args.fargate).apply(fargate => {
+        if ((fargate || !args.skipDefaultNodeGroup) && (args.corednsAddonOptions?.enabled ?? true)) {
+            const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
+                ? pulumi.output(args.corednsAddonOptions.version)
+                : aws.eks
+                    .getAddonVersionOutput(
+                        {
+                            addonName: "coredns",
+                            kubernetesVersion: eksCluster.version,
+                            mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                        },
+                        { parent, provider },
+                    )
+                    .apply((addonVersion) => addonVersion.version);
 
-        const corednsAddon = new aws.eks.Addon(
-            `${name}-coredns`,
-            {
-                clusterName: eksCluster.name,
-                addonName: "coredns",
-                tags: args.tags,
-                preserve: true,
-                addonVersion: corednsVersion,
-                resolveConflictsOnCreate:
-                    args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
-                resolveConflictsOnUpdate:
-                    args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
-                configurationValues: pulumi.output(args.fargate).apply((fargate) => {
-                    if (fargate) {
-                        return JSON.stringify({
-                            computeType: "Fargate",
-                        });
-                    }
-                    return undefined;
-                }) as any,
-            },
-            { parent, provider },
-        );
-    }
+            const corednsAddon = new aws.eks.Addon(
+                `${name}-coredns`,
+                {
+                    clusterName: eksCluster.name,
+                    addonName: "coredns",
+                    tags: args.tags,
+                    preserve: true,
+                    addonVersion: corednsVersion,
+                    resolveConflictsOnCreate:
+                        args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
+                    resolveConflictsOnUpdate:
+                        args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
+                    configurationValues: fargate ? JSON.stringify({
+                        computeType: "Fargate",
+                    }) : undefined,
+                },
+                { parent, provider },
+            );
+        }
+    })
 
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
@@ -1176,7 +1175,10 @@ export type ResolveConflictsOnUpdate =
 
 export interface CoreDnsAddonOptions {
     /**
-     * Whether or not to create the Addon in the cluster
+     * Whether or not to create the Addon in the cluster.
+     *
+     * The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+     * uses the default node group, otherwise the self-managed addon is used.
      */
     enabled?: boolean;
     /**

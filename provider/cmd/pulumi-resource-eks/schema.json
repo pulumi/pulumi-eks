@@ -510,7 +510,7 @@
                 "enabled": {
                     "type": "boolean",
                     "plain": true,
-                    "description": "Whether or not to create the Addon in the cluster",
+                    "description": "Whether or not to create the Addon in the cluster\n\nThe managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster\nuses the default node group, otherwise the self-managed addon is used.",
                     "default": true
                 },
                 "resolveConflictsOnCreate": {
