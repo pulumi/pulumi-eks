@@ -15,6 +15,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import { Cluster } from "./cluster";
+import deepmerge from "deepmerge";
 
 /**
  * AddonOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes. This is obtained from
@@ -54,4 +55,26 @@ export class Addon extends pulumi.ComponentResource {
 
         this.addon = addon;
     }
+}
+
+export type ConfigurationValue = string | number | boolean | undefined | ConfigurationValues;
+export type ConfigurationValues = { [key: string]: pulumi.Input<ConfigurationValue> };
+
+/**
+ * Deeply merges the provided configuration values with the optional base settings and json stringifies it. Returns undefined if no values and base settings are provided.
+ * If a key exists in both the base settings and the provided values, the value from the provided values will be used.
+ */
+export function createAddonConfiguration(
+    values: pulumi.Input<object> | undefined,
+    baseSettings?: ConfigurationValues,
+): pulumi.Output<string> | undefined {
+    if (!values && !baseSettings) {
+        return undefined;
+    }
+
+    const merged = pulumi.all([values, baseSettings]).apply(([values, base]) => {
+        return deepmerge(base ?? {}, values ?? {});
+    });
+
+    return pulumi.jsonStringify(merged);
 }
