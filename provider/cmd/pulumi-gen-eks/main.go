@@ -1859,12 +1859,20 @@ func generateSchema() schema.PackageSpec {
 						"enabled": {
 							TypeSpec:    schema.TypeSpec{Type: "boolean", Plain: true},
 							Default:     true,
-							Description: "Whether or not to create the Addon in the cluster",
+							Description: "Whether or not to create the `coredns` Addon in the cluster",
 						},
 						"version": {
 							TypeSpec: schema.TypeSpec{Type: "string"},
 							Description: "The version of the EKS add-on. The version must " +
 								"match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).",
+						},
+						"configurationValues": {
+							TypeSpec: schema.TypeSpec{
+								Type:                 "object",
+								AdditionalProperties: &schema.TypeSpec{Ref: "pulumi.json#/Any"},
+							},
+							Description: "Custom configuration values for the coredns addon. This object must match the schema derived from " +
+								"[describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).",
 						},
 						"resolveConflictsOnCreate": {
 							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnCreate"},
@@ -1894,6 +1902,14 @@ func generateSchema() schema.PackageSpec {
 							TypeSpec: schema.TypeSpec{Type: "string"},
 							Description: "The version of the EKS add-on. The version must " +
 								"match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).",
+						},
+						"configurationValues": {
+							TypeSpec: schema.TypeSpec{
+								Type:                 "object",
+								AdditionalProperties: &schema.TypeSpec{Ref: "pulumi.json#/Any"},
+							},
+							Description: "Custom configuration values for the kube-proxy addon. This object must match the schema derived from " +
+								"[describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).",
 						},
 						"resolveConflictsOnCreate": {
 							TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnCreate"},
@@ -2391,16 +2407,18 @@ func vpcCniProperties(cluster bool) map[string]schema.PropertySpec {
 				"(https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).",
 		},
 		"resolveConflictsOnCreate": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.\n" +
-				"Valid values are NONE and OVERWRITE.\n\nFor more details see the " +
-				"[CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).",
+			TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnCreate"},
+			Description: "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. " +
+				"Valid values are `NONE` and `OVERWRITE`. For more details see the " +
+				"[CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+			Default: "OVERWRITE",
 		},
 		"resolveConflictsOnUpdate": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the" +
-				"Amazon EKS default value.\nValid values are NONE, OVERWRITE, and PRESERVE.\n\nFor more details see the " +
-				"[UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).",
+			TypeSpec: schema.TypeSpec{Plain: true, Type: "string", Ref: "#/types/eks:index:ResolveConflictsOnUpdate"},
+			Description: "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the " +
+				"Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the " +
+				"[UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+			Default: "OVERWRITE",
 		},
 		"serviceAccountRoleArn": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
