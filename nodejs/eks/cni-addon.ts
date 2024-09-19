@@ -15,15 +15,20 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
-import * as deepmerge from "deepmerge";
+import { ConfigurationValues, createAddonConfiguration } from "./addon";
 
-export interface VpcCniAddonOptions {
+export interface VpcCniAddonOptions extends CniEnvVariables {
     clusterName: pulumi.Input<string>;
 
     /**
      * The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
      */
     clusterVersion?: pulumi.Input<string>;
+
+    /**
+     * The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+     */
+    addonVersion?: pulumi.Input<string>;
 
     /**
      * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
@@ -63,17 +68,21 @@ export interface VpcCniAddonOptions {
     configurationValues?: pulumi.Input<object>;
 
     /**
+     * Pass privilege to containers securityContext
+     * this is required when SELinux is enabled
+     * This value will not be passed to the CNI config by default
+     */
+    securityContextPrivileged?: pulumi.Input<boolean>;
+
+    /**
      * Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
      *
      * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
      */
     enableNetworkPolicy?: pulumi.Input<boolean>;
+}
 
-    /**
-     * The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
-     */
-    addonVersion?: pulumi.Input<string>;
-
+export interface CniEnvVariables {
     /**
      * Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires
      * additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
@@ -124,14 +133,6 @@ export interface VpcCniAddonOptions {
      * Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
      */
     enablePrefixDelegation?: pulumi.Input<boolean>;
-
-    /**
-     * VPC CNI can operate in either IPv4 or IPv6 mode. Setting ENABLE_IPv6 to true. will configure it in IPv6 mode.
-     * Note that IPv6 is only supported in Prefix Delegation mode so enablePrefixDelegation must also be set.
-     *
-     * Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/README.md#enable_ipv6-v1100
-     */
-    enableIpv6?: pulumi.Input<boolean>;
 
     /**
      * Specifies the log level used for logs.
@@ -239,13 +240,6 @@ export interface VpcCniAddonOptions {
      * Defaults to "false".
      */
     cniExternalSnat?: pulumi.Input<boolean>;
-
-    /**
-     * Pass privilege to containers securityContext
-     * this is required when SELinux is enabled
-     * This value will not be passed to the CNI config by default
-     */
-    securityContextPrivileged?: pulumi.Input<boolean>;
 }
 
 /**
@@ -302,17 +296,9 @@ export class VpcCniAddon extends pulumi.ComponentResource {
 
         if (args.enableNetworkPolicy) {
             Object.assign(baseSettings, {
-                enableNetworkPolicy: pulumi
-                    .output(args.enableNetworkPolicy)
-                    .apply((val) => (val ? "true" : "false")),
+                enableNetworkPolicy: pulumi.output(args.enableNetworkPolicy).apply(stringifyBool),
             });
         }
-
-        const configurationValues = pulumi
-            .output(args.configurationValues ?? {})
-            .apply((config) => {
-                return deepmerge(baseSettings, config);
-            });
 
         const addon = new aws.eks.Addon(
             name,
@@ -325,7 +311,10 @@ export class VpcCniAddon extends pulumi.ComponentResource {
                 // OVERWRITE makes sure updates to the addon do not fail
                 resolveConflictsOnUpdate: args.resolveConflictsOnUpdate ?? "OVERWRITE",
                 preserve: true,
-                configurationValues: pulumi.jsonStringify(configurationValues),
+                configurationValues: createAddonConfiguration(
+                    args.configurationValues,
+                    baseSettings,
+                ),
                 serviceAccountRoleArn: args.serviceAccountRoleArn,
                 tags: args.tags,
             },
@@ -384,133 +373,141 @@ export class VpcCniAddon extends pulumi.ComponentResource {
     }
 }
 
-function computeEnv(args: VpcCniAddonOptions): {
-    env: { [key: string]: string };
-    initEnv: { [key: string]: string };
-} {
-    const env: { name: string; value: string }[] = [];
-    const initEnv: { name: string; value: string }[] = [];
+export type ComputedEnv = {
+    env: ConfigurationValues;
+    initEnv: ConfigurationValues;
+};
+
+export function computeEnv(args: CniEnvVariables): ComputedEnv {
+    const env: { name: string; value: pulumi.Output<string> }[] = [];
+    const initEnv: { name: string; value: pulumi.Output<string> }[] = [];
     if (args.nodePortSupport) {
         env.push({
             name: "AWS_VPC_CNI_NODE_PORT_SUPPORT",
-            value: args.nodePortSupport ? "true" : "false",
+            value: pulumi.output(args.nodePortSupport).apply(stringifyBool),
         });
     }
     if (args.customNetworkConfig) {
         env.push({
             name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG",
-            value: args.customNetworkConfig ? "true" : "false",
+            value: pulumi.output(args.customNetworkConfig).apply(stringifyBool),
         });
     }
-    env.push({ name: "WARM_ENI_TARGET", value: `${args.warmEniTarget ?? 1}` });
+    env.push({
+        name: "WARM_ENI_TARGET",
+        value: pulumi.output(args.warmEniTarget).apply((val) => `${val ?? 1}`),
+    });
     if (args.warmIpTarget) {
         env.push({
             name: "WARM_IP_TARGET",
-            value: args.warmIpTarget.toString(),
+            value: pulumi.output(args.warmIpTarget).apply(stringifyNumber),
         });
     }
     if (args.warmPrefixTarget) {
         env.push({
             name: "WARM_PREFIX_TARGET",
-            value: args.warmPrefixTarget.toString(),
+            value: pulumi.output(args.warmPrefixTarget).apply(stringifyNumber),
         });
     }
 
     if (args.enablePrefixDelegation) {
         env.push({
             name: "ENABLE_PREFIX_DELEGATION",
-            value: args.enablePrefixDelegation ? "true" : "false",
+            value: pulumi.output(args.enablePrefixDelegation).apply(stringifyBool),
         });
     }
     if (args.logLevel) {
         env.push({
             name: "AWS_VPC_K8S_CNI_LOGLEVEL",
-            value: args.logLevel.toString(),
+            value: pulumi.output(args.logLevel),
         });
     } else {
-        env.push({ name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: "DEBUG" });
+        env.push({ name: "AWS_VPC_K8S_CNI_LOGLEVEL", value: pulumi.output("DEBUG") });
     }
     if (args.logFile) {
         env.push({
             name: "AWS_VPC_K8S_CNI_LOG_FILE",
-            value: args.logFile.toString(),
+            value: pulumi.output(args.logFile),
         });
     } else {
         env.push({
             name: "AWS_VPC_K8S_CNI_LOG_FILE",
-            value: "/host/var/log/aws-routed-eni/ipamd.log",
+            value: pulumi.output("/host/var/log/aws-routed-eni/ipamd.log"),
         });
     }
     if (args.vethPrefix) {
         env.push({
             name: "AWS_VPC_K8S_CNI_VETHPREFIX",
-            value: args.vethPrefix.toString(),
+            value: pulumi.output(args.vethPrefix),
         });
     } else {
-        env.push({ name: "AWS_VPC_K8S_CNI_VETHPREFIX", value: "eni" });
+        env.push({ name: "AWS_VPC_K8S_CNI_VETHPREFIX", value: pulumi.output("eni") });
     }
     if (args.eniMtu) {
-        env.push({ name: "AWS_VPC_ENI_MTU", value: args.eniMtu.toString() });
+        env.push({
+            name: "AWS_VPC_ENI_MTU",
+            value: pulumi.output(args.eniMtu).apply(stringifyNumber),
+        });
     } else {
-        env.push({ name: "AWS_VPC_ENI_MTU", value: "9001" });
+        env.push({ name: "AWS_VPC_ENI_MTU", value: pulumi.output("9001") });
     }
 
     if (args.eniConfigLabelDef) {
         env.push({
             name: "ENI_CONFIG_LABEL_DEF",
-            value: args.eniConfigLabelDef.toString(),
+            value: pulumi.output(args.eniConfigLabelDef),
         });
     }
     if (args.pluginLogLevel) {
         env.push({
             name: "AWS_VPC_K8S_PLUGIN_LOG_LEVEL",
-            value: args.pluginLogLevel.toString(),
+            value: pulumi.output(args.pluginLogLevel),
         });
     } else {
-        env.push({ name: "AWS_VPC_K8S_PLUGIN_LOG_LEVEL", value: "DEBUG" });
+        env.push({ name: "AWS_VPC_K8S_PLUGIN_LOG_LEVEL", value: pulumi.output("DEBUG") });
     }
     if (args.pluginLogFile) {
         env.push({
             name: "AWS_VPC_K8S_PLUGIN_LOG_FILE",
-            value: args.pluginLogFile.toString(),
+            value: pulumi.output(args.pluginLogFile),
         });
     } else {
         env.push({
             name: "AWS_VPC_K8S_PLUGIN_LOG_FILE",
-            value: "/var/log/aws-routed-eni/plugin.log",
+            value: pulumi.output("/var/log/aws-routed-eni/plugin.log"),
         });
     }
     if (args.enablePodEni) {
         env.push({
             name: "ENABLE_POD_ENI",
-            value: args.enablePodEni ? "true" : "false",
+            value: pulumi.output(args.enablePodEni).apply(stringifyBool),
         });
     } else {
-        env.push({ name: "ENABLE_POD_ENI", value: "false" });
+        env.push({ name: "ENABLE_POD_ENI", value: pulumi.output("false") });
     }
     if (args.disableTcpEarlyDemux) {
         initEnv.push({
             name: "DISABLE_TCP_EARLY_DEMUX",
-            value: args.disableTcpEarlyDemux ? "true" : "false",
+            value: pulumi.output(args.disableTcpEarlyDemux).apply(stringifyBool),
         });
     } else {
-        initEnv.push({ name: "DISABLE_TCP_EARLY_DEMUX", value: "false" });
+        initEnv.push({ name: "DISABLE_TCP_EARLY_DEMUX", value: pulumi.output("false") });
     }
     if (args.cniConfigureRpfilter) {
         env.push({
             name: "AWS_VPC_K8S_CNI_CONFIGURE_RPFILTER",
-            value: args.cniConfigureRpfilter ? "true" : "false",
+            value: pulumi.output(args.cniConfigureRpfilter).apply(stringifyBool),
         });
     }
     if (args.cniCustomNetworkCfg) {
         env.push({
             name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG",
-            value: args.cniCustomNetworkCfg ? "true" : "false",
+            value: pulumi.output(args.cniCustomNetworkCfg).apply(stringifyBool),
         });
     } else {
         env.push({
             name: "AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG",
-            value: "false",
+            value: pulumi.output("false"),
         });
     }
     // A user would usually specify externalSnat or cniExternalSnat NOT both
@@ -522,15 +519,15 @@ function computeEnv(args: VpcCniAddonOptions): {
     if (args.externalSnat) {
         env.push({
             name: "AWS_VPC_K8S_CNI_EXTERNALSNAT",
-            value: args.externalSnat ? "true" : "false",
+            value: pulumi.output(args.externalSnat).apply(stringifyBool),
         });
     } else if (args.cniExternalSnat) {
         env.push({
             name: "AWS_VPC_K8S_CNI_EXTERNALSNAT",
-            value: args.cniExternalSnat ? "true" : "false",
+            value: pulumi.output(args.cniExternalSnat).apply(stringifyBool),
         });
     } else {
-        env.push({ name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: "false" });
+        env.push({ name: "AWS_VPC_K8S_CNI_EXTERNALSNAT", value: pulumi.output("false") });
     }
 
     return {
@@ -543,4 +540,12 @@ function computeEnv(args: VpcCniAddonOptions): {
             return acc;
         }, {}),
     };
+}
+
+function stringifyBool(val: boolean): string {
+    return val ? "true" : "false";
+}
+
+function stringifyNumber(val: number): string {
+    return `${val}`;
 }
