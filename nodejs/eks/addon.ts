@@ -15,7 +15,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import { Cluster } from "./cluster";
-import deepmerge from "deepmerge";
+import * as deepmerge from "deepmerge";
 
 /**
  * AddonOptions describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes. This is obtained from
