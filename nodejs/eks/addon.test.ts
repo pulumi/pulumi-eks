@@ -64,7 +64,7 @@ describe("createAddonConfiguration", () => {
 
         const result = createAddonConfiguration(values, baseSettings);
         expect(result).toBeDefined();
-        await promisify(result!).then((r) => {
+        await promisify(result).then((r) => {
             expect(JSON.parse(r)).toStrictEqual(expectedMerged);
         });
     });
@@ -92,8 +92,122 @@ describe("createAddonConfiguration", () => {
 
         const result = createAddonConfiguration(values, baseSettings);
         expect(result).toBeDefined();
-        await promisify(result!).then((r) => {
+        await promisify(result).then((r) => {
             expect(JSON.parse(r)).toStrictEqual(expectedMerged);
+        });
+    });
+
+    it("should filter out undefined values", async () => {
+        const values = {
+            existing: true,
+            root: undefined,
+            nested: { input: undefined, existing: true },
+            rootInput: new Promise((resolve) => resolve(undefined)),
+            nestedInput: new Promise((resolve) => resolve({ key: undefined, existing: true })),
+        };
+        const expectedMerged = {
+            existing: true,
+            nested: { existing: true },
+            nestedInput: { existing: true },
+        };
+
+        const result = createAddonConfiguration(values);
+        expect(result).toBeDefined();
+        await promisify(result).then((r) => {
+            expect(JSON.parse(r)).toStrictEqual(expectedMerged);
+        });
+    });
+
+    it("should order keys deterministically", async () => {
+        const values = {
+            a: "aVal",
+            b: "bVal",
+            c: "cVal",
+            d: "dVal",
+            arr: [1, 2, 3, 4, 5],
+        };
+        const reverse = {
+            arr: [1, 2, 3, 4, 5],
+            d: "dVal",
+            c: "cVal",
+            b: "bVal",
+            a: "aVal",
+        };
+
+        const result = createAddonConfiguration(values);
+        const reverseResult = createAddonConfiguration(reverse);
+        expect(result).toBeDefined();
+        expect(reverseResult).toBeDefined();
+        await promisify(pulumi.all([result, reverseResult])).then(([result, reverseResult]) => {
+            expect(result).toBe(reverseResult);
+        });
+    });
+
+    it("should order nested inputs deterministically", async () => {
+        const values = {
+            a: new Promise((resolve) =>
+                resolve({
+                    nested: {
+                        inputs: {
+                            a: "aVal",
+                            b: "bVal",
+                            c: "cVal",
+                            d: "dVal",
+                            arr: [1, 2, 3, 4, 5],
+                        },
+                    },
+                }),
+            ),
+            b: new Promise((resolve) =>
+                resolve({
+                    nested: {
+                        inputs: {
+                            arr: [1, 2, 3, 4, 5],
+                            d: "dVal",
+                            c: "cVal",
+                            b: "bVal",
+                            a: "aVal",
+                        },
+                    },
+                }),
+            ),
+        };
+
+        const reverse = {
+            b: new Promise((resolve) =>
+                resolve({
+                    nested: {
+                        inputs: {
+                            a: "aVal",
+                            b: "bVal",
+                            c: "cVal",
+                            d: "dVal",
+                            arr: [1, 2, 3, 4, 5],
+                        },
+                    },
+                }),
+            ),
+            a: new Promise((resolve) =>
+                resolve({
+                    nested: {
+                        inputs: {
+                            arr: [1, 2, 3, 4, 5],
+                            d: "dVal",
+                            c: "cVal",
+                            b: "bVal",
+                            a: "aVal",
+                        },
+                    },
+                }),
+            ),
+        };
+
+        const result = createAddonConfiguration(values);
+        const reverseResult = createAddonConfiguration(reverse);
+        expect(result).toBeDefined();
+        expect(reverseResult).toBeDefined();
+        await promisify(pulumi.all([result, reverseResult])).then(([result, reverseResult]) => {
+            expect(result).toBe(reverseResult);
         });
     });
 });

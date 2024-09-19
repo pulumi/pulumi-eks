@@ -60,6 +60,19 @@ export class Addon extends pulumi.ComponentResource {
 export type ConfigurationValue = string | number | boolean | undefined | ConfigurationValues;
 export type ConfigurationValues = { [key: string]: pulumi.Input<ConfigurationValue> };
 
+// Sorts the keys of an object to ensure the output is deterministic.
+function stringifyReplacer(key: string, value: any) {
+    return value instanceof Object &&
+        !(value instanceof Array || value instanceof Date || value instanceof Function)
+        ? Object.keys(value)
+              .sort()
+              .reduce((sorted, key) => {
+                  sorted[key] = value[key];
+                  return sorted;
+              }, {} as { [key: string]: any })
+        : value;
+}
+
 /**
  * Deeply merges the provided configuration values with the optional base settings and json stringifies it. Returns undefined if no values and base settings are provided.
  * If a key exists in both the base settings and the provided values, the value from the provided values will be used.
@@ -76,5 +89,6 @@ export function createAddonConfiguration(
         return deepmerge(base ?? {}, values ?? {});
     });
 
-    return pulumi.jsonStringify(merged);
+    // We need to sort the keys to ensure the output is deterministic.
+    return pulumi.jsonStringify(merged, stringifyReplacer);
 }
