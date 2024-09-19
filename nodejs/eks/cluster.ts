@@ -656,20 +656,23 @@ export function createCore(
 
     // We can only enable the coredns addon if using we have a node group to place it on
     // This means we are either using the default node group or the cluster is a fargate cluster
-    pulumi.output(args.fargate).apply(fargate => {
-        if ((fargate || !args.skipDefaultNodeGroup) && (args.corednsAddonOptions?.enabled ?? true)) {
+    pulumi.output(args.fargate).apply((fargate) => {
+        if (
+            (fargate || !args.skipDefaultNodeGroup) &&
+            (args.corednsAddonOptions?.enabled ?? true)
+        ) {
             const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
                 ? pulumi.output(args.corednsAddonOptions.version)
                 : aws.eks
-                    .getAddonVersionOutput(
-                        {
-                            addonName: "coredns",
-                            kubernetesVersion: eksCluster.version,
-                            mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
-                        },
-                        { parent, provider },
-                    )
-                    .apply((addonVersion) => addonVersion.version);
+                      .getAddonVersionOutput(
+                          {
+                              addonName: "coredns",
+                              kubernetesVersion: eksCluster.version,
+                              mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                          },
+                          { parent, provider },
+                      )
+                      .apply((addonVersion) => addonVersion.version);
 
             const corednsAddon = new aws.eks.Addon(
                 `${name}-coredns`,
@@ -683,14 +686,16 @@ export function createCore(
                         args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
                     resolveConflictsOnUpdate:
                         args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
-                    configurationValues: fargate ? JSON.stringify({
-                        computeType: "Fargate",
-                    }) : undefined,
+                    configurationValues: fargate
+                        ? JSON.stringify({
+                              computeType: "Fargate",
+                          })
+                        : undefined,
                 },
                 { parent, provider },
             );
         }
-    })
+    });
 
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
