@@ -356,7 +356,14 @@ export interface CoreDataArgs {
 
 export interface CoreDnsAddonOptionsArgs {
     /**
-     * Whether or not to create the Addon in the cluster
+     * Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     */
+    configurationValues?: pulumi.Input<{[key: string]: any}>;
+    /**
+     * Whether or not to create the `coredns` Addon in the cluster
+     *
+     * The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+     * uses the default node group, otherwise the self-managed addon is used.
      */
     enabled?: boolean;
     /**
@@ -413,6 +420,10 @@ export interface FargateProfileArgs {
 }
 
 export interface KubeProxyAddonOptionsArgs {
+    /**
+     * Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     */
+    configurationValues?: pulumi.Input<{[key: string]: any}>;
     /**
      * Whether or not to create the `kube-proxy` Addon in the cluster
      */
@@ -682,19 +693,13 @@ export interface VpcCniOptionsArgs {
      */
     nodePortSupport?: pulumi.Input<boolean>;
     /**
-     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-     * Valid values are NONE and OVERWRITE.
-     *
-     * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
      */
-    resolveConflictsOnCreate?: pulumi.Input<string>;
+    resolveConflictsOnCreate?: enums.ResolveConflictsOnCreate;
     /**
-     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-     * Valid values are NONE, OVERWRITE, and PRESERVE.
-     *
-     * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
      */
-    resolveConflictsOnUpdate?: pulumi.Input<string>;
+    resolveConflictsOnUpdate?: enums.ResolveConflictsOnUpdate;
     /**
      * Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
      */
@@ -729,4 +734,14 @@ export interface VpcCniOptionsArgs {
      * WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
      */
     warmPrefixTarget?: pulumi.Input<number>;
+}
+/**
+ * vpcCniOptionsArgsProvideDefaults sets the appropriate defaults for VpcCniOptionsArgs
+ */
+export function vpcCniOptionsArgsProvideDefaults(val: VpcCniOptionsArgs): VpcCniOptionsArgs {
+    return {
+        ...val,
+        resolveConflictsOnCreate: (val.resolveConflictsOnCreate) ?? "OVERWRITE",
+        resolveConflictsOnUpdate: (val.resolveConflictsOnUpdate) ?? "OVERWRITE",
+    };
 }

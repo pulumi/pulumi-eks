@@ -149,7 +149,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["useDefaultVpcCni"] = args ? args.useDefaultVpcCni : undefined;
             resourceInputs["userMappings"] = args ? args.userMappings : undefined;
             resourceInputs["version"] = args ? args.version : undefined;
-            resourceInputs["vpcCniOptions"] = args ? args.vpcCniOptions : undefined;
+            resourceInputs["vpcCniOptions"] = args ? (args.vpcCniOptions ? inputs.vpcCniOptionsArgsProvideDefaults(args.vpcCniOptions) : undefined) : undefined;
             resourceInputs["vpcId"] = args ? args.vpcId : undefined;
             resourceInputs["awsProvider"] = undefined /*out*/;
             resourceInputs["core"] = undefined /*out*/;

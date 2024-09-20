@@ -2,6 +2,9 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
+import * as inputs from "./types/input";
+import * as outputs from "./types/output";
+import * as enums from "./types/enums";
 import * as utilities from "./utilities";
 
 /**
@@ -68,8 +71,8 @@ export class VpcCniAddon extends pulumi.CustomResource {
             resourceInputs["logFile"] = args ? args.logFile : undefined;
             resourceInputs["logLevel"] = args ? args.logLevel : undefined;
             resourceInputs["nodePortSupport"] = args ? args.nodePortSupport : undefined;
-            resourceInputs["resolveConflictsOnCreate"] = args ? args.resolveConflictsOnCreate : undefined;
-            resourceInputs["resolveConflictsOnUpdate"] = args ? args.resolveConflictsOnUpdate : undefined;
+            resourceInputs["resolveConflictsOnCreate"] = (args ? args.resolveConflictsOnCreate : undefined) ?? "OVERWRITE";
+            resourceInputs["resolveConflictsOnUpdate"] = (args ? args.resolveConflictsOnUpdate : undefined) ?? "OVERWRITE";
             resourceInputs["securityContextPrivileged"] = args ? args.securityContextPrivileged : undefined;
             resourceInputs["serviceAccountRoleArn"] = args ? args.serviceAccountRoleArn : undefined;
             resourceInputs["tags"] = args ? args.tags : undefined;
@@ -179,19 +182,13 @@ export interface VpcCniAddonArgs {
      */
     nodePortSupport?: pulumi.Input<boolean>;
     /**
-     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-     * Valid values are NONE and OVERWRITE.
-     *
-     * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
      */
-    resolveConflictsOnCreate?: pulumi.Input<string>;
+    resolveConflictsOnCreate?: enums.ResolveConflictsOnCreate;
     /**
-     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-     * Valid values are NONE, OVERWRITE, and PRESERVE.
-     *
-     * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+     * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
      */
-    resolveConflictsOnUpdate?: pulumi.Input<string>;
+    resolveConflictsOnUpdate?: enums.ResolveConflictsOnUpdate;
     /**
      * Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
      */
