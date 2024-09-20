@@ -19,6 +19,7 @@ import { NodeadmOptions, Taint } from "./nodegroup";
 import * as jsyaml from "js-yaml";
 import * as toml from "@iarna/toml";
 import * as ipaddr from "ipaddr.js";
+import { isObject } from "./utilities";
 
 // linux is the default user data type for AMIs that use the eks bootstrap script. (e.g. AL2)
 // nodeadm is the user data type for AMIs that use nodeadm to bootstrap the node. (e.g. AL2023)
@@ -543,8 +544,4 @@ export function getClusterDnsIp(serviceCidr: string, parent: pulumi.Resource | u
             parent,
         );
     }
-}
-
-function isObject(obj: any): obj is Record<string, any> {
-    return typeof obj === "object" && !Array.isArray(obj) && obj !== null;
 }

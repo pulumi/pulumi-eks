@@ -5,6 +5,9 @@ package com.pulumi.eks;
 
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.core.internal.Codegen;
+import com.pulumi.eks.enums.ResolveConflictsOnCreate;
+import com.pulumi.eks.enums.ResolveConflictsOnUpdate;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.Object;
@@ -327,44 +330,32 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-     * Valid values are NONE and OVERWRITE.
-     * 
-     * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+     * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
      * 
      */
     @Import(name="resolveConflictsOnCreate")
-    private @Nullable Output<String> resolveConflictsOnCreate;
+    private @Nullable ResolveConflictsOnCreate resolveConflictsOnCreate;
 
     /**
-     * @return How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-     * Valid values are NONE and OVERWRITE.
-     * 
-     * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+     * @return How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
      * 
      */
-    public Optional<Output<String>> resolveConflictsOnCreate() {
+    public Optional<ResolveConflictsOnCreate> resolveConflictsOnCreate() {
         return Optional.ofNullable(this.resolveConflictsOnCreate);
     }
 
     /**
-     * How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
-     * Valid values are NONE, OVERWRITE, and PRESERVE.
-     * 
-     * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+     * How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
      * 
      */
     @Import(name="resolveConflictsOnUpdate")
-    private @Nullable Output<String> resolveConflictsOnUpdate;
+    private @Nullable ResolveConflictsOnUpdate resolveConflictsOnUpdate;
 
     /**
-     * @return How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
-     * Valid values are NONE, OVERWRITE, and PRESERVE.
-     * 
-     * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+     * @return How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
      * 
      */
-    public Optional<Output<String>> resolveConflictsOnUpdate() {
+    public Optional<ResolveConflictsOnUpdate> resolveConflictsOnUpdate() {
         return Optional.ofNullable(this.resolveConflictsOnUpdate);
     }
 
@@ -958,57 +949,25 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-         * Valid values are NONE and OVERWRITE.
-         * 
-         * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
          * 
          * @return builder
          * 
          */
-        public Builder resolveConflictsOnCreate(@Nullable Output<String> resolveConflictsOnCreate) {
+        public Builder resolveConflictsOnCreate(@Nullable ResolveConflictsOnCreate resolveConflictsOnCreate) {
             $.resolveConflictsOnCreate = resolveConflictsOnCreate;
             return this;
         }
 
         /**
-         * @param resolveConflictsOnCreate How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-         * Valid values are NONE and OVERWRITE.
-         * 
-         * For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
          * 
          * @return builder
          * 
          */
-        public Builder resolveConflictsOnCreate(String resolveConflictsOnCreate) {
-            return resolveConflictsOnCreate(Output.of(resolveConflictsOnCreate));
-        }
-
-        /**
-         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
-         * Valid values are NONE, OVERWRITE, and PRESERVE.
-         * 
-         * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
-         * 
-         * @return builder
-         * 
-         */
-        public Builder resolveConflictsOnUpdate(@Nullable Output<String> resolveConflictsOnUpdate) {
+        public Builder resolveConflictsOnUpdate(@Nullable ResolveConflictsOnUpdate resolveConflictsOnUpdate) {
             $.resolveConflictsOnUpdate = resolveConflictsOnUpdate;
             return this;
-        }
-
-        /**
-         * @param resolveConflictsOnUpdate How to resolve field value conflicts for an Amazon EKS add-on if you&#39;ve changed a value from theAmazon EKS default value.
-         * Valid values are NONE, OVERWRITE, and PRESERVE.
-         * 
-         * For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
-         * 
-         * @return builder
-         * 
-         */
-        public Builder resolveConflictsOnUpdate(String resolveConflictsOnUpdate) {
-            return resolveConflictsOnUpdate(Output.of(resolveConflictsOnUpdate));
         }
 
         /**
@@ -1190,6 +1149,8 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
 
         public VpcCniAddonArgs build() {
             $.clusterName = Objects.requireNonNull($.clusterName, "expected parameter 'clusterName' to be non-null");
+            $.resolveConflictsOnCreate = Codegen.objectProp("resolveConflictsOnCreate", ResolveConflictsOnCreate.class).arg($.resolveConflictsOnCreate).def(ResolveConflictsOnCreate.Overwrite).getNullable();
+            $.resolveConflictsOnUpdate = Codegen.objectProp("resolveConflictsOnUpdate", ResolveConflictsOnUpdate.class).arg($.resolveConflictsOnUpdate).def(ResolveConflictsOnUpdate.Overwrite).getNullable();
             return $;
         }
     }
