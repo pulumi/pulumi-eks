@@ -12,98 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { assertCompatibleKubectlVersionExists, assertCompatibleAWSCLIExists } from "./dependencies";
+import { assertCompatibleAWSCLIExists } from "./dependencies";
 import child_process from "child_process";
 import which from "which";
 
 jest.mock("child_process");
 jest.mock("which");
 
-function fakeKubectlVersionJson(v: string): string {
-    return `{"clientVersion": {"gitVersion": "${v}"},"kustomizeVersion": "v5.0.4-0.20230601165947-6ce0bf390ce3"}`;
-}
-
 function fakeAwsVersion(v: string): string {
     return `aws-cli/${v} Python/3.8.8 Darwin/20.5.0 source/x86_64 prompt/off`;
 }
-
-describe("assertCompatibleKubectlVersionExists", () => {
-    beforeEach(() => {
-        (which.sync as jest.Mock).mockImplementation(() => "/fake/path/to/kubectl");
-    });
-
-    afterEach(() => {
-        jest.resetAllMocks();
-    });
-
-    it("should throw if kubectl is not installed", () => {
-        (which.sync as jest.Mock).mockImplementation(() => {
-            throw new Error("Not found");
-        });
-
-        expect(() => {
-            assertCompatibleKubectlVersionExists();
-        }).toThrow(
-            "kubectl is missing. See https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl for installation instructions.",
-        );
-
-        expect(which.sync).toHaveBeenCalledWith("kubectl");
-        expect(child_process.execSync).not.toHaveBeenCalled();
-        expect(which.sync).toHaveBeenCalledTimes(1);
-    });
-
-    it("should throw if kubectl version is lower than v1.24.0", () => {
-        (child_process.execSync as jest.Mock).mockImplementation(() =>
-            fakeKubectlVersionJson("v1.23.0"),
-        );
-
-        expect(() => {
-            assertCompatibleKubectlVersionExists();
-        }).toThrow("At least v1.24.0 of kubectl is required.");
-
-        expect(which.sync).toHaveBeenCalledWith("kubectl");
-        expect(child_process.execSync).toHaveBeenCalledTimes(1);
-    });
-
-    it("should throw if kubectl version is invalid", () => {
-        (child_process.execSync as jest.Mock).mockImplementation(() =>
-            fakeKubectlVersionJson("fake-version"),
-        );
-
-        expect(() => {
-            assertCompatibleKubectlVersionExists();
-        }).toThrow("Invalid version");
-
-        expect(which.sync).toHaveBeenCalledWith("kubectl");
-        expect(child_process.execSync).toHaveBeenCalledTimes(1);
-    });
-
-    it("should not error if kubectl is v1.24.0", () => {
-        (child_process.execSync as jest.Mock).mockImplementation(() =>
-            fakeKubectlVersionJson("v1.24.0"),
-        );
-
-        expect(() => {
-            assertCompatibleKubectlVersionExists();
-        }).not.toThrow();
-
-        expect(which.sync).toHaveBeenCalledWith("kubectl");
-        expect(child_process.execSync).toHaveBeenCalledTimes(1);
-    });
-
-    it("should not error if kubectl is greater than v1.24.0", () => {
-        (child_process.execSync as jest.Mock).mockImplementation(() =>
-            fakeKubectlVersionJson("v1.29.6-gke.1400"),
-        );
-
-        expect(() => {
-            assertCompatibleKubectlVersionExists();
-        }).not.toThrow();
-
-        expect(which.sync).toHaveBeenCalledWith("kubectl");
-        expect(child_process.execSync).toHaveBeenCalledTimes(1);
-    });
-});
 
 describe("assertCompatibleAWSCLIExists", () => {
     beforeEach(() => {
