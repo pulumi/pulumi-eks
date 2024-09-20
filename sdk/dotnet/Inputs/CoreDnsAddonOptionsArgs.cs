@@ -26,6 +26,9 @@ namespace Pulumi.Eks.Inputs
 
         /// <summary>
         /// Whether or not to create the `coredns` Addon in the cluster
+        /// 
+        /// The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+        /// uses the default node group, otherwise the self-managed addon is used.
         /// </summary>
         [Input("enabled")]
         public bool? Enabled { get; set; }

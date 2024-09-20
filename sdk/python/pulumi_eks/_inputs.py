@@ -1234,6 +1234,9 @@ class CoreDnsAddonOptionsArgs:
         """
         :param pulumi.Input[Mapping[str, Any]] configuration_values: Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
         :param bool enabled: Whether or not to create the `coredns` Addon in the cluster
+               
+               The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+               uses the default node group, otherwise the self-managed addon is used.
         :param 'ResolveConflictsOnCreate' resolve_conflicts_on_create: How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
         :param 'ResolveConflictsOnUpdate' resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
         :param pulumi.Input[str] version: The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
@@ -1272,6 +1275,9 @@ class CoreDnsAddonOptionsArgs:
     def enabled(self) -> Optional[bool]:
         """
         Whether or not to create the `coredns` Addon in the cluster
+
+        The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+        uses the default node group, otherwise the self-managed addon is used.
         """
         return pulumi.get(self, "enabled")
 

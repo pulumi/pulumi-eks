@@ -1857,9 +1857,11 @@ func generateSchema() schema.PackageSpec {
 					Type: "object",
 					Properties: map[string]schema.PropertySpec{
 						"enabled": {
-							TypeSpec:    schema.TypeSpec{Type: "boolean", Plain: true},
-							Default:     true,
-							Description: "Whether or not to create the `coredns` Addon in the cluster",
+							TypeSpec: schema.TypeSpec{Type: "boolean", Plain: true},
+							Default:  true,
+							Description: "Whether or not to create the `coredns` Addon in the cluster\n\n" +
+								"The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster\n" +
+								"uses the default node group, otherwise the self-managed addon is used.",
 						},
 						"version": {
 							TypeSpec: schema.TypeSpec{Type: "string"},
