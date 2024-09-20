@@ -8,7 +8,6 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"
-	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/cloudformation"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
@@ -375,8 +374,12 @@ type ClusterNodeGroupOptions struct {
 	KubeletExtraArgs *string `pulumi:"kubeletExtraArgs"`
 	// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
 	Labels map[string]string `pulumi:"labels"`
+	// The tag specifications to apply to the launch template.
+	LaunchTemplateTagSpecifications []ec2.LaunchTemplateTagSpecification `pulumi:"launchTemplateTagSpecifications"`
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize *int `pulumi:"maxSize"`
+	// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+	MinRefreshPercentage *int `pulumi:"minRefreshPercentage"`
 	// The minimum number of worker nodes running in the cluster. Defaults to 1.
 	MinSize *int `pulumi:"minSize"`
 	// Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
@@ -530,8 +533,12 @@ type ClusterNodeGroupOptionsArgs struct {
 	KubeletExtraArgs *string `pulumi:"kubeletExtraArgs"`
 	// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
 	Labels map[string]string `pulumi:"labels"`
+	// The tag specifications to apply to the launch template.
+	LaunchTemplateTagSpecifications ec2.LaunchTemplateTagSpecificationArrayInput `pulumi:"launchTemplateTagSpecifications"`
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
 	MaxSize pulumi.IntPtrInput `pulumi:"maxSize"`
+	// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+	MinRefreshPercentage pulumi.IntPtrInput `pulumi:"minRefreshPercentage"`
 	// The minimum number of worker nodes running in the cluster. Defaults to 1.
 	MinSize pulumi.IntPtrInput `pulumi:"minSize"`
 	// Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
@@ -801,9 +808,21 @@ func (o ClusterNodeGroupOptionsOutput) Labels() pulumi.StringMapOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) map[string]string { return v.Labels }).(pulumi.StringMapOutput)
 }
 
+// The tag specifications to apply to the launch template.
+func (o ClusterNodeGroupOptionsOutput) LaunchTemplateTagSpecifications() ec2.LaunchTemplateTagSpecificationArrayOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) []ec2.LaunchTemplateTagSpecification {
+		return v.LaunchTemplateTagSpecifications
+	}).(ec2.LaunchTemplateTagSpecificationArrayOutput)
+}
+
 // The maximum number of worker nodes running in the cluster. Defaults to 2.
 func (o ClusterNodeGroupOptionsOutput) MaxSize() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *int { return v.MaxSize }).(pulumi.IntPtrOutput)
+}
+
+// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+func (o ClusterNodeGroupOptionsOutput) MinRefreshPercentage() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *int { return v.MinRefreshPercentage }).(pulumi.IntPtrOutput)
 }
 
 // The minimum number of worker nodes running in the cluster. Defaults to 1.
@@ -1158,6 +1177,16 @@ func (o ClusterNodeGroupOptionsPtrOutput) Labels() pulumi.StringMapOutput {
 	}).(pulumi.StringMapOutput)
 }
 
+// The tag specifications to apply to the launch template.
+func (o ClusterNodeGroupOptionsPtrOutput) LaunchTemplateTagSpecifications() ec2.LaunchTemplateTagSpecificationArrayOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) []ec2.LaunchTemplateTagSpecification {
+		if v == nil {
+			return nil
+		}
+		return v.LaunchTemplateTagSpecifications
+	}).(ec2.LaunchTemplateTagSpecificationArrayOutput)
+}
+
 // The maximum number of worker nodes running in the cluster. Defaults to 2.
 func (o ClusterNodeGroupOptionsPtrOutput) MaxSize() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) *int {
@@ -1165,6 +1194,16 @@ func (o ClusterNodeGroupOptionsPtrOutput) MaxSize() pulumi.IntPtrOutput {
 			return nil
 		}
 		return v.MaxSize
+	}).(pulumi.IntPtrOutput)
+}
+
+// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+func (o ClusterNodeGroupOptionsPtrOutput) MinRefreshPercentage() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *int {
+		if v == nil {
+			return nil
+		}
+		return v.MinRefreshPercentage
 	}).(pulumi.IntPtrOutput)
 }
 
@@ -2676,8 +2715,6 @@ func (o KubeconfigOptionsPtrOutput) RoleArn() pulumi.StringPtrOutput {
 type NodeGroupData struct {
 	// The AutoScalingGroup name for the node group.
 	AutoScalingGroupName string `pulumi:"autoScalingGroupName"`
-	// The CloudFormation Stack which defines the Node AutoScalingGroup.
-	CfnStack *cloudformation.Stack `pulumi:"cfnStack"`
 	// The additional security groups for the node group that captures user-specific rules.
 	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
 	// The security group for the node group to communicate with the cluster.
@@ -2702,11 +2739,6 @@ func (o NodeGroupDataOutput) ToNodeGroupDataOutputWithContext(ctx context.Contex
 // The AutoScalingGroup name for the node group.
 func (o NodeGroupDataOutput) AutoScalingGroupName() pulumi.StringOutput {
 	return o.ApplyT(func(v NodeGroupData) string { return v.AutoScalingGroupName }).(pulumi.StringOutput)
-}
-
-// The CloudFormation Stack which defines the Node AutoScalingGroup.
-func (o NodeGroupDataOutput) CfnStack() cloudformation.StackOutput {
-	return o.ApplyT(func(v NodeGroupData) *cloudformation.Stack { return v.CfnStack }).(cloudformation.StackOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.
@@ -2751,16 +2783,6 @@ func (o NodeGroupDataPtrOutput) AutoScalingGroupName() pulumi.StringPtrOutput {
 		}
 		return &v.AutoScalingGroupName
 	}).(pulumi.StringPtrOutput)
-}
-
-// The CloudFormation Stack which defines the Node AutoScalingGroup.
-func (o NodeGroupDataPtrOutput) CfnStack() cloudformation.StackOutput {
-	return o.ApplyT(func(v *NodeGroupData) *cloudformation.Stack {
-		if v == nil {
-			return nil
-		}
-		return v.CfnStack
-	}).(cloudformation.StackOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.

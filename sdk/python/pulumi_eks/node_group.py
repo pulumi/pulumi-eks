@@ -752,7 +752,12 @@ class NodeGroupArgs:
         pulumi.set(self, "version", value)
 
 
+warnings.warn("""NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.""", DeprecationWarning)
+
+
 class NodeGroup(pulumi.ComponentResource):
+    warnings.warn("""NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.""", DeprecationWarning)
+
     @overload
     def __init__(__self__,
                  resource_name: str,
@@ -968,6 +973,7 @@ class NodeGroup(pulumi.ComponentResource):
                  taints: Optional[Mapping[str, Union['TaintArgs', 'TaintArgsDict']]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
+        pulumi.log.warn("""NodeGroup is deprecated: NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.""")
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
             raise TypeError('Expected resource options to be a ResourceOptions instance')

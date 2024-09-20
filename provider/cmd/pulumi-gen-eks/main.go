@@ -994,8 +994,9 @@ func generateSchema() schema.PackageSpec {
 						"autoScalingGroupName",
 					},
 				},
-				InputProperties: nodeGroupProperties(true /*cluster*/, false /*NodeGroupV2*/),
-				RequiredInputs:  []string{"cluster"},
+				DeprecationMessage: "NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.",
+				InputProperties:    nodeGroupProperties(true /*cluster*/, false /*NodeGroupV2*/),
+				RequiredInputs:     []string{"cluster"},
 			},
 			"eks:index:NodeGroupV2": {
 				IsComponent: true,
@@ -1371,10 +1372,6 @@ func generateSchema() schema.PackageSpec {
 							},
 							Description: "The additional security groups for the node group that captures user-specific rules.",
 						},
-						"cfnStack": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:cloudformation%2Fstack:Stack")},
-							Description: "The CloudFormation Stack which defines the Node AutoScalingGroup.",
-						},
 						"autoScalingGroupName": {
 							TypeSpec:    schema.TypeSpec{Type: "string"},
 							Description: "The AutoScalingGroup name for the node group.",
@@ -1383,7 +1380,6 @@ func generateSchema() schema.PackageSpec {
 					Required: []string{
 						"nodeSecurityGroup",
 						"extraNodeSecurityGroups",
-						"cfnStack",
 						"autoScalingGroupName",
 					},
 				},
@@ -1564,7 +1560,7 @@ func generateSchema() schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "object",
 					Description: "Describes the configuration options accepted by a cluster to create its own node groups.",
-					Properties:  nodeGroupProperties(false /*cluster*/, false /*NodeGroupV2*/),
+					Properties:  nodeGroupProperties(false /*cluster*/, true /*NodeGroupV2*/),
 				},
 			},
 

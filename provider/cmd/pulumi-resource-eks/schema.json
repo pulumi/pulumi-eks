@@ -292,9 +292,20 @@
                     "plain": true,
                     "description": "Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument."
                 },
+                "launchTemplateTagSpecifications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "/aws/v6.18.2/schema.json#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification"
+                    },
+                    "description": "The tag specifications to apply to the launch template."
+                },
                 "maxSize": {
                     "type": "integer",
                     "description": "The maximum number of worker nodes running in the cluster. Defaults to 2."
+                },
+                "minRefreshPercentage": {
+                    "type": "integer",
+                    "description": "The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50."
                 },
                 "minSize": {
                     "type": "integer",
@@ -640,10 +651,6 @@
                     "type": "string",
                     "description": "The AutoScalingGroup name for the node group."
                 },
-                "cfnStack": {
-                    "$ref": "/aws/v6.18.2/schema.json#/resources/aws:cloudformation%2Fstack:Stack",
-                    "description": "The CloudFormation Stack which defines the Node AutoScalingGroup."
-                },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
@@ -660,7 +667,6 @@
             "required": [
                 "nodeSecurityGroup",
                 "extraNodeSecurityGroups",
-                "cfnStack",
                 "autoScalingGroupName"
             ]
         },
@@ -1798,6 +1804,7 @@
             "requiredInputs": [
                 "cluster"
             ],
+            "deprecationMessage": "NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.",
             "isComponent": true
         },
         "eks:index:NodeGroupSecurityGroup": {

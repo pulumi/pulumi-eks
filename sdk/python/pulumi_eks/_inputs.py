@@ -200,7 +200,9 @@ class ClusterNodeGroupOptionsArgs:
                  key_name: Optional[pulumi.Input[str]] = None,
                  kubelet_extra_args: Optional[str] = None,
                  labels: Optional[Mapping[str, str]] = None,
+                 launch_template_tag_specifications: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
+                 min_refresh_percentage: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
                  node_associate_public_ip_address: Optional[bool] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
@@ -280,7 +282,9 @@ class ClusterNodeGroupOptionsArgs:
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         :param Mapping[str, str] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]] launch_template_tag_specifications: The tag specifications to apply to the launch template.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
+        :param pulumi.Input[int] min_refresh_percentage: The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
         :param bool node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
@@ -360,8 +364,12 @@ class ClusterNodeGroupOptionsArgs:
             pulumi.set(__self__, "kubelet_extra_args", kubelet_extra_args)
         if labels is not None:
             pulumi.set(__self__, "labels", labels)
+        if launch_template_tag_specifications is not None:
+            pulumi.set(__self__, "launch_template_tag_specifications", launch_template_tag_specifications)
         if max_size is not None:
             pulumi.set(__self__, "max_size", max_size)
+        if min_refresh_percentage is not None:
+            pulumi.set(__self__, "min_refresh_percentage", min_refresh_percentage)
         if min_size is not None:
             pulumi.set(__self__, "min_size", min_size)
         if node_associate_public_ip_address is not None:
@@ -646,6 +654,18 @@ class ClusterNodeGroupOptionsArgs:
         pulumi.set(self, "labels", value)
 
     @property
+    @pulumi.getter(name="launchTemplateTagSpecifications")
+    def launch_template_tag_specifications(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]]:
+        """
+        The tag specifications to apply to the launch template.
+        """
+        return pulumi.get(self, "launch_template_tag_specifications")
+
+    @launch_template_tag_specifications.setter
+    def launch_template_tag_specifications(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]]):
+        pulumi.set(self, "launch_template_tag_specifications", value)
+
+    @property
     @pulumi.getter(name="maxSize")
     def max_size(self) -> Optional[pulumi.Input[int]]:
         """
@@ -656,6 +676,18 @@ class ClusterNodeGroupOptionsArgs:
     @max_size.setter
     def max_size(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "max_size", value)
+
+    @property
+    @pulumi.getter(name="minRefreshPercentage")
+    def min_refresh_percentage(self) -> Optional[pulumi.Input[int]]:
+        """
+        The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+        """
+        return pulumi.get(self, "min_refresh_percentage")
+
+    @min_refresh_percentage.setter
+    def min_refresh_percentage(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "min_refresh_percentage", value)
 
     @property
     @pulumi.getter(name="minSize")
