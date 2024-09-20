@@ -6,7 +6,7 @@ PROVIDER_VERSION ?= 2.0.0-alpha.0+dev
 # Use this normalised version everywhere rather than the raw input to ensure consistency.
 VERSION_GENERIC = $(shell pulumictl convert-version --language generic --version "$(PROVIDER_VERSION)")
 
-TESTPARALLELISM := 12
+TESTPARALLELISM := 8
 
 PACK            := eks
 PROVIDER        := pulumi-resource-${PACK}

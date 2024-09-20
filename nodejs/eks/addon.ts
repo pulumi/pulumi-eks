@@ -55,3 +55,25 @@ export class Addon extends pulumi.ComponentResource {
         this.addon = addon;
     }
 }
+
+// Sorts the keys of an object to ensure the output is deterministic.
+function stringifyReplacer(key: string, value: any) {
+    return value instanceof Object &&
+        !(value instanceof Array || value instanceof Date || value instanceof Function)
+        ? Object.keys(value)
+              .sort()
+              .reduce((sorted, key) => {
+                  sorted[key] = value[key];
+                  return sorted;
+              }, {} as { [key: string]: any })
+        : value;
+}
+
+/**
+ * Creates the json based addon configuration with deterministic ordering of keys. Returns undefined if no values are provided.
+ */
+export function stringifyAddonConfiguration(
+    values: pulumi.Input<object> | undefined,
+): pulumi.Output<string> | undefined {
+    return values ? pulumi.jsonStringify(values, stringifyReplacer) : undefined;
+}

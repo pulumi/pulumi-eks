@@ -9,7 +9,9 @@ import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.enums.ResolveConflictsOnCreate;
 import com.pulumi.eks.enums.ResolveConflictsOnUpdate;
 import java.lang.Boolean;
+import java.lang.Object;
 import java.lang.String;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -20,7 +22,22 @@ public final class CoreDnsAddonOptionsArgs extends com.pulumi.resources.Resource
     public static final CoreDnsAddonOptionsArgs Empty = new CoreDnsAddonOptionsArgs();
 
     /**
-     * Whether or not to create the Addon in the cluster
+     * Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     * 
+     */
+    @Import(name="configurationValues")
+    private @Nullable Output<Map<String,Object>> configurationValues;
+
+    /**
+     * @return Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     * 
+     */
+    public Optional<Output<Map<String,Object>>> configurationValues() {
+        return Optional.ofNullable(this.configurationValues);
+    }
+
+    /**
+     * Whether or not to create the `coredns` Addon in the cluster
      * 
      * The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
      * uses the default node group, otherwise the self-managed addon is used.
@@ -30,7 +47,7 @@ public final class CoreDnsAddonOptionsArgs extends com.pulumi.resources.Resource
     private @Nullable Boolean enabled;
 
     /**
-     * @return Whether or not to create the Addon in the cluster
+     * @return Whether or not to create the `coredns` Addon in the cluster
      * 
      * The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
      * uses the default node group, otherwise the self-managed addon is used.
@@ -88,6 +105,7 @@ public final class CoreDnsAddonOptionsArgs extends com.pulumi.resources.Resource
     private CoreDnsAddonOptionsArgs() {}
 
     private CoreDnsAddonOptionsArgs(CoreDnsAddonOptionsArgs $) {
+        this.configurationValues = $.configurationValues;
         this.enabled = $.enabled;
         this.resolveConflictsOnCreate = $.resolveConflictsOnCreate;
         this.resolveConflictsOnUpdate = $.resolveConflictsOnUpdate;
@@ -113,7 +131,28 @@ public final class CoreDnsAddonOptionsArgs extends com.pulumi.resources.Resource
         }
 
         /**
-         * @param enabled Whether or not to create the Addon in the cluster
+         * @param configurationValues Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder configurationValues(@Nullable Output<Map<String,Object>> configurationValues) {
+            $.configurationValues = configurationValues;
+            return this;
+        }
+
+        /**
+         * @param configurationValues Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder configurationValues(Map<String,Object> configurationValues) {
+            return configurationValues(Output.of(configurationValues));
+        }
+
+        /**
+         * @param enabled Whether or not to create the `coredns` Addon in the cluster
          * 
          * The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
          * uses the default node group, otherwise the self-managed addon is used.
