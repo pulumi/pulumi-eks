@@ -22,12 +22,18 @@ public final class CoreDnsAddonOptionsArgs extends com.pulumi.resources.Resource
     /**
      * Whether or not to create the Addon in the cluster
      * 
+     * The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+     * uses the default node group, otherwise the self-managed addon is used.
+     * 
      */
     @Import(name="enabled")
     private @Nullable Boolean enabled;
 
     /**
      * @return Whether or not to create the Addon in the cluster
+     * 
+     * The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+     * uses the default node group, otherwise the self-managed addon is used.
      * 
      */
     public Optional<Boolean> enabled() {
@@ -108,6 +114,9 @@ public final class CoreDnsAddonOptionsArgs extends com.pulumi.resources.Resource
 
         /**
          * @param enabled Whether or not to create the Addon in the cluster
+         * 
+         * The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+         * uses the default node group, otherwise the self-managed addon is used.
          * 
          * @return builder
          * 

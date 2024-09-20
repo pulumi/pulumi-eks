@@ -1599,6 +1599,9 @@ func (o CoreDataOutput) VpcId() pulumi.StringOutput {
 
 type CoreDnsAddonOptions struct {
 	// Whether or not to create the Addon in the cluster
+	//
+	// The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+	// uses the default node group, otherwise the self-managed addon is used.
 	Enabled *bool `pulumi:"enabled"`
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
 	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
@@ -1642,6 +1645,9 @@ type CoreDnsAddonOptionsInput interface {
 
 type CoreDnsAddonOptionsArgs struct {
 	// Whether or not to create the Addon in the cluster
+	//
+	// The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+	// uses the default node group, otherwise the self-managed addon is used.
 	Enabled *bool `pulumi:"enabled"`
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
 	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
@@ -1749,6 +1755,9 @@ func (o CoreDnsAddonOptionsOutput) ToCoreDnsAddonOptionsPtrOutputWithContext(ctx
 }
 
 // Whether or not to create the Addon in the cluster
+//
+// The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+// uses the default node group, otherwise the self-managed addon is used.
 func (o CoreDnsAddonOptionsOutput) Enabled() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v CoreDnsAddonOptions) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
 }
@@ -1793,6 +1802,9 @@ func (o CoreDnsAddonOptionsPtrOutput) Elem() CoreDnsAddonOptionsOutput {
 }
 
 // Whether or not to create the Addon in the cluster
+//
+// The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+// uses the default node group, otherwise the self-managed addon is used.
 func (o CoreDnsAddonOptionsPtrOutput) Enabled() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *CoreDnsAddonOptions) *bool {
 		if v == nil {
