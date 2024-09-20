@@ -31,7 +31,7 @@ import {
 } from "./authenticationMode";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
 import { createDashboard } from "./dashboard";
-import { assertCompatibleAWSCLIExists, assertCompatibleKubectlVersionExists } from "./dependencies";
+import { assertCompatibleAWSCLIExists } from "./dependencies";
 import {
     computeWorkerSubnets,
     createNodeGroup,
@@ -44,6 +44,7 @@ import { ServiceRole } from "./servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
 import { InputTags, UserStorageClasses } from "./utils";
 import { VpcCniAddon, VpcCniAddonOptions } from "./cni-addon";
+import { stringifyAddonConfiguration } from "./addon";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -399,9 +400,6 @@ export function createCore(
     // Check to ensure that a compatible version of aws CLI is installed, as we'll need it in order
     // to retrieve a token to login to the EKS cluster later.
     assertCompatibleAWSCLIExists();
-    // Check to ensure that a compatible kubectl is installed, as we'll need it in order to deploy
-    // k8s resources later.
-    assertCompatibleKubectlVersionExists();
 
     const args = validateAuthenticationMode(rawArgs);
 
@@ -650,13 +648,17 @@ export function createCore(
                 resolveConflictsOnUpdate:
                     args.kubeProxyAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
                 addonVersion: kubeProxyVersion,
+                configurationValues: stringifyAddonConfiguration(
+                    args.kubeProxyAddonOptions?.configurationValues,
+                ),
             },
             { parent, provider },
         );
     }
 
-    const corednsExplicitlyEnabled = args.corednsAddonOptions?.enabled === true;
-    // We can only enable the coredns addon if using we have a node group to place it on
+    const corednsExplicitlyEnabled =
+        args.corednsAddonOptions?.enabled === true || args.corednsAddonOptions?.configurationValues;
+    // We can only enable the coredns addon if we have a node group to place it on
     // This means we are either using the default node group or the cluster is a fargate cluster
     // Also, if the user explicitly enables it then do what they want
     pulumi.output(args.fargate).apply((fargate) => {
@@ -677,6 +679,19 @@ export function createCore(
                       )
                       .apply((addonVersion) => addonVersion.version);
 
+            const configurationValues = pulumi
+                .all([args.fargate, args.corednsAddonOptions?.configurationValues])
+                .apply(([fargate, configurationValues]) => {
+                    if (fargate) {
+                        return {
+                            computeType: "Fargate",
+                            ...configurationValues,
+                        };
+                    } else {
+                        return configurationValues;
+                    }
+                });
+
             const corednsAddon = new aws.eks.Addon(
                 `${name}-coredns`,
                 {
@@ -689,11 +704,7 @@ export function createCore(
                         args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
                     resolveConflictsOnUpdate:
                         args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
-                    configurationValues: fargate
-                        ? JSON.stringify({
-                              computeType: "Fargate",
-                          })
-                        : undefined,
+                    configurationValues: stringifyAddonConfiguration(configurationValues),
                 },
                 { parent, provider },
             );
@@ -1203,6 +1214,10 @@ export interface CoreDnsAddonOptions {
      * The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
      */
     version?: pulumi.Input<string>;
+    /**
+     * Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     */
+    configurationValues?: pulumi.Input<object>;
 }
 
 export interface KubeProxyAddonOptionsArgs {
@@ -1222,6 +1237,10 @@ export interface KubeProxyAddonOptionsArgs {
      * The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
      */
     version?: pulumi.Input<string>;
+    /**
+     * Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     */
+    configurationValues?: pulumi.Input<object>;
 }
 
 /**

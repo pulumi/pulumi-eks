@@ -1226,12 +1226,14 @@ class CoreDataArgs:
 @pulumi.input_type
 class CoreDnsAddonOptionsArgs:
     def __init__(__self__, *,
+                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  enabled: Optional[bool] = None,
                  resolve_conflicts_on_create: Optional['ResolveConflictsOnCreate'] = None,
                  resolve_conflicts_on_update: Optional['ResolveConflictsOnUpdate'] = None,
                  version: Optional[pulumi.Input[str]] = None):
         """
-        :param bool enabled: Whether or not to create the Addon in the cluster
+        :param pulumi.Input[Mapping[str, Any]] configuration_values: Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        :param bool enabled: Whether or not to create the `coredns` Addon in the cluster
                
                The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
                uses the default node group, otherwise the self-managed addon is used.
@@ -1239,6 +1241,8 @@ class CoreDnsAddonOptionsArgs:
         :param 'ResolveConflictsOnUpdate' resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
         :param pulumi.Input[str] version: The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
         """
+        if configuration_values is not None:
+            pulumi.set(__self__, "configuration_values", configuration_values)
         if enabled is None:
             enabled = True
         if enabled is not None:
@@ -1255,10 +1259,22 @@ class CoreDnsAddonOptionsArgs:
             pulumi.set(__self__, "version", version)
 
     @property
+    @pulumi.getter(name="configurationValues")
+    def configuration_values(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
+        """
+        Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        """
+        return pulumi.get(self, "configuration_values")
+
+    @configuration_values.setter
+    def configuration_values(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
+        pulumi.set(self, "configuration_values", value)
+
+    @property
     @pulumi.getter
     def enabled(self) -> Optional[bool]:
         """
-        Whether or not to create the Addon in the cluster
+        Whether or not to create the `coredns` Addon in the cluster
 
         The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
         uses the default node group, otherwise the self-managed addon is used.
@@ -1397,16 +1413,20 @@ class FargateProfileArgs:
 @pulumi.input_type
 class KubeProxyAddonOptionsArgs:
     def __init__(__self__, *,
+                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  enabled: Optional[bool] = None,
                  resolve_conflicts_on_create: Optional['ResolveConflictsOnCreate'] = None,
                  resolve_conflicts_on_update: Optional['ResolveConflictsOnUpdate'] = None,
                  version: Optional[pulumi.Input[str]] = None):
         """
+        :param pulumi.Input[Mapping[str, Any]] configuration_values: Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
         :param bool enabled: Whether or not to create the `kube-proxy` Addon in the cluster
         :param 'ResolveConflictsOnCreate' resolve_conflicts_on_create: How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
         :param 'ResolveConflictsOnUpdate' resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
         :param pulumi.Input[str] version: The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
         """
+        if configuration_values is not None:
+            pulumi.set(__self__, "configuration_values", configuration_values)
         if enabled is None:
             enabled = True
         if enabled is not None:
@@ -1421,6 +1441,18 @@ class KubeProxyAddonOptionsArgs:
             pulumi.set(__self__, "resolve_conflicts_on_update", resolve_conflicts_on_update)
         if version is not None:
             pulumi.set(__self__, "version", version)
+
+    @property
+    @pulumi.getter(name="configurationValues")
+    def configuration_values(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
+        """
+        Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        """
+        return pulumi.get(self, "configuration_values")
+
+    @configuration_values.setter
+    def configuration_values(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
+        pulumi.set(self, "configuration_values", value)
 
     @property
     @pulumi.getter
@@ -1928,8 +1960,8 @@ class VpcCniOptionsArgs:
                  log_file: Optional[pulumi.Input[str]] = None,
                  log_level: Optional[pulumi.Input[str]] = None,
                  node_port_support: Optional[pulumi.Input[bool]] = None,
-                 resolve_conflicts_on_create: Optional[pulumi.Input[str]] = None,
-                 resolve_conflicts_on_update: Optional[pulumi.Input[str]] = None,
+                 resolve_conflicts_on_create: Optional['ResolveConflictsOnCreate'] = None,
+                 resolve_conflicts_on_update: Optional['ResolveConflictsOnUpdate'] = None,
                  security_context_privileged: Optional[pulumi.Input[bool]] = None,
                  service_account_role_arn: Optional[pulumi.Input[str]] = None,
                  veth_prefix: Optional[pulumi.Input[str]] = None,
@@ -1972,14 +2004,8 @@ class VpcCniOptionsArgs:
         :param pulumi.Input[bool] node_port_support: Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
                
                Defaults to true.
-        :param pulumi.Input[str] resolve_conflicts_on_create: How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-               Valid values are NONE and OVERWRITE.
-               
-               For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
-        :param pulumi.Input[str] resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-               Valid values are NONE, OVERWRITE, and PRESERVE.
-               
-               For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+        :param 'ResolveConflictsOnCreate' resolve_conflicts_on_create: How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+        :param 'ResolveConflictsOnUpdate' resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
         :param pulumi.Input[bool] security_context_privileged: Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
         :param pulumi.Input[str] service_account_role_arn: The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
                
@@ -2029,8 +2055,12 @@ class VpcCniOptionsArgs:
             pulumi.set(__self__, "log_level", log_level)
         if node_port_support is not None:
             pulumi.set(__self__, "node_port_support", node_port_support)
+        if resolve_conflicts_on_create is None:
+            resolve_conflicts_on_create = 'OVERWRITE'
         if resolve_conflicts_on_create is not None:
             pulumi.set(__self__, "resolve_conflicts_on_create", resolve_conflicts_on_create)
+        if resolve_conflicts_on_update is None:
+            resolve_conflicts_on_update = 'OVERWRITE'
         if resolve_conflicts_on_update is not None:
             pulumi.set(__self__, "resolve_conflicts_on_update", resolve_conflicts_on_update)
         if security_context_privileged is not None:
@@ -2258,32 +2288,26 @@ class VpcCniOptionsArgs:
 
     @property
     @pulumi.getter(name="resolveConflictsOnCreate")
-    def resolve_conflicts_on_create(self) -> Optional[pulumi.Input[str]]:
+    def resolve_conflicts_on_create(self) -> Optional['ResolveConflictsOnCreate']:
         """
-        How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-        Valid values are NONE and OVERWRITE.
-
-        For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
+        How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
         """
         return pulumi.get(self, "resolve_conflicts_on_create")
 
     @resolve_conflicts_on_create.setter
-    def resolve_conflicts_on_create(self, value: Optional[pulumi.Input[str]]):
+    def resolve_conflicts_on_create(self, value: Optional['ResolveConflictsOnCreate']):
         pulumi.set(self, "resolve_conflicts_on_create", value)
 
     @property
     @pulumi.getter(name="resolveConflictsOnUpdate")
-    def resolve_conflicts_on_update(self) -> Optional[pulumi.Input[str]]:
+    def resolve_conflicts_on_update(self) -> Optional['ResolveConflictsOnUpdate']:
         """
-        How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-        Valid values are NONE, OVERWRITE, and PRESERVE.
-
-        For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
+        How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
         """
         return pulumi.get(self, "resolve_conflicts_on_update")
 
     @resolve_conflicts_on_update.setter
-    def resolve_conflicts_on_update(self, value: Optional[pulumi.Input[str]]):
+    def resolve_conflicts_on_update(self, value: Optional['ResolveConflictsOnUpdate']):
         pulumi.set(self, "resolve_conflicts_on_update", value)
 
     @property

@@ -85,6 +85,9 @@ func NewCluster(ctx *pulumi.Context,
 	if args.KubeProxyAddonOptions != nil {
 		args.KubeProxyAddonOptions = args.KubeProxyAddonOptions.Defaults()
 	}
+	if args.VpcCniOptions != nil {
+		args.VpcCniOptions = args.VpcCniOptions.Defaults()
+	}
 	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource Cluster
 	err := ctx.RegisterRemoteComponentResource("eks:index:Cluster", name, args, &resource, opts...)
