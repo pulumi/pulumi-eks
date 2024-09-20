@@ -1598,7 +1598,12 @@ func (o CoreDataOutput) VpcId() pulumi.StringOutput {
 }
 
 type CoreDnsAddonOptions struct {
-	// Whether or not to create the Addon in the cluster
+	// Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+	ConfigurationValues map[string]interface{} `pulumi:"configurationValues"`
+	// Whether or not to create the `coredns` Addon in the cluster
+	//
+	// The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+	// uses the default node group, otherwise the self-managed addon is used.
 	Enabled *bool `pulumi:"enabled"`
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
 	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
@@ -1641,7 +1646,12 @@ type CoreDnsAddonOptionsInput interface {
 }
 
 type CoreDnsAddonOptionsArgs struct {
-	// Whether or not to create the Addon in the cluster
+	// Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+	ConfigurationValues pulumi.MapInput `pulumi:"configurationValues"`
+	// Whether or not to create the `coredns` Addon in the cluster
+	//
+	// The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+	// uses the default node group, otherwise the self-managed addon is used.
 	Enabled *bool `pulumi:"enabled"`
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
 	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
@@ -1748,7 +1758,15 @@ func (o CoreDnsAddonOptionsOutput) ToCoreDnsAddonOptionsPtrOutputWithContext(ctx
 	}).(CoreDnsAddonOptionsPtrOutput)
 }
 
-// Whether or not to create the Addon in the cluster
+// Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+func (o CoreDnsAddonOptionsOutput) ConfigurationValues() pulumi.MapOutput {
+	return o.ApplyT(func(v CoreDnsAddonOptions) map[string]interface{} { return v.ConfigurationValues }).(pulumi.MapOutput)
+}
+
+// Whether or not to create the `coredns` Addon in the cluster
+//
+// The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+// uses the default node group, otherwise the self-managed addon is used.
 func (o CoreDnsAddonOptionsOutput) Enabled() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v CoreDnsAddonOptions) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
 }
@@ -1792,7 +1810,20 @@ func (o CoreDnsAddonOptionsPtrOutput) Elem() CoreDnsAddonOptionsOutput {
 	}).(CoreDnsAddonOptionsOutput)
 }
 
-// Whether or not to create the Addon in the cluster
+// Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+func (o CoreDnsAddonOptionsPtrOutput) ConfigurationValues() pulumi.MapOutput {
+	return o.ApplyT(func(v *CoreDnsAddonOptions) map[string]interface{} {
+		if v == nil {
+			return nil
+		}
+		return v.ConfigurationValues
+	}).(pulumi.MapOutput)
+}
+
+// Whether or not to create the `coredns` Addon in the cluster
+//
+// The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+// uses the default node group, otherwise the self-managed addon is used.
 func (o CoreDnsAddonOptionsPtrOutput) Enabled() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *CoreDnsAddonOptions) *bool {
 		if v == nil {
@@ -2168,6 +2199,8 @@ func (o FargateProfilePtrOutput) SubnetIds() pulumi.StringArrayOutput {
 }
 
 type KubeProxyAddonOptions struct {
+	// Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+	ConfigurationValues map[string]interface{} `pulumi:"configurationValues"`
 	// Whether or not to create the `kube-proxy` Addon in the cluster
 	Enabled *bool `pulumi:"enabled"`
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
@@ -2211,6 +2244,8 @@ type KubeProxyAddonOptionsInput interface {
 }
 
 type KubeProxyAddonOptionsArgs struct {
+	// Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+	ConfigurationValues pulumi.MapInput `pulumi:"configurationValues"`
 	// Whether or not to create the `kube-proxy` Addon in the cluster
 	Enabled *bool `pulumi:"enabled"`
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
@@ -2318,6 +2353,11 @@ func (o KubeProxyAddonOptionsOutput) ToKubeProxyAddonOptionsPtrOutputWithContext
 	}).(KubeProxyAddonOptionsPtrOutput)
 }
 
+// Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+func (o KubeProxyAddonOptionsOutput) ConfigurationValues() pulumi.MapOutput {
+	return o.ApplyT(func(v KubeProxyAddonOptions) map[string]interface{} { return v.ConfigurationValues }).(pulumi.MapOutput)
+}
+
 // Whether or not to create the `kube-proxy` Addon in the cluster
 func (o KubeProxyAddonOptionsOutput) Enabled() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v KubeProxyAddonOptions) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
@@ -2360,6 +2400,16 @@ func (o KubeProxyAddonOptionsPtrOutput) Elem() KubeProxyAddonOptionsOutput {
 		var ret KubeProxyAddonOptions
 		return ret
 	}).(KubeProxyAddonOptionsOutput)
+}
+
+// Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+func (o KubeProxyAddonOptionsPtrOutput) ConfigurationValues() pulumi.MapOutput {
+	return o.ApplyT(func(v *KubeProxyAddonOptions) map[string]interface{} {
+		if v == nil {
+			return nil
+		}
+		return v.ConfigurationValues
+	}).(pulumi.MapOutput)
 }
 
 // Whether or not to create the `kube-proxy` Addon in the cluster
@@ -3447,16 +3497,10 @@ type VpcCniOptions struct {
 	//
 	// Defaults to true.
 	NodePortSupport *bool `pulumi:"nodePortSupport"`
-	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-	// Valid values are NONE and OVERWRITE.
-	//
-	// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
-	ResolveConflictsOnCreate *string `pulumi:"resolveConflictsOnCreate"`
-	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-	// Valid values are NONE, OVERWRITE, and PRESERVE.
-	//
-	// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
-	ResolveConflictsOnUpdate *string `pulumi:"resolveConflictsOnUpdate"`
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+	ResolveConflictsOnUpdate *ResolveConflictsOnUpdate `pulumi:"resolveConflictsOnUpdate"`
 	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 	SecurityContextPrivileged *bool `pulumi:"securityContextPrivileged"`
 	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
@@ -3479,6 +3523,23 @@ type VpcCniOptions struct {
 	WarmIpTarget *int `pulumi:"warmIpTarget"`
 	// WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
 	WarmPrefixTarget *int `pulumi:"warmPrefixTarget"`
+}
+
+// Defaults sets the appropriate defaults for VpcCniOptions
+func (val *VpcCniOptions) Defaults() *VpcCniOptions {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if tmp.ResolveConflictsOnCreate == nil {
+		resolveConflictsOnCreate_ := ResolveConflictsOnCreate("OVERWRITE")
+		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
+	}
+	if tmp.ResolveConflictsOnUpdate == nil {
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("OVERWRITE")
+		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
+	}
+	return &tmp
 }
 
 // VpcCniOptionsInput is an input type that accepts VpcCniOptionsArgs and VpcCniOptionsOutput values.
@@ -3544,16 +3605,10 @@ type VpcCniOptionsArgs struct {
 	//
 	// Defaults to true.
 	NodePortSupport pulumi.BoolPtrInput `pulumi:"nodePortSupport"`
-	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-	// Valid values are NONE and OVERWRITE.
-	//
-	// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
-	ResolveConflictsOnCreate pulumi.StringPtrInput `pulumi:"resolveConflictsOnCreate"`
-	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-	// Valid values are NONE, OVERWRITE, and PRESERVE.
-	//
-	// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
-	ResolveConflictsOnUpdate pulumi.StringPtrInput `pulumi:"resolveConflictsOnUpdate"`
+	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
+	// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+	ResolveConflictsOnUpdate *ResolveConflictsOnUpdate `pulumi:"resolveConflictsOnUpdate"`
 	// Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
 	SecurityContextPrivileged pulumi.BoolPtrInput `pulumi:"securityContextPrivileged"`
 	// The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
@@ -3578,6 +3633,22 @@ type VpcCniOptionsArgs struct {
 	WarmPrefixTarget pulumi.IntPtrInput `pulumi:"warmPrefixTarget"`
 }
 
+// Defaults sets the appropriate defaults for VpcCniOptionsArgs
+func (val *VpcCniOptionsArgs) Defaults() *VpcCniOptionsArgs {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if tmp.ResolveConflictsOnCreate == nil {
+		resolveConflictsOnCreate_ := ResolveConflictsOnCreate("OVERWRITE")
+		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
+	}
+	if tmp.ResolveConflictsOnUpdate == nil {
+		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("OVERWRITE")
+		tmp.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
+	}
+	return &tmp
+}
 func (VpcCniOptionsArgs) ElementType() reflect.Type {
 	return reflect.TypeOf((*VpcCniOptions)(nil)).Elem()
 }
@@ -3754,20 +3825,14 @@ func (o VpcCniOptionsOutput) NodePortSupport() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v VpcCniOptions) *bool { return v.NodePortSupport }).(pulumi.BoolPtrOutput)
 }
 
-// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-// Valid values are NONE and OVERWRITE.
-//
-// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
-func (o VpcCniOptionsOutput) ResolveConflictsOnCreate() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v VpcCniOptions) *string { return v.ResolveConflictsOnCreate }).(pulumi.StringPtrOutput)
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+func (o VpcCniOptionsOutput) ResolveConflictsOnCreate() ResolveConflictsOnCreatePtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *ResolveConflictsOnCreate { return v.ResolveConflictsOnCreate }).(ResolveConflictsOnCreatePtrOutput)
 }
 
-// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-// Valid values are NONE, OVERWRITE, and PRESERVE.
-//
-// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
-func (o VpcCniOptionsOutput) ResolveConflictsOnUpdate() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v VpcCniOptions) *string { return v.ResolveConflictsOnUpdate }).(pulumi.StringPtrOutput)
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+func (o VpcCniOptionsOutput) ResolveConflictsOnUpdate() ResolveConflictsOnUpdatePtrOutput {
+	return o.ApplyT(func(v VpcCniOptions) *ResolveConflictsOnUpdate { return v.ResolveConflictsOnUpdate }).(ResolveConflictsOnUpdatePtrOutput)
 }
 
 // Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
@@ -4012,30 +4077,24 @@ func (o VpcCniOptionsPtrOutput) NodePortSupport() pulumi.BoolPtrOutput {
 	}).(pulumi.BoolPtrOutput)
 }
 
-// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.
-// Valid values are NONE and OVERWRITE.
-//
-// For more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html).
-func (o VpcCniOptionsPtrOutput) ResolveConflictsOnCreate() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *VpcCniOptions) *string {
+// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+func (o VpcCniOptionsPtrOutput) ResolveConflictsOnCreate() ResolveConflictsOnCreatePtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *ResolveConflictsOnCreate {
 		if v == nil {
 			return nil
 		}
 		return v.ResolveConflictsOnCreate
-	}).(pulumi.StringPtrOutput)
+	}).(ResolveConflictsOnCreatePtrOutput)
 }
 
-// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.
-// Valid values are NONE, OVERWRITE, and PRESERVE.
-//
-// For more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).
-func (o VpcCniOptionsPtrOutput) ResolveConflictsOnUpdate() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *VpcCniOptions) *string {
+// How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+func (o VpcCniOptionsPtrOutput) ResolveConflictsOnUpdate() ResolveConflictsOnUpdatePtrOutput {
+	return o.ApplyT(func(v *VpcCniOptions) *ResolveConflictsOnUpdate {
 		if v == nil {
 			return nil
 		}
 		return v.ResolveConflictsOnUpdate
-	}).(pulumi.StringPtrOutput)
+	}).(ResolveConflictsOnUpdatePtrOutput)
 }
 
 // Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default

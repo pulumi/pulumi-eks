@@ -529,10 +529,17 @@
         },
         "eks:index:CoreDnsAddonOptions": {
             "properties": {
+                "configurationValues": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html)."
+                },
                 "enabled": {
                     "type": "boolean",
                     "plain": true,
-                    "description": "Whether or not to create the Addon in the cluster",
+                    "description": "Whether or not to create the `coredns` Addon in the cluster\n\nThe managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster\nuses the default node group, otherwise the self-managed addon is used.",
                     "default": true
                 },
                 "resolveConflictsOnCreate": {
@@ -600,6 +607,13 @@
         },
         "eks:index:KubeProxyAddonOptions": {
             "properties": {
+                "configurationValues": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html)."
+                },
                 "enabled": {
                     "type": "boolean",
                     "plain": true,
@@ -952,11 +966,17 @@
                 },
                 "resolveConflictsOnCreate": {
                     "type": "string",
-                    "description": "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.\nValid values are NONE and OVERWRITE.\n\nFor more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html)."
+                    "$ref": "#/types/eks:index:ResolveConflictsOnCreate",
+                    "plain": true,
+                    "description": "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+                    "default": "OVERWRITE"
                 },
                 "resolveConflictsOnUpdate": {
                     "type": "string",
-                    "description": "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.\nValid values are NONE, OVERWRITE, and PRESERVE.\n\nFor more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html)."
+                    "$ref": "#/types/eks:index:ResolveConflictsOnUpdate",
+                    "plain": true,
+                    "description": "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+                    "default": "OVERWRITE"
                 },
                 "securityContextPrivileged": {
                     "type": "boolean",
@@ -2155,11 +2175,17 @@
                 },
                 "resolveConflictsOnCreate": {
                     "type": "string",
-                    "description": "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on.\nValid values are NONE and OVERWRITE.\n\nFor more details see the [CreateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html)."
+                    "$ref": "#/types/eks:index:ResolveConflictsOnCreate",
+                    "plain": true,
+                    "description": "How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.",
+                    "default": "OVERWRITE"
                 },
                 "resolveConflictsOnUpdate": {
                     "type": "string",
-                    "description": "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from theAmazon EKS default value.\nValid values are NONE, OVERWRITE, and PRESERVE.\n\nFor more details see the [UpdateAddon API Docs](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html)."
+                    "$ref": "#/types/eks:index:ResolveConflictsOnUpdate",
+                    "plain": true,
+                    "description": "How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.",
+                    "default": "OVERWRITE"
                 },
                 "securityContextPrivileged": {
                     "type": "boolean",

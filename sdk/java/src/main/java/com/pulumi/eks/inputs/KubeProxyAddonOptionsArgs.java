@@ -9,7 +9,9 @@ import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.enums.ResolveConflictsOnCreate;
 import com.pulumi.eks.enums.ResolveConflictsOnUpdate;
 import java.lang.Boolean;
+import java.lang.Object;
 import java.lang.String;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -18,6 +20,21 @@ import javax.annotation.Nullable;
 public final class KubeProxyAddonOptionsArgs extends com.pulumi.resources.ResourceArgs {
 
     public static final KubeProxyAddonOptionsArgs Empty = new KubeProxyAddonOptionsArgs();
+
+    /**
+     * Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     * 
+     */
+    @Import(name="configurationValues")
+    private @Nullable Output<Map<String,Object>> configurationValues;
+
+    /**
+     * @return Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+     * 
+     */
+    public Optional<Output<Map<String,Object>>> configurationValues() {
+        return Optional.ofNullable(this.configurationValues);
+    }
 
     /**
      * Whether or not to create the `kube-proxy` Addon in the cluster
@@ -82,6 +99,7 @@ public final class KubeProxyAddonOptionsArgs extends com.pulumi.resources.Resour
     private KubeProxyAddonOptionsArgs() {}
 
     private KubeProxyAddonOptionsArgs(KubeProxyAddonOptionsArgs $) {
+        this.configurationValues = $.configurationValues;
         this.enabled = $.enabled;
         this.resolveConflictsOnCreate = $.resolveConflictsOnCreate;
         this.resolveConflictsOnUpdate = $.resolveConflictsOnUpdate;
@@ -104,6 +122,27 @@ public final class KubeProxyAddonOptionsArgs extends com.pulumi.resources.Resour
 
         public Builder(KubeProxyAddonOptionsArgs defaults) {
             $ = new KubeProxyAddonOptionsArgs(Objects.requireNonNull(defaults));
+        }
+
+        /**
+         * @param configurationValues Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder configurationValues(@Nullable Output<Map<String,Object>> configurationValues) {
+            $.configurationValues = configurationValues;
+            return this;
+        }
+
+        /**
+         * @param configurationValues Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+         * 
+         * @return builder
+         * 
+         */
+        public Builder configurationValues(Map<String,Object> configurationValues) {
+            return configurationValues(Output.of(configurationValues));
         }
 
         /**
