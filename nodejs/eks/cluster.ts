@@ -654,12 +654,14 @@ export function createCore(
         );
     }
 
+    const corednsExplicitlyEnabled = args.corednsAddonOptions?.enabled === true;
     // We can only enable the coredns addon if using we have a node group to place it on
     // This means we are either using the default node group or the cluster is a fargate cluster
+    // Also, if the user explicitly enables it then do what they want
     pulumi.output(args.fargate).apply((fargate) => {
         if (
-            (fargate || !args.skipDefaultNodeGroup) &&
-            (args.corednsAddonOptions?.enabled ?? true)
+            corednsExplicitlyEnabled ||
+            ((fargate || !args.skipDefaultNodeGroup) && (args.corednsAddonOptions?.enabled ?? true))
         ) {
             const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
                 ? pulumi.output(args.corednsAddonOptions.version)
