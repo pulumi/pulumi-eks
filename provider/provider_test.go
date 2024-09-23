@@ -14,6 +14,7 @@ import (
 	"github.com/pulumi/providertest/pulumitest/assertpreview"
 	"github.com/pulumi/providertest/pulumitest/optnewstack"
 	"github.com/pulumi/providertest/pulumitest/opttest"
+	"github.com/pulumi/pulumi/sdk/v3/go/auto/optpreview"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
 	"github.com/stretchr/testify/require"
 )
@@ -103,6 +104,52 @@ func TestEksClusterInputValidations(t *testing.T) {
 			})
 		}
 	}
+}
+
+func TestIgnoringScalingChanges(t *testing.T) {
+	t.Parallel()
+	if testing.Short() {
+		t.Skipf("Skipping in testing.Short() mode, assuming this is a CI run without credentials")
+	}
+
+	cwd, err := os.Getwd()
+	require.NoError(t, err)
+	dir := filepath.Join("test-programs", "ignore-scaling-changes")
+	options := []opttest.Option{
+		opttest.LocalProviderPath("eks", filepath.Join(cwd, "..", "bin")),
+		opttest.YarnLink("@pulumi/eks"),
+	}
+
+	pt := pulumitest.NewPulumiTest(t, dir, options...)
+	pt.SetConfig("aws:region", getEnvRegion(t))
+	pt.SetConfig("desiredSize", "1")
+
+	cacheDir := filepath.Join("testdata", "recorded", t.Name())
+	err = os.MkdirAll(cacheDir, 0755)
+	require.NoError(t, err)
+	stackExportFile := filepath.Join(cacheDir, "stack.json")
+
+	var export *apitype.UntypedDeployment
+	export, err = tryReadStackExport(stackExportFile)
+	if err != nil {
+		pt.Up()
+		grpcLog := pt.GrpcLog()
+		grpcLogPath := filepath.Join(cacheDir, "grpc.json")
+		t.Logf("writing grpc log to %s", grpcLogPath)
+		err = grpcLog.WriteTo(grpcLogPath)
+		require.NoError(t, err)
+
+		e := pt.ExportStack()
+		export = &e
+		err = writeStackExport(stackExportFile, export, true)
+		require.NoError(t, err)
+	} else {
+		pt.ImportStack(*export)
+	}
+
+	// Change the desiredSize, but expect no changes because it should be ignored
+	pt.SetConfig("desiredSize", "2")
+	pt.Preview(optpreview.ExpectNoChanges(), optpreview.Diff())
 }
 
 func checkEksClusterInputValidations(t *testing.T, property string, n int, expectFailure bool) {
@@ -286,4 +333,13 @@ func exists(filePath string) (bool, error) {
 		return false, err
 	}
 	return false, nil
+}
+
+func getEnvRegion(t *testing.T) string {
+	envRegion := os.Getenv("AWS_REGION")
+	if envRegion == "" {
+		t.Skipf("Skipping test due to missing AWS_REGION environment variable")
+	}
+
+	return envRegion
 }
