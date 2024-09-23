@@ -83,6 +83,8 @@ export class VpcCniAddon extends pulumi.CustomResource {
         } else {
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
+        const aliasOpts = { aliases: [{ type: "eks:index:VpcCni" }] };
+        opts = pulumi.mergeOptions(opts, aliasOpts);
         super(VpcCniAddon.__pulumiType, name, resourceInputs, opts);
     }
 }

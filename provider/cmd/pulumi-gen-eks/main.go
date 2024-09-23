@@ -27,6 +27,7 @@ import (
 	pygen "github.com/pulumi/pulumi/pkg/v3/codegen/python"
 	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
 const Tool = "pulumi-gen-eks"
@@ -1087,6 +1088,9 @@ func generateSchema() schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Description: "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\n" +
 						"For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
+				},
+				Aliases: []schema.AliasSpec{
+					{Type: pulumi.StringRef("eks:index:VpcCni")},
 				},
 				InputProperties: vpcCniProperties(false /*cluster*/),
 				RequiredInputs:  []string{"clusterName"},

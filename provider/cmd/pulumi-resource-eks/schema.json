@@ -2224,6 +2224,11 @@
             },
             "requiredInputs": [
                 "clusterName"
+            ],
+            "aliases": [
+                {
+                    "type": "eks:index:VpcCni"
+                }
             ]
         }
     },
