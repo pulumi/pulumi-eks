@@ -1894,6 +1894,11 @@ function createManagedNodeGroupInternal(
     parent: pulumi.Resource,
     provider?: pulumi.ProviderResource,
 ): aws.eks.NodeGroup {
+    // default the version to the cluster version if not provided.
+    if (!args.version) {
+        args.version = pulumi.output(args.version ?? core.cluster.version);
+    }
+
     // Compute the nodegroup role.
     if (!args.nodeRole && !args.nodeRoleArn) {
         // throw new pulumi.ResourceError(`An IAM role, or role ARN must be provided to create a managed node group`);
@@ -2039,7 +2044,6 @@ function createManagedNodeGroupInternal(
         name,
         {
             ...nodeGroupArgs,
-            version: pulumi.output(nodeGroupArgs.version ?? core.cluster.version),
             amiType,
             clusterName: args.clusterName || core.cluster.name,
             nodeRoleArn: roleArn,
