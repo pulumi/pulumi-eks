@@ -118,6 +118,7 @@ func TestIgnoringScalingChanges(t *testing.T) {
 	options := []opttest.Option{
 		opttest.LocalProviderPath("eks", filepath.Join(cwd, "..", "bin")),
 		opttest.YarnLink("@pulumi/eks"),
+		opttest.NewStackOptions(optnewstack.DisableAutoDestroy()),
 	}
 
 	pt := pulumitest.NewPulumiTest(t, dir, options...)
