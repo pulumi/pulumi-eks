@@ -1484,6 +1484,11 @@
                     "type": "boolean",
                     "description": "Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.\nDefaults to false.\n\nNote: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html."
                 },
+                "ignoreScalingChanges": {
+                    "type": "boolean",
+                    "plain": true,
+                    "description": "Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.\n\nSee [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details."
+                },
                 "instanceTypes": {
                     "type": "array",
                     "items": {
@@ -1943,6 +1948,11 @@
                 "gpu": {
                     "type": "boolean",
                     "description": "Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\nNote: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html"
+                },
+                "ignoreScalingChanges": {
+                    "type": "boolean",
+                    "plain": true,
+                    "description": "Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.\n\nSee [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details."
                 },
                 "instanceProfile": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
