@@ -44,8 +44,20 @@ export const AccessEntryType = {
 export type AccessEntryType = (typeof AccessEntryType)[keyof typeof AccessEntryType];
 
 export const AmiType = {
+    /**
+     * @deprecated Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html
+     */
     AL2X86_64: "AL2_x86_64",
+    /**
+     * @deprecated Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html
+     */
     AL2X86_64GPU: "AL2_x86_64_GPU",
+    /**
+     * @deprecated Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html
+     */
     AL2Arm64: "AL2_ARM_64",
     AL2023X86_64Standard: "AL2023_x86_64_STANDARD",
     AL2023Arm64Standard: "AL2023_ARM_64_STANDARD",
