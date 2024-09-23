@@ -1763,14 +1763,20 @@ func generateSchema() schema.PackageSpec {
 					{
 						Name:  "AL2X86_64",
 						Value: "AL2_x86_64",
+						DeprecationMessage: "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html",
 					},
 					{
 						Name:  "AL2X86_64GPU",
 						Value: "AL2_x86_64_GPU",
+						DeprecationMessage: "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html",
 					},
 					{
 						Name:  "AL2Arm64",
 						Value: "AL2_ARM_64",
+						DeprecationMessage: "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html",
 					},
 
 					{

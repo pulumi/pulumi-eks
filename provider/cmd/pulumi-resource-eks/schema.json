@@ -164,15 +164,18 @@
             "enum": [
                 {
                     "name": "AL2X86_64",
-                    "value": "AL2_x86_64"
+                    "value": "AL2_x86_64",
+                    "deprecationMessage": "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html"
                 },
                 {
                     "name": "AL2X86_64GPU",
-                    "value": "AL2_x86_64_GPU"
+                    "value": "AL2_x86_64_GPU",
+                    "deprecationMessage": "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html"
                 },
                 {
                     "name": "AL2Arm64",
-                    "value": "AL2_ARM_64"
+                    "value": "AL2_ARM_64",
+                    "deprecationMessage": "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html"
                 },
                 {
                     "name": "AL2023X86_64Standard",
