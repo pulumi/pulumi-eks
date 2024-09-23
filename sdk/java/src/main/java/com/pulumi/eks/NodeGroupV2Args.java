@@ -310,6 +310,25 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+     * 
+     * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+     * 
+     */
+    @Import(name="ignoreScalingChanges")
+    private @Nullable Boolean ignoreScalingChanges;
+
+    /**
+     * @return Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+     * 
+     * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+     * 
+     */
+    public Optional<Boolean> ignoreScalingChanges() {
+        return Optional.ofNullable(this.ignoreScalingChanges);
+    }
+
+    /**
      * The ingress rule that gives node group access.
      * 
      */
@@ -767,6 +786,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
         this.encryptRootBlockDevice = $.encryptRootBlockDevice;
         this.extraNodeSecurityGroups = $.extraNodeSecurityGroups;
         this.gpu = $.gpu;
+        this.ignoreScalingChanges = $.ignoreScalingChanges;
         this.instanceProfile = $.instanceProfile;
         this.instanceType = $.instanceType;
         this.keyName = $.keyName;
@@ -1190,6 +1210,19 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
          */
         public Builder gpu(Boolean gpu) {
             return gpu(Output.of(gpu));
+        }
+
+        /**
+         * @param ignoreScalingChanges Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+         * 
+         * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder ignoreScalingChanges(@Nullable Boolean ignoreScalingChanges) {
+            $.ignoreScalingChanges = ignoreScalingChanges;
+            return this;
         }
 
         /**
