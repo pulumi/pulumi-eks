@@ -2039,6 +2039,7 @@ function createManagedNodeGroupInternal(
         name,
         {
             ...nodeGroupArgs,
+            version: pulumi.output(nodeGroupArgs.version ?? core.cluster.version),
             amiType,
             clusterName: args.clusterName || core.cluster.name,
             nodeRoleArn: roleArn,
