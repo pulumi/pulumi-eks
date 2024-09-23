@@ -66,8 +66,14 @@ namespace Pulumi.Eks
             _value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
+        [Obsolete(@"Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html")]
         public static AmiType AL2X86_64 { get; } = new AmiType("AL2_x86_64");
+        [Obsolete(@"Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html")]
         public static AmiType AL2X86_64GPU { get; } = new AmiType("AL2_x86_64_GPU");
+        [Obsolete(@"Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html")]
         public static AmiType AL2Arm64 { get; } = new AmiType("AL2_ARM_64");
         public static AmiType AL2023X86_64Standard { get; } = new AmiType("AL2023_x86_64_STANDARD");
         public static AmiType AL2023Arm64Standard { get; } = new AmiType("AL2023_ARM_64_STANDARD");
