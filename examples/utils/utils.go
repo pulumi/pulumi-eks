@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 	"testing"
@@ -888,6 +889,25 @@ type addonInfo struct {
 	ClusterVersion string
 }
 
+// ListKubernetesVersions returns a list of Kubernetes versions supported by EKS ordered in descending order.
+func ListKubernetesVersions(eksClient *eks.Client) ([]string, error) {
+	var clusterVersions []string
+	_, err := findAddonVersion(eksClient, "vpc-cni", func (_ *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo {
+		if compatibility.DefaultVersion && compatibility.ClusterVersion != nil {
+			clusterVersions = append(clusterVersions, *compatibility.ClusterVersion)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	sort.Sort(sort.Reverse(semver.ByVersion(clusterVersions)))
+
+	return clusterVersions, nil
+}
+
 func FindDefaultAddonVersion(eksClient *eks.Client, addonName string) (string, error) {
 	addon, err := findAddonVersion(eksClient, addonName, func (currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo {
 		if compatibility.DefaultVersion && versionInfo.AddonVersion != nil && compatibility.ClusterVersion != nil {
@@ -970,4 +990,20 @@ func GetInstalledAddon(t *testing.T, eksClient *eks.Client, clusterName, addonNa
 	}
 
 	return resp.Addon, nil
+}
+
+func GetEksNodeGroup(t *testing.T, eksClient *eks.Client, clusterName, nodeGroupName string) (*eksTypes.Nodegroup, error) {
+	resp, err := eksClient.DescribeNodegroup(context.TODO(), &eks.DescribeNodegroupInput{
+		ClusterName:   aws.String(clusterName),
+		NodegroupName: aws.String(nodeGroupName),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.Nodegroup == nil {
+		return nil, fmt.Errorf("unable to find nodegroup %s in cluster %s", nodeGroupName, clusterName)
+	}
+
+	return resp.Nodegroup, nil
 }
