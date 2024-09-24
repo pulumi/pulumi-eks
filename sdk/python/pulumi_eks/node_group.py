@@ -160,7 +160,7 @@ class NodeGroupArgs:
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
                Valid values are `AL2`, `AL2023` and `Bottlerocket`.
                
-               Defaults to `AL2`.
+               Defaults to `AL2023`.
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
         :param Mapping[str, 'TaintArgs'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
@@ -707,7 +707,7 @@ class NodeGroupArgs:
         The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
         Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 
-        Defaults to `AL2`.
+        Defaults to `AL2023`.
         """
         return pulumi.get(self, "operating_system")
 
@@ -906,7 +906,7 @@ class NodeGroup(pulumi.ComponentResource):
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
                Valid values are `AL2`, `AL2023` and `Bottlerocket`.
                
-               Defaults to `AL2`.
+               Defaults to `AL2023`.
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
         :param Mapping[str, Union['TaintArgs', 'TaintArgsDict']] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.

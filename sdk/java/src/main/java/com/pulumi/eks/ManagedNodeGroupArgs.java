@@ -441,7 +441,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
      * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
      * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
      * 
-     * Defaults to `AL2`.
+     * Defaults to `AL2023`.
      * 
      */
     @Import(name="operatingSystem")
@@ -451,7 +451,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
      * @return The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
      * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
      * 
-     * Defaults to `AL2`.
+     * Defaults to `AL2023`.
      * 
      */
     public Optional<Output<OperatingSystem>> operatingSystem() {
@@ -1190,7 +1190,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          * @param operatingSystem The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
          * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
          * 
-         * Defaults to `AL2`.
+         * Defaults to `AL2023`.
          * 
          * @return builder
          * 
@@ -1204,7 +1204,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          * @param operatingSystem The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
          * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
          * 
-         * Defaults to `AL2`.
+         * Defaults to `AL2023`.
          * 
          * @return builder
          * 

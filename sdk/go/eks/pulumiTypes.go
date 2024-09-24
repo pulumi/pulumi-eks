@@ -438,7 +438,7 @@ type ClusterNodeGroupOptions struct {
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 	//
-	// Defaults to `AL2`.
+	// Defaults to `AL2023`.
 	OperatingSystem *OperatingSystem `pulumi:"operatingSystem"`
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice *string `pulumi:"spotPrice"`
@@ -601,7 +601,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 	//
-	// Defaults to `AL2`.
+	// Defaults to `AL2023`.
 	OperatingSystem OperatingSystemPtrInput `pulumi:"operatingSystem"`
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice pulumi.StringPtrInput `pulumi:"spotPrice"`
@@ -936,7 +936,7 @@ func (o ClusterNodeGroupOptionsOutput) NodeadmExtraOptions() NodeadmOptionsArray
 // The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 // Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 //
-// Defaults to `AL2`.
+// Defaults to `AL2023`.
 func (o ClusterNodeGroupOptionsOutput) OperatingSystem() OperatingSystemPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *OperatingSystem { return v.OperatingSystem }).(OperatingSystemPtrOutput)
 }
@@ -1400,7 +1400,7 @@ func (o ClusterNodeGroupOptionsPtrOutput) NodeadmExtraOptions() NodeadmOptionsAr
 // The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 // Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 //
-// Defaults to `AL2`.
+// Defaults to `AL2023`.
 func (o ClusterNodeGroupOptionsPtrOutput) OperatingSystem() OperatingSystemPtrOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) *OperatingSystem {
 		if v == nil {

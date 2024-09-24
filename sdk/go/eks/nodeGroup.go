@@ -185,7 +185,7 @@ type nodeGroupArgs struct {
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 	//
-	// Defaults to `AL2`.
+	// Defaults to `AL2023`.
 	OperatingSystem *OperatingSystem `pulumi:"operatingSystem"`
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice *string `pulumi:"spotPrice"`
@@ -331,7 +331,7 @@ type NodeGroupArgs struct {
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
 	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
 	//
-	// Defaults to `AL2`.
+	// Defaults to `AL2023`.
 	OperatingSystem OperatingSystemPtrInput
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice pulumi.StringPtrInput
