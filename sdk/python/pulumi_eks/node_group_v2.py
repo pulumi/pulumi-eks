@@ -33,6 +33,7 @@ class NodeGroupV2Args:
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
+                 ignore_scaling_changes: Optional[bool] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
@@ -116,6 +117,9 @@ class NodeGroupV2Args:
                See for more details:
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
                - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+        :param bool ignore_scaling_changes: Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+               
+               See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
         :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The ingress rule that gives node group access.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
@@ -194,6 +198,8 @@ class NodeGroupV2Args:
             pulumi.set(__self__, "extra_node_security_groups", extra_node_security_groups)
         if gpu is not None:
             pulumi.set(__self__, "gpu", gpu)
+        if ignore_scaling_changes is not None:
+            pulumi.set(__self__, "ignore_scaling_changes", ignore_scaling_changes)
         if instance_profile is not None:
             pulumi.set(__self__, "instance_profile", instance_profile)
         if instance_type is not None:
@@ -444,6 +450,20 @@ class NodeGroupV2Args:
     @gpu.setter
     def gpu(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "gpu", value)
+
+    @property
+    @pulumi.getter(name="ignoreScalingChanges")
+    def ignore_scaling_changes(self) -> Optional[bool]:
+        """
+        Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+
+        See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+        """
+        return pulumi.get(self, "ignore_scaling_changes")
+
+    @ignore_scaling_changes.setter
+    def ignore_scaling_changes(self, value: Optional[bool]):
+        pulumi.set(self, "ignore_scaling_changes", value)
 
     @property
     @pulumi.getter(name="instanceProfile")
@@ -802,6 +822,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
+                 ignore_scaling_changes: Optional[bool] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
@@ -889,6 +910,9 @@ class NodeGroupV2(pulumi.ComponentResource):
                See for more details:
                - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
                - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+        :param bool ignore_scaling_changes: Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+               
+               See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
         :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The ingress rule that gives node group access.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
@@ -979,6 +1003,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
                  extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
+                 ignore_scaling_changes: Optional[bool] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
@@ -1031,6 +1056,7 @@ class NodeGroupV2(pulumi.ComponentResource):
             __props__.__dict__["encrypt_root_block_device"] = encrypt_root_block_device
             __props__.__dict__["extra_node_security_groups"] = extra_node_security_groups
             __props__.__dict__["gpu"] = gpu
+            __props__.__dict__["ignore_scaling_changes"] = ignore_scaling_changes
             __props__.__dict__["instance_profile"] = instance_profile
             __props__.__dict__["instance_type"] = instance_type
             __props__.__dict__["key_name"] = key_name
