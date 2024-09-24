@@ -1901,13 +1901,20 @@ function createManagedNodeGroup(
     );
 }
 
-function createManagedNodeGroupInternal(
+export function createManagedNodeGroupInternal(
     name: string,
     args: Omit<ManagedNodeGroupOptions, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
     parent: pulumi.Resource,
     provider?: pulumi.ProviderResource,
 ): aws.eks.NodeGroup {
+    // default the version to the cluster version if not provided.
+    // we can only do that if the user doesn't provide a launch template. If they do, they're responsible
+    // for deciding the k8s version as part of the ami they're choosing.
+    if (!args.version && !args.launchTemplate) {
+        args.version = pulumi.output(args.version ?? core.cluster.version);
+    }
+
     // Compute the nodegroup role.
     if (!args.nodeRole && !args.nodeRoleArn) {
         // throw new pulumi.ResourceError(`An IAM role, or role ARN must be provided to create a managed node group`);
