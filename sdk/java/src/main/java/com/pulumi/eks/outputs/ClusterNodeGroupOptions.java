@@ -267,9 +267,9 @@ public final class ClusterNodeGroupOptions {
     private @Nullable List<NodeadmOptions> nodeadmExtraOptions;
     /**
      * @return The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     * Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
      * 
-     * Defaults to `AL2023`.
+     * Defaults to the current recommended OS.
      * 
      */
     private @Nullable OperatingSystem operatingSystem;
@@ -604,9 +604,9 @@ public final class ClusterNodeGroupOptions {
     }
     /**
      * @return The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-     * Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+     * Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
      * 
-     * Defaults to `AL2023`.
+     * Defaults to the current recommended OS.
      * 
      */
     public Optional<OperatingSystem> operatingSystem() {

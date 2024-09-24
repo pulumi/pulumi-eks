@@ -187,9 +187,9 @@ type nodeGroupV2Args struct {
 	//   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
 	NodeadmExtraOptions []NodeadmOptions `pulumi:"nodeadmExtraOptions"`
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+	// Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
 	//
-	// Defaults to `AL2023`.
+	// Defaults to the current recommended OS.
 	OperatingSystem *OperatingSystem `pulumi:"operatingSystem"`
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice *string `pulumi:"spotPrice"`
@@ -341,9 +341,9 @@ type NodeGroupV2Args struct {
 	//   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
 	NodeadmExtraOptions NodeadmOptionsArrayInput
 	// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-	// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+	// Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
 	//
-	// Defaults to `AL2023`.
+	// Defaults to the current recommended OS.
 	OperatingSystem OperatingSystemPtrInput
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice pulumi.StringPtrInput

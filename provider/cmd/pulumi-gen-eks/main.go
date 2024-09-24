@@ -908,8 +908,8 @@ func generateSchema() schema.PackageSpec {
 							Ref: "#/types/eks:index:OperatingSystem",
 						},
 						Description: "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\n" +
-							"Valid values are `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
-							"Defaults to `AL2023`.",
+							"Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
+							"Defaults to the current recommended OS.",
 					},
 					"bottlerocketSettings": {
 						TypeSpec: schema.TypeSpec{
@@ -1756,6 +1756,13 @@ func generateSchema() schema.PackageSpec {
 						Description: "EKS optimized Container OS based on Bottlerocket.\n" +
 							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html",
 					},
+					{
+						Name:  "RECOMMENDED",
+						Value: "AL2023",
+						Description: "The recommended EKS optimized OS. Currently Amazon Linux 2023 (AL2023).\n" +
+							"This will be kept up to date with AWS' recommendations for EKS optimized operating systems.\n\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html", 
+					},
 				},
 			},
 			"eks:index:AmiType": {
@@ -2254,8 +2261,8 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				Ref: "#/types/eks:index:OperatingSystem",
 			},
 			Description: "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\n" +
-				"Valid values are `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
-				"Defaults to `AL2023`.",
+				"Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
+				"Defaults to the current recommended OS.",
 		},
 		"bottlerocketSettings": {
 			TypeSpec: schema.TypeSpec{

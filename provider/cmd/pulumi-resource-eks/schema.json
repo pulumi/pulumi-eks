@@ -402,7 +402,7 @@
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
-                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2023`."
+                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to the current recommended OS."
                 },
                 "spotPrice": {
                     "type": "string",
@@ -737,6 +737,11 @@
                     "name": "Bottlerocket",
                     "description": "EKS optimized Container OS based on Bottlerocket.\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html",
                     "value": "Bottlerocket"
+                },
+                {
+                    "name": "RECOMMENDED",
+                    "description": "The recommended EKS optimized OS. Currently Amazon Linux 2023 (AL2023).\nThis will be kept up to date with AWS' recommendations for EKS optimized operating systems.\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html",
+                    "value": "AL2023"
                 }
             ]
         },
@@ -1570,7 +1575,7 @@
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
-                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2023`."
+                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to the current recommended OS."
                 },
                 "releaseVersion": {
                     "type": "string",
@@ -1816,7 +1821,7 @@
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
-                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2023`."
+                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to the current recommended OS."
                 },
                 "spotPrice": {
                     "type": "string",
@@ -2095,7 +2100,7 @@
                 },
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
-                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to `AL2023`."
+                    "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to the current recommended OS."
                 },
                 "spotPrice": {
                     "type": "string",
