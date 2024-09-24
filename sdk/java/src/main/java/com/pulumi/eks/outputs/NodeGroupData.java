@@ -3,7 +3,6 @@
 
 package com.pulumi.eks.outputs;
 
-import com.pulumi.aws.cloudformation.Stack;
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.core.annotations.CustomType;
 import java.lang.String;
@@ -17,11 +16,6 @@ public final class NodeGroupData {
      * 
      */
     private String autoScalingGroupName;
-    /**
-     * @return The CloudFormation Stack which defines the Node AutoScalingGroup.
-     * 
-     */
-    private Stack cfnStack;
     /**
      * @return The additional security groups for the node group that captures user-specific rules.
      * 
@@ -40,13 +34,6 @@ public final class NodeGroupData {
      */
     public String autoScalingGroupName() {
         return this.autoScalingGroupName;
-    }
-    /**
-     * @return The CloudFormation Stack which defines the Node AutoScalingGroup.
-     * 
-     */
-    public Stack cfnStack() {
-        return this.cfnStack;
     }
     /**
      * @return The additional security groups for the node group that captures user-specific rules.
@@ -73,14 +60,12 @@ public final class NodeGroupData {
     @CustomType.Builder
     public static final class Builder {
         private String autoScalingGroupName;
-        private Stack cfnStack;
         private List<SecurityGroup> extraNodeSecurityGroups;
         private SecurityGroup nodeSecurityGroup;
         public Builder() {}
         public Builder(NodeGroupData defaults) {
     	      Objects.requireNonNull(defaults);
     	      this.autoScalingGroupName = defaults.autoScalingGroupName;
-    	      this.cfnStack = defaults.cfnStack;
     	      this.extraNodeSecurityGroups = defaults.extraNodeSecurityGroups;
     	      this.nodeSecurityGroup = defaults.nodeSecurityGroup;
         }
@@ -88,11 +73,6 @@ public final class NodeGroupData {
         @CustomType.Setter
         public Builder autoScalingGroupName(String autoScalingGroupName) {
             this.autoScalingGroupName = Objects.requireNonNull(autoScalingGroupName);
-            return this;
-        }
-        @CustomType.Setter
-        public Builder cfnStack(Stack cfnStack) {
-            this.cfnStack = Objects.requireNonNull(cfnStack);
             return this;
         }
         @CustomType.Setter
@@ -111,7 +91,6 @@ public final class NodeGroupData {
         public NodeGroupData build() {
             final var _resultValue = new NodeGroupData();
             _resultValue.autoScalingGroupName = autoScalingGroupName;
-            _resultValue.cfnStack = cfnStack;
             _resultValue.extraNodeSecurityGroups = extraNodeSecurityGroups;
             _resultValue.nodeSecurityGroup = nodeSecurityGroup;
             return _resultValue;

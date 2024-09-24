@@ -5,6 +5,7 @@ package com.pulumi.eks.inputs;
 
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.aws.ec2.SecurityGroupRule;
+import com.pulumi.aws.ec2.inputs.LaunchTemplateTagSpecificationArgs;
 import com.pulumi.aws.iam.InstanceProfile;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
@@ -370,6 +371,21 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
     }
 
     /**
+     * The tag specifications to apply to the launch template.
+     * 
+     */
+    @Import(name="launchTemplateTagSpecifications")
+    private @Nullable Output<List<LaunchTemplateTagSpecificationArgs>> launchTemplateTagSpecifications;
+
+    /**
+     * @return The tag specifications to apply to the launch template.
+     * 
+     */
+    public Optional<Output<List<LaunchTemplateTagSpecificationArgs>>> launchTemplateTagSpecifications() {
+        return Optional.ofNullable(this.launchTemplateTagSpecifications);
+    }
+
+    /**
      * The maximum number of worker nodes running in the cluster. Defaults to 2.
      * 
      */
@@ -382,6 +398,21 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
      */
     public Optional<Output<Integer>> maxSize() {
         return Optional.ofNullable(this.maxSize);
+    }
+
+    /**
+     * The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+     * 
+     */
+    @Import(name="minRefreshPercentage")
+    private @Nullable Output<Integer> minRefreshPercentage;
+
+    /**
+     * @return The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+     * 
+     */
+    public Optional<Output<Integer>> minRefreshPercentage() {
+        return Optional.ofNullable(this.minRefreshPercentage);
     }
 
     /**
@@ -726,7 +757,9 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         this.keyName = $.keyName;
         this.kubeletExtraArgs = $.kubeletExtraArgs;
         this.labels = $.labels;
+        this.launchTemplateTagSpecifications = $.launchTemplateTagSpecifications;
         this.maxSize = $.maxSize;
+        this.minRefreshPercentage = $.minRefreshPercentage;
         this.minSize = $.minSize;
         this.nodeAssociatePublicIpAddress = $.nodeAssociatePublicIpAddress;
         this.nodePublicKey = $.nodePublicKey;
@@ -1179,6 +1212,37 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         }
 
         /**
+         * @param launchTemplateTagSpecifications The tag specifications to apply to the launch template.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder launchTemplateTagSpecifications(@Nullable Output<List<LaunchTemplateTagSpecificationArgs>> launchTemplateTagSpecifications) {
+            $.launchTemplateTagSpecifications = launchTemplateTagSpecifications;
+            return this;
+        }
+
+        /**
+         * @param launchTemplateTagSpecifications The tag specifications to apply to the launch template.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder launchTemplateTagSpecifications(List<LaunchTemplateTagSpecificationArgs> launchTemplateTagSpecifications) {
+            return launchTemplateTagSpecifications(Output.of(launchTemplateTagSpecifications));
+        }
+
+        /**
+         * @param launchTemplateTagSpecifications The tag specifications to apply to the launch template.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder launchTemplateTagSpecifications(LaunchTemplateTagSpecificationArgs... launchTemplateTagSpecifications) {
+            return launchTemplateTagSpecifications(List.of(launchTemplateTagSpecifications));
+        }
+
+        /**
          * @param maxSize The maximum number of worker nodes running in the cluster. Defaults to 2.
          * 
          * @return builder
@@ -1197,6 +1261,27 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          */
         public Builder maxSize(Integer maxSize) {
             return maxSize(Output.of(maxSize));
+        }
+
+        /**
+         * @param minRefreshPercentage The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder minRefreshPercentage(@Nullable Output<Integer> minRefreshPercentage) {
+            $.minRefreshPercentage = minRefreshPercentage;
+            return this;
+        }
+
+        /**
+         * @param minRefreshPercentage The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder minRefreshPercentage(Integer minRefreshPercentage) {
+            return minRefreshPercentage(Output.of(minRefreshPercentage));
         }
 
         /**

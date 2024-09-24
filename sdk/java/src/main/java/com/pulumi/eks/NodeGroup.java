@@ -18,7 +18,11 @@ import javax.annotation.Nullable;
 /**
  * NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
  * 
+ * @deprecated
+ * NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn&#39;t support the newest instance types. Please use NodeGroupV2 instead.
+ * 
  */
+@Deprecated /* NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead. */
 @ResourceType(type="eks:index:NodeGroup")
 public class NodeGroup extends com.pulumi.resources.ComponentResource {
     /**
