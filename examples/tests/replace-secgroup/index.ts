@@ -25,7 +25,7 @@ const testCluster = new eks.Cluster(`${projectName}`, {
 // Create an external nodeSecurityGroup for the NodeGroup and set up its rules.
 const secgroupName = `${projectName}-extNodeSecurityGroup`;
 const nodeSecurityGroup = secgroup.createNodeGroupSecurityGroup(secgroupName, {
-    vpcId: vpc.id,
+    vpcId: vpc.vpcId,
     clusterSecurityGroup: testCluster.clusterSecurityGroup,
     eksCluster: testCluster.core.cluster,
 }, testCluster);

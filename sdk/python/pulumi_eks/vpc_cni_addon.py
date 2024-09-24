@@ -700,6 +700,8 @@ class VpcCniAddon(pulumi.CustomResource):
             __props__.__dict__["warm_eni_target"] = warm_eni_target
             __props__.__dict__["warm_ip_target"] = warm_ip_target
             __props__.__dict__["warm_prefix_target"] = warm_prefix_target
+        alias_opts = pulumi.ResourceOptions(aliases=[pulumi.Alias(type_="eks:index:VpcCni")])
+        opts = pulumi.ResourceOptions.merge(opts, alias_opts)
         super(VpcCniAddon, __self__).__init__(
             'eks:index:VpcCniAddon',
             resource_name,

@@ -23,9 +23,11 @@ import (
 	"github.com/pkg/errors"
 	dotnetgen "github.com/pulumi/pulumi/pkg/v3/codegen/dotnet"
 	gogen "github.com/pulumi/pulumi/pkg/v3/codegen/go"
+	nodejsgen "github.com/pulumi/pulumi/pkg/v3/codegen/nodejs"
 	pygen "github.com/pulumi/pulumi/pkg/v3/codegen/python"
 	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
 const Tool = "pulumi-gen-eks"
@@ -34,6 +36,7 @@ const Tool = "pulumi-gen-eks"
 type Language string
 
 const (
+	Nodejs Language = "nodejs"
 	DotNet Language = "dotnet"
 	Go     Language = "go"
 	Python Language = "python"
@@ -42,7 +45,7 @@ const (
 
 func main() {
 	printUsage := func() {
-		fmt.Printf("Usage: %s <language> <out-dir> [schema-file] [version]\n", os.Args[0])
+		fmt.Printf("Usage: %s <language> <out-dir> <root-pulumi-eks-dir> [schema-file] [version]\n", os.Args[0])
 	}
 
 	args := os.Args[1:]
@@ -55,15 +58,19 @@ func main() {
 
 	var schemaFile string
 	var version string
+	var base string
 	if language != Schema {
-		if len(args) < 4 {
+		if len(args) < 5 {
 			printUsage()
 			os.Exit(1)
 		}
-		schemaFile, version = args[2], args[3]
+		base, schemaFile, version = args[2], args[3], args[4]
 	}
 
 	switch language {
+	case Nodejs:
+		templateDir := filepath.Join(base, "provider", "cmd", "pulumi-gen-eks", "nodejs-templates")
+		genNodejs(readSchema(schemaFile, version), templateDir, outdir)
 	case DotNet:
 		genDotNet(readSchema(schemaFile, version), outdir)
 	case Go:
@@ -1091,6 +1098,9 @@ func generateSchema() schema.PackageSpec {
 					Description: "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\n" +
 						"For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
 				},
+				Aliases: []schema.AliasSpec{
+					{Type: pulumi.StringRef("eks:index:VpcCni")},
+				},
 				InputProperties: vpcCniProperties(false /*cluster*/),
 				RequiredInputs:  []string{"clusterName"},
 			},
@@ -1978,6 +1988,28 @@ func generateSchema() schema.PackageSpec {
 					"com.pulumi:kubernetes": "4.4.0",
 				},
 			}),
+			"nodejs": rawMessage(map[string]interface{}{
+				"respectSchemaVersion": true,
+				"dependencies": map[string]string{
+					"@pulumi/aws":        "^6.18.2",
+					"@pulumi/kubernetes": "^4.1.1",
+					"@pulumi/pulumi":     "^3.47.0",
+					"https-proxy-agent":  "^5.0.1",
+					"jest":               "^29.7.0",
+					"js-yaml":            "^4.1.0",
+					"netmask":            "^2.0.2",
+					"semver":             "^7.3.7",
+					"which":              "^1.3.1",
+				},
+				"devDependencies": map[string]string{
+					"@types/js-yaml": "^4.0.5",
+					"@types/netmask": "^1.0.30",
+					"@types/node":    "^18.11.13",
+					"@types/semver":  "^7.3.10",
+					"typescript":     "^4.6.2",
+					"@types/which":   "^1.3.1",
+				},
+			}),
 		},
 	}
 }
@@ -2519,6 +2551,68 @@ func readSchema(schemaPath string, version string) *schema.Package {
 	return pkg
 }
 
+func genNodejs(pkg *schema.Package, templateDir, outdir string) {
+	overlays := map[string][]byte{
+		"clusterMixins.ts":      mustLoadFile(filepath.Join(templateDir, "clusterMixins.ts")),
+		"nodegroupMixins.ts":    mustLoadFile(filepath.Join(templateDir, "nodegroupMixins.ts")),
+		"storageclassMixins.ts": mustLoadFile(filepath.Join(templateDir, "storageclassMixins.ts")),
+	}
+	// Need to add the old enum types from `nodejs/eks` for backwards compatibility.
+	// Marking as deprecated so that users know to use the new names
+	for _, typ := range pkg.Types {
+		if enum, ok := typ.(*schema.EnumType); ok {
+			switch enum.Token {
+			case "eks:index:AuthenticationMode":
+				enum.Elements = append(enum.Elements,
+					&schema.Enum{
+						Name:               "CONFIG_MAP",
+						Value:              "CONFIG_MAP",
+						DeprecationMessage: "Use `ConfigMap` instead",
+					},
+					&schema.Enum{
+						Name:               "API",
+						Value:              "API",
+						DeprecationMessage: "Use `Api` instead",
+					},
+					&schema.Enum{
+						Name:               "API_AND_CONFIG_MAP",
+						Value:              "API_AND_CONFIG_MAP",
+						DeprecationMessage: "Use `ApiAndConfigMap` instead",
+					},
+				)
+			case "eks:index:AccessEntryType":
+				enum.Elements = append(enum.Elements,
+					&schema.Enum{
+						Value:              "STANDARD",
+						DeprecationMessage: "Use `Standard` instead`",
+						Name:               "STANDARD",
+					},
+					&schema.Enum{
+						Value:              "FARGATE_LINUX",
+						DeprecationMessage: "Use `FargateLinux` instead`",
+						Name:               "FARGATE_LINUX",
+					},
+					&schema.Enum{
+						Value:              "EC2_LINUX",
+						DeprecationMessage: "Use `EC2Linux` instead`",
+						Name:               "EC2_LINUX",
+					},
+					&schema.Enum{
+						Value:              "EC2_WINDOWS",
+						DeprecationMessage: "Use `EC2Windows` instead`",
+						Name:               "EC2_WINDOWS",
+					},
+				)
+			}
+		}
+	}
+	files, err := nodejsgen.GeneratePackage(Tool, pkg, overlays, nil, false)
+	if err != nil {
+		panic(err)
+	}
+	mustWriteFiles(outdir, files)
+}
+
 func genDotNet(pkg *schema.Package, outdir string) {
 	files, err := dotnetgen.GeneratePackage(Tool, pkg, map[string][]byte{}, map[string]string{})
 	if err != nil {
@@ -2567,4 +2661,11 @@ func mustWritePulumiSchema(pkgSpec schema.PackageSpec, outdir string) {
 		panic(errors.Wrap(err, "marshaling Pulumi schema"))
 	}
 	mustWriteFile(outdir, "schema.json", schemaJSON)
+}
+func mustLoadFile(path string) []byte {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	return b
 }

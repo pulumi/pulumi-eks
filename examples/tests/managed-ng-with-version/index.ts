@@ -16,7 +16,6 @@ const eksVpc = new awsx.ec2.Vpc("eks-vpc", {
 // Create an EKS cluster.
 const cluster = new eks.Cluster("example-managed-nodegroups", {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     vpcId: eksVpc.vpcId,
     // Public subnets will be used for load balancers
     publicSubnetIds: eksVpc.publicSubnetIds,

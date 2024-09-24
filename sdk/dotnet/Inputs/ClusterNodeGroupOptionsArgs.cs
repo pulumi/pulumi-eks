@@ -154,6 +154,14 @@ namespace Pulumi.Eks.Inputs
         public Input<bool>? Gpu { get; set; }
 
         /// <summary>
+        /// Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+        /// 
+        /// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+        /// </summary>
+        [Input("ignoreScalingChanges")]
+        public bool? IgnoreScalingChanges { get; set; }
+
+        /// <summary>
         /// The ingress rule that gives node group access.
         /// </summary>
         [Input("instanceProfile")]

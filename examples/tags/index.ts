@@ -16,7 +16,6 @@ const cluster1 = new eks.Cluster("example-tags-cluster1", {
     clusterSecurityGroupTags: { "myClusterSecurityGroupTag1": "true" },
     nodeSecurityGroupTags: { "myNodeSecurityGroupTag1": "true" },
     clusterTags: { "myClusterTag1": "true" },
-    deployDashboard: false,
 });
 
 // Export the cluster's kubeconfig.
@@ -27,7 +26,6 @@ const role0 = iam.createRole("example-tags-role0");
 const instanceProfile0 = new aws.iam.InstanceProfile("example-tags-instanceProfile0", {role: role0});
 const cluster2 = new eks.Cluster("example-tags-cluster2", {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     instanceRole: role0,
     tags: {
         "project": "foo",

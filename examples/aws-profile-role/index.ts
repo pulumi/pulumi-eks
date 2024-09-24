@@ -67,7 +67,7 @@ const roleKubeconfigOpts: eks.KubeconfigOptions = {
     profileName: aws.config.profile,
     roleArn: clusterAdminRole.arn,
 };
-export const roleKubeconfig = cluster.getKubeconfig(roleKubeconfigOpts);
+export const roleKubeconfig = cluster.getKubeconfig(roleKubeconfigOpts).result;
 const roleProvider = new k8s.Provider("provider", {
     kubeconfig: roleKubeconfig,
 }, {dependsOn: [cluster.provider]});

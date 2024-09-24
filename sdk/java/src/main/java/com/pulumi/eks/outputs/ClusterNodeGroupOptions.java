@@ -126,6 +126,13 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable Boolean gpu;
     /**
+     * @return Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+     * 
+     * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+     * 
+     */
+    private @Nullable Boolean ignoreScalingChanges;
+    /**
      * @return The ingress rule that gives node group access.
      * 
      */
@@ -410,6 +417,15 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.gpu);
     }
     /**
+     * @return Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+     * 
+     * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+     * 
+     */
+    public Optional<Boolean> ignoreScalingChanges() {
+        return Optional.ofNullable(this.ignoreScalingChanges);
+    }
+    /**
      * @return The ingress rule that gives node group access.
      * 
      */
@@ -639,6 +655,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable Boolean encryptRootBlockDevice;
         private @Nullable List<SecurityGroup> extraNodeSecurityGroups;
         private @Nullable Boolean gpu;
+        private @Nullable Boolean ignoreScalingChanges;
         private @Nullable InstanceProfile instanceProfile;
         private @Nullable String instanceType;
         private @Nullable String keyName;
@@ -680,6 +697,7 @@ public final class ClusterNodeGroupOptions {
     	      this.encryptRootBlockDevice = defaults.encryptRootBlockDevice;
     	      this.extraNodeSecurityGroups = defaults.extraNodeSecurityGroups;
     	      this.gpu = defaults.gpu;
+    	      this.ignoreScalingChanges = defaults.ignoreScalingChanges;
     	      this.instanceProfile = defaults.instanceProfile;
     	      this.instanceType = defaults.instanceType;
     	      this.keyName = defaults.keyName;
@@ -769,6 +787,11 @@ public final class ClusterNodeGroupOptions {
         @CustomType.Setter
         public Builder gpu(@Nullable Boolean gpu) {
             this.gpu = gpu;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder ignoreScalingChanges(@Nullable Boolean ignoreScalingChanges) {
+            this.ignoreScalingChanges = ignoreScalingChanges;
             return this;
         }
         @CustomType.Setter
@@ -924,6 +947,7 @@ public final class ClusterNodeGroupOptions {
             _resultValue.encryptRootBlockDevice = encryptRootBlockDevice;
             _resultValue.extraNodeSecurityGroups = extraNodeSecurityGroups;
             _resultValue.gpu = gpu;
+            _resultValue.ignoreScalingChanges = ignoreScalingChanges;
             _resultValue.instanceProfile = instanceProfile;
             _resultValue.instanceType = instanceType;
             _resultValue.keyName = keyName;

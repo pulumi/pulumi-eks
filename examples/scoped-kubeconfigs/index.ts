@@ -5,7 +5,7 @@ import * as pulumi from "@pulumi/pulumi";
 import assert = require("assert");
 
 const projectName = pulumi.getProject();
-const accountId = pulumi.output(aws.getCallerIdentity({async: true})).accountId;
+const accountId = pulumi.output(aws.getCallerIdentity({}, { async: true })).accountId;
 const rolePolicy = accountId.apply(id => <aws.iam.PolicyDocument>{
     "Version": "2012-10-17",
     "Statement": [
@@ -28,7 +28,6 @@ const devsRole = new aws.iam.Role(`${projectName}`, {
 // Create an EKS cluster with a role mapping from the devs IAM role to the
 // dev group and user in k8s.
 const cluster = new eks.Cluster(`${projectName}`, {
-    deployDashboard: false,
     roleMappings      : [
         {
             roleArn   : devsRole.arn,
@@ -74,7 +73,7 @@ const devsGroupRoleBinding = new k8s.rbac.v1.RoleBinding("pulumi-devs",
 
 // Create and use a role-based kubeconfig.
 const roleKubeconfigOpts: eks.KubeconfigOptions = { roleArn: devsRole.arn };
-const roleKubeconfig = cluster.getKubeconfig(roleKubeconfigOpts);
+const roleKubeconfig = cluster.getKubeconfig(roleKubeconfigOpts).result;
 const roleProvider = new k8s.Provider("provider", {kubeconfig: roleKubeconfig});
 const pod = new k8s.core.v1.Pod("nginx", {
     metadata: { namespace: appsNamespace.metadata.name },

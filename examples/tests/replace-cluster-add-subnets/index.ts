@@ -22,7 +22,6 @@ const popped = pulumi.output(publicSubnetIds).apply(subnets => {
 const cluster = new eks.Cluster(`${projectName}`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: popped,
-    deployDashboard: false,
 });
 
 // Export the cluster name and kubeconfig
