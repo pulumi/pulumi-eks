@@ -909,7 +909,7 @@ func generateSchema() schema.PackageSpec {
 						},
 						Description: "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\n" +
 							"Valid values are `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
-							"Defaults to `AL2`.",
+							"Defaults to `AL2023`.",
 					},
 					"bottlerocketSettings": {
 						TypeSpec: schema.TypeSpec{
@@ -2255,7 +2255,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			},
 			Description: "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\n" +
 				"Valid values are `AL2`, `AL2023` and `Bottlerocket`.\n\n" +
-				"Defaults to `AL2`.",
+				"Defaults to `AL2023`.",
 		},
 		"bottlerocketSettings": {
 			TypeSpec: schema.TypeSpec{
