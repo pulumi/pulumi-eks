@@ -20,7 +20,6 @@ const instanceProfile0 = new aws.iam.InstanceProfile("example-instanceProfile0",
 // cluster auth.
 const cluster1 = new eks.Cluster("example-nodegroup-iam-simple", {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     nodeAmiId: "ami-0384725f0d30527c7",
     instanceRole: role0,
 });
@@ -117,7 +116,6 @@ const instanceProfile3 = new aws.iam.InstanceProfile("example-instanceProfile3",
 // Create an EKS cluster with many IAM roles to register with the cluster auth.
 const cluster2 = new eks.Cluster("example-nodegroup-iam-advanced", {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     instanceRoles: [role1, role2, role3],
     nodeAmiId: "ami-0384725f0d30527c7",
 });

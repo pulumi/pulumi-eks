@@ -24,7 +24,6 @@ const roleMapping1: eks.RoleMapping = {
 // Create an EKS cluster.
 const cluster = new eks.Cluster(`${projectName}`, {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     roleMappings: [roleMapping0],
     instanceRoles: [roles[2]],
 });

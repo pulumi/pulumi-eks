@@ -40,7 +40,7 @@ const cluster = new eks.Cluster(`${projectName}-cluster`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     skipDefaultNodeGroup: true,
-    authenticationMode: eks.AuthenticationMode.API,
+    authenticationMode: eks.AuthenticationMode.Api,
     instanceRole: role0,
     storageClasses: {
         "mygp2": {

@@ -24,6 +24,7 @@ LOCAL_PLAT ?= ""
 
 PKG_ARGS   := --no-bytecode --public-packages "*" --public
 PKG_TARGET := ./bin/cmd/provider/index.js
+SCHEMA_PATH := provider/cmd/$(PROVIDER)/schema.json
 
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
@@ -32,16 +33,17 @@ schema::
 
 provider:: bin/${PROVIDER}
 
-build_nodejs::
-	rm -rf nodejs/eks/bin/*
-	cd nodejs/eks && \
-		yarn install && \
-		yarn run tsc && \
+.pulumi/bin/pulumi: PULUMI_VERSION := $(shell cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3)
+.pulumi/bin/pulumi: HOME := $(WORKING_DIR)
+.pulumi/bin/pulumi:
+	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
+
+build_nodejs:: .pulumi/bin/pulumi schema
+	cd provider/cmd/$(CODEGEN) && go run main.go nodejs ../../../sdk/nodejs $(CURDIR) ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
+	cd sdk/nodejs && \
+		yarn install --no-progress && \
 		yarn run tsc --version && \
-		sed -e 's/\$${VERSION}/$(VERSION_GENERIC)/g' < package.json > bin/package.json && \
-		cp ../../README.md ../../LICENSE bin/ && \
-		cp -R dashboard bin/ && \
-		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
+		yarn run tsc
 
 bin/pulumi-java-gen::
 	mkdir -p bin/
@@ -57,7 +59,7 @@ build_java:: bin/pulumi-java-gen schema
 
 build_python:: schema
 	rm -rf sdk/python
-	cd provider/cmd/$(CODEGEN) && go run main.go python ../../../sdk/python ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
+	cd provider/cmd/$(CODEGEN) && go run main.go python ../../../sdk/python $(CURDIR) ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
 	cd sdk/python/ && \
 		echo "module fake_python_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		cp ../../README.md . && \
@@ -69,11 +71,11 @@ build_python:: schema
 
 build_go:: schema
 	rm -rf sdk/go
-	cd provider/cmd/$(CODEGEN) && go run main.go go ../../../sdk/go ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
+	cd provider/cmd/$(CODEGEN) && go run main.go go ../../../sdk/go $(CURDIR) ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
 
 build_dotnet:: schema
 	rm -rf sdk/dotnet
-	cd provider/cmd/$(CODEGEN) && go run main.go dotnet ../../../sdk/dotnet ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
+	cd provider/cmd/$(CODEGEN) && go run main.go dotnet ../../../sdk/dotnet $(CURDIR) ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
 	cd sdk/dotnet/ && \
 		echo "module fake_dotnet_module // Exclude this directory from Go tools\n\ngo 1.17" > go.mod && \
 		echo "${VERSION_GENERIC}" >version.txt && \
@@ -98,15 +100,12 @@ install_provider:: provider install_nodejs_sdk
 		rm -rf ../provider.bin/ && \
 			cp -R . ../provider.bin && mv ../provider.bin ./bin && \
 			cp ../../../bin/$(PROVIDER) ./bin && \
-		sed -e 's/\$${VERSION}/$(PROVIDER_VERSION)/g' < package.json > bin/package.json && \
-		cd ./bin && \
-			yarn install && \
-			yarn link @pulumi/eks
+		sed -e 's/\$${VERSION}/$(PROVIDER_VERSION)/g' < package.json > bin/package.json
 
 generate_schema:: schema
 
 install_nodejs_sdk:: build_nodejs
-	yarn link --cwd $(WORKING_DIR)/nodejs/eks/bin
+	yarn link --cwd $(WORKING_DIR)/sdk/nodejs/bin
 
 install_dotnet_sdk:: build_dotnet
 	mkdir -p $(WORKING_DIR)/nuget
@@ -129,7 +128,6 @@ nodejs/eks/bin: nodejs/eks/node_modules ${EKS_SRC}
 	@cd nodejs/eks && \
 		yarn tsc && \
 		sed -e 's/\$${VERSION}/$(VERSION_GENERIC)/g' < package.json > bin/package.json && \
-		cp -R dashboard bin/ && \
 		cp ../../provider/cmd/pulumi-resource-eks/schema.json bin/cmd/provider/
 	@touch nodejs/eks/bin
 
@@ -178,7 +176,7 @@ test_nodejs:: provider install_nodejs_sdk
 
 test_nodejs_upgrade:: PATH := $(WORKING_DIR)/bin:$(PATH)
 test_nodejs_upgrade:: provider install_nodejs_sdk
-	cd provider && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
+	cd provider && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 4 . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_python:: install_provider test_build
 	cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt

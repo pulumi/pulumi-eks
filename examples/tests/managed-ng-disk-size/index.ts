@@ -15,7 +15,6 @@ const projectName = pulumi.getProject();
 
 const cluster = new eks.Cluster(`${projectName}`, {
     skipDefaultNodeGroup: true,
-    deployDashboard: false,
     vpcId: eksVpc.vpcId,
     // Public subnets will be used for load balancers
     publicSubnetIds: eksVpc.publicSubnetIds,
