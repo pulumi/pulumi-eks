@@ -642,6 +642,10 @@ func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 
 // TestAccCNIAcrossUpdates tests that the CNI manifest is reapplied when the EKS provider changes its base manifest.
 func TestAccCNIAcrossUpdates(t *testing.T) {
+	// Skipping for now because we have removed the `eks:index:VpcCni` resource.
+	// In the real world pulumi would use the previous version of the provider to delete the `eks:index:VpcCni` resource
+	// but in the test it uses the current local provider which doesn't have the resource and causes the test to fail.
+	t.Skip("Skipping for now")
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}

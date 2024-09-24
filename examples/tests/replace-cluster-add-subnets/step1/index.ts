@@ -16,7 +16,6 @@ const publicSubnetIds = vpc.publicSubnetIds;
 const cluster = new eks.Cluster(`${projectName}`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: publicSubnetIds,
-    deployDashboard: false,
 });
 
 // Export the cluster name and kubeconfig

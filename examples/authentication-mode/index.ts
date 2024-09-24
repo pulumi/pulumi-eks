@@ -35,7 +35,7 @@ const clusterConfigMap = new eks.Cluster(`${projectName}-cluster-configmap`, {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
-    authenticationMode: eks.AuthenticationMode.CONFIG_MAP,
+    authenticationMode: eks.AuthenticationMode.ConfigMap,
     roleMappings: [
         {
             roleArn: iamRole.arn,
@@ -51,7 +51,7 @@ const clusterBoth = new eks.Cluster(`${projectName}-cluster-both`, {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
-    authenticationMode: eks.AuthenticationMode.API_AND_CONFIG_MAP,
+    authenticationMode: eks.AuthenticationMode.ApiAndConfigMap,
     roleMappings: [
         {
             roleArn: iamRole.arn,
@@ -63,7 +63,7 @@ const clusterBoth = new eks.Cluster(`${projectName}-cluster-both`, {
         [`${projectName}-role`]: {
             principalArn: iamRole.arn,
             kubernetesGroups: ["test-group"],
-            type: eks.AccessEntryType.STANDARD,
+            type: eks.AccessEntryType.Standard,
             accessPolicies: {
                 "view": {
                     accessScope: {
@@ -83,7 +83,7 @@ const clusterApi = new eks.Cluster(`${projectName}-cluster-api`, {
     desiredCapacity: 1,
     minSize: 1,
     maxSize: 2,
-    authenticationMode: eks.AuthenticationMode.API,
+    authenticationMode: eks.AuthenticationMode.Api,
     accessEntries: {
         [`${projectName}-role`]: {
             principalArn: iamRole.arn,

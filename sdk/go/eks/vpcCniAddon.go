@@ -36,6 +36,12 @@ func NewVpcCniAddon(ctx *pulumi.Context,
 		resolveConflictsOnUpdate_ := ResolveConflictsOnUpdate("OVERWRITE")
 		args.ResolveConflictsOnUpdate = &resolveConflictsOnUpdate_
 	}
+	aliases := pulumi.Aliases([]pulumi.Alias{
+		{
+			Type: pulumi.String("eks:index:VpcCni"),
+		},
+	})
+	opts = append(opts, aliases)
 	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource VpcCniAddon
 	err := ctx.RegisterResource("eks:index:VpcCniAddon", name, args, &resource, opts...)

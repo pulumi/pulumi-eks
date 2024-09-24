@@ -2,7 +2,7 @@ import * as eks from "@pulumi/eks";
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 
-export function createUserData(cluster: aws.eks.Cluster, extraArgs: string): pulumi.Output<string> {
+export function createUserData(cluster: pulumi.Output<aws.eks.Cluster>, extraArgs: string): pulumi.Output<string> {
     const userdata = pulumi
         .all([
             cluster.name,

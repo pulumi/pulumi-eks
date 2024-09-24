@@ -25,7 +25,6 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
     minSize: 2,
     maxSize: 2,
     nodeAmiId: "ami-0384725f0d30527c7",
-    deployDashboard: false,
     enabledClusterLogTypes: [
         "api",
         "audit",
