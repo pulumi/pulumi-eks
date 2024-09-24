@@ -1,3 +1,0 @@
-name: cluster-upgrade
-description: Tests upgrading an EKS cluster and its node groups
-runtime: nodejs
