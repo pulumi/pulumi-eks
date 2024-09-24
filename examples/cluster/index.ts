@@ -15,7 +15,7 @@ const vpc = new awsx.ec2.Vpc(`${projectName}-2`, {
 
 // Create an EKS cluster with the default configuration.
 const cluster1 = new eks.Cluster(`${projectName}-1`, {
-    nodeAmiId: "ami-0384725f0d30527c7",
+    nodeAmiId: "ami-066e69f6f03b5383e",
 });
 
 const cluster2 = new eks.Cluster(`${projectName}-2`, {
@@ -24,7 +24,7 @@ const cluster2 = new eks.Cluster(`${projectName}-2`, {
     desiredCapacity: 2,
     minSize: 2,
     maxSize: 2,
-    nodeAmiId: "ami-0384725f0d30527c7",
+    nodeAmiId: "ami-066e69f6f03b5383e",
     enabledClusterLogTypes: [
         "api",
         "audit",
@@ -42,7 +42,7 @@ const cluster3 = new eks.Cluster(`${projectName}-3`, {
         enabled: false,
     },
     nodeGroupOptions: {
-        amiId: "ami-0384725f0d30527c7",
+        amiId: "ami-066e69f6f03b5383e",
         desiredCapacity: 1,
         minSize: 1,
         maxSize: 1,

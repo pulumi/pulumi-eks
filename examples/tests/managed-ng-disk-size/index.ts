@@ -31,6 +31,6 @@ eks.createManagedNodeGroup(`${projectName}-managed-ng`, {
     cluster: cluster,
     nodeRole: role,
     // Force creating a custom launch template
-    bootstrapExtraArgs: "--max-pods=500",
+    kubeletExtraArgs: "--max-pods=500",
     diskSize: 50,
 });

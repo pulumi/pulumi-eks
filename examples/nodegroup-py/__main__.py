@@ -61,7 +61,6 @@ eks.NodeGroup(
     labels={"preemptible": "true"},
     taints={"special": eks.TaintArgs(value="true", effect="NoSchedule")},
     kubelet_extra_args="--alsologtostderr",
-    bootstrap_extra_args="--aws-api-retry-attempts 10",
     instance_profile=instance_profile0,
     opts=pulumi.ResourceOptions(providers={"kubernetes": cluster1_provider}),
 )
