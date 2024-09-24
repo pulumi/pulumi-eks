@@ -958,6 +958,14 @@ func generateSchema() schema.PackageSpec {
 							"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n" +
 							"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/",
 					},
+					"ignoreScalingChanges": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "boolean",
+							Plain: true,
+						},
+						Description: "Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.\n\n" +
+							"See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.",
+					},
 				},
 				RequiredInputs: []string{"cluster"},
 			},
@@ -2280,6 +2288,15 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				},
 			},
 			Description: "The tag specifications to apply to the launch template.",
+		}
+
+		props["ignoreScalingChanges"] = schema.PropertySpec{
+			TypeSpec: schema.TypeSpec{
+				Type:  "boolean",
+				Plain: true,
+			},
+			Description: "Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.\n\n" +
+				"See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.",
 		}
 	}
 

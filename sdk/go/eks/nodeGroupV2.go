@@ -115,6 +115,10 @@ type nodeGroupV2Args struct {
 	// - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
 	// - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
 	Gpu *bool `pulumi:"gpu"`
+	// Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+	//
+	// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+	IgnoreScalingChanges *bool `pulumi:"ignoreScalingChanges"`
 	// The ingress rule that gives node group access.
 	InstanceProfile *iam.InstanceProfile `pulumi:"instanceProfile"`
 	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
@@ -265,6 +269,10 @@ type NodeGroupV2Args struct {
 	// - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
 	// - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
 	Gpu pulumi.BoolPtrInput
+	// Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+	//
+	// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+	IgnoreScalingChanges *bool
 	// The ingress rule that gives node group access.
 	InstanceProfile *iam.InstanceProfile
 	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".

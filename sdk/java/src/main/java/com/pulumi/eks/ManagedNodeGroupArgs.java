@@ -250,6 +250,25 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     }
 
     /**
+     * Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+     * 
+     * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+     * 
+     */
+    @Import(name="ignoreScalingChanges")
+    private @Nullable Boolean ignoreScalingChanges;
+
+    /**
+     * @return Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+     * 
+     * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+     * 
+     */
+    public Optional<Boolean> ignoreScalingChanges() {
+        return Optional.ofNullable(this.ignoreScalingChanges);
+    }
+
+    /**
      * Set of instance types associated with the EKS Node Group. Defaults to `[&#34;t3.medium&#34;]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
      * 
      */
@@ -593,6 +612,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         this.enableIMDSv2 = $.enableIMDSv2;
         this.forceUpdateVersion = $.forceUpdateVersion;
         this.gpu = $.gpu;
+        this.ignoreScalingChanges = $.ignoreScalingChanges;
         this.instanceTypes = $.instanceTypes;
         this.kubeletExtraArgs = $.kubeletExtraArgs;
         this.labels = $.labels;
@@ -909,6 +929,19 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          */
         public Builder gpu(Boolean gpu) {
             return gpu(Output.of(gpu));
+        }
+
+        /**
+         * @param ignoreScalingChanges Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+         * 
+         * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder ignoreScalingChanges(@Nullable Boolean ignoreScalingChanges) {
+            $.ignoreScalingChanges = ignoreScalingChanges;
+            return this;
         }
 
         /**
