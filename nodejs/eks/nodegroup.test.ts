@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import * as pulumi from "@pulumi/pulumi";
+import * as aws from "@pulumi/aws";
+
 import { isGravitonInstance } from "./nodegroup";
 import { getArchitecture } from "./nodegroup";
+import { CoreData } from "./cluster";
 
 const gravitonInstances = [
     "c6g.12xlarge",
@@ -341,3 +345,108 @@ describe("isGravitonInstance", () => {
         });
     });
 });
+
+describe("createManagedNodeGroup", function () {
+    beforeAll(() => {
+        pulumi.runtime.setMocks(
+            {
+                newResource: function (args: pulumi.runtime.MockResourceArgs): {
+                    id: string;
+                    state: any;
+                } {
+                    return {
+                        id: args.inputs.name + "_id",
+                        state: args.inputs,
+                    };
+                },
+                call: function (args: pulumi.runtime.MockCallArgs) {
+                    return args.inputs;
+                },
+            },
+            "project",
+            "stack",
+            false, // Sets the flag `dryRun`, which indicates if pulumi is running in preview mode.
+        );
+    });
+
+    let ng: typeof import("./nodegroup");
+    beforeEach(async function () {
+        ng = await import("./nodegroup");
+    });
+
+    test("should default to the cluster version if no version is provided", async () => {
+        const mng = ng.createManagedNodeGroupInternal(
+            "test",
+            {
+                nodeRoleArn: pulumi.output("nodeRoleArn"),
+            },
+            pulumi.output({
+                cluster: {
+                    version: pulumi.output("1.30"),
+                    accessConfig: pulumi.output({
+                        authenticationMode: "API",
+                    }),
+                } as aws.eks.Cluster,
+            } as CoreData),
+            undefined as any,
+        );
+
+        const configuredVersion = await promisify(mng.version);
+
+        expect(configuredVersion).toBe("1.30");
+    });
+
+    test("should use user defined version if provided", async () => {
+        const mng = ng.createManagedNodeGroupInternal(
+            "test",
+            {
+                nodeRoleArn: pulumi.output("nodeRoleArn"),
+                version: pulumi.output("1.29"),
+            },
+            pulumi.output({
+                cluster: {
+                    version: pulumi.output("1.30"),
+                    accessConfig: pulumi.output({
+                        authenticationMode: "API",
+                    }),
+                } as aws.eks.Cluster,
+            } as CoreData),
+            undefined as any,
+        );
+
+        const configuredVersion = await promisify(mng.version);
+
+        expect(configuredVersion).toBe("1.29");
+    });
+
+    test("should not default the version if a custom launch template is configured", async () => {
+        const mng = ng.createManagedNodeGroupInternal(
+            "test",
+            {
+                nodeRoleArn: pulumi.output("nodeRoleArn"),
+                launchTemplate: {
+                    id: pulumi.output("lt-id"),
+                    version: pulumi.output("lt-version"),
+                },
+            },
+            pulumi.output({
+                cluster: {
+                    version: pulumi.output("1.30"),
+                    accessConfig: pulumi.output({
+                        authenticationMode: "API",
+                    }),
+                } as aws.eks.Cluster,
+            } as CoreData),
+            undefined as any,
+        );
+
+        const configuredVersion = await promisify(mng.version);
+
+        expect(configuredVersion).toBeUndefined();
+    });
+});
+
+function promisify<T>(output: pulumi.Output<T> | undefined): Promise<T> {
+    expect(output).toBeDefined();
+    return new Promise((resolve) => output!.apply(resolve));
+}
