@@ -63,6 +63,7 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
             resourceInputs["enableIMDSv2"] = args ? args.enableIMDSv2 : undefined;
             resourceInputs["forceUpdateVersion"] = args ? args.forceUpdateVersion : undefined;
             resourceInputs["gpu"] = args ? args.gpu : undefined;
+            resourceInputs["ignoreScalingChanges"] = args ? args.ignoreScalingChanges : undefined;
             resourceInputs["instanceTypes"] = args ? args.instanceTypes : undefined;
             resourceInputs["kubeletExtraArgs"] = args ? args.kubeletExtraArgs : undefined;
             resourceInputs["labels"] = args ? args.labels : undefined;
@@ -165,6 +166,12 @@ export interface ManagedNodeGroupArgs {
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
      */
     gpu?: pulumi.Input<boolean>;
+    /**
+     * Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+     *
+     * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+     */
+    ignoreScalingChanges?: boolean;
     /**
      * Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
      */

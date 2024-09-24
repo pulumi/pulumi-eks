@@ -70,6 +70,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource {
             resourceInputs["encryptRootBlockDevice"] = args ? args.encryptRootBlockDevice : undefined;
             resourceInputs["extraNodeSecurityGroups"] = args ? args.extraNodeSecurityGroups : undefined;
             resourceInputs["gpu"] = args ? args.gpu : undefined;
+            resourceInputs["ignoreScalingChanges"] = args ? args.ignoreScalingChanges : undefined;
             resourceInputs["instanceProfile"] = args ? args.instanceProfile : undefined;
             resourceInputs["instanceType"] = args ? args.instanceType : undefined;
             resourceInputs["keyName"] = args ? args.keyName : undefined;
@@ -205,6 +206,12 @@ export interface NodeGroupV2Args {
      * - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
      */
     gpu?: pulumi.Input<boolean>;
+    /**
+     * Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+     *
+     * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+     */
+    ignoreScalingChanges?: boolean;
     /**
      * The ingress rule that gives node group access.
      */

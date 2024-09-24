@@ -107,6 +107,12 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly bool? Gpu;
         /// <summary>
+        /// Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+        /// 
+        /// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+        /// </summary>
+        public readonly bool? IgnoreScalingChanges;
+        /// <summary>
         /// The ingress rule that gives node group access.
         /// </summary>
         public readonly Pulumi.Aws.Iam.InstanceProfile? InstanceProfile;
@@ -263,6 +269,8 @@ namespace Pulumi.Eks.Outputs
 
             bool? gpu,
 
+            bool? ignoreScalingChanges,
+
             Pulumi.Aws.Iam.InstanceProfile? instanceProfile,
 
             string? instanceType,
@@ -327,6 +335,7 @@ namespace Pulumi.Eks.Outputs
             EncryptRootBlockDevice = encryptRootBlockDevice;
             ExtraNodeSecurityGroups = extraNodeSecurityGroups;
             Gpu = gpu;
+            IgnoreScalingChanges = ignoreScalingChanges;
             InstanceProfile = instanceProfile;
             InstanceType = instanceType;
             KeyName = keyName;

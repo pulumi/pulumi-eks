@@ -158,6 +158,12 @@ export interface ClusterNodeGroupOptionsArgs {
      */
     gpu?: pulumi.Input<boolean>;
     /**
+     * Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+     *
+     * See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+     */
+    ignoreScalingChanges?: boolean;
+    /**
      * The ingress rule that gives node group access.
      */
     instanceProfile?: pulumiAws.iam.InstanceProfile;
@@ -178,9 +184,17 @@ export interface ClusterNodeGroupOptionsArgs {
      */
     labels?: {[key: string]: string};
     /**
+     * The tag specifications to apply to the launch template.
+     */
+    launchTemplateTagSpecifications?: pulumi.Input<pulumi.Input<pulumiAws.types.input.ec2.LaunchTemplateTagSpecification>[]>;
+    /**
      * The maximum number of worker nodes running in the cluster. Defaults to 2.
      */
     maxSize?: pulumi.Input<number>;
+    /**
+     * The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+     */
+    minRefreshPercentage?: pulumi.Input<number>;
     /**
      * The minimum number of worker nodes running in the cluster. Defaults to 1.
      */

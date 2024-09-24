@@ -14,6 +14,8 @@ import {Cluster, VpcCniAddon} from "./index";
 
 /**
  * NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
+ *
+ * @deprecated NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.
  */
 export class NodeGroup extends pulumi.ComponentResource {
     /** @internal */
@@ -54,7 +56,9 @@ export class NodeGroup extends pulumi.ComponentResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param opts A bag of options that control this resource's behavior.
      */
+    /** @deprecated NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead. */
     constructor(name: string, args: NodeGroupArgs, opts?: pulumi.ComponentResourceOptions) {
+        pulumi.log.warn("NodeGroup is deprecated: NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.")
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
