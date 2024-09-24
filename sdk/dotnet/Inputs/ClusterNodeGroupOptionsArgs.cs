@@ -189,11 +189,29 @@ namespace Pulumi.Eks.Inputs
             set => _labels = value;
         }
 
+        [Input("launchTemplateTagSpecifications")]
+        private InputList<Pulumi.Aws.Ec2.Inputs.LaunchTemplateTagSpecificationArgs>? _launchTemplateTagSpecifications;
+
+        /// <summary>
+        /// The tag specifications to apply to the launch template.
+        /// </summary>
+        public InputList<Pulumi.Aws.Ec2.Inputs.LaunchTemplateTagSpecificationArgs> LaunchTemplateTagSpecifications
+        {
+            get => _launchTemplateTagSpecifications ?? (_launchTemplateTagSpecifications = new InputList<Pulumi.Aws.Ec2.Inputs.LaunchTemplateTagSpecificationArgs>());
+            set => _launchTemplateTagSpecifications = value;
+        }
+
         /// <summary>
         /// The maximum number of worker nodes running in the cluster. Defaults to 2.
         /// </summary>
         [Input("maxSize")]
         public Input<int>? MaxSize { get; set; }
+
+        /// <summary>
+        /// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+        /// </summary>
+        [Input("minRefreshPercentage")]
+        public Input<int>? MinRefreshPercentage { get; set; }
 
         /// <summary>
         /// The minimum number of worker nodes running in the cluster. Defaults to 1.

@@ -35,9 +35,11 @@ import { assertCompatibleAWSCLIExists } from "./dependencies";
 import {
     computeWorkerSubnets,
     createNodeGroup,
+    createNodeGroupV2,
     NodeGroup,
     NodeGroupBaseOptions,
     NodeGroupData,
+    NodeGroupV2Data,
 } from "./nodegroup";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
 import { ServiceRole } from "./servicerole";
@@ -1899,7 +1901,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
      */
-    public readonly defaultNodeGroup: NodeGroupData | undefined;
+    public readonly defaultNodeGroup: NodeGroupV2Data | undefined;
 
     /**
      * The EKS cluster.
@@ -2012,7 +2014,7 @@ export interface ClusterResult {
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
     nodeSecurityGroup: aws.ec2.SecurityGroup;
     eksClusterIngressRule: aws.ec2.SecurityGroupRule;
-    defaultNodeGroup: NodeGroupData | undefined;
+    defaultNodeGroup: NodeGroupV2Data | undefined;
     eksCluster: aws.eks.Cluster;
     core: CoreData;
 }
@@ -2072,10 +2074,9 @@ export function createCluster(
     const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
 
     // Create the default worker node group and grant the workers access to the API server.
-    const configDeps = [core.kubeconfig];
-    let defaultNodeGroup: NodeGroupData | undefined = undefined;
+    let defaultNodeGroup: NodeGroupV2Data | undefined = undefined;
     if (!skipDefaultNodeGroup) {
-        defaultNodeGroup = createNodeGroup(
+        defaultNodeGroup = createNodeGroupV2(
             name,
             {
                 cluster: core,
@@ -2083,15 +2084,9 @@ export function createCluster(
             },
             self,
         );
-        if (defaultNodeGroup.cfnStack) {
-            configDeps.push(defaultNodeGroup.cfnStack.id);
-        }
     }
 
-    // Export the cluster's kubeconfig with a dependency upon the cluster's autoscaling group. This will help
-    // ensure that the cluster's consumers do not attempt to use the cluster until its workers are attached.
-    const kubeconfig = pulumi.all(configDeps).apply(([kc]) => kc);
-    const kubeconfigJson = kubeconfig.apply(JSON.stringify);
+    const kubeconfigJson = pulumi.jsonStringify(core.kubeconfig);
 
     // Export a k8s provider with the above kubeconfig. Note that we do not export the provider we created earlier
     // in order to help ensure that worker nodes are available before the provider can be used.
@@ -2121,7 +2116,7 @@ export function createCluster(
         nodeSecurityGroup,
         eksClusterIngressRule,
         defaultNodeGroup,
-        kubeconfig,
+        kubeconfig: pulumi.output(core.kubeconfig),
         kubeconfigJson,
         provider,
     };
@@ -2141,7 +2136,7 @@ export function createCluster(
 export class ClusterInternal extends pulumi.ComponentResource {
     public readonly clusterSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
     public readonly core!: pulumi.Output<pulumi.Unwrap<CoreData>>;
-    public readonly defaultNodeGroup!: pulumi.Output<pulumi.Unwrap<NodeGroupData> | undefined>;
+    public readonly defaultNodeGroup!: pulumi.Output<pulumi.Unwrap<NodeGroupV2Data> | undefined>;
     public readonly eksCluster!: pulumi.Output<aws.eks.Cluster>;
     public readonly eksClusterIngressRule!: pulumi.Output<aws.ec2.SecurityGroupRule>;
     public readonly instanceRoles!: pulumi.Output<aws.iam.Role[]>;

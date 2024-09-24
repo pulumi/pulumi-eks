@@ -16,6 +16,8 @@ import (
 )
 
 // NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
+//
+// Deprecated: NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.
 type NodeGroup struct {
 	pulumi.ResourceState
 
