@@ -100,10 +100,7 @@ install_provider:: provider install_nodejs_sdk
 		rm -rf ../provider.bin/ && \
 			cp -R . ../provider.bin && mv ../provider.bin ./bin && \
 			cp ../../../bin/$(PROVIDER) ./bin && \
-		sed -e 's/\$${VERSION}/$(PROVIDER_VERSION)/g' < package.json > bin/package.json && \
-		cd ./bin && \
-			yarn install && \
-			yarn link @pulumi/eks
+		sed -e 's/\$${VERSION}/$(PROVIDER_VERSION)/g' < package.json > bin/package.json
 
 generate_schema:: schema
 
