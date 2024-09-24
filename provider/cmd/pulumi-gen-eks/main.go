@@ -1761,7 +1761,7 @@ func generateSchema() schema.PackageSpec {
 						Value: "AL2023",
 						Description: "The recommended EKS optimized OS. Currently Amazon Linux 2023 (AL2023).\n" +
 							"This will be kept up to date with AWS' recommendations for EKS optimized operating systems.\n\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html", 
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html",
 					},
 				},
 			},
