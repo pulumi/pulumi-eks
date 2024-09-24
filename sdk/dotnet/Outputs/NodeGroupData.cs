@@ -21,10 +21,6 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly string AutoScalingGroupName;
         /// <summary>
-        /// The CloudFormation Stack which defines the Node AutoScalingGroup.
-        /// </summary>
-        public readonly Pulumi.Aws.CloudFormation.Stack CfnStack;
-        /// <summary>
         /// The additional security groups for the node group that captures user-specific rules.
         /// </summary>
         public readonly ImmutableArray<Pulumi.Aws.Ec2.SecurityGroup> ExtraNodeSecurityGroups;
@@ -37,14 +33,11 @@ namespace Pulumi.Eks.Outputs
         private NodeGroupData(
             string autoScalingGroupName,
 
-            Pulumi.Aws.CloudFormation.Stack cfnStack,
-
             ImmutableArray<Pulumi.Aws.Ec2.SecurityGroup> extraNodeSecurityGroups,
 
             Pulumi.Aws.Ec2.SecurityGroup nodeSecurityGroup)
         {
             AutoScalingGroupName = autoScalingGroupName;
-            CfnStack = cfnStack;
             ExtraNodeSecurityGroups = extraNodeSecurityGroups;
             NodeSecurityGroup = nodeSecurityGroup;
         }

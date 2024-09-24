@@ -94,6 +94,10 @@ type managedNodeGroupArgs struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
 	Gpu *bool `pulumi:"gpu"`
+	// Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+	//
+	// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+	IgnoreScalingChanges *bool `pulumi:"ignoreScalingChanges"`
 	// Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
 	InstanceTypes []string `pulumi:"instanceTypes"`
 	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
@@ -216,6 +220,10 @@ type ManagedNodeGroupArgs struct {
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
 	Gpu pulumi.BoolPtrInput
+	// Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+	//
+	// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+	IgnoreScalingChanges *bool
 	// Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
 	InstanceTypes pulumi.StringArrayInput
 	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.

@@ -127,9 +127,17 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly ImmutableDictionary<string, string>? Labels;
         /// <summary>
+        /// The tag specifications to apply to the launch template.
+        /// </summary>
+        public readonly ImmutableArray<Pulumi.Aws.Ec2.Outputs.LaunchTemplateTagSpecification> LaunchTemplateTagSpecifications;
+        /// <summary>
         /// The maximum number of worker nodes running in the cluster. Defaults to 2.
         /// </summary>
         public readonly int? MaxSize;
+        /// <summary>
+        /// The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+        /// </summary>
+        public readonly int? MinRefreshPercentage;
         /// <summary>
         /// The minimum number of worker nodes running in the cluster. Defaults to 1.
         /// </summary>
@@ -265,7 +273,11 @@ namespace Pulumi.Eks.Outputs
 
             ImmutableDictionary<string, string>? labels,
 
+            ImmutableArray<Pulumi.Aws.Ec2.Outputs.LaunchTemplateTagSpecification> launchTemplateTagSpecifications,
+
             int? maxSize,
+
+            int? minRefreshPercentage,
 
             int? minSize,
 
@@ -320,7 +332,9 @@ namespace Pulumi.Eks.Outputs
             KeyName = keyName;
             KubeletExtraArgs = kubeletExtraArgs;
             Labels = labels;
+            LaunchTemplateTagSpecifications = launchTemplateTagSpecifications;
             MaxSize = maxSize;
+            MinRefreshPercentage = minRefreshPercentage;
             MinSize = minSize;
             NodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
             NodePublicKey = nodePublicKey;

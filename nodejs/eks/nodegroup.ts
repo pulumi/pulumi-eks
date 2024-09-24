@@ -389,6 +389,13 @@ export interface NodeGroupV2Options extends NodeGroupOptions {
      * application takes time to initialize itself before it starts to serve traffic.
      */
     defaultInstanceWarmup?: pulumi.Input<number>;
+
+    /**
+     * Whether to ignore changes to the desired size of the AutoScalingGroup. This is useful when using Cluster Autoscaler.
+     *
+     * See EKS best practices for more details: https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/
+     */
+    ignoreScalingChanges?: boolean;
 }
 
 /**
@@ -1469,6 +1476,7 @@ function createNodeGroupV2Internal(
 
     const launchTemplateVersion = nodeLaunchTemplate.latestVersion.apply((v) => v.toString());
 
+    const ignoreScalingChanges = args.ignoreScalingChanges ? ["desiredCapacity"] : undefined;
     const asGroup = new aws.autoscaling.Group(
         name,
         {
@@ -1489,7 +1497,7 @@ function createNodeGroupV2Internal(
             tags: asgTags,
             defaultInstanceWarmup: args.defaultInstanceWarmup,
         },
-        { parent, dependsOn: nodeGroupDeps, provider },
+        { parent, dependsOn: nodeGroupDeps, provider, ignoreChanges: ignoreScalingChanges },
     );
 
     return {
@@ -1717,6 +1725,13 @@ export type ManagedNodeGroupOptions = Omit<
      *   - maxSize: 2
      */
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>;
+
+    /**
+     * Whether to ignore changes to the desired size of the AutoScalingGroup. This is useful when using Cluster Autoscaler.
+     *
+     * See EKS best practices for more details: https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/
+     */
+    ignoreScalingChanges?: boolean;
 
     /**
      * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the
@@ -2031,6 +2046,10 @@ function createManagedNodeGroupInternal(
         amiType = determineAmiType(args.operatingSystem, args.gpu, args.instanceTypes, parent);
     }
 
+    const ignoreScalingChanges = args.ignoreScalingChanges
+        ? ["scalingConfig.desiredSize"]
+        : undefined;
+
     // Make the aws-auth configmap a dependency of the node group.
     const ngDeps = core.apply((c) => (c.eksNodeAccess !== undefined ? [c.eksNodeAccess] : []));
     // Create the managed node group.
@@ -2061,7 +2080,7 @@ function createManagedNodeGroupInternal(
                   }
                 : args.launchTemplate,
         },
-        { parent: parent, dependsOn: ngDeps, provider },
+        { parent: parent, dependsOn: ngDeps, provider, ignoreChanges: ignoreScalingChanges },
     );
 
     return nodeGroup;

@@ -5,6 +5,7 @@ package com.pulumi.eks.outputs;
 
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.aws.ec2.SecurityGroupRule;
+import com.pulumi.aws.ec2.outputs.LaunchTemplateTagSpecification;
 import com.pulumi.aws.iam.InstanceProfile;
 import com.pulumi.core.annotations.CustomType;
 import com.pulumi.eks.enums.OperatingSystem;
@@ -150,10 +151,20 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable Map<String,String> labels;
     /**
+     * @return The tag specifications to apply to the launch template.
+     * 
+     */
+    private @Nullable List<LaunchTemplateTagSpecification> launchTemplateTagSpecifications;
+    /**
      * @return The maximum number of worker nodes running in the cluster. Defaults to 2.
      * 
      */
     private @Nullable Integer maxSize;
+    /**
+     * @return The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+     * 
+     */
+    private @Nullable Integer minRefreshPercentage;
     /**
      * @return The minimum number of worker nodes running in the cluster. Defaults to 1.
      * 
@@ -434,11 +445,25 @@ public final class ClusterNodeGroupOptions {
         return this.labels == null ? Map.of() : this.labels;
     }
     /**
+     * @return The tag specifications to apply to the launch template.
+     * 
+     */
+    public List<LaunchTemplateTagSpecification> launchTemplateTagSpecifications() {
+        return this.launchTemplateTagSpecifications == null ? List.of() : this.launchTemplateTagSpecifications;
+    }
+    /**
      * @return The maximum number of worker nodes running in the cluster. Defaults to 2.
      * 
      */
     public Optional<Integer> maxSize() {
         return Optional.ofNullable(this.maxSize);
+    }
+    /**
+     * @return The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+     * 
+     */
+    public Optional<Integer> minRefreshPercentage() {
+        return Optional.ofNullable(this.minRefreshPercentage);
     }
     /**
      * @return The minimum number of worker nodes running in the cluster. Defaults to 1.
@@ -619,7 +644,9 @@ public final class ClusterNodeGroupOptions {
         private @Nullable String keyName;
         private @Nullable String kubeletExtraArgs;
         private @Nullable Map<String,String> labels;
+        private @Nullable List<LaunchTemplateTagSpecification> launchTemplateTagSpecifications;
         private @Nullable Integer maxSize;
+        private @Nullable Integer minRefreshPercentage;
         private @Nullable Integer minSize;
         private @Nullable Boolean nodeAssociatePublicIpAddress;
         private @Nullable String nodePublicKey;
@@ -658,7 +685,9 @@ public final class ClusterNodeGroupOptions {
     	      this.keyName = defaults.keyName;
     	      this.kubeletExtraArgs = defaults.kubeletExtraArgs;
     	      this.labels = defaults.labels;
+    	      this.launchTemplateTagSpecifications = defaults.launchTemplateTagSpecifications;
     	      this.maxSize = defaults.maxSize;
+    	      this.minRefreshPercentage = defaults.minRefreshPercentage;
     	      this.minSize = defaults.minSize;
     	      this.nodeAssociatePublicIpAddress = defaults.nodeAssociatePublicIpAddress;
     	      this.nodePublicKey = defaults.nodePublicKey;
@@ -768,8 +797,21 @@ public final class ClusterNodeGroupOptions {
             return this;
         }
         @CustomType.Setter
+        public Builder launchTemplateTagSpecifications(@Nullable List<LaunchTemplateTagSpecification> launchTemplateTagSpecifications) {
+            this.launchTemplateTagSpecifications = launchTemplateTagSpecifications;
+            return this;
+        }
+        public Builder launchTemplateTagSpecifications(LaunchTemplateTagSpecification... launchTemplateTagSpecifications) {
+            return launchTemplateTagSpecifications(List.of(launchTemplateTagSpecifications));
+        }
+        @CustomType.Setter
         public Builder maxSize(@Nullable Integer maxSize) {
             this.maxSize = maxSize;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder minRefreshPercentage(@Nullable Integer minRefreshPercentage) {
+            this.minRefreshPercentage = minRefreshPercentage;
             return this;
         }
         @CustomType.Setter
@@ -887,7 +929,9 @@ public final class ClusterNodeGroupOptions {
             _resultValue.keyName = keyName;
             _resultValue.kubeletExtraArgs = kubeletExtraArgs;
             _resultValue.labels = labels;
+            _resultValue.launchTemplateTagSpecifications = launchTemplateTagSpecifications;
             _resultValue.maxSize = maxSize;
+            _resultValue.minRefreshPercentage = minRefreshPercentage;
             _resultValue.minSize = minSize;
             _resultValue.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
             _resultValue.nodePublicKey = nodePublicKey;
