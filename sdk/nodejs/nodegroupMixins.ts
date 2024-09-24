@@ -106,6 +106,13 @@ export type ManagedNodeGroupOptions = Omit<
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>;
 
     /**
+     * Whether to ignore changes to the desired size of the AutoScalingGroup. This is useful when using Cluster Autoscaler.
+     *
+     * See EKS best practices for more details: https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/
+     */
+    ignoreScalingChanges?: boolean;
+
+    /**
      * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the
      * instance types and gpu configuration. Valid values are `AL2`, `AL2023` and `Bottlerocket`.
      *
