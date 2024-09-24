@@ -31,6 +31,7 @@ class ManagedNodeGroupArgs:
                  enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
+                 ignore_scaling_changes: Optional[bool] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  kubelet_extra_args: Optional[str] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -89,6 +90,9 @@ class ManagedNodeGroupArgs:
                Note: `gpu` and `amiId` are mutually exclusive.
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+        :param bool ignore_scaling_changes: Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+               
+               See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
                Note that this field conflicts with `launchTemplate`.
@@ -162,6 +166,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "force_update_version", force_update_version)
         if gpu is not None:
             pulumi.set(__self__, "gpu", gpu)
+        if ignore_scaling_changes is not None:
+            pulumi.set(__self__, "ignore_scaling_changes", ignore_scaling_changes)
         if instance_types is not None:
             pulumi.set(__self__, "instance_types", instance_types)
         if kubelet_extra_args is not None:
@@ -357,6 +363,20 @@ class ManagedNodeGroupArgs:
     @gpu.setter
     def gpu(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "gpu", value)
+
+    @property
+    @pulumi.getter(name="ignoreScalingChanges")
+    def ignore_scaling_changes(self) -> Optional[bool]:
+        """
+        Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+
+        See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+        """
+        return pulumi.get(self, "ignore_scaling_changes")
+
+    @ignore_scaling_changes.setter
+    def ignore_scaling_changes(self, value: Optional[bool]):
+        pulumi.set(self, "ignore_scaling_changes", value)
 
     @property
     @pulumi.getter(name="instanceTypes")
@@ -622,6 +642,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
+                 ignore_scaling_changes: Optional[bool] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  kubelet_extra_args: Optional[str] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -687,6 +708,9 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                Note: `gpu` and `amiId` are mutually exclusive.
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
+        :param bool ignore_scaling_changes: Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+               
+               See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] instance_types: Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
                Note that this field conflicts with `launchTemplate`.
@@ -777,6 +801,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
+                 ignore_scaling_changes: Optional[bool] = None,
                  instance_types: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  kubelet_extra_args: Optional[str] = None,
                  labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -819,6 +844,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["enable_imd_sv2"] = enable_imd_sv2
             __props__.__dict__["force_update_version"] = force_update_version
             __props__.__dict__["gpu"] = gpu
+            __props__.__dict__["ignore_scaling_changes"] = ignore_scaling_changes
             __props__.__dict__["instance_types"] = instance_types
             __props__.__dict__["kubelet_extra_args"] = kubelet_extra_args
             __props__.__dict__["labels"] = labels
