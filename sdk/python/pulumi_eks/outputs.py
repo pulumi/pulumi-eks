@@ -231,8 +231,12 @@ class ClusterNodeGroupOptions(dict):
             suggest = "key_name"
         elif key == "kubeletExtraArgs":
             suggest = "kubelet_extra_args"
+        elif key == "launchTemplateTagSpecifications":
+            suggest = "launch_template_tag_specifications"
         elif key == "maxSize":
             suggest = "max_size"
+        elif key == "minRefreshPercentage":
+            suggest = "min_refresh_percentage"
         elif key == "minSize":
             suggest = "min_size"
         elif key == "nodeAssociatePublicIpAddress":
@@ -295,7 +299,9 @@ class ClusterNodeGroupOptions(dict):
                  key_name: Optional[str] = None,
                  kubelet_extra_args: Optional[str] = None,
                  labels: Optional[Mapping[str, str]] = None,
+                 launch_template_tag_specifications: Optional[Sequence['pulumi_aws.ec2.outputs.LaunchTemplateTagSpecification']] = None,
                  max_size: Optional[int] = None,
+                 min_refresh_percentage: Optional[int] = None,
                  min_size: Optional[int] = None,
                  node_associate_public_ip_address: Optional[bool] = None,
                  node_public_key: Optional[str] = None,
@@ -375,7 +381,9 @@ class ClusterNodeGroupOptions(dict):
         :param str key_name: Name of the key pair to use for SSH access to worker nodes.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         :param Mapping[str, str] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        :param Sequence['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs'] launch_template_tag_specifications: The tag specifications to apply to the launch template.
         :param int max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
+        :param int min_refresh_percentage: The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
         :param int min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
         :param bool node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         :param str node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
@@ -455,8 +463,12 @@ class ClusterNodeGroupOptions(dict):
             pulumi.set(__self__, "kubelet_extra_args", kubelet_extra_args)
         if labels is not None:
             pulumi.set(__self__, "labels", labels)
+        if launch_template_tag_specifications is not None:
+            pulumi.set(__self__, "launch_template_tag_specifications", launch_template_tag_specifications)
         if max_size is not None:
             pulumi.set(__self__, "max_size", max_size)
+        if min_refresh_percentage is not None:
+            pulumi.set(__self__, "min_refresh_percentage", min_refresh_percentage)
         if min_size is not None:
             pulumi.set(__self__, "min_size", min_size)
         if node_associate_public_ip_address is not None:
@@ -673,12 +685,28 @@ class ClusterNodeGroupOptions(dict):
         return pulumi.get(self, "labels")
 
     @property
+    @pulumi.getter(name="launchTemplateTagSpecifications")
+    def launch_template_tag_specifications(self) -> Optional[Sequence['pulumi_aws.ec2.outputs.LaunchTemplateTagSpecification']]:
+        """
+        The tag specifications to apply to the launch template.
+        """
+        return pulumi.get(self, "launch_template_tag_specifications")
+
+    @property
     @pulumi.getter(name="maxSize")
     def max_size(self) -> Optional[int]:
         """
         The maximum number of worker nodes running in the cluster. Defaults to 2.
         """
         return pulumi.get(self, "max_size")
+
+    @property
+    @pulumi.getter(name="minRefreshPercentage")
+    def min_refresh_percentage(self) -> Optional[int]:
+        """
+        The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+        """
+        return pulumi.get(self, "min_refresh_percentage")
 
     @property
     @pulumi.getter(name="minSize")
@@ -1148,8 +1176,6 @@ class NodeGroupData(dict):
         suggest = None
         if key == "autoScalingGroupName":
             suggest = "auto_scaling_group_name"
-        elif key == "cfnStack":
-            suggest = "cfn_stack"
         elif key == "extraNodeSecurityGroups":
             suggest = "extra_node_security_groups"
         elif key == "nodeSecurityGroup":
@@ -1168,18 +1194,15 @@ class NodeGroupData(dict):
 
     def __init__(__self__, *,
                  auto_scaling_group_name: str,
-                 cfn_stack: 'pulumi_aws.cloudformation.Stack',
                  extra_node_security_groups: Sequence['pulumi_aws.ec2.SecurityGroup'],
                  node_security_group: 'pulumi_aws.ec2.SecurityGroup'):
         """
         NodeGroupData describes the resources created for the given NodeGroup.
         :param str auto_scaling_group_name: The AutoScalingGroup name for the node group.
-        :param 'pulumi_aws.cloudformation.Stack' cfn_stack: The CloudFormation Stack which defines the Node AutoScalingGroup.
         :param Sequence['pulumi_aws.ec2.SecurityGroup'] extra_node_security_groups: The additional security groups for the node group that captures user-specific rules.
         :param 'pulumi_aws.ec2.SecurityGroup' node_security_group: The security group for the node group to communicate with the cluster.
         """
         pulumi.set(__self__, "auto_scaling_group_name", auto_scaling_group_name)
-        pulumi.set(__self__, "cfn_stack", cfn_stack)
         pulumi.set(__self__, "extra_node_security_groups", extra_node_security_groups)
         pulumi.set(__self__, "node_security_group", node_security_group)
 
@@ -1190,14 +1213,6 @@ class NodeGroupData(dict):
         The AutoScalingGroup name for the node group.
         """
         return pulumi.get(self, "auto_scaling_group_name")
-
-    @property
-    @pulumi.getter(name="cfnStack")
-    def cfn_stack(self) -> 'pulumi_aws.cloudformation.Stack':
-        """
-        The CloudFormation Stack which defines the Node AutoScalingGroup.
-        """
-        return pulumi.get(self, "cfn_stack")
 
     @property
     @pulumi.getter(name="extraNodeSecurityGroups")
