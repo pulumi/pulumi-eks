@@ -35,8 +35,48 @@ env:
   SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}
 
 jobs:
+
+  # TODO this job is specific for EKS and needs to be retrofitted to be part of prerequisites so that test run against
+  # the actual provider build being published, not a separate set of binaries. Inserting a separate job temporarily.
+  dist:
+    name: dist
+    runs-on: ubuntu-latest
+    needs:
+      - prerequisites
+    strategy:
+      matrix:
+        os: [linux, darwin, windows]
+        arch: [amd64, arm64]
+      exclude:
+        - os: windows
+          arch: arm64
+    env:
+      PROVIDER_VERSION: ${{ inputs.version }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - uses: MOZGIII/install-ldid-action@v1
+        with:
+          tag: v2.1.5-procursus2
+      - name: Install pulumictl
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
+        with:
+          repo: pulumi/pulumictl
+      - name: Install Pulumi CLI
+        uses: pulumi/actions@v5
+      - name: Make Provider Binary
+        run: make dist/pulumi-resource-eks-${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: pulumi-resource-eks-${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          path: dist/pulumi-resource-eks-${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          retention-days: 30
+
   publish:
     name: publish
+    needs:
+      - dist
     runs-on: ubuntu-latest
     steps:
     - name: Validate prerelease
