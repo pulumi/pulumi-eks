@@ -26,7 +26,6 @@ env:
   DOTNETVERSION: "6.x"
   PYTHONVERSION: "3.8"
   JAVAVERSION: "11"
-  IS_PRERELEASE: ${{ contains(github.ref_name,'-') }}
 jobs:
   lint:
     name: Lint and unit test
@@ -232,7 +231,7 @@ jobs:
           generate_release_notes: true
           files: |
             dist/*.tar.gz
-          prerelease: ${{ env.IS_PRERELEASE }}
+          prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
   publish_sdk:
@@ -346,23 +345,6 @@ jobs:
           arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository
           build-root-directory: ./sdk/java
           gradle-version: 7.4.1
-  create_docs_build:
-    name: Create docs build
-    needs:
-      - prerequisites
-      - publish_sdk
-    runs-on: ubuntu-latest
-    env:
-      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
-    steps:
-      - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.12.0
-        with:
-          repo: pulumi/pulumictl
-      - env:
-          GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
-        name: Dispatch event
-        run: pulumictl create docs-build pulumi-${{ env.PROVIDER }} "${GITHUB_REF#refs/tags/}"
   test-nodejs:
     name: Run NodeJS Tests
     needs:
@@ -802,9 +784,8 @@ jobs:
             go.*
             go/**
             !*.tar.gz
-name: release
+name: prerelease
 "on":
   push:
     tags:
-      - v*.*.*
-      - "!v*.*.*-**"
+      - v*.*.*-**
