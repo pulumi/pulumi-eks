@@ -120,7 +120,7 @@ jobs:
         {
           echo 'summary<<EOF'
           if [[ "$LAST_VERSION" != "No stable release" ]]; then
-            schema-tools compare --provider="aws" --old-commit="$LAST_VERSION" --new-commit="--local-path=provider/cmd/pulumi-resource-aws/schema.json"
+            schema-tools compare --provider="eks" --old-commit="$LAST_VERSION" --new-commit="--local-path=provider/cmd/pulumi-resource-eks/schema.json"
           fi
           echo 'EOF'
         } >> "$GITHUB_OUTPUT"
@@ -192,7 +192,7 @@ jobs:
           client-payload: |-
             {
               "project": "${{ github.repository }}",
-              "project-shortname": "aws",
+              "project-shortname": "eks",
               "ref": "${{ github.ref_name }}"
             }
 
