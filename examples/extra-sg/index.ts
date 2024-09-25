@@ -40,7 +40,7 @@ const cluster = new eks.Cluster(`${projectName}`, {
   skipDefaultNodeGroup: true,
   instanceRoles: [ngRole],
   nodeGroupOptions: {
-    amiId: "ami-0384725f0d30527c7",
+    amiId: "ami-066e69f6f03b5383e",
     instanceType: "t3.small",
   },
 });
@@ -95,7 +95,7 @@ const publicInternetEgressRule = new aws.ec2.SecurityGroupRule(
 cluster.createNodeGroup("example-ng", {
   instanceProfile: ngInstanceProfile,
   extraNodeSecurityGroups: [customSecurityGroup],
-  amiId: "ami-0384725f0d30527c7",
+  amiId: "ami-066e69f6f03b5383e",
   instanceType: "t3.small",
 });
 
@@ -105,7 +105,7 @@ const ng = new eks.NodeGroupV2("example-mng", {
   cluster: cluster,
   instanceProfile: ngInstanceProfile,
   instanceType: "t3.small",
-  amiId: "ami-0384725f0d30527c7",
+  amiId: "ami-066e69f6f03b5383e",
   extraNodeSecurityGroups: [
     customSecurityGroup, // Plain type
     cluster.nodeSecurityGroup, // Input type

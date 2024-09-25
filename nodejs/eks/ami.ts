@@ -28,7 +28,7 @@ export const OperatingSystem = {
  * The AMI families supported by the component.
  */
 export type OperatingSystem = (typeof OperatingSystem)[keyof typeof OperatingSystem];
-export const DEFAULT_OS = OperatingSystem.AL2;
+export const DEFAULT_OS = OperatingSystem.AL2023;
 
 export interface AmiMetadata {
     os: OperatingSystem;

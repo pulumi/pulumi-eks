@@ -225,9 +225,9 @@ namespace Pulumi.Eks.Outputs
         public readonly ImmutableArray<Outputs.NodeadmOptions> NodeadmExtraOptions;
         /// <summary>
         /// The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-        /// Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+        /// Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
         /// 
-        /// Defaults to `AL2`.
+        /// Defaults to the current recommended OS.
         /// </summary>
         public readonly Pulumi.Eks.OperatingSystem? OperatingSystem;
         /// <summary>

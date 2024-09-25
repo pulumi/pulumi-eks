@@ -26,7 +26,7 @@ export const aliasArn = alias.arn;
 // Create an EKS cluster with a KMS encryption provider.
 const cluster = new eks.Cluster(`${projectName}`, {
     encryptionConfigKeyArn: alias.targetKeyArn,
-    nodeAmiId: "ami-0384725f0d30527c7",
+    nodeAmiId: "ami-066e69f6f03b5383e",
 });
 
 // Export the cluster kubeconfig.
