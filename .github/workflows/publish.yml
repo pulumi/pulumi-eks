@@ -63,12 +63,12 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/actions@v5
       - name: Make Provider Binary
-        run: make dist/pulumi-resource-eks-${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+        run: make dist/pulumi-resource-eks-v${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: pulumi-resource-eks-${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
-          path: dist/pulumi-resource-eks-${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          name: pulumi-resource-eks-v${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          path: dist/pulumi-resource-eks-v${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
           retention-days: 30
 
   publish:
