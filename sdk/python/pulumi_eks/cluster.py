@@ -131,7 +131,7 @@ class ClusterArgs:
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]] instance_roles: This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
                
                Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
-        :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param pulumi.Input[str] ip_family: The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
                You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
         :param 'KubeProxyAddonOptionsArgs' kube_proxy_addon_options: Options for managing the `kube-proxy` addon.
@@ -637,7 +637,7 @@ class ClusterArgs:
     @pulumi.getter(name="instanceType")
     def instance_type(self) -> Optional[pulumi.Input[str]]:
         """
-        The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         """
         return pulumi.get(self, "instance_type")
 
@@ -1243,7 +1243,7 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]] instance_roles: This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
                
                Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
-        :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param pulumi.Input[str] ip_family: The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
                You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
         :param Union['KubeProxyAddonOptionsArgs', 'KubeProxyAddonOptionsArgsDict'] kube_proxy_addon_options: Options for managing the `kube-proxy` addon.

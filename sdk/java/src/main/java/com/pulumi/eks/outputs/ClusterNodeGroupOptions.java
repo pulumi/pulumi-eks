@@ -138,7 +138,7 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable InstanceProfile instanceProfile;
     /**
-     * @return The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t2.medium&#34;.
+     * @return The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t3.medium&#34;.
      * 
      */
     private @Nullable String instanceType;
@@ -433,7 +433,7 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.instanceProfile);
     }
     /**
-     * @return The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t2.medium&#34;.
+     * @return The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t3.medium&#34;.
      * 
      */
     public Optional<String> instanceType() {

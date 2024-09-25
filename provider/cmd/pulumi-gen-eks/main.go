@@ -353,7 +353,7 @@ func generateSchema() schema.PackageSpec {
 					},
 					"instanceType": {
 						TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO: aws.ec2.InstanceType is a string enum.
-						Description: "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\".",
+						Description: "The instance type to use for the cluster's nodes. Defaults to \"t3.medium\".",
 					},
 					"instanceRole": {
 						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
@@ -2035,7 +2035,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"instanceType": {
 			TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO: aws.ec2.InstanceType is a string enum.
-			Description: "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\".",
+			Description: "The instance type to use for the cluster's nodes. Defaults to \"t3.medium\".",
 		},
 		"spotPrice": {
 			TypeSpec: schema.TypeSpec{Type: "string"},

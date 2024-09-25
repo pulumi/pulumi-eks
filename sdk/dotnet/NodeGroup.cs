@@ -219,7 +219,7 @@ namespace Pulumi.Eks
         public Pulumi.Aws.Iam.InstanceProfile? InstanceProfile { get; set; }
 
         /// <summary>
-        /// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        /// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         /// </summary>
         [Input("instanceType")]
         public Input<string>? InstanceType { get; set; }

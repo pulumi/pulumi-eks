@@ -117,7 +117,7 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly Pulumi.Aws.Iam.InstanceProfile? InstanceProfile;
         /// <summary>
-        /// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        /// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         /// </summary>
         public readonly string? InstanceType;
         /// <summary>
