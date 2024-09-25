@@ -187,7 +187,6 @@ jobs:
       - test-python
       - test-dotnet
       - test-go
-    runs-on: ubuntu-latest
     uses: ./.github/workflows/publish.yml
     secrets: inherit
     with:
