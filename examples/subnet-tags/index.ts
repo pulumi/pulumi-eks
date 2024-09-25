@@ -43,7 +43,7 @@ const cluster = new eks.Cluster(`${projectName}`, {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     privateSubnetIds: vpc.privateSubnetIds,
-    nodeAmiId: "ami-0384725f0d30527c7",
+    nodeAmiId: "ami-066e69f6f03b5383e",
     tags,
 });
 

@@ -177,6 +177,13 @@ See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.ht
         /// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html
         /// </summary>
         public static OperatingSystem Bottlerocket { get; } = new OperatingSystem("Bottlerocket");
+        /// <summary>
+        /// The recommended EKS optimized OS. Currently Amazon Linux 2023 (AL2023).
+        /// This will be kept up to date with AWS' recommendations for EKS optimized operating systems.
+        /// 
+        /// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+        /// </summary>
+        public static OperatingSystem RECOMMENDED { get; } = new OperatingSystem("AL2023");
 
         public static bool operator ==(OperatingSystem left, OperatingSystem right) => left.Equals(right);
         public static bool operator !=(OperatingSystem left, OperatingSystem right) => !left.Equals(right);

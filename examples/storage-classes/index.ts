@@ -6,7 +6,7 @@ const projectName = pulumi.getProject();
 // Create an EKS cluster with a single storage class as a string.
 const cluster1 = new eks.Cluster(`${projectName}-1`, {
     storageClasses: "io1",
-    nodeAmiId: "ami-0384725f0d30527c7",
+    nodeAmiId: "ami-066e69f6f03b5383e",
 });
 
 if (cluster1.core.storageClasses) {
@@ -25,7 +25,7 @@ export const kubeconfig1 = cluster1.kubeconfig;
 
 // Create an EKS cluster with many storage classes as a map.
 const cluster2 = new eks.Cluster(`${projectName}-2`, {
-    nodeAmiId: "ami-0384725f0d30527c7",
+    nodeAmiId: "ami-066e69f6f03b5383e",
     storageClasses: {
         "mygp2": {
             type: "gp2",
