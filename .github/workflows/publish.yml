@@ -47,9 +47,9 @@ jobs:
       matrix:
         os: [linux, darwin, windows]
         arch: [amd64, arm64]
-      exclude:
-        - os: windows
-          arch: arm64
+        exclude:
+          - os: windows
+            arch: arm64
     env:
       PROVIDER_VERSION: ${{ inputs.version }}
     steps:
