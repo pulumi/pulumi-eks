@@ -7,6 +7,8 @@ const cluster = new eks.Cluster(`${projectName}`, {
     nodeGroupOptions: {
         // AL2023 doesn't support GPU instances yet.
         operatingSystem: eks.OperatingSystem.Bottlerocket,
+        // The cheapest instance with GPU support.
+        instanceType: "g5g.xlarge",
         gpu: true,
     }
 });
