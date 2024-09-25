@@ -178,6 +178,7 @@ jobs:
           path: ${{ github.workspace }}/bin/provider.tar.gz
     strategy:
       fail-fast: true
+
   publish:
     name: publish
     needs:
@@ -187,173 +188,12 @@ jobs:
       - test-dotnet
       - test-go
     runs-on: ubuntu-latest
-    env:
-      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-region: us-east-2
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          role-duration-seconds: 7200
-          role-external-id: upload-pulumi-release
-          role-session-name: ${{ env.PROVIDER}}@githubActions
-          role-to-assume: ${{ secrets.AWS_UPLOAD_ROLE_ARN }}
-      - uses: MOZGIII/install-ldid-action@v1
-        with:
-          tag: v2.1.5-procursus2
-      - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.12.0
-        with:
-          repo: pulumi/pulumictl
-      - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
-      - name: Create Provider Binaries
-        run: make dist
-      - name: Upload Provider Binaries
-        run: aws s3 cp dist s3://get.pulumi.com/releases/plugins/ --recursive
-      - name: Create GH Release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: |
-            dist/*.tar.gz
-          prerelease: ${{ env.IS_PRERELEASE }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
-  publish_sdk:
-    name: publish_sdk
-    needs:
-      - prerequisites
-      - publish
-    runs-on: ubuntu-latest
-    env:
-      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
-      PACKAGE_VERSION: ${{ needs.prerequisites.outputs.version }}
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Install Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GOVERSION }}
-      - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.12.0
-        with:
-          repo: pulumi/pulumictl
-      - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          always-auth: true
-          node-version-file: .node-version
-          registry-url: https://registry.npmjs.org
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHONVERSION }}
-      - name: Download NodeJS SDK
-        uses: actions/download-artifact@v4
-        with:
-          name: nodejs-sdk.tar.gz
-          path: ${{ github.workspace}}
-      - name: Uncompress NodeJS SDK folder
-        run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
-      - name: Download Python SDK
-        uses: actions/download-artifact@v4
-        with:
-          name: python-sdk.tar.gz
-          path: ${{ github.workspace}}/sdk/
-      - name: Uncompress Python SDK folder
-        run: tar -zxf ${{ github.workspace}}/sdk/python.tar.gz -C ${{github.workspace}}/sdk/python
-      - name: Install Twine
-        run: python -m pip install pip twine
-      - name: Download DotNet SDK
-        uses: actions/download-artifact@v4
-        with:
-          name: dotnet-sdk.tar.gz
-          path: ${{ github.workspace}}/sdk/
-      - name: Uncompress DotNet SDK folder
-        run: tar -zxf ${{ github.workspace}}/sdk/dotnet.tar.gz -C ${{github.workspace}}/sdk/dotnet
-      - env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        name: Publish SDK
-        run: ./scripts/publish_packages.sh
-  publish_java_sdk:
-    continue-on-error: true
-    name: publish_java_sdk
-    needs:
-      - prerequisites
-      - publish
-    runs-on: ubuntu-latest
-    env:
-      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
-      PACKAGE_VERSION: ${{ needs.prerequisites.outputs.version }}
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Install Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GOVERSION }}
-      - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.12.0
-        with:
-          repo: pulumi/pulumictl
-      - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          always-auth: true
-          node-version-file: .node-version
-          registry-url: https://registry.npmjs.org
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHONVERSION }}
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          cache: gradle
-          distribution: temurin
-          java-version: ${{ env.JAVAVERSION }}
-      - name: Download Java SDK
-        uses: actions/download-artifact@v4
-        with:
-          name: java-sdk.tar.gz
-          path: ${{ github.workspace}}/sdk/
-      - name: Uncompress Java SDK folder
-        run: tar -zxf ${{ github.workspace}}/sdk/java.tar.gz -C ${{github.workspace}}/sdk/java
-      - name: Publish Java SDK
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
-        with:
-          arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository
-          build-root-directory: ./sdk/java
-          gradle-version: 7.4.1
-  create_docs_build:
-    name: Create docs build
-    # only pre-releases contain a hyphen
-    if: ${{ ! contains(github.ref_name,'-') }}
-    needs:
-      - prerequisites
-      - publish_sdk
-    runs-on: ubuntu-latest
-    env:
-      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
-    steps:
-      - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.12.0
-        with:
-          repo: pulumi/pulumictl
-      - env:
-          GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
-        name: Dispatch event
-        run: pulumictl create docs-build pulumi-${{ env.PROVIDER }} "${GITHUB_REF#refs/tags/}"
+    uses: ./.github/workflows/publish.yml
+    secrets: inherit
+    with:
+      version: ${{ needs.prerequisites.outputs.version }}
+      isPrerelease: false
+
   test-nodejs:
     name: Run NodeJS Tests
     needs:
@@ -756,43 +596,6 @@ jobs:
           yarn install && yarn link @pulumi/eks
       - name: Run tests
         run: cd examples && go test -tags=go -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
-  publish_go_sdk:
-    name: publish_go_sdk
-    needs:
-      - prerequisites
-      - publish_sdk
-    runs-on: ubuntu-latest
-    env:
-      PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.12.0
-        with:
-          repo: pulumi/pulumictl
-      - name: Download Go SDK
-        uses: actions/download-artifact@v4
-        with:
-          name: go-sdk.tar.gz
-          path: ${{ github.workspace }}/sdk/
-      - name: Uncompress Go SDK
-        run: tar -zxf ${{ github.workspace }}/sdk/go.tar.gz -C
-          ${{ github.workspace }}/sdk/go
-        shell: bash
-      - uses: pulumi/publish-go-sdk-action@v1
-        with:
-          repository: ${{ github.repository }}
-          base-ref: ${{ github.sha }}
-          source: sdk
-          path: sdk
-          version: ${{ needs.prerequisites.outputs.version }}
-          additive: false
-          # Avoid including other language SDKs & artifacts in the commit
-          files: |
-            go.*
-            go/**
-            !*.tar.gz
 name: release
 "on":
   push:
