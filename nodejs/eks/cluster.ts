@@ -1358,7 +1358,7 @@ export interface ClusterOptions {
     useDefaultVpcCni?: boolean;
 
     /**
-     * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+     * The instance type to use for the cluster's nodes. Defaults to "t3.medium".
      */
     instanceType?: pulumi.Input<aws.ec2.InstanceType | string>;
 

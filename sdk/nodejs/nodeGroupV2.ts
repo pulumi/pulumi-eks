@@ -217,7 +217,7 @@ export interface NodeGroupV2Args {
      */
     instanceProfile?: pulumiAws.iam.InstanceProfile;
     /**
-     * The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+     * The instance type to use for the cluster's nodes. Defaults to "t3.medium".
      */
     instanceType?: pulumi.Input<string>;
     /**

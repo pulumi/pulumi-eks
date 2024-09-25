@@ -409,14 +409,14 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t2.medium&#34;.
+     * The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t3.medium&#34;.
      * 
      */
     @Import(name="instanceType")
     private @Nullable Output<String> instanceType;
 
     /**
-     * @return The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t2.medium&#34;.
+     * @return The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t3.medium&#34;.
      * 
      */
     public Optional<Output<String>> instanceType() {
@@ -1636,7 +1636,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param instanceType The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t2.medium&#34;.
+         * @param instanceType The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t3.medium&#34;.
          * 
          * @return builder
          * 
@@ -1647,7 +1647,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param instanceType The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t2.medium&#34;.
+         * @param instanceType The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t3.medium&#34;.
          * 
          * @return builder
          * 

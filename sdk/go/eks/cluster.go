@@ -175,7 +175,7 @@ type clusterArgs struct {
 	//
 	// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
 	InstanceRoles []*iam.Role `pulumi:"instanceRoles"`
-	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType *string `pulumi:"instanceType"`
 	// The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
 	// You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
@@ -407,7 +407,7 @@ type ClusterArgs struct {
 	//
 	// Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
 	InstanceRoles iam.RoleArrayInput
-	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType pulumi.StringPtrInput
 	// The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
 	// You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
