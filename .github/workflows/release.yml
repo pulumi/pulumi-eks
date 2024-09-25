@@ -192,7 +192,7 @@ jobs:
     secrets: inherit
     with:
       version: ${{ needs.prerequisites.outputs.version }}
-      isPrerelease: false
+      isPrerelease: ${{ env.IS_PRERELEASE }}
 
   test-nodejs:
     name: Run NodeJS Tests
