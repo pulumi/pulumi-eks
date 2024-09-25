@@ -26,6 +26,7 @@ const (
 )
 
 func TestExamplesUpgrades(t *testing.T) {
+	t.Skip("Skipping for now until EKS v3 alpha is released. Otherwise we cannot re-record.")
 	t.Run("cluster", func(t *testing.T) {
 		testProviderUpgrade(t, "cluster")
 	})
