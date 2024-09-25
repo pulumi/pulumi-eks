@@ -370,7 +370,7 @@ type ClusterNodeGroupOptions struct {
 	IgnoreScalingChanges *bool `pulumi:"ignoreScalingChanges"`
 	// The ingress rule that gives node group access.
 	InstanceProfile *iam.InstanceProfile `pulumi:"instanceProfile"`
-	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType *string `pulumi:"instanceType"`
 	// Name of the key pair to use for SSH access to worker nodes.
 	KeyName *string `pulumi:"keyName"`
@@ -533,7 +533,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	IgnoreScalingChanges *bool `pulumi:"ignoreScalingChanges"`
 	// The ingress rule that gives node group access.
 	InstanceProfile *iam.InstanceProfile `pulumi:"instanceProfile"`
-	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType pulumi.StringPtrInput `pulumi:"instanceType"`
 	// Name of the key pair to use for SSH access to worker nodes.
 	KeyName pulumi.StringPtrInput `pulumi:"keyName"`
@@ -803,7 +803,7 @@ func (o ClusterNodeGroupOptionsOutput) InstanceProfile() iam.InstanceProfileOutp
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *iam.InstanceProfile { return v.InstanceProfile }).(iam.InstanceProfileOutput)
 }
 
-// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 func (o ClusterNodeGroupOptionsOutput) InstanceType() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.InstanceType }).(pulumi.StringPtrOutput)
 }
@@ -1164,7 +1164,7 @@ func (o ClusterNodeGroupOptionsPtrOutput) InstanceProfile() iam.InstanceProfileO
 	}).(iam.InstanceProfileOutput)
 }
 
-// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 func (o ClusterNodeGroupOptionsPtrOutput) InstanceType() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) *string {
 		if v == nil {
