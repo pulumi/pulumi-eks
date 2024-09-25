@@ -158,9 +158,9 @@ class NodeGroupArgs:
                  - https://awslabs.github.io/amazon-eks-ami/nodeadm/
                  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-               Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+               Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
                
-               Defaults to `AL2`.
+               Defaults to the current recommended OS.
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
         :param Mapping[str, 'TaintArgs'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
@@ -705,9 +705,9 @@ class NodeGroupArgs:
     def operating_system(self) -> Optional[pulumi.Input['OperatingSystem']]:
         """
         The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-        Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+        Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
 
-        Defaults to `AL2`.
+        Defaults to the current recommended OS.
         """
         return pulumi.get(self, "operating_system")
 
@@ -904,9 +904,9 @@ class NodeGroup(pulumi.ComponentResource):
                  - https://awslabs.github.io/amazon-eks-ami/nodeadm/
                  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-               Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+               Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
                
-               Defaults to `AL2`.
+               Defaults to the current recommended OS.
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
         :param Mapping[str, Union['TaintArgs', 'TaintArgsDict']] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.

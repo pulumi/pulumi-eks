@@ -120,9 +120,9 @@ class ManagedNodeGroupArgs:
                  - https://awslabs.github.io/amazon-eks-ami/nodeadm/
                  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-               Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+               Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
                
-               Defaults to `AL2`.
+               Defaults to the current recommended OS.
         :param pulumi.Input[str] release_version: AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
         :param pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs'] remote_access: Remote access settings.
         :param pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs'] scaling_config: Scaling settings.
@@ -508,9 +508,9 @@ class ManagedNodeGroupArgs:
     def operating_system(self) -> Optional[pulumi.Input['OperatingSystem']]:
         """
         The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-        Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+        Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
 
-        Defaults to `AL2`.
+        Defaults to the current recommended OS.
         """
         return pulumi.get(self, "operating_system")
 
@@ -738,9 +738,9 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  - https://awslabs.github.io/amazon-eks-ami/nodeadm/
                  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
         :param pulumi.Input['OperatingSystem'] operating_system: The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
-               Valid values are `AL2`, `AL2023` and `Bottlerocket`.
+               Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
                
-               Defaults to `AL2`.
+               Defaults to the current recommended OS.
         :param pulumi.Input[str] release_version: AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
         :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']] remote_access: Remote access settings.
         :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']] scaling_config: Scaling settings.

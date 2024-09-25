@@ -94,6 +94,13 @@ class OperatingSystem(str, Enum):
     EKS optimized Container OS based on Bottlerocket.
     See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html
     """
+    RECOMMENDED = "AL2023"
+    """
+    The recommended EKS optimized OS. Currently Amazon Linux 2023 (AL2023).
+    This will be kept up to date with AWS' recommendations for EKS optimized operating systems.
+
+    See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+    """
 
 
 class ResolveConflictsOnCreate(str, Enum):

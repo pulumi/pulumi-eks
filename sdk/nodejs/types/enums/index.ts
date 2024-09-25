@@ -131,6 +131,13 @@ See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.ht
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html
      */
     Bottlerocket: "Bottlerocket",
+    /**
+     * The recommended EKS optimized OS. Currently Amazon Linux 2023 (AL2023).
+     * This will be kept up to date with AWS' recommendations for EKS optimized operating systems.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+     */
+    RECOMMENDED: "AL2023",
 } as const;
 
 /**

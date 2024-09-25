@@ -9,7 +9,7 @@ const projectName = pulumi.getProject();
 // Create an EKS cluster.
 const cluster = new eks.Cluster(`${projectName}`, {
     createOidcProvider: true,
-    nodeAmiId: "ami-0384725f0d30527c7",
+    nodeAmiId: "ami-066e69f6f03b5383e",
 });
 
 // Export the cluster's kubeconfig.

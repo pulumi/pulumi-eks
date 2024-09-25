@@ -48,7 +48,7 @@ const cluster = new eks.Cluster(`${projectName}`, {
     providerCredentialOpts: {
         profileName: aws.config.profile,
     },
-    nodeAmiId: "ami-0384725f0d30527c7",
+    nodeAmiId: "ami-066e69f6f03b5383e",
     roleMappings: [
         {
             groups: ["system:masters"],

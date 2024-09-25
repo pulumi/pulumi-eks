@@ -245,6 +245,11 @@ const (
 	// EKS optimized Container OS based on Bottlerocket.
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html
 	OperatingSystemBottlerocket = OperatingSystem("Bottlerocket")
+	// The recommended EKS optimized OS. Currently Amazon Linux 2023 (AL2023).
+	// This will be kept up to date with AWS' recommendations for EKS optimized operating systems.
+	//
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+	OperatingSystemRECOMMENDED = OperatingSystem("AL2023")
 )
 
 func (OperatingSystem) ElementType() reflect.Type {
@@ -371,6 +376,7 @@ func (o OperatingSystemPtrOutput) ToStringPtrOutputWithContext(ctx context.Conte
 //
 //	OperatingSystemAL2023
 //	OperatingSystemBottlerocket
+//	OperatingSystemRECOMMENDED
 type OperatingSystemInput interface {
 	pulumi.Input
 
