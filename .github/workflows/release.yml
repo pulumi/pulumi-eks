@@ -348,6 +348,7 @@ jobs:
           gradle-version: 7.4.1
   create_docs_build:
     name: Create docs build
+    if: env.IS_PRERELEASE != 'true'
     needs:
       - prerequisites
       - publish_sdk
