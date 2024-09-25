@@ -121,7 +121,7 @@ type nodeGroupV2Args struct {
 	IgnoreScalingChanges *bool `pulumi:"ignoreScalingChanges"`
 	// The ingress rule that gives node group access.
 	InstanceProfile *iam.InstanceProfile `pulumi:"instanceProfile"`
-	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType *string `pulumi:"instanceType"`
 	// Name of the key pair to use for SSH access to worker nodes.
 	KeyName *string `pulumi:"keyName"`
@@ -275,7 +275,7 @@ type NodeGroupV2Args struct {
 	IgnoreScalingChanges *bool
 	// The ingress rule that gives node group access.
 	InstanceProfile *iam.InstanceProfile
-	// The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType pulumi.StringPtrInput
 	// Name of the key pair to use for SSH access to worker nodes.
 	KeyName pulumi.StringPtrInput

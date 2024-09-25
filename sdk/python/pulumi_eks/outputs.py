@@ -383,7 +383,7 @@ class ClusterNodeGroupOptions(dict):
                
                See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
         :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The ingress rule that gives node group access.
-        :param str instance_type: The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        :param str instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param str key_name: Name of the key pair to use for SSH access to worker nodes.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         :param Mapping[str, str] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
@@ -674,7 +674,7 @@ class ClusterNodeGroupOptions(dict):
     @pulumi.getter(name="instanceType")
     def instance_type(self) -> Optional[str]:
         """
-        The instance type to use for the cluster's nodes. Defaults to "t2.medium".
+        The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         """
         return pulumi.get(self, "instance_type")
 

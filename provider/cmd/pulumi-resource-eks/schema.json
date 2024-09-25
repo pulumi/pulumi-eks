@@ -302,7 +302,7 @@
                 },
                 "instanceType": {
                     "type": "string",
-                    "description": "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\"."
+                    "description": "The instance type to use for the cluster's nodes. Defaults to \"t3.medium\"."
                 },
                 "keyName": {
                     "type": "string",
@@ -1253,7 +1253,7 @@
                 },
                 "instanceType": {
                     "type": "string",
-                    "description": "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\"."
+                    "description": "The instance type to use for the cluster's nodes. Defaults to \"t3.medium\"."
                 },
                 "ipFamily": {
                     "type": "string",
@@ -1732,7 +1732,7 @@
                 },
                 "instanceType": {
                     "type": "string",
-                    "description": "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\"."
+                    "description": "The instance type to use for the cluster's nodes. Defaults to \"t3.medium\"."
                 },
                 "keyName": {
                     "type": "string",
@@ -2000,7 +2000,7 @@
                 },
                 "instanceType": {
                     "type": "string",
-                    "description": "The instance type to use for the cluster's nodes. Defaults to \"t2.medium\"."
+                    "description": "The instance type to use for the cluster's nodes. Defaults to \"t3.medium\"."
                 },
                 "keyName": {
                     "type": "string",
