@@ -200,6 +200,18 @@ jobs:
       isPrerelease: true
       skipGoSdk: true
 
+  publish_test:
+    name: publish_test
+    if: (github.head_ref || github.ref_name) == 't0yv0/fix-compressing-node-sdk'
+    needs:
+      - prerequisites
+    uses: ./.github/workflows/publish.yml
+    secrets: inherit
+    with:
+      version: ${{ needs.prerequisites.outputs.version }}
+      isPrerelease: true
+      skipGoSdk: true
+
   test-nodejs:
     name: Run NodeJS Tests
     if: (github.head_ref || github.ref_name) != 't0yv0/fix-compressing-node-sdk'
