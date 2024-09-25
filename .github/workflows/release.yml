@@ -807,3 +807,4 @@ name: release
   push:
     tags:
       - v*.*.*
+  workflow_dispatch: {}
