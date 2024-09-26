@@ -1,12 +1,16 @@
-module github.com/pulumi/pulumi-eks/examples/managed-nodegroups-go
+module github.com/pulumi/pulumi-eks/examples/extra-sg-go
 
-go 1.21
+go 1.21.12
+
+toolchain go1.23.1
 
 require (
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.50.1
-	github.com/pulumi/pulumi-eks/sdk/v3 v2.7.9
+	github.com/pulumi/pulumi-eks/sdk/v3 v3.0.0-alpha.6
 	github.com/pulumi/pulumi/sdk/v3 v3.129.0
 )
+
+replace github.com/pulumi/pulumi-eks/sdk/v3 => ../../sdk
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
