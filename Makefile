@@ -2,7 +2,7 @@ PROJECT_NAME := Pulumi Amazon Web Services (AWS) EKS Components
 
 # Override during CI using `make [TARGET] PROVIDER_VERSION=""` or by setting a PROVIDER_VERSION environment variable
 # Local & branch builds will just used this fixed default version unless specified
-PROVIDER_VERSION ?= 2.0.0-alpha.0+dev
+PROVIDER_VERSION ?= 3.0.0-alpha.0+dev
 # Use this normalised version everywhere rather than the raw input to ensure consistency.
 VERSION_GENERIC = $(shell pulumictl convert-version --language generic --version "$(PROVIDER_VERSION)")
 
@@ -29,7 +29,7 @@ SCHEMA_PATH := provider/cmd/$(PROVIDER)/schema.json
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
 
 schema::
-	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER))
+	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER) $(VERSION_GENERIC))
 
 provider:: bin/${PROVIDER}
 
