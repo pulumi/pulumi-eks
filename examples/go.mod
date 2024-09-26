@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.48.4
 	github.com/pulumi/providertest v0.0.11
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.41.0
-	github.com/pulumi/pulumi-eks/sdk/v2 v2.7.1
+	github.com/pulumi/pulumi-eks/sdk/v3 v2.7.1
 	github.com/pulumi/pulumi/pkg/v3 v3.129.0
 	github.com/pulumi/pulumi/sdk/v3 v3.129.0
 	github.com/stretchr/testify v1.9.0
