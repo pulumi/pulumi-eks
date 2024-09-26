@@ -384,8 +384,6 @@ github.com/pulumi/providertest v0.0.11 h1:mg8MQ7Cq7+9XlHIkBD+aCqQO4mwAJEISngZgVd
 github.com/pulumi/providertest v0.0.11/go.mod h1:HsxjVsytcMIuNj19w1lT2W0QXY0oReXl1+h6eD2JXP8=
 github.com/pulumi/pulumi-aws/sdk/v6 v6.41.0 h1:Mjp2495ZjQBKnZAAcgHfdaHvsJDMPwbFZA/NCvY275k=
 github.com/pulumi/pulumi-aws/sdk/v6 v6.41.0/go.mod h1:cV2EBfrvaS/YUKr9L0ua93vrSuAihpkhokzyYjj6NkQ=
-github.com/pulumi/pulumi-eks/sdk/v2 v2.7.1 h1:AhAPXTWxhn0DClohTlqIxZ6XhtgNErYTNryraGpL5mY=
-github.com/pulumi/pulumi-eks/sdk/v2 v2.7.1/go.mod h1:ARGNnIZENIpDUVSX21JEQJKrESj/0u0r0iT61rpb86I=
 github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.9.1 h1:dgazi5bI3Vxz+aLuH+DxRqKxPWGaFIkT3fIepHr7h0g=
 github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.9.1/go.mod h1:O8hanLXCEXiyzA8gIeME5o/SmJ39Vyy9wLcBYCFpOp0=
 github.com/pulumi/pulumi/pkg/v3 v3.129.0 h1:n4Jd4ctlvw3eqyHglb/yJKDtRqjOvdkCBfG5T+orU30=

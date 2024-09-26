@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/blang/semver"
 	"github.com/pkg/errors"
 	dotnetgen "github.com/pulumi/pulumi/pkg/v3/codegen/dotnet"
 	gogen "github.com/pulumi/pulumi/pkg/v3/codegen/go"
@@ -65,6 +66,8 @@ func main() {
 			os.Exit(1)
 		}
 		base, schemaFile, version = args[2], args[3], args[4]
+	} else if len(args) >= 3 {
+		version = args[2]
 	}
 
 	switch language {
@@ -78,7 +81,7 @@ func main() {
 	case Python:
 		genPython(readSchema(schemaFile, version), outdir)
 	case Schema:
-		pkgSpec := generateSchema()
+		pkgSpec := generateSchema(semver.MustParse(version))
 		mustWritePulumiSchema(pkgSpec, outdir)
 	default:
 		panic(fmt.Sprintf("Unrecognized language %q", language))
@@ -99,7 +102,7 @@ func k8sRef(ref string) string {
 }
 
 //nolint:lll,goconst
-func generateSchema() schema.PackageSpec {
+func generateSchema(version semver.Version) schema.PackageSpec {
 	return schema.PackageSpec{
 		Name:        "eks",
 		Description: "Pulumi Amazon Web Services (AWS) EKS Components.",
@@ -1984,7 +1987,7 @@ func generateSchema() schema.PackageSpec {
 			}),
 			"go": rawMessage(map[string]interface{}{
 				"generateResourceContainerTypes": true,
-				"importBasePath":                 "github.com/pulumi/pulumi-eks/sdk/v2/go/eks",
+				"importBasePath":                 fmt.Sprintf("github.com/pulumi/pulumi-eks/sdk/v%d/go/eks", version.Major),
 				"liftSingleValueMethodReturns":   true,
 				"internalModuleName":             "utilities",
 				"respectSchemaVersion":           true,
