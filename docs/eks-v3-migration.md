@@ -45,7 +45,7 @@ The VPC CNI cluster component is now configured as an EKS addon as mentioned in 
 
 ### `NodeGroup` component deprecation
 
-The `NodeGroup` component uses the deprecated AWS Launch Configuration (see [AWS docs](https://docs.aws.amazon.com/autoscaling/ec2/userguide/launch-configurations.html)). Launch Configuration does not support new instance types released after December 31, 2022 and starting on October 1, 2024, new accounts will not be able to create new launch configurations.  
+The `NodeGroup` component uses the deprecated AWS Launch Configuration (see [AWS docs](https://docs.aws.amazon.com/autoscaling/ec2/userguide/launch-configurations.html)). Launch Configurations do not support new instance types released after December 31, 2022 and starting on October 1, 2024, new AWS accounts will not be able to create launch configurations.
 Its successor, the `NodeGroupV2` component is functionally equivalent and easier to operate because it does not use CloudFormation templates under the hood like `NodeGroup` did.
 
 The default node group of the `Cluster` component was updated to use the `NodeGroupV2` component as well.  
@@ -59,7 +59,7 @@ To align the provider with EKS best practices we’ve updated the default operat
 
 You can either upgrade the OS right away, or intentionally configure AL2 as the desired operating system by using the `operatingSystem` parameter that’s available on all node groups.
 
-Have a look at [Gracefully upgrading node groups](#gracefully-upgrading-node-groups). for more information around the upgrade procedure.
+Have a look at [Gracefully upgrading node groups](#gracefully-upgrading-node-groups) for more information around the upgrade procedure.
 
 ### Gracefully upgrading node groups
 
@@ -75,7 +75,7 @@ The detailed update procedure can be seen in the [AWS docs](https://docs.aws.ama
 For self-managed node groups (i.e. the `NodeGroup` and `NodeGroupV2` components) you have two options:
 
 1. Update the node group in place. Pulumi does this by first creating the new replacement nodes and then shutting down the old ones which will move pods to the new nodes forcibly. This is the default behavior when node groups are updated.  
-2. Create a new node group and migrate your Pods to that group. Migrating to a new node group is more graceful than simply updating the node group in place. This is because the migration process taints the old node group as `NoSchedule` and drains the nodes gradually.
+2. Create a new node group and move your Pods to that group. Migrating to a new node group is more graceful than simply updating the node group in place. This is because the migration process taints the old node group as `NoSchedule` and drains the nodes gradually.
 
 The second option involves the following steps:
 
