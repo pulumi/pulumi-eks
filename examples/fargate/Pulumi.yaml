@@ -1,3 +1,0 @@
-name: example-cluster-fargate
-description: EKS cluster example using Fargate
-runtime: nodejs
