@@ -200,21 +200,8 @@ jobs:
       isPrerelease: true
       skipGoSdk: true
 
-  publish_test:
-    name: publish_test
-    if: (github.head_ref || github.ref_name) == 't0yv0/fix-compressing-node-sdk'
-    needs:
-      - prerequisites
-    uses: ./.github/workflows/publish.yml
-    secrets: inherit
-    with:
-      version: ${{ needs.prerequisites.outputs.version }}
-      isPrerelease: true
-      skipGoSdk: true
-
   test-nodejs:
     name: Run NodeJS Tests
-    if: (github.head_ref || github.ref_name) != 't0yv0/fix-compressing-node-sdk'
     needs:
       - prerequisites
       - build_sdk
@@ -222,9 +209,6 @@ jobs:
     env:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
-      - name: Checking current branch
-        run:
-          echo "${{ github.head_ref || github.ref_name }}"
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install Go
@@ -320,7 +304,6 @@ jobs:
       - prerequisites
       - build_sdk
     runs-on: ubuntu-latest
-    if: (github.head_ref || github.ref_name) != 't0yv0/fix-compressing-node-sdk'
     env:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
@@ -428,7 +411,6 @@ jobs:
         index: [0, 1, 2, 3, 4, 5]
   test-dotnet:
     name: Run DotNet Tests
-    if: (github.head_ref || github.ref_name) != 't0yv0/fix-compressing-node-sdk'
     needs:
       - prerequisites
       - build_sdk
@@ -531,7 +513,6 @@ jobs:
       - prerequisites
       - build_sdk
     runs-on: ubuntu-latest
-    if: (github.head_ref || github.ref_name) != 't0yv0/fix-compressing-node-sdk'
     env:
       PROVIDER_VERSION: ${{ needs.prerequisites.outputs.version }}
     steps:
