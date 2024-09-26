@@ -1543,6 +1543,13 @@ export type ManagedNodeGroupOptions = Omit<
      *   - maxSize: 2
      */
     scalingConfig?: pulumi.Input<awsInputs.eks.NodeGroupScalingConfig>;
+
+    /**
+     * The AMI ID to use for the worker nodes.
+     *
+     * If not provided, the recommended EKS Optimized AMI for the specified Kubernetes version will be used.
+     */
+    amiId?: pulumi.Input<string>;
 };
 
 /**
@@ -1855,15 +1862,17 @@ Content-Type: text/x-shellscript; charset="us-ascii"
           ]
         : undefined;
 
+    // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
+    // nodes failing to join the cluster.
+    const imageId = args.amiId || (userData ? getRecommendedAMI(args, core.cluster.version, parent) : undefined);
+
     return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
         {
             blockDeviceMappings,
             userData,
             metadataOptions,
-            // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
-            // nodes failing to join the cluster.
-            imageId: userData ? getRecommendedAMI(args, core.cluster.version, parent) : undefined,
+            imageId,
         },
         { parent, provider },
     );
