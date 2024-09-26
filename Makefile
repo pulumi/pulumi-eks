@@ -42,8 +42,8 @@ build_nodejs:: .pulumi/bin/pulumi schema
 	cd provider/cmd/$(CODEGEN) && go run main.go nodejs ../../../sdk/nodejs $(CURDIR) ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
 	cd sdk/nodejs && \
 		yarn install --no-progress && \
-		yarn run tsc --version && \
-		yarn run tsc
+		yarn run build && \
+		cp package.json yarn.lock ./bin/
 
 bin/pulumi-java-gen::
 	mkdir -p bin/

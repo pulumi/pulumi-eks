@@ -204,20 +204,9 @@ jobs:
             sdk/go/**/pulumiUtilities.go
             sdk/nodejs/package.json
             sdk/python/pyproject.toml
-      - name: Compress NodeJS SDK folder
-        if: matrix.language == 'nodejs'
-        run: tar -zcf ${{ matrix.language }}.tar.gz -C ${{ matrix.language }}/ .
-      - name: Upload NodeJS artifacts
-        if: matrix.language == 'nodejs'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.language  }}-sdk.tar.gz
-          path: ${{ github.workspace}}/${{ matrix.language }}.tar.gz
-      - name: Compress Other Lang SDK folder
-        if: matrix.language != 'nodejs'
+      - name: Compress ${{ matrix.language }} SDK folder
         run: tar -zcf sdk/${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}/ .
-      - name: Upload Other Lang artifacts
-        if: matrix.language != 'nodejs'
+      - name: Upload ${{ matrix.language }} artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.language  }}-sdk.tar.gz
