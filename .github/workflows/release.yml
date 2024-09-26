@@ -26,7 +26,6 @@ env:
   DOTNETVERSION: "6.x"
   PYTHONVERSION: "3.8"
   JAVAVERSION: "11"
-  IS_PRERELEASE: ${{ contains(github.ref_name,'-') || github.event_name == 'workflow_dispatch' }}
 jobs:
   lint:
     name: Lint and unit test
@@ -191,7 +190,7 @@ jobs:
     secrets: inherit
     with:
       version: ${{ needs.prerequisites.outputs.version }}
-      isPrerelease: ${{ env.IS_PRERELEASE }}
+      isPrerelease: ${{ contains(github.ref_name,'-') || github.event_name == 'workflow_dispatch' }}
 
   test-nodejs:
     name: Run NodeJS Tests
