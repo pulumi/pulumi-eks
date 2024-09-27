@@ -138,11 +138,11 @@ More details about this can be found [here](https://docs.aws.amazon.com/eks/late
 
 ## Nodejs SDK breaking changes
 
-The Node SDK is updated to use state of the art Pulumi tooling, improving stability, documentation and security. The update requires the following changes to programs:
+The Nodejs SDK is updated to use state of the art Pulumi tooling, improving stability, documentation and security. The update requires the following changes to programs:
 
 - Properties of the components are now outputs instead of plain types. Notable cases where you need to change your program are:
   - The [`Cluster::getKubeConfig`](https://www.pulumi.com/registry/packages/eks/api-docs/cluster/#method_GetKubeconfig) method now returns an output.  
   - Creating an IRSA based IAM role now requires you to use `apply` for accessing the OIDC provider ARN and URL. An example of how this works can be found [here](https://github.com/pulumi/pulumi-eks/blob/release-3.x.x/examples/oidc-iam-sa/index.ts).  
   - `k8s.Provider` will be deleted if not referenced (no impact, but it will appear in the diff)
   - `clusterOidcProvider` is an output now. `getKubeConfig` returns an output now  
-- The deprecated input property `deployDashboard` of the `Cluster` component has been removed from the nodejs SDK. This has already been removed from the other SDKs in the past. If you’d like to continue using it, you can adopt the existing code into your own program from [here](https://github.com/pulumi/pulumi-eks/blob/bcc170e72b802a78e7f0a99bc92316a5f8a62b0e/nodejs/eks/dashboard.ts).
+- The deprecated input property `deployDashboard` of the `Cluster` component has been removed from the Nodejs SDK. This has already been removed from the other SDKs in the past. If you’d like to continue using it, you can adopt the existing code into your own program from [here](https://github.com/pulumi/pulumi-eks/blob/bcc170e72b802a78e7f0a99bc92316a5f8a62b0e/nodejs/eks/dashboard.ts).
