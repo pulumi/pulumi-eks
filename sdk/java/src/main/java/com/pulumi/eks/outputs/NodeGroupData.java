@@ -3,19 +3,19 @@
 
 package com.pulumi.eks.outputs;
 
+import com.pulumi.aws.autoscaling.Group;
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.core.annotations.CustomType;
-import java.lang.String;
 import java.util.List;
 import java.util.Objects;
 
 @CustomType
 public final class NodeGroupData {
     /**
-     * @return The AutoScalingGroup name for the node group.
+     * @return The AutoScalingGroup for the node group.
      * 
      */
-    private String autoScalingGroupName;
+    private Group autoScalingGroup;
     /**
      * @return The additional security groups for the node group that captures user-specific rules.
      * 
@@ -29,11 +29,11 @@ public final class NodeGroupData {
 
     private NodeGroupData() {}
     /**
-     * @return The AutoScalingGroup name for the node group.
+     * @return The AutoScalingGroup for the node group.
      * 
      */
-    public String autoScalingGroupName() {
-        return this.autoScalingGroupName;
+    public Group autoScalingGroup() {
+        return this.autoScalingGroup;
     }
     /**
      * @return The additional security groups for the node group that captures user-specific rules.
@@ -59,20 +59,20 @@ public final class NodeGroupData {
     }
     @CustomType.Builder
     public static final class Builder {
-        private String autoScalingGroupName;
+        private Group autoScalingGroup;
         private List<SecurityGroup> extraNodeSecurityGroups;
         private SecurityGroup nodeSecurityGroup;
         public Builder() {}
         public Builder(NodeGroupData defaults) {
     	      Objects.requireNonNull(defaults);
-    	      this.autoScalingGroupName = defaults.autoScalingGroupName;
+    	      this.autoScalingGroup = defaults.autoScalingGroup;
     	      this.extraNodeSecurityGroups = defaults.extraNodeSecurityGroups;
     	      this.nodeSecurityGroup = defaults.nodeSecurityGroup;
         }
 
         @CustomType.Setter
-        public Builder autoScalingGroupName(String autoScalingGroupName) {
-            this.autoScalingGroupName = Objects.requireNonNull(autoScalingGroupName);
+        public Builder autoScalingGroup(Group autoScalingGroup) {
+            this.autoScalingGroup = Objects.requireNonNull(autoScalingGroup);
             return this;
         }
         @CustomType.Setter
@@ -90,7 +90,7 @@ public final class NodeGroupData {
         }
         public NodeGroupData build() {
             final var _resultValue = new NodeGroupData();
-            _resultValue.autoScalingGroupName = autoScalingGroupName;
+            _resultValue.autoScalingGroup = autoScalingGroup;
             _resultValue.extraNodeSecurityGroups = extraNodeSecurityGroups;
             _resultValue.nodeSecurityGroup = nodeSecurityGroup;
             return _resultValue;
