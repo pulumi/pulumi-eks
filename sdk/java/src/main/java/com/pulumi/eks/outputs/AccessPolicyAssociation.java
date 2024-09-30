@@ -5,6 +5,7 @@ package com.pulumi.eks.outputs;
 
 import com.pulumi.aws.eks.outputs.AccessPolicyAssociationAccessScope;
 import com.pulumi.core.annotations.CustomType;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.String;
 import java.util.Objects;
 
@@ -57,12 +58,18 @@ public final class AccessPolicyAssociation {
 
         @CustomType.Setter
         public Builder accessScope(AccessPolicyAssociationAccessScope accessScope) {
-            this.accessScope = Objects.requireNonNull(accessScope);
+            if (accessScope == null) {
+              throw new MissingRequiredPropertyException("AccessPolicyAssociation", "accessScope");
+            }
+            this.accessScope = accessScope;
             return this;
         }
         @CustomType.Setter
         public Builder policyArn(String policyArn) {
-            this.policyArn = Objects.requireNonNull(policyArn);
+            if (policyArn == null) {
+              throw new MissingRequiredPropertyException("AccessPolicyAssociation", "policyArn");
+            }
+            this.policyArn = policyArn;
             return this;
         }
         public AccessPolicyAssociation build() {

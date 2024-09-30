@@ -52,7 +52,7 @@ public class NodeGroupSecurityGroup extends com.pulumi.resources.ComponentResour
      *
      * @param name The _unique_ name of the resulting resource.
      */
-    public NodeGroupSecurityGroup(String name) {
+    public NodeGroupSecurityGroup(java.lang.String name) {
         this(name, NodeGroupSecurityGroupArgs.Empty);
     }
     /**
@@ -60,7 +60,7 @@ public class NodeGroupSecurityGroup extends com.pulumi.resources.ComponentResour
      * @param name The _unique_ name of the resulting resource.
      * @param args The arguments to use to populate this resource's properties.
      */
-    public NodeGroupSecurityGroup(String name, NodeGroupSecurityGroupArgs args) {
+    public NodeGroupSecurityGroup(java.lang.String name, NodeGroupSecurityGroupArgs args) {
         this(name, args, null);
     }
     /**
@@ -69,11 +69,18 @@ public class NodeGroupSecurityGroup extends com.pulumi.resources.ComponentResour
      * @param args The arguments to use to populate this resource's properties.
      * @param options A bag of options that control this resource's behavior.
      */
-    public NodeGroupSecurityGroup(String name, NodeGroupSecurityGroupArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
-        super("eks:index:NodeGroupSecurityGroup", name, args == null ? NodeGroupSecurityGroupArgs.Empty : args, makeResourceOptions(options, Codegen.empty()), true);
+    public NodeGroupSecurityGroup(java.lang.String name, NodeGroupSecurityGroupArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        super("eks:index:NodeGroupSecurityGroup", name, makeArgs(args, options), makeResourceOptions(options, Codegen.empty()), true);
     }
 
-    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<String> id) {
+    private static NodeGroupSecurityGroupArgs makeArgs(NodeGroupSecurityGroupArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        if (options != null && options.getUrn().isPresent()) {
+            return null;
+        }
+        return args == null ? NodeGroupSecurityGroupArgs.Empty : args;
+    }
+
+    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<java.lang.String> id) {
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .build();
