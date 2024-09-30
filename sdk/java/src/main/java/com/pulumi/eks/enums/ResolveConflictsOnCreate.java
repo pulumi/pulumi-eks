@@ -37,7 +37,7 @@ import java.util.StringJoiner;
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return new StringJoiner(", ", "ResolveConflictsOnCreate[", "]")
                 .add("value='" + this.value + "'")
                 .toString();

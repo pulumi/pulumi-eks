@@ -728,56 +728,67 @@ public final class ClusterNodeGroupOptions {
 
         @CustomType.Setter
         public Builder amiId(@Nullable String amiId) {
+
             this.amiId = amiId;
             return this;
         }
         @CustomType.Setter
         public Builder amiType(@Nullable String amiType) {
+
             this.amiType = amiType;
             return this;
         }
         @CustomType.Setter
         public Builder autoScalingGroupTags(@Nullable Map<String,String> autoScalingGroupTags) {
+
             this.autoScalingGroupTags = autoScalingGroupTags;
             return this;
         }
         @CustomType.Setter
         public Builder bootstrapExtraArgs(@Nullable String bootstrapExtraArgs) {
+
             this.bootstrapExtraArgs = bootstrapExtraArgs;
             return this;
         }
         @CustomType.Setter
         public Builder bottlerocketSettings(@Nullable Map<String,Object> bottlerocketSettings) {
+
             this.bottlerocketSettings = bottlerocketSettings;
             return this;
         }
         @CustomType.Setter
         public Builder cloudFormationTags(@Nullable Map<String,String> cloudFormationTags) {
+
             this.cloudFormationTags = cloudFormationTags;
             return this;
         }
         @CustomType.Setter
         public Builder clusterIngressRule(@Nullable SecurityGroupRule clusterIngressRule) {
+
             this.clusterIngressRule = clusterIngressRule;
             return this;
         }
         @CustomType.Setter
         public Builder desiredCapacity(@Nullable Integer desiredCapacity) {
+
             this.desiredCapacity = desiredCapacity;
             return this;
         }
         @CustomType.Setter
         public Builder enableDetailedMonitoring(@Nullable Boolean enableDetailedMonitoring) {
+
             this.enableDetailedMonitoring = enableDetailedMonitoring;
             return this;
         }
         @CustomType.Setter
         public Builder encryptRootBlockDevice(@Nullable Boolean encryptRootBlockDevice) {
+
             this.encryptRootBlockDevice = encryptRootBlockDevice;
             return this;
         }
         @CustomType.Setter
         public Builder extraNodeSecurityGroups(@Nullable List<SecurityGroup> extraNodeSecurityGroups) {
+
             this.extraNodeSecurityGroups = extraNodeSecurityGroups;
             return this;
         }
@@ -786,41 +797,49 @@ public final class ClusterNodeGroupOptions {
         }
         @CustomType.Setter
         public Builder gpu(@Nullable Boolean gpu) {
+
             this.gpu = gpu;
             return this;
         }
         @CustomType.Setter
         public Builder ignoreScalingChanges(@Nullable Boolean ignoreScalingChanges) {
+
             this.ignoreScalingChanges = ignoreScalingChanges;
             return this;
         }
         @CustomType.Setter
         public Builder instanceProfile(@Nullable InstanceProfile instanceProfile) {
+
             this.instanceProfile = instanceProfile;
             return this;
         }
         @CustomType.Setter
         public Builder instanceType(@Nullable String instanceType) {
+
             this.instanceType = instanceType;
             return this;
         }
         @CustomType.Setter
         public Builder keyName(@Nullable String keyName) {
+
             this.keyName = keyName;
             return this;
         }
         @CustomType.Setter
         public Builder kubeletExtraArgs(@Nullable String kubeletExtraArgs) {
+
             this.kubeletExtraArgs = kubeletExtraArgs;
             return this;
         }
         @CustomType.Setter
         public Builder labels(@Nullable Map<String,String> labels) {
+
             this.labels = labels;
             return this;
         }
         @CustomType.Setter
         public Builder launchTemplateTagSpecifications(@Nullable List<LaunchTemplateTagSpecification> launchTemplateTagSpecifications) {
+
             this.launchTemplateTagSpecifications = launchTemplateTagSpecifications;
             return this;
         }
@@ -829,66 +848,79 @@ public final class ClusterNodeGroupOptions {
         }
         @CustomType.Setter
         public Builder maxSize(@Nullable Integer maxSize) {
+
             this.maxSize = maxSize;
             return this;
         }
         @CustomType.Setter
         public Builder minRefreshPercentage(@Nullable Integer minRefreshPercentage) {
+
             this.minRefreshPercentage = minRefreshPercentage;
             return this;
         }
         @CustomType.Setter
         public Builder minSize(@Nullable Integer minSize) {
+
             this.minSize = minSize;
             return this;
         }
         @CustomType.Setter
         public Builder nodeAssociatePublicIpAddress(@Nullable Boolean nodeAssociatePublicIpAddress) {
+
             this.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
             return this;
         }
         @CustomType.Setter
         public Builder nodePublicKey(@Nullable String nodePublicKey) {
+
             this.nodePublicKey = nodePublicKey;
             return this;
         }
         @CustomType.Setter
         public Builder nodeRootVolumeDeleteOnTermination(@Nullable Boolean nodeRootVolumeDeleteOnTermination) {
+
             this.nodeRootVolumeDeleteOnTermination = nodeRootVolumeDeleteOnTermination;
             return this;
         }
         @CustomType.Setter
         public Builder nodeRootVolumeEncrypted(@Nullable Boolean nodeRootVolumeEncrypted) {
+
             this.nodeRootVolumeEncrypted = nodeRootVolumeEncrypted;
             return this;
         }
         @CustomType.Setter
         public Builder nodeRootVolumeIops(@Nullable Integer nodeRootVolumeIops) {
+
             this.nodeRootVolumeIops = nodeRootVolumeIops;
             return this;
         }
         @CustomType.Setter
         public Builder nodeRootVolumeSize(@Nullable Integer nodeRootVolumeSize) {
+
             this.nodeRootVolumeSize = nodeRootVolumeSize;
             return this;
         }
         @CustomType.Setter
         public Builder nodeRootVolumeThroughput(@Nullable Integer nodeRootVolumeThroughput) {
+
             this.nodeRootVolumeThroughput = nodeRootVolumeThroughput;
             return this;
         }
         @CustomType.Setter
         public Builder nodeRootVolumeType(@Nullable String nodeRootVolumeType) {
+
             this.nodeRootVolumeType = nodeRootVolumeType;
             return this;
         }
         @CustomType.Setter
         public Builder nodeSecurityGroup(@Nullable SecurityGroup nodeSecurityGroup) {
+
             this.nodeSecurityGroup = nodeSecurityGroup;
             return this;
         }
         @CustomType.Setter
         public Builder nodeSubnetIds(@Nullable List<String> nodeSubnetIds) {
+
             this.nodeSubnetIds = nodeSubnetIds;
             return this;
         }
@@ -897,16 +929,19 @@ public final class ClusterNodeGroupOptions {
         }
         @CustomType.Setter
         public Builder nodeUserData(@Nullable String nodeUserData) {
+
             this.nodeUserData = nodeUserData;
             return this;
         }
         @CustomType.Setter
         public Builder nodeUserDataOverride(@Nullable String nodeUserDataOverride) {
+
             this.nodeUserDataOverride = nodeUserDataOverride;
             return this;
         }
         @CustomType.Setter
         public Builder nodeadmExtraOptions(@Nullable List<NodeadmOptions> nodeadmExtraOptions) {
+
             this.nodeadmExtraOptions = nodeadmExtraOptions;
             return this;
         }
@@ -915,21 +950,25 @@ public final class ClusterNodeGroupOptions {
         }
         @CustomType.Setter
         public Builder operatingSystem(@Nullable OperatingSystem operatingSystem) {
+
             this.operatingSystem = operatingSystem;
             return this;
         }
         @CustomType.Setter
         public Builder spotPrice(@Nullable String spotPrice) {
+
             this.spotPrice = spotPrice;
             return this;
         }
         @CustomType.Setter
         public Builder taints(@Nullable Map<String,Taint> taints) {
+
             this.taints = taints;
             return this;
         }
         @CustomType.Setter
         public Builder version(@Nullable String version) {
+
             this.version = version;
             return this;
         }
