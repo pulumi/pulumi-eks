@@ -22,9 +22,10 @@ AWS recently announced the deprecation of two features used by default in Pulumi
   - **`RECOMMENDED` Default Setting**: By default, the `RECOMMENDED` option will be used, which ensures your nodes are always running the OS recommended by AWS for optimal security and performance. This default setting will be kept in sync with AWS’s updates.
 
 
-- **EKS Cluster Addon Management: `vpc-cni` and `coredns`**  
-  The EKS cluster components `vpc-cni` and `coredns` are now configured as EKS managed addons. This change eliminates the dependency on `kubectl` for managing these components and automates their updates, ensuring that clusters stay up to date without manual intervention.  
-  This also simplifies management of clusters with private API endpoints because those components are managed via AWS APIs.  
+- **EKS Cluster Addon Management: `vpc-cni`, `coredns` and `kube-proxy`**
+  The EKS cluster components `vpc-cni`, `coredns` and `kube-proxy` are now configured as EKS managed addons. This change eliminates the dependency on `kubectl` for managing these components and automates their updates, ensuring that clusters stay up to date without manual intervention.
+  This also simplifies management of clusters with private API endpoints because those components are managed via AWS APIs.
+  If you want to manage those EKS components yourself, you can do so by disabling them in the cluster component.
     
 - **Support for Cluster Autoscaler and External Scaling**  
   Pulumi EKS v3 introduces support for integrating with the Kubernetes cluster-autoscaler, which allows your cluster to scale dynamically based on resource needs. A new `ignoreScalingChanges` parameter has been added for node groups. This parameter allows Pulumi to ignore external scaling changes (e.g., changes to the desired size made by the cluster-autoscaler).
@@ -136,7 +137,7 @@ A step-by-step migration guide can be found [here](https://github.com/pulumi/pul
 We currently recommend users create all new clusters with the `API` authentication mode.
 More details about this can be found [here](https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html).
 
-## Nodejs SDK breaking changes
+## Nodejs SDK changes
 
 The Nodejs SDK is updated to use state of the art Pulumi tooling, improving stability, documentation and security. The update requires the following changes to programs:
 
@@ -146,3 +147,4 @@ The Nodejs SDK is updated to use state of the art Pulumi tooling, improving stab
   - `k8s.Provider` will be deleted if not referenced (no impact, but it will appear in the diff)
   - `clusterOidcProvider` is an output now. `getKubeConfig` returns an output now  
 - The deprecated input property `deployDashboard` of the `Cluster` component has been removed from the Nodejs SDK. This has already been removed from the other SDKs in the past. If you’d like to continue using it, you can adopt the existing code into your own program from [here](https://github.com/pulumi/pulumi-eks/blob/bcc170e72b802a78e7f0a99bc92316a5f8a62b0e/nodejs/eks/dashboard.ts).
+- The `createManagedNodeGroup` function will now create an Pulumi EKS `ManagedNodeGroup` instead of creating the underlying `aws.eks.NodeGroup` resource directly. During the upgrade to Pulumi EKS v3 you'll see the additional wrapper component being created.
