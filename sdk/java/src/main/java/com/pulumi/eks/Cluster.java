@@ -30,7 +30,8 @@ import javax.annotation.Nullable;
  * 
  * &lt;!--Start PulumiCodeChooser --&gt;
  * 
- * ```java
+ * <pre>
+ * {@code
  * import com.pulumi.Context;
  * import com.pulumi.Pulumi;
  * import com.pulumi.core.Output;
@@ -49,13 +50,14 @@ import javax.annotation.Nullable;
  * 
  * 	 public static void stack(Context ctx) {
  *  		// Create an EKS cluster with the default configuration.
- *  		var cluster = new Cluster(&#34;cluster&#34;);
+ *  		var cluster = new Cluster("cluster");
  *  
- *  		// Export the cluster&#39;s kubeconfig.
- * 		ctx.export(&#34;kubeconfig&#34;, cluster.kubeconfig());
+ *  		// Export the cluster's kubeconfig.
+ * 		ctx.export("kubeconfig", cluster.kubeconfig());
  * 	}
  *  }
- * ```
+ * }
+ * </pre>
  * &lt;!--End PulumiCodeChooser --&gt;
  * 
  */
@@ -206,7 +208,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      *
      * @param name The _unique_ name of the resulting resource.
      */
-    public Cluster(String name) {
+    public Cluster(java.lang.String name) {
         this(name, ClusterArgs.Empty);
     }
     /**
@@ -214,7 +216,7 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * @param name The _unique_ name of the resulting resource.
      * @param args The arguments to use to populate this resource's properties.
      */
-    public Cluster(String name, @Nullable ClusterArgs args) {
+    public Cluster(java.lang.String name, @Nullable ClusterArgs args) {
         this(name, args, null);
     }
     /**
@@ -223,11 +225,18 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param options A bag of options that control this resource's behavior.
      */
-    public Cluster(String name, @Nullable ClusterArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
-        super("eks:index:Cluster", name, args == null ? ClusterArgs.Empty : args, makeResourceOptions(options, Codegen.empty()), true);
+    public Cluster(java.lang.String name, @Nullable ClusterArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        super("eks:index:Cluster", name, makeArgs(args, options), makeResourceOptions(options, Codegen.empty()), true);
     }
 
-    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<String> id) {
+    private static ClusterArgs makeArgs(@Nullable ClusterArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        if (options != null && options.getUrn().isPresent()) {
+            return null;
+        }
+        return args == null ? ClusterArgs.Empty : args;
+    }
+
+    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<java.lang.String> id) {
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .build();

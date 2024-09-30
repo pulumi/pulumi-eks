@@ -6,6 +6,7 @@ package com.pulumi.eks.inputs;
 import com.pulumi.aws.eks.inputs.AccessPolicyAssociationAccessScopeArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.String;
 import java.util.Objects;
 
@@ -119,8 +120,12 @@ public final class AccessPolicyAssociationArgs extends com.pulumi.resources.Reso
         }
 
         public AccessPolicyAssociationArgs build() {
-            $.accessScope = Objects.requireNonNull($.accessScope, "expected parameter 'accessScope' to be non-null");
-            $.policyArn = Objects.requireNonNull($.policyArn, "expected parameter 'policyArn' to be non-null");
+            if ($.accessScope == null) {
+                throw new MissingRequiredPropertyException("AccessPolicyAssociationArgs", "accessScope");
+            }
+            if ($.policyArn == null) {
+                throw new MissingRequiredPropertyException("AccessPolicyAssociationArgs", "policyArn");
+            }
             return $;
         }
     }

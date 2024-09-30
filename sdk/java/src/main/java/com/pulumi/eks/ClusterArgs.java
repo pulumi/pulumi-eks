@@ -790,12 +790,12 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * This option is required iff the proxy environment variables are not set.
      * 
      * Format:      &lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;
-     * Auth Format: &lt;protocol&gt;://&lt;username&gt;:&lt;password&gt;@&lt;host&gt;:&lt;port&gt;
+     * Auth Format: &lt;protocol&gt;://&lt;username&gt;:&lt;password&gt;{@literal @}&lt;host&gt;:&lt;port&gt;
      * 
      * Ex:
      *   - &#34;http://proxy.example.com:3128&#34;
      *   - &#34;https://proxy.example.com&#34;
-     *   - &#34;http://username:password@proxy.example.com:3128&#34;
+     *   - &#34;http://username:password{@literal @}proxy.example.com:3128&#34;
      * 
      */
     @Import(name="proxy")
@@ -811,12 +811,12 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      * This option is required iff the proxy environment variables are not set.
      * 
      * Format:      &lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;
-     * Auth Format: &lt;protocol&gt;://&lt;username&gt;:&lt;password&gt;@&lt;host&gt;:&lt;port&gt;
+     * Auth Format: &lt;protocol&gt;://&lt;username&gt;:&lt;password&gt;{@literal @}&lt;host&gt;:&lt;port&gt;
      * 
      * Ex:
      *   - &#34;http://proxy.example.com:3128&#34;
      *   - &#34;https://proxy.example.com&#34;
-     *   - &#34;http://username:password@proxy.example.com:3128&#34;
+     *   - &#34;http://username:password{@literal @}proxy.example.com:3128&#34;
      * 
      */
     public Optional<String> proxy() {
@@ -2129,12 +2129,12 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          * This option is required iff the proxy environment variables are not set.
          * 
          * Format:      &lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;
-         * Auth Format: &lt;protocol&gt;://&lt;username&gt;:&lt;password&gt;@&lt;host&gt;:&lt;port&gt;
+         * Auth Format: &lt;protocol&gt;://&lt;username&gt;:&lt;password&gt;{@literal @}&lt;host&gt;:&lt;port&gt;
          * 
          * Ex:
          *   - &#34;http://proxy.example.com:3128&#34;
          *   - &#34;https://proxy.example.com&#34;
-         *   - &#34;http://username:password@proxy.example.com:3128&#34;
+         *   - &#34;http://username:password{@literal @}proxy.example.com:3128&#34;
          * 
          * @return builder
          * 

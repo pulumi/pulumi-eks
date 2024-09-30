@@ -40,7 +40,7 @@ public class ManagedNodeGroup extends com.pulumi.resources.ComponentResource {
      *
      * @param name The _unique_ name of the resulting resource.
      */
-    public ManagedNodeGroup(String name) {
+    public ManagedNodeGroup(java.lang.String name) {
         this(name, ManagedNodeGroupArgs.Empty);
     }
     /**
@@ -48,7 +48,7 @@ public class ManagedNodeGroup extends com.pulumi.resources.ComponentResource {
      * @param name The _unique_ name of the resulting resource.
      * @param args The arguments to use to populate this resource's properties.
      */
-    public ManagedNodeGroup(String name, ManagedNodeGroupArgs args) {
+    public ManagedNodeGroup(java.lang.String name, ManagedNodeGroupArgs args) {
         this(name, args, null);
     }
     /**
@@ -57,11 +57,18 @@ public class ManagedNodeGroup extends com.pulumi.resources.ComponentResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param options A bag of options that control this resource's behavior.
      */
-    public ManagedNodeGroup(String name, ManagedNodeGroupArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
-        super("eks:index:ManagedNodeGroup", name, args == null ? ManagedNodeGroupArgs.Empty : args, makeResourceOptions(options, Codegen.empty()), true);
+    public ManagedNodeGroup(java.lang.String name, ManagedNodeGroupArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        super("eks:index:ManagedNodeGroup", name, makeArgs(args, options), makeResourceOptions(options, Codegen.empty()), true);
     }
 
-    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<String> id) {
+    private static ManagedNodeGroupArgs makeArgs(ManagedNodeGroupArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        if (options != null && options.getUrn().isPresent()) {
+            return null;
+        }
+        return args == null ? ManagedNodeGroupArgs.Empty : args;
+    }
+
+    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<java.lang.String> id) {
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .build();

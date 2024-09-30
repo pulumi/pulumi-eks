@@ -14,6 +14,7 @@ import com.pulumi.core.annotations.CustomType;
 import com.pulumi.eks.VpcCniAddon;
 import com.pulumi.eks.outputs.AccessEntry;
 import com.pulumi.eks.outputs.ClusterNodeGroupOptions;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import com.pulumi.kubernetes.core.v1.ConfigMap;
 import com.pulumi.kubernetes.storage.v1.StorageClass;
 import java.lang.Object;
@@ -297,6 +298,7 @@ public final class CoreData {
 
         @CustomType.Setter
         public Builder accessEntries(@Nullable List<AccessEntry> accessEntries) {
+
             this.accessEntries = accessEntries;
             return this;
         }
@@ -305,47 +307,66 @@ public final class CoreData {
         }
         @CustomType.Setter
         public Builder awsProvider(@Nullable Provider awsProvider) {
+
             this.awsProvider = awsProvider;
             return this;
         }
         @CustomType.Setter
         public Builder cluster(Cluster cluster) {
-            this.cluster = Objects.requireNonNull(cluster);
+            if (cluster == null) {
+              throw new MissingRequiredPropertyException("CoreData", "cluster");
+            }
+            this.cluster = cluster;
             return this;
         }
         @CustomType.Setter
         public Builder clusterIamRole(Role clusterIamRole) {
-            this.clusterIamRole = Objects.requireNonNull(clusterIamRole);
+            if (clusterIamRole == null) {
+              throw new MissingRequiredPropertyException("CoreData", "clusterIamRole");
+            }
+            this.clusterIamRole = clusterIamRole;
             return this;
         }
         @CustomType.Setter
         public Builder clusterSecurityGroup(SecurityGroup clusterSecurityGroup) {
-            this.clusterSecurityGroup = Objects.requireNonNull(clusterSecurityGroup);
+            if (clusterSecurityGroup == null) {
+              throw new MissingRequiredPropertyException("CoreData", "clusterSecurityGroup");
+            }
+            this.clusterSecurityGroup = clusterSecurityGroup;
             return this;
         }
         @CustomType.Setter
         public Builder eksNodeAccess(@Nullable ConfigMap eksNodeAccess) {
+
             this.eksNodeAccess = eksNodeAccess;
             return this;
         }
         @CustomType.Setter
         public Builder encryptionConfig(@Nullable ClusterEncryptionConfig encryptionConfig) {
+
             this.encryptionConfig = encryptionConfig;
             return this;
         }
         @CustomType.Setter
         public Builder endpoint(String endpoint) {
-            this.endpoint = Objects.requireNonNull(endpoint);
+            if (endpoint == null) {
+              throw new MissingRequiredPropertyException("CoreData", "endpoint");
+            }
+            this.endpoint = endpoint;
             return this;
         }
         @CustomType.Setter
         public Builder fargateProfile(@Nullable FargateProfile fargateProfile) {
+
             this.fargateProfile = fargateProfile;
             return this;
         }
         @CustomType.Setter
         public Builder instanceRoles(List<Role> instanceRoles) {
-            this.instanceRoles = Objects.requireNonNull(instanceRoles);
+            if (instanceRoles == null) {
+              throw new MissingRequiredPropertyException("CoreData", "instanceRoles");
+            }
+            this.instanceRoles = instanceRoles;
             return this;
         }
         public Builder instanceRoles(Role... instanceRoles) {
@@ -353,26 +374,33 @@ public final class CoreData {
         }
         @CustomType.Setter
         public Builder kubeconfig(@Nullable Object kubeconfig) {
+
             this.kubeconfig = kubeconfig;
             return this;
         }
         @CustomType.Setter
         public Builder nodeGroupOptions(ClusterNodeGroupOptions nodeGroupOptions) {
-            this.nodeGroupOptions = Objects.requireNonNull(nodeGroupOptions);
+            if (nodeGroupOptions == null) {
+              throw new MissingRequiredPropertyException("CoreData", "nodeGroupOptions");
+            }
+            this.nodeGroupOptions = nodeGroupOptions;
             return this;
         }
         @CustomType.Setter
         public Builder nodeSecurityGroupTags(@Nullable Map<String,String> nodeSecurityGroupTags) {
+
             this.nodeSecurityGroupTags = nodeSecurityGroupTags;
             return this;
         }
         @CustomType.Setter
         public Builder oidcProvider(@Nullable OpenIdConnectProvider oidcProvider) {
+
             this.oidcProvider = oidcProvider;
             return this;
         }
         @CustomType.Setter
         public Builder privateSubnetIds(@Nullable List<String> privateSubnetIds) {
+
             this.privateSubnetIds = privateSubnetIds;
             return this;
         }
@@ -381,11 +409,15 @@ public final class CoreData {
         }
         @CustomType.Setter
         public Builder provider(com.pulumi.kubernetes.Provider provider) {
-            this.provider = Objects.requireNonNull(provider);
+            if (provider == null) {
+              throw new MissingRequiredPropertyException("CoreData", "provider");
+            }
+            this.provider = provider;
             return this;
         }
         @CustomType.Setter
         public Builder publicSubnetIds(@Nullable List<String> publicSubnetIds) {
+
             this.publicSubnetIds = publicSubnetIds;
             return this;
         }
@@ -394,12 +426,16 @@ public final class CoreData {
         }
         @CustomType.Setter
         public Builder storageClasses(@Nullable Map<String,StorageClass> storageClasses) {
+
             this.storageClasses = storageClasses;
             return this;
         }
         @CustomType.Setter
         public Builder subnetIds(List<String> subnetIds) {
-            this.subnetIds = Objects.requireNonNull(subnetIds);
+            if (subnetIds == null) {
+              throw new MissingRequiredPropertyException("CoreData", "subnetIds");
+            }
+            this.subnetIds = subnetIds;
             return this;
         }
         public Builder subnetIds(String... subnetIds) {
@@ -407,17 +443,22 @@ public final class CoreData {
         }
         @CustomType.Setter
         public Builder tags(@Nullable Map<String,String> tags) {
+
             this.tags = tags;
             return this;
         }
         @CustomType.Setter
         public Builder vpcCni(@Nullable VpcCniAddon vpcCni) {
+
             this.vpcCni = vpcCni;
             return this;
         }
         @CustomType.Setter
         public Builder vpcId(String vpcId) {
-            this.vpcId = Objects.requireNonNull(vpcId);
+            if (vpcId == null) {
+              throw new MissingRequiredPropertyException("CoreData", "vpcId");
+            }
+            this.vpcId = vpcId;
             return this;
         }
         public CoreData build() {
