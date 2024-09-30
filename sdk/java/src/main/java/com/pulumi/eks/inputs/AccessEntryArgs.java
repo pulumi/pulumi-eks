@@ -7,6 +7,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.enums.AccessEntryType;
 import com.pulumi.eks.inputs.AccessPolicyAssociationArgs;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
@@ -276,7 +277,9 @@ public final class AccessEntryArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public AccessEntryArgs build() {
-            $.principalArn = Objects.requireNonNull($.principalArn, "expected parameter 'principalArn' to be non-null");
+            if ($.principalArn == null) {
+                throw new MissingRequiredPropertyException("AccessEntryArgs", "principalArn");
+            }
             return $;
         }
     }

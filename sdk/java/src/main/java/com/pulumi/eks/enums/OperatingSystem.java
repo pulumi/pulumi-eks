@@ -60,7 +60,7 @@ See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.ht
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return new StringJoiner(", ", "OperatingSystem[", "]")
                 .add("value='" + this.value + "'")
                 .toString();

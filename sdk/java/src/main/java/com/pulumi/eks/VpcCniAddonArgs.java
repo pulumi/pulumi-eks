@@ -8,6 +8,7 @@ import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.enums.ResolveConflictsOnCreate;
 import com.pulumi.eks.enums.ResolveConflictsOnUpdate;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.Object;
@@ -1148,7 +1149,9 @@ public final class VpcCniAddonArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public VpcCniAddonArgs build() {
-            $.clusterName = Objects.requireNonNull($.clusterName, "expected parameter 'clusterName' to be non-null");
+            if ($.clusterName == null) {
+                throw new MissingRequiredPropertyException("VpcCniAddonArgs", "clusterName");
+            }
             $.resolveConflictsOnCreate = Codegen.objectProp("resolveConflictsOnCreate", ResolveConflictsOnCreate.class).arg($.resolveConflictsOnCreate).def(ResolveConflictsOnCreate.Overwrite).getNullable();
             $.resolveConflictsOnUpdate = Codegen.objectProp("resolveConflictsOnUpdate", ResolveConflictsOnUpdate.class).arg($.resolveConflictsOnUpdate).def(ResolveConflictsOnUpdate.Overwrite).getNullable();
             return $;

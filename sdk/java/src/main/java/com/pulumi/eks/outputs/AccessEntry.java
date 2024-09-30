@@ -6,6 +6,7 @@ package com.pulumi.eks.outputs;
 import com.pulumi.core.annotations.CustomType;
 import com.pulumi.eks.enums.AccessEntryType;
 import com.pulumi.eks.outputs.AccessPolicyAssociation;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
@@ -120,11 +121,13 @@ public final class AccessEntry {
 
         @CustomType.Setter
         public Builder accessPolicies(@Nullable Map<String,AccessPolicyAssociation> accessPolicies) {
+
             this.accessPolicies = accessPolicies;
             return this;
         }
         @CustomType.Setter
         public Builder kubernetesGroups(@Nullable List<String> kubernetesGroups) {
+
             this.kubernetesGroups = kubernetesGroups;
             return this;
         }
@@ -133,21 +136,27 @@ public final class AccessEntry {
         }
         @CustomType.Setter
         public Builder principalArn(String principalArn) {
-            this.principalArn = Objects.requireNonNull(principalArn);
+            if (principalArn == null) {
+              throw new MissingRequiredPropertyException("AccessEntry", "principalArn");
+            }
+            this.principalArn = principalArn;
             return this;
         }
         @CustomType.Setter
         public Builder tags(@Nullable Map<String,String> tags) {
+
             this.tags = tags;
             return this;
         }
         @CustomType.Setter
         public Builder type(@Nullable AccessEntryType type) {
+
             this.type = type;
             return this;
         }
         @CustomType.Setter
         public Builder username(@Nullable String username) {
+
             this.username = username;
             return this;
         }
