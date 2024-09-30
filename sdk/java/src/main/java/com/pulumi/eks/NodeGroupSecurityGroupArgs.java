@@ -7,6 +7,7 @@ import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.aws.eks.Cluster;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.String;
 import java.util.Map;
 import java.util.Objects;
@@ -190,9 +191,15 @@ public final class NodeGroupSecurityGroupArgs extends com.pulumi.resources.Resou
         }
 
         public NodeGroupSecurityGroupArgs build() {
-            $.clusterSecurityGroup = Objects.requireNonNull($.clusterSecurityGroup, "expected parameter 'clusterSecurityGroup' to be non-null");
-            $.eksCluster = Objects.requireNonNull($.eksCluster, "expected parameter 'eksCluster' to be non-null");
-            $.vpcId = Objects.requireNonNull($.vpcId, "expected parameter 'vpcId' to be non-null");
+            if ($.clusterSecurityGroup == null) {
+                throw new MissingRequiredPropertyException("NodeGroupSecurityGroupArgs", "clusterSecurityGroup");
+            }
+            if ($.eksCluster == null) {
+                throw new MissingRequiredPropertyException("NodeGroupSecurityGroupArgs", "eksCluster");
+            }
+            if ($.vpcId == null) {
+                throw new MissingRequiredPropertyException("NodeGroupSecurityGroupArgs", "vpcId");
+            }
             return $;
         }
     }

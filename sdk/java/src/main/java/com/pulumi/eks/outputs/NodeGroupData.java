@@ -5,6 +5,7 @@ package com.pulumi.eks.outputs;
 
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.core.annotations.CustomType;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.String;
 import java.util.List;
 import java.util.Objects;
@@ -72,12 +73,18 @@ public final class NodeGroupData {
 
         @CustomType.Setter
         public Builder autoScalingGroupName(String autoScalingGroupName) {
-            this.autoScalingGroupName = Objects.requireNonNull(autoScalingGroupName);
+            if (autoScalingGroupName == null) {
+              throw new MissingRequiredPropertyException("NodeGroupData", "autoScalingGroupName");
+            }
+            this.autoScalingGroupName = autoScalingGroupName;
             return this;
         }
         @CustomType.Setter
         public Builder extraNodeSecurityGroups(List<SecurityGroup> extraNodeSecurityGroups) {
-            this.extraNodeSecurityGroups = Objects.requireNonNull(extraNodeSecurityGroups);
+            if (extraNodeSecurityGroups == null) {
+              throw new MissingRequiredPropertyException("NodeGroupData", "extraNodeSecurityGroups");
+            }
+            this.extraNodeSecurityGroups = extraNodeSecurityGroups;
             return this;
         }
         public Builder extraNodeSecurityGroups(SecurityGroup... extraNodeSecurityGroups) {
@@ -85,7 +92,10 @@ public final class NodeGroupData {
         }
         @CustomType.Setter
         public Builder nodeSecurityGroup(SecurityGroup nodeSecurityGroup) {
-            this.nodeSecurityGroup = Objects.requireNonNull(nodeSecurityGroup);
+            if (nodeSecurityGroup == null) {
+              throw new MissingRequiredPropertyException("NodeGroupData", "nodeSecurityGroup");
+            }
+            this.nodeSecurityGroup = nodeSecurityGroup;
             return this;
         }
         public NodeGroupData build() {

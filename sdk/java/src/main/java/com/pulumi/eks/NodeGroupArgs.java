@@ -14,6 +14,7 @@ import com.pulumi.eks.enums.OperatingSystem;
 import com.pulumi.eks.inputs.CoreDataArgs;
 import com.pulumi.eks.inputs.NodeadmOptionsArgs;
 import com.pulumi.eks.inputs.TaintArgs;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.Object;
@@ -1698,7 +1699,9 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public NodeGroupArgs build() {
-            $.cluster = Objects.requireNonNull($.cluster, "expected parameter 'cluster' to be non-null");
+            if ($.cluster == null) {
+                throw new MissingRequiredPropertyException("NodeGroupArgs", "cluster");
+            }
             return $;
         }
     }

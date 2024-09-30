@@ -5,6 +5,7 @@ package com.pulumi.eks.inputs;
 
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import com.pulumi.kubernetes.meta.v1.inputs.ObjectMetaArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -490,7 +491,9 @@ public final class StorageClassArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public StorageClassArgs build() {
-            $.type = Objects.requireNonNull($.type, "expected parameter 'type' to be non-null");
+            if ($.type == null) {
+                throw new MissingRequiredPropertyException("StorageClassArgs", "type");
+            }
             return $;
         }
     }
