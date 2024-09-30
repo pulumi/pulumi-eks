@@ -845,7 +845,7 @@ export function createCore(
         }
         instanceRoles = pulumi.output([args.instanceRole]);
         defaultInstanceRole = pulumi.output(args.instanceRole);
-    } else {
+    } else if (args.skipDefaultNodeGroup === false) {
         const instanceRole = new ServiceRole(
             `${name}-instanceRole`,
             {
@@ -888,15 +888,14 @@ export function createCore(
             );
         }
 
-        // Create an instance profile if using a default node group
-        if (!skipDefaultNodeGroup) {
-            nodeGroupOptions.instanceProfile = createOrGetInstanceProfile(
-                name,
-                parent,
-                instanceRole,
-                args.instanceProfileName,
-            );
-        }
+        nodeGroupOptions.instanceProfile = createOrGetInstanceProfile(
+            name,
+            parent,
+            instanceRole,
+            args.instanceProfileName,
+        );
+    } else {
+        instanceRoles = pulumi.output([]);
     }
 
     let eksNodeAccess: k8s.core.v1.ConfigMap | undefined = undefined;
