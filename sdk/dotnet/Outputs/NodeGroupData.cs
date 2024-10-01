@@ -17,9 +17,9 @@ namespace Pulumi.Eks.Outputs
     public sealed class NodeGroupData
     {
         /// <summary>
-        /// The AutoScalingGroup name for the node group.
+        /// The AutoScalingGroup for the node group.
         /// </summary>
-        public readonly string AutoScalingGroupName;
+        public readonly Pulumi.Aws.AutoScaling.Group AutoScalingGroup;
         /// <summary>
         /// The additional security groups for the node group that captures user-specific rules.
         /// </summary>
@@ -31,13 +31,13 @@ namespace Pulumi.Eks.Outputs
 
         [OutputConstructor]
         private NodeGroupData(
-            string autoScalingGroupName,
+            Pulumi.Aws.AutoScaling.Group autoScalingGroup,
 
             ImmutableArray<Pulumi.Aws.Ec2.SecurityGroup> extraNodeSecurityGroups,
 
             Pulumi.Aws.Ec2.SecurityGroup nodeSecurityGroup)
         {
-            AutoScalingGroupName = autoScalingGroupName;
+            AutoScalingGroup = autoScalingGroup;
             ExtraNodeSecurityGroups = extraNodeSecurityGroups;
             NodeSecurityGroup = nodeSecurityGroup;
         }

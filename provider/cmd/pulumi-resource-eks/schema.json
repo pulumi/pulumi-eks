@@ -677,9 +677,9 @@
         "eks:index:NodeGroupData": {
             "description": "NodeGroupData describes the resources created for the given NodeGroup.",
             "properties": {
-                "autoScalingGroupName": {
-                    "type": "string",
-                    "description": "The AutoScalingGroup name for the node group."
+                "autoScalingGroup": {
+                    "$ref": "/aws/v6.18.2/schema.json#/resources/aws:autoscaling%2Fgroup:Group",
+                    "description": "The AutoScalingGroup for the node group."
                 },
                 "extraNodeSecurityGroups": {
                     "type": "array",
@@ -697,7 +697,7 @@
             "required": [
                 "nodeSecurityGroup",
                 "extraNodeSecurityGroups",
-                "autoScalingGroupName"
+                "autoScalingGroup"
             ]
         },
         "eks:index:NodeadmOptions": {

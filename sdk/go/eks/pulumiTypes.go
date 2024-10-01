@@ -8,6 +8,7 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/autoscaling"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
@@ -2740,8 +2741,8 @@ func (o KubeconfigOptionsPtrOutput) RoleArn() pulumi.StringPtrOutput {
 
 // NodeGroupData describes the resources created for the given NodeGroup.
 type NodeGroupData struct {
-	// The AutoScalingGroup name for the node group.
-	AutoScalingGroupName string `pulumi:"autoScalingGroupName"`
+	// The AutoScalingGroup for the node group.
+	AutoScalingGroup *autoscaling.Group `pulumi:"autoScalingGroup"`
 	// The additional security groups for the node group that captures user-specific rules.
 	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
 	// The security group for the node group to communicate with the cluster.
@@ -2763,9 +2764,9 @@ func (o NodeGroupDataOutput) ToNodeGroupDataOutputWithContext(ctx context.Contex
 	return o
 }
 
-// The AutoScalingGroup name for the node group.
-func (o NodeGroupDataOutput) AutoScalingGroupName() pulumi.StringOutput {
-	return o.ApplyT(func(v NodeGroupData) string { return v.AutoScalingGroupName }).(pulumi.StringOutput)
+// The AutoScalingGroup for the node group.
+func (o NodeGroupDataOutput) AutoScalingGroup() autoscaling.GroupOutput {
+	return o.ApplyT(func(v NodeGroupData) *autoscaling.Group { return v.AutoScalingGroup }).(autoscaling.GroupOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.
@@ -2802,14 +2803,14 @@ func (o NodeGroupDataPtrOutput) Elem() NodeGroupDataOutput {
 	}).(NodeGroupDataOutput)
 }
 
-// The AutoScalingGroup name for the node group.
-func (o NodeGroupDataPtrOutput) AutoScalingGroupName() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *NodeGroupData) *string {
+// The AutoScalingGroup for the node group.
+func (o NodeGroupDataPtrOutput) AutoScalingGroup() autoscaling.GroupOutput {
+	return o.ApplyT(func(v *NodeGroupData) *autoscaling.Group {
 		if v == nil {
 			return nil
 		}
-		return &v.AutoScalingGroupName
-	}).(pulumi.StringPtrOutput)
+		return v.AutoScalingGroup
+	}).(autoscaling.GroupOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.

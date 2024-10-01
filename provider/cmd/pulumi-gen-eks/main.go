@@ -1393,15 +1393,15 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 							},
 							Description: "The additional security groups for the node group that captures user-specific rules.",
 						},
-						"autoScalingGroupName": {
-							TypeSpec:    schema.TypeSpec{Type: "string"},
-							Description: "The AutoScalingGroup name for the node group.",
+						"autoScalingGroup": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:autoscaling%2Fgroup:Group")},
+							Description: "The AutoScalingGroup for the node group.",
 						},
 					},
 					Required: []string{
 						"nodeSecurityGroup",
 						"extraNodeSecurityGroups",
-						"autoScalingGroupName",
+						"autoScalingGroup",
 					},
 				},
 			},
