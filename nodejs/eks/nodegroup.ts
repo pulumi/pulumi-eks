@@ -1155,7 +1155,7 @@ function createNodeGroupV2Internal(
         return result;
     });
 
-    let eksClusterIngressRule: aws.ec2.SecurityGroupRule = args.clusterIngressRule!;
+    let eksClusterIngressRule: aws.ec2.SecurityGroupRule | undefined = args.clusterIngressRule;
     if (args.nodeSecurityGroup) {
         nodeSecurityGroup = args.nodeSecurityGroup;
         if (eksClusterIngressRule === undefined) {

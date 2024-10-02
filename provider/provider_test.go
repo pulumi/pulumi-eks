@@ -107,6 +107,50 @@ func TestEksClusterInputValidations(t *testing.T) {
 	}
 }
 
+func TestSecurityGroupInputValidations(t *testing.T) {
+	cwd, err := os.Getwd()
+	require.NoError(t, err)
+	dir := filepath.Join("test-programs", "skip-default-security-groups")
+	options := []opttest.Option{
+		opttest.LocalProviderPath("eks", filepath.Join(cwd, "..", "bin")),
+		opttest.YarnLink("@pulumi/eks"),
+	}
+
+	tests := map[string]struct {
+		configuration func(*pulumitest.PulumiTest)
+		expectFailure bool
+	}{
+		"skip SGs with default node group": {
+			configuration: func(pt *pulumitest.PulumiTest) {
+				pt.SetConfig("skipDefaultSecurityGroups", "true")
+				pt.SetConfig("skipDefaultNodeGroup", "false")
+				pt.SetConfig("createNG", "false")
+			},
+			expectFailure: true,
+		},
+		"skip SGs without node group": {
+			configuration: func(pt *pulumitest.PulumiTest) {
+				pt.SetConfig("skipDefaultSecurityGroups", "true")
+				pt.SetConfig("skipDefaultNodeGroup", "true")
+				pt.SetConfig("createNG", "false")
+			},
+			expectFailure: false,
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			tw := &testWrapper{PT: t, expectFailure: tc.expectFailure}
+			test := pulumitest.NewPulumiTest(tw, dir, options...)
+			tc.configuration(test)
+			test.Preview()
+			if tc.expectFailure {
+				require.Truef(t, tw.failed, "Expected preview to fail due to invalid inputs but it succeeded")
+			}
+		})
+	}
+}
+
 func TestIgnoringScalingChanges(t *testing.T) {
 	t.Parallel()
 	if testing.Short() {
