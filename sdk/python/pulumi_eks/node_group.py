@@ -24,7 +24,7 @@ class NodeGroupArgs:
                  ami_id: Optional[pulumi.Input[str]] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 bootstrap_extra_args: Optional[str] = None,
+                 bootstrap_extra_args: Optional[pulumi.Input[str]] = None,
                  bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
@@ -36,11 +36,11 @@ class NodeGroupArgs:
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
-                 kubelet_extra_args: Optional[str] = None,
-                 labels: Optional[Mapping[str, str]] = None,
+                 kubelet_extra_args: Optional[pulumi.Input[str]] = None,
+                 labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
-                 node_associate_public_ip_address: Optional[bool] = None,
+                 node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
                  node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
                  node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
@@ -55,7 +55,7 @@ class NodeGroupArgs:
                  nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
-                 taints: Optional[Mapping[str, 'TaintArgs']] = None,
+                 taints: Optional[pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]]] = None,
                  version: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a NodeGroup resource.
@@ -78,7 +78,7 @@ class NodeGroupArgs:
                Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
-        :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+        :param pulumi.Input[str] bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         :param pulumi.Input[Mapping[str, Any]] bottlerocket_settings: The configuration settings for Bottlerocket OS.
                The settings will get merged with the base settings the provider uses to configure Bottlerocket.
                
@@ -117,11 +117,11 @@ class NodeGroupArgs:
         :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The ingress rule that gives node group access.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
-        :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
-        :param Mapping[str, str] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
-        :param bool node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
+        :param pulumi.Input[bool] node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
@@ -162,7 +162,7 @@ class NodeGroupArgs:
                
                Defaults to the current recommended OS.
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
-        :param Mapping[str, 'TaintArgs'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
+        :param pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         """
         pulumi.set(__self__, "cluster", cluster)
@@ -304,14 +304,14 @@ class NodeGroupArgs:
 
     @property
     @pulumi.getter(name="bootstrapExtraArgs")
-    def bootstrap_extra_args(self) -> Optional[str]:
+    def bootstrap_extra_args(self) -> Optional[pulumi.Input[str]]:
         """
         Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         """
         return pulumi.get(self, "bootstrap_extra_args")
 
     @bootstrap_extra_args.setter
-    def bootstrap_extra_args(self, value: Optional[str]):
+    def bootstrap_extra_args(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "bootstrap_extra_args", value)
 
     @property
@@ -475,26 +475,26 @@ class NodeGroupArgs:
 
     @property
     @pulumi.getter(name="kubeletExtraArgs")
-    def kubelet_extra_args(self) -> Optional[str]:
+    def kubelet_extra_args(self) -> Optional[pulumi.Input[str]]:
         """
         Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         """
         return pulumi.get(self, "kubelet_extra_args")
 
     @kubelet_extra_args.setter
-    def kubelet_extra_args(self, value: Optional[str]):
+    def kubelet_extra_args(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "kubelet_extra_args", value)
 
     @property
     @pulumi.getter
-    def labels(self) -> Optional[Mapping[str, str]]:
+    def labels(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
         """
         Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         """
         return pulumi.get(self, "labels")
 
     @labels.setter
-    def labels(self, value: Optional[Mapping[str, str]]):
+    def labels(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]):
         pulumi.set(self, "labels", value)
 
     @property
@@ -523,14 +523,14 @@ class NodeGroupArgs:
 
     @property
     @pulumi.getter(name="nodeAssociatePublicIpAddress")
-    def node_associate_public_ip_address(self) -> Optional[bool]:
+    def node_associate_public_ip_address(self) -> Optional[pulumi.Input[bool]]:
         """
         Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         """
         return pulumi.get(self, "node_associate_public_ip_address")
 
     @node_associate_public_ip_address.setter
-    def node_associate_public_ip_address(self, value: Optional[bool]):
+    def node_associate_public_ip_address(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "node_associate_public_ip_address", value)
 
     @property
@@ -729,14 +729,14 @@ class NodeGroupArgs:
 
     @property
     @pulumi.getter
-    def taints(self) -> Optional[Mapping[str, 'TaintArgs']]:
+    def taints(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]]]:
         """
         Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         """
         return pulumi.get(self, "taints")
 
     @taints.setter
-    def taints(self, value: Optional[Mapping[str, 'TaintArgs']]):
+    def taints(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]]]):
         pulumi.set(self, "taints", value)
 
     @property
@@ -765,7 +765,7 @@ class NodeGroup(pulumi.ComponentResource):
                  ami_id: Optional[pulumi.Input[str]] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 bootstrap_extra_args: Optional[str] = None,
+                 bootstrap_extra_args: Optional[pulumi.Input[str]] = None,
                  bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
@@ -778,11 +778,11 @@ class NodeGroup(pulumi.ComponentResource):
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
-                 kubelet_extra_args: Optional[str] = None,
-                 labels: Optional[Mapping[str, str]] = None,
+                 kubelet_extra_args: Optional[pulumi.Input[str]] = None,
+                 labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
-                 node_associate_public_ip_address: Optional[bool] = None,
+                 node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
                  node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
                  node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
@@ -797,7 +797,7 @@ class NodeGroup(pulumi.ComponentResource):
                  nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
-                 taints: Optional[Mapping[str, Union['TaintArgs', 'TaintArgsDict']]] = None,
+                 taints: Optional[pulumi.Input[Mapping[str, pulumi.Input[Union['TaintArgs', 'TaintArgsDict']]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
@@ -823,7 +823,7 @@ class NodeGroup(pulumi.ComponentResource):
                Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
-        :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+        :param pulumi.Input[str] bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         :param pulumi.Input[Mapping[str, Any]] bottlerocket_settings: The configuration settings for Bottlerocket OS.
                The settings will get merged with the base settings the provider uses to configure Bottlerocket.
                
@@ -863,11 +863,11 @@ class NodeGroup(pulumi.ComponentResource):
         :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The ingress rule that gives node group access.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
-        :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
-        :param Mapping[str, str] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
-        :param bool node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
+        :param pulumi.Input[bool] node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
@@ -908,7 +908,7 @@ class NodeGroup(pulumi.ComponentResource):
                
                Defaults to the current recommended OS.
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
-        :param Mapping[str, Union['TaintArgs', 'TaintArgsDict']] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
+        :param pulumi.Input[Mapping[str, pulumi.Input[Union['TaintArgs', 'TaintArgsDict']]]] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         """
         ...
@@ -938,7 +938,7 @@ class NodeGroup(pulumi.ComponentResource):
                  ami_id: Optional[pulumi.Input[str]] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 bootstrap_extra_args: Optional[str] = None,
+                 bootstrap_extra_args: Optional[pulumi.Input[str]] = None,
                  bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
@@ -951,11 +951,11 @@ class NodeGroup(pulumi.ComponentResource):
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
-                 kubelet_extra_args: Optional[str] = None,
-                 labels: Optional[Mapping[str, str]] = None,
+                 kubelet_extra_args: Optional[pulumi.Input[str]] = None,
+                 labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
-                 node_associate_public_ip_address: Optional[bool] = None,
+                 node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
                  node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
                  node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
@@ -970,7 +970,7 @@ class NodeGroup(pulumi.ComponentResource):
                  nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
-                 taints: Optional[Mapping[str, Union['TaintArgs', 'TaintArgsDict']]] = None,
+                 taints: Optional[pulumi.Input[Mapping[str, pulumi.Input[Union['TaintArgs', 'TaintArgsDict']]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         pulumi.log.warn("""NodeGroup is deprecated: NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.""")

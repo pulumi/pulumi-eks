@@ -148,3 +148,15 @@ The Nodejs SDK is updated to use state of the art Pulumi tooling, improving stab
   - `clusterOidcProvider` is an output now. `getKubeConfig` returns an output now  
 - The deprecated input property `deployDashboard` of the `Cluster` component has been removed from the Nodejs SDK. This has already been removed from the other SDKs in the past. If you’d like to continue using it, you can adopt the existing code into your own program from [here](https://github.com/pulumi/pulumi-eks/blob/bcc170e72b802a78e7f0a99bc92316a5f8a62b0e/nodejs/eks/dashboard.ts).
 - The `createManagedNodeGroup` function will now create an Pulumi EKS `ManagedNodeGroup` instead of creating the underlying `aws.eks.NodeGroup` resource directly. During the upgrade to Pulumi EKS v3 you'll see the additional wrapper component being created.
+
+## Miscellaneous changes
+
+### NodeGroup & NodeGroupV2 accept inputs for its properties
+The `NodeGroup` and `NodeGroupV2` components now accept inputs for the following input properties:
+- `kubeletExtraArgs`
+- `bootstrapExtraArgs`
+- `labels`
+- `taints`
+- `nodeAssociatePublicIpAddress`
+
+If you're using Go you'll need to adjust your program to handle those types being inputs.
