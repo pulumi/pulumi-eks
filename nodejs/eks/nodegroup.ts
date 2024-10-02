@@ -714,7 +714,16 @@ function createNodeGroupInternal(
             name,
             {
                 vpcId: core.vpcId,
-                clusterSecurityGroup: core.clusterSecurityGroup,
+                clusterSecurityGroup: pulumi.output(core.clusterSecurityGroup).apply((sg) => {
+                    if (!sg) {
+                        throw new pulumi.ResourceError(
+                            "Cluster security group is required for node group. Please create the cluster without specifying `skipDefaultNodeGroups`.",
+                            parent,
+                        );
+                    }
+
+                    return sg;
+                }),
                 eksCluster: eksCluster,
                 tags: pulumi.all([core.tags, core.nodeSecurityGroupTags]).apply(
                     ([tags, nodeSecurityGroupTags]) =>
@@ -1160,7 +1169,16 @@ function createNodeGroupV2Internal(
             name,
             {
                 vpcId: core.vpcId,
-                clusterSecurityGroup: core.clusterSecurityGroup,
+                clusterSecurityGroup: pulumi.output(core.clusterSecurityGroup).apply((sg) => {
+                    if (!sg) {
+                        throw new pulumi.ResourceError(
+                            "Cluster security group is required for node group. Please create the cluster without specifying `skipDefaultNodeGroups`.",
+                            parent,
+                        );
+                    }
+
+                    return sg;
+                }),
                 eksCluster: eksCluster,
                 tags: core.apply(
                     (c) =>

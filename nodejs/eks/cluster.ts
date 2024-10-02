@@ -137,7 +137,7 @@ export interface CoreData {
     vpcId: pulumi.Output<string>;
     subnetIds: pulumi.Output<string[]>;
     endpoint: pulumi.Output<string>;
-    clusterSecurityGroup: aws.ec2.SecurityGroup;
+    clusterSecurityGroup?: aws.ec2.SecurityGroup;
     provider: k8s.Provider;
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
     nodeGroupOptions: ClusterNodeGroupOptions;
@@ -504,10 +504,10 @@ export function createCore(
     }
 
     // Create the EKS cluster security group
-    let eksClusterSecurityGroup: aws.ec2.SecurityGroup;
+    let eksClusterSecurityGroup: aws.ec2.SecurityGroup | undefined;
     if (args.clusterSecurityGroup) {
         eksClusterSecurityGroup = args.clusterSecurityGroup;
-    } else {
+    } else if (!args.skipDefaultSecurityGroups) {
         eksClusterSecurityGroup = new aws.ec2.SecurityGroup(
             `${name}-eksClusterSecurityGroup`,
             {
@@ -581,7 +581,9 @@ export function createCore(
             name: args.name,
             roleArn: eksRole.apply((r) => r.arn),
             vpcConfig: {
-                securityGroupIds: [eksClusterSecurityGroup.id],
+                securityGroupIds: eksClusterSecurityGroup
+                    ? [eksClusterSecurityGroup.id]
+                    : undefined,
                 subnetIds: clusterSubnetIds,
                 endpointPrivateAccess: args.endpointPrivateAccess,
                 endpointPublicAccess: args.endpointPublicAccess,
@@ -1514,6 +1516,12 @@ export interface ClusterOptions {
     skipDefaultNodeGroup?: boolean;
 
     /**
+     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups.
+     * Defaults to false.
+     */
+    skipDefaultSecurityGroups?: boolean;
+
+    /**
      * Whether or not to deploy the Kubernetes dashboard to the cluster. If the dashboard is deployed, it can be
      * accessed as follows:
      *
@@ -1877,7 +1885,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The security group for the EKS cluster.
      */
-    public readonly clusterSecurityGroup: aws.ec2.SecurityGroup;
+    public readonly clusterSecurityGroup: aws.ec2.SecurityGroup | undefined;
 
     /**
      * The service roles used by the EKS cluster.
@@ -1887,12 +1895,12 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The security group for the cluster's nodes.
      */
-    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
+    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
 
     /**
      * The ingress rule that gives node group access to cluster API server
      */
-    public readonly eksClusterIngressRule: aws.ec2.SecurityGroupRule;
+    public readonly eksClusterIngressRule: aws.ec2.SecurityGroupRule | undefined;
 
     /**
      * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
@@ -1978,10 +1986,10 @@ export interface ClusterResult {
     kubeconfig: pulumi.Output<any>;
     kubeconfigJson: pulumi.Output<string>;
     awsProvider?: pulumi.ProviderResource;
-    clusterSecurityGroup: aws.ec2.SecurityGroup;
+    clusterSecurityGroup?: aws.ec2.SecurityGroup;
     instanceRoles: pulumi.Output<aws.iam.Role[]>;
-    nodeSecurityGroup: aws.ec2.SecurityGroup;
-    eksClusterIngressRule: aws.ec2.SecurityGroupRule;
+    nodeSecurityGroup?: aws.ec2.SecurityGroup;
+    eksClusterIngressRule?: aws.ec2.SecurityGroupRule;
     defaultNodeGroup: NodeGroupV2Data | undefined;
     eksCluster: aws.eks.Cluster;
     core: CoreData;
@@ -2016,30 +2024,47 @@ export function createCluster(
         };
     }
 
+    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
+    if (!skipDefaultNodeGroup && args.skipDefaultSecurityGroups) {
+        throw new pulumi.ResourceError(
+            "skipDefaultSecurityGroups cannot be set when creating the default node group. Set `skipDefaultNodeGroup` or `fargate` to omit the default node group.",
+            self,
+        );
+    }
+
     // Create the core resources required by the cluster.
     const core = createCore(name, args, self, opts?.provider);
 
-    // Create default node group security group and cluster ingress rule.
-    const [nodeSecurityGroup, eksClusterIngressRule] = createNodeGroupSecurityGroup(
-        name,
-        {
-            vpcId: core.vpcId,
-            clusterSecurityGroup: core.clusterSecurityGroup,
-            eksCluster: core.cluster,
-            tags: pulumi.all([args.tags, args.nodeSecurityGroupTags]).apply(
-                ([tags, nodeSecurityGroupTags]) =>
-                    <aws.Tags>{
-                        ...nodeSecurityGroupTags,
-                        ...tags,
-                    },
-            ),
-        },
-        self,
-    );
-    core.nodeGroupOptions.nodeSecurityGroup = nodeSecurityGroup;
-    core.nodeGroupOptions.clusterIngressRule = eksClusterIngressRule;
+    let nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
+    let eksClusterIngressRule: aws.ec2.SecurityGroupRule | undefined;
+    if (!args.skipDefaultSecurityGroups) {
+        if (!core.clusterSecurityGroup) {
+            throw new pulumi.ResourceError(
+                "clusterSecurityGroup is required when creating the default node group.",
+                self,
+            );
+        }
 
-    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
+        // Create default node group security group and cluster ingress rule.
+        [nodeSecurityGroup, eksClusterIngressRule] = createNodeGroupSecurityGroup(
+            name,
+            {
+                vpcId: core.vpcId,
+                clusterSecurityGroup: core.clusterSecurityGroup,
+                eksCluster: core.cluster,
+                tags: pulumi.all([args.tags, args.nodeSecurityGroupTags]).apply(
+                    ([tags, nodeSecurityGroupTags]) =>
+                        <aws.Tags>{
+                            ...nodeSecurityGroupTags,
+                            ...tags,
+                        },
+                ),
+            },
+            self,
+        );
+        core.nodeGroupOptions.nodeSecurityGroup = nodeSecurityGroup;
+        core.nodeGroupOptions.clusterIngressRule = eksClusterIngressRule;
+    }
 
     // Create the default worker node group and grant the workers access to the API server.
     let defaultNodeGroup: NodeGroupV2Data | undefined = undefined;
@@ -2082,15 +2107,15 @@ export function createCluster(
  * @internal
  */
 export class ClusterInternal extends pulumi.ComponentResource {
-    public readonly clusterSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
+    public readonly clusterSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
     public readonly core!: pulumi.Output<pulumi.Unwrap<CoreData>>;
     public readonly defaultNodeGroup!: pulumi.Output<pulumi.Unwrap<NodeGroupV2Data> | undefined>;
     public readonly eksCluster!: pulumi.Output<aws.eks.Cluster>;
-    public readonly eksClusterIngressRule!: pulumi.Output<aws.ec2.SecurityGroupRule>;
+    public readonly eksClusterIngressRule!: pulumi.Output<aws.ec2.SecurityGroupRule | undefined>;
     public readonly instanceRoles!: pulumi.Output<aws.iam.Role[]>;
     public readonly kubeconfig!: pulumi.Output<any>;
     public readonly kubeconfigJson!: pulumi.Output<string>;
-    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
+    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
 
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:Cluster";
