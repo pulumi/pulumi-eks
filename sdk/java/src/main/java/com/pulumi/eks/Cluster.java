@@ -82,14 +82,14 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * 
      */
     @Export(name="clusterSecurityGroup", refs={SecurityGroup.class}, tree="[0]")
-    private Output<SecurityGroup> clusterSecurityGroup;
+    private Output</* @Nullable */ SecurityGroup> clusterSecurityGroup;
 
     /**
      * @return The security group for the EKS cluster.
      * 
      */
-    public Output<SecurityGroup> clusterSecurityGroup() {
-        return this.clusterSecurityGroup;
+    public Output<Optional<SecurityGroup>> clusterSecurityGroup() {
+        return Codegen.optional(this.clusterSecurityGroup);
     }
     /**
      * The EKS cluster and its dependencies.
@@ -194,14 +194,14 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * 
      */
     @Export(name="nodeSecurityGroup", refs={SecurityGroup.class}, tree="[0]")
-    private Output<SecurityGroup> nodeSecurityGroup;
+    private Output</* @Nullable */ SecurityGroup> nodeSecurityGroup;
 
     /**
      * @return The security group for the cluster&#39;s nodes.
      * 
      */
-    public Output<SecurityGroup> nodeSecurityGroup() {
-        return this.nodeSecurityGroup;
+    public Output<Optional<SecurityGroup>> nodeSecurityGroup() {
+        return Codegen.optional(this.nodeSecurityGroup);
     }
 
     /**

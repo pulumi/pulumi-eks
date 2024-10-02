@@ -309,7 +309,7 @@ export interface CoreData {
      * The IAM Role attached to the EKS Cluster
      */
     clusterIamRole: pulumiAws.iam.Role;
-    clusterSecurityGroup: pulumiAws.ec2.SecurityGroup;
+    clusterSecurityGroup?: pulumiAws.ec2.SecurityGroup;
     eksNodeAccess?: pulumiKubernetes.core.v1.ConfigMap;
     encryptionConfig?: pulumiAws.types.output.eks.ClusterEncryptionConfig;
     /**

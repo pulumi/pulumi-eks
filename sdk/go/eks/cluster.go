@@ -300,6 +300,10 @@ type clusterArgs struct {
 	ServiceRole *iam.Role `pulumi:"serviceRole"`
 	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
 	SkipDefaultNodeGroup *bool `pulumi:"skipDefaultNodeGroup"`
+	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+	//
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+	SkipDefaultSecurityGroups *bool `pulumi:"skipDefaultSecurityGroups"`
 	// An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
 	//
 	// Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
@@ -532,6 +536,10 @@ type ClusterArgs struct {
 	ServiceRole iam.RoleInput
 	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
 	SkipDefaultNodeGroup *bool
+	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+	//
+	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+	SkipDefaultSecurityGroups *bool
 	// An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
 	//
 	// Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html

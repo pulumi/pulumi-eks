@@ -54,7 +54,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The security group for the EKS cluster.
      */
-    public readonly clusterSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup>;
+    public readonly clusterSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
     /**
      * The EKS cluster and its dependencies.
      */
@@ -86,7 +86,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The security group for the cluster's nodes.
      */
-    public /*out*/ readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup>;
+    public /*out*/ readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
 
     /**
      * Create a Cluster resource with the given unique name, arguments, and options.
@@ -143,6 +143,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["roleMappings"] = args ? args.roleMappings : undefined;
             resourceInputs["serviceRole"] = args ? args.serviceRole : undefined;
             resourceInputs["skipDefaultNodeGroup"] = args ? args.skipDefaultNodeGroup : undefined;
+            resourceInputs["skipDefaultSecurityGroups"] = args ? args.skipDefaultSecurityGroups : undefined;
             resourceInputs["storageClasses"] = args ? args.storageClasses : undefined;
             resourceInputs["subnetIds"] = args ? args.subnetIds : undefined;
             resourceInputs["tags"] = args ? args.tags : undefined;
@@ -489,6 +490,12 @@ export interface ClusterArgs {
      * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
      */
     skipDefaultNodeGroup?: boolean;
+    /**
+     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+     *
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+     */
+    skipDefaultSecurityGroups?: boolean;
     /**
      * An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
      *

@@ -74,13 +74,21 @@ Object.defineProperty(Cluster.prototype, 'provider', {
 })
 
 Cluster.prototype.createNodeGroup = function(name: string, args: ClusterNodeGroupOptionsArgs, awsProvider?: pulumi.ProviderResource): NodeGroup {
-
     return new NodeGroup(
         name,
         {
             ...args,
             cluster: this.core,
-            nodeSecurityGroup: this.nodeSecurityGroup,
+            nodeSecurityGroup: pulumi.output(this.clusterSecurityGroup).apply((sg) => {
+                    if (!sg) {
+                        throw new pulumi.ResourceError(
+                            "Cluster security group is required for node group. Please create the cluster without specifying `skipDefaultNodeGroups`.",
+                            this,
+                        );
+                    }
+
+                    return sg;
+                }),
             clusterIngressRule: this.eksClusterIngressRule,
         },
         {
