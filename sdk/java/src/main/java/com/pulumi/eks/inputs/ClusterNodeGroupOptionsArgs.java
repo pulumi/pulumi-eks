@@ -111,13 +111,13 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
      * 
      */
     @Import(name="bootstrapExtraArgs")
-    private @Nullable String bootstrapExtraArgs;
+    private @Nullable Output<String> bootstrapExtraArgs;
 
     /**
      * @return Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
      * 
      */
-    public Optional<String> bootstrapExtraArgs() {
+    public Optional<Output<String>> bootstrapExtraArgs() {
         return Optional.ofNullable(this.bootstrapExtraArgs);
     }
 
@@ -364,13 +364,13 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
      * 
      */
     @Import(name="kubeletExtraArgs")
-    private @Nullable String kubeletExtraArgs;
+    private @Nullable Output<String> kubeletExtraArgs;
 
     /**
      * @return Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
      * 
      */
-    public Optional<String> kubeletExtraArgs() {
+    public Optional<Output<String>> kubeletExtraArgs() {
         return Optional.ofNullable(this.kubeletExtraArgs);
     }
 
@@ -379,13 +379,13 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
      * 
      */
     @Import(name="labels")
-    private @Nullable Map<String,String> labels;
+    private @Nullable Output<Map<String,String>> labels;
 
     /**
      * @return Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
      * 
      */
-    public Optional<Map<String,String>> labels() {
+    public Optional<Output<Map<String,String>>> labels() {
         return Optional.ofNullable(this.labels);
     }
 
@@ -454,13 +454,13 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
      * 
      */
     @Import(name="nodeAssociatePublicIpAddress")
-    private @Nullable Boolean nodeAssociatePublicIpAddress;
+    private @Nullable Output<Boolean> nodeAssociatePublicIpAddress;
 
     /**
      * @return Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
      * 
      */
-    public Optional<Boolean> nodeAssociatePublicIpAddress() {
+    public Optional<Output<Boolean>> nodeAssociatePublicIpAddress() {
         return Optional.ofNullable(this.nodeAssociatePublicIpAddress);
     }
 
@@ -731,13 +731,13 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
      * 
      */
     @Import(name="taints")
-    private @Nullable Map<String,TaintArgs> taints;
+    private @Nullable Output<Map<String,TaintArgs>> taints;
 
     /**
      * @return Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
      * 
      */
-    public Optional<Map<String,TaintArgs>> taints() {
+    public Optional<Output<Map<String,TaintArgs>>> taints() {
         return Optional.ofNullable(this.taints);
     }
 
@@ -917,9 +917,19 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          * @return builder
          * 
          */
-        public Builder bootstrapExtraArgs(@Nullable String bootstrapExtraArgs) {
+        public Builder bootstrapExtraArgs(@Nullable Output<String> bootstrapExtraArgs) {
             $.bootstrapExtraArgs = bootstrapExtraArgs;
             return this;
+        }
+
+        /**
+         * @param bootstrapExtraArgs Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder bootstrapExtraArgs(String bootstrapExtraArgs) {
+            return bootstrapExtraArgs(Output.of(bootstrapExtraArgs));
         }
 
         /**
@@ -1228,8 +1238,29 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          * @return builder
          * 
          */
-        public Builder kubeletExtraArgs(@Nullable String kubeletExtraArgs) {
+        public Builder kubeletExtraArgs(@Nullable Output<String> kubeletExtraArgs) {
             $.kubeletExtraArgs = kubeletExtraArgs;
+            return this;
+        }
+
+        /**
+         * @param kubeletExtraArgs Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, &#39;--port=10251 --address=0.0.0.0&#39;. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder kubeletExtraArgs(String kubeletExtraArgs) {
+            return kubeletExtraArgs(Output.of(kubeletExtraArgs));
+        }
+
+        /**
+         * @param labels Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder labels(@Nullable Output<Map<String,String>> labels) {
+            $.labels = labels;
             return this;
         }
 
@@ -1239,9 +1270,8 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          * @return builder
          * 
          */
-        public Builder labels(@Nullable Map<String,String> labels) {
-            $.labels = labels;
-            return this;
+        public Builder labels(Map<String,String> labels) {
+            return labels(Output.of(labels));
         }
 
         /**
@@ -1344,9 +1374,19 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          * @return builder
          * 
          */
-        public Builder nodeAssociatePublicIpAddress(@Nullable Boolean nodeAssociatePublicIpAddress) {
+        public Builder nodeAssociatePublicIpAddress(@Nullable Output<Boolean> nodeAssociatePublicIpAddress) {
             $.nodeAssociatePublicIpAddress = nodeAssociatePublicIpAddress;
             return this;
+        }
+
+        /**
+         * @param nodeAssociatePublicIpAddress Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeAssociatePublicIpAddress(Boolean nodeAssociatePublicIpAddress) {
+            return nodeAssociatePublicIpAddress(Output.of(nodeAssociatePublicIpAddress));
         }
 
         /**
@@ -1733,9 +1773,19 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
          * @return builder
          * 
          */
-        public Builder taints(@Nullable Map<String,TaintArgs> taints) {
+        public Builder taints(@Nullable Output<Map<String,TaintArgs>> taints) {
             $.taints = taints;
             return this;
+        }
+
+        /**
+         * @param taints Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
+         * 
+         * @return builder
+         * 
+         */
+        public Builder taints(Map<String,TaintArgs> taints) {
+            return taints(Output.of(taints));
         }
 
         /**

@@ -484,7 +484,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
 	AutoScalingGroupTags pulumi.StringMapInput `pulumi:"autoScalingGroupTags"`
 	// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
-	BootstrapExtraArgs *string `pulumi:"bootstrapExtraArgs"`
+	BootstrapExtraArgs pulumi.StringPtrInput `pulumi:"bootstrapExtraArgs"`
 	// The configuration settings for Bottlerocket OS.
 	// The settings will get merged with the base settings the provider uses to configure Bottlerocket.
 	//
@@ -539,9 +539,9 @@ type ClusterNodeGroupOptionsArgs struct {
 	// Name of the key pair to use for SSH access to worker nodes.
 	KeyName pulumi.StringPtrInput `pulumi:"keyName"`
 	// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
-	KubeletExtraArgs *string `pulumi:"kubeletExtraArgs"`
+	KubeletExtraArgs pulumi.StringPtrInput `pulumi:"kubeletExtraArgs"`
 	// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
-	Labels map[string]string `pulumi:"labels"`
+	Labels pulumi.StringMapInput `pulumi:"labels"`
 	// The tag specifications to apply to the launch template.
 	LaunchTemplateTagSpecifications ec2.LaunchTemplateTagSpecificationArrayInput `pulumi:"launchTemplateTagSpecifications"`
 	// The maximum number of worker nodes running in the cluster. Defaults to 2.
@@ -551,7 +551,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// The minimum number of worker nodes running in the cluster. Defaults to 1.
 	MinSize pulumi.IntPtrInput `pulumi:"minSize"`
 	// Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
-	NodeAssociatePublicIpAddress *bool `pulumi:"nodeAssociatePublicIpAddress"`
+	NodeAssociatePublicIpAddress pulumi.BoolPtrInput `pulumi:"nodeAssociatePublicIpAddress"`
 	// Public key material for SSH access to worker nodes. See allowed formats at:
 	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 	// If not provided, no SSH access is enabled on VMs.
@@ -607,7 +607,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	// Bidding price for spot instance. If set, only spot instances will be added as worker node.
 	SpotPrice pulumi.StringPtrInput `pulumi:"spotPrice"`
 	// Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
-	Taints map[string]TaintArgs `pulumi:"taints"`
+	Taints TaintMapInput `pulumi:"taints"`
 	// Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
 	Version pulumi.StringPtrInput `pulumi:"version"`
 }
@@ -3290,9 +3290,9 @@ type TaintInput interface {
 // Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
 type TaintArgs struct {
 	// The effect of the taint.
-	Effect string `pulumi:"effect"`
+	Effect pulumi.StringInput `pulumi:"effect"`
 	// The value of the taint.
-	Value string `pulumi:"value"`
+	Value pulumi.StringInput `pulumi:"value"`
 }
 
 func (TaintArgs) ElementType() reflect.Type {

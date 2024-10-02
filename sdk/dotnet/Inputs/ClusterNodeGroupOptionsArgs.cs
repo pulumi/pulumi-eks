@@ -58,7 +58,7 @@ namespace Pulumi.Eks.Inputs
         /// Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         /// </summary>
         [Input("bootstrapExtraArgs")]
-        public string? BootstrapExtraArgs { get; set; }
+        public Input<string>? BootstrapExtraArgs { get; set; }
 
         [Input("bottlerocketSettings")]
         private InputMap<object>? _bottlerocketSettings;
@@ -183,17 +183,17 @@ namespace Pulumi.Eks.Inputs
         /// Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         /// </summary>
         [Input("kubeletExtraArgs")]
-        public string? KubeletExtraArgs { get; set; }
+        public Input<string>? KubeletExtraArgs { get; set; }
 
         [Input("labels")]
-        private Dictionary<string, string>? _labels;
+        private InputMap<string>? _labels;
 
         /// <summary>
         /// Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         /// </summary>
-        public Dictionary<string, string> Labels
+        public InputMap<string> Labels
         {
-            get => _labels ?? (_labels = new Dictionary<string, string>());
+            get => _labels ?? (_labels = new InputMap<string>());
             set => _labels = value;
         }
 
@@ -231,7 +231,7 @@ namespace Pulumi.Eks.Inputs
         /// Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         /// </summary>
         [Input("nodeAssociatePublicIpAddress")]
-        public bool? NodeAssociatePublicIpAddress { get; set; }
+        public Input<bool>? NodeAssociatePublicIpAddress { get; set; }
 
         /// <summary>
         /// Public key material for SSH access to worker nodes. See allowed formats at:
@@ -356,14 +356,14 @@ namespace Pulumi.Eks.Inputs
         public Input<string>? SpotPrice { get; set; }
 
         [Input("taints")]
-        private Dictionary<string, Inputs.TaintArgs>? _taints;
+        private InputMap<Inputs.TaintArgs>? _taints;
 
         /// <summary>
         /// Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         /// </summary>
-        public Dictionary<string, Inputs.TaintArgs> Taints
+        public InputMap<Inputs.TaintArgs> Taints
         {
-            get => _taints ?? (_taints = new Dictionary<string, Inputs.TaintArgs>());
+            get => _taints ?? (_taints = new InputMap<Inputs.TaintArgs>());
             set => _taints = value;
         }
 

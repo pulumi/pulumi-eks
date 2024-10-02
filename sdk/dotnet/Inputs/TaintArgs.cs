@@ -19,13 +19,13 @@ namespace Pulumi.Eks.Inputs
         /// The effect of the taint.
         /// </summary>
         [Input("effect", required: true)]
-        public string Effect { get; set; } = null!;
+        public Input<string> Effect { get; set; } = null!;
 
         /// <summary>
         /// The value of the taint.
         /// </summary>
         [Input("value", required: true)]
-        public string Value { get; set; } = null!;
+        public Input<string> Value { get; set; } = null!;
 
         public TaintArgs()
         {
