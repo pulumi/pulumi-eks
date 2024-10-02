@@ -1522,15 +1522,13 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 					Properties: map[string]schema.PropertySpec{
 						"value": {
 							TypeSpec: schema.TypeSpec{
-								Type:  "string",
-								Plain: true,
+								Type: "string",
 							},
 							Description: "The value of the taint.",
 						},
 						"effect": {
 							TypeSpec: schema.TypeSpec{
-								Type:  "string", // TODO strict string enum: "NoSchedule" | "NoExecute" | "PreferNoSchedule".
-								Plain: true,
+								Type: "string", // TODO strict string enum: "NoSchedule" | "NoExecute" | "PreferNoSchedule".
 							},
 							Description: "The effect of the taint.",
 						},
@@ -2162,10 +2160,8 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			TypeSpec: schema.TypeSpec{
 				Type: "object",
 				AdditionalProperties: &schema.TypeSpec{
-					Type:  "string",
-					Plain: true,
+					Type: "string",
 				},
-				Plain: true,
 			},
 			Description: "Custom k8s node labels to be attached to each worker node. Adds the given " +
 				"key/value pairs to the `--node-labels` kubelet argument.",
@@ -2174,18 +2170,15 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			TypeSpec: schema.TypeSpec{
 				Type: "object",
 				AdditionalProperties: &schema.TypeSpec{
-					Ref:   "#/types/eks:index:Taint",
-					Plain: true,
+					Ref: "#/types/eks:index:Taint",
 				},
-				Plain: true,
 			},
 			Description: "Custom k8s node taints to be attached to each worker node. Adds the given " +
 				"taints to the `--register-with-taints` kubelet argument",
 		},
 		"kubeletExtraArgs": {
 			TypeSpec: schema.TypeSpec{
-				Type:  "string",
-				Plain: true,
+				Type: "string",
 			},
 			Description: "Extra args to pass to the Kubelet. Corresponds to the options passed in the " +
 				"`--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, " +
@@ -2195,8 +2188,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"bootstrapExtraArgs": {
 			TypeSpec: schema.TypeSpec{
-				Type:  "string",
-				Plain: true,
+				Type: "string",
 			},
 			Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on " +
 				"available options, see: " +
@@ -2206,8 +2198,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"nodeAssociatePublicIpAddress": {
 			TypeSpec: schema.TypeSpec{
-				Type:  "boolean",
-				Plain: true,
+				Type: "boolean",
 			},
 			Description: "Whether or not to auto-assign public IP addresses on the EKS worker nodes. If " +
 				"this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, " +
