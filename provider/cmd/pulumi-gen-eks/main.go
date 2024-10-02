@@ -1970,7 +1970,6 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
-					"pulumi":            ">=3.0.0,<4.0.0",
 					"pulumi-aws":        ">=6.0.0,<7.0.0",
 					"pulumi-kubernetes": ">=4.0.0,<5.0.0",
 				},
@@ -2001,7 +2000,6 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 				"dependencies": map[string]string{
 					"@pulumi/aws":        "^6.18.2",
 					"@pulumi/kubernetes": "^4.1.1",
-					"@pulumi/pulumi":     "^3.47.0",
 					"https-proxy-agent":  "^5.0.1",
 					"jest":               "^29.7.0",
 					"js-yaml":            "^4.1.0",
