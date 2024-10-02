@@ -530,7 +530,6 @@
                 "vpcId",
                 "subnetIds",
                 "endpoint",
-                "clusterSecurityGroup",
                 "provider",
                 "instanceRoles",
                 "nodeGroupOptions",
@@ -1122,9 +1121,7 @@
                 "kubeconfig",
                 "kubeconfigJson",
                 "awsProvider",
-                "clusterSecurityGroup",
                 "instanceRoles",
-                "nodeSecurityGroup",
                 "eksClusterIngressRule",
                 "eksCluster",
                 "core"
@@ -1359,6 +1356,11 @@
                     "type": "boolean",
                     "plain": true,
                     "description": "If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided."
+                },
+                "skipDefaultSecurityGroups": {
+                    "type": "boolean",
+                    "plain": true,
+                    "description": "If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.\n\nSee for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html"
                 },
                 "storageClasses": {
                     "oneOf": [
