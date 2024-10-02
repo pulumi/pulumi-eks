@@ -48,11 +48,11 @@ export interface Taint {
     /**
      * The value of the taint.
      */
-    value: string;
+    value: pulumi.Input<string>;
     /**
      * The effect of the taint.
      */
-    effect: "NoSchedule" | "NoExecute" | "PreferNoSchedule";
+    effect: pulumi.Input<"NoSchedule" | "NoExecute" | "PreferNoSchedule">;
 }
 
 /**
@@ -231,13 +231,13 @@ export interface NodeGroupBaseOptions {
      * Custom k8s node labels to be attached to each worker node.  Adds the given key/value pairs to the `--node-labels`
      * kubelet argument.
      */
-    labels?: { [key: string]: string };
+    labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
 
     /**
      * Custom k8s node taints to be attached to each worker node.  Adds the given taints to the `--register-with-taints`
      * kubelet argument.
      */
-    taints?: { [key: string]: Taint };
+    taints?: pulumi.Input<{ [key: string]: pulumi.Input<Taint> }>;
 
     /**
      * Extra args to pass to the Kubelet.  Corresponds to the options passed in the `--kubeletExtraArgs` flag to
@@ -245,7 +245,7 @@ export interface NodeGroupBaseOptions {
      * properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after
      * to the expicit `kubeletExtraArgs`.
      */
-    kubeletExtraArgs?: string;
+    kubeletExtraArgs?: pulumi.Input<string>;
 
     /**
      * Additional args to pass directly to `/etc/eks/bootstrap.sh`.  For details on available options, see:
@@ -253,7 +253,7 @@ export interface NodeGroupBaseOptions {
      * `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration
      * parameters.
      */
-    bootstrapExtraArgs?: string;
+    bootstrapExtraArgs?: pulumi.Input<string>;
 
     /**
      * Whether or not to auto-assign public IP addresses on the EKS worker nodes.
@@ -261,7 +261,7 @@ export interface NodeGroupBaseOptions {
      * auto-assigned public IPs. If false, they will not be auto-assigned
      * public IPs.
      */
-    nodeAssociatePublicIpAddress?: boolean;
+    nodeAssociatePublicIpAddress?: pulumi.Input<boolean>;
 
     /**
      * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
@@ -783,45 +783,31 @@ function createNodeGroupInternal(
             return nodeadmExtraOptions ? pulumi.all(nodeadmExtraOptions) : undefined;
         });
 
-    const userdata = pulumi
-        .all([
-            awsRegion,
-            clusterMetadata,
-            cfnStackName,
-            args.nodeUserData,
-            args.nodeUserDataOverride,
-            os,
-            args.bottlerocketSettings,
-            nodeadmExtraOptions,
-        ])
-        .apply(
-            ([
-                region,
-                clusterMetadata,
-                stackName,
-                extraUserData,
-                userDataOverride,
-                os,
-                bottlerocketSettings,
-                nodeadmExtraOptions,
-            ]) => {
-                const userDataArgs: SelfManagedV1NodeUserDataArgs = {
-                    nodeGroupType: "self-managed-v1",
-                    awsRegion: region.name,
-                    kubeletExtraArgs: args.kubeletExtraArgs,
-                    bootstrapExtraArgs: args.bootstrapExtraArgs,
-                    labels: args.labels,
-                    taints: args.taints,
-                    userDataOverride,
-                    extraUserData,
-                    stackName,
-                    bottlerocketSettings,
-                    nodeadmExtraOptions,
-                };
+    const nodegroupInputs = {
+        nodeUserData: args.nodeUserData,
+        nodeUserDataOverride: args.nodeUserDataOverride,
+        bottlerocketSettings: args.bottlerocketSettings,
+        kubeletExtraArgs: args.kubeletExtraArgs,
+        bootstrapExtraArgs: args.bootstrapExtraArgs,
+        labels: args.labels,
+        taints: args.taints,
+    };
 
-                return createUserData(os, clusterMetadata, userDataArgs, parent);
-            },
-        );
+    const userdata = pulumi
+        .all([awsRegion, clusterMetadata, cfnStackName, os, nodeadmExtraOptions, nodegroupInputs])
+        .apply(([region, clusterMetadata, stackName, os, nodeadmExtraOptions, nodegroupInputs]) => {
+            const userDataArgs: SelfManagedV1NodeUserDataArgs = {
+                ...nodegroupInputs,
+                nodeGroupType: "self-managed-v1",
+                awsRegion: region.name,
+                stackName,
+                nodeadmExtraOptions,
+                extraUserData: nodegroupInputs.nodeUserData,
+                userDataOverride: nodegroupInputs.nodeUserDataOverride,
+            };
+
+            return createUserData(os, clusterMetadata, userDataArgs, parent);
+        });
 
     const version = pulumi.output(args.version || core.cluster.version);
 
@@ -830,10 +816,7 @@ function createNodeGroupInternal(
     // Enable auto-assignment of public IP addresses on worker nodes for
     // backwards compatibility on existing EKS clusters launched with it
     // enabled. Defaults to `true`.
-    let nodeAssociatePublicIpAddress: boolean = true;
-    if (args.nodeAssociatePublicIpAddress !== undefined) {
-        nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
-    }
+    const nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress ?? true;
 
     const numeric = new RegExp("^\\d+$");
 
@@ -1241,42 +1224,30 @@ function createNodeGroupV2Internal(
             return nodeadmExtraOptions ? pulumi.all(nodeadmExtraOptions) : undefined;
         });
 
-    const userdata = pulumi
-        .all([
-            clusterMetadata,
-            name,
-            args.nodeUserData,
-            args.nodeUserDataOverride,
-            os,
-            args.bottlerocketSettings,
-            nodeadmExtraOptions,
-        ])
-        .apply(
-            ([
-                clusterMetadata,
-                stackName,
-                extraUserData,
-                userDataOverride,
-                os,
-                bottlerocketSettings,
-                nodeadmExtraOptions,
-            ]) => {
-                const userDataArgs: SelfManagedV2NodeUserDataArgs = {
-                    nodeGroupType: "self-managed-v2",
-                    kubeletExtraArgs: args.kubeletExtraArgs,
-                    bootstrapExtraArgs: args.bootstrapExtraArgs,
-                    labels: args.labels,
-                    taints: args.taints,
-                    userDataOverride,
-                    extraUserData,
-                    stackName,
-                    bottlerocketSettings,
-                    nodeadmExtraOptions,
-                };
+    const nodegroupInputs = {
+        nodeUserData: args.nodeUserData,
+        nodeUserDataOverride: args.nodeUserDataOverride,
+        bottlerocketSettings: args.bottlerocketSettings,
+        kubeletExtraArgs: args.kubeletExtraArgs,
+        bootstrapExtraArgs: args.bootstrapExtraArgs,
+        labels: args.labels,
+        taints: args.taints,
+    };
 
-                return createUserData(os, clusterMetadata, userDataArgs, parent);
-            },
-        )
+    const userdata = pulumi
+        .all([clusterMetadata, name, os, nodeadmExtraOptions, nodegroupInputs])
+        .apply(([clusterMetadata, stackName, os, nodeadmExtraOptions, nodegroupInputs]) => {
+            const userDataArgs: SelfManagedV2NodeUserDataArgs = {
+                ...nodegroupInputs,
+                nodeGroupType: "self-managed-v2",
+                stackName,
+                nodeadmExtraOptions,
+                extraUserData: nodegroupInputs.nodeUserData,
+                userDataOverride: nodegroupInputs.nodeUserDataOverride,
+            };
+
+            return createUserData(os, clusterMetadata, userDataArgs, parent);
+        })
         .apply((x) => Buffer.from(x, "utf-8").toString("base64")); // Launch Templates require user data to be passed as base64.
 
     const version = pulumi.output(args.version || core.cluster.version);
@@ -1286,10 +1257,7 @@ function createNodeGroupV2Internal(
     // Enable auto-assignment of public IP addresses on worker nodes for
     // backwards compatibility on existing EKS clusters launched with it
     // enabled. Defaults to `true`.
-    let nodeAssociatePublicIpAddress: boolean = true;
-    if (args.nodeAssociatePublicIpAddress !== undefined) {
-        nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress;
-    }
+    const nodeAssociatePublicIpAddress = args.nodeAssociatePublicIpAddress ?? true;
 
     const numeric = new RegExp("^\\d+$");
 
