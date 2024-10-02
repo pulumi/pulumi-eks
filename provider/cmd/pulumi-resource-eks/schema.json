@@ -36,7 +36,6 @@
             "dependencies": {
                 "@pulumi/aws": "^6.18.2",
                 "@pulumi/kubernetes": "^4.1.1",
-                "@pulumi/pulumi": "^3.47.0",
                 "https-proxy-agent": "^5.0.1",
                 "jest": "^29.7.0",
                 "js-yaml": "^4.1.0",
@@ -61,7 +60,6 @@
             },
             "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
             "requires": {
-                "pulumi": "\u003e=3.0.0,\u003c4.0.0",
                 "pulumi-aws": "\u003e=6.0.0,\u003c7.0.0",
                 "pulumi-kubernetes": "\u003e=4.0.0,\u003c5.0.0"
             },
