@@ -3,6 +3,7 @@
 
 package com.pulumi.eks.inputs;
 
+import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.String;
@@ -22,13 +23,13 @@ public final class TaintArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="effect", required=true)
-    private String effect;
+    private Output<String> effect;
 
     /**
      * @return The effect of the taint.
      * 
      */
-    public String effect() {
+    public Output<String> effect() {
         return this.effect;
     }
 
@@ -37,13 +38,13 @@ public final class TaintArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="value", required=true)
-    private String value;
+    private Output<String> value;
 
     /**
      * @return The value of the taint.
      * 
      */
-    public String value() {
+    public Output<String> value() {
         return this.value;
     }
 
@@ -78,8 +79,29 @@ public final class TaintArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder effect(String effect) {
+        public Builder effect(Output<String> effect) {
             $.effect = effect;
+            return this;
+        }
+
+        /**
+         * @param effect The effect of the taint.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder effect(String effect) {
+            return effect(Output.of(effect));
+        }
+
+        /**
+         * @param value The value of the taint.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder value(Output<String> value) {
+            $.value = value;
             return this;
         }
 
@@ -90,8 +112,7 @@ public final class TaintArgs extends com.pulumi.resources.ResourceArgs {
          * 
          */
         public Builder value(String value) {
-            $.value = value;
-            return this;
+            return value(Output.of(value));
         }
 
         public TaintArgs build() {
