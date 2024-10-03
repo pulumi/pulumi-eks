@@ -61,7 +61,7 @@ const nodeIngressRule = new aws.ec2.SecurityGroupRule("nodeIngressRule", {
   fromPort: 0,
   toPort: 65535,
   protocol: "tcp",
-  securityGroupId: cluster.nodeSecurityGroup.id,
+  securityGroupId: cluster.nodeSecurityGroup.apply((sg) => sg!.id),
   sourceSecurityGroupId: customSecurityGroup.id,
 });
 
@@ -108,6 +108,6 @@ const ng = new eks.NodeGroupV2("example-mng", {
   amiId: "ami-066e69f6f03b5383e",
   extraNodeSecurityGroups: [
     customSecurityGroup, // Plain type
-    cluster.nodeSecurityGroup, // Input type
+    cluster.nodeSecurityGroup.apply(sg => sg!), // Input type
   ],
 });
