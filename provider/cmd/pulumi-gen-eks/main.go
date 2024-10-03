@@ -241,10 +241,7 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 						"kubeconfigJson",
 						"awsProvider",
 						// "provider",
-						"clusterSecurityGroup",
 						"instanceRoles",
-						"nodeSecurityGroup",
-						"eksClusterIngressRule",
 						"eksCluster",
 						"core",
 					},
@@ -506,6 +503,15 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 						},
 						Description: "If this toggle is set to true, the EKS cluster will be created without node " +
 							"group attached. Defaults to false, unless `fargate` input is provided.",
+					},
+					"skipDefaultSecurityGroups": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "boolean",
+							Plain: true,
+						},
+						Description: "If this toggle is set to true, the EKS cluster will be created without the default " +
+							"node and cluster security groups. Defaults to false.\n\n" +
+							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html",
 					},
 					"tags": {
 						TypeSpec: schema.TypeSpec{
@@ -1281,7 +1287,6 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 						"vpcId",
 						"subnetIds",
 						"endpoint",
-						"clusterSecurityGroup",
 						"provider",
 						"instanceRoles",
 						"nodeGroupOptions",

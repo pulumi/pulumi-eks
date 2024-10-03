@@ -160,3 +160,9 @@ The `NodeGroup` and `NodeGroupV2` components now accept inputs for the following
 - `nodeAssociatePublicIpAddress`
 
 If you're using Go you'll need to adjust your program to handle those types being inputs.
+
+### Default Security Groups can now be disabled
+If you do not need the default cluster and node security groups you can disable those now
+with the `skipDefaultSecurityGroups` flag. Those security groups will not be created when setting that flag to true.
+
+Because of this change, the `clusterSecurityGroup`, `nodeSecurityGroup` and `clusterIngressRule` properties are optional now. If you're using those outputs you'll need to update your code accordingly.

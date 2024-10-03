@@ -69,6 +69,7 @@ class ClusterArgs:
                  role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[bool] = None,
+                 skip_default_security_groups: Optional[bool] = None,
                  storage_classes: Optional[Union[str, Mapping[str, 'StorageClassArgs']]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -237,6 +238,9 @@ class ClusterArgs:
         :param pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
         :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+               
+               See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
         :param Union[str, Mapping[str, 'StorageClassArgs']] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
                
                Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
@@ -344,6 +348,8 @@ class ClusterArgs:
             pulumi.set(__self__, "service_role", service_role)
         if skip_default_node_group is not None:
             pulumi.set(__self__, "skip_default_node_group", skip_default_node_group)
+        if skip_default_security_groups is not None:
+            pulumi.set(__self__, "skip_default_security_groups", skip_default_security_groups)
         if storage_classes is not None:
             pulumi.set(__self__, "storage_classes", storage_classes)
         if subnet_ids is not None:
@@ -1004,6 +1010,20 @@ class ClusterArgs:
         pulumi.set(self, "skip_default_node_group", value)
 
     @property
+    @pulumi.getter(name="skipDefaultSecurityGroups")
+    def skip_default_security_groups(self) -> Optional[bool]:
+        """
+        If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+
+        See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+        """
+        return pulumi.get(self, "skip_default_security_groups")
+
+    @skip_default_security_groups.setter
+    def skip_default_security_groups(self, value: Optional[bool]):
+        pulumi.set(self, "skip_default_security_groups", value)
+
+    @property
     @pulumi.getter(name="storageClasses")
     def storage_classes(self) -> Optional[Union[str, Mapping[str, 'StorageClassArgs']]]:
         """
@@ -1159,6 +1179,7 @@ class Cluster(pulumi.ComponentResource):
                  role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[Union['RoleMappingArgs', 'RoleMappingArgsDict']]]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[bool] = None,
+                 skip_default_security_groups: Optional[bool] = None,
                  storage_classes: Optional[Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -1349,6 +1370,9 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[Sequence[pulumi.Input[Union['RoleMappingArgs', 'RoleMappingArgsDict']]]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
         :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+               
+               See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
         :param Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
                
                Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
@@ -1454,6 +1478,7 @@ class Cluster(pulumi.ComponentResource):
                  role_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[Union['RoleMappingArgs', 'RoleMappingArgsDict']]]]] = None,
                  service_role: Optional[pulumi.Input['pulumi_aws.iam.Role']] = None,
                  skip_default_node_group: Optional[bool] = None,
+                 skip_default_security_groups: Optional[bool] = None,
                  storage_classes: Optional[Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -1517,6 +1542,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["role_mappings"] = role_mappings
             __props__.__dict__["service_role"] = service_role
             __props__.__dict__["skip_default_node_group"] = skip_default_node_group
+            __props__.__dict__["skip_default_security_groups"] = skip_default_security_groups
             __props__.__dict__["storage_classes"] = storage_classes
             __props__.__dict__["subnet_ids"] = subnet_ids
             __props__.__dict__["tags"] = tags
@@ -1550,7 +1576,7 @@ class Cluster(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="clusterSecurityGroup")
-    def cluster_security_group(self) -> pulumi.Output['pulumi_aws.ec2.SecurityGroup']:
+    def cluster_security_group(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroup']]:
         """
         The security group for the EKS cluster.
         """
@@ -1582,7 +1608,7 @@ class Cluster(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="eksClusterIngressRule")
-    def eks_cluster_ingress_rule(self) -> pulumi.Output['pulumi_aws.ec2.SecurityGroupRule']:
+    def eks_cluster_ingress_rule(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroupRule']]:
         """
         The ingress rule that gives node group access to cluster API server.
         """
@@ -1614,7 +1640,7 @@ class Cluster(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="nodeSecurityGroup")
-    def node_security_group(self) -> pulumi.Output['pulumi_aws.ec2.SecurityGroup']:
+    def node_security_group(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroup']]:
         """
         The security group for the cluster's nodes.
         """

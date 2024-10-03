@@ -74,14 +74,26 @@ export class NodeGroupSecurityGroup extends pulumi.ComponentResource {
     ) {
         super("eks:index:NodeGroupSecurityGroup", name, args, opts);
 
+        const { clusterSecurityGroup, ...nodeGroupSecurityArgs } = args;
+
         [this.securityGroup, this.securityGroupRule] = createNodeGroupSecurityGroup(
             name,
-            args,
+            {
+                ...nodeGroupSecurityArgs,
+                clusterSecurityGroupId: pulumi.output(clusterSecurityGroup).id,
+            },
             this,
             opts?.provider,
         );
         this.registerOutputs(undefined);
     }
+}
+
+export interface NodeGroupSecurityArgs {
+    vpcId: pulumi.Input<string>;
+    clusterSecurityGroupId: pulumi.Input<string>;
+    tags?: InputTags;
+    eksCluster: pulumi.Input<aws.eks.Cluster>;
 }
 
 /**
@@ -91,12 +103,12 @@ export class NodeGroupSecurityGroup extends pulumi.ComponentResource {
  */
 export function createNodeGroupSecurityGroup(
     name: string,
-    args: NodeGroupSecurityGroupOptions,
+    args: NodeGroupSecurityArgs,
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): [aws.ec2.SecurityGroup, aws.ec2.SecurityGroupRule] {
     const eksCluster = pulumi.output(args.eksCluster);
-    const clusterSecurityGroup = pulumi.output(args.clusterSecurityGroup);
+    const clusterSecurityGroupId = pulumi.output(args.clusterSecurityGroupId);
 
     const nodeSecurityGroup = new aws.ec2.SecurityGroup(
         `${name}-nodeSecurityGroup`,
@@ -139,7 +151,7 @@ export function createNodeGroupSecurityGroup(
             toPort: 65535,
             protocol: "tcp",
             securityGroupId: nodeSecurityGroup.id,
-            sourceSecurityGroupId: clusterSecurityGroup.id,
+            sourceSecurityGroupId: clusterSecurityGroupId,
         },
         { parent, provider },
     );
@@ -154,7 +166,7 @@ export function createNodeGroupSecurityGroup(
             toPort: 443,
             protocol: "tcp",
             securityGroupId: nodeSecurityGroup.id,
-            sourceSecurityGroupId: clusterSecurityGroup.id,
+            sourceSecurityGroupId: clusterSecurityGroupId,
         },
         { parent, provider },
     );
@@ -181,7 +193,7 @@ export function createNodeGroupSecurityGroup(
             fromPort: 443,
             toPort: 443,
             protocol: "tcp",
-            securityGroupId: clusterSecurityGroup.id,
+            securityGroupId: clusterSecurityGroupId,
             sourceSecurityGroupId: nodeSecurityGroup.id,
         },
         { parent, provider },
