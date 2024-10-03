@@ -150,4 +150,6 @@ The Nodejs SDK is updated to use state of the art Pulumi tooling, improving stab
 - The `createManagedNodeGroup` function will now create an Pulumi EKS `ManagedNodeGroup` instead of creating the underlying `aws.eks.NodeGroup` resource directly. During the upgrade to Pulumi EKS v3 you'll see the additional wrapper component being created.
 
 ## Miscellaneous changes
-- The cluster component no longer creates an extraneous instance IAM role if `skipDefaultNodeGroup` is set to `true`.
+
+### Cluster does not create extraneous instance IAM role if `skipDefaultNodeGroup` is set to `true`
+Previously the Cluster component created a default instance IAM role even if `skipDefaultNodeGroup` was set to `true`. This role gets correctly omitted now if you're specifying `skipDefaultNodeGroup`.

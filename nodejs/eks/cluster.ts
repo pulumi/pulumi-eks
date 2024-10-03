@@ -845,7 +845,7 @@ export function createCore(
         }
         instanceRoles = pulumi.output([args.instanceRole]);
         defaultInstanceRole = pulumi.output(args.instanceRole);
-    } else if (args.skipDefaultNodeGroup === false) {
+    } else if (!args.skipDefaultNodeGroup) {
         const instanceRole = new ServiceRole(
             `${name}-instanceRole`,
             {
