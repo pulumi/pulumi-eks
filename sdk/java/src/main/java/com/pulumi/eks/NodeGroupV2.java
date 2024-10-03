@@ -67,7 +67,7 @@ public class NodeGroupV2 extends com.pulumi.resources.ComponentResource {
      *
      * @param name The _unique_ name of the resulting resource.
      */
-    public NodeGroupV2(String name) {
+    public NodeGroupV2(java.lang.String name) {
         this(name, NodeGroupV2Args.Empty);
     }
     /**
@@ -75,7 +75,7 @@ public class NodeGroupV2 extends com.pulumi.resources.ComponentResource {
      * @param name The _unique_ name of the resulting resource.
      * @param args The arguments to use to populate this resource's properties.
      */
-    public NodeGroupV2(String name, NodeGroupV2Args args) {
+    public NodeGroupV2(java.lang.String name, NodeGroupV2Args args) {
         this(name, args, null);
     }
     /**
@@ -84,11 +84,18 @@ public class NodeGroupV2 extends com.pulumi.resources.ComponentResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param options A bag of options that control this resource's behavior.
      */
-    public NodeGroupV2(String name, NodeGroupV2Args args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
-        super("eks:index:NodeGroupV2", name, args == null ? NodeGroupV2Args.Empty : args, makeResourceOptions(options, Codegen.empty()), true);
+    public NodeGroupV2(java.lang.String name, NodeGroupV2Args args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        super("eks:index:NodeGroupV2", name, makeArgs(args, options), makeResourceOptions(options, Codegen.empty()), true);
     }
 
-    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<String> id) {
+    private static NodeGroupV2Args makeArgs(NodeGroupV2Args args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        if (options != null && options.getUrn().isPresent()) {
+            return null;
+        }
+        return args == null ? NodeGroupV2Args.Empty : args;
+    }
+
+    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<java.lang.String> id) {
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .build();

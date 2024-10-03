@@ -55,7 +55,7 @@ For more information and instructions how to upgrade, see https://docs.aws.amazo
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return new StringJoiner(", ", "AuthenticationMode[", "]")
                 .add("value='" + this.value + "'")
                 .toString();

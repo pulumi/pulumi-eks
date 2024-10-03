@@ -4,9 +4,14 @@
 
 import copy
 import warnings
+import sys
 import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, TypedDict, TypeAlias
+else:
+    from typing_extensions import NotRequired, TypedDict, TypeAlias
 from . import _utilities
 from ._enums import *
 from .vpc_cni_addon import VpcCniAddon
@@ -15,21 +20,74 @@ import pulumi_kubernetes
 
 __all__ = [
     'AccessEntryArgs',
+    'AccessEntryArgsDict',
     'AccessPolicyAssociationArgs',
+    'AccessPolicyAssociationArgsDict',
     'ClusterNodeGroupOptionsArgs',
+    'ClusterNodeGroupOptionsArgsDict',
     'CoreDataArgs',
+    'CoreDataArgsDict',
     'CoreDnsAddonOptionsArgs',
+    'CoreDnsAddonOptionsArgsDict',
     'CreationRoleProviderArgs',
+    'CreationRoleProviderArgsDict',
     'FargateProfileArgs',
+    'FargateProfileArgsDict',
     'KubeProxyAddonOptionsArgs',
+    'KubeProxyAddonOptionsArgsDict',
     'KubeconfigOptionsArgs',
+    'KubeconfigOptionsArgsDict',
     'NodeadmOptionsArgs',
+    'NodeadmOptionsArgsDict',
     'RoleMappingArgs',
+    'RoleMappingArgsDict',
     'StorageClassArgs',
+    'StorageClassArgsDict',
     'TaintArgs',
+    'TaintArgsDict',
     'UserMappingArgs',
+    'UserMappingArgsDict',
     'VpcCniOptionsArgs',
+    'VpcCniOptionsArgsDict',
 ]
+
+MYPY = False
+
+if not MYPY:
+    class AccessEntryArgsDict(TypedDict):
+        """
+        Access entries allow an IAM principal to access your cluster.
+
+        You have the following options for authorizing an IAM principal to access Kubernetes objects on your cluster: Kubernetes role-based access control (RBAC), Amazon EKS, or both.
+        Kubernetes RBAC authorization requires you to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects, in addition to managing access entries. If you use Amazon EKS authorization exclusively, you don't need to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects.
+        """
+        principal_arn: pulumi.Input[str]
+        """
+        The IAM Principal ARN which requires Authentication access to the EKS cluster.
+        """
+        access_policies: NotRequired[Mapping[str, pulumi.Input['AccessPolicyAssociationArgsDict']]]
+        """
+        The access policies to associate to the access entry.
+        """
+        kubernetes_groups: NotRequired[pulumi.Input[Sequence[pulumi.Input[str]]]]
+        """
+        A list of groups within Kubernetes to which the IAM principal is mapped to.
+        """
+        tags: NotRequired[pulumi.Input[Mapping[str, pulumi.Input[str]]]]
+        """
+        The tags to apply to the AccessEntry.
+        """
+        type: NotRequired[pulumi.Input['AccessEntryType']]
+        """
+        The type of the new access entry. Valid values are STANDARD, FARGATE_LINUX, EC2_LINUX, and EC2_WINDOWS.
+        Defaults to STANDARD which provides the standard workflow. EC2_LINUX, EC2_WINDOWS, FARGATE_LINUX types disallow users to input a username or kubernetesGroup, and prevent associating access policies.
+        """
+        username: NotRequired[pulumi.Input[str]]
+        """
+        Defaults to the principalArn if the principal is a user, else defaults to assume-role/session-name.
+        """
+elif False:
+    AccessEntryArgsDict: TypeAlias = Mapping[str, Any]
 
 @pulumi.input_type
 class AccessEntryArgs:
@@ -139,6 +197,25 @@ class AccessEntryArgs:
         pulumi.set(self, "username", value)
 
 
+if not MYPY:
+    class AccessPolicyAssociationArgsDict(TypedDict):
+        """
+        Associates an access policy and its scope to an IAM principal.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+        """
+        access_scope: pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs']
+        """
+        The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
+        """
+        policy_arn: pulumi.Input[str]
+        """
+        The ARN of the access policy to associate with the principal
+        """
+elif False:
+    AccessPolicyAssociationArgsDict: TypeAlias = Mapping[str, Any]
+
 @pulumi.input_type
 class AccessPolicyAssociationArgs:
     def __init__(__self__, *,
@@ -180,13 +257,247 @@ class AccessPolicyAssociationArgs:
         pulumi.set(self, "policy_arn", value)
 
 
+if not MYPY:
+    class ClusterNodeGroupOptionsArgsDict(TypedDict):
+        """
+        Describes the configuration options accepted by a cluster to create its own node groups.
+        """
+        ami_id: NotRequired[pulumi.Input[str]]
+        """
+        The AMI ID to use for the worker nodes.
+
+        Defaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.
+
+        Note: `amiId` and `gpu` are mutually exclusive.
+
+        See for more details:
+        - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
+        """
+        ami_type: NotRequired[pulumi.Input[str]]
+        """
+        The AMI Type to use for the worker nodes. 
+
+        Only applicable when setting an AMI ID that is of type `arm64`. 
+
+        Note: `amiType` and `gpu` are mutually exclusive.
+        """
+        auto_scaling_group_tags: NotRequired[pulumi.Input[Mapping[str, pulumi.Input[str]]]]
+        """
+        The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
+
+        Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
+
+        Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
+        """
+        bootstrap_extra_args: NotRequired[str]
+        """
+        Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+        """
+        bottlerocket_settings: NotRequired[pulumi.Input[Mapping[str, Any]]]
+        """
+        The configuration settings for Bottlerocket OS.
+        The settings will get merged with the base settings the provider uses to configure Bottlerocket.
+
+        This includes:
+          - settings.kubernetes.api-server
+          - settings.kubernetes.cluster-certificate
+          - settings.kubernetes.cluster-name
+          - settings.kubernetes.cluster-dns-ip
+
+        For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
+        """
+        cloud_formation_tags: NotRequired[pulumi.Input[Mapping[str, pulumi.Input[str]]]]
+        """
+        The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
+
+        Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
+        """
+        cluster_ingress_rule: NotRequired[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']]
+        """
+        The ingress rule that gives node group access.
+        """
+        desired_capacity: NotRequired[pulumi.Input[int]]
+        """
+        The number of worker nodes that should be running in the cluster. Defaults to 2.
+        """
+        enable_detailed_monitoring: NotRequired[pulumi.Input[bool]]
+        """
+        Enables/disables detailed monitoring of the EC2 instances.
+
+        With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.
+        When enabled, you can also get aggregated data across groups of similar instances.
+
+        Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
+        For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
+        """
+        encrypt_root_block_device: NotRequired[pulumi.Input[bool]]
+        """
+        Encrypt the root block device of the nodes in the node group.
+        """
+        extra_node_security_groups: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]]
+        """
+        Extra security groups to attach on all nodes in this worker node group.
+
+        This additional set of security groups captures any user application rules that will be needed for the nodes.
+        """
+        gpu: NotRequired[pulumi.Input[bool]]
+        """
+        Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
+
+        Defaults to false.
+
+        Note: `gpu` and `amiId` are mutually exclusive.
+
+        See for more details:
+        - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+        - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
+        """
+        ignore_scaling_changes: NotRequired[bool]
+        """
+        Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
+
+        See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
+        """
+        instance_profile: NotRequired['pulumi_aws.iam.InstanceProfile']
+        """
+        The ingress rule that gives node group access.
+        """
+        instance_type: NotRequired[pulumi.Input[str]]
+        """
+        The instance type to use for the cluster's nodes. Defaults to "t3.medium".
+        """
+        key_name: NotRequired[pulumi.Input[str]]
+        """
+        Name of the key pair to use for SSH access to worker nodes.
+        """
+        kubelet_extra_args: NotRequired[str]
+        """
+        Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
+        """
+        labels: NotRequired[Mapping[str, str]]
+        """
+        Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        """
+        launch_template_tag_specifications: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]]
+        """
+        The tag specifications to apply to the launch template.
+        """
+        max_size: NotRequired[pulumi.Input[int]]
+        """
+        The maximum number of worker nodes running in the cluster. Defaults to 2.
+        """
+        min_refresh_percentage: NotRequired[pulumi.Input[int]]
+        """
+        The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
+        """
+        min_size: NotRequired[pulumi.Input[int]]
+        """
+        The minimum number of worker nodes running in the cluster. Defaults to 1.
+        """
+        node_associate_public_ip_address: NotRequired[bool]
+        """
+        Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
+        """
+        node_public_key: NotRequired[pulumi.Input[str]]
+        """
+        Public key material for SSH access to worker nodes. See allowed formats at:
+        https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+        If not provided, no SSH access is enabled on VMs.
+        """
+        node_root_volume_delete_on_termination: NotRequired[pulumi.Input[bool]]
+        """
+        Whether the root block device should be deleted on termination of the instance. Defaults to true.
+        """
+        node_root_volume_encrypted: NotRequired[pulumi.Input[bool]]
+        """
+        Whether to encrypt a cluster node's root volume. Defaults to false.
+        """
+        node_root_volume_iops: NotRequired[pulumi.Input[int]]
+        """
+        The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
+        """
+        node_root_volume_size: NotRequired[pulumi.Input[int]]
+        """
+        The size in GiB of a cluster node's root volume. Defaults to 20.
+        """
+        node_root_volume_throughput: NotRequired[pulumi.Input[int]]
+        """
+        Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
+        """
+        node_root_volume_type: NotRequired[pulumi.Input[str]]
+        """
+        Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
+        """
+        node_security_group: NotRequired[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]
+        """
+        The security group for the worker node group to communicate with the cluster.
+
+        This security group requires specific inbound and outbound rules.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+
+        Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
+        """
+        node_subnet_ids: NotRequired[pulumi.Input[Sequence[pulumi.Input[str]]]]
+        """
+        The set of subnets to override and use for the worker node group.
+
+        Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
+        """
+        node_user_data: NotRequired[pulumi.Input[str]]
+        """
+        Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node signals its readiness to the managing CloudFormation stack. This code must be a typical user data script: critically it must begin with an interpreter directive (i.e. a `#!`).
+        """
+        node_user_data_override: NotRequired[pulumi.Input[str]]
+        """
+        User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
+
+        See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html
+        """
+        nodeadm_extra_options: NotRequired[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgsDict']]]]
+        """
+        Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
+        The base settings the provider sets are:
+          - cluster.name
+          - cluster.apiServerEndpoint
+          - cluster.certificateAuthority
+          - cluster.cidr
+
+        Note: This is only applicable when using AL2023.
+        See for more details:
+          - https://awslabs.github.io/amazon-eks-ami/nodeadm/
+          - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
+        """
+        operating_system: NotRequired[pulumi.Input['OperatingSystem']]
+        """
+        The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
+        Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
+
+        Defaults to the current recommended OS.
+        """
+        spot_price: NotRequired[pulumi.Input[str]]
+        """
+        Bidding price for spot instance. If set, only spot instances will be added as worker node.
+        """
+        taints: NotRequired[Mapping[str, 'TaintArgsDict']]
+        """
+        Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
+        """
+        version: NotRequired[pulumi.Input[str]]
+        """
+        Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
+        """
+elif False:
+    ClusterNodeGroupOptionsArgsDict: TypeAlias = Mapping[str, Any]
+
 @pulumi.input_type
 class ClusterNodeGroupOptionsArgs:
     def __init__(__self__, *,
                  ami_id: Optional[pulumi.Input[str]] = None,
                  ami_type: Optional[pulumi.Input[str]] = None,
                  auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 bootstrap_extra_args: Optional[str] = None,
+                 bootstrap_extra_args: Optional[pulumi.Input[str]] = None,
                  bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
@@ -199,13 +510,13 @@ class ClusterNodeGroupOptionsArgs:
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
-                 kubelet_extra_args: Optional[str] = None,
-                 labels: Optional[Mapping[str, str]] = None,
+                 kubelet_extra_args: Optional[pulumi.Input[str]] = None,
+                 labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  launch_template_tag_specifications: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]] = None,
                  max_size: Optional[pulumi.Input[int]] = None,
                  min_refresh_percentage: Optional[pulumi.Input[int]] = None,
                  min_size: Optional[pulumi.Input[int]] = None,
-                 node_associate_public_ip_address: Optional[bool] = None,
+                 node_associate_public_ip_address: Optional[pulumi.Input[bool]] = None,
                  node_public_key: Optional[pulumi.Input[str]] = None,
                  node_root_volume_delete_on_termination: Optional[pulumi.Input[bool]] = None,
                  node_root_volume_encrypted: Optional[pulumi.Input[bool]] = None,
@@ -220,7 +531,7 @@ class ClusterNodeGroupOptionsArgs:
                  nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
                  spot_price: Optional[pulumi.Input[str]] = None,
-                 taints: Optional[Mapping[str, 'TaintArgs']] = None,
+                 taints: Optional[pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]]] = None,
                  version: Optional[pulumi.Input[str]] = None):
         """
         Describes the configuration options accepted by a cluster to create its own node groups.
@@ -242,7 +553,7 @@ class ClusterNodeGroupOptionsArgs:
                Per AWS, all stack-level tags, including automatically created tags, and the `cloudFormationTags` option are propagated to resources that AWS CloudFormation supports, including the AutoScalingGroup. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
-        :param str bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
+        :param pulumi.Input[str] bootstrap_extra_args: Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         :param pulumi.Input[Mapping[str, Any]] bottlerocket_settings: The configuration settings for Bottlerocket OS.
                The settings will get merged with the base settings the provider uses to configure Bottlerocket.
                
@@ -284,13 +595,13 @@ class ClusterNodeGroupOptionsArgs:
         :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The ingress rule that gives node group access.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
-        :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
-        :param Mapping[str, str] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
+        :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] labels: Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]] launch_template_tag_specifications: The tag specifications to apply to the launch template.
         :param pulumi.Input[int] max_size: The maximum number of worker nodes running in the cluster. Defaults to 2.
         :param pulumi.Input[int] min_refresh_percentage: The minimum amount of instances that should remain available during an instance refresh, expressed as a percentage. Defaults to 50.
         :param pulumi.Input[int] min_size: The minimum number of worker nodes running in the cluster. Defaults to 1.
-        :param bool node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
+        :param pulumi.Input[bool] node_associate_public_ip_address: Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         :param pulumi.Input[str] node_public_key: Public key material for SSH access to worker nodes. See allowed formats at:
                https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
                If not provided, no SSH access is enabled on VMs.
@@ -331,7 +642,7 @@ class ClusterNodeGroupOptionsArgs:
                
                Defaults to the current recommended OS.
         :param pulumi.Input[str] spot_price: Bidding price for spot instance. If set, only spot instances will be added as worker node.
-        :param Mapping[str, 'TaintArgs'] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
+        :param pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]] taints: Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         """
         if ami_id is not None:
@@ -466,14 +777,14 @@ class ClusterNodeGroupOptionsArgs:
 
     @property
     @pulumi.getter(name="bootstrapExtraArgs")
-    def bootstrap_extra_args(self) -> Optional[str]:
+    def bootstrap_extra_args(self) -> Optional[pulumi.Input[str]]:
         """
         Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         """
         return pulumi.get(self, "bootstrap_extra_args")
 
     @bootstrap_extra_args.setter
-    def bootstrap_extra_args(self, value: Optional[str]):
+    def bootstrap_extra_args(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "bootstrap_extra_args", value)
 
     @property
@@ -651,26 +962,26 @@ class ClusterNodeGroupOptionsArgs:
 
     @property
     @pulumi.getter(name="kubeletExtraArgs")
-    def kubelet_extra_args(self) -> Optional[str]:
+    def kubelet_extra_args(self) -> Optional[pulumi.Input[str]]:
         """
         Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         """
         return pulumi.get(self, "kubelet_extra_args")
 
     @kubelet_extra_args.setter
-    def kubelet_extra_args(self, value: Optional[str]):
+    def kubelet_extra_args(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "kubelet_extra_args", value)
 
     @property
     @pulumi.getter
-    def labels(self) -> Optional[Mapping[str, str]]:
+    def labels(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
         """
         Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         """
         return pulumi.get(self, "labels")
 
     @labels.setter
-    def labels(self, value: Optional[Mapping[str, str]]):
+    def labels(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]):
         pulumi.set(self, "labels", value)
 
     @property
@@ -723,14 +1034,14 @@ class ClusterNodeGroupOptionsArgs:
 
     @property
     @pulumi.getter(name="nodeAssociatePublicIpAddress")
-    def node_associate_public_ip_address(self) -> Optional[bool]:
+    def node_associate_public_ip_address(self) -> Optional[pulumi.Input[bool]]:
         """
         Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         """
         return pulumi.get(self, "node_associate_public_ip_address")
 
     @node_associate_public_ip_address.setter
-    def node_associate_public_ip_address(self, value: Optional[bool]):
+    def node_associate_public_ip_address(self, value: Optional[pulumi.Input[bool]]):
         pulumi.set(self, "node_associate_public_ip_address", value)
 
     @property
@@ -929,14 +1240,14 @@ class ClusterNodeGroupOptionsArgs:
 
     @property
     @pulumi.getter
-    def taints(self) -> Optional[Mapping[str, 'TaintArgs']]:
+    def taints(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]]]:
         """
         Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         """
         return pulumi.get(self, "taints")
 
     @taints.setter
-    def taints(self, value: Optional[Mapping[str, 'TaintArgs']]):
+    def taints(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]]]):
         pulumi.set(self, "taints", value)
 
     @property
@@ -951,6 +1262,81 @@ class ClusterNodeGroupOptionsArgs:
     def version(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "version", value)
 
+
+if not MYPY:
+    class CoreDataArgsDict(TypedDict):
+        """
+        Defines the core set of data associated with an EKS cluster, including the network in which it runs.
+        """
+        cluster: pulumi.Input['pulumi_aws.eks.Cluster']
+        cluster_iam_role: pulumi.Input['pulumi_aws.iam.Role']
+        """
+        The IAM Role attached to the EKS Cluster
+        """
+        cluster_security_group: pulumi.Input['pulumi_aws.ec2.SecurityGroup']
+        endpoint: pulumi.Input[str]
+        """
+        The EKS cluster's Kubernetes API server endpoint.
+        """
+        instance_roles: pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]
+        """
+        The IAM instance roles for the cluster's nodes.
+        """
+        node_group_options: pulumi.Input['ClusterNodeGroupOptionsArgsDict']
+        """
+        The cluster's node group options.
+        """
+        provider: pulumi.Input['pulumi_kubernetes.Provider']
+        subnet_ids: pulumi.Input[Sequence[pulumi.Input[str]]]
+        """
+        List of subnet IDs for the EKS cluster.
+        """
+        vpc_id: pulumi.Input[str]
+        """
+        ID of the cluster's VPC.
+        """
+        access_entries: NotRequired[pulumi.Input[Sequence[pulumi.Input['AccessEntryArgsDict']]]]
+        """
+        The access entries added to the cluster.
+        """
+        aws_provider: NotRequired[pulumi.Input['pulumi_aws.Provider']]
+        eks_node_access: NotRequired[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']]
+        encryption_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']]
+        fargate_profile: NotRequired[pulumi.Input['pulumi_aws.eks.FargateProfile']]
+        """
+        The Fargate profile used to manage which pods run on Fargate.
+        """
+        kubeconfig: NotRequired[Any]
+        """
+        The kubeconfig file for the cluster.
+        """
+        node_security_group_tags: NotRequired[pulumi.Input[Mapping[str, pulumi.Input[str]]]]
+        """
+        Tags attached to the security groups associated with the cluster's worker nodes.
+        """
+        oidc_provider: NotRequired[pulumi.Input['pulumi_aws.iam.OpenIdConnectProvider']]
+        private_subnet_ids: NotRequired[pulumi.Input[Sequence[pulumi.Input[str]]]]
+        """
+        List of subnet IDs for the private subnets.
+        """
+        public_subnet_ids: NotRequired[pulumi.Input[Sequence[pulumi.Input[str]]]]
+        """
+        List of subnet IDs for the public subnets.
+        """
+        storage_classes: NotRequired[pulumi.Input[Mapping[str, pulumi.Input['pulumi_kubernetes.storage.v1.StorageClass']]]]
+        """
+        The storage class used for persistent storage by the cluster.
+        """
+        tags: NotRequired[pulumi.Input[Mapping[str, pulumi.Input[str]]]]
+        """
+        A map of tags assigned to the EKS cluster.
+        """
+        vpc_cni: NotRequired[pulumi.Input['VpcCniAddon']]
+        """
+        The VPC CNI for the cluster.
+        """
+elif False:
+    CoreDataArgsDict: TypeAlias = Mapping[str, Any]
 
 @pulumi.input_type
 class CoreDataArgs:
@@ -1275,6 +1661,34 @@ class CoreDataArgs:
         pulumi.set(self, "vpc_cni", value)
 
 
+if not MYPY:
+    class CoreDnsAddonOptionsArgsDict(TypedDict):
+        configuration_values: NotRequired[pulumi.Input[Mapping[str, Any]]]
+        """
+        Custom configuration values for the coredns addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        """
+        enabled: NotRequired[bool]
+        """
+        Whether or not to create the `coredns` Addon in the cluster
+
+        The managed addon can only be enabled if the cluster is a Fargate cluster or if the cluster
+        uses the default node group, otherwise the self-managed addon is used.
+        """
+        resolve_conflicts_on_create: NotRequired['ResolveConflictsOnCreate']
+        """
+        How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+        """
+        resolve_conflicts_on_update: NotRequired['ResolveConflictsOnUpdate']
+        """
+        How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+        """
+        version: NotRequired[pulumi.Input[str]]
+        """
+        The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+        """
+elif False:
+    CoreDnsAddonOptionsArgsDict: TypeAlias = Mapping[str, Any]
+
 @pulumi.input_type
 class CoreDnsAddonOptionsArgs:
     def __init__(__self__, *,
@@ -1374,6 +1788,18 @@ class CoreDnsAddonOptionsArgs:
         pulumi.set(self, "version", value)
 
 
+if not MYPY:
+    class CreationRoleProviderArgsDict(TypedDict):
+        """
+        Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+
+        Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
+        """
+        provider: 'pulumi_aws.Provider'
+        role: 'pulumi_aws.iam.Role'
+elif False:
+    CreationRoleProviderArgsDict: TypeAlias = Mapping[str, Any]
+
 @pulumi.input_type
 class CreationRoleProviderArgs:
     def __init__(__self__, *,
@@ -1405,6 +1831,26 @@ class CreationRoleProviderArgs:
     def role(self, value: 'pulumi_aws.iam.Role'):
         pulumi.set(self, "role", value)
 
+
+if not MYPY:
+    class FargateProfileArgsDict(TypedDict):
+        """
+        Defines how Kubernetes pods are executed in Fargate. See aws.eks.FargateProfileArgs for reference.
+        """
+        pod_execution_role_arn: NotRequired[pulumi.Input[str]]
+        """
+        Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
+        """
+        selectors: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]]]
+        """
+        Specify the namespace and label selectors to use for launching pods into Fargate.
+        """
+        subnet_ids: NotRequired[pulumi.Input[Sequence[pulumi.Input[str]]]]
+        """
+        Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
+        """
+elif False:
+    FargateProfileArgsDict: TypeAlias = Mapping[str, Any]
 
 @pulumi.input_type
 class FargateProfileArgs:
@@ -1461,6 +1907,31 @@ class FargateProfileArgs:
     def subnet_ids(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
         pulumi.set(self, "subnet_ids", value)
 
+
+if not MYPY:
+    class KubeProxyAddonOptionsArgsDict(TypedDict):
+        configuration_values: NotRequired[pulumi.Input[Mapping[str, Any]]]
+        """
+        Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        """
+        enabled: NotRequired[bool]
+        """
+        Whether or not to create the `kube-proxy` Addon in the cluster
+        """
+        resolve_conflicts_on_create: NotRequired['ResolveConflictsOnCreate']
+        """
+        How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+        """
+        resolve_conflicts_on_update: NotRequired['ResolveConflictsOnUpdate']
+        """
+        How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+        """
+        version: NotRequired[pulumi.Input[str]]
+        """
+        The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
+        """
+elif False:
+    KubeProxyAddonOptionsArgsDict: TypeAlias = Mapping[str, Any]
 
 @pulumi.input_type
 class KubeProxyAddonOptionsArgs:
@@ -1555,6 +2026,41 @@ class KubeProxyAddonOptionsArgs:
         pulumi.set(self, "version", value)
 
 
+if not MYPY:
+    class KubeconfigOptionsArgsDict(TypedDict):
+        """
+        Represents the AWS credentials to scope a given kubeconfig when using a non-default credential chain.
+
+        The options can be used independently, or additively.
+
+        A scoped kubeconfig is necessary for certain auth scenarios. For example:
+          1. Assume a role on the default account caller,
+          2. Use an AWS creds profile instead of the default account caller,
+          3. Use an AWS creds creds profile instead of the default account caller,
+             and then assume a given role on the profile. This scenario is also
+             possible by only using a profile, iff the profile includes a role to
+             assume in its settings.
+
+        See for more details:
+        - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
+        - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
+        - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+        """
+        profile_name: NotRequired[pulumi.Input[str]]
+        """
+        AWS credential profile name to always use instead of the default AWS credential provider chain.
+
+        The profile is passed to kubeconfig as an authentication environment setting.
+        """
+        role_arn: NotRequired[pulumi.Input[str]]
+        """
+        Role ARN to assume instead of the default AWS credential provider chain.
+
+        The role is passed to kubeconfig as an authentication exec argument.
+        """
+elif False:
+    KubeconfigOptionsArgsDict: TypeAlias = Mapping[str, Any]
+
 @pulumi.input_type
 class KubeconfigOptionsArgs:
     def __init__(__self__, *,
@@ -1618,6 +2124,24 @@ class KubeconfigOptionsArgs:
         pulumi.set(self, "role_arn", value)
 
 
+if not MYPY:
+    class NodeadmOptionsArgsDict(TypedDict):
+        """
+        MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
+
+        See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+        """
+        content: pulumi.Input[str]
+        """
+        The ARN of the access policy to associate with the principal
+        """
+        content_type: pulumi.Input[str]
+        """
+        The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
+        """
+elif False:
+    NodeadmOptionsArgsDict: TypeAlias = Mapping[str, Any]
+
 @pulumi.input_type
 class NodeadmOptionsArgs:
     def __init__(__self__, *,
@@ -1657,6 +2181,26 @@ class NodeadmOptionsArgs:
     def content_type(self, value: pulumi.Input[str]):
         pulumi.set(self, "content_type", value)
 
+
+if not MYPY:
+    class RoleMappingArgsDict(TypedDict):
+        """
+        Describes a mapping from an AWS IAM role to a Kubernetes user and groups.
+        """
+        groups: pulumi.Input[Sequence[pulumi.Input[str]]]
+        """
+        A list of groups within Kubernetes to which the role is mapped.
+        """
+        role_arn: pulumi.Input[str]
+        """
+        The ARN of the IAM role to add.
+        """
+        username: pulumi.Input[str]
+        """
+        The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role.
+        """
+elif False:
+    RoleMappingArgsDict: TypeAlias = Mapping[str, Any]
 
 @pulumi.input_type
 class RoleMappingArgs:
@@ -1710,6 +2254,62 @@ class RoleMappingArgs:
     def username(self, value: pulumi.Input[str]):
         pulumi.set(self, "username", value)
 
+
+if not MYPY:
+    class StorageClassArgsDict(TypedDict):
+        """
+        StorageClass describes the inputs to a single Kubernetes StorageClass provisioned by AWS. Any number of storage classes can be added to a cluster at creation time. One of these storage classes may be configured the default storage class for the cluster.
+        """
+        type: pulumi.Input[str]
+        """
+        The EBS volume type.
+        """
+        allow_volume_expansion: NotRequired[pulumi.Input[bool]]
+        """
+        AllowVolumeExpansion shows whether the storage class allow volume expand.
+        """
+        default: NotRequired[pulumi.Input[bool]]
+        """
+        True if this storage class should be a default storage class for the cluster.
+
+        Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
+
+        Please note that at most one storage class can be marked as default. If two or more of them are marked as default, a PersistentVolumeClaim without `storageClassName` explicitly specified cannot be created. See: https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/#changing-the-default-storageclass
+        """
+        encrypted: NotRequired[pulumi.Input[bool]]
+        """
+        Denotes whether the EBS volume should be encrypted.
+        """
+        iops_per_gb: NotRequired[pulumi.Input[int]]
+        """
+        I/O operations per second per GiB for "io1" volumes. The AWS volume plugin multiplies this with the size of a requested volume to compute IOPS of the volume and caps the result at 20,000 IOPS.
+        """
+        kms_key_id: NotRequired[pulumi.Input[str]]
+        """
+        The full Amazon Resource Name of the key to use when encrypting the volume. If none is supplied but encrypted is true, a key is generated by AWS.
+        """
+        metadata: NotRequired[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']]
+        """
+        Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+        """
+        mount_options: NotRequired[pulumi.Input[Sequence[pulumi.Input[str]]]]
+        """
+        Dynamically provisioned PersistentVolumes of this storage class are created with these mountOptions, e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one is invalid.
+        """
+        reclaim_policy: NotRequired[pulumi.Input[str]]
+        """
+        Dynamically provisioned PersistentVolumes of this storage class are created with this reclaimPolicy. Defaults to Delete.
+        """
+        volume_binding_mode: NotRequired[pulumi.Input[str]]
+        """
+        VolumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound. When unset, VolumeBindingImmediate is used. This field is alpha-level and is only honored by servers that enable the VolumeScheduling feature.
+        """
+        zones: NotRequired[pulumi.Input[Sequence[pulumi.Input[str]]]]
+        """
+        The AWS zone or zones for the EBS volume. If zones is not specified, volumes are generally round-robin-ed across all active zones where Kubernetes cluster has a node. zone and zones parameters must not be used at the same time.
+        """
+elif False:
+    StorageClassArgsDict: TypeAlias = Mapping[str, Any]
 
 @pulumi.input_type
 class StorageClassArgs:
@@ -1902,43 +2502,79 @@ class StorageClassArgs:
         pulumi.set(self, "zones", value)
 
 
+if not MYPY:
+    class TaintArgsDict(TypedDict):
+        """
+        Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
+        """
+        effect: str
+        """
+        The effect of the taint.
+        """
+        value: str
+        """
+        The value of the taint.
+        """
+elif False:
+    TaintArgsDict: TypeAlias = Mapping[str, Any]
+
 @pulumi.input_type
 class TaintArgs:
     def __init__(__self__, *,
-                 effect: str,
-                 value: str):
+                 effect: pulumi.Input[str],
+                 value: pulumi.Input[str]):
         """
         Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
-        :param str effect: The effect of the taint.
-        :param str value: The value of the taint.
+        :param pulumi.Input[str] effect: The effect of the taint.
+        :param pulumi.Input[str] value: The value of the taint.
         """
         pulumi.set(__self__, "effect", effect)
         pulumi.set(__self__, "value", value)
 
     @property
     @pulumi.getter
-    def effect(self) -> str:
+    def effect(self) -> pulumi.Input[str]:
         """
         The effect of the taint.
         """
         return pulumi.get(self, "effect")
 
     @effect.setter
-    def effect(self, value: str):
+    def effect(self, value: pulumi.Input[str]):
         pulumi.set(self, "effect", value)
 
     @property
     @pulumi.getter
-    def value(self) -> str:
+    def value(self) -> pulumi.Input[str]:
         """
         The value of the taint.
         """
         return pulumi.get(self, "value")
 
     @value.setter
-    def value(self, value: str):
+    def value(self, value: pulumi.Input[str]):
         pulumi.set(self, "value", value)
 
+
+if not MYPY:
+    class UserMappingArgsDict(TypedDict):
+        """
+        Describes a mapping from an AWS IAM user to a Kubernetes user and groups.
+        """
+        groups: pulumi.Input[Sequence[pulumi.Input[str]]]
+        """
+        A list of groups within Kubernetes to which the user is mapped to.
+        """
+        user_arn: pulumi.Input[str]
+        """
+        The ARN of the IAM user to add.
+        """
+        username: pulumi.Input[str]
+        """
+        The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user.
+        """
+elif False:
+    UserMappingArgsDict: TypeAlias = Mapping[str, Any]
 
 @pulumi.input_type
 class UserMappingArgs:
@@ -1992,6 +2628,138 @@ class UserMappingArgs:
     def username(self, value: pulumi.Input[str]):
         pulumi.set(self, "username", value)
 
+
+if not MYPY:
+    class VpcCniOptionsArgsDict(TypedDict):
+        """
+        Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
+        """
+        addon_version: NotRequired[pulumi.Input[str]]
+        """
+        The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
+        """
+        cni_configure_rpfilter: NotRequired[pulumi.Input[bool]]
+        """
+        Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
+        """
+        cni_custom_network_cfg: NotRequired[pulumi.Input[bool]]
+        """
+        Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
+        """
+        cni_external_snat: NotRequired[pulumi.Input[bool]]
+        """
+        Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
+        """
+        configuration_values: NotRequired[pulumi.Input[Mapping[str, Any]]]
+        """
+        Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
+        """
+        custom_network_config: NotRequired[pulumi.Input[bool]]
+        """
+        Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
+
+        Defaults to false.
+        """
+        disable_tcp_early_demux: NotRequired[pulumi.Input[bool]]
+        """
+        Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
+        """
+        enable_network_policy: NotRequired[pulumi.Input[bool]]
+        """
+        Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
+
+        See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+        """
+        enable_pod_eni: NotRequired[pulumi.Input[bool]]
+        """
+        Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
+        """
+        enable_prefix_delegation: NotRequired[pulumi.Input[bool]]
+        """
+        IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
+        """
+        eni_config_label_def: NotRequired[pulumi.Input[str]]
+        """
+        Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
+        Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
+
+        Defaults to the official AWS CNI image in ECR.
+        """
+        eni_mtu: NotRequired[pulumi.Input[int]]
+        """
+        Used to configure the MTU size for attached ENIs. The valid range is from 576 to 9001.
+
+        Defaults to 9001.
+        """
+        external_snat: NotRequired[pulumi.Input[bool]]
+        """
+        Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
+
+        Defaults to false.
+        """
+        log_file: NotRequired[pulumi.Input[str]]
+        """
+        Specifies the file path used for logs.
+
+        Defaults to "stdout" to emit Pod logs for `kubectl logs`.
+        """
+        log_level: NotRequired[pulumi.Input[str]]
+        """
+        Specifies the log level used for logs.
+
+        Defaults to "DEBUG"
+        Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
+        """
+        node_port_support: NotRequired[pulumi.Input[bool]]
+        """
+        Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
+
+        Defaults to true.
+        """
+        resolve_conflicts_on_create: NotRequired['ResolveConflictsOnCreate']
+        """
+        How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
+        """
+        resolve_conflicts_on_update: NotRequired['ResolveConflictsOnUpdate']
+        """
+        How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value.  Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
+        """
+        security_context_privileged: NotRequired[pulumi.Input[bool]]
+        """
+        Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
+        """
+        service_account_role_arn: NotRequired[pulumi.Input[str]]
+        """
+        The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
+
+        For more information, see [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html) in the Amazon EKS User Guide.
+
+        Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
+        """
+        veth_prefix: NotRequired[pulumi.Input[str]]
+        """
+        Specifies the veth prefix used to generate the host-side veth device name for the CNI.
+
+        The prefix can be at most 4 characters long.
+
+        Defaults to "eni".
+        """
+        warm_eni_target: NotRequired[pulumi.Input[int]]
+        """
+        Specifies the number of free elastic network interfaces (and all of their available IP addresses) that the ipamD daemon should attempt to keep available for pod assignment on the node.
+
+        Defaults to 1.
+        """
+        warm_ip_target: NotRequired[pulumi.Input[int]]
+        """
+        Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
+        """
+        warm_prefix_target: NotRequired[pulumi.Input[int]]
+        """
+        WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
+        """
+elif False:
+    VpcCniOptionsArgsDict: TypeAlias = Mapping[str, Any]
 
 @pulumi.input_type
 class VpcCniOptionsArgs:

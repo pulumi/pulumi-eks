@@ -3,19 +3,20 @@
 
 package com.pulumi.eks.outputs;
 
+import com.pulumi.aws.autoscaling.Group;
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.core.annotations.CustomType;
-import java.lang.String;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.util.List;
 import java.util.Objects;
 
 @CustomType
 public final class NodeGroupData {
     /**
-     * @return The AutoScalingGroup name for the node group.
+     * @return The AutoScalingGroup for the node group.
      * 
      */
-    private String autoScalingGroupName;
+    private Group autoScalingGroup;
     /**
      * @return The additional security groups for the node group that captures user-specific rules.
      * 
@@ -29,11 +30,11 @@ public final class NodeGroupData {
 
     private NodeGroupData() {}
     /**
-     * @return The AutoScalingGroup name for the node group.
+     * @return The AutoScalingGroup for the node group.
      * 
      */
-    public String autoScalingGroupName() {
-        return this.autoScalingGroupName;
+    public Group autoScalingGroup() {
+        return this.autoScalingGroup;
     }
     /**
      * @return The additional security groups for the node group that captures user-specific rules.
@@ -59,25 +60,31 @@ public final class NodeGroupData {
     }
     @CustomType.Builder
     public static final class Builder {
-        private String autoScalingGroupName;
+        private Group autoScalingGroup;
         private List<SecurityGroup> extraNodeSecurityGroups;
         private SecurityGroup nodeSecurityGroup;
         public Builder() {}
         public Builder(NodeGroupData defaults) {
     	      Objects.requireNonNull(defaults);
-    	      this.autoScalingGroupName = defaults.autoScalingGroupName;
+    	      this.autoScalingGroup = defaults.autoScalingGroup;
     	      this.extraNodeSecurityGroups = defaults.extraNodeSecurityGroups;
     	      this.nodeSecurityGroup = defaults.nodeSecurityGroup;
         }
 
         @CustomType.Setter
-        public Builder autoScalingGroupName(String autoScalingGroupName) {
-            this.autoScalingGroupName = Objects.requireNonNull(autoScalingGroupName);
+        public Builder autoScalingGroup(Group autoScalingGroup) {
+            if (autoScalingGroup == null) {
+              throw new MissingRequiredPropertyException("NodeGroupData", "autoScalingGroup");
+            }
+            this.autoScalingGroup = autoScalingGroup;
             return this;
         }
         @CustomType.Setter
         public Builder extraNodeSecurityGroups(List<SecurityGroup> extraNodeSecurityGroups) {
-            this.extraNodeSecurityGroups = Objects.requireNonNull(extraNodeSecurityGroups);
+            if (extraNodeSecurityGroups == null) {
+              throw new MissingRequiredPropertyException("NodeGroupData", "extraNodeSecurityGroups");
+            }
+            this.extraNodeSecurityGroups = extraNodeSecurityGroups;
             return this;
         }
         public Builder extraNodeSecurityGroups(SecurityGroup... extraNodeSecurityGroups) {
@@ -85,12 +92,15 @@ public final class NodeGroupData {
         }
         @CustomType.Setter
         public Builder nodeSecurityGroup(SecurityGroup nodeSecurityGroup) {
-            this.nodeSecurityGroup = Objects.requireNonNull(nodeSecurityGroup);
+            if (nodeSecurityGroup == null) {
+              throw new MissingRequiredPropertyException("NodeGroupData", "nodeSecurityGroup");
+            }
+            this.nodeSecurityGroup = nodeSecurityGroup;
             return this;
         }
         public NodeGroupData build() {
             final var _resultValue = new NodeGroupData();
-            _resultValue.autoScalingGroupName = autoScalingGroupName;
+            _resultValue.autoScalingGroup = autoScalingGroup;
             _resultValue.extraNodeSecurityGroups = extraNodeSecurityGroups;
             _resultValue.nodeSecurityGroup = nodeSecurityGroup;
             return _resultValue;

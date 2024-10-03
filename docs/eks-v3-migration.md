@@ -151,5 +151,16 @@ The Nodejs SDK is updated to use state of the art Pulumi tooling, improving stab
 
 ## Miscellaneous changes
 
+### NodeGroup & NodeGroupV2 accept inputs for its properties
+The `NodeGroup` and `NodeGroupV2` components now accept inputs for the following input properties:
+- `kubeletExtraArgs`
+- `bootstrapExtraArgs`
+- `labels`
+- `taints`
+- `nodeAssociatePublicIpAddress`
+
+If you're using Go you'll need to adjust your program to handle those types being inputs.
+
 ### Cluster does not create extraneous instance IAM role if `skipDefaultNodeGroup` is set to `true`
+
 Previously the Cluster component created a default instance IAM role even if `skipDefaultNodeGroup` was set to `true`. This role gets correctly omitted now if you're specifying `skipDefaultNodeGroup`.

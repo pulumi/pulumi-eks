@@ -4,9 +4,14 @@
 
 import copy
 import warnings
+import sys
 import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, TypedDict, TypeAlias
+else:
+    from typing_extensions import NotRequired, TypedDict, TypeAlias
 from . import _utilities
 from . import outputs
 from ._enums import *
@@ -1192,8 +1197,8 @@ class NodeGroupData(dict):
     @staticmethod
     def __key_warning(key: str):
         suggest = None
-        if key == "autoScalingGroupName":
-            suggest = "auto_scaling_group_name"
+        if key == "autoScalingGroup":
+            suggest = "auto_scaling_group"
         elif key == "extraNodeSecurityGroups":
             suggest = "extra_node_security_groups"
         elif key == "nodeSecurityGroup":
@@ -1211,26 +1216,26 @@ class NodeGroupData(dict):
         return super().get(key, default)
 
     def __init__(__self__, *,
-                 auto_scaling_group_name: str,
+                 auto_scaling_group: 'pulumi_aws.autoscaling.Group',
                  extra_node_security_groups: Sequence['pulumi_aws.ec2.SecurityGroup'],
                  node_security_group: 'pulumi_aws.ec2.SecurityGroup'):
         """
         NodeGroupData describes the resources created for the given NodeGroup.
-        :param str auto_scaling_group_name: The AutoScalingGroup name for the node group.
+        :param 'pulumi_aws.autoscaling.Group' auto_scaling_group: The AutoScalingGroup for the node group.
         :param Sequence['pulumi_aws.ec2.SecurityGroup'] extra_node_security_groups: The additional security groups for the node group that captures user-specific rules.
         :param 'pulumi_aws.ec2.SecurityGroup' node_security_group: The security group for the node group to communicate with the cluster.
         """
-        pulumi.set(__self__, "auto_scaling_group_name", auto_scaling_group_name)
+        pulumi.set(__self__, "auto_scaling_group", auto_scaling_group)
         pulumi.set(__self__, "extra_node_security_groups", extra_node_security_groups)
         pulumi.set(__self__, "node_security_group", node_security_group)
 
     @property
-    @pulumi.getter(name="autoScalingGroupName")
-    def auto_scaling_group_name(self) -> str:
+    @pulumi.getter(name="autoScalingGroup")
+    def auto_scaling_group(self) -> 'pulumi_aws.autoscaling.Group':
         """
-        The AutoScalingGroup name for the node group.
+        The AutoScalingGroup for the node group.
         """
-        return pulumi.get(self, "auto_scaling_group_name")
+        return pulumi.get(self, "auto_scaling_group")
 
     @property
     @pulumi.getter(name="extraNodeSecurityGroups")

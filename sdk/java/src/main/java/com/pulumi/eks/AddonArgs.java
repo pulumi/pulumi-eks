@@ -6,6 +6,7 @@ package com.pulumi.eks;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.Cluster;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;
 import java.lang.Object;
 import java.lang.String;
@@ -395,8 +396,12 @@ public final class AddonArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public AddonArgs build() {
-            $.addonName = Objects.requireNonNull($.addonName, "expected parameter 'addonName' to be non-null");
-            $.cluster = Objects.requireNonNull($.cluster, "expected parameter 'cluster' to be non-null");
+            if ($.addonName == null) {
+                throw new MissingRequiredPropertyException("AddonArgs", "addonName");
+            }
+            if ($.cluster == null) {
+                throw new MissingRequiredPropertyException("AddonArgs", "cluster");
+            }
             return $;
         }
     }

@@ -373,9 +373,9 @@ export interface CoreData {
  */
 export interface NodeGroupData {
     /**
-     * The AutoScalingGroup name for the node group.
+     * The AutoScalingGroup for the node group.
      */
-    autoScalingGroupName: string;
+    autoScalingGroup: pulumiAws.autoscaling.Group;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */

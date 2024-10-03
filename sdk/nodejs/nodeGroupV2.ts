@@ -142,7 +142,7 @@ export interface NodeGroupV2Args {
     /**
      * Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
      */
-    bootstrapExtraArgs?: string;
+    bootstrapExtraArgs?: pulumi.Input<string>;
     /**
      * The configuration settings for Bottlerocket OS.
      * The settings will get merged with the base settings the provider uses to configure Bottlerocket.
@@ -227,11 +227,11 @@ export interface NodeGroupV2Args {
     /**
      * Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
      */
-    kubeletExtraArgs?: string;
+    kubeletExtraArgs?: pulumi.Input<string>;
     /**
      * Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
      */
-    labels?: {[key: string]: string};
+    labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
      * The tag specifications to apply to the launch template.
      */
@@ -251,7 +251,7 @@ export interface NodeGroupV2Args {
     /**
      * Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
      */
-    nodeAssociatePublicIpAddress?: boolean;
+    nodeAssociatePublicIpAddress?: pulumi.Input<boolean>;
     /**
      * Public key material for SSH access to worker nodes. See allowed formats at:
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
@@ -337,7 +337,7 @@ export interface NodeGroupV2Args {
     /**
      * Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
      */
-    taints?: {[key: string]: inputs.TaintArgs};
+    taints?: pulumi.Input<{[key: string]: pulumi.Input<inputs.TaintArgs>}>;
     /**
      * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
      */

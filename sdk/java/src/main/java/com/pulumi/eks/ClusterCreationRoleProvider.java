@@ -29,7 +29,7 @@ public class ClusterCreationRoleProvider extends com.pulumi.resources.ComponentR
      *
      * @param name The _unique_ name of the resulting resource.
      */
-    public ClusterCreationRoleProvider(String name) {
+    public ClusterCreationRoleProvider(java.lang.String name) {
         this(name, ClusterCreationRoleProviderArgs.Empty);
     }
     /**
@@ -37,7 +37,7 @@ public class ClusterCreationRoleProvider extends com.pulumi.resources.ComponentR
      * @param name The _unique_ name of the resulting resource.
      * @param args The arguments to use to populate this resource's properties.
      */
-    public ClusterCreationRoleProvider(String name, @Nullable ClusterCreationRoleProviderArgs args) {
+    public ClusterCreationRoleProvider(java.lang.String name, @Nullable ClusterCreationRoleProviderArgs args) {
         this(name, args, null);
     }
     /**
@@ -46,11 +46,18 @@ public class ClusterCreationRoleProvider extends com.pulumi.resources.ComponentR
      * @param args The arguments to use to populate this resource's properties.
      * @param options A bag of options that control this resource's behavior.
      */
-    public ClusterCreationRoleProvider(String name, @Nullable ClusterCreationRoleProviderArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
-        super("eks:index:ClusterCreationRoleProvider", name, args == null ? ClusterCreationRoleProviderArgs.Empty : args, makeResourceOptions(options, Codegen.empty()), true);
+    public ClusterCreationRoleProvider(java.lang.String name, @Nullable ClusterCreationRoleProviderArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        super("eks:index:ClusterCreationRoleProvider", name, makeArgs(args, options), makeResourceOptions(options, Codegen.empty()), true);
     }
 
-    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<String> id) {
+    private static ClusterCreationRoleProviderArgs makeArgs(@Nullable ClusterCreationRoleProviderArgs args, @Nullable com.pulumi.resources.ComponentResourceOptions options) {
+        if (options != null && options.getUrn().isPresent()) {
+            return null;
+        }
+        return args == null ? ClusterCreationRoleProviderArgs.Empty : args;
+    }
+
+    private static com.pulumi.resources.ComponentResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.ComponentResourceOptions options, @Nullable Output<java.lang.String> id) {
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .build();

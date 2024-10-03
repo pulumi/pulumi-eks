@@ -5,6 +5,7 @@ package com.pulumi.eks.inputs;
 
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.String;
 import java.util.List;
 import java.util.Objects;
@@ -163,9 +164,15 @@ public final class RoleMappingArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public RoleMappingArgs build() {
-            $.groups = Objects.requireNonNull($.groups, "expected parameter 'groups' to be non-null");
-            $.roleArn = Objects.requireNonNull($.roleArn, "expected parameter 'roleArn' to be non-null");
-            $.username = Objects.requireNonNull($.username, "expected parameter 'username' to be non-null");
+            if ($.groups == null) {
+                throw new MissingRequiredPropertyException("RoleMappingArgs", "groups");
+            }
+            if ($.roleArn == null) {
+                throw new MissingRequiredPropertyException("RoleMappingArgs", "roleArn");
+            }
+            if ($.username == null) {
+                throw new MissingRequiredPropertyException("RoleMappingArgs", "username");
+            }
             return $;
         }
     }

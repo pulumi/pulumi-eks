@@ -15,7 +15,7 @@
 import * as pulumi from "@pulumi/pulumi";
 
 import { OperatingSystem } from "./ami";
-import { NodeadmOptions, Taint } from "./nodegroup";
+import { NodeadmOptions } from "./nodegroup";
 import * as jsyaml from "js-yaml";
 import * as toml from "@iarna/toml";
 import * as ipaddr from "ipaddr.js";
@@ -42,6 +42,11 @@ export interface ClusterMetadata {
     certificateAuthority: string;
     // the cluster service CIDR
     serviceCidr: string;
+}
+
+interface Taint {
+    value: string;
+    effect: "NoSchedule" | "NoExecute" | "PreferNoSchedule";
 }
 
 // base arguments for all types of node groups
