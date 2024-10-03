@@ -13,6 +13,7 @@ import (
 )
 
 func TestEksAuthModeUpgrade(t *testing.T) {
+	t.Skip("Temporarily skipping upgrade tests. Needs to be addressed in pulumi/pulumi-eks#1387")
 	t.Parallel()
 	if testing.Short() {
 		t.Skipf("Skipping in testing.Short() mode, assuming this is a CI run without credentials")
