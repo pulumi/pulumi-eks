@@ -912,8 +912,6 @@ class CoreData(dict):
         suggest = None
         if key == "clusterIamRole":
             suggest = "cluster_iam_role"
-        elif key == "clusterSecurityGroup":
-            suggest = "cluster_security_group"
         elif key == "instanceRoles":
             suggest = "instance_roles"
         elif key == "nodeGroupOptions":
@@ -926,6 +924,8 @@ class CoreData(dict):
             suggest = "access_entries"
         elif key == "awsProvider":
             suggest = "aws_provider"
+        elif key == "clusterSecurityGroup":
+            suggest = "cluster_security_group"
         elif key == "eksNodeAccess":
             suggest = "eks_node_access"
         elif key == "encryptionConfig":
@@ -959,7 +959,6 @@ class CoreData(dict):
     def __init__(__self__, *,
                  cluster: 'pulumi_aws.eks.Cluster',
                  cluster_iam_role: 'pulumi_aws.iam.Role',
-                 cluster_security_group: 'pulumi_aws.ec2.SecurityGroup',
                  endpoint: str,
                  instance_roles: Sequence['pulumi_aws.iam.Role'],
                  node_group_options: 'outputs.ClusterNodeGroupOptions',
@@ -968,6 +967,7 @@ class CoreData(dict):
                  vpc_id: str,
                  access_entries: Optional[Sequence['outputs.AccessEntry']] = None,
                  aws_provider: Optional['pulumi_aws.Provider'] = None,
+                 cluster_security_group: Optional['pulumi_aws.ec2.SecurityGroup'] = None,
                  eks_node_access: Optional['pulumi_kubernetes.core.v1.ConfigMap'] = None,
                  encryption_config: Optional['pulumi_aws.eks.outputs.ClusterEncryptionConfig'] = None,
                  fargate_profile: Optional['pulumi_aws.eks.FargateProfile'] = None,
@@ -999,7 +999,6 @@ class CoreData(dict):
         """
         pulumi.set(__self__, "cluster", cluster)
         pulumi.set(__self__, "cluster_iam_role", cluster_iam_role)
-        pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         pulumi.set(__self__, "endpoint", endpoint)
         pulumi.set(__self__, "instance_roles", instance_roles)
         pulumi.set(__self__, "node_group_options", node_group_options)
@@ -1010,6 +1009,8 @@ class CoreData(dict):
             pulumi.set(__self__, "access_entries", access_entries)
         if aws_provider is not None:
             pulumi.set(__self__, "aws_provider", aws_provider)
+        if cluster_security_group is not None:
+            pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         if eks_node_access is not None:
             pulumi.set(__self__, "eks_node_access", eks_node_access)
         if encryption_config is not None:
@@ -1045,11 +1046,6 @@ class CoreData(dict):
         The IAM Role attached to the EKS Cluster
         """
         return pulumi.get(self, "cluster_iam_role")
-
-    @property
-    @pulumi.getter(name="clusterSecurityGroup")
-    def cluster_security_group(self) -> 'pulumi_aws.ec2.SecurityGroup':
-        return pulumi.get(self, "cluster_security_group")
 
     @property
     @pulumi.getter
@@ -1108,6 +1104,11 @@ class CoreData(dict):
     @pulumi.getter(name="awsProvider")
     def aws_provider(self) -> Optional['pulumi_aws.Provider']:
         return pulumi.get(self, "aws_provider")
+
+    @property
+    @pulumi.getter(name="clusterSecurityGroup")
+    def cluster_security_group(self) -> Optional['pulumi_aws.ec2.SecurityGroup']:
+        return pulumi.get(self, "cluster_security_group")
 
     @property
     @pulumi.getter(name="eksNodeAccess")

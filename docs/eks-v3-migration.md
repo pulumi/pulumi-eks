@@ -159,8 +159,14 @@ The `NodeGroup` and `NodeGroupV2` components now accept inputs for the following
 - `taints`
 - `nodeAssociatePublicIpAddress`
 
-If you're using Go you'll need to adjust your program to handle those types being inputs.
+If you are using Go you will need to adjust your program to handle those types being inputs.
 
-### Cluster does not create extraneous instance IAM role if `skipDefaultNodeGroup` is set to `true`
+### Default Security Groups can now be disabled
+If you do not need the default cluster and node security groups you can disable those now
+with the `skipDefaultSecurityGroups` flag. Those security groups will not be created when setting that flag to true.
 
-Previously the Cluster component created a default instance IAM role even if `skipDefaultNodeGroup` was set to `true`. This role gets correctly omitted now if you're specifying `skipDefaultNodeGroup`.
+Because of this change, the `clusterSecurityGroup`, `nodeSecurityGroup` and `clusterIngressRule` properties are optional now. If you're using those outputs you'll need to update your code accordingly.
+
+### Cluster does not create extraneous node IAM role if `skipDefaultNodeGroup` is set to `true`
+
+Previously the Cluster component created a default node IAM role even if `skipDefaultNodeGroup` was set to `true`. This role gets correctly omitted now if you are specifying `skipDefaultNodeGroup`.

@@ -1004,3 +1004,24 @@ func TestAccClusterAddons(t *testing.T) {
 
 	programTestWithExtraOptions(t, &test, nil)
 }
+
+func TestAccSkipDefaultSecurityGroups(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "skip-default-security-groups"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+
+				assert.Nil(t, info.Outputs["clusterSecurityGroup"])
+				assert.Nil(t, info.Outputs["nodeSecurityGroup"])
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}

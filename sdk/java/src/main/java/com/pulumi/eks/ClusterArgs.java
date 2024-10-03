@@ -923,6 +923,25 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+     * 
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+     * 
+     */
+    @Import(name="skipDefaultSecurityGroups")
+    private @Nullable Boolean skipDefaultSecurityGroups;
+
+    /**
+     * @return If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+     * 
+     * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+     * 
+     */
+    public Optional<Boolean> skipDefaultSecurityGroups() {
+        return Optional.ofNullable(this.skipDefaultSecurityGroups);
+    }
+
+    /**
      * An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
      * 
      * Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be created automatically for the cluster by the EKS service. See https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
@@ -1109,6 +1128,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.roleMappings = $.roleMappings;
         this.serviceRole = $.serviceRole;
         this.skipDefaultNodeGroup = $.skipDefaultNodeGroup;
+        this.skipDefaultSecurityGroups = $.skipDefaultSecurityGroups;
         this.storageClasses = $.storageClasses;
         this.subnetIds = $.subnetIds;
         this.tags = $.tags;
@@ -2302,6 +2322,19 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder skipDefaultNodeGroup(@Nullable Boolean skipDefaultNodeGroup) {
             $.skipDefaultNodeGroup = skipDefaultNodeGroup;
+            return this;
+        }
+
+        /**
+         * @param skipDefaultSecurityGroups If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+         * 
+         * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder skipDefaultSecurityGroups(@Nullable Boolean skipDefaultSecurityGroups) {
+            $.skipDefaultSecurityGroups = skipDefaultSecurityGroups;
             return this;
         }
 

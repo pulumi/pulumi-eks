@@ -1273,7 +1273,6 @@ if not MYPY:
         """
         The IAM Role attached to the EKS Cluster
         """
-        cluster_security_group: pulumi.Input['pulumi_aws.ec2.SecurityGroup']
         endpoint: pulumi.Input[str]
         """
         The EKS cluster's Kubernetes API server endpoint.
@@ -1300,6 +1299,7 @@ if not MYPY:
         The access entries added to the cluster.
         """
         aws_provider: NotRequired[pulumi.Input['pulumi_aws.Provider']]
+        cluster_security_group: NotRequired[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]
         eks_node_access: NotRequired[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']]
         encryption_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']]
         fargate_profile: NotRequired[pulumi.Input['pulumi_aws.eks.FargateProfile']]
@@ -1343,7 +1343,6 @@ class CoreDataArgs:
     def __init__(__self__, *,
                  cluster: pulumi.Input['pulumi_aws.eks.Cluster'],
                  cluster_iam_role: pulumi.Input['pulumi_aws.iam.Role'],
-                 cluster_security_group: pulumi.Input['pulumi_aws.ec2.SecurityGroup'],
                  endpoint: pulumi.Input[str],
                  instance_roles: pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]],
                  node_group_options: pulumi.Input['ClusterNodeGroupOptionsArgs'],
@@ -1352,6 +1351,7 @@ class CoreDataArgs:
                  vpc_id: pulumi.Input[str],
                  access_entries: Optional[pulumi.Input[Sequence[pulumi.Input['AccessEntryArgs']]]] = None,
                  aws_provider: Optional[pulumi.Input['pulumi_aws.Provider']] = None,
+                 cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']] = None,
                  encryption_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']] = None,
                  fargate_profile: Optional[pulumi.Input['pulumi_aws.eks.FargateProfile']] = None,
@@ -1383,7 +1383,6 @@ class CoreDataArgs:
         """
         pulumi.set(__self__, "cluster", cluster)
         pulumi.set(__self__, "cluster_iam_role", cluster_iam_role)
-        pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         pulumi.set(__self__, "endpoint", endpoint)
         pulumi.set(__self__, "instance_roles", instance_roles)
         pulumi.set(__self__, "node_group_options", node_group_options)
@@ -1394,6 +1393,8 @@ class CoreDataArgs:
             pulumi.set(__self__, "access_entries", access_entries)
         if aws_provider is not None:
             pulumi.set(__self__, "aws_provider", aws_provider)
+        if cluster_security_group is not None:
+            pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         if eks_node_access is not None:
             pulumi.set(__self__, "eks_node_access", eks_node_access)
         if encryption_config is not None:
@@ -1437,15 +1438,6 @@ class CoreDataArgs:
     @cluster_iam_role.setter
     def cluster_iam_role(self, value: pulumi.Input['pulumi_aws.iam.Role']):
         pulumi.set(self, "cluster_iam_role", value)
-
-    @property
-    @pulumi.getter(name="clusterSecurityGroup")
-    def cluster_security_group(self) -> pulumi.Input['pulumi_aws.ec2.SecurityGroup']:
-        return pulumi.get(self, "cluster_security_group")
-
-    @cluster_security_group.setter
-    def cluster_security_group(self, value: pulumi.Input['pulumi_aws.ec2.SecurityGroup']):
-        pulumi.set(self, "cluster_security_group", value)
 
     @property
     @pulumi.getter
@@ -1536,6 +1528,15 @@ class CoreDataArgs:
     @aws_provider.setter
     def aws_provider(self, value: Optional[pulumi.Input['pulumi_aws.Provider']]):
         pulumi.set(self, "aws_provider", value)
+
+    @property
+    @pulumi.getter(name="clusterSecurityGroup")
+    def cluster_security_group(self) -> Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]:
+        return pulumi.get(self, "cluster_security_group")
+
+    @cluster_security_group.setter
+    def cluster_security_group(self, value: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]):
+        pulumi.set(self, "cluster_security_group", value)
 
     @property
     @pulumi.getter(name="eksNodeAccess")
