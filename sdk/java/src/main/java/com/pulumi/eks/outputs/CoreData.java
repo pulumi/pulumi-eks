@@ -39,7 +39,7 @@ public final class CoreData {
      * 
      */
     private Role clusterIamRole;
-    private SecurityGroup clusterSecurityGroup;
+    private @Nullable SecurityGroup clusterSecurityGroup;
     private @Nullable ConfigMap eksNodeAccess;
     private @Nullable ClusterEncryptionConfig encryptionConfig;
     /**
@@ -131,8 +131,8 @@ public final class CoreData {
     public Role clusterIamRole() {
         return this.clusterIamRole;
     }
-    public SecurityGroup clusterSecurityGroup() {
-        return this.clusterSecurityGroup;
+    public Optional<SecurityGroup> clusterSecurityGroup() {
+        return Optional.ofNullable(this.clusterSecurityGroup);
     }
     public Optional<ConfigMap> eksNodeAccess() {
         return Optional.ofNullable(this.eksNodeAccess);
@@ -251,7 +251,7 @@ public final class CoreData {
         private @Nullable Provider awsProvider;
         private Cluster cluster;
         private Role clusterIamRole;
-        private SecurityGroup clusterSecurityGroup;
+        private @Nullable SecurityGroup clusterSecurityGroup;
         private @Nullable ConfigMap eksNodeAccess;
         private @Nullable ClusterEncryptionConfig encryptionConfig;
         private String endpoint;
@@ -328,10 +328,8 @@ public final class CoreData {
             return this;
         }
         @CustomType.Setter
-        public Builder clusterSecurityGroup(SecurityGroup clusterSecurityGroup) {
-            if (clusterSecurityGroup == null) {
-              throw new MissingRequiredPropertyException("CoreData", "clusterSecurityGroup");
-            }
+        public Builder clusterSecurityGroup(@Nullable SecurityGroup clusterSecurityGroup) {
+
             this.clusterSecurityGroup = clusterSecurityGroup;
             return this;
         }

@@ -289,7 +289,7 @@ if not MYPY:
 
         Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
         """
-        bootstrap_extra_args: NotRequired[str]
+        bootstrap_extra_args: NotRequired[pulumi.Input[str]]
         """
         Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         """
@@ -370,11 +370,11 @@ if not MYPY:
         """
         Name of the key pair to use for SSH access to worker nodes.
         """
-        kubelet_extra_args: NotRequired[str]
+        kubelet_extra_args: NotRequired[pulumi.Input[str]]
         """
         Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         """
-        labels: NotRequired[Mapping[str, str]]
+        labels: NotRequired[pulumi.Input[Mapping[str, pulumi.Input[str]]]]
         """
         Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         """
@@ -394,7 +394,7 @@ if not MYPY:
         """
         The minimum number of worker nodes running in the cluster. Defaults to 1.
         """
-        node_associate_public_ip_address: NotRequired[bool]
+        node_associate_public_ip_address: NotRequired[pulumi.Input[bool]]
         """
         Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         """
@@ -480,7 +480,7 @@ if not MYPY:
         """
         Bidding price for spot instance. If set, only spot instances will be added as worker node.
         """
-        taints: NotRequired[Mapping[str, 'TaintArgsDict']]
+        taints: NotRequired[pulumi.Input[Mapping[str, pulumi.Input['TaintArgsDict']]]]
         """
         Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         """
@@ -1273,7 +1273,6 @@ if not MYPY:
         """
         The IAM Role attached to the EKS Cluster
         """
-        cluster_security_group: pulumi.Input['pulumi_aws.ec2.SecurityGroup']
         endpoint: pulumi.Input[str]
         """
         The EKS cluster's Kubernetes API server endpoint.
@@ -1300,6 +1299,7 @@ if not MYPY:
         The access entries added to the cluster.
         """
         aws_provider: NotRequired[pulumi.Input['pulumi_aws.Provider']]
+        cluster_security_group: NotRequired[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]
         eks_node_access: NotRequired[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']]
         encryption_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']]
         fargate_profile: NotRequired[pulumi.Input['pulumi_aws.eks.FargateProfile']]
@@ -1343,7 +1343,6 @@ class CoreDataArgs:
     def __init__(__self__, *,
                  cluster: pulumi.Input['pulumi_aws.eks.Cluster'],
                  cluster_iam_role: pulumi.Input['pulumi_aws.iam.Role'],
-                 cluster_security_group: pulumi.Input['pulumi_aws.ec2.SecurityGroup'],
                  endpoint: pulumi.Input[str],
                  instance_roles: pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]],
                  node_group_options: pulumi.Input['ClusterNodeGroupOptionsArgs'],
@@ -1352,6 +1351,7 @@ class CoreDataArgs:
                  vpc_id: pulumi.Input[str],
                  access_entries: Optional[pulumi.Input[Sequence[pulumi.Input['AccessEntryArgs']]]] = None,
                  aws_provider: Optional[pulumi.Input['pulumi_aws.Provider']] = None,
+                 cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  eks_node_access: Optional[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']] = None,
                  encryption_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']] = None,
                  fargate_profile: Optional[pulumi.Input['pulumi_aws.eks.FargateProfile']] = None,
@@ -1383,7 +1383,6 @@ class CoreDataArgs:
         """
         pulumi.set(__self__, "cluster", cluster)
         pulumi.set(__self__, "cluster_iam_role", cluster_iam_role)
-        pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         pulumi.set(__self__, "endpoint", endpoint)
         pulumi.set(__self__, "instance_roles", instance_roles)
         pulumi.set(__self__, "node_group_options", node_group_options)
@@ -1394,6 +1393,8 @@ class CoreDataArgs:
             pulumi.set(__self__, "access_entries", access_entries)
         if aws_provider is not None:
             pulumi.set(__self__, "aws_provider", aws_provider)
+        if cluster_security_group is not None:
+            pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         if eks_node_access is not None:
             pulumi.set(__self__, "eks_node_access", eks_node_access)
         if encryption_config is not None:
@@ -1437,15 +1438,6 @@ class CoreDataArgs:
     @cluster_iam_role.setter
     def cluster_iam_role(self, value: pulumi.Input['pulumi_aws.iam.Role']):
         pulumi.set(self, "cluster_iam_role", value)
-
-    @property
-    @pulumi.getter(name="clusterSecurityGroup")
-    def cluster_security_group(self) -> pulumi.Input['pulumi_aws.ec2.SecurityGroup']:
-        return pulumi.get(self, "cluster_security_group")
-
-    @cluster_security_group.setter
-    def cluster_security_group(self, value: pulumi.Input['pulumi_aws.ec2.SecurityGroup']):
-        pulumi.set(self, "cluster_security_group", value)
 
     @property
     @pulumi.getter
@@ -1536,6 +1528,15 @@ class CoreDataArgs:
     @aws_provider.setter
     def aws_provider(self, value: Optional[pulumi.Input['pulumi_aws.Provider']]):
         pulumi.set(self, "aws_provider", value)
+
+    @property
+    @pulumi.getter(name="clusterSecurityGroup")
+    def cluster_security_group(self) -> Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]:
+        return pulumi.get(self, "cluster_security_group")
+
+    @cluster_security_group.setter
+    def cluster_security_group(self, value: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]):
+        pulumi.set(self, "cluster_security_group", value)
 
     @property
     @pulumi.getter(name="eksNodeAccess")
@@ -2507,11 +2508,11 @@ if not MYPY:
         """
         Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
         """
-        effect: str
+        effect: pulumi.Input[str]
         """
         The effect of the taint.
         """
-        value: str
+        value: pulumi.Input[str]
         """
         The value of the taint.
         """

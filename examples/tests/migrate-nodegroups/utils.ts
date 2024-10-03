@@ -16,8 +16,8 @@ export function createNodeGroup(
 ): eks.NodeGroup {
     return new eks.NodeGroup(name, {
         cluster: args.cluster,
-        nodeSecurityGroup: args.cluster.nodeSecurityGroup,
-        clusterIngressRule: args.cluster.eksClusterIngressRule,
+        nodeSecurityGroup: args.cluster.nodeSecurityGroup.apply(v => v!),
+        clusterIngressRule: args.cluster.eksClusterIngressRule.apply(v => v!),
         instanceType: args.instanceType,
         nodeAssociatePublicIpAddress: false,
         desiredCapacity: args.desiredCapacity,

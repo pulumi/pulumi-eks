@@ -39,8 +39,8 @@ namespace Pulumi.Eks.Inputs
         [Input("clusterIamRole", required: true)]
         public Input<Pulumi.Aws.Iam.Role> ClusterIamRole { get; set; } = null!;
 
-        [Input("clusterSecurityGroup", required: true)]
-        public Input<Pulumi.Aws.Ec2.SecurityGroup> ClusterSecurityGroup { get; set; } = null!;
+        [Input("clusterSecurityGroup")]
+        public Input<Pulumi.Aws.Ec2.SecurityGroup>? ClusterSecurityGroup { get; set; }
 
         [Input("eksNodeAccess")]
         public Input<Pulumi.Kubernetes.Core.V1.ConfigMap>? EksNodeAccess { get; set; }

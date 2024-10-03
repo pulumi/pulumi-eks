@@ -79,11 +79,11 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
         return this.clusterIamRole;
     }
 
-    @Import(name="clusterSecurityGroup", required=true)
-    private Output<SecurityGroup> clusterSecurityGroup;
+    @Import(name="clusterSecurityGroup")
+    private @Nullable Output<SecurityGroup> clusterSecurityGroup;
 
-    public Output<SecurityGroup> clusterSecurityGroup() {
-        return this.clusterSecurityGroup;
+    public Optional<Output<SecurityGroup>> clusterSecurityGroup() {
+        return Optional.ofNullable(this.clusterSecurityGroup);
     }
 
     @Import(name="eksNodeAccess")
@@ -424,7 +424,7 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
             return clusterIamRole(Output.of(clusterIamRole));
         }
 
-        public Builder clusterSecurityGroup(Output<SecurityGroup> clusterSecurityGroup) {
+        public Builder clusterSecurityGroup(@Nullable Output<SecurityGroup> clusterSecurityGroup) {
             $.clusterSecurityGroup = clusterSecurityGroup;
             return this;
         }
@@ -788,9 +788,6 @@ public final class CoreDataArgs extends com.pulumi.resources.ResourceArgs {
             }
             if ($.clusterIamRole == null) {
                 throw new MissingRequiredPropertyException("CoreDataArgs", "clusterIamRole");
-            }
-            if ($.clusterSecurityGroup == null) {
-                throw new MissingRequiredPropertyException("CoreDataArgs", "clusterSecurityGroup");
             }
             if ($.endpoint == null) {
                 throw new MissingRequiredPropertyException("CoreDataArgs", "endpoint");
