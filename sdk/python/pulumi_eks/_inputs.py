@@ -289,7 +289,7 @@ if not MYPY:
 
         Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
         """
-        bootstrap_extra_args: NotRequired[str]
+        bootstrap_extra_args: NotRequired[pulumi.Input[str]]
         """
         Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         """
@@ -370,11 +370,11 @@ if not MYPY:
         """
         Name of the key pair to use for SSH access to worker nodes.
         """
-        kubelet_extra_args: NotRequired[str]
+        kubelet_extra_args: NotRequired[pulumi.Input[str]]
         """
         Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         """
-        labels: NotRequired[Mapping[str, str]]
+        labels: NotRequired[pulumi.Input[Mapping[str, pulumi.Input[str]]]]
         """
         Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         """
@@ -394,7 +394,7 @@ if not MYPY:
         """
         The minimum number of worker nodes running in the cluster. Defaults to 1.
         """
-        node_associate_public_ip_address: NotRequired[bool]
+        node_associate_public_ip_address: NotRequired[pulumi.Input[bool]]
         """
         Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         """
@@ -480,7 +480,7 @@ if not MYPY:
         """
         Bidding price for spot instance. If set, only spot instances will be added as worker node.
         """
-        taints: NotRequired[Mapping[str, 'TaintArgsDict']]
+        taints: NotRequired[pulumi.Input[Mapping[str, pulumi.Input['TaintArgsDict']]]]
         """
         Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         """
@@ -2507,11 +2507,11 @@ if not MYPY:
         """
         Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
         """
-        effect: str
+        effect: pulumi.Input[str]
         """
         The effect of the taint.
         """
-        value: str
+        value: pulumi.Input[str]
         """
         The value of the taint.
         """
