@@ -242,7 +242,6 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 						"awsProvider",
 						// "provider",
 						"instanceRoles",
-						"eksClusterIngressRule",
 						"eksCluster",
 						"core",
 					},

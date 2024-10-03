@@ -15,7 +15,6 @@ const eksVpc = new awsx.ec2.Vpc("managed-ng-os", {
 // for managed node groups because they use the cluster security group created
 // by EKS.
 const cluster = new eks.Cluster("managed-ng-os", {
-  skipDefaultNodeGroup: true,
   skipDefaultSecurityGroups: true,
   vpcId: eksVpc.vpcId,
   authenticationMode: eks.AuthenticationMode.API,

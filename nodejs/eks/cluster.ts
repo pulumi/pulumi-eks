@@ -2024,14 +2024,6 @@ export function createCluster(
         };
     }
 
-    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
-    if (!skipDefaultNodeGroup && args.skipDefaultSecurityGroups) {
-        throw new pulumi.ResourceError(
-            "skipDefaultSecurityGroups cannot be set when creating the default node group. Set `skipDefaultNodeGroup` or `fargate` to omit the default node group.",
-            self,
-        );
-    }
-
     // Create the core resources required by the cluster.
     const core = createCore(name, args, self, opts?.provider);
 
@@ -2050,7 +2042,7 @@ export function createCluster(
             name,
             {
                 vpcId: core.vpcId,
-                clusterSecurityGroup: core.clusterSecurityGroup,
+                clusterSecurityGroupId: core.clusterSecurityGroup.id,
                 eksCluster: core.cluster,
                 tags: pulumi.all([args.tags, args.nodeSecurityGroupTags]).apply(
                     ([tags, nodeSecurityGroupTags]) =>
@@ -2065,6 +2057,8 @@ export function createCluster(
         core.nodeGroupOptions.nodeSecurityGroup = nodeSecurityGroup;
         core.nodeGroupOptions.clusterIngressRule = eksClusterIngressRule;
     }
+
+    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
 
     // Create the default worker node group and grant the workers access to the API server.
     let defaultNodeGroup: NodeGroupV2Data | undefined = undefined;

@@ -714,16 +714,9 @@ function createNodeGroupInternal(
             name,
             {
                 vpcId: core.vpcId,
-                clusterSecurityGroup: pulumi.output(core.clusterSecurityGroup).apply((sg) => {
-                    if (!sg) {
-                        throw new pulumi.ResourceError(
-                            "Cluster security group is required for node group. Please create the cluster without specifying `skipDefaultNodeGroups`.",
-                            parent,
-                        );
-                    }
-
-                    return sg;
-                }),
+                clusterSecurityGroupId: pulumi
+                    .output(core.clusterSecurityGroup)
+                    .apply((sg) => sg?.id ?? core.cluster.vpcConfig.clusterSecurityGroupId),
                 eksCluster: eksCluster,
                 tags: pulumi.all([core.tags, core.nodeSecurityGroupTags]).apply(
                     ([tags, nodeSecurityGroupTags]) =>
@@ -1102,19 +1095,19 @@ function createNodeGroupV2Internal(
         return args.instanceProfile?.arn ?? c.nodeGroupOptions.instanceProfile!.arn;
     });
 
-    core.apply((c) => {
-        if (c.nodeGroupOptions.nodeSecurityGroup && args.nodeSecurityGroup) {
-            if (
-                c.nodeSecurityGroupTags &&
-                c.nodeGroupOptions.nodeSecurityGroup.id !== args.nodeSecurityGroup.id
-            ) {
-                throw new pulumi.ResourceError(
-                    `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
-                    parent,
-                );
+    const coreSecurityGroupId = core.nodeGroupOptions.nodeSecurityGroup?.apply((sg) => sg?.id);
+    pulumi
+        .all([coreSecurityGroupId, args.nodeSecurityGroup?.id, core.nodeSecurityGroupTags])
+        .apply(([coreSecurityGroup, nodeSecurityGroup, sgTags]) => {
+            if (coreSecurityGroup && nodeSecurityGroup) {
+                if (sgTags && coreSecurityGroup !== nodeSecurityGroup) {
+                    throw new pulumi.ResourceError(
+                        `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
+                        parent,
+                    );
+                }
             }
-        }
-    });
+        });
 
     if (args.nodePublicKey && args.keyName) {
         throw new pulumi.ResourceError(
@@ -1169,16 +1162,9 @@ function createNodeGroupV2Internal(
             name,
             {
                 vpcId: core.vpcId,
-                clusterSecurityGroup: pulumi.output(core.clusterSecurityGroup).apply((sg) => {
-                    if (!sg) {
-                        throw new pulumi.ResourceError(
-                            "Cluster security group is required for node group. Please create the cluster without specifying `skipDefaultNodeGroups`.",
-                            parent,
-                        );
-                    }
-
-                    return sg;
-                }),
+                clusterSecurityGroupId: pulumi
+                    .output(core.clusterSecurityGroup)
+                    .apply((sg) => sg?.id ?? core.cluster.vpcConfig.clusterSecurityGroupId),
                 eksCluster: eksCluster,
                 tags: core.apply(
                     (c) =>

@@ -138,14 +138,14 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      * 
      */
     @Export(name="eksClusterIngressRule", refs={SecurityGroupRule.class}, tree="[0]")
-    private Output<SecurityGroupRule> eksClusterIngressRule;
+    private Output</* @Nullable */ SecurityGroupRule> eksClusterIngressRule;
 
     /**
      * @return The ingress rule that gives node group access to cluster API server.
      * 
      */
-    public Output<SecurityGroupRule> eksClusterIngressRule() {
-        return this.eksClusterIngressRule;
+    public Output<Optional<SecurityGroupRule>> eksClusterIngressRule() {
+        return Codegen.optional(this.eksClusterIngressRule);
     }
     /**
      * The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.

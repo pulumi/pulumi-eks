@@ -1608,7 +1608,7 @@ class Cluster(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="eksClusterIngressRule")
-    def eks_cluster_ingress_rule(self) -> pulumi.Output['pulumi_aws.ec2.SecurityGroupRule']:
+    def eks_cluster_ingress_rule(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroupRule']]:
         """
         The ingress rule that gives node group access to cluster API server.
         """

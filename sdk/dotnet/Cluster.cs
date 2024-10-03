@@ -75,7 +75,7 @@ namespace Pulumi.Eks
         /// The ingress rule that gives node group access to cluster API server.
         /// </summary>
         [Output("eksClusterIngressRule")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroupRule> EksClusterIngressRule { get; private set; } = null!;
+        public Output<Pulumi.Aws.Ec2.SecurityGroupRule?> EksClusterIngressRule { get; private set; } = null!;
 
         /// <summary>
         /// The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.

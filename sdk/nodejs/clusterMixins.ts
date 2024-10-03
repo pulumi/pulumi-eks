@@ -74,22 +74,25 @@ Object.defineProperty(Cluster.prototype, 'provider', {
 })
 
 Cluster.prototype.createNodeGroup = function(name: string, args: ClusterNodeGroupOptionsArgs, awsProvider?: pulumi.ProviderResource): NodeGroup {
+    const { nodeSecurityGroup, clusterIngressRule } = pulumi.all([this.nodeSecurityGroup, this.eksClusterIngressRule])
+        .apply(([nodeSecurityGroup, clusterIngressRule]) => {
+            if (!nodeSecurityGroup || !clusterIngressRule) {
+                throw new pulumi.ResourceError(
+                    "The nodeSecurityGroup and eksClusterIngressRule are required when using `createNodeGroup`. Please create the cluster without specifying `skipDefaultNodeGroups`.",
+                    this,
+                );
+            }
+
+            return { nodeSecurityGroup, clusterIngressRule };
+        });
+
     return new NodeGroup(
         name,
         {
             ...args,
             cluster: this.core,
-            nodeSecurityGroup: pulumi.output(this.clusterSecurityGroup).apply((sg) => {
-                    if (!sg) {
-                        throw new pulumi.ResourceError(
-                            "Cluster security group is required for node group. Please create the cluster without specifying `skipDefaultNodeGroups`.",
-                            this,
-                        );
-                    }
-
-                    return sg;
-                }),
-            clusterIngressRule: this.eksClusterIngressRule,
+            nodeSecurityGroup,
+            clusterIngressRule,
         },
         {
             // parent: this,

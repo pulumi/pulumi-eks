@@ -70,7 +70,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The ingress rule that gives node group access to cluster API server.
      */
-    public /*out*/ readonly eksClusterIngressRule!: pulumi.Output<pulumiAws.ec2.SecurityGroupRule>;
+    public /*out*/ readonly eksClusterIngressRule!: pulumi.Output<pulumiAws.ec2.SecurityGroupRule | undefined>;
     /**
      * The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      */
