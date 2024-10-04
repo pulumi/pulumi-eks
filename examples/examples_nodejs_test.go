@@ -829,6 +829,9 @@ func TestAccManagedNodeGroupCustom(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 
+				defaultInstanceRoles := info.Outputs["defaultInstanceRoles"]
+				assert.Empty(t, defaultInstanceRoles, "Expected no instanceRoles to be created")
+
 				expectedLaunchTemplateName := info.Outputs["launchTemplateName"]
 
 				var launchTemplateFound bool = false
