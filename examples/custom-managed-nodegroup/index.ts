@@ -31,6 +31,8 @@ const cluster = new eks.Cluster("example-managed-nodegroup", {
   }
 });
 
+export const defaultInstanceRoles = cluster.instanceRoles;
+
 // Export the cluster's kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
 
