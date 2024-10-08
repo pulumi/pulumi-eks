@@ -194,5 +194,3 @@ function configureClusterAccess(name: string, cluster: eks.Cluster, sg: aws.ec2.
     cidrIpv4: "0.0.0.0/0",
   });
 }
-
-// new time.Sleep("wait", {createDuration: "2h"});
