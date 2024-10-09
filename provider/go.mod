@@ -6,8 +6,8 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/pulumi/providertest v0.0.15
-	github.com/pulumi/pulumi/pkg/v3 v3.135.0
-	github.com/pulumi/pulumi/sdk/v3 v3.135.0
+	github.com/pulumi/pulumi/pkg/v3 v3.136.2-0.20241009115009-6df535394514
+	github.com/pulumi/pulumi/sdk/v3 v3.136.2-0.20241009115009-6df535394514
 	github.com/stretchr/testify v1.9.0
 )
 

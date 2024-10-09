@@ -2749,6 +2749,80 @@ type NodeGroupData struct {
 	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
 }
 
+// NodeGroupDataInput is an input type that accepts NodeGroupDataArgs and NodeGroupDataOutput values.
+// You can construct a concrete instance of `NodeGroupDataInput` via:
+//
+//	NodeGroupDataArgs{...}
+type NodeGroupDataInput interface {
+	pulumi.Input
+
+	ToNodeGroupDataOutput() NodeGroupDataOutput
+	ToNodeGroupDataOutputWithContext(context.Context) NodeGroupDataOutput
+}
+
+// NodeGroupData describes the resources created for the given NodeGroup.
+type NodeGroupDataArgs struct {
+	// The AutoScalingGroup for the node group.
+	AutoScalingGroup autoscaling.GroupInput `pulumi:"autoScalingGroup"`
+	// The additional security groups for the node group that captures user-specific rules.
+	ExtraNodeSecurityGroups ec2.SecurityGroupArrayInput `pulumi:"extraNodeSecurityGroups"`
+	// The security group for the node group to communicate with the cluster.
+	NodeSecurityGroup ec2.SecurityGroupInput `pulumi:"nodeSecurityGroup"`
+}
+
+func (NodeGroupDataArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*NodeGroupData)(nil)).Elem()
+}
+
+func (i NodeGroupDataArgs) ToNodeGroupDataOutput() NodeGroupDataOutput {
+	return i.ToNodeGroupDataOutputWithContext(context.Background())
+}
+
+func (i NodeGroupDataArgs) ToNodeGroupDataOutputWithContext(ctx context.Context) NodeGroupDataOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupDataOutput)
+}
+
+func (i NodeGroupDataArgs) ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput {
+	return i.ToNodeGroupDataPtrOutputWithContext(context.Background())
+}
+
+func (i NodeGroupDataArgs) ToNodeGroupDataPtrOutputWithContext(ctx context.Context) NodeGroupDataPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupDataOutput).ToNodeGroupDataPtrOutputWithContext(ctx)
+}
+
+// NodeGroupDataPtrInput is an input type that accepts NodeGroupDataArgs, NodeGroupDataPtr and NodeGroupDataPtrOutput values.
+// You can construct a concrete instance of `NodeGroupDataPtrInput` via:
+//
+//	        NodeGroupDataArgs{...}
+//
+//	or:
+//
+//	        nil
+type NodeGroupDataPtrInput interface {
+	pulumi.Input
+
+	ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput
+	ToNodeGroupDataPtrOutputWithContext(context.Context) NodeGroupDataPtrOutput
+}
+
+type nodeGroupDataPtrType NodeGroupDataArgs
+
+func NodeGroupDataPtr(v *NodeGroupDataArgs) NodeGroupDataPtrInput {
+	return (*nodeGroupDataPtrType)(v)
+}
+
+func (*nodeGroupDataPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**NodeGroupData)(nil)).Elem()
+}
+
+func (i *nodeGroupDataPtrType) ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput {
+	return i.ToNodeGroupDataPtrOutputWithContext(context.Background())
+}
+
+func (i *nodeGroupDataPtrType) ToNodeGroupDataPtrOutputWithContext(ctx context.Context) NodeGroupDataPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NodeGroupDataPtrOutput)
+}
+
 // NodeGroupData describes the resources created for the given NodeGroup.
 type NodeGroupDataOutput struct{ *pulumi.OutputState }
 
@@ -2762,6 +2836,16 @@ func (o NodeGroupDataOutput) ToNodeGroupDataOutput() NodeGroupDataOutput {
 
 func (o NodeGroupDataOutput) ToNodeGroupDataOutputWithContext(ctx context.Context) NodeGroupDataOutput {
 	return o
+}
+
+func (o NodeGroupDataOutput) ToNodeGroupDataPtrOutput() NodeGroupDataPtrOutput {
+	return o.ToNodeGroupDataPtrOutputWithContext(context.Background())
+}
+
+func (o NodeGroupDataOutput) ToNodeGroupDataPtrOutputWithContext(ctx context.Context) NodeGroupDataPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v NodeGroupData) *NodeGroupData {
+		return &v
+	}).(NodeGroupDataPtrOutput)
 }
 
 // The AutoScalingGroup for the node group.
@@ -4235,6 +4319,8 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*KubeProxyAddonOptionsPtrInput)(nil)).Elem(), KubeProxyAddonOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*KubeconfigOptionsInput)(nil)).Elem(), KubeconfigOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*KubeconfigOptionsPtrInput)(nil)).Elem(), KubeconfigOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupDataInput)(nil)).Elem(), NodeGroupDataArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NodeGroupDataPtrInput)(nil)).Elem(), NodeGroupDataArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*NodeadmOptionsInput)(nil)).Elem(), NodeadmOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*NodeadmOptionsArrayInput)(nil)).Elem(), NodeadmOptionsArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*RoleMappingInput)(nil)).Elem(), RoleMappingArgs{})

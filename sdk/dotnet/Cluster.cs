@@ -63,7 +63,7 @@ namespace Pulumi.Eks
         /// The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
         /// </summary>
         [Output("defaultNodeGroup")]
-        public Output<Outputs.NodeGroupData?> DefaultNodeGroup { get; private set; } = null!;
+        public Outputs.NodeGroupData? DefaultNodeGroup { get; private set; } = null!;
 
         /// <summary>
         /// The EKS cluster.
@@ -99,7 +99,7 @@ namespace Pulumi.Eks
         /// The security group for the cluster's nodes.
         /// </summary>
         [Output("nodeSecurityGroup")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroup?> NodeSecurityGroup { get; private set; } = null!;
+        public Pulumi.Aws.Ec2.SecurityGroup? NodeSecurityGroup { get; private set; } = null!;
 
 
         /// <summary>

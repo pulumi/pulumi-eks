@@ -1087,6 +1087,7 @@
                 },
                 "defaultNodeGroup": {
                     "$ref": "#/types/eks:index:NodeGroupData",
+                    "plain": true,
                     "description": "The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified."
                 },
                 "eksCluster": {
@@ -1114,6 +1115,7 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group for the cluster's nodes."
                 }
             },
