@@ -38,9 +38,14 @@ AWS recently announced the deprecation of two features used by default in Pulumi
 ## VPC CNI Component changes
 
 The VPC CNI cluster component is now configured as an EKS addon as mentioned in the “New Features” section above. This brings the following changes:
-
 - Removed `enableIpv6` input property. The component automatically configures the IP version now depending on whether the cluster is running in IPv4 or IPv6 mode.  
 - Removed `image`, `initImage`, `nodeAgentImage` input properties. The component now automatically selects an image registry in the cluster’s region to pull the images from.
+
+During the update, you'll observe two key changes:
+1. The removal of the previous `kubectl`-based `VpcCni` component.
+2. The creation of the new EKS addon-based `VpcCniAddon` component.
+
+It's important to note that deleting the `VpcCni` component will not modify or delete any existing on-cluster resources. When creating the `VpcCniAddon` component, it will safely adopt the existing VPC CNI resources and update them to the current recommended version.
 
 ## Node Group Updates
 
