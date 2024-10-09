@@ -65,8 +65,10 @@ const kube = cluster.provider;
 const nginxSg = new aws.ec2.SecurityGroup("nginx", {
   vpcId: eksVpc.vpcId,
 });
-// Allow all traffic between the cluster to the nginx SecurityGroup
+
+// Allow all traffic between the cluster and the nginx SecurityGroup
 configureClusterAccess("nginx", cluster, nginxSg);
+
 // Create the nginx application (Deployment, Service, SecurityGroupPolicy)
 const nginx = app.createApplication("nginx", nginxSg.id, kube);
 
@@ -78,8 +80,10 @@ const nginx = app.createApplication("nginx", nginxSg.id, kube);
 const callerSg = new aws.ec2.SecurityGroup("caller", {
   vpcId: eksVpc.vpcId,
 });
+
 // Allow all traffic between the cluster and the caller SecurityGroup
 configureClusterAccess("caller", cluster, callerSg);
+
 // Allow the caller job to access the nginx service
 new aws.vpc.SecurityGroupIngressRule("caller-to-nginx", {
   securityGroupId: nginxSg.id,
@@ -131,6 +135,7 @@ new k8s.batch.v1.Job("caller", {
 const wrongCallerSg = new aws.ec2.SecurityGroup("wrong-caller", {
   vpcId: eksVpc.vpcId,
 });
+
 // Allow all traffic between the cluster and the caller SecurityGroup
 configureClusterAccess("wrong-caller", cluster, wrongCallerSg);
 
