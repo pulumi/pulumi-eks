@@ -1025,3 +1025,21 @@ func TestAccSkipDefaultSecurityGroups(t *testing.T) {
 
 	programTestWithExtraOptions(t, &test, nil)
 }
+
+func TestAccNetworkPolicies(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "network-policies"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
