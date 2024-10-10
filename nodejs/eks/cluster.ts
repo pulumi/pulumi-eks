@@ -2155,7 +2155,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
                 clusterIamRole: undefined,
                 clusterIamRoleName: undefined,
                 defaultNodeGroupAsg: undefined,
-                oidcProvider: undefined
+                oidcProvider: undefined,
 
                 // todo flo: add the new optional properties here and in the registerOutputs below
             };

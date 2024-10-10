@@ -231,15 +231,15 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 						},
 						"defaultNodeGroup": {
 							TypeSpec: schema.TypeSpec{
-								Ref:   "#/types/eks:index:NodeGroupData",
+								Ref: "#/types/eks:index:NodeGroupData",
 							},
 							DeprecationMessage: "TODO flo",
 							Description: "The default Node Group configuration, or undefined if " +
 								"`skipDefaultNodeGroup` was specified.",
 						},
 						"defaultNodeGroupAsg": {
-							TypeSpec:    schema.TypeSpec{
-								Ref: awsRef("#/resources/aws:autoscaling%2Fgroup:Group"),
+							TypeSpec: schema.TypeSpec{
+								Ref:   awsRef("#/resources/aws:autoscaling%2Fgroup:Group"),
 								Plain: true,
 							},
 							Description: "The AutoScalingGroup of the default node group.",
@@ -252,8 +252,8 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 							Description: "The EKS cluster.",
 						},
 						"core": {
-							TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
-							Description: "The EKS cluster and its dependencies.",
+							TypeSpec:           schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
+							Description:        "The EKS cluster and its dependencies.",
 							DeprecationMessage: "TODO flo",
 						},
 						"vpcId": {
@@ -269,39 +269,39 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 						},
 						"kubernetesProvider": {
 							TypeSpec: schema.TypeSpec{
-								Ref: k8sRef("#/provider"),
+								Ref:   k8sRef("#/provider"),
 								Plain: true,
 							},
 						},
 						"awsAuthConfigMap": {
 							TypeSpec: schema.TypeSpec{
-								Ref: k8sRef("#/resources/kubernetes:core%2Fv1:ConfigMap"),
+								Ref:   k8sRef("#/resources/kubernetes:core%2Fv1:ConfigMap"),
 								Plain: true,
 							},
 						},
 						"vpcCni": {
-							TypeSpec:    schema.TypeSpec{
-								Ref: "#/resources/eks:index:VpcCniAddon",
+							TypeSpec: schema.TypeSpec{
+								Ref:   "#/resources/eks:index:VpcCniAddon",
 								Plain: true,
 							},
 							Description: "The VPC CNI for the cluster.",
 						},
 						"fargateProfile": {
-							TypeSpec:    schema.TypeSpec{
-								Ref: awsRef("#/resources/aws:eks%2FfargateProfile:FargateProfile"),
+							TypeSpec: schema.TypeSpec{
+								Ref:   awsRef("#/resources/aws:eks%2FfargateProfile:FargateProfile"),
 								Plain: true,
 							},
 							Description: "The Fargate profile used to manage which pods run on Fargate.",
 						},
 						"oidcProvider": {
 							TypeSpec: schema.TypeSpec{
-								Ref: awsRef("#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider"),
+								Ref:   awsRef("#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider"),
 								Plain: true,
 							},
 						},
 						"clusterIamRole": {
 							Description: "The IAM Role attached to the EKS Cluster",
-							TypeSpec:    schema.TypeSpec{
+							TypeSpec: schema.TypeSpec{
 								// this cannot be plain, because if users pass in the role it's a pulumi.Input<aws.iam.Role>
 								Ref: awsRef("#/resources/aws:iam%2Frole:Role"),
 							},
@@ -1092,8 +1092,8 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 							Description: "The additional security groups for the node group that captures user-specific rules.",
 						},
 						"cfnStack": {
-							TypeSpec:    schema.TypeSpec{
-								Ref: awsRef("#/resources/aws:cloudformation%2Fstack:Stack"),
+							TypeSpec: schema.TypeSpec{
+								Ref:   awsRef("#/resources/aws:cloudformation%2Fstack:Stack"),
 								Plain: true,
 							},
 							Description: "The CloudFormation Stack which defines the Node AutoScalingGroup.",
