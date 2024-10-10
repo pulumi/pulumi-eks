@@ -151,6 +151,8 @@ func TestAccManagedNodeGroup(t *testing.T) {
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig"],
 				)
+
+				assert.NotEmpty(t, info.Outputs["mngName"], "nodegroup name should not be empty")
 			},
 		})
 

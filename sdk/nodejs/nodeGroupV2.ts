@@ -33,7 +33,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource {
     /**
      * The AutoScalingGroup for the Node group.
      */
-    public /*out*/ readonly autoScalingGroup!: pulumi.Output<pulumiAws.autoscaling.Group>;
+    public /*out*/ readonly autoScalingGroup!: pulumiAws.autoscaling.Group;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
@@ -41,7 +41,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource {
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    public readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup>;
+    public readonly nodeSecurityGroup!: pulumiAws.ec2.SecurityGroup;
 
     /**
      * Create a NodeGroupV2 resource with the given unique name, arguments, and options.

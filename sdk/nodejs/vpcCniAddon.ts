@@ -11,19 +11,7 @@ import * as utilities from "./utilities";
  * VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
  * For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
  */
-export class VpcCniAddon extends pulumi.CustomResource {
-    /**
-     * Get an existing VpcCniAddon resource's state with the given name, ID, and optional extra
-     * properties used to qualify the lookup.
-     *
-     * @param name The _unique_ name of the resulting resource.
-     * @param id The _unique_ provider ID of the resource to lookup.
-     * @param opts Optional settings to control the behavior of the CustomResource.
-     */
-    public static get(name: string, id: pulumi.Input<pulumi.ID>, opts?: pulumi.CustomResourceOptions): VpcCniAddon {
-        return new VpcCniAddon(name, undefined as any, { ...opts, id: id });
-    }
-
+export class VpcCniAddon extends pulumi.ComponentResource {
     /** @internal */
     public static readonly __pulumiType = 'eks:index:VpcCniAddon';
 
@@ -46,7 +34,7 @@ export class VpcCniAddon extends pulumi.CustomResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param opts A bag of options that control this resource's behavior.
      */
-    constructor(name: string, args: VpcCniAddonArgs, opts?: pulumi.CustomResourceOptions) {
+    constructor(name: string, args: VpcCniAddonArgs, opts?: pulumi.ComponentResourceOptions) {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
@@ -85,7 +73,7 @@ export class VpcCniAddon extends pulumi.CustomResource {
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         const aliasOpts = { aliases: [{ type: "eks:index:VpcCni" }] };
         opts = pulumi.mergeOptions(opts, aliasOpts);
-        super(VpcCniAddon.__pulumiType, name, resourceInputs, opts);
+        super(VpcCniAddon.__pulumiType, name, resourceInputs, opts, true /*remote*/);
     }
 }
 

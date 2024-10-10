@@ -16,7 +16,7 @@ namespace Pulumi.Eks
     public partial class ClusterCreationRoleProvider : global::Pulumi.ComponentResource
     {
         [Output("role")]
-        public Output<Pulumi.Aws.Iam.Role> Role { get; private set; } = null!;
+        public Pulumi.Aws.Iam.Role Role { get; private set; }
 
 
         /// <summary>

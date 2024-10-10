@@ -1990,8 +1990,15 @@ export interface ClusterResult {
     nodeSecurityGroup?: aws.ec2.SecurityGroup;
     eksClusterIngressRule?: aws.ec2.SecurityGroupRule;
     defaultNodeGroup: NodeGroupV2Data | undefined;
+    defaultNodeGroupAsg: aws.autoscaling.Group | undefined;
     eksCluster: aws.eks.Cluster;
     core: CoreData;
+    vpcId: pulumi.Output<string>;
+    subnetIds: pulumi.Output<string[]>;
+    kubernetesProvider: k8s.Provider;
+    clusterIamRole: pulumi.Output<aws.iam.Role>;
+    clusterIamRoleName: pulumi.Output<string>;
+    // todo flo: add the new optional properties
 }
 
 /** @internal */
@@ -2083,8 +2090,16 @@ export function createCluster(
         nodeSecurityGroup,
         eksClusterIngressRule,
         defaultNodeGroup,
+        defaultNodeGroupAsg: defaultNodeGroup?.autoScalingGroup,
         kubeconfig: pulumi.output(core.kubeconfig),
         kubeconfigJson,
+        vpcId: core.vpcId,
+        subnetIds: core.subnetIds,
+        // todo flo: This is the wrong k8s provider. Just returning any for now to get the build working
+        // the clusterMixins also need to be updated, otherwise we have duplicate URN issues
+        kubernetesProvider: core.provider,
+        clusterIamRole: core.clusterIamRole,
+        clusterIamRoleName: core.clusterIamRole.name,
     };
 }
 
@@ -2100,15 +2115,22 @@ export function createCluster(
  * @internal
  */
 export class ClusterInternal extends pulumi.ComponentResource {
-    public readonly clusterSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
+    public readonly clusterSecurityGroup!: aws.ec2.SecurityGroup | undefined;
     public readonly core!: pulumi.Output<pulumi.Unwrap<CoreData>>;
     public readonly defaultNodeGroup!: pulumi.Output<pulumi.Unwrap<NodeGroupV2Data> | undefined>;
-    public readonly eksCluster!: pulumi.Output<aws.eks.Cluster>;
-    public readonly eksClusterIngressRule!: pulumi.Output<aws.ec2.SecurityGroupRule | undefined>;
+    public readonly eksCluster!: aws.eks.Cluster;
+    public readonly eksClusterIngressRule!: aws.ec2.SecurityGroupRule | undefined;
     public readonly instanceRoles!: pulumi.Output<aws.iam.Role[]>;
     public readonly kubeconfig!: pulumi.Output<any>;
     public readonly kubeconfigJson!: pulumi.Output<string>;
-    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
+    public readonly nodeSecurityGroup!: aws.ec2.SecurityGroup | undefined;
+
+    public readonly vpcId!: pulumi.Output<string>;
+    public readonly subnetIds!: pulumi.Output<string[]>;
+    public readonly kubernetesProvider!: k8s.Provider;
+    public readonly clusterIamRole!: pulumi.Output<aws.iam.Role>;
+    public readonly clusterIamRoleName!: pulumi.Output<string>;
+    public readonly defaultNodeGroupAsg!: aws.autoscaling.Group | undefined;
 
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:Cluster";
@@ -2124,6 +2146,14 @@ export class ClusterInternal extends pulumi.ComponentResource {
                 kubeconfig: undefined,
                 kubeconfigJson: undefined,
                 nodeSecurityGroup: undefined,
+                vpcId: undefined,
+                subnetIds: undefined,
+                kubernetesProvider: undefined,
+                clusterIamRole: undefined,
+                clusterIamRoleName: undefined,
+                defaultNodeGroupAsg: undefined,
+
+                // todo flo: add the new optional properties here and in the registerOutputs below
             };
             super(type, name, props, opts);
             return;
@@ -2140,13 +2170,19 @@ export class ClusterInternal extends pulumi.ComponentResource {
         const cluster = createCluster(name, this, args, opts);
         this.kubeconfig = cluster.kubeconfig;
         this.kubeconfigJson = cluster.kubeconfigJson;
-        this.clusterSecurityGroup = pulumi.output(cluster.clusterSecurityGroup);
+        this.clusterSecurityGroup = cluster.clusterSecurityGroup;
         this.instanceRoles = cluster.instanceRoles;
-        this.nodeSecurityGroup = pulumi.output(cluster.nodeSecurityGroup);
-        this.eksClusterIngressRule = pulumi.output(cluster.eksClusterIngressRule);
+        this.nodeSecurityGroup = cluster.nodeSecurityGroup;
+        this.eksClusterIngressRule = cluster.eksClusterIngressRule;
         this.defaultNodeGroup = pulumi.output(cluster.defaultNodeGroup);
-        this.eksCluster = pulumi.output(cluster.eksCluster);
+        this.eksCluster = cluster.eksCluster;
         this.core = pulumi.output(cluster.core);
+        this.vpcId = cluster.vpcId;
+        this.subnetIds = cluster.subnetIds;
+        this.kubernetesProvider = cluster.kubernetesProvider;
+        this.clusterIamRole = cluster.clusterIamRole;
+        this.clusterIamRoleName = cluster.clusterIamRoleName;
+        this.defaultNodeGroupAsg = cluster.defaultNodeGroupAsg;
 
         this.registerOutputs({
             clusterSecurityGroup: this.clusterSecurityGroup,
@@ -2158,6 +2194,12 @@ export class ClusterInternal extends pulumi.ComponentResource {
             kubeconfig: this.kubeconfig,
             kubeconfigJson: this.kubeconfigJson,
             nodeSecurityGroup: this.nodeSecurityGroup,
+            vpcId: this.vpcId,
+            subnetIds: this.subnetIds,
+            kubernetesProvider: this.kubernetesProvider,
+            clusterIamRole: this.clusterIamRole,
+            clusterIamRoleName: this.clusterIamRoleName,
+            defaultNodeGroupAsg: this.defaultNodeGroupAsg,
         });
     }
 

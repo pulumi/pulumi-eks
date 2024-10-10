@@ -166,7 +166,7 @@ class NodeGroupSecurityGroup(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="securityGroup")
-    def security_group(self) -> pulumi.Output['pulumi_aws.ec2.SecurityGroup']:
+    def security_group(self) -> 'pulumi_aws.ec2.SecurityGroup':
         """
         The security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
         """
@@ -174,7 +174,7 @@ class NodeGroupSecurityGroup(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="securityGroupRule")
-    def security_group_rule(self) -> pulumi.Output['pulumi_aws.ec2.SecurityGroupRule']:
+    def security_group_rule(self) -> 'pulumi_aws.ec2.SecurityGroupRule':
         """
         The EKS cluster ingress rule.
         """

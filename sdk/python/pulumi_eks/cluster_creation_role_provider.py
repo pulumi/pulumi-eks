@@ -112,6 +112,6 @@ class ClusterCreationRoleProvider(pulumi.ComponentResource):
 
     @property
     @pulumi.getter
-    def role(self) -> pulumi.Output['pulumi_aws.iam.Role']:
+    def role(self) -> 'pulumi_aws.iam.Role':
         return pulumi.get(self, "role")
 

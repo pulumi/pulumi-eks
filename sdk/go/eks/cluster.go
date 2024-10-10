@@ -8,10 +8,13 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/autoscaling"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
 	"github.com/pulumi/pulumi-eks/sdk/v3/go/eks/utilities"
+	"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes"
+	corev1 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/core/v1"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -50,26 +53,47 @@ import (
 type Cluster struct {
 	pulumi.ResourceState
 
+	AwsAuthConfigMap *corev1.ConfigMap `pulumi:"awsAuthConfigMap"`
 	// The AWS resource provider.
-	AwsProvider aws.ProviderOutput `pulumi:"awsProvider"`
+	AwsProvider *aws.Provider `pulumi:"awsProvider"`
+	// The IAM Role attached to the EKS Cluster
+	ClusterIamRole iam.RoleOutput `pulumi:"clusterIamRole"`
+	// The name of the Role attached to the EKS Cluster
+	ClusterIamRoleName pulumi.StringOutput `pulumi:"clusterIamRoleName"`
 	// The security group for the EKS cluster.
-	ClusterSecurityGroup ec2.SecurityGroupOutput `pulumi:"clusterSecurityGroup"`
+	ClusterSecurityGroup *ec2.SecurityGroup `pulumi:"clusterSecurityGroup"`
 	// The EKS cluster and its dependencies.
+	//
+	// Deprecated: TODO flo
 	Core CoreDataOutput `pulumi:"core"`
 	// The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
+	//
+	// Deprecated: TODO flo
 	DefaultNodeGroup NodeGroupDataPtrOutput `pulumi:"defaultNodeGroup"`
+	// The AutoScalingGroup of the default node group.
+	DefaultNodeGroupAsg *autoscaling.Group `pulumi:"defaultNodeGroupAsg"`
 	// The EKS cluster.
-	EksCluster eks.ClusterOutput `pulumi:"eksCluster"`
+	EksCluster *eks.Cluster `pulumi:"eksCluster"`
 	// The ingress rule that gives node group access to cluster API server.
-	EksClusterIngressRule ec2.SecurityGroupRuleOutput `pulumi:"eksClusterIngressRule"`
+	EksClusterIngressRule *ec2.SecurityGroupRule `pulumi:"eksClusterIngressRule"`
+	// The Fargate profile used to manage which pods run on Fargate.
+	FargateProfile *eks.FargateProfile `pulumi:"fargateProfile"`
 	// The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	InstanceRoles iam.RoleArrayOutput `pulumi:"instanceRoles"`
 	// A kubeconfig that can be used to connect to the EKS cluster.
 	Kubeconfig pulumi.AnyOutput `pulumi:"kubeconfig"`
 	// A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
-	KubeconfigJson pulumi.StringOutput `pulumi:"kubeconfigJson"`
+	KubeconfigJson     pulumi.StringOutput  `pulumi:"kubeconfigJson"`
+	KubernetesProvider *kubernetes.Provider `pulumi:"kubernetesProvider"`
 	// The security group for the cluster's nodes.
-	NodeSecurityGroup ec2.SecurityGroupOutput `pulumi:"nodeSecurityGroup"`
+	NodeSecurityGroup *ec2.SecurityGroup         `pulumi:"nodeSecurityGroup"`
+	OidcProvider      *iam.OpenIdConnectProvider `pulumi:"oidcProvider"`
+	// List of subnet IDs for the EKS cluster.
+	SubnetIds pulumi.StringArrayOutput `pulumi:"subnetIds"`
+	// The VPC CNI for the cluster.
+	VpcCni *VpcCniAddon `pulumi:"vpcCni"`
+	// ID of the cluster's VPC.
+	VpcId pulumi.StringOutput `pulumi:"vpcId"`
 }
 
 // NewCluster registers a new resource with the given unique name, arguments, and options.
@@ -714,34 +738,62 @@ func (o ClusterOutput) ToClusterOutputWithContext(ctx context.Context) ClusterOu
 	return o
 }
 
+func (o ClusterOutput) AwsAuthConfigMap() corev1.ConfigMapOutput {
+	return o.ApplyT(func(v *Cluster) *corev1.ConfigMap { return v.AwsAuthConfigMap }).(corev1.ConfigMapOutput)
+}
+
 // The AWS resource provider.
 func (o ClusterOutput) AwsProvider() aws.ProviderOutput {
-	return o.ApplyT(func(v *Cluster) aws.ProviderOutput { return v.AwsProvider }).(aws.ProviderOutput)
+	return o.ApplyT(func(v *Cluster) *aws.Provider { return v.AwsProvider }).(aws.ProviderOutput)
+}
+
+// The IAM Role attached to the EKS Cluster
+func (o ClusterOutput) ClusterIamRole() iam.RoleOutput {
+	return o.ApplyT(func(v *Cluster) iam.RoleOutput { return v.ClusterIamRole }).(iam.RoleOutput)
+}
+
+// The name of the Role attached to the EKS Cluster
+func (o ClusterOutput) ClusterIamRoleName() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.ClusterIamRoleName }).(pulumi.StringOutput)
 }
 
 // The security group for the EKS cluster.
 func (o ClusterOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v *Cluster) ec2.SecurityGroupOutput { return v.ClusterSecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v *Cluster) *ec2.SecurityGroup { return v.ClusterSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
 // The EKS cluster and its dependencies.
+//
+// Deprecated: TODO flo
 func (o ClusterOutput) Core() CoreDataOutput {
 	return o.ApplyT(func(v *Cluster) CoreDataOutput { return v.Core }).(CoreDataOutput)
 }
 
 // The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
+//
+// Deprecated: TODO flo
 func (o ClusterOutput) DefaultNodeGroup() NodeGroupDataPtrOutput {
 	return o.ApplyT(func(v *Cluster) NodeGroupDataPtrOutput { return v.DefaultNodeGroup }).(NodeGroupDataPtrOutput)
 }
 
+// The AutoScalingGroup of the default node group.
+func (o ClusterOutput) DefaultNodeGroupAsg() autoscaling.GroupOutput {
+	return o.ApplyT(func(v *Cluster) *autoscaling.Group { return v.DefaultNodeGroupAsg }).(autoscaling.GroupOutput)
+}
+
 // The EKS cluster.
 func (o ClusterOutput) EksCluster() eks.ClusterOutput {
-	return o.ApplyT(func(v *Cluster) eks.ClusterOutput { return v.EksCluster }).(eks.ClusterOutput)
+	return o.ApplyT(func(v *Cluster) *eks.Cluster { return v.EksCluster }).(eks.ClusterOutput)
 }
 
 // The ingress rule that gives node group access to cluster API server.
 func (o ClusterOutput) EksClusterIngressRule() ec2.SecurityGroupRuleOutput {
-	return o.ApplyT(func(v *Cluster) ec2.SecurityGroupRuleOutput { return v.EksClusterIngressRule }).(ec2.SecurityGroupRuleOutput)
+	return o.ApplyT(func(v *Cluster) *ec2.SecurityGroupRule { return v.EksClusterIngressRule }).(ec2.SecurityGroupRuleOutput)
+}
+
+// The Fargate profile used to manage which pods run on Fargate.
+func (o ClusterOutput) FargateProfile() eks.FargateProfileOutput {
+	return o.ApplyT(func(v *Cluster) *eks.FargateProfile { return v.FargateProfile }).(eks.FargateProfileOutput)
 }
 
 // The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
@@ -759,9 +811,32 @@ func (o ClusterOutput) KubeconfigJson() pulumi.StringOutput {
 	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.KubeconfigJson }).(pulumi.StringOutput)
 }
 
+func (o ClusterOutput) KubernetesProvider() kubernetes.ProviderOutput {
+	return o.ApplyT(func(v *Cluster) *kubernetes.Provider { return v.KubernetesProvider }).(kubernetes.ProviderOutput)
+}
+
 // The security group for the cluster's nodes.
 func (o ClusterOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v *Cluster) ec2.SecurityGroupOutput { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v *Cluster) *ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+}
+
+func (o ClusterOutput) OidcProvider() iam.OpenIdConnectProviderOutput {
+	return o.ApplyT(func(v *Cluster) *iam.OpenIdConnectProvider { return v.OidcProvider }).(iam.OpenIdConnectProviderOutput)
+}
+
+// List of subnet IDs for the EKS cluster.
+func (o ClusterOutput) SubnetIds() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringArrayOutput { return v.SubnetIds }).(pulumi.StringArrayOutput)
+}
+
+// The VPC CNI for the cluster.
+func (o ClusterOutput) VpcCni() VpcCniAddonOutput {
+	return o.ApplyT(func(v *Cluster) *VpcCniAddon { return v.VpcCni }).(VpcCniAddonOutput)
+}
+
+// ID of the cluster's VPC.
+func (o ClusterOutput) VpcId() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.VpcId }).(pulumi.StringOutput)
 }
 
 type ClusterArrayOutput struct{ *pulumi.OutputState }

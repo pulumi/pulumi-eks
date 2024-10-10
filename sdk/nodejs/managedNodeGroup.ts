@@ -36,7 +36,7 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
     /**
      * The AWS managed node group.
      */
-    public /*out*/ readonly nodeGroup!: pulumi.Output<pulumiAws.eks.NodeGroup>;
+    public /*out*/ readonly nodeGroup!: pulumiAws.eks.NodeGroup;
 
     /**
      * Create a ManagedNodeGroup resource with the given unique name, arguments, and options.

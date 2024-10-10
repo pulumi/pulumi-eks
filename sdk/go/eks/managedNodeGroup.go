@@ -22,7 +22,7 @@ type ManagedNodeGroup struct {
 	pulumi.ResourceState
 
 	// The AWS managed node group.
-	NodeGroup eks.NodeGroupOutput `pulumi:"nodeGroup"`
+	NodeGroup *eks.NodeGroup `pulumi:"nodeGroup"`
 }
 
 // NewManagedNodeGroup registers a new resource with the given unique name, arguments, and options.
@@ -384,7 +384,7 @@ func (o ManagedNodeGroupOutput) ToManagedNodeGroupOutputWithContext(ctx context.
 
 // The AWS managed node group.
 func (o ManagedNodeGroupOutput) NodeGroup() eks.NodeGroupOutput {
-	return o.ApplyT(func(v *ManagedNodeGroup) eks.NodeGroupOutput { return v.NodeGroup }).(eks.NodeGroupOutput)
+	return o.ApplyT(func(v *ManagedNodeGroup) *eks.NodeGroup { return v.NodeGroup }).(eks.NodeGroupOutput)
 }
 
 type ManagedNodeGroupArrayOutput struct{ *pulumi.OutputState }

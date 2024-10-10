@@ -47,30 +47,51 @@ export class Cluster extends pulumi.ComponentResource {
         return obj['__pulumiType'] === Cluster.__pulumiType;
     }
 
+    public /*out*/ readonly awsAuthConfigMap!: pulumiKubernetes.core.v1.ConfigMap | undefined;
     /**
      * The AWS resource provider.
      */
-    public /*out*/ readonly awsProvider!: pulumi.Output<pulumiAws.Provider>;
+    public /*out*/ readonly awsProvider!: pulumiAws.Provider;
+    /**
+     * The IAM Role attached to the EKS Cluster
+     */
+    public /*out*/ readonly clusterIamRole!: pulumi.Output<pulumiAws.iam.Role>;
+    /**
+     * The name of the Role attached to the EKS Cluster
+     */
+    public /*out*/ readonly clusterIamRoleName!: pulumi.Output<string>;
     /**
      * The security group for the EKS cluster.
      */
-    public readonly clusterSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
+    public readonly clusterSecurityGroup!: pulumiAws.ec2.SecurityGroup | undefined;
     /**
      * The EKS cluster and its dependencies.
+     *
+     * @deprecated TODO flo
      */
     public /*out*/ readonly core!: pulumi.Output<outputs.CoreData>;
     /**
      * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
+     *
+     * @deprecated TODO flo
      */
     public /*out*/ readonly defaultNodeGroup!: pulumi.Output<outputs.NodeGroupData | undefined>;
     /**
+     * The AutoScalingGroup of the default node group.
+     */
+    public /*out*/ readonly defaultNodeGroupAsg!: pulumiAws.autoscaling.Group | undefined;
+    /**
      * The EKS cluster.
      */
-    public /*out*/ readonly eksCluster!: pulumi.Output<pulumiAws.eks.Cluster>;
+    public /*out*/ readonly eksCluster!: pulumiAws.eks.Cluster;
     /**
      * The ingress rule that gives node group access to cluster API server.
      */
-    public /*out*/ readonly eksClusterIngressRule!: pulumi.Output<pulumiAws.ec2.SecurityGroupRule | undefined>;
+    public /*out*/ readonly eksClusterIngressRule!: pulumiAws.ec2.SecurityGroupRule | undefined;
+    /**
+     * The Fargate profile used to manage which pods run on Fargate.
+     */
+    public /*out*/ readonly fargateProfile!: pulumiAws.eks.FargateProfile | undefined;
     /**
      * The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      */
@@ -83,10 +104,24 @@ export class Cluster extends pulumi.ComponentResource {
      * A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
      */
     public /*out*/ readonly kubeconfigJson!: pulumi.Output<string>;
+    public /*out*/ readonly kubernetesProvider!: pulumiKubernetes.Provider;
     /**
      * The security group for the cluster's nodes.
      */
-    public /*out*/ readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
+    public /*out*/ readonly nodeSecurityGroup!: pulumiAws.ec2.SecurityGroup | undefined;
+    public /*out*/ readonly oidcProvider!: pulumiAws.iam.OpenIdConnectProvider | undefined;
+    /**
+     * List of subnet IDs for the EKS cluster.
+     */
+    public readonly subnetIds!: pulumi.Output<string[]>;
+    /**
+     * The VPC CNI for the cluster.
+     */
+    public /*out*/ readonly vpcCni!: VpcCniAddon | undefined;
+    /**
+     * ID of the cluster's VPC.
+     */
+    public readonly vpcId!: pulumi.Output<string>;
 
     /**
      * Create a Cluster resource with the given unique name, arguments, and options.
@@ -152,25 +187,43 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["version"] = args ? args.version : undefined;
             resourceInputs["vpcCniOptions"] = args ? (args.vpcCniOptions ? inputs.vpcCniOptionsArgsProvideDefaults(args.vpcCniOptions) : undefined) : undefined;
             resourceInputs["vpcId"] = args ? args.vpcId : undefined;
+            resourceInputs["awsAuthConfigMap"] = undefined /*out*/;
             resourceInputs["awsProvider"] = undefined /*out*/;
+            resourceInputs["clusterIamRole"] = undefined /*out*/;
+            resourceInputs["clusterIamRoleName"] = undefined /*out*/;
             resourceInputs["core"] = undefined /*out*/;
             resourceInputs["defaultNodeGroup"] = undefined /*out*/;
+            resourceInputs["defaultNodeGroupAsg"] = undefined /*out*/;
             resourceInputs["eksCluster"] = undefined /*out*/;
             resourceInputs["eksClusterIngressRule"] = undefined /*out*/;
+            resourceInputs["fargateProfile"] = undefined /*out*/;
             resourceInputs["kubeconfig"] = undefined /*out*/;
             resourceInputs["kubeconfigJson"] = undefined /*out*/;
+            resourceInputs["kubernetesProvider"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
+            resourceInputs["oidcProvider"] = undefined /*out*/;
+            resourceInputs["vpcCni"] = undefined /*out*/;
         } else {
+            resourceInputs["awsAuthConfigMap"] = undefined /*out*/;
             resourceInputs["awsProvider"] = undefined /*out*/;
+            resourceInputs["clusterIamRole"] = undefined /*out*/;
+            resourceInputs["clusterIamRoleName"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroup"] = undefined /*out*/;
             resourceInputs["core"] = undefined /*out*/;
             resourceInputs["defaultNodeGroup"] = undefined /*out*/;
+            resourceInputs["defaultNodeGroupAsg"] = undefined /*out*/;
             resourceInputs["eksCluster"] = undefined /*out*/;
             resourceInputs["eksClusterIngressRule"] = undefined /*out*/;
+            resourceInputs["fargateProfile"] = undefined /*out*/;
             resourceInputs["instanceRoles"] = undefined /*out*/;
             resourceInputs["kubeconfig"] = undefined /*out*/;
             resourceInputs["kubeconfigJson"] = undefined /*out*/;
+            resourceInputs["kubernetesProvider"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
+            resourceInputs["oidcProvider"] = undefined /*out*/;
+            resourceInputs["subnetIds"] = undefined /*out*/;
+            resourceInputs["vpcCni"] = undefined /*out*/;
+            resourceInputs["vpcId"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(Cluster.__pulumiType, name, resourceInputs, opts, true /*remote*/);

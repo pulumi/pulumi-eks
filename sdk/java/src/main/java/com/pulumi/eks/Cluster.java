@@ -4,8 +4,11 @@
 package com.pulumi.eks;
 
 import com.pulumi.aws.Provider;
+import com.pulumi.aws.autoscaling.Group;
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.aws.ec2.SecurityGroupRule;
+import com.pulumi.aws.eks.FargateProfile;
+import com.pulumi.aws.iam.OpenIdConnectProvider;
 import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
@@ -13,8 +16,10 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.ClusterArgs;
 import com.pulumi.eks.Utilities;
+import com.pulumi.eks.VpcCniAddon;
 import com.pulumi.eks.outputs.CoreData;
 import com.pulumi.eks.outputs.NodeGroupData;
+import com.pulumi.kubernetes.core.v1.ConfigMap;
 import java.lang.Object;
 import java.lang.String;
 import java.util.List;
@@ -63,6 +68,12 @@ import javax.annotation.Nullable;
  */
 @ResourceType(type="eks:index:Cluster")
 public class Cluster extends com.pulumi.resources.ComponentResource {
+    @Export(name="awsAuthConfigMap", refs={ConfigMap.class}, tree="[0]")
+    private Output</* @Nullable */ ConfigMap> awsAuthConfigMap;
+
+    public Output<Optional<ConfigMap>> awsAuthConfigMap() {
+        return Codegen.optional(this.awsAuthConfigMap);
+    }
     /**
      * The AWS resource provider.
      * 
@@ -76,6 +87,34 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<Provider> awsProvider() {
         return this.awsProvider;
+    }
+    /**
+     * The IAM Role attached to the EKS Cluster
+     * 
+     */
+    @Export(name="clusterIamRole", refs={Role.class}, tree="[0]")
+    private Output<Role> clusterIamRole;
+
+    /**
+     * @return The IAM Role attached to the EKS Cluster
+     * 
+     */
+    public Output<Role> clusterIamRole() {
+        return this.clusterIamRole;
+    }
+    /**
+     * The name of the Role attached to the EKS Cluster
+     * 
+     */
+    @Export(name="clusterIamRoleName", refs={String.class}, tree="[0]")
+    private Output<String> clusterIamRoleName;
+
+    /**
+     * @return The name of the Role attached to the EKS Cluster
+     * 
+     */
+    public Output<String> clusterIamRoleName() {
+        return this.clusterIamRoleName;
     }
     /**
      * The security group for the EKS cluster.
@@ -94,7 +133,11 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
     /**
      * The EKS cluster and its dependencies.
      * 
+     * @deprecated
+     * TODO flo
+     * 
      */
+    @Deprecated /* TODO flo */
     @Export(name="core", refs={CoreData.class}, tree="[0]")
     private Output<CoreData> core;
 
@@ -108,7 +151,11 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
     /**
      * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
      * 
+     * @deprecated
+     * TODO flo
+     * 
      */
+    @Deprecated /* TODO flo */
     @Export(name="defaultNodeGroup", refs={NodeGroupData.class}, tree="[0]")
     private Output</* @Nullable */ NodeGroupData> defaultNodeGroup;
 
@@ -118,6 +165,20 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<Optional<NodeGroupData>> defaultNodeGroup() {
         return Codegen.optional(this.defaultNodeGroup);
+    }
+    /**
+     * The AutoScalingGroup of the default node group.
+     * 
+     */
+    @Export(name="defaultNodeGroupAsg", refs={Group.class}, tree="[0]")
+    private Output</* @Nullable */ Group> defaultNodeGroupAsg;
+
+    /**
+     * @return The AutoScalingGroup of the default node group.
+     * 
+     */
+    public Output<Optional<Group>> defaultNodeGroupAsg() {
+        return Codegen.optional(this.defaultNodeGroupAsg);
     }
     /**
      * The EKS cluster.
@@ -146,6 +207,20 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<Optional<SecurityGroupRule>> eksClusterIngressRule() {
         return Codegen.optional(this.eksClusterIngressRule);
+    }
+    /**
+     * The Fargate profile used to manage which pods run on Fargate.
+     * 
+     */
+    @Export(name="fargateProfile", refs={FargateProfile.class}, tree="[0]")
+    private Output</* @Nullable */ FargateProfile> fargateProfile;
+
+    /**
+     * @return The Fargate profile used to manage which pods run on Fargate.
+     * 
+     */
+    public Output<Optional<FargateProfile>> fargateProfile() {
+        return Codegen.optional(this.fargateProfile);
     }
     /**
      * The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
@@ -189,6 +264,12 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
     public Output<String> kubeconfigJson() {
         return this.kubeconfigJson;
     }
+    @Export(name="kubernetesProvider", refs={com.pulumi.kubernetes.Provider.class}, tree="[0]")
+    private Output<com.pulumi.kubernetes.Provider> kubernetesProvider;
+
+    public Output<com.pulumi.kubernetes.Provider> kubernetesProvider() {
+        return this.kubernetesProvider;
+    }
     /**
      * The security group for the cluster&#39;s nodes.
      * 
@@ -202,6 +283,54 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<Optional<SecurityGroup>> nodeSecurityGroup() {
         return Codegen.optional(this.nodeSecurityGroup);
+    }
+    @Export(name="oidcProvider", refs={OpenIdConnectProvider.class}, tree="[0]")
+    private Output</* @Nullable */ OpenIdConnectProvider> oidcProvider;
+
+    public Output<Optional<OpenIdConnectProvider>> oidcProvider() {
+        return Codegen.optional(this.oidcProvider);
+    }
+    /**
+     * List of subnet IDs for the EKS cluster.
+     * 
+     */
+    @Export(name="subnetIds", refs={List.class,String.class}, tree="[0,1]")
+    private Output<List<String>> subnetIds;
+
+    /**
+     * @return List of subnet IDs for the EKS cluster.
+     * 
+     */
+    public Output<List<String>> subnetIds() {
+        return this.subnetIds;
+    }
+    /**
+     * The VPC CNI for the cluster.
+     * 
+     */
+    @Export(name="vpcCni", refs={VpcCniAddon.class}, tree="[0]")
+    private Output</* @Nullable */ VpcCniAddon> vpcCni;
+
+    /**
+     * @return The VPC CNI for the cluster.
+     * 
+     */
+    public Output<Optional<VpcCniAddon>> vpcCni() {
+        return Codegen.optional(this.vpcCni);
+    }
+    /**
+     * ID of the cluster&#39;s VPC.
+     * 
+     */
+    @Export(name="vpcId", refs={String.class}, tree="[0]")
+    private Output<String> vpcId;
+
+    /**
+     * @return ID of the cluster&#39;s VPC.
+     * 
+     */
+    public Output<String> vpcId() {
+        return this.vpcId;
     }
 
     /**

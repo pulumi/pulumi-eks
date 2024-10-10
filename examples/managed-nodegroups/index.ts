@@ -48,6 +48,8 @@ const managedNodeGroup1 = eks.createManagedNodeGroup(
   cluster
 );
 
+export const mngName = managedNodeGroup1.nodeGroup.nodeGroupName;
+
 // Create an explicit AWS managed node group using a cluster as input and the
 // initial API.
 const managedNodeGroup2 = eks.createManagedNodeGroup(

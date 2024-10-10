@@ -24,11 +24,11 @@ type NodeGroup struct {
 	// The AutoScalingGroup name for the Node group.
 	AutoScalingGroupName pulumi.StringOutput `pulumi:"autoScalingGroupName"`
 	// The CloudFormation Stack which defines the Node AutoScalingGroup.
-	CfnStack cloudformation.StackOutput `pulumi:"cfnStack"`
+	CfnStack *cloudformation.Stack `pulumi:"cfnStack"`
 	// The additional security groups for the node group that captures user-specific rules.
 	ExtraNodeSecurityGroups ec2.SecurityGroupArrayOutput `pulumi:"extraNodeSecurityGroups"`
 	// The security group for the node group to communicate with the cluster.
-	NodeSecurityGroup ec2.SecurityGroupOutput `pulumi:"nodeSecurityGroup"`
+	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
 }
 
 // NewNodeGroup registers a new resource with the given unique name, arguments, and options.
@@ -435,7 +435,7 @@ func (o NodeGroupOutput) AutoScalingGroupName() pulumi.StringOutput {
 
 // The CloudFormation Stack which defines the Node AutoScalingGroup.
 func (o NodeGroupOutput) CfnStack() cloudformation.StackOutput {
-	return o.ApplyT(func(v *NodeGroup) cloudformation.StackOutput { return v.CfnStack }).(cloudformation.StackOutput)
+	return o.ApplyT(func(v *NodeGroup) *cloudformation.Stack { return v.CfnStack }).(cloudformation.StackOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.
@@ -445,7 +445,7 @@ func (o NodeGroupOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput 
 
 // The security group for the node group to communicate with the cluster.
 func (o NodeGroupOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v *NodeGroup) ec2.SecurityGroupOutput { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v *NodeGroup) *ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
 type NodeGroupArrayOutput struct{ *pulumi.OutputState }

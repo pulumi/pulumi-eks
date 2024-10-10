@@ -20,11 +20,11 @@ type NodeGroupV2 struct {
 	pulumi.ResourceState
 
 	// The AutoScalingGroup for the Node group.
-	AutoScalingGroup autoscaling.GroupOutput `pulumi:"autoScalingGroup"`
+	AutoScalingGroup *autoscaling.Group `pulumi:"autoScalingGroup"`
 	// The additional security groups for the node group that captures user-specific rules.
 	ExtraNodeSecurityGroups ec2.SecurityGroupArrayOutput `pulumi:"extraNodeSecurityGroups"`
 	// The security group for the node group to communicate with the cluster.
-	NodeSecurityGroup ec2.SecurityGroupOutput `pulumi:"nodeSecurityGroup"`
+	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
 }
 
 // NewNodeGroupV2 registers a new resource with the given unique name, arguments, and options.
@@ -442,7 +442,7 @@ func (o NodeGroupV2Output) ToNodeGroupV2OutputWithContext(ctx context.Context) N
 
 // The AutoScalingGroup for the Node group.
 func (o NodeGroupV2Output) AutoScalingGroup() autoscaling.GroupOutput {
-	return o.ApplyT(func(v *NodeGroupV2) autoscaling.GroupOutput { return v.AutoScalingGroup }).(autoscaling.GroupOutput)
+	return o.ApplyT(func(v *NodeGroupV2) *autoscaling.Group { return v.AutoScalingGroup }).(autoscaling.GroupOutput)
 }
 
 // The additional security groups for the node group that captures user-specific rules.
@@ -452,7 +452,7 @@ func (o NodeGroupV2Output) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutpu
 
 // The security group for the node group to communicate with the cluster.
 func (o NodeGroupV2Output) NodeSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v *NodeGroupV2) ec2.SecurityGroupOutput { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v *NodeGroupV2) *ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
 type NodeGroupV2ArrayOutput struct{ *pulumi.OutputState }

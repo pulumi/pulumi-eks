@@ -26,7 +26,7 @@ namespace Pulumi.Eks
         /// The CloudFormation Stack which defines the Node AutoScalingGroup.
         /// </summary>
         [Output("cfnStack")]
-        public Output<Pulumi.Aws.CloudFormation.Stack> CfnStack { get; private set; } = null!;
+        public Pulumi.Aws.CloudFormation.Stack CfnStack { get; private set; }
 
         /// <summary>
         /// The additional security groups for the node group that captures user-specific rules.
@@ -38,7 +38,7 @@ namespace Pulumi.Eks
         /// The security group for the node group to communicate with the cluster.
         /// </summary>
         [Output("nodeSecurityGroup")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroup> NodeSecurityGroup { get; private set; } = null!;
+        public Pulumi.Aws.Ec2.SecurityGroup NodeSecurityGroup { get; private set; }
 
 
         /// <summary>

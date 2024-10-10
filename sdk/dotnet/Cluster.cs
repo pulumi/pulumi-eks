@@ -41,17 +41,32 @@ namespace Pulumi.Eks
     [EksResourceType("eks:index:Cluster")]
     public partial class Cluster : global::Pulumi.ComponentResource
     {
+        [Output("awsAuthConfigMap")]
+        public Pulumi.Kubernetes.Core.V1.ConfigMap? AwsAuthConfigMap { get; private set; }
+
         /// <summary>
         /// The AWS resource provider.
         /// </summary>
         [Output("awsProvider")]
-        public Output<Pulumi.Aws.Provider> AwsProvider { get; private set; } = null!;
+        public Pulumi.Aws.Provider AwsProvider { get; private set; }
+
+        /// <summary>
+        /// The IAM Role attached to the EKS Cluster
+        /// </summary>
+        [Output("clusterIamRole")]
+        public Output<Pulumi.Aws.Iam.Role> ClusterIamRole { get; private set; } = null!;
+
+        /// <summary>
+        /// The name of the Role attached to the EKS Cluster
+        /// </summary>
+        [Output("clusterIamRoleName")]
+        public Output<string> ClusterIamRoleName { get; private set; } = null!;
 
         /// <summary>
         /// The security group for the EKS cluster.
         /// </summary>
         [Output("clusterSecurityGroup")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroup?> ClusterSecurityGroup { get; private set; } = null!;
+        public Pulumi.Aws.Ec2.SecurityGroup? ClusterSecurityGroup { get; private set; }
 
         /// <summary>
         /// The EKS cluster and its dependencies.
@@ -66,16 +81,28 @@ namespace Pulumi.Eks
         public Output<Outputs.NodeGroupData?> DefaultNodeGroup { get; private set; } = null!;
 
         /// <summary>
+        /// The AutoScalingGroup of the default node group.
+        /// </summary>
+        [Output("defaultNodeGroupAsg")]
+        public Pulumi.Aws.AutoScaling.Group? DefaultNodeGroupAsg { get; private set; }
+
+        /// <summary>
         /// The EKS cluster.
         /// </summary>
         [Output("eksCluster")]
-        public Output<Pulumi.Aws.Eks.Cluster> EksCluster { get; private set; } = null!;
+        public Pulumi.Aws.Eks.Cluster EksCluster { get; private set; }
 
         /// <summary>
         /// The ingress rule that gives node group access to cluster API server.
         /// </summary>
         [Output("eksClusterIngressRule")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroupRule?> EksClusterIngressRule { get; private set; } = null!;
+        public Pulumi.Aws.Ec2.SecurityGroupRule? EksClusterIngressRule { get; private set; }
+
+        /// <summary>
+        /// The Fargate profile used to manage which pods run on Fargate.
+        /// </summary>
+        [Output("fargateProfile")]
+        public Pulumi.Aws.Eks.FargateProfile? FargateProfile { get; private set; }
 
         /// <summary>
         /// The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
@@ -95,11 +122,35 @@ namespace Pulumi.Eks
         [Output("kubeconfigJson")]
         public Output<string> KubeconfigJson { get; private set; } = null!;
 
+        [Output("kubernetesProvider")]
+        public Pulumi.Kubernetes.Provider KubernetesProvider { get; private set; }
+
         /// <summary>
         /// The security group for the cluster's nodes.
         /// </summary>
         [Output("nodeSecurityGroup")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroup?> NodeSecurityGroup { get; private set; } = null!;
+        public Pulumi.Aws.Ec2.SecurityGroup? NodeSecurityGroup { get; private set; }
+
+        [Output("oidcProvider")]
+        public Pulumi.Aws.Iam.OpenIdConnectProvider? OidcProvider { get; private set; }
+
+        /// <summary>
+        /// List of subnet IDs for the EKS cluster.
+        /// </summary>
+        [Output("subnetIds")]
+        public Output<ImmutableArray<string>> SubnetIds { get; private set; } = null!;
+
+        /// <summary>
+        /// The VPC CNI for the cluster.
+        /// </summary>
+        [Output("vpcCni")]
+        public Pulumi.Eks.VpcCniAddon? VpcCni { get; private set; }
+
+        /// <summary>
+        /// ID of the cluster's VPC.
+        /// </summary>
+        [Output("vpcId")]
+        public Output<string> VpcId { get; private set; } = null!;
 
 
         /// <summary>

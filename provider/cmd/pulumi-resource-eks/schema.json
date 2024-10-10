@@ -1073,29 +1073,57 @@
         "eks:index:Cluster": {
             "description": "Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.\n\n## Example Usage\n\n### Provisioning a New EKS Cluster\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as eks from \"@pulumi/eks\";\n\n// Create an EKS cluster with the default configuration.\nconst cluster = new eks.Cluster(\"cluster\", {});\n\n// Export the cluster's kubeconfig.\nexport const kubeconfig = cluster.kubeconfig;\n ```\n\n```python\n import pulumi\n import pulumi_eks as eks\n \n # Create an EKS cluster with the default configuration.\n cluster = eks.Cluster(\"cluster\")\n\n # Export the cluster's kubeconfig.\n pulumi.export(\"kubeconfig\", cluster.kubeconfig)\n ```\n\n```go\n package main\n \n import (\n \t\"github.com/pulumi/pulumi-eks/sdk/go/eks\"\n \t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n )\n\nfunc main() {\n \tpulumi.Run(func(ctx *pulumi.Context) error {\n \t\t// Create an EKS cluster with the default configuration.\n\t\tcluster, err := eks.NewCluster(ctx, \"cluster\", nil)\n \t\tif err != nil {\n \t\t\treturn err\n \t\t}\n \t\t// Export the cluster's kubeconfig.\n \t\tctx.Export(\"kubeconfig\", cluster.Kubeconfig)\n\t\treturn nil\n \t})\n }\n ```\n\n```csharp\n using System.Collections.Generic;\n using Pulumi;\n using Eks = Pulumi.Eks;\n \n return await Deployment.RunAsync(() =\u003e\n {\n \t// Create an EKS cluster with the default configuration.\n\tvar cluster = new Eks.Cluster(\"cluster\");\n \n \treturn new Dictionary\u003cstring, object?\u003e\n \t{\n \t\t// Export the cluster's kubeconfig.\n \t\t[\"kubeconfig\"] = cluster.Kubeconfig,\n \t};\n });\n\n```\n\n```java\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.eks.Cluster;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n\tpublic static void main(String[] args) {\n\t\tPulumi.run(App::stack);\n\t}\n\n\t public static void stack(Context ctx) {\n \t\t// Create an EKS cluster with the default configuration.\n \t\tvar cluster = new Cluster(\"cluster\");\n \n \t\t// Export the cluster's kubeconfig.\n\t\tctx.export(\"kubeconfig\", cluster.kubeconfig());\n\t}\n }\n```\n\n```yaml\nresources:\n# Create an EKS cluster with the default configuration.\ncluster:\ntype: eks:Cluster\noutputs:\n# Export the cluster's kubeconfig.\nkubeconfig: ${cluster.kubeconfig}\n\n```\n\u003c!--End PulumiCodeChooser --\u003e",
             "properties": {
+                "awsAuthConfigMap": {
+                    "$ref": "/kubernetes/v4.4.0/schema.json#/resources/kubernetes:core%2Fv1:ConfigMap",
+                    "plain": true
+                },
                 "awsProvider": {
                     "$ref": "/aws/v6.18.2/schema.json#/provider",
+                    "plain": true,
                     "description": "The AWS resource provider."
+                },
+                "clusterIamRole": {
+                    "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2Frole:Role",
+                    "description": "The IAM Role attached to the EKS Cluster"
+                },
+                "clusterIamRoleName": {
+                    "type": "string",
+                    "description": "The name of the Role attached to the EKS Cluster"
                 },
                 "clusterSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group for the EKS cluster."
                 },
                 "core": {
                     "$ref": "#/types/eks:index:CoreData",
-                    "description": "The EKS cluster and its dependencies."
+                    "description": "The EKS cluster and its dependencies.",
+                    "deprecationMessage": "TODO flo"
                 },
                 "defaultNodeGroup": {
                     "$ref": "#/types/eks:index:NodeGroupData",
-                    "description": "The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified."
+                    "description": "The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.",
+                    "deprecationMessage": "TODO flo"
+                },
+                "defaultNodeGroupAsg": {
+                    "$ref": "/aws/v6.18.2/schema.json#/resources/aws:autoscaling%2Fgroup:Group",
+                    "plain": true,
+                    "description": "The AutoScalingGroup of the default node group."
                 },
                 "eksCluster": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:eks%2Fcluster:Cluster",
+                    "plain": true,
                     "description": "The EKS cluster."
                 },
                 "eksClusterIngressRule": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "plain": true,
                     "description": "The ingress rule that gives node group access to cluster API server."
+                },
+                "fargateProfile": {
+                    "$ref": "/aws/v6.18.2/schema.json#/resources/aws:eks%2FfargateProfile:FargateProfile",
+                    "plain": true,
+                    "description": "The Fargate profile used to manage which pods run on Fargate."
                 },
                 "instanceRoles": {
                     "type": "array",
@@ -1112,9 +1140,34 @@
                     "type": "string",
                     "description": "A kubeconfig that can be used to connect to the EKS cluster as a JSON string."
                 },
+                "kubernetesProvider": {
+                    "$ref": "/kubernetes/v4.4.0/schema.json#/provider",
+                    "plain": true
+                },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group for the cluster's nodes."
+                },
+                "oidcProvider": {
+                    "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider",
+                    "plain": true
+                },
+                "subnetIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "List of subnet IDs for the EKS cluster."
+                },
+                "vpcCni": {
+                    "$ref": "#/resources/eks:index:VpcCniAddon",
+                    "plain": true,
+                    "description": "The VPC CNI for the cluster."
+                },
+                "vpcId": {
+                    "type": "string",
+                    "description": "ID of the cluster's VPC."
                 }
             },
             "required": [
@@ -1123,7 +1176,12 @@
                 "awsProvider",
                 "instanceRoles",
                 "eksCluster",
-                "core"
+                "core",
+                "vpcId",
+                "subnetIds",
+                "kubernetesProvider",
+                "clusterIamRole",
+                "clusterIamRoleName"
             ],
             "inputProperties": {
                 "accessEntries": {
@@ -1428,7 +1486,8 @@
             "description": "ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a specific role to use for the creation of the EKS cluster different from the role being used to run the Pulumi deployment.",
             "properties": {
                 "role": {
-                    "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2Frole:Role"
+                    "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2Frole:Role",
+                    "plain": true
                 }
             },
             "required": [
@@ -1449,6 +1508,7 @@
             "properties": {
                 "nodeGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:eks%2FnodeGroup:NodeGroup",
+                    "plain": true,
                     "description": "The AWS managed node group."
                 }
             },
@@ -1622,6 +1682,7 @@
                 },
                 "cfnStack": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:cloudformation%2Fstack:Stack",
+                    "plain": true,
                     "description": "The CloudFormation Stack which defines the Node AutoScalingGroup."
                 },
                 "extraNodeSecurityGroups": {
@@ -1633,6 +1694,7 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group for the node group to communicate with the cluster."
                 }
             },
@@ -1835,10 +1897,12 @@
             "properties": {
                 "securityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group for node groups with the default ingress \u0026 egress rules required to connect and work with the EKS cluster security group."
                 },
                 "securityGroupRule": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "plain": true,
                     "description": "The EKS cluster ingress rule."
                 }
             },
@@ -1879,17 +1943,20 @@
             "properties": {
                 "autoScalingGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:autoscaling%2Fgroup:Group",
+                    "plain": true,
                     "description": "The AutoScalingGroup for the Node group."
                 },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                        "plain": true
                     },
                     "description": "The additional security groups for the node group that captures user-specific rules."
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "plain": true,
                     "description": "The security group for the node group to communicate with the cluster."
                 }
             },
@@ -2235,7 +2302,8 @@
                 {
                     "type": "eks:index:VpcCni"
                 }
-            ]
+            ],
+            "isComponent": true
         }
     },
     "functions": {

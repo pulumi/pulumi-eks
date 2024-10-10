@@ -1551,14 +1551,22 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["version"] = version
             __props__.__dict__["vpc_cni_options"] = vpc_cni_options
             __props__.__dict__["vpc_id"] = vpc_id
+            __props__.__dict__["aws_auth_config_map"] = None
             __props__.__dict__["aws_provider"] = None
+            __props__.__dict__["cluster_iam_role"] = None
+            __props__.__dict__["cluster_iam_role_name"] = None
             __props__.__dict__["core"] = None
             __props__.__dict__["default_node_group"] = None
+            __props__.__dict__["default_node_group_asg"] = None
             __props__.__dict__["eks_cluster"] = None
             __props__.__dict__["eks_cluster_ingress_rule"] = None
+            __props__.__dict__["fargate_profile"] = None
             __props__.__dict__["kubeconfig"] = None
             __props__.__dict__["kubeconfig_json"] = None
+            __props__.__dict__["kubernetes_provider"] = None
             __props__.__dict__["node_security_group"] = None
+            __props__.__dict__["oidc_provider"] = None
+            __props__.__dict__["vpc_cni"] = None
         super(Cluster, __self__).__init__(
             'eks:index:Cluster',
             resource_name,
@@ -1567,16 +1575,37 @@ class Cluster(pulumi.ComponentResource):
             remote=True)
 
     @property
+    @pulumi.getter(name="awsAuthConfigMap")
+    def aws_auth_config_map(self) -> Optional['pulumi_kubernetes.core.v1.ConfigMap']:
+        return pulumi.get(self, "aws_auth_config_map")
+
+    @property
     @pulumi.getter(name="awsProvider")
-    def aws_provider(self) -> pulumi.Output['pulumi_aws.Provider']:
+    def aws_provider(self) -> 'pulumi_aws.Provider':
         """
         The AWS resource provider.
         """
         return pulumi.get(self, "aws_provider")
 
     @property
+    @pulumi.getter(name="clusterIamRole")
+    def cluster_iam_role(self) -> pulumi.Output['pulumi_aws.iam.Role']:
+        """
+        The IAM Role attached to the EKS Cluster
+        """
+        return pulumi.get(self, "cluster_iam_role")
+
+    @property
+    @pulumi.getter(name="clusterIamRoleName")
+    def cluster_iam_role_name(self) -> pulumi.Output[str]:
+        """
+        The name of the Role attached to the EKS Cluster
+        """
+        return pulumi.get(self, "cluster_iam_role_name")
+
+    @property
     @pulumi.getter(name="clusterSecurityGroup")
-    def cluster_security_group(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroup']]:
+    def cluster_security_group(self) -> Optional['pulumi_aws.ec2.SecurityGroup']:
         """
         The security group for the EKS cluster.
         """
@@ -1584,6 +1613,7 @@ class Cluster(pulumi.ComponentResource):
 
     @property
     @pulumi.getter
+    @_utilities.deprecated("""TODO flo""")
     def core(self) -> pulumi.Output['outputs.CoreData']:
         """
         The EKS cluster and its dependencies.
@@ -1592,6 +1622,7 @@ class Cluster(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="defaultNodeGroup")
+    @_utilities.deprecated("""TODO flo""")
     def default_node_group(self) -> pulumi.Output[Optional['outputs.NodeGroupData']]:
         """
         The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
@@ -1599,8 +1630,16 @@ class Cluster(pulumi.ComponentResource):
         return pulumi.get(self, "default_node_group")
 
     @property
+    @pulumi.getter(name="defaultNodeGroupAsg")
+    def default_node_group_asg(self) -> Optional['pulumi_aws.autoscaling.Group']:
+        """
+        The AutoScalingGroup of the default node group.
+        """
+        return pulumi.get(self, "default_node_group_asg")
+
+    @property
     @pulumi.getter(name="eksCluster")
-    def eks_cluster(self) -> pulumi.Output['pulumi_aws.eks.Cluster']:
+    def eks_cluster(self) -> 'pulumi_aws.eks.Cluster':
         """
         The EKS cluster.
         """
@@ -1608,11 +1647,19 @@ class Cluster(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="eksClusterIngressRule")
-    def eks_cluster_ingress_rule(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroupRule']]:
+    def eks_cluster_ingress_rule(self) -> Optional['pulumi_aws.ec2.SecurityGroupRule']:
         """
         The ingress rule that gives node group access to cluster API server.
         """
         return pulumi.get(self, "eks_cluster_ingress_rule")
+
+    @property
+    @pulumi.getter(name="fargateProfile")
+    def fargate_profile(self) -> Optional['pulumi_aws.eks.FargateProfile']:
+        """
+        The Fargate profile used to manage which pods run on Fargate.
+        """
+        return pulumi.get(self, "fargate_profile")
 
     @property
     @pulumi.getter(name="instanceRoles")
@@ -1639,12 +1686,46 @@ class Cluster(pulumi.ComponentResource):
         return pulumi.get(self, "kubeconfig_json")
 
     @property
+    @pulumi.getter(name="kubernetesProvider")
+    def kubernetes_provider(self) -> 'pulumi_kubernetes.Provider':
+        return pulumi.get(self, "kubernetes_provider")
+
+    @property
     @pulumi.getter(name="nodeSecurityGroup")
-    def node_security_group(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroup']]:
+    def node_security_group(self) -> Optional['pulumi_aws.ec2.SecurityGroup']:
         """
         The security group for the cluster's nodes.
         """
         return pulumi.get(self, "node_security_group")
+
+    @property
+    @pulumi.getter(name="oidcProvider")
+    def oidc_provider(self) -> Optional['pulumi_aws.iam.OpenIdConnectProvider']:
+        return pulumi.get(self, "oidc_provider")
+
+    @property
+    @pulumi.getter(name="subnetIds")
+    def subnet_ids(self) -> pulumi.Output[Sequence[str]]:
+        """
+        List of subnet IDs for the EKS cluster.
+        """
+        return pulumi.get(self, "subnet_ids")
+
+    @property
+    @pulumi.getter(name="vpcCni")
+    def vpc_cni(self) -> Optional['VpcCniAddon']:
+        """
+        The VPC CNI for the cluster.
+        """
+        return pulumi.get(self, "vpc_cni")
+
+    @property
+    @pulumi.getter(name="vpcId")
+    def vpc_id(self) -> pulumi.Output[str]:
+        """
+        ID of the cluster's VPC.
+        """
+        return pulumi.get(self, "vpc_id")
 
     @pulumi.output_type
     class GetKubeconfigResult:
