@@ -1998,6 +1998,7 @@ export interface ClusterResult {
     kubernetesProvider: k8s.Provider;
     clusterIamRole: pulumi.Output<aws.iam.Role>;
     clusterIamRoleName: pulumi.Output<string>;
+    oidcProvider: aws.iam.OpenIdConnectProvider | undefined;
     // todo flo: add the new optional properties
 }
 
@@ -2100,6 +2101,7 @@ export function createCluster(
         kubernetesProvider: core.provider,
         clusterIamRole: core.clusterIamRole,
         clusterIamRoleName: core.clusterIamRole.name,
+        oidcProvider: core.oidcProvider,
     };
 }
 
@@ -2131,6 +2133,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
     public readonly clusterIamRole!: pulumi.Output<aws.iam.Role>;
     public readonly clusterIamRoleName!: pulumi.Output<string>;
     public readonly defaultNodeGroupAsg!: aws.autoscaling.Group | undefined;
+    public readonly oidcProvider!: aws.iam.OpenIdConnectProvider | undefined;
 
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:Cluster";
@@ -2152,6 +2155,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
                 clusterIamRole: undefined,
                 clusterIamRoleName: undefined,
                 defaultNodeGroupAsg: undefined,
+                oidcProvider: undefined
 
                 // todo flo: add the new optional properties here and in the registerOutputs below
             };
@@ -2183,6 +2187,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
         this.clusterIamRole = cluster.clusterIamRole;
         this.clusterIamRoleName = cluster.clusterIamRoleName;
         this.defaultNodeGroupAsg = cluster.defaultNodeGroupAsg;
+        this.oidcProvider = cluster.oidcProvider;
 
         this.registerOutputs({
             clusterSecurityGroup: this.clusterSecurityGroup,
@@ -2200,6 +2205,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
             clusterIamRole: this.clusterIamRole,
             clusterIamRoleName: this.clusterIamRoleName,
             defaultNodeGroupAsg: this.defaultNodeGroupAsg,
+            oidcProvider: this.oidcProvider,
         });
     }
 
