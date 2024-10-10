@@ -68,6 +68,8 @@ func main() {
 			return err
 		}
 
+		ctx.Export("defaultAsgName", cluster2.DefaultNodeGroupAsg.Name)
+
 		// Create a cluster that avoids conflicts between default settings and mutually exclusive arguments
 		// https://github.com/pulumi/pulumi-eks/pull/813
 		cluster3, err := eks.NewCluster(ctx, "example-cluster-3", &eks.ClusterArgs{
