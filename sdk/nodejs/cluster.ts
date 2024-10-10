@@ -62,7 +62,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
      */
-    public /*out*/ readonly defaultNodeGroup!: pulumi.Output<outputs.NodeGroupData | undefined>;
+    public /*out*/ readonly defaultNodeGroup!: outputs.NodeGroupData | undefined;
     /**
      * The EKS cluster.
      */
@@ -86,7 +86,7 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The security group for the cluster's nodes.
      */
-    public /*out*/ readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
+    public /*out*/ readonly nodeSecurityGroup!: pulumiAws.ec2.SecurityGroup | undefined;
 
     /**
      * Create a Cluster resource with the given unique name, arguments, and options.

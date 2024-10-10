@@ -57,7 +57,7 @@ type Cluster struct {
 	// The EKS cluster and its dependencies.
 	Core CoreDataOutput `pulumi:"core"`
 	// The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
-	DefaultNodeGroup NodeGroupDataPtrOutput `pulumi:"defaultNodeGroup"`
+	DefaultNodeGroup *NodeGroupData `pulumi:"defaultNodeGroup"`
 	// The EKS cluster.
 	EksCluster eks.ClusterOutput `pulumi:"eksCluster"`
 	// The ingress rule that gives node group access to cluster API server.
@@ -69,7 +69,7 @@ type Cluster struct {
 	// A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
 	KubeconfigJson pulumi.StringOutput `pulumi:"kubeconfigJson"`
 	// The security group for the cluster's nodes.
-	NodeSecurityGroup ec2.SecurityGroupOutput `pulumi:"nodeSecurityGroup"`
+	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
 }
 
 // NewCluster registers a new resource with the given unique name, arguments, and options.
@@ -731,7 +731,7 @@ func (o ClusterOutput) Core() CoreDataOutput {
 
 // The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
 func (o ClusterOutput) DefaultNodeGroup() NodeGroupDataPtrOutput {
-	return o.ApplyT(func(v *Cluster) NodeGroupDataPtrOutput { return v.DefaultNodeGroup }).(NodeGroupDataPtrOutput)
+	return o.ApplyT(func(v *Cluster) *NodeGroupData { return v.DefaultNodeGroup }).(NodeGroupDataPtrOutput)
 }
 
 // The EKS cluster.
@@ -761,7 +761,7 @@ func (o ClusterOutput) KubeconfigJson() pulumi.StringOutput {
 
 // The security group for the cluster's nodes.
 func (o ClusterOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v *Cluster) ec2.SecurityGroupOutput { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v *Cluster) *ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
 type ClusterArrayOutput struct{ *pulumi.OutputState }

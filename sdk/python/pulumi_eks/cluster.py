@@ -1592,7 +1592,7 @@ class Cluster(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="defaultNodeGroup")
-    def default_node_group(self) -> pulumi.Output[Optional['outputs.NodeGroupData']]:
+    def default_node_group(self) -> Optional['outputs.NodeGroupData']:
         """
         The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
         """
@@ -1640,7 +1640,7 @@ class Cluster(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="nodeSecurityGroup")
-    def node_security_group(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroup']]:
+    def node_security_group(self) -> Optional['pulumi_aws.ec2.SecurityGroup']:
         """
         The security group for the cluster's nodes.
         """

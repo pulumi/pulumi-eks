@@ -215,7 +215,10 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 							Description: "The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.",
 						},
 						"nodeSecurityGroup": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							TypeSpec: schema.TypeSpec{
+								Ref:   awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
+								Plain: true,
+							},
 							Description: "The security group for the cluster's nodes.",
 						},
 						"eksClusterIngressRule": {
@@ -223,7 +226,10 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 							Description: "The ingress rule that gives node group access to cluster API server.",
 						},
 						"defaultNodeGroup": {
-							TypeSpec: schema.TypeSpec{Ref: "#/types/eks:index:NodeGroupData"},
+							TypeSpec: schema.TypeSpec{
+								Ref:   "#/types/eks:index:NodeGroupData",
+								Plain: true,
+							},
 							Description: "The default Node Group configuration, or undefined if " +
 								"`skipDefaultNodeGroup` was specified.",
 						},
