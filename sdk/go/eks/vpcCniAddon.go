@@ -15,7 +15,7 @@ import (
 // VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
 // For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
 type VpcCniAddon struct {
-	pulumi.CustomResourceState
+	pulumi.ResourceState
 }
 
 // NewVpcCniAddon registers a new resource with the given unique name, arguments, and options.
@@ -44,34 +44,11 @@ func NewVpcCniAddon(ctx *pulumi.Context,
 	opts = append(opts, aliases)
 	opts = utilities.PkgResourceDefaultOpts(opts)
 	var resource VpcCniAddon
-	err := ctx.RegisterResource("eks:index:VpcCniAddon", name, args, &resource, opts...)
+	err := ctx.RegisterRemoteComponentResource("eks:index:VpcCniAddon", name, args, &resource, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return &resource, nil
-}
-
-// GetVpcCniAddon gets an existing VpcCniAddon resource's state with the given name, ID, and optional
-// state properties that are used to uniquely qualify the lookup (nil if not required).
-func GetVpcCniAddon(ctx *pulumi.Context,
-	name string, id pulumi.IDInput, state *VpcCniAddonState, opts ...pulumi.ResourceOption) (*VpcCniAddon, error) {
-	var resource VpcCniAddon
-	err := ctx.ReadResource("eks:index:VpcCniAddon", name, id, state, &resource, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resource, nil
-}
-
-// Input properties used for looking up and filtering VpcCniAddon resources.
-type vpcCniAddonState struct {
-}
-
-type VpcCniAddonState struct {
-}
-
-func (VpcCniAddonState) ElementType() reflect.Type {
-	return reflect.TypeOf((*vpcCniAddonState)(nil)).Elem()
 }
 
 type vpcCniAddonArgs struct {

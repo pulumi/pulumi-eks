@@ -78,6 +78,7 @@ func TestAccClusterPy(t *testing.T) {
 					info.Outputs["kubeconfig2"],
 					info.Outputs["kubeconfig3"],
 				)
+				assert.NotEmpty(t, info.Outputs["defaultAsgName"], "should have a default ASG")
 			},
 			EditDirs: []integration.EditDir{
 				{

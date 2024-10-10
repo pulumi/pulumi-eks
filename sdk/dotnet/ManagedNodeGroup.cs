@@ -22,7 +22,7 @@ namespace Pulumi.Eks
         /// The AWS managed node group.
         /// </summary>
         [Output("nodeGroup")]
-        public Output<Pulumi.Aws.Eks.NodeGroup> NodeGroup { get; private set; } = null!;
+        public Pulumi.Aws.Eks.NodeGroup NodeGroup { get; private set; }
 
 
         /// <summary>

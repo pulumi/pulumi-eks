@@ -61,7 +61,7 @@ const nodeIngressRule = new aws.ec2.SecurityGroupRule("nodeIngressRule", {
   fromPort: 0,
   toPort: 65535,
   protocol: "tcp",
-  securityGroupId: cluster.nodeSecurityGroup.apply((sg) => sg!.id),
+  securityGroupId: cluster.nodeSecurityGroup?.id,
   sourceSecurityGroupId: customSecurityGroup.id,
 });
 

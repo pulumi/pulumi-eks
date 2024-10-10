@@ -19,7 +19,7 @@ namespace Pulumi.Eks
         /// The AutoScalingGroup for the Node group.
         /// </summary>
         [Output("autoScalingGroup")]
-        public Output<Pulumi.Aws.AutoScaling.Group> AutoScalingGroup { get; private set; } = null!;
+        public Pulumi.Aws.AutoScaling.Group AutoScalingGroup { get; private set; }
 
         /// <summary>
         /// The additional security groups for the node group that captures user-specific rules.
@@ -31,7 +31,7 @@ namespace Pulumi.Eks
         /// The security group for the node group to communicate with the cluster.
         /// </summary>
         [Output("nodeSecurityGroup")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroup> NodeSecurityGroup { get; private set; } = null!;
+        public Pulumi.Aws.Ec2.SecurityGroup NodeSecurityGroup { get; private set; }
 
 
         /// <summary>

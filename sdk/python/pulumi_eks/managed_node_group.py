@@ -878,7 +878,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="nodeGroup")
-    def node_group(self) -> pulumi.Output['pulumi_aws.eks.NodeGroup']:
+    def node_group(self) -> 'pulumi_aws.eks.NodeGroup':
         """
         The AWS managed node group.
         """

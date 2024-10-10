@@ -39,7 +39,7 @@ export class NodeGroup extends pulumi.ComponentResource {
     /**
      * The CloudFormation Stack which defines the Node AutoScalingGroup.
      */
-    public /*out*/ readonly cfnStack!: pulumi.Output<pulumiAws.cloudformation.Stack>;
+    public /*out*/ readonly cfnStack!: pulumiAws.cloudformation.Stack;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
@@ -47,7 +47,7 @@ export class NodeGroup extends pulumi.ComponentResource {
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    public readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup>;
+    public readonly nodeSecurityGroup!: pulumiAws.ec2.SecurityGroup;
 
     /**
      * Create a NodeGroup resource with the given unique name, arguments, and options.

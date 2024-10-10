@@ -36,6 +36,16 @@ const clusterProvider: pulumi.provider.Provider = {
                     defaultNodeGroup: cluster.defaultNodeGroup,
                     eksCluster: cluster.eksCluster,
                     core: cluster.core,
+
+                    vpcId: cluster.vpcId,
+                    subnetIds: cluster.subnetIds,
+                    kubernetesProvider: cluster.kubernetesProvider,
+                    clusterIamRole: cluster.clusterIamRole,
+                    clusterIamRoleName: cluster.clusterIamRoleName,
+                    defaultNodeGroupAsg: cluster.defaultNodeGroupAsg,
+                    oidcProvider: cluster.oidcProvider,
+
+                    // todo flo: add the new optional properties here and in the registerOutputs below
                 },
             });
         } catch (e) {

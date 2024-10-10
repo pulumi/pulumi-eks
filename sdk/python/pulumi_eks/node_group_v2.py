@@ -1098,7 +1098,7 @@ class NodeGroupV2(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="autoScalingGroup")
-    def auto_scaling_group(self) -> pulumi.Output['pulumi_aws.autoscaling.Group']:
+    def auto_scaling_group(self) -> 'pulumi_aws.autoscaling.Group':
         """
         The AutoScalingGroup for the Node group.
         """
@@ -1114,7 +1114,7 @@ class NodeGroupV2(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="nodeSecurityGroup")
-    def node_security_group(self) -> pulumi.Output['pulumi_aws.ec2.SecurityGroup']:
+    def node_security_group(self) -> 'pulumi_aws.ec2.SecurityGroup':
         """
         The security group for the node group to communicate with the cluster.
         """

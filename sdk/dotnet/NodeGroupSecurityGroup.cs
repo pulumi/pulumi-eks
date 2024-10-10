@@ -19,13 +19,13 @@ namespace Pulumi.Eks
         /// The security group for node groups with the default ingress &amp; egress rules required to connect and work with the EKS cluster security group.
         /// </summary>
         [Output("securityGroup")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroup> SecurityGroup { get; private set; } = null!;
+        public Pulumi.Aws.Ec2.SecurityGroup SecurityGroup { get; private set; }
 
         /// <summary>
         /// The EKS cluster ingress rule.
         /// </summary>
         [Output("securityGroupRule")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroupRule> SecurityGroupRule { get; private set; } = null!;
+        public Pulumi.Aws.Ec2.SecurityGroupRule SecurityGroupRule { get; private set; }
 
 
         /// <summary>

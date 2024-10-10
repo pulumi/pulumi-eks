@@ -1047,7 +1047,7 @@ class NodeGroup(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="cfnStack")
-    def cfn_stack(self) -> pulumi.Output['pulumi_aws.cloudformation.Stack']:
+    def cfn_stack(self) -> 'pulumi_aws.cloudformation.Stack':
         """
         The CloudFormation Stack which defines the Node AutoScalingGroup.
         """
@@ -1063,7 +1063,7 @@ class NodeGroup(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="nodeSecurityGroup")
-    def node_security_group(self) -> pulumi.Output['pulumi_aws.ec2.SecurityGroup']:
+    def node_security_group(self) -> 'pulumi_aws.ec2.SecurityGroup':
         """
         The security group for the node group to communicate with the cluster.
         """

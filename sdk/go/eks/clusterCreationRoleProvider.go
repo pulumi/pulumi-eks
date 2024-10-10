@@ -16,7 +16,7 @@ import (
 type ClusterCreationRoleProvider struct {
 	pulumi.ResourceState
 
-	Role iam.RoleOutput `pulumi:"role"`
+	Role *iam.Role `pulumi:"role"`
 }
 
 // NewClusterCreationRoleProvider registers a new resource with the given unique name, arguments, and options.
@@ -134,7 +134,7 @@ func (o ClusterCreationRoleProviderOutput) ToClusterCreationRoleProviderOutputWi
 }
 
 func (o ClusterCreationRoleProviderOutput) Role() iam.RoleOutput {
-	return o.ApplyT(func(v *ClusterCreationRoleProvider) iam.RoleOutput { return v.Role }).(iam.RoleOutput)
+	return o.ApplyT(func(v *ClusterCreationRoleProvider) *iam.Role { return v.Role }).(iam.RoleOutput)
 }
 
 type ClusterCreationRoleProviderArrayOutput struct{ *pulumi.OutputState }

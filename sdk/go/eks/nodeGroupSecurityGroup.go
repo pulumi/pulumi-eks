@@ -19,9 +19,9 @@ type NodeGroupSecurityGroup struct {
 	pulumi.ResourceState
 
 	// The security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
-	SecurityGroup ec2.SecurityGroupOutput `pulumi:"securityGroup"`
+	SecurityGroup *ec2.SecurityGroup `pulumi:"securityGroup"`
 	// The EKS cluster ingress rule.
-	SecurityGroupRule ec2.SecurityGroupRuleOutput `pulumi:"securityGroupRule"`
+	SecurityGroupRule *ec2.SecurityGroupRule `pulumi:"securityGroupRule"`
 }
 
 // NewNodeGroupSecurityGroup registers a new resource with the given unique name, arguments, and options.
@@ -161,12 +161,12 @@ func (o NodeGroupSecurityGroupOutput) ToNodeGroupSecurityGroupOutputWithContext(
 
 // The security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
 func (o NodeGroupSecurityGroupOutput) SecurityGroup() ec2.SecurityGroupOutput {
-	return o.ApplyT(func(v *NodeGroupSecurityGroup) ec2.SecurityGroupOutput { return v.SecurityGroup }).(ec2.SecurityGroupOutput)
+	return o.ApplyT(func(v *NodeGroupSecurityGroup) *ec2.SecurityGroup { return v.SecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
 // The EKS cluster ingress rule.
 func (o NodeGroupSecurityGroupOutput) SecurityGroupRule() ec2.SecurityGroupRuleOutput {
-	return o.ApplyT(func(v *NodeGroupSecurityGroup) ec2.SecurityGroupRuleOutput { return v.SecurityGroupRule }).(ec2.SecurityGroupRuleOutput)
+	return o.ApplyT(func(v *NodeGroupSecurityGroup) *ec2.SecurityGroupRule { return v.SecurityGroupRule }).(ec2.SecurityGroupRuleOutput)
 }
 
 type NodeGroupSecurityGroupArrayOutput struct{ *pulumi.OutputState }

@@ -37,6 +37,8 @@ cluster2 = eks.Cluster(
     ],
 )
 
+pulumi.export("defaultAsgName", cluster2.default_node_group_asg.name)
+
 iam_role = aws.iam.Role(
     f"{project_name}-role",
     assume_role_policy=pulumi.Output.json_dumps(
