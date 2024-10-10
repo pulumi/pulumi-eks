@@ -16,7 +16,7 @@ const cluster = new eks.Cluster(`${projectName}`, {
 export const kubeconfig = cluster.kubeconfig;
 
 // Export the cluster OIDC provider URL.
-if (!cluster?.core?.oidcProvider) {
+if (!cluster?.oidcProvider) {
     throw new Error("Invalid cluster OIDC provider URL");
 }
 export const clusterOidcProviderUrl: pulumi.Output<string> = cluster.oidcProvider!.url;

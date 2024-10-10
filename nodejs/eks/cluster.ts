@@ -2149,6 +2149,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
                 kubeconfig: undefined,
                 kubeconfigJson: undefined,
                 nodeSecurityGroup: undefined,
+                
                 vpcId: undefined,
                 subnetIds: undefined,
                 kubernetesProvider: undefined,
