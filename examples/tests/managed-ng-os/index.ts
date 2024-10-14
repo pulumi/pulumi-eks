@@ -72,6 +72,9 @@ const managedNodeGroupAL2023Taints = eks.createManagedNodeGroup("al-2023-mng-tai
       effect: "NO_SCHEDULE",
     },
   ],
+  labels: {
+    "increased-pod-capacity": "true",
+  },
   kubeletExtraArgs: `--max-pods=${increasedPodCapacity}`,
 });
 
@@ -190,6 +193,9 @@ const managedNodeGroupBottlerocketTaints = eks.createManagedNodeGroup("bottleroc
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t3.medium"],
   nodeRole: role,
+  labels: {
+    "increased-pod-capacity": "true",
+  },
   taints: [
     // Taints with values and without values should work
     {

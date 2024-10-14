@@ -84,11 +84,15 @@ cluster3 = eks.Cluster(
 ###     EKS Addons     ###
 ##########################
 
+coredns_version = aws.eks.get_addon_version(addon_name="coredns",
+    kubernetes_version=cluster3["eks_cluster"]["version"],
+    most_recent=True)
+
 coredns = eks.Addon(
     f"{project_name}-cluster3-coredns",
     cluster=cluster3,
     addon_name="coredns",
-    addon_version="v1.11.1-eksbuild.9",
+    addon_version=coredns_version.version,
     resolve_conflicts_on_update="PRESERVE",
     configuration_values={
         "replicaCount": 4,
