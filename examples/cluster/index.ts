@@ -66,7 +66,7 @@ const cluster4 = new eks.Cluster(`${projectName}-4`, {
 const coredns = new eks.Addon("coredns", {
   cluster: cluster3,
   addonName: "coredns",
-  addonVersion: "v1.11.1-eksbuild.9",
+  addonVersion: "v1.11.3-eksbuild.1",
   resolveConflictsOnUpdate: "PRESERVE",
   configurationValues: {
     replicaCount: 4,
