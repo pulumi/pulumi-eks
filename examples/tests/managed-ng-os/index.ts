@@ -65,11 +65,11 @@ const managedNodeGroupAL2023Taints = eks.createManagedNodeGroup("al-2023-mng-tai
     {
       key: "mySpecialNodes",
       value: "special",
-      effect: "NoSchedule",
+      effect: "NO_SCHEDULE",
     },
     {
       key: "withoutValue",
-      effect: "NoSchedule",
+      effect: "NO_SCHEDULE",
     },
   ],
   kubeletExtraArgs: `--max-pods=${increasedPodCapacity}`,
@@ -195,11 +195,11 @@ const managedNodeGroupBottlerocketTaints = eks.createManagedNodeGroup("bottleroc
     {
       key: "mySpecialNodes",
       value: "special",
-      effect: "NoSchedule",
+      effect: "NO_SCHEDULE",
     },
     {
       key: "withoutValue",
-      effect: "NoSchedule",
+      effect: "NO_SCHEDULE",
     },
   ],
   bottlerocketSettings: {
