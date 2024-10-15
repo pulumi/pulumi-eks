@@ -54,6 +54,30 @@ const managedNodeGroupAL2023 = eks.createManagedNodeGroup("al-2023-mng", {
   nodeRole: role,
 });
 
+const managedNodeGroupAL2023Taints = eks.createManagedNodeGroup("al-2023-mng-taints", {
+  ...scalingConfig,
+  cluster: cluster,
+  operatingSystem: eks.OperatingSystem.AL2023,
+  instanceTypes: ["t3.medium"],
+  nodeRole: role,
+  taints: [
+    // Taints with values and without values should work
+    {
+      key: "mySpecialNodes",
+      value: "special",
+      effect: "NO_SCHEDULE",
+    },
+    {
+      key: "withoutValue",
+      effect: "NO_SCHEDULE",
+    },
+  ],
+  labels: {
+    "increased-pod-capacity": "true",
+  },
+  kubeletExtraArgs: `--max-pods=${increasedPodCapacity}`,
+});
+
 // Create a simple AL 2023 node group with arm instances
 const managedNodeGroupAL2023Arm = eks.createManagedNodeGroup("al-2023-arm-mng", {
   ...scalingConfig,
@@ -154,6 +178,36 @@ const managedNodeGroupBottlerocketArmUserData = eks.createManagedNodeGroup("bott
     "increased-pod-capacity": "true",
     "increased-storage-capacity": "true",
   },
+  bottlerocketSettings: {
+    settings: {
+      kubernetes: {
+        "max-pods": increasedPodCapacity,
+      },
+    },
+  },
+});
+
+const managedNodeGroupBottlerocketTaints = eks.createManagedNodeGroup("bottlerocket-mng-taints", {
+  ...scalingConfig,
+  cluster: cluster,
+  operatingSystem: eks.OperatingSystem.Bottlerocket,
+  instanceTypes: ["t3.medium"],
+  nodeRole: role,
+  labels: {
+    "increased-pod-capacity": "true",
+  },
+  taints: [
+    // Taints with values and without values should work
+    {
+      key: "mySpecialNodes",
+      value: "special",
+      effect: "NO_SCHEDULE",
+    },
+    {
+      key: "withoutValue",
+      effect: "NO_SCHEDULE",
+    },
+  ],
   bottlerocketSettings: {
     settings: {
       kubernetes: {
