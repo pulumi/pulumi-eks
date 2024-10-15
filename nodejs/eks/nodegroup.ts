@@ -40,6 +40,8 @@ import {
     SelfManagedV2NodeUserDataArgs,
 } from "./userdata";
 
+export type TaintEffect = "NoSchedule" | "NoExecute" | "PreferNoSchedule";
+
 /**
  * Taint represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup.  See
  * https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
@@ -52,7 +54,7 @@ export interface Taint {
     /**
      * The effect of the taint.
      */
-    effect: pulumi.Input<"NoSchedule" | "NoExecute" | "PreferNoSchedule">;
+    effect: pulumi.Input<TaintEffect>;
 }
 
 /**
@@ -2099,8 +2101,8 @@ function createMNGCustomLaunchTemplate(
                       return {
                           [taint.key]: {
                               value: taint.value,
-                              effect: taint.effect,
-                          } as Taint,
+                              effect: mapMngTaintEffect(taint.effect, parent),
+                          },
                       };
                   })
                   .reduce((acc, val) => Object.assign(acc, val), {});
@@ -2219,6 +2221,30 @@ function createMNGCustomLaunchTemplate(
         },
         { parent, provider },
     );
+}
+
+/**
+ * Maps an EKS taint effect enum to its corresponding Kubernetes taint effect.
+ *
+ * @param effect - The taint effect string. Must be one of "NO_SCHEDULE", "NO_EXECUTE", "PREFER_NO_SCHEDULE".
+ * @param parent - The parent Pulumi resource.
+ * @returns The corresponding Kubernetes taint effect.
+ * @throws {pulumi.ResourceError} If the provided effect is invalid.
+ */
+function mapMngTaintEffect(effect: string, parent: pulumi.Resource): TaintEffect {
+    switch (effect) {
+        case "NO_SCHEDULE":
+            return "NoSchedule";
+        case "NO_EXECUTE":
+            return "NoExecute";
+        case "PREFER_NO_SCHEDULE":
+            return "PreferNoSchedule";
+        default:
+            throw new pulumi.ResourceError(
+                `Invalid taint effect: ${effect}. Must be one of NO_SCHEDULE, NO_EXECUTE, PREFER_NO_SCHEDULE.`,
+                parent,
+            );
+    }
 }
 
 function getClusterServiceCidr(
