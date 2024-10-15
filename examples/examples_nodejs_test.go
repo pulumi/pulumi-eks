@@ -23,6 +23,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -1056,6 +1057,97 @@ func TestAccPodSecurityGroups(t *testing.T) {
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig"],
 				)
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
+func TestAccScalarTypes(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getCwd(t), "tests", "scalar-types"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig1"],
+					info.Outputs["kubeconfig2"],
+				)
+
+				// cluster1 runs the default settings with a default node group and an oidc provider
+				require.NotNil(t, info.Outputs["cluster1"])
+				cluster1 := info.Outputs["cluster1"].(map[string]interface{})
+
+				require.NotNil(t, cluster1["clusterSecurityGroup"])
+				require.NotNil(t, cluster1["nodeSecurityGroup"])
+				assert.Equal(t, cluster1["clusterSecurityGroup"].(map[string]interface{})["id"], cluster1["clusterSecurityGroupId"].(string))
+				assert.Equal(t, cluster1["nodeSecurityGroup"].(map[string]interface{})["id"], cluster1["nodeSecurityGroupId"].(string))
+				assert.NotEmpty(t, cluster1["clusterIngressRuleId"])
+				assert.Empty(t, cluster1["fargateProfileId"])
+				assert.Empty(t, cluster1["fargateProfileStatus"])
+
+				require.NotNil(t, cluster1["defaultNodeGroup"])
+				defaultNodeGroup1 := cluster1["defaultNodeGroup"].(map[string]interface{})
+				assert.Equal(t, defaultNodeGroup1["autoScalingGroup"].(map[string]interface{})["name"], cluster1["defaultNodeGroupAsgName"].(string))
+
+				require.NotNil(t, cluster1["core"])
+				coreData1 := cluster1["core"].(map[string]interface{})
+				require.NotNil(t, coreData1["oidcProvider"])
+				oidcProvider1 := coreData1["oidcProvider"].(map[string]interface{})
+
+				assert.Equal(t, oidcProvider1["arn"], cluster1["oidcProviderArn"])
+				oidcProviderUrl1 := oidcProvider1["url"].(string)
+				assert.Equal(t, oidcProvider1["url"], cluster1["oidcProviderUrl"])
+				assert.Equal(t, strings.ReplaceAll(oidcProviderUrl1, "https://", ""), cluster1["oidcIssuer"],
+					"expected oidcIssuer to be the same as the oidcProvider url without the https:// prefix")
+				
+				// cluster2 runs with fargate, no default node group, no default security groups and no oidc provider
+				require.NotNil(t, info.Outputs["cluster2"])
+				cluster2 := info.Outputs["cluster2"].(map[string]interface{})
+				require.NotNil(t, cluster2["eksCluster"])
+				eksCluster := cluster2["eksCluster"].(map[string]interface{})
+				require.NotNil(t, eksCluster["vpcConfig"])
+				vpcConfig := eksCluster["vpcConfig"].(map[string]interface{})
+				
+				// AWS EKS always creates a security group for the cluster
+				eksSecurityGroupId := vpcConfig["clusterSecurityGroupId"]
+				require.NotEmpty(t, eksSecurityGroupId)
+
+				// verify that the cluster and node security group ID are set to the eks security group ID
+				assert.Equal(t, eksSecurityGroupId, cluster2["clusterSecurityGroupId"])
+				assert.Equal(t, eksSecurityGroupId, cluster2["nodeSecurityGroupId"])
+
+				// verify that the provider creates no security groups
+				assert.Nil(t, cluster2["clusterSecurityGroup"])
+				assert.Nil(t, cluster2["nodeSecurityGroup"])
+				assert.Empty(t, cluster2["clusterIngressRuleId"])
+
+				// verify that the provider creates no default node group
+				assert.Nil(t, cluster2["defaultNodeGroup"])
+				assert.Empty(t, cluster2["defaultNodeGroupAsgName"])
+
+				require.NotNil(t, cluster2["core"])
+				coreData2 := cluster2["core"].(map[string]interface{})
+				
+				// verify that the provider creates no IAM OIDC provider
+				assert.Empty(t, cluster2["oidcProviderArn"])
+				assert.Nil(t, coreData2["oidcProvider"])	
+
+				// every EKS cluster has an OIDC provider URL, even if no OIDC provider is created
+				oidcProviderUrl2 := cluster2["oidcProviderUrl"].(string)
+				assert.NotEmpty(t, oidcProviderUrl2)
+				assert.NotEmpty(t, cluster2["oidcIssuer"])
+				assert.Equal(t, strings.ReplaceAll(oidcProviderUrl2, "https://", ""), cluster2["oidcIssuer"],
+					"expected oidcIssuer to be the same as the oidcProvider url without the https:// prefix")
+
+				// verify that the provider creates a fargate profile
+				require.NotNil(t, coreData2["fargateProfile"])
+				fargateProfile := coreData2["fargateProfile"].(map[string]interface{})
+				assert.Equal(t, fargateProfile["id"], cluster2["fargateProfileId"])
+				assert.Equal(t, fargateProfile["status"], cluster2["fargateProfileStatus"])
 			},
 		})
 
