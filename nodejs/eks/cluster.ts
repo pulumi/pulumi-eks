@@ -1009,7 +1009,8 @@ export function createCore(
             return result;
         });
 
-    const corednsExplicitlyEnabled = args.corednsAddonOptions?.enabled === true || args.corednsAddonOptions?.configurationValues;
+    const corednsExplicitlyEnabled =
+        args.corednsAddonOptions?.enabled === true || args.corednsAddonOptions?.configurationValues;
     // We can only enable the coredns addon if we have a node group to place it on
     // This means we are either using the default node group or the cluster is a fargate cluster
     // Also, if the user explicitly enables it then do what they want
@@ -1058,17 +1059,21 @@ export function createCore(
                         args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
                     configurationValues: stringifyAddonConfiguration(configurationValues),
                 },
-                { parent, provider, dependsOn: fargateProfile.apply(profile => {
-                    // The coredns addon needs a dependency on the fargate profile because
-                    // if there's no profile at the time of deployment, the pods of the
-                    // addon will be assigned to the default-scheduler and not the
-                    // fargate scheduler.
-                    if (profile) {
-                        return [profile];
-                    } else {
-                        return [];
-                    }
-                }) },
+                {
+                    parent,
+                    provider,
+                    dependsOn: fargateProfile.apply((profile) => {
+                        // The coredns addon needs a dependency on the fargate profile because
+                        // if there's no profile at the time of deployment, the pods of the
+                        // addon will be assigned to the default-scheduler and not the
+                        // fargate scheduler.
+                        if (profile) {
+                            return [profile];
+                        } else {
+                            return [];
+                        }
+                    }),
+                },
             );
         }
     });
@@ -2092,11 +2097,16 @@ export function createCluster(
 
     const kubeconfigJson = pulumi.jsonStringify(core.kubeconfig);
 
-    const oidcIssuerUrl = core.cluster.identities.apply(identities => {
+    const oidcIssuerUrl = core.cluster.identities.apply((identities) => {
         // this is nowadays guaranteed to be present, but we still check for it to be safe
         // this was not set for cluster version 1.14 and below. Those versions are not available anymore
         // since 2020-12-08 and clusters were force upgraded
-        if (identities && identities.length > 0 && identities[0].oidcs && identities[0].oidcs.length > 0) {
+        if (
+            identities &&
+            identities.length > 0 &&
+            identities[0].oidcs &&
+            identities[0].oidcs.length > 0
+        ) {
             return identities[0].oidcs[0].issuer;
         }
         return "";
@@ -2115,17 +2125,22 @@ export function createCluster(
         kubeconfigJson,
         // If the cluster is created without default security groups, we're returning the EKS created security group
         // see: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html#security-group-default-rules
-        clusterSecurityGroupId: core.clusterSecurityGroup?.id ?? core.cluster.vpcConfig.clusterSecurityGroupId,
+        clusterSecurityGroupId:
+            core.clusterSecurityGroup?.id ?? core.cluster.vpcConfig.clusterSecurityGroupId,
         nodeSecurityGroupId: nodeSecurityGroup?.id ?? core.cluster.vpcConfig.clusterSecurityGroupId,
 
         clusterIngressRuleId: eksClusterIngressRule?.securityGroupRuleId ?? pulumi.output(""),
         defaultNodeGroupAsgName: defaultNodeGroup?.autoScalingGroup.name ?? pulumi.output(""),
-        fargateProfileId: core.fargateProfile.apply(fargateProfile => fargateProfile?.id ?? pulumi.output("")),
-        fargateProfileStatus: core.fargateProfile.apply(fargateProfile => fargateProfile?.status ?? pulumi.output("")),
+        fargateProfileId: core.fargateProfile.apply(
+            (fargateProfile) => fargateProfile?.id ?? pulumi.output(""),
+        ),
+        fargateProfileStatus: core.fargateProfile.apply(
+            (fargateProfile) => fargateProfile?.status ?? pulumi.output(""),
+        ),
         oidcProviderArn: core.oidcProvider?.arn ?? pulumi.output(""),
         oidcProviderUrl: oidcIssuerUrl,
         // The issuer is the issuer URL without the protocol part
-        oidcIssuer: oidcIssuerUrl.apply(url => url.replace("https://", "")),
+        oidcIssuer: oidcIssuerUrl.apply((url) => url.replace("https://", "")),
     };
 }
 

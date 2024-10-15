@@ -264,7 +264,7 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 							Description: "Issuer URL for the OpenID Connect identity provider of the EKS cluster.",
 						},
 						"oidcIssuer": {
-							TypeSpec:    schema.TypeSpec{Type: "string"},
+							TypeSpec: schema.TypeSpec{Type: "string"},
 							Description: "The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).\n\n" +
 								"This value can be used to associate kubernetes service accounts with IAM roles. For more information, see " +
 								"https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.",
