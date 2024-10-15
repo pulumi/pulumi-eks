@@ -45,7 +45,7 @@ export interface ClusterMetadata {
 }
 
 interface Taint {
-    value: string;
+    value: string | undefined;
     effect: "NoSchedule" | "NoExecute" | "PreferNoSchedule";
 }
 
@@ -389,7 +389,12 @@ function buildKubeletFlags(args: UserDataArgs): string[] {
         const parts = [];
         for (const key of Object.keys(args.taints)) {
             const taint = args.taints[key];
-            parts.push(key + "=" + taint.value + ":" + taint.effect);
+            // taints are represented as key=value:effect or key:effect if value is empty. See https://github.com/kubernetes/kubernetes/blob/de8f6b0db7a6d7506b7544021be413d3faa47078/pkg/apis/core/taint.go#L30
+            if (taint.value) {
+                parts.push(key + "=" + taint.value + ":" + taint.effect);
+            } else {
+                parts.push(key + ":" + taint.effect);
+            }
         }
         if (parts.length > 0) {
             kubeletExtraArgs.push("--register-with-taints=" + parts.join(","));
@@ -449,7 +454,8 @@ function createBottlerocketUserData(
     if (args.taints) {
         const taints = {};
         const records = Object.entries(args.taints).map(([key, taint]) => {
-            return { [key]: `${taint.value}:${taint.effect}` };
+            // empty taint values are represented as an empty string, see https://github.com/bottlerocket-os/bottlerocket/pull/1406
+            return { [key]: `${taint.value ?? ""}:${taint.effect}` };
         });
         Object.assign(taints, ...records);
 
