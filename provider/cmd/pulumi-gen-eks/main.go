@@ -1103,6 +1103,7 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 				},
 			},
 			"eks:index:VpcCniAddon": {
+				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Description: "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\n" +
 						"For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
