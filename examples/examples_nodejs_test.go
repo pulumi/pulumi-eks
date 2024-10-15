@@ -57,7 +57,7 @@ func TestAccCluster(t *testing.T) {
 					info.Outputs["kubeconfig4"],
 				)
 
-				assert.NotEmpty(t, info.Outputs["defaultAsgArn"], "should have a default ASG")
+				assert.NotEmpty(t, info.Outputs["defaultAsgName"], "should have a default ASG")
 
 				// let's test there's a iamRoleArn specified for the cluster
 				assert.NotEmpty(t, info.Outputs["iamRoleArn"])
