@@ -198,7 +198,7 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly Pulumi.Aws.Ec2.SecurityGroup? NodeSecurityGroup;
         /// <summary>
-        /// The security group ID for the worker node group to communicate with the cluster.
+        /// The ID of the security group for the worker node group to communicate with the cluster.
         /// 
         /// This security group requires specific inbound and outbound rules.
         /// 

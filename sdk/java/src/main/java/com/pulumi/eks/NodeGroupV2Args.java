@@ -633,7 +633,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The security group ID for the worker node group to communicate with the cluster.
+     * The ID of the security group for the worker node group to communicate with the cluster.
      * 
      * This security group requires specific inbound and outbound rules.
      * 
@@ -647,7 +647,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
     private @Nullable Output<String> nodeSecurityGroupId;
 
     /**
-     * @return The security group ID for the worker node group to communicate with the cluster.
+     * @return The ID of the security group for the worker node group to communicate with the cluster.
      * 
      * This security group requires specific inbound and outbound rules.
      * 
@@ -1700,7 +1700,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param nodeSecurityGroupId The security group ID for the worker node group to communicate with the cluster.
+         * @param nodeSecurityGroupId The ID of the security group for the worker node group to communicate with the cluster.
          * 
          * This security group requires specific inbound and outbound rules.
          * 
@@ -1718,7 +1718,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param nodeSecurityGroupId The security group ID for the worker node group to communicate with the cluster.
+         * @param nodeSecurityGroupId The ID of the security group for the worker node group to communicate with the cluster.
          * 
          * This security group requires specific inbound and outbound rules.
          * 

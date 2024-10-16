@@ -147,7 +147,7 @@ class NodeGroupArgs:
                https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
                
                Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
-        :param pulumi.Input[str] node_security_group_id: The security group ID for the worker node group to communicate with the cluster.
+        :param pulumi.Input[str] node_security_group_id: The ID of the security group for the worker node group to communicate with the cluster.
                
                This security group requires specific inbound and outbound rules.
                
@@ -674,7 +674,7 @@ class NodeGroupArgs:
     @pulumi.getter(name="nodeSecurityGroupId")
     def node_security_group_id(self) -> Optional[pulumi.Input[str]]:
         """
-        The security group ID for the worker node group to communicate with the cluster.
+        The ID of the security group for the worker node group to communicate with the cluster.
 
         This security group requires specific inbound and outbound rules.
 
@@ -939,7 +939,7 @@ class NodeGroup(pulumi.ComponentResource):
                https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
                
                Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
-        :param pulumi.Input[str] node_security_group_id: The security group ID for the worker node group to communicate with the cluster.
+        :param pulumi.Input[str] node_security_group_id: The ID of the security group for the worker node group to communicate with the cluster.
                
                This security group requires specific inbound and outbound rules.
                

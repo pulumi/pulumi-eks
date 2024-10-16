@@ -421,7 +421,7 @@ class ClusterNodeGroupOptions(dict):
                https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
                
                Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
-        :param str node_security_group_id: The security group ID for the worker node group to communicate with the cluster.
+        :param str node_security_group_id: The ID of the security group for the worker node group to communicate with the cluster.
                
                This security group requires specific inbound and outbound rules.
                
@@ -851,7 +851,7 @@ class ClusterNodeGroupOptions(dict):
     @pulumi.getter(name="nodeSecurityGroupId")
     def node_security_group_id(self) -> Optional[str]:
         """
-        The security group ID for the worker node group to communicate with the cluster.
+        The ID of the security group for the worker node group to communicate with the cluster.
 
         This security group requires specific inbound and outbound rules.
 

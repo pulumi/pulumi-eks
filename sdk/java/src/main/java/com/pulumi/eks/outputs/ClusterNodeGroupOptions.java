@@ -237,7 +237,7 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable SecurityGroup nodeSecurityGroup;
     /**
-     * @return The security group ID for the worker node group to communicate with the cluster.
+     * @return The ID of the security group for the worker node group to communicate with the cluster.
      * 
      * This security group requires specific inbound and outbound rules.
      * 
@@ -585,7 +585,7 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.nodeSecurityGroup);
     }
     /**
-     * @return The security group ID for the worker node group to communicate with the cluster.
+     * @return The ID of the security group for the worker node group to communicate with the cluster.
      * 
      * This security group requires specific inbound and outbound rules.
      * 

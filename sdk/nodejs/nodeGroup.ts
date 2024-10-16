@@ -298,7 +298,7 @@ export interface NodeGroupArgs {
      */
     nodeSecurityGroup?: pulumi.Input<pulumiAws.ec2.SecurityGroup>;
     /**
-     * The security group ID for the worker node group to communicate with the cluster.
+     * The ID of the security group for the worker node group to communicate with the cluster.
      *
      * This security group requires specific inbound and outbound rules.
      *

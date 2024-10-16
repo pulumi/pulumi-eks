@@ -416,7 +416,7 @@ type ClusterNodeGroupOptions struct {
 	//
 	// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
 	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
-	// The security group ID for the worker node group to communicate with the cluster.
+	// The ID of the security group for the worker node group to communicate with the cluster.
 	//
 	// This security group requires specific inbound and outbound rules.
 	//
@@ -590,7 +590,7 @@ type ClusterNodeGroupOptionsArgs struct {
 	//
 	// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
 	NodeSecurityGroup ec2.SecurityGroupInput `pulumi:"nodeSecurityGroup"`
-	// The security group ID for the worker node group to communicate with the cluster.
+	// The ID of the security group for the worker node group to communicate with the cluster.
 	//
 	// This security group requires specific inbound and outbound rules.
 	//
@@ -927,7 +927,7 @@ func (o ClusterNodeGroupOptionsOutput) NodeSecurityGroup() ec2.SecurityGroupOutp
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
 }
 
-// The security group ID for the worker node group to communicate with the cluster.
+// The ID of the security group for the worker node group to communicate with the cluster.
 //
 // This security group requires specific inbound and outbound rules.
 //
@@ -1393,7 +1393,7 @@ func (o ClusterNodeGroupOptionsPtrOutput) NodeSecurityGroup() ec2.SecurityGroupO
 	}).(ec2.SecurityGroupOutput)
 }
 
-// The security group ID for the worker node group to communicate with the cluster.
+// The ID of the security group for the worker node group to communicate with the cluster.
 //
 // This security group requires specific inbound and outbound rules.
 //
