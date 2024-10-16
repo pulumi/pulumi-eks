@@ -78,6 +78,20 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
         return this.awsProvider;
     }
     /**
+     * The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
+     * 
+     */
+    @Export(name="clusterIngressRuleId", refs={String.class}, tree="[0]")
+    private Output<String> clusterIngressRuleId;
+
+    /**
+     * @return The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
+     * 
+     */
+    public Output<String> clusterIngressRuleId() {
+        return this.clusterIngressRuleId;
+    }
+    /**
      * The security group for the EKS cluster.
      * 
      */
@@ -90,6 +104,20 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<Optional<SecurityGroup>> clusterSecurityGroup() {
         return Codegen.optional(this.clusterSecurityGroup);
+    }
+    /**
+     * The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+     * 
+     */
+    @Export(name="clusterSecurityGroupId", refs={String.class}, tree="[0]")
+    private Output<String> clusterSecurityGroupId;
+
+    /**
+     * @return The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+     * 
+     */
+    public Output<String> clusterSecurityGroupId() {
+        return this.clusterSecurityGroupId;
     }
     /**
      * The EKS cluster and its dependencies.
@@ -120,6 +148,20 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
         return Codegen.optional(this.defaultNodeGroup);
     }
     /**
+     * The name of the default node group&#39;s AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true.
+     * 
+     */
+    @Export(name="defaultNodeGroupAsgName", refs={String.class}, tree="[0]")
+    private Output<String> defaultNodeGroupAsgName;
+
+    /**
+     * @return The name of the default node group&#39;s AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true.
+     * 
+     */
+    public Output<String> defaultNodeGroupAsgName() {
+        return this.defaultNodeGroupAsgName;
+    }
+    /**
      * The EKS cluster.
      * 
      */
@@ -146,6 +188,34 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<Optional<SecurityGroupRule>> eksClusterIngressRule() {
         return Codegen.optional(this.eksClusterIngressRule);
+    }
+    /**
+     * The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+     * 
+     */
+    @Export(name="fargateProfileId", refs={String.class}, tree="[0]")
+    private Output<String> fargateProfileId;
+
+    /**
+     * @return The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+     * 
+     */
+    public Output<String> fargateProfileId() {
+        return this.fargateProfileId;
+    }
+    /**
+     * The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+     * 
+     */
+    @Export(name="fargateProfileStatus", refs={String.class}, tree="[0]")
+    private Output<String> fargateProfileStatus;
+
+    /**
+     * @return The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+     * 
+     */
+    public Output<String> fargateProfileStatus() {
+        return this.fargateProfileStatus;
     }
     /**
      * The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
@@ -202,6 +272,66 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<Optional<SecurityGroup>> nodeSecurityGroup() {
         return Codegen.optional(this.nodeSecurityGroup);
+    }
+    /**
+     * The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+     * 
+     */
+    @Export(name="nodeSecurityGroupId", refs={String.class}, tree="[0]")
+    private Output<String> nodeSecurityGroupId;
+
+    /**
+     * @return The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+     * 
+     */
+    public Output<String> nodeSecurityGroupId() {
+        return this.nodeSecurityGroupId;
+    }
+    /**
+     * The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).
+     * 
+     * This value can be used to associate kubernetes service accounts with IAM roles. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.
+     * 
+     */
+    @Export(name="oidcIssuer", refs={String.class}, tree="[0]")
+    private Output<String> oidcIssuer;
+
+    /**
+     * @return The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).
+     * 
+     * This value can be used to associate kubernetes service accounts with IAM roles. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.
+     * 
+     */
+    public Output<String> oidcIssuer() {
+        return this.oidcIssuer;
+    }
+    /**
+     * The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured.
+     * 
+     */
+    @Export(name="oidcProviderArn", refs={String.class}, tree="[0]")
+    private Output<String> oidcProviderArn;
+
+    /**
+     * @return The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured.
+     * 
+     */
+    public Output<String> oidcProviderArn() {
+        return this.oidcProviderArn;
+    }
+    /**
+     * Issuer URL for the OpenID Connect identity provider of the EKS cluster.
+     * 
+     */
+    @Export(name="oidcProviderUrl", refs={String.class}, tree="[0]")
+    private Output<String> oidcProviderUrl;
+
+    /**
+     * @return Issuer URL for the OpenID Connect identity provider of the EKS cluster.
+     * 
+     */
+    public Output<String> oidcProviderUrl() {
+        return this.oidcProviderUrl;
     }
 
     /**

@@ -19,7 +19,7 @@ const cluster1 = new eks.Cluster(`${projectName}-1`, {
     nodeAmiId: "ami-066e69f6f03b5383e",
 });
 
-export const defaultAsgArn: pulumi.Output<string> = cluster1.defaultNodeGroup.apply(ng => ng?.autoScalingGroup.arn ?? pulumi.output(""));
+export const defaultAsgName: pulumi.Output<string> = cluster1.defaultNodeGroupAsgName;
 
 const cluster2 = new eks.Cluster(`${projectName}-2`, {
     vpcId: vpc.vpcId,

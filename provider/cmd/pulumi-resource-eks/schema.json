@@ -1077,9 +1077,17 @@
                     "$ref": "/aws/v6.18.2/schema.json#/provider",
                     "description": "The AWS resource provider."
                 },
+                "clusterIngressRuleId": {
+                    "type": "string",
+                    "description": "The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true."
+                },
                 "clusterSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the EKS cluster."
+                },
+                "clusterSecurityGroupId": {
+                    "type": "string",
+                    "description": "The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true."
                 },
                 "core": {
                     "$ref": "#/types/eks:index:CoreData",
@@ -1089,6 +1097,10 @@
                     "$ref": "#/types/eks:index:NodeGroupData",
                     "description": "The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified."
                 },
+                "defaultNodeGroupAsgName": {
+                    "type": "string",
+                    "description": "The name of the default node group's AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true."
+                },
                 "eksCluster": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:eks%2Fcluster:Cluster",
                     "description": "The EKS cluster."
@@ -1096,6 +1108,14 @@
                 "eksClusterIngressRule": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access to cluster API server."
+                },
+                "fargateProfileId": {
+                    "type": "string",
+                    "description": "The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured."
+                },
+                "fargateProfileStatus": {
+                    "type": "string",
+                    "description": "The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured."
                 },
                 "instanceRoles": {
                     "type": "array",
@@ -1115,6 +1135,22 @@
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the cluster's nodes."
+                },
+                "nodeSecurityGroupId": {
+                    "type": "string",
+                    "description": "The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true."
+                },
+                "oidcIssuer": {
+                    "type": "string",
+                    "description": "The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).\n\nThis value can be used to associate kubernetes service accounts with IAM roles. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html."
+                },
+                "oidcProviderArn": {
+                    "type": "string",
+                    "description": "The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured."
+                },
+                "oidcProviderUrl": {
+                    "type": "string",
+                    "description": "Issuer URL for the OpenID Connect identity provider of the EKS cluster."
                 }
             },
             "required": [
@@ -1123,7 +1159,16 @@
                 "awsProvider",
                 "instanceRoles",
                 "eksCluster",
-                "core"
+                "core",
+                "clusterSecurityGroupId",
+                "nodeSecurityGroupId",
+                "clusterIngressRuleId",
+                "defaultNodeGroupAsgName",
+                "fargateProfileId",
+                "fargateProfileStatus",
+                "oidcProviderArn",
+                "oidcProviderUrl",
+                "oidcIssuer"
             ],
             "inputProperties": {
                 "accessEntries": {
@@ -2235,7 +2280,8 @@
                 {
                     "type": "eks:index:VpcCni"
                 }
-            ]
+            ],
+            "isComponent": true
         }
     },
     "functions": {

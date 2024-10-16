@@ -656,61 +656,6 @@ export function createCore(
         );
     }
 
-    const corednsExplicitlyEnabled =
-        args.corednsAddonOptions?.enabled === true || args.corednsAddonOptions?.configurationValues;
-    // We can only enable the coredns addon if we have a node group to place it on
-    // This means we are either using the default node group or the cluster is a fargate cluster
-    // Also, if the user explicitly enables it then do what they want
-    pulumi.output(args.fargate).apply((fargate) => {
-        if (
-            corednsExplicitlyEnabled ||
-            ((fargate || !args.skipDefaultNodeGroup) && (args.corednsAddonOptions?.enabled ?? true))
-        ) {
-            const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
-                ? pulumi.output(args.corednsAddonOptions.version)
-                : aws.eks
-                      .getAddonVersionOutput(
-                          {
-                              addonName: "coredns",
-                              kubernetesVersion: eksCluster.version,
-                              mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
-                          },
-                          { parent, provider },
-                      )
-                      .apply((addonVersion) => addonVersion.version);
-
-            const configurationValues = pulumi
-                .all([args.fargate, args.corednsAddonOptions?.configurationValues])
-                .apply(([fargate, configurationValues]) => {
-                    if (fargate) {
-                        return {
-                            computeType: "Fargate",
-                            ...configurationValues,
-                        };
-                    } else {
-                        return configurationValues;
-                    }
-                });
-
-            const corednsAddon = new aws.eks.Addon(
-                `${name}-coredns`,
-                {
-                    clusterName: eksCluster.name,
-                    addonName: "coredns",
-                    tags: args.tags,
-                    preserve: true,
-                    addonVersion: corednsVersion,
-                    resolveConflictsOnCreate:
-                        args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
-                    resolveConflictsOnUpdate:
-                        args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
-                    configurationValues: stringifyAddonConfiguration(configurationValues),
-                },
-                { parent, provider },
-            );
-        }
-    });
-
     // Instead of using the kubeconfig directly, we also add a wait of up to 5 minutes or until we
     // can reach the API server for the Output that provides access to the kubeconfig string so that
     // there is time for the cluster API server to become completely available.  Ideally we
@@ -1063,6 +1008,75 @@ export function createCore(
             }
             return result;
         });
+
+    const corednsExplicitlyEnabled =
+        args.corednsAddonOptions?.enabled === true || args.corednsAddonOptions?.configurationValues;
+    // We can only enable the coredns addon if we have a node group to place it on
+    // This means we are either using the default node group or the cluster is a fargate cluster
+    // Also, if the user explicitly enables it then do what they want
+    pulumi.output(args.fargate).apply((fargate) => {
+        if (
+            corednsExplicitlyEnabled ||
+            ((fargate || !args.skipDefaultNodeGroup) && (args.corednsAddonOptions?.enabled ?? true))
+        ) {
+            const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
+                ? pulumi.output(args.corednsAddonOptions.version)
+                : aws.eks
+                      .getAddonVersionOutput(
+                          {
+                              addonName: "coredns",
+                              kubernetesVersion: eksCluster.version,
+                              mostRecent: true, // whether to return the default version or the most recent version for the specified kubernetes version
+                          },
+                          { parent, provider },
+                      )
+                      .apply((addonVersion) => addonVersion.version);
+
+            const configurationValues = pulumi
+                .all([args.fargate, args.corednsAddonOptions?.configurationValues])
+                .apply(([fargate, configurationValues]) => {
+                    if (fargate) {
+                        return {
+                            computeType: "Fargate",
+                            ...configurationValues,
+                        };
+                    } else {
+                        return configurationValues;
+                    }
+                });
+
+            const corednsAddon = new aws.eks.Addon(
+                `${name}-coredns`,
+                {
+                    clusterName: eksCluster.name,
+                    addonName: "coredns",
+                    tags: args.tags,
+                    preserve: true,
+                    addonVersion: corednsVersion,
+                    resolveConflictsOnCreate:
+                        args.corednsAddonOptions?.resolveConflictsOnCreate ?? "OVERWRITE",
+                    resolveConflictsOnUpdate:
+                        args.corednsAddonOptions?.resolveConflictsOnUpdate ?? "OVERWRITE",
+                    configurationValues: stringifyAddonConfiguration(configurationValues),
+                },
+                {
+                    parent,
+                    provider,
+                    dependsOn: fargateProfile.apply((profile) => {
+                        // The coredns addon needs a dependency on the fargate profile because
+                        // if there's no profile at the time of deployment, the pods of the
+                        // addon will be assigned to the default-scheduler and not the
+                        // fargate scheduler.
+                        if (profile) {
+                            return [profile];
+                        } else {
+                            return [];
+                        }
+                    }),
+                },
+            );
+        }
+    });
 
     // Setup OIDC provider to leverage IAM roles for k8s service accounts.
     let oidcProvider: aws.iam.OpenIdConnectProvider | undefined;
@@ -1992,6 +2006,15 @@ export interface ClusterResult {
     defaultNodeGroup: NodeGroupV2Data | undefined;
     eksCluster: aws.eks.Cluster;
     core: CoreData;
+    clusterSecurityGroupId: pulumi.Output<string>;
+    nodeSecurityGroupId: pulumi.Output<string>;
+    clusterIngressRuleId: pulumi.Output<string>;
+    defaultNodeGroupAsgName: pulumi.Output<string>;
+    fargateProfileId: pulumi.Output<string>;
+    fargateProfileStatus: pulumi.Output<string>;
+    oidcProviderArn: pulumi.Output<string>;
+    oidcProviderUrl: pulumi.Output<string>;
+    oidcIssuer: pulumi.Output<string>;
 }
 
 /** @internal */
@@ -2074,6 +2097,21 @@ export function createCluster(
 
     const kubeconfigJson = pulumi.jsonStringify(core.kubeconfig);
 
+    const oidcIssuerUrl = core.cluster.identities.apply((identities) => {
+        // this is nowadays guaranteed to be present, but we still check for it to be safe
+        // this was not set for cluster version 1.14 and below. Those versions are not available anymore
+        // since 2020-12-08 and clusters were force upgraded
+        if (
+            identities &&
+            identities.length > 0 &&
+            identities[0].oidcs &&
+            identities[0].oidcs.length > 0
+        ) {
+            return identities[0].oidcs[0].issuer;
+        }
+        return "";
+    });
+
     return {
         core,
         clusterSecurityGroup: core.clusterSecurityGroup,
@@ -2085,6 +2123,24 @@ export function createCluster(
         defaultNodeGroup,
         kubeconfig: pulumi.output(core.kubeconfig),
         kubeconfigJson,
+        // If the cluster is created without default security groups, we're returning the EKS created security group
+        // see: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html#security-group-default-rules
+        clusterSecurityGroupId:
+            core.clusterSecurityGroup?.id ?? core.cluster.vpcConfig.clusterSecurityGroupId,
+        nodeSecurityGroupId: nodeSecurityGroup?.id ?? core.cluster.vpcConfig.clusterSecurityGroupId,
+
+        clusterIngressRuleId: eksClusterIngressRule?.securityGroupRuleId ?? pulumi.output(""),
+        defaultNodeGroupAsgName: defaultNodeGroup?.autoScalingGroup.name ?? pulumi.output(""),
+        fargateProfileId: core.fargateProfile.apply(
+            (fargateProfile) => fargateProfile?.id ?? pulumi.output(""),
+        ),
+        fargateProfileStatus: core.fargateProfile.apply(
+            (fargateProfile) => fargateProfile?.status ?? pulumi.output(""),
+        ),
+        oidcProviderArn: core.oidcProvider?.arn ?? pulumi.output(""),
+        oidcProviderUrl: oidcIssuerUrl,
+        // The issuer is the issuer URL without the protocol part
+        oidcIssuer: oidcIssuerUrl.apply((url) => url.replace("https://", "")),
     };
 }
 
@@ -2110,6 +2166,16 @@ export class ClusterInternal extends pulumi.ComponentResource {
     public readonly kubeconfigJson!: pulumi.Output<string>;
     public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
 
+    public readonly clusterSecurityGroupId: pulumi.Output<string>;
+    public readonly nodeSecurityGroupId: pulumi.Output<string>;
+    public readonly clusterIngressRuleId: pulumi.Output<string>;
+    public readonly defaultNodeGroupAsgName: pulumi.Output<string>;
+    public readonly fargateProfileId: pulumi.Output<string>;
+    public readonly fargateProfileStatus: pulumi.Output<string>;
+    public readonly oidcProviderArn: pulumi.Output<string>;
+    public readonly oidcProviderUrl: pulumi.Output<string>;
+    public readonly oidcIssuer: pulumi.Output<string>;
+
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:Cluster";
 
@@ -2124,6 +2190,15 @@ export class ClusterInternal extends pulumi.ComponentResource {
                 kubeconfig: undefined,
                 kubeconfigJson: undefined,
                 nodeSecurityGroup: undefined,
+                clusterSecurityGroupId: undefined,
+                nodeSecurityGroupId: undefined,
+                clusterIngressRuleId: undefined,
+                defaultNodeGroupAsgName: undefined,
+                fargateProfileId: undefined,
+                fargateProfileStatus: undefined,
+                oidcProviderArn: undefined,
+                oidcProviderUrl: undefined,
+                oidcIssuer: undefined,
             };
             super(type, name, props, opts);
             return;
@@ -2147,6 +2222,15 @@ export class ClusterInternal extends pulumi.ComponentResource {
         this.defaultNodeGroup = pulumi.output(cluster.defaultNodeGroup);
         this.eksCluster = pulumi.output(cluster.eksCluster);
         this.core = pulumi.output(cluster.core);
+        this.clusterSecurityGroupId = pulumi.output(cluster.clusterSecurityGroupId);
+        this.nodeSecurityGroupId = pulumi.output(cluster.nodeSecurityGroupId);
+        this.clusterIngressRuleId = pulumi.output(cluster.clusterIngressRuleId);
+        this.defaultNodeGroupAsgName = pulumi.output(cluster.defaultNodeGroupAsgName);
+        this.fargateProfileId = pulumi.output(cluster.fargateProfileId);
+        this.fargateProfileStatus = pulumi.output(cluster.fargateProfileStatus);
+        this.oidcProviderArn = pulumi.output(cluster.oidcProviderArn);
+        this.oidcProviderUrl = pulumi.output(cluster.oidcProviderUrl);
+        this.oidcIssuer = pulumi.output(cluster.oidcIssuer);
 
         this.registerOutputs({
             clusterSecurityGroup: this.clusterSecurityGroup,
@@ -2158,6 +2242,15 @@ export class ClusterInternal extends pulumi.ComponentResource {
             kubeconfig: this.kubeconfig,
             kubeconfigJson: this.kubeconfigJson,
             nodeSecurityGroup: this.nodeSecurityGroup,
+            clusterSecurityGroupId: this.clusterSecurityGroupId,
+            nodeSecurityGroupId: this.nodeSecurityGroupId,
+            clusterIngressRuleId: this.clusterIngressRuleId,
+            defaultNodeGroupAsgName: this.defaultNodeGroupAsgName,
+            fargateProfileId: this.fargateProfileId,
+            fargateProfileStatus: this.fargateProfileStatus,
+            oidcProviderArn: this.oidcProviderArn,
+            oidcProviderUrl: this.oidcProviderUrl,
+            oidcIssuer: this.oidcIssuer,
         });
     }
 
