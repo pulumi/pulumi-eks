@@ -39,9 +39,13 @@ export class NodeGroupV2 extends pulumi.ComponentResource {
      */
     public readonly extraNodeSecurityGroups!: pulumi.Output<pulumiAws.ec2.SecurityGroup[]>;
     /**
-     * The security group for the node group to communicate with the cluster.
+     * The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.
      */
-    public readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup>;
+    public readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
+    /**
+     * The ID of the security group for the node group to communicate with the cluster.
+     */
+    public readonly nodeSecurityGroupId!: pulumi.Output<string>;
 
     /**
      * Create a NodeGroupV2 resource with the given unique name, arguments, and options.
@@ -65,6 +69,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource {
             resourceInputs["cloudFormationTags"] = args ? args.cloudFormationTags : undefined;
             resourceInputs["cluster"] = args ? args.cluster : undefined;
             resourceInputs["clusterIngressRule"] = args ? args.clusterIngressRule : undefined;
+            resourceInputs["clusterIngressRuleId"] = args ? args.clusterIngressRuleId : undefined;
             resourceInputs["desiredCapacity"] = args ? args.desiredCapacity : undefined;
             resourceInputs["enableDetailedMonitoring"] = args ? args.enableDetailedMonitoring : undefined;
             resourceInputs["encryptRootBlockDevice"] = args ? args.encryptRootBlockDevice : undefined;
@@ -89,6 +94,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource {
             resourceInputs["nodeRootVolumeThroughput"] = args ? args.nodeRootVolumeThroughput : undefined;
             resourceInputs["nodeRootVolumeType"] = args ? args.nodeRootVolumeType : undefined;
             resourceInputs["nodeSecurityGroup"] = args ? args.nodeSecurityGroup : undefined;
+            resourceInputs["nodeSecurityGroupId"] = args ? args.nodeSecurityGroupId : undefined;
             resourceInputs["nodeSubnetIds"] = args ? args.nodeSubnetIds : undefined;
             resourceInputs["nodeUserData"] = args ? args.nodeUserData : undefined;
             resourceInputs["nodeUserDataOverride"] = args ? args.nodeUserDataOverride : undefined;
@@ -102,6 +108,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource {
             resourceInputs["autoScalingGroup"] = undefined /*out*/;
             resourceInputs["extraNodeSecurityGroups"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
+            resourceInputs["nodeSecurityGroupId"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(NodeGroupV2.__pulumiType, name, resourceInputs, opts, true /*remote*/);
@@ -170,6 +177,10 @@ export interface NodeGroupV2Args {
      * The ingress rule that gives node group access.
      */
     clusterIngressRule?: pulumi.Input<pulumiAws.ec2.SecurityGroupRule>;
+    /**
+     * The ID of the ingress rule that gives node group access.
+     */
+    clusterIngressRuleId?: pulumi.Input<string>;
     /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      */
@@ -293,6 +304,17 @@ export interface NodeGroupV2Args {
      * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
      */
     nodeSecurityGroup?: pulumi.Input<pulumiAws.ec2.SecurityGroup>;
+    /**
+     * The ID of the security group for the worker node group to communicate with the cluster.
+     *
+     * This security group requires specific inbound and outbound rules.
+     *
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+     *
+     * Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+     */
+    nodeSecurityGroupId?: pulumi.Input<string>;
     /**
      * The set of subnets to override and use for the worker node group.
      *

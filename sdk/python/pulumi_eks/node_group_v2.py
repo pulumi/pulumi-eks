@@ -33,6 +33,7 @@ class NodeGroupV2Args:
                  bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
+                 cluster_ingress_rule_id: Optional[pulumi.Input[str]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enable_detailed_monitoring: Optional[pulumi.Input[bool]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
@@ -57,6 +58,7 @@ class NodeGroupV2Args:
                  node_root_volume_throughput: Optional[pulumi.Input[int]] = None,
                  node_root_volume_type: Optional[pulumi.Input[str]] = None,
                  node_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
+                 node_security_group_id: Optional[pulumi.Input[str]] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
@@ -101,6 +103,7 @@ class NodeGroupV2Args:
                
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroupRule'] cluster_ingress_rule: The ingress rule that gives node group access.
+        :param pulumi.Input[str] cluster_ingress_rule_id: The ID of the ingress rule that gives node group access.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] enable_detailed_monitoring: Enables/disables detailed monitoring of the EC2 instances.
                
@@ -152,6 +155,14 @@ class NodeGroupV2Args:
                https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
                
                Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
+        :param pulumi.Input[str] node_security_group_id: The ID of the security group for the worker node group to communicate with the cluster.
+               
+               This security group requires specific inbound and outbound rules.
+               
+               See for more details:
+               https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+               
+               Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] node_subnet_ids: The set of subnets to override and use for the worker node group.
                
                Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -193,6 +204,8 @@ class NodeGroupV2Args:
             pulumi.set(__self__, "cloud_formation_tags", cloud_formation_tags)
         if cluster_ingress_rule is not None:
             pulumi.set(__self__, "cluster_ingress_rule", cluster_ingress_rule)
+        if cluster_ingress_rule_id is not None:
+            pulumi.set(__self__, "cluster_ingress_rule_id", cluster_ingress_rule_id)
         if desired_capacity is not None:
             pulumi.set(__self__, "desired_capacity", desired_capacity)
         if enable_detailed_monitoring is not None:
@@ -241,6 +254,8 @@ class NodeGroupV2Args:
             pulumi.set(__self__, "node_root_volume_type", node_root_volume_type)
         if node_security_group is not None:
             pulumi.set(__self__, "node_security_group", node_security_group)
+        if node_security_group_id is not None:
+            pulumi.set(__self__, "node_security_group_id", node_security_group_id)
         if node_subnet_ids is not None:
             pulumi.set(__self__, "node_subnet_ids", node_subnet_ids)
         if node_user_data is not None:
@@ -379,6 +394,18 @@ class NodeGroupV2Args:
     @cluster_ingress_rule.setter
     def cluster_ingress_rule(self, value: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']]):
         pulumi.set(self, "cluster_ingress_rule", value)
+
+    @property
+    @pulumi.getter(name="clusterIngressRuleId")
+    def cluster_ingress_rule_id(self) -> Optional[pulumi.Input[str]]:
+        """
+        The ID of the ingress rule that gives node group access.
+        """
+        return pulumi.get(self, "cluster_ingress_rule_id")
+
+    @cluster_ingress_rule_id.setter
+    def cluster_ingress_rule_id(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "cluster_ingress_rule_id", value)
 
     @property
     @pulumi.getter(name="desiredCapacity")
@@ -696,6 +723,25 @@ class NodeGroupV2Args:
         pulumi.set(self, "node_security_group", value)
 
     @property
+    @pulumi.getter(name="nodeSecurityGroupId")
+    def node_security_group_id(self) -> Optional[pulumi.Input[str]]:
+        """
+        The ID of the security group for the worker node group to communicate with the cluster.
+
+        This security group requires specific inbound and outbound rules.
+
+        See for more details:
+        https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+
+        Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+        """
+        return pulumi.get(self, "node_security_group_id")
+
+    @node_security_group_id.setter
+    def node_security_group_id(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "node_security_group_id", value)
+
+    @property
     @pulumi.getter(name="nodeSubnetIds")
     def node_subnet_ids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
         """
@@ -822,6 +868,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
+                 cluster_ingress_rule_id: Optional[pulumi.Input[str]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enable_detailed_monitoring: Optional[pulumi.Input[bool]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
@@ -846,6 +893,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  node_root_volume_throughput: Optional[pulumi.Input[int]] = None,
                  node_root_volume_type: Optional[pulumi.Input[str]] = None,
                  node_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
+                 node_security_group_id: Optional[pulumi.Input[str]] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
@@ -894,6 +942,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both.
         :param pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]] cluster: The target EKS cluster.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroupRule'] cluster_ingress_rule: The ingress rule that gives node group access.
+        :param pulumi.Input[str] cluster_ingress_rule_id: The ID of the ingress rule that gives node group access.
         :param pulumi.Input[int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[bool] enable_detailed_monitoring: Enables/disables detailed monitoring of the EC2 instances.
                
@@ -945,6 +994,14 @@ class NodeGroupV2(pulumi.ComponentResource):
                https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
                
                Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
+        :param pulumi.Input[str] node_security_group_id: The ID of the security group for the worker node group to communicate with the cluster.
+               
+               This security group requires specific inbound and outbound rules.
+               
+               See for more details:
+               https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+               
+               Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] node_subnet_ids: The set of subnets to override and use for the worker node group.
                
                Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -1003,6 +1060,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
+                 cluster_ingress_rule_id: Optional[pulumi.Input[str]] = None,
                  desired_capacity: Optional[pulumi.Input[int]] = None,
                  enable_detailed_monitoring: Optional[pulumi.Input[bool]] = None,
                  encrypt_root_block_device: Optional[pulumi.Input[bool]] = None,
@@ -1027,6 +1085,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  node_root_volume_throughput: Optional[pulumi.Input[int]] = None,
                  node_root_volume_type: Optional[pulumi.Input[str]] = None,
                  node_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
+                 node_security_group_id: Optional[pulumi.Input[str]] = None,
                  node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  node_user_data: Optional[pulumi.Input[str]] = None,
                  node_user_data_override: Optional[pulumi.Input[str]] = None,
@@ -1056,6 +1115,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                 raise TypeError("Missing required property 'cluster'")
             __props__.__dict__["cluster"] = cluster
             __props__.__dict__["cluster_ingress_rule"] = cluster_ingress_rule
+            __props__.__dict__["cluster_ingress_rule_id"] = cluster_ingress_rule_id
             __props__.__dict__["desired_capacity"] = desired_capacity
             __props__.__dict__["enable_detailed_monitoring"] = enable_detailed_monitoring
             __props__.__dict__["encrypt_root_block_device"] = encrypt_root_block_device
@@ -1080,6 +1140,7 @@ class NodeGroupV2(pulumi.ComponentResource):
             __props__.__dict__["node_root_volume_throughput"] = node_root_volume_throughput
             __props__.__dict__["node_root_volume_type"] = node_root_volume_type
             __props__.__dict__["node_security_group"] = node_security_group
+            __props__.__dict__["node_security_group_id"] = node_security_group_id
             __props__.__dict__["node_subnet_ids"] = node_subnet_ids
             __props__.__dict__["node_user_data"] = node_user_data
             __props__.__dict__["node_user_data_override"] = node_user_data_override
@@ -1114,9 +1175,17 @@ class NodeGroupV2(pulumi.ComponentResource):
 
     @property
     @pulumi.getter(name="nodeSecurityGroup")
-    def node_security_group(self) -> pulumi.Output['pulumi_aws.ec2.SecurityGroup']:
+    def node_security_group(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroup']]:
         """
-        The security group for the node group to communicate with the cluster.
+        The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.
         """
         return pulumi.get(self, "node_security_group")
+
+    @property
+    @pulumi.getter(name="nodeSecurityGroupId")
+    def node_security_group_id(self) -> pulumi.Output[str]:
+        """
+        The ID of the security group for the node group to communicate with the cluster.
+        """
+        return pulumi.get(self, "node_security_group_id")
 
