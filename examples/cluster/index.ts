@@ -1,4 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
+import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 
@@ -62,11 +63,17 @@ const cluster4 = new eks.Cluster(`${projectName}-4`, {
 ///     EKS Addons     ///
 //////////////////////////
 
+const corednsVersion = aws.eks.getAddonVersionOutput({
+  addonName: "coredns",
+  kubernetesVersion: cluster3.eksCluster.version,
+  mostRecent: true,
+});
+
 // Test that we can create a coredns addon within cluster3.
 const coredns = new eks.Addon("coredns", {
   cluster: cluster3,
   addonName: "coredns",
-  addonVersion: "v1.11.1-eksbuild.9",
+  addonVersion: corednsVersion.version,
   resolveConflictsOnUpdate: "PRESERVE",
   configurationValues: {
     replicaCount: 4,
