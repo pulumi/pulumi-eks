@@ -108,6 +108,6 @@ const ng = new eks.NodeGroupV2("example-mng", {
   amiId: "ami-066e69f6f03b5383e",
   extraNodeSecurityGroups: [
     customSecurityGroup, // Plain type
-    cluster.nodeSecurityGroupId, // Input type
+    cluster.nodeSecurityGroup.apply(sg => sg!), // Input type
   ],
 });

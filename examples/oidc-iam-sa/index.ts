@@ -32,7 +32,7 @@ export const appsNamespaceName = appsNamespace.metadata.name;
 // Create the new IAM policy for the Service Account using the
 // AssumeRoleWebWebIdentity action.
 const saName = "s3";
-const saAssumeRolePolicy = aws.iam.getPolicyDocument({
+const saAssumeRolePolicy = aws.iam.getPolicyDocumentOutput({
     statements: [{
         actions: ["sts:AssumeRoleWithWebIdentity"],
         conditions: [{

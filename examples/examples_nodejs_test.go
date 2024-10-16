@@ -1080,6 +1080,8 @@ func TestAccScalarTypes(t *testing.T) {
 				// cluster1 runs the default settings with a default node group and an oidc provider
 				require.NotNil(t, info.Outputs["cluster1"])
 				cluster1 := info.Outputs["cluster1"].(map[string]interface{})
+				require.NotNil(t, cluster1["eksCluster"])
+				eksCluster1 := cluster1["eksCluster"].(map[string]interface{})
 
 				require.NotNil(t, cluster1["clusterSecurityGroup"])
 				require.NotNil(t, cluster1["nodeSecurityGroup"])
@@ -1099,8 +1101,8 @@ func TestAccScalarTypes(t *testing.T) {
 				oidcProvider1 := coreData1["oidcProvider"].(map[string]interface{})
 
 				assert.Equal(t, oidcProvider1["arn"], cluster1["oidcProviderArn"])
-				oidcProviderUrl1 := oidcProvider1["url"].(string)
-				assert.Equal(t, oidcProvider1["url"], cluster1["oidcProviderUrl"])
+				oidcProviderUrl1 := getOidcProviderUrl(t, eksCluster1)
+				assert.Equal(t, oidcProviderUrl1, cluster1["oidcProviderUrl"])
 				assert.Equal(t, strings.ReplaceAll(oidcProviderUrl1, "https://", ""), cluster1["oidcIssuer"],
 					"expected oidcIssuer to be the same as the oidcProvider url without the https:// prefix")
 				
@@ -1108,9 +1110,9 @@ func TestAccScalarTypes(t *testing.T) {
 				require.NotNil(t, info.Outputs["cluster2"])
 				cluster2 := info.Outputs["cluster2"].(map[string]interface{})
 				require.NotNil(t, cluster2["eksCluster"])
-				eksCluster := cluster2["eksCluster"].(map[string]interface{})
-				require.NotNil(t, eksCluster["vpcConfig"])
-				vpcConfig := eksCluster["vpcConfig"].(map[string]interface{})
+				eksCluster2 := cluster2["eksCluster"].(map[string]interface{})
+				require.NotNil(t, eksCluster2["vpcConfig"])
+				vpcConfig := eksCluster2["vpcConfig"].(map[string]interface{})
 				
 				// AWS EKS always creates a security group for the cluster
 				eksSecurityGroupId := vpcConfig["clusterSecurityGroupId"]
@@ -1152,4 +1154,20 @@ func TestAccScalarTypes(t *testing.T) {
 		})
 
 	programTestWithExtraOptions(t, &test, nil)
+}
+
+func getOidcProviderUrl(t *testing.T, eksCluster map[string]interface{}) string {
+	require.NotEmpty(t, eksCluster["identities"])
+	identities := eksCluster["identities"].([]interface{})
+	require.NotEmpty(t, identities[0])
+
+	require.Contains(t, identities[0].(map[string]interface{}), "oidcs")
+	require.NotEmpty(t, identities[0].(map[string]interface{})["oidcs"])
+	oidcs := identities[0].(map[string]interface{})["oidcs"].([]interface{})
+
+	require.NotEmpty(t, oidcs[0])
+	require.Contains(t, oidcs[0].(map[string]interface{}), "issuer")
+	require.NotEmpty(t, oidcs[0].(map[string]interface{})["issuer"])
+
+	return oidcs[0].(map[string]interface{})["issuer"].(string)
 }
