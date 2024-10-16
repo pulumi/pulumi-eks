@@ -52,9 +52,17 @@ export class Cluster extends pulumi.ComponentResource {
      */
     public /*out*/ readonly awsProvider!: pulumi.Output<pulumiAws.Provider>;
     /**
+     * The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
+     */
+    public /*out*/ readonly clusterIngressRuleId!: pulumi.Output<string>;
+    /**
      * The security group for the EKS cluster.
      */
     public readonly clusterSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
+    /**
+     * The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+     */
+    public /*out*/ readonly clusterSecurityGroupId!: pulumi.Output<string>;
     /**
      * The EKS cluster and its dependencies.
      */
@@ -64,6 +72,10 @@ export class Cluster extends pulumi.ComponentResource {
      */
     public /*out*/ readonly defaultNodeGroup!: pulumi.Output<outputs.NodeGroupData | undefined>;
     /**
+     * The name of the default node group's AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true.
+     */
+    public /*out*/ readonly defaultNodeGroupAsgName!: pulumi.Output<string>;
+    /**
      * The EKS cluster.
      */
     public /*out*/ readonly eksCluster!: pulumi.Output<pulumiAws.eks.Cluster>;
@@ -71,6 +83,14 @@ export class Cluster extends pulumi.ComponentResource {
      * The ingress rule that gives node group access to cluster API server.
      */
     public /*out*/ readonly eksClusterIngressRule!: pulumi.Output<pulumiAws.ec2.SecurityGroupRule | undefined>;
+    /**
+     * The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+     */
+    public /*out*/ readonly fargateProfileId!: pulumi.Output<string>;
+    /**
+     * The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+     */
+    public /*out*/ readonly fargateProfileStatus!: pulumi.Output<string>;
     /**
      * The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      */
@@ -87,6 +107,24 @@ export class Cluster extends pulumi.ComponentResource {
      * The security group for the cluster's nodes.
      */
     public /*out*/ readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
+    /**
+     * The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+     */
+    public /*out*/ readonly nodeSecurityGroupId!: pulumi.Output<string>;
+    /**
+     * The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).
+     *
+     * This value can be used to associate kubernetes service accounts with IAM roles. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.
+     */
+    public /*out*/ readonly oidcIssuer!: pulumi.Output<string>;
+    /**
+     * The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured.
+     */
+    public /*out*/ readonly oidcProviderArn!: pulumi.Output<string>;
+    /**
+     * Issuer URL for the OpenID Connect identity provider of the EKS cluster.
+     */
+    public /*out*/ readonly oidcProviderUrl!: pulumi.Output<string>;
 
     /**
      * Create a Cluster resource with the given unique name, arguments, and options.
@@ -153,24 +191,42 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["vpcCniOptions"] = args ? (args.vpcCniOptions ? inputs.vpcCniOptionsArgsProvideDefaults(args.vpcCniOptions) : undefined) : undefined;
             resourceInputs["vpcId"] = args ? args.vpcId : undefined;
             resourceInputs["awsProvider"] = undefined /*out*/;
+            resourceInputs["clusterIngressRuleId"] = undefined /*out*/;
+            resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
             resourceInputs["core"] = undefined /*out*/;
             resourceInputs["defaultNodeGroup"] = undefined /*out*/;
+            resourceInputs["defaultNodeGroupAsgName"] = undefined /*out*/;
             resourceInputs["eksCluster"] = undefined /*out*/;
             resourceInputs["eksClusterIngressRule"] = undefined /*out*/;
+            resourceInputs["fargateProfileId"] = undefined /*out*/;
+            resourceInputs["fargateProfileStatus"] = undefined /*out*/;
             resourceInputs["kubeconfig"] = undefined /*out*/;
             resourceInputs["kubeconfigJson"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
+            resourceInputs["nodeSecurityGroupId"] = undefined /*out*/;
+            resourceInputs["oidcIssuer"] = undefined /*out*/;
+            resourceInputs["oidcProviderArn"] = undefined /*out*/;
+            resourceInputs["oidcProviderUrl"] = undefined /*out*/;
         } else {
             resourceInputs["awsProvider"] = undefined /*out*/;
+            resourceInputs["clusterIngressRuleId"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroup"] = undefined /*out*/;
+            resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
             resourceInputs["core"] = undefined /*out*/;
             resourceInputs["defaultNodeGroup"] = undefined /*out*/;
+            resourceInputs["defaultNodeGroupAsgName"] = undefined /*out*/;
             resourceInputs["eksCluster"] = undefined /*out*/;
             resourceInputs["eksClusterIngressRule"] = undefined /*out*/;
+            resourceInputs["fargateProfileId"] = undefined /*out*/;
+            resourceInputs["fargateProfileStatus"] = undefined /*out*/;
             resourceInputs["instanceRoles"] = undefined /*out*/;
             resourceInputs["kubeconfig"] = undefined /*out*/;
             resourceInputs["kubeconfigJson"] = undefined /*out*/;
             resourceInputs["nodeSecurityGroup"] = undefined /*out*/;
+            resourceInputs["nodeSecurityGroupId"] = undefined /*out*/;
+            resourceInputs["oidcIssuer"] = undefined /*out*/;
+            resourceInputs["oidcProviderArn"] = undefined /*out*/;
+            resourceInputs["oidcProviderUrl"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(Cluster.__pulumiType, name, resourceInputs, opts, true /*remote*/);

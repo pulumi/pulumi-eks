@@ -52,16 +52,26 @@ type Cluster struct {
 
 	// The AWS resource provider.
 	AwsProvider aws.ProviderOutput `pulumi:"awsProvider"`
+	// The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
+	ClusterIngressRuleId pulumi.StringOutput `pulumi:"clusterIngressRuleId"`
 	// The security group for the EKS cluster.
 	ClusterSecurityGroup ec2.SecurityGroupOutput `pulumi:"clusterSecurityGroup"`
+	// The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+	ClusterSecurityGroupId pulumi.StringOutput `pulumi:"clusterSecurityGroupId"`
 	// The EKS cluster and its dependencies.
 	Core CoreDataOutput `pulumi:"core"`
 	// The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
 	DefaultNodeGroup NodeGroupDataPtrOutput `pulumi:"defaultNodeGroup"`
+	// The name of the default node group's AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true.
+	DefaultNodeGroupAsgName pulumi.StringOutput `pulumi:"defaultNodeGroupAsgName"`
 	// The EKS cluster.
 	EksCluster eks.ClusterOutput `pulumi:"eksCluster"`
 	// The ingress rule that gives node group access to cluster API server.
 	EksClusterIngressRule ec2.SecurityGroupRuleOutput `pulumi:"eksClusterIngressRule"`
+	// The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+	FargateProfileId pulumi.StringOutput `pulumi:"fargateProfileId"`
+	// The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+	FargateProfileStatus pulumi.StringOutput `pulumi:"fargateProfileStatus"`
 	// The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	InstanceRoles iam.RoleArrayOutput `pulumi:"instanceRoles"`
 	// A kubeconfig that can be used to connect to the EKS cluster.
@@ -70,6 +80,16 @@ type Cluster struct {
 	KubeconfigJson pulumi.StringOutput `pulumi:"kubeconfigJson"`
 	// The security group for the cluster's nodes.
 	NodeSecurityGroup ec2.SecurityGroupOutput `pulumi:"nodeSecurityGroup"`
+	// The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+	NodeSecurityGroupId pulumi.StringOutput `pulumi:"nodeSecurityGroupId"`
+	// The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).
+	//
+	// This value can be used to associate kubernetes service accounts with IAM roles. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.
+	OidcIssuer pulumi.StringOutput `pulumi:"oidcIssuer"`
+	// The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured.
+	OidcProviderArn pulumi.StringOutput `pulumi:"oidcProviderArn"`
+	// Issuer URL for the OpenID Connect identity provider of the EKS cluster.
+	OidcProviderUrl pulumi.StringOutput `pulumi:"oidcProviderUrl"`
 }
 
 // NewCluster registers a new resource with the given unique name, arguments, and options.
@@ -719,9 +739,19 @@ func (o ClusterOutput) AwsProvider() aws.ProviderOutput {
 	return o.ApplyT(func(v *Cluster) aws.ProviderOutput { return v.AwsProvider }).(aws.ProviderOutput)
 }
 
+// The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
+func (o ClusterOutput) ClusterIngressRuleId() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.ClusterIngressRuleId }).(pulumi.StringOutput)
+}
+
 // The security group for the EKS cluster.
 func (o ClusterOutput) ClusterSecurityGroup() ec2.SecurityGroupOutput {
 	return o.ApplyT(func(v *Cluster) ec2.SecurityGroupOutput { return v.ClusterSecurityGroup }).(ec2.SecurityGroupOutput)
+}
+
+// The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+func (o ClusterOutput) ClusterSecurityGroupId() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.ClusterSecurityGroupId }).(pulumi.StringOutput)
 }
 
 // The EKS cluster and its dependencies.
@@ -734,6 +764,11 @@ func (o ClusterOutput) DefaultNodeGroup() NodeGroupDataPtrOutput {
 	return o.ApplyT(func(v *Cluster) NodeGroupDataPtrOutput { return v.DefaultNodeGroup }).(NodeGroupDataPtrOutput)
 }
 
+// The name of the default node group's AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true.
+func (o ClusterOutput) DefaultNodeGroupAsgName() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.DefaultNodeGroupAsgName }).(pulumi.StringOutput)
+}
+
 // The EKS cluster.
 func (o ClusterOutput) EksCluster() eks.ClusterOutput {
 	return o.ApplyT(func(v *Cluster) eks.ClusterOutput { return v.EksCluster }).(eks.ClusterOutput)
@@ -742,6 +777,16 @@ func (o ClusterOutput) EksCluster() eks.ClusterOutput {
 // The ingress rule that gives node group access to cluster API server.
 func (o ClusterOutput) EksClusterIngressRule() ec2.SecurityGroupRuleOutput {
 	return o.ApplyT(func(v *Cluster) ec2.SecurityGroupRuleOutput { return v.EksClusterIngressRule }).(ec2.SecurityGroupRuleOutput)
+}
+
+// The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+func (o ClusterOutput) FargateProfileId() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.FargateProfileId }).(pulumi.StringOutput)
+}
+
+// The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+func (o ClusterOutput) FargateProfileStatus() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.FargateProfileStatus }).(pulumi.StringOutput)
 }
 
 // The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
@@ -762,6 +807,28 @@ func (o ClusterOutput) KubeconfigJson() pulumi.StringOutput {
 // The security group for the cluster's nodes.
 func (o ClusterOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
 	return o.ApplyT(func(v *Cluster) ec2.SecurityGroupOutput { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+}
+
+// The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+func (o ClusterOutput) NodeSecurityGroupId() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.NodeSecurityGroupId }).(pulumi.StringOutput)
+}
+
+// The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).
+//
+// This value can be used to associate kubernetes service accounts with IAM roles. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.
+func (o ClusterOutput) OidcIssuer() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.OidcIssuer }).(pulumi.StringOutput)
+}
+
+// The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured.
+func (o ClusterOutput) OidcProviderArn() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.OidcProviderArn }).(pulumi.StringOutput)
+}
+
+// Issuer URL for the OpenID Connect identity provider of the EKS cluster.
+func (o ClusterOutput) OidcProviderUrl() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.OidcProviderUrl }).(pulumi.StringOutput)
 }
 
 type ClusterArrayOutput struct{ *pulumi.OutputState }
