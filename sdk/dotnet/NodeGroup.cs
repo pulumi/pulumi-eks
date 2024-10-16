@@ -35,10 +35,16 @@ namespace Pulumi.Eks
         public Output<ImmutableArray<Pulumi.Aws.Ec2.SecurityGroup>> ExtraNodeSecurityGroups { get; private set; } = null!;
 
         /// <summary>
-        /// The security group for the node group to communicate with the cluster.
+        /// The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.
         /// </summary>
         [Output("nodeSecurityGroup")]
-        public Output<Pulumi.Aws.Ec2.SecurityGroup> NodeSecurityGroup { get; private set; } = null!;
+        public Output<Pulumi.Aws.Ec2.SecurityGroup?> NodeSecurityGroup { get; private set; } = null!;
+
+        /// <summary>
+        /// The ID of the security group for the node group to communicate with the cluster.
+        /// </summary>
+        [Output("nodeSecurityGroupId")]
+        public Output<string> NodeSecurityGroupId { get; private set; } = null!;
 
 
         /// <summary>
@@ -159,6 +165,12 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("clusterIngressRule")]
         public Input<Pulumi.Aws.Ec2.SecurityGroupRule>? ClusterIngressRule { get; set; }
+
+        /// <summary>
+        /// The ID of the ingress rule that gives node group access.
+        /// </summary>
+        [Input("clusterIngressRuleId")]
+        public Input<string>? ClusterIngressRuleId { get; set; }
 
         /// <summary>
         /// The number of worker nodes that should be running in the cluster. Defaults to 2.
@@ -322,6 +334,19 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("nodeSecurityGroup")]
         public Input<Pulumi.Aws.Ec2.SecurityGroup>? NodeSecurityGroup { get; set; }
+
+        /// <summary>
+        /// The ID of the security group for the worker node group to communicate with the cluster.
+        /// 
+        /// This security group requires specific inbound and outbound rules.
+        /// 
+        /// See for more details:
+        /// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+        /// 
+        /// Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+        /// </summary>
+        [Input("nodeSecurityGroupId")]
+        public Input<string>? NodeSecurityGroupId { get; set; }
 
         [Input("nodeSubnetIds")]
         private InputList<string>? _nodeSubnetIds;

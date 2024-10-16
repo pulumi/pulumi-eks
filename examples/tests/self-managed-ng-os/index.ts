@@ -186,3 +186,32 @@ const nodeGroupBottlerocketUserdata = new eks.NodeGroupV2("bottlerocket-userdata
     },
   },
 });
+
+const nodegroupWithSecurityGroupId = new eks.NodeGroup("ng-security-group-id", {
+  ...capacity,
+  cluster: cluster,
+  instanceType: "t3.medium",
+  instanceProfile: instanceProfile,
+  nodeSecurityGroupId: cluster.nodeSecurityGroupId,
+  clusterIngressRuleId: cluster.clusterIngressRuleId,
+});
+
+const nodegroupV2WithSecurityGroupId = new eks.NodeGroupV2("ng-security-group-id", {
+  ...capacity,
+  cluster: cluster,
+  instanceType: "t3.medium",
+  instanceProfile: instanceProfile,
+  nodeSecurityGroupId: cluster.nodeSecurityGroupId,
+  clusterIngressRuleId: cluster.clusterIngressRuleId,
+});
+
+export const standardNodeSecurityGroup = nodeGroupAL2023V1.nodeSecurityGroup;
+export const standardNodeSecurityGroupId = nodeGroupAL2023V1.nodeSecurityGroupId;
+export const standardNodeSecurityGroupV2 = nodeGroupAL2023.nodeSecurityGroup;
+export const standardNodeSecurityGroupIdV2 = nodeGroupAL2023.nodeSecurityGroupId;
+
+export const clusterNodeSecurityGroupId = cluster.nodeSecurityGroupId;
+export const customNodeSecurityGroup = nodegroupWithSecurityGroupId.nodeSecurityGroup;
+export const customNodeSecurityGroupId = nodegroupWithSecurityGroupId.nodeSecurityGroupId;
+export const customNodeSecurityGroupV2 = nodegroupV2WithSecurityGroupId.nodeSecurityGroup;
+export const customNodeSecurityGroupIdV2 = nodegroupV2WithSecurityGroupId.nodeSecurityGroupId;
