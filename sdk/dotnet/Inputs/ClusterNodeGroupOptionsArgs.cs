@@ -102,6 +102,12 @@ namespace Pulumi.Eks.Inputs
         public Input<Pulumi.Aws.Ec2.SecurityGroupRule>? ClusterIngressRule { get; set; }
 
         /// <summary>
+        /// The ID of the ingress rule that gives node group access.
+        /// </summary>
+        [Input("clusterIngressRuleId")]
+        public Input<string>? ClusterIngressRuleId { get; set; }
+
+        /// <summary>
         /// The number of worker nodes that should be running in the cluster. Defaults to 2.
         /// </summary>
         [Input("desiredCapacity")]
@@ -289,6 +295,19 @@ namespace Pulumi.Eks.Inputs
         /// </summary>
         [Input("nodeSecurityGroup")]
         public Input<Pulumi.Aws.Ec2.SecurityGroup>? NodeSecurityGroup { get; set; }
+
+        /// <summary>
+        /// The security group ID for the worker node group to communicate with the cluster.
+        /// 
+        /// This security group requires specific inbound and outbound rules.
+        /// 
+        /// See for more details:
+        /// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+        /// 
+        /// Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+        /// </summary>
+        [Input("nodeSecurityGroupId")]
+        public Input<string>? NodeSecurityGroupId { get; set; }
 
         [Input("nodeSubnetIds")]
         private InputList<string>? _nodeSubnetIds;

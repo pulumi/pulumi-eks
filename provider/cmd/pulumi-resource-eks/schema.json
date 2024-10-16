@@ -264,6 +264,10 @@
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access."
                 },
+                "clusterIngressRuleId": {
+                    "type": "string",
+                    "description": "The ID of the ingress rule that gives node group access."
+                },
                 "desiredCapacity": {
                     "type": "integer",
                     "description": "The number of worker nodes that should be running in the cluster. Defaults to 2."
@@ -370,6 +374,10 @@
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
+                },
+                "nodeSecurityGroupId": {
+                    "type": "string",
+                    "description": "The security group ID for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
                     "type": "array",
@@ -1678,11 +1686,15 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                    "description": "The security group for the node group to communicate with the cluster."
+                    "description": "The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`."
+                },
+                "nodeSecurityGroupId": {
+                    "type": "string",
+                    "description": "The ID of the security group for the node group to communicate with the cluster."
                 }
             },
             "required": [
-                "nodeSecurityGroup",
+                "nodeSecurityGroupId",
                 "extraNodeSecurityGroups",
                 "cfnStack",
                 "autoScalingGroupName"
@@ -1735,6 +1747,10 @@
                 "clusterIngressRule": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access."
+                },
+                "clusterIngressRuleId": {
+                    "type": "string",
+                    "description": "The ID of the ingress rule that gives node group access."
                 },
                 "desiredCapacity": {
                     "type": "integer",
@@ -1826,6 +1842,10 @@
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
+                },
+                "nodeSecurityGroupId": {
+                    "type": "string",
+                    "description": "The security group ID for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
                     "type": "array",
@@ -1935,11 +1955,15 @@
                 },
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
-                    "description": "The security group for the node group to communicate with the cluster."
+                    "description": "The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`."
+                },
+                "nodeSecurityGroupId": {
+                    "type": "string",
+                    "description": "The ID of the security group for the node group to communicate with the cluster."
                 }
             },
             "required": [
-                "nodeSecurityGroup",
+                "nodeSecurityGroupId",
                 "extraNodeSecurityGroups",
                 "autoScalingGroup"
             ],
@@ -1991,6 +2015,10 @@
                 "clusterIngressRule": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access."
+                },
+                "clusterIngressRuleId": {
+                    "type": "string",
+                    "description": "The ID of the ingress rule that gives node group access."
                 },
                 "desiredCapacity": {
                     "type": "integer",
@@ -2098,6 +2126,10 @@
                 "nodeSecurityGroup": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
+                },
+                "nodeSecurityGroupId": {
+                    "type": "string",
+                    "description": "The security group ID for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSubnetIds": {
                     "type": "array",

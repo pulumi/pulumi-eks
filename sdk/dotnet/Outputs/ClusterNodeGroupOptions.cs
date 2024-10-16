@@ -71,6 +71,10 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly Pulumi.Aws.Ec2.SecurityGroupRule? ClusterIngressRule;
         /// <summary>
+        /// The ID of the ingress rule that gives node group access.
+        /// </summary>
+        public readonly string? ClusterIngressRuleId;
+        /// <summary>
         /// The number of worker nodes that should be running in the cluster. Defaults to 2.
         /// </summary>
         public readonly int? DesiredCapacity;
@@ -194,6 +198,17 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly Pulumi.Aws.Ec2.SecurityGroup? NodeSecurityGroup;
         /// <summary>
+        /// The security group ID for the worker node group to communicate with the cluster.
+        /// 
+        /// This security group requires specific inbound and outbound rules.
+        /// 
+        /// See for more details:
+        /// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+        /// 
+        /// Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+        /// </summary>
+        public readonly string? NodeSecurityGroupId;
+        /// <summary>
         /// The set of subnets to override and use for the worker node group.
         /// 
         /// Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -259,6 +274,8 @@ namespace Pulumi.Eks.Outputs
 
             Pulumi.Aws.Ec2.SecurityGroupRule? clusterIngressRule,
 
+            string? clusterIngressRuleId,
+
             int? desiredCapacity,
 
             bool? enableDetailedMonitoring,
@@ -307,6 +324,8 @@ namespace Pulumi.Eks.Outputs
 
             Pulumi.Aws.Ec2.SecurityGroup? nodeSecurityGroup,
 
+            string? nodeSecurityGroupId,
+
             ImmutableArray<string> nodeSubnetIds,
 
             string? nodeUserData,
@@ -330,6 +349,7 @@ namespace Pulumi.Eks.Outputs
             BottlerocketSettings = bottlerocketSettings;
             CloudFormationTags = cloudFormationTags;
             ClusterIngressRule = clusterIngressRule;
+            ClusterIngressRuleId = clusterIngressRuleId;
             DesiredCapacity = desiredCapacity;
             EnableDetailedMonitoring = enableDetailedMonitoring;
             EncryptRootBlockDevice = encryptRootBlockDevice;
@@ -354,6 +374,7 @@ namespace Pulumi.Eks.Outputs
             NodeRootVolumeThroughput = nodeRootVolumeThroughput;
             NodeRootVolumeType = nodeRootVolumeType;
             NodeSecurityGroup = nodeSecurityGroup;
+            NodeSecurityGroupId = nodeSecurityGroupId;
             NodeSubnetIds = nodeSubnetIds;
             NodeUserData = nodeUserData;
             NodeUserDataOverride = nodeUserDataOverride;

@@ -122,6 +122,10 @@ export interface ClusterNodeGroupOptions {
      */
     clusterIngressRule?: pulumiAws.ec2.SecurityGroupRule;
     /**
+     * The ID of the ingress rule that gives node group access.
+     */
+    clusterIngressRuleId?: string;
+    /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      */
     desiredCapacity?: number;
@@ -244,6 +248,17 @@ export interface ClusterNodeGroupOptions {
      * Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
      */
     nodeSecurityGroup?: pulumiAws.ec2.SecurityGroup;
+    /**
+     * The security group ID for the worker node group to communicate with the cluster.
+     *
+     * This security group requires specific inbound and outbound rules.
+     *
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+     *
+     * Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+     */
+    nodeSecurityGroupId?: string;
     /**
      * The set of subnets to override and use for the worker node group.
      *

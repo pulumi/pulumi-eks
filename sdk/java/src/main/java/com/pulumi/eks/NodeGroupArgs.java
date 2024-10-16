@@ -203,6 +203,21 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * The ID of the ingress rule that gives node group access.
+     * 
+     */
+    @Import(name="clusterIngressRuleId")
+    private @Nullable Output<String> clusterIngressRuleId;
+
+    /**
+     * @return The ID of the ingress rule that gives node group access.
+     * 
+     */
+    public Optional<Output<String>> clusterIngressRuleId() {
+        return Optional.ofNullable(this.clusterIngressRuleId);
+    }
+
+    /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      * 
      */
@@ -568,6 +583,35 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * The security group ID for the worker node group to communicate with the cluster.
+     * 
+     * This security group requires specific inbound and outbound rules.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+     * 
+     * Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+     * 
+     */
+    @Import(name="nodeSecurityGroupId")
+    private @Nullable Output<String> nodeSecurityGroupId;
+
+    /**
+     * @return The security group ID for the worker node group to communicate with the cluster.
+     * 
+     * This security group requires specific inbound and outbound rules.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+     * 
+     * Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+     * 
+     */
+    public Optional<Output<String>> nodeSecurityGroupId() {
+        return Optional.ofNullable(this.nodeSecurityGroupId);
+    }
+
+    /**
      * The set of subnets to override and use for the worker node group.
      * 
      * Setting this option overrides which subnets to use for the worker node group, regardless if the cluster&#39;s `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -732,6 +776,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
         this.cloudFormationTags = $.cloudFormationTags;
         this.cluster = $.cluster;
         this.clusterIngressRule = $.clusterIngressRule;
+        this.clusterIngressRuleId = $.clusterIngressRuleId;
         this.desiredCapacity = $.desiredCapacity;
         this.enableDetailedMonitoring = $.enableDetailedMonitoring;
         this.encryptRootBlockDevice = $.encryptRootBlockDevice;
@@ -753,6 +798,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
         this.nodeRootVolumeThroughput = $.nodeRootVolumeThroughput;
         this.nodeRootVolumeType = $.nodeRootVolumeType;
         this.nodeSecurityGroup = $.nodeSecurityGroup;
+        this.nodeSecurityGroupId = $.nodeSecurityGroupId;
         this.nodeSubnetIds = $.nodeSubnetIds;
         this.nodeUserData = $.nodeUserData;
         this.nodeUserDataOverride = $.nodeUserDataOverride;
@@ -1019,6 +1065,27 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder clusterIngressRule(SecurityGroupRule clusterIngressRule) {
             return clusterIngressRule(Output.of(clusterIngressRule));
+        }
+
+        /**
+         * @param clusterIngressRuleId The ID of the ingress rule that gives node group access.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterIngressRuleId(@Nullable Output<String> clusterIngressRuleId) {
+            $.clusterIngressRuleId = clusterIngressRuleId;
+            return this;
+        }
+
+        /**
+         * @param clusterIngressRuleId The ID of the ingress rule that gives node group access.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder clusterIngressRuleId(String clusterIngressRuleId) {
+            return clusterIngressRuleId(Output.of(clusterIngressRuleId));
         }
 
         /**
@@ -1512,6 +1579,41 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder nodeSecurityGroup(SecurityGroup nodeSecurityGroup) {
             return nodeSecurityGroup(Output.of(nodeSecurityGroup));
+        }
+
+        /**
+         * @param nodeSecurityGroupId The security group ID for the worker node group to communicate with the cluster.
+         * 
+         * This security group requires specific inbound and outbound rules.
+         * 
+         * See for more details:
+         * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+         * 
+         * Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeSecurityGroupId(@Nullable Output<String> nodeSecurityGroupId) {
+            $.nodeSecurityGroupId = nodeSecurityGroupId;
+            return this;
+        }
+
+        /**
+         * @param nodeSecurityGroupId The security group ID for the worker node group to communicate with the cluster.
+         * 
+         * This security group requires specific inbound and outbound rules.
+         * 
+         * See for more details:
+         * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+         * 
+         * Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder nodeSecurityGroupId(String nodeSecurityGroupId) {
+            return nodeSecurityGroupId(Output.of(nodeSecurityGroupId));
         }
 
         /**

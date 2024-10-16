@@ -339,6 +339,8 @@ type ClusterNodeGroupOptions struct {
 	CloudFormationTags map[string]string `pulumi:"cloudFormationTags"`
 	// The ingress rule that gives node group access.
 	ClusterIngressRule *ec2.SecurityGroupRule `pulumi:"clusterIngressRule"`
+	// The ID of the ingress rule that gives node group access.
+	ClusterIngressRuleId *string `pulumi:"clusterIngressRuleId"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity *int `pulumi:"desiredCapacity"`
 	// Enables/disables detailed monitoring of the EC2 instances.
@@ -414,6 +416,15 @@ type ClusterNodeGroupOptions struct {
 	//
 	// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
 	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
+	// The security group ID for the worker node group to communicate with the cluster.
+	//
+	// This security group requires specific inbound and outbound rules.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+	//
+	// Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+	NodeSecurityGroupId *string `pulumi:"nodeSecurityGroupId"`
 	// The set of subnets to override and use for the worker node group.
 	//
 	// Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -502,6 +513,8 @@ type ClusterNodeGroupOptionsArgs struct {
 	CloudFormationTags pulumi.StringMapInput `pulumi:"cloudFormationTags"`
 	// The ingress rule that gives node group access.
 	ClusterIngressRule ec2.SecurityGroupRuleInput `pulumi:"clusterIngressRule"`
+	// The ID of the ingress rule that gives node group access.
+	ClusterIngressRuleId pulumi.StringPtrInput `pulumi:"clusterIngressRuleId"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput `pulumi:"desiredCapacity"`
 	// Enables/disables detailed monitoring of the EC2 instances.
@@ -577,6 +590,15 @@ type ClusterNodeGroupOptionsArgs struct {
 	//
 	// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
 	NodeSecurityGroup ec2.SecurityGroupInput `pulumi:"nodeSecurityGroup"`
+	// The security group ID for the worker node group to communicate with the cluster.
+	//
+	// This security group requires specific inbound and outbound rules.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+	//
+	// Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+	NodeSecurityGroupId pulumi.StringPtrInput `pulumi:"nodeSecurityGroupId"`
 	// The set of subnets to override and use for the worker node group.
 	//
 	// Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -751,6 +773,11 @@ func (o ClusterNodeGroupOptionsOutput) ClusterIngressRule() ec2.SecurityGroupRul
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *ec2.SecurityGroupRule { return v.ClusterIngressRule }).(ec2.SecurityGroupRuleOutput)
 }
 
+// The ID of the ingress rule that gives node group access.
+func (o ClusterNodeGroupOptionsOutput) ClusterIngressRuleId() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.ClusterIngressRuleId }).(pulumi.StringPtrOutput)
+}
+
 // The number of worker nodes that should be running in the cluster. Defaults to 2.
 func (o ClusterNodeGroupOptionsOutput) DesiredCapacity() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *int { return v.DesiredCapacity }).(pulumi.IntPtrOutput)
@@ -898,6 +925,18 @@ func (o ClusterNodeGroupOptionsOutput) NodeRootVolumeType() pulumi.StringPtrOutp
 // Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
 func (o ClusterNodeGroupOptionsOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *ec2.SecurityGroup { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+}
+
+// The security group ID for the worker node group to communicate with the cluster.
+//
+// This security group requires specific inbound and outbound rules.
+//
+// See for more details:
+// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+//
+// Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+func (o ClusterNodeGroupOptionsOutput) NodeSecurityGroupId() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.NodeSecurityGroupId }).(pulumi.StringPtrOutput)
 }
 
 // The set of subnets to override and use for the worker node group.
@@ -1075,6 +1114,16 @@ func (o ClusterNodeGroupOptionsPtrOutput) ClusterIngressRule() ec2.SecurityGroup
 		}
 		return v.ClusterIngressRule
 	}).(ec2.SecurityGroupRuleOutput)
+}
+
+// The ID of the ingress rule that gives node group access.
+func (o ClusterNodeGroupOptionsPtrOutput) ClusterIngressRuleId() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.ClusterIngressRuleId
+	}).(pulumi.StringPtrOutput)
 }
 
 // The number of worker nodes that should be running in the cluster. Defaults to 2.
@@ -1342,6 +1391,23 @@ func (o ClusterNodeGroupOptionsPtrOutput) NodeSecurityGroup() ec2.SecurityGroupO
 		}
 		return v.NodeSecurityGroup
 	}).(ec2.SecurityGroupOutput)
+}
+
+// The security group ID for the worker node group to communicate with the cluster.
+//
+// This security group requires specific inbound and outbound rules.
+//
+// See for more details:
+// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+//
+// Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+func (o ClusterNodeGroupOptionsPtrOutput) NodeSecurityGroupId() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) *string {
+		if v == nil {
+			return nil
+		}
+		return v.NodeSecurityGroupId
+	}).(pulumi.StringPtrOutput)
 }
 
 // The set of subnets to override and use for the worker node group.

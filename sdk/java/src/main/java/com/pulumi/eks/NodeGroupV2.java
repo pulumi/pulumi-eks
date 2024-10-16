@@ -11,7 +11,9 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.NodeGroupV2Args;
 import com.pulumi.eks.Utilities;
+import java.lang.String;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
@@ -49,18 +51,32 @@ public class NodeGroupV2 extends com.pulumi.resources.ComponentResource {
         return this.extraNodeSecurityGroups;
     }
     /**
-     * The security group for the node group to communicate with the cluster.
+     * The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.
      * 
      */
     @Export(name="nodeSecurityGroup", refs={SecurityGroup.class}, tree="[0]")
-    private Output<SecurityGroup> nodeSecurityGroup;
+    private Output</* @Nullable */ SecurityGroup> nodeSecurityGroup;
 
     /**
-     * @return The security group for the node group to communicate with the cluster.
+     * @return The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.
      * 
      */
-    public Output<SecurityGroup> nodeSecurityGroup() {
-        return this.nodeSecurityGroup;
+    public Output<Optional<SecurityGroup>> nodeSecurityGroup() {
+        return Codegen.optional(this.nodeSecurityGroup);
+    }
+    /**
+     * The ID of the security group for the node group to communicate with the cluster.
+     * 
+     */
+    @Export(name="nodeSecurityGroupId", refs={String.class}, tree="[0]")
+    private Output<String> nodeSecurityGroupId;
+
+    /**
+     * @return The ID of the security group for the node group to communicate with the cluster.
+     * 
+     */
+    public Output<String> nodeSecurityGroupId() {
+        return this.nodeSecurityGroupId;
     }
 
     /**

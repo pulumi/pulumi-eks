@@ -27,8 +27,10 @@ type NodeGroup struct {
 	CfnStack cloudformation.StackOutput `pulumi:"cfnStack"`
 	// The additional security groups for the node group that captures user-specific rules.
 	ExtraNodeSecurityGroups ec2.SecurityGroupArrayOutput `pulumi:"extraNodeSecurityGroups"`
-	// The security group for the node group to communicate with the cluster.
+	// The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.
 	NodeSecurityGroup ec2.SecurityGroupOutput `pulumi:"nodeSecurityGroup"`
+	// The ID of the security group for the node group to communicate with the cluster.
+	NodeSecurityGroupId pulumi.StringOutput `pulumi:"nodeSecurityGroupId"`
 }
 
 // NewNodeGroup registers a new resource with the given unique name, arguments, and options.
@@ -93,6 +95,8 @@ type nodeGroupArgs struct {
 	Cluster interface{} `pulumi:"cluster"`
 	// The ingress rule that gives node group access.
 	ClusterIngressRule *ec2.SecurityGroupRule `pulumi:"clusterIngressRule"`
+	// The ID of the ingress rule that gives node group access.
+	ClusterIngressRuleId *string `pulumi:"clusterIngressRuleId"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity *int `pulumi:"desiredCapacity"`
 	// Enables/disables detailed monitoring of the EC2 instances.
@@ -160,6 +164,15 @@ type nodeGroupArgs struct {
 	//
 	// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
 	NodeSecurityGroup *ec2.SecurityGroup `pulumi:"nodeSecurityGroup"`
+	// The security group ID for the worker node group to communicate with the cluster.
+	//
+	// This security group requires specific inbound and outbound rules.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+	//
+	// Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+	NodeSecurityGroupId *string `pulumi:"nodeSecurityGroupId"`
 	// The set of subnets to override and use for the worker node group.
 	//
 	// Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -239,6 +252,8 @@ type NodeGroupArgs struct {
 	Cluster pulumi.Input
 	// The ingress rule that gives node group access.
 	ClusterIngressRule ec2.SecurityGroupRuleInput
+	// The ID of the ingress rule that gives node group access.
+	ClusterIngressRuleId pulumi.StringPtrInput
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput
 	// Enables/disables detailed monitoring of the EC2 instances.
@@ -306,6 +321,15 @@ type NodeGroupArgs struct {
 	//
 	// Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive.
 	NodeSecurityGroup ec2.SecurityGroupInput
+	// The security group ID for the worker node group to communicate with the cluster.
+	//
+	// This security group requires specific inbound and outbound rules.
+	//
+	// See for more details:
+	// https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+	//
+	// Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+	NodeSecurityGroupId pulumi.StringPtrInput
 	// The set of subnets to override and use for the worker node group.
 	//
 	// Setting this option overrides which subnets to use for the worker node group, regardless if the cluster's `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -443,9 +467,14 @@ func (o NodeGroupOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput 
 	return o.ApplyT(func(v *NodeGroup) ec2.SecurityGroupArrayOutput { return v.ExtraNodeSecurityGroups }).(ec2.SecurityGroupArrayOutput)
 }
 
-// The security group for the node group to communicate with the cluster.
+// The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.
 func (o NodeGroupOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
 	return o.ApplyT(func(v *NodeGroup) ec2.SecurityGroupOutput { return v.NodeSecurityGroup }).(ec2.SecurityGroupOutput)
+}
+
+// The ID of the security group for the node group to communicate with the cluster.
+func (o NodeGroupOutput) NodeSecurityGroupId() pulumi.StringOutput {
+	return o.ApplyT(func(v *NodeGroup) pulumi.StringOutput { return v.NodeSecurityGroupId }).(pulumi.StringOutput)
 }
 
 type NodeGroupArrayOutput struct{ *pulumi.OutputState }
