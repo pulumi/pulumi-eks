@@ -983,7 +983,7 @@ function createNodeGroupInternal(
             // ingress rule is applied.
             securityGroups: pulumi
                 .all([nodeSecurityGroupId, extraNodeSecurityGroupIds, eksClusterIngressRuleId])
-                .apply(([sg, extraSG, ingress]) => [sg, ...extraSG]),
+                .apply(([sg, extraSG, _]) => [sg, ...extraSG]),
             spotPrice: args.spotPrice,
             rootBlockDevice,
             ebsBlockDevices,
@@ -1475,7 +1475,7 @@ function createNodeGroupV2Internal(
                             extraNodeSecurityGroupIds,
                             eksClusterIngressRuleId,
                         ])
-                        .apply(([sg, extraSG, ingress]) => [sg, ...extraSG]),
+                        .apply(([sg, extraSG, _]) => [sg, ...extraSG]),
                 },
             ],
             metadataOptions: args.metadataOptions,
