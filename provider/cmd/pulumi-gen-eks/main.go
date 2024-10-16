@@ -2110,7 +2110,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"nodeSecurityGroupId": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
-			Description: "The security group ID for the worker node group to communicate with the cluster.\n\n" +
+			Description: "The ID of the security group for the worker node group to communicate with the cluster.\n\n" +
 				"This security group requires specific inbound and outbound rules.\n\n" +
 				"See for more details:\n" +
 				"https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\n" +
@@ -2124,7 +2124,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			Description: "The ingress rule that gives node group access.",
 		},
 		"clusterIngressRuleId": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
+			TypeSpec:    schema.TypeSpec{Type: "string"},
 			Description: "The ID of the ingress rule that gives node group access.",
 		},
 		"extraNodeSecurityGroups": {

@@ -682,7 +682,11 @@ function createNodeGroupInternal(
 
     const coreSecurityGroupId = core.nodeGroupOptions.nodeSecurityGroup?.apply((sg) => sg?.id);
     pulumi
-        .all([coreSecurityGroupId, args.nodeSecurityGroup?.id, core.nodeSecurityGroupTags])
+        .all([
+            coreSecurityGroupId,
+            args.nodeSecurityGroup?.id ?? args.nodeSecurityGroupId,
+            core.nodeSecurityGroupTags,
+        ])
         .apply(([coreSecurityGroup, nodeSecurityGroup, sgTags]) => {
             if (coreSecurityGroup && nodeSecurityGroup) {
                 if (sgTags && coreSecurityGroup !== nodeSecurityGroup) {
@@ -743,8 +747,10 @@ function createNodeGroupInternal(
         }
 
         nodeSecurityGroup = args.nodeSecurityGroup;
-        nodeSecurityGroupId = args.nodeSecurityGroup?.id ?? pulumi.output(args.nodeSecurityGroupId!);
-        eksClusterIngressRuleId = args.clusterIngressRule?.id ?? pulumi.output(args.clusterIngressRuleId!);
+        nodeSecurityGroupId =
+            args.nodeSecurityGroup?.id ?? pulumi.output(args.nodeSecurityGroupId!);
+        eksClusterIngressRuleId =
+            args.clusterIngressRule?.id ?? pulumi.output(args.clusterIngressRuleId!);
     } else {
         const [nodeSg, eksClusterIngressRule] = createNodeGroupSecurityGroup(
             name,
@@ -975,7 +981,8 @@ function createNodeGroupInternal(
             // dependency on the eksClusterIngressRule. The nodes may fail to
             // connect to the cluster if we attempt to create them before the
             // ingress rule is applied.
-            securityGroups: pulumi.all([nodeSecurityGroupId, extraNodeSecurityGroupIds, eksClusterIngressRuleId])
+            securityGroups: pulumi
+                .all([nodeSecurityGroupId, extraNodeSecurityGroupIds, eksClusterIngressRuleId])
                 .apply(([sg, extraSG, ingress]) => [sg, ...extraSG]),
             spotPrice: args.spotPrice,
             rootBlockDevice,
@@ -1146,7 +1153,11 @@ function createNodeGroupV2Internal(
 
     const coreSecurityGroupId = core.nodeGroupOptions.nodeSecurityGroup?.apply((sg) => sg?.id);
     pulumi
-        .all([coreSecurityGroupId, args.nodeSecurityGroup?.id, core.nodeSecurityGroupTags])
+        .all([
+            coreSecurityGroupId,
+            args.nodeSecurityGroup?.id ?? args.nodeSecurityGroupId,
+            core.nodeSecurityGroupTags,
+        ])
         .apply(([coreSecurityGroup, nodeSecurityGroup, sgTags]) => {
             if (coreSecurityGroup && nodeSecurityGroup) {
                 if (sgTags && coreSecurityGroup !== nodeSecurityGroup) {
@@ -1208,8 +1219,10 @@ function createNodeGroupV2Internal(
         }
 
         nodeSecurityGroup = args.nodeSecurityGroup;
-        nodeSecurityGroupId = args.nodeSecurityGroup?.id ?? pulumi.output(args.nodeSecurityGroupId!);
-        eksClusterIngressRuleId = args.clusterIngressRule?.id ?? pulumi.output(args.clusterIngressRuleId!);
+        nodeSecurityGroupId =
+            args.nodeSecurityGroup?.id ?? pulumi.output(args.nodeSecurityGroupId!);
+        eksClusterIngressRuleId =
+            args.clusterIngressRule?.id ?? pulumi.output(args.clusterIngressRuleId!);
     } else {
         const [nodeSg, eksClusterIngressRule] = createNodeGroupSecurityGroup(
             name,
@@ -1231,7 +1244,7 @@ function createNodeGroupV2Internal(
         );
         nodeSecurityGroup = nodeSg;
         nodeSecurityGroupId = nodeSg.id;
-        eksClusterIngressRuleId = eksClusterIngressRule.id
+        eksClusterIngressRuleId = eksClusterIngressRule.id;
     }
 
     // Collect the IDs of any extra, user-specific security groups.
@@ -1456,7 +1469,12 @@ function createNodeGroupV2Internal(
                     // dependency on the eksClusterIngressRule. The nodes may fail to
                     // connect to the cluster if we attempt to create them before the
                     // ingress rule is applied.
-                    securityGroups: pulumi.all([nodeSecurityGroupId, extraNodeSecurityGroupIds, eksClusterIngressRuleId])
+                    securityGroups: pulumi
+                        .all([
+                            nodeSecurityGroupId,
+                            extraNodeSecurityGroupIds,
+                            eksClusterIngressRuleId,
+                        ])
                         .apply(([sg, extraSG, ingress]) => [sg, ...extraSG]),
                 },
             ],
