@@ -1552,13 +1552,22 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["vpc_cni_options"] = vpc_cni_options
             __props__.__dict__["vpc_id"] = vpc_id
             __props__.__dict__["aws_provider"] = None
+            __props__.__dict__["cluster_ingress_rule_id"] = None
+            __props__.__dict__["cluster_security_group_id"] = None
             __props__.__dict__["core"] = None
             __props__.__dict__["default_node_group"] = None
+            __props__.__dict__["default_node_group_asg_name"] = None
             __props__.__dict__["eks_cluster"] = None
             __props__.__dict__["eks_cluster_ingress_rule"] = None
+            __props__.__dict__["fargate_profile_id"] = None
+            __props__.__dict__["fargate_profile_status"] = None
             __props__.__dict__["kubeconfig"] = None
             __props__.__dict__["kubeconfig_json"] = None
             __props__.__dict__["node_security_group"] = None
+            __props__.__dict__["node_security_group_id"] = None
+            __props__.__dict__["oidc_issuer"] = None
+            __props__.__dict__["oidc_provider_arn"] = None
+            __props__.__dict__["oidc_provider_url"] = None
         super(Cluster, __self__).__init__(
             'eks:index:Cluster',
             resource_name,
@@ -1575,12 +1584,28 @@ class Cluster(pulumi.ComponentResource):
         return pulumi.get(self, "aws_provider")
 
     @property
+    @pulumi.getter(name="clusterIngressRuleId")
+    def cluster_ingress_rule_id(self) -> pulumi.Output[str]:
+        """
+        The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
+        """
+        return pulumi.get(self, "cluster_ingress_rule_id")
+
+    @property
     @pulumi.getter(name="clusterSecurityGroup")
     def cluster_security_group(self) -> pulumi.Output[Optional['pulumi_aws.ec2.SecurityGroup']]:
         """
         The security group for the EKS cluster.
         """
         return pulumi.get(self, "cluster_security_group")
+
+    @property
+    @pulumi.getter(name="clusterSecurityGroupId")
+    def cluster_security_group_id(self) -> pulumi.Output[str]:
+        """
+        The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+        """
+        return pulumi.get(self, "cluster_security_group_id")
 
     @property
     @pulumi.getter
@@ -1599,6 +1624,14 @@ class Cluster(pulumi.ComponentResource):
         return pulumi.get(self, "default_node_group")
 
     @property
+    @pulumi.getter(name="defaultNodeGroupAsgName")
+    def default_node_group_asg_name(self) -> pulumi.Output[str]:
+        """
+        The name of the default node group's AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true.
+        """
+        return pulumi.get(self, "default_node_group_asg_name")
+
+    @property
     @pulumi.getter(name="eksCluster")
     def eks_cluster(self) -> pulumi.Output['pulumi_aws.eks.Cluster']:
         """
@@ -1613,6 +1646,22 @@ class Cluster(pulumi.ComponentResource):
         The ingress rule that gives node group access to cluster API server.
         """
         return pulumi.get(self, "eks_cluster_ingress_rule")
+
+    @property
+    @pulumi.getter(name="fargateProfileId")
+    def fargate_profile_id(self) -> pulumi.Output[str]:
+        """
+        The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+        """
+        return pulumi.get(self, "fargate_profile_id")
+
+    @property
+    @pulumi.getter(name="fargateProfileStatus")
+    def fargate_profile_status(self) -> pulumi.Output[str]:
+        """
+        The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+        """
+        return pulumi.get(self, "fargate_profile_status")
 
     @property
     @pulumi.getter(name="instanceRoles")
@@ -1645,6 +1694,40 @@ class Cluster(pulumi.ComponentResource):
         The security group for the cluster's nodes.
         """
         return pulumi.get(self, "node_security_group")
+
+    @property
+    @pulumi.getter(name="nodeSecurityGroupId")
+    def node_security_group_id(self) -> pulumi.Output[str]:
+        """
+        The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+        """
+        return pulumi.get(self, "node_security_group_id")
+
+    @property
+    @pulumi.getter(name="oidcIssuer")
+    def oidc_issuer(self) -> pulumi.Output[str]:
+        """
+        The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).
+
+        This value can be used to associate kubernetes service accounts with IAM roles. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.
+        """
+        return pulumi.get(self, "oidc_issuer")
+
+    @property
+    @pulumi.getter(name="oidcProviderArn")
+    def oidc_provider_arn(self) -> pulumi.Output[str]:
+        """
+        The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured.
+        """
+        return pulumi.get(self, "oidc_provider_arn")
+
+    @property
+    @pulumi.getter(name="oidcProviderUrl")
+    def oidc_provider_url(self) -> pulumi.Output[str]:
+        """
+        Issuer URL for the OpenID Connect identity provider of the EKS cluster.
+        """
+        return pulumi.get(self, "oidc_provider_url")
 
     @pulumi.output_type
     class GetKubeconfigResult:

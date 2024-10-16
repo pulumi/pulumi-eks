@@ -36,6 +36,15 @@ const clusterProvider: pulumi.provider.Provider = {
                     defaultNodeGroup: cluster.defaultNodeGroup,
                     eksCluster: cluster.eksCluster,
                     core: cluster.core,
+                    clusterSecurityGroupId: cluster.clusterSecurityGroupId,
+                    nodeSecurityGroupId: cluster.nodeSecurityGroupId,
+                    clusterIngressRuleId: cluster.clusterIngressRuleId,
+                    defaultNodeGroupAsgName: cluster.defaultNodeGroupAsgName,
+                    fargateProfileId: cluster.fargateProfileId,
+                    fargateProfileStatus: cluster.fargateProfileStatus,
+                    oidcProviderArn: cluster.oidcProviderArn,
+                    oidcProviderUrl: cluster.oidcProviderUrl,
+                    oidcIssuer: cluster.oidcIssuer,
                 },
             });
         } catch (e) {

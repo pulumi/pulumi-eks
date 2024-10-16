@@ -199,10 +199,6 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/provider")},
 							Description: "The AWS resource provider.",
 						},
-						// "provider": {
-						// 	TypeSpec:    schema.TypeSpec{Ref: k8sRef("#/provider")},
-						// 	Description: "A Kubernetes resource provider that can be used to deploy into this cluster.",
-						// },
 						"clusterSecurityGroup": {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
 							Description: "The security group for the EKS cluster.",
@@ -235,15 +231,61 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: "#/types/eks:index:CoreData"},
 							Description: "The EKS cluster and its dependencies.",
 						},
+						"clusterSecurityGroupId": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.",
+						},
+						"nodeSecurityGroupId": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.",
+						},
+						"clusterIngressRuleId": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.",
+						},
+						"defaultNodeGroupAsgName": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The name of the default node group's AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true.",
+						},
+						"fargateProfileId": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.",
+						},
+						"fargateProfileStatus": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.",
+						},
+						"oidcProviderArn": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured.",
+						},
+						"oidcProviderUrl": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "Issuer URL for the OpenID Connect identity provider of the EKS cluster.",
+						},
+						"oidcIssuer": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+							Description: "The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).\n\n" +
+								"This value can be used to associate kubernetes service accounts with IAM roles. For more information, see " +
+								"https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.",
+						},
 					},
 					Required: []string{
 						"kubeconfig",
 						"kubeconfigJson",
 						"awsProvider",
-						// "provider",
 						"instanceRoles",
 						"eksCluster",
 						"core",
+						"clusterSecurityGroupId",
+						"nodeSecurityGroupId",
+						"clusterIngressRuleId",
+						"defaultNodeGroupAsgName",
+						"fargateProfileId",
+						"fargateProfileStatus",
+						"oidcProviderArn",
+						"oidcProviderUrl",
+						"oidcIssuer",
 					},
 				},
 				InputProperties: map[string]schema.PropertySpec{
@@ -1103,6 +1145,7 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 				},
 			},
 			"eks:index:VpcCniAddon": {
+				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Description: "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\n" +
 						"For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",

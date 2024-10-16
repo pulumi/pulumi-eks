@@ -48,10 +48,22 @@ namespace Pulumi.Eks
         public Output<Pulumi.Aws.Provider> AwsProvider { get; private set; } = null!;
 
         /// <summary>
+        /// The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
+        /// </summary>
+        [Output("clusterIngressRuleId")]
+        public Output<string> ClusterIngressRuleId { get; private set; } = null!;
+
+        /// <summary>
         /// The security group for the EKS cluster.
         /// </summary>
         [Output("clusterSecurityGroup")]
         public Output<Pulumi.Aws.Ec2.SecurityGroup?> ClusterSecurityGroup { get; private set; } = null!;
+
+        /// <summary>
+        /// The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+        /// </summary>
+        [Output("clusterSecurityGroupId")]
+        public Output<string> ClusterSecurityGroupId { get; private set; } = null!;
 
         /// <summary>
         /// The EKS cluster and its dependencies.
@@ -66,6 +78,12 @@ namespace Pulumi.Eks
         public Output<Outputs.NodeGroupData?> DefaultNodeGroup { get; private set; } = null!;
 
         /// <summary>
+        /// The name of the default node group's AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true.
+        /// </summary>
+        [Output("defaultNodeGroupAsgName")]
+        public Output<string> DefaultNodeGroupAsgName { get; private set; } = null!;
+
+        /// <summary>
         /// The EKS cluster.
         /// </summary>
         [Output("eksCluster")]
@@ -76,6 +94,18 @@ namespace Pulumi.Eks
         /// </summary>
         [Output("eksClusterIngressRule")]
         public Output<Pulumi.Aws.Ec2.SecurityGroupRule?> EksClusterIngressRule { get; private set; } = null!;
+
+        /// <summary>
+        /// The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+        /// </summary>
+        [Output("fargateProfileId")]
+        public Output<string> FargateProfileId { get; private set; } = null!;
+
+        /// <summary>
+        /// The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
+        /// </summary>
+        [Output("fargateProfileStatus")]
+        public Output<string> FargateProfileStatus { get; private set; } = null!;
 
         /// <summary>
         /// The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
@@ -100,6 +130,32 @@ namespace Pulumi.Eks
         /// </summary>
         [Output("nodeSecurityGroup")]
         public Output<Pulumi.Aws.Ec2.SecurityGroup?> NodeSecurityGroup { get; private set; } = null!;
+
+        /// <summary>
+        /// The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
+        /// </summary>
+        [Output("nodeSecurityGroupId")]
+        public Output<string> NodeSecurityGroupId { get; private set; } = null!;
+
+        /// <summary>
+        /// The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).
+        /// 
+        /// This value can be used to associate kubernetes service accounts with IAM roles. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.
+        /// </summary>
+        [Output("oidcIssuer")]
+        public Output<string> OidcIssuer { get; private set; } = null!;
+
+        /// <summary>
+        /// The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured.
+        /// </summary>
+        [Output("oidcProviderArn")]
+        public Output<string> OidcProviderArn { get; private set; } = null!;
+
+        /// <summary>
+        /// Issuer URL for the OpenID Connect identity provider of the EKS cluster.
+        /// </summary>
+        [Output("oidcProviderUrl")]
+        public Output<string> OidcProviderUrl { get; private set; } = null!;
 
 
         /// <summary>
