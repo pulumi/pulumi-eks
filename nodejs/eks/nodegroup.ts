@@ -102,11 +102,13 @@ export interface NodeGroupBaseOptions {
      * `nodeSecurityGroupTags` are mutually exclusive.
      */
     nodeSecurityGroup?: aws.ec2.SecurityGroup;
+    nodeSecurityGroupId?: pulumi.Input<string>;
 
     /**
      * The ingress rule that gives node group access.
      */
     clusterIngressRule?: aws.ec2.SecurityGroupRule;
+    clusterIngressRuleId?: pulumi.Input<string>;
 
     /**
      * Extra security groups to attach on all nodes in this worker node group.
@@ -407,7 +409,8 @@ export interface NodeGroupData {
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    nodeSecurityGroup: aws.ec2.SecurityGroup;
+    nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
+    nodeSecurityGroupId: pulumi.Output<string>;
     /**
      * The CloudFormation Stack which defines the node group's AutoScalingGroup.
      */
@@ -426,7 +429,8 @@ export interface NodeGroupV2Data {
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    nodeSecurityGroup: aws.ec2.SecurityGroup;
+    nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
+    nodeSecurityGroupId: pulumi.Output<string>;
     /**
      * The AutoScalingGroup name for the node group.
      */
@@ -444,7 +448,8 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
+    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
+    public readonly nodeSecurityGroupId: pulumi.Output<string>;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
@@ -473,6 +478,7 @@ export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData
 
         const group = createNodeGroup(name, args, this, opts?.provider);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
+        this.nodeSecurityGroupId = group.nodeSecurityGroupId;
         this.cfnStack = group.cfnStack;
         this.autoScalingGroupName = group.autoScalingGroupName;
         this.registerOutputs(undefined);
@@ -490,7 +496,8 @@ export class NodeGroupInternal extends pulumi.ComponentResource {
     public readonly autoScalingGroupName!: pulumi.Output<string>;
     public readonly cfnStack!: pulumi.Output<aws.cloudformation.Stack>;
     public readonly extraNodeSecurityGroups!: pulumi.Output<aws.ec2.SecurityGroup[]>;
-    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
+    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
+    public readonly nodeSecurityGroupId!: pulumi.Output<string>;
 
     constructor(name: string, args: NodeGroupInternalArgs, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:NodeGroup";
@@ -501,6 +508,7 @@ export class NodeGroupInternal extends pulumi.ComponentResource {
                 cfnStack: undefined,
                 extraNodeSecurityGroups: undefined,
                 nodeSecurityGroup: undefined,
+                nodeSecurityGroupId: undefined,
             };
             super(type, name, props, opts);
             return;
@@ -519,11 +527,13 @@ export class NodeGroupInternal extends pulumi.ComponentResource {
         this.cfnStack = pulumi.output(group.cfnStack);
         this.extraNodeSecurityGroups = pulumi.output(group.extraNodeSecurityGroups ?? []);
         this.nodeSecurityGroup = pulumi.output(group.nodeSecurityGroup);
+        this.nodeSecurityGroupId = pulumi.output(group.nodeSecurityGroupId);
         this.registerOutputs({
             autoScalingGroupName: this.autoScalingGroupName,
             cfnStack: this.cfnStack,
             extraNodeSecurityGroups: this.extraNodeSecurityGroups,
             nodeSecurityGroup: this.nodeSecurityGroup,
+            nodeSecurityGroupId: this.nodeSecurityGroupId,
         });
     }
 }
@@ -537,7 +547,8 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2
     /**
      * The security group for the node group to communicate with the cluster.
      */
-    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup;
+    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
+    public readonly nodeSecurityGroupId: pulumi.Output<string>;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
@@ -561,6 +572,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2
 
         const group = createNodeGroupV2(name, args, this, opts?.provider);
         this.nodeSecurityGroup = group.nodeSecurityGroup;
+        this.nodeSecurityGroupId = group.nodeSecurityGroupId;
         this.autoScalingGroup = group.autoScalingGroup;
         this.registerOutputs(undefined);
     }
@@ -576,7 +588,8 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2
 export class NodeGroupV2Internal extends pulumi.ComponentResource {
     public readonly autoScalingGroup!: pulumi.Output<aws.autoscaling.Group>;
     public readonly extraNodeSecurityGroups!: pulumi.Output<aws.ec2.SecurityGroup[]>;
-    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup>;
+    public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
+    public readonly nodeSecurityGroupId!: pulumi.Output<string>;
 
     constructor(
         name: string,
@@ -590,6 +603,7 @@ export class NodeGroupV2Internal extends pulumi.ComponentResource {
                 autoScalingGroup: undefined,
                 extraNodeSecurityGroups: undefined,
                 nodeSecurityGroup: undefined,
+                nodeSecurityGroupId: undefined,
             };
             super(type, name, props, opts);
             return;
@@ -607,10 +621,12 @@ export class NodeGroupV2Internal extends pulumi.ComponentResource {
         this.autoScalingGroup = pulumi.output(group.autoScalingGroup);
         this.extraNodeSecurityGroups = pulumi.output(group.extraNodeSecurityGroups ?? []);
         this.nodeSecurityGroup = pulumi.output(group.nodeSecurityGroup);
+        this.nodeSecurityGroupId = pulumi.output(group.nodeSecurityGroupId);
         this.registerOutputs({
             autoScalingGroup: this.autoScalingGroup,
             extraNodeSecurityGroups: this.extraNodeSecurityGroups,
             nodeSecurityGroup: this.nodeSecurityGroup,
+            nodeSecurityGroupId: this.nodeSecurityGroupId,
         });
     }
 }
@@ -650,6 +666,20 @@ function createNodeGroupInternal(
         return args.instanceProfile ?? c.nodeGroupOptions.instanceProfile!;
     });
 
+    if (args.clusterIngressRule && args.clusterIngressRuleId) {
+        throw new pulumi.ResourceError(
+            `invalid args for node group ${name}, clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
+            parent,
+        );
+    }
+
+    if (args.nodeSecurityGroup && args.nodeSecurityGroupId) {
+        throw new pulumi.ResourceError(
+            `invalid args for node group ${name}, nodeSecurityGroup and nodeSecurityGroupId are mutually exclusive`,
+            parent,
+        );
+    }
+
     const coreSecurityGroupId = core.nodeGroupOptions.nodeSecurityGroup?.apply((sg) => sg?.id);
     pulumi
         .all([coreSecurityGroupId, args.nodeSecurityGroup?.id, core.nodeSecurityGroupTags])
@@ -688,7 +718,8 @@ function createNodeGroupInternal(
         );
     }
 
-    let nodeSecurityGroup: aws.ec2.SecurityGroup;
+    let nodeSecurityGroupId: pulumi.Output<string>;
+    let nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
     const eksCluster = core.cluster;
 
     const cfnStackDeps = core.apply((c) => {
@@ -702,17 +733,20 @@ function createNodeGroupInternal(
         return result;
     });
 
-    let eksClusterIngressRule: aws.ec2.SecurityGroupRule = args.clusterIngressRule!;
-    if (args.nodeSecurityGroup) {
-        nodeSecurityGroup = args.nodeSecurityGroup;
-        if (eksClusterIngressRule === undefined) {
+    let eksClusterIngressRuleId: pulumi.Output<string>;
+    if (args.nodeSecurityGroup || args.nodeSecurityGroupId) {
+        if (args.clusterIngressRule === undefined && args.clusterIngressRuleId === undefined) {
             throw new pulumi.ResourceError(
-                `invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`,
+                `invalid args for node group ${name}, clusterIngressRule or clusterIngressRuleId is required when nodeSecurityGroup is manually specified`,
                 parent,
             );
         }
+
+        nodeSecurityGroup = args.nodeSecurityGroup;
+        nodeSecurityGroupId = args.nodeSecurityGroup?.id ?? pulumi.output(args.nodeSecurityGroupId!);
+        eksClusterIngressRuleId = args.clusterIngressRule?.id ?? pulumi.output(args.clusterIngressRuleId!);
     } else {
-        [nodeSecurityGroup, eksClusterIngressRule] = createNodeGroupSecurityGroup(
+        const [nodeSg, eksClusterIngressRule] = createNodeGroupSecurityGroup(
             name,
             {
                 vpcId: core.vpcId,
@@ -730,15 +764,10 @@ function createNodeGroupInternal(
             },
             parent,
         );
+        nodeSecurityGroup = nodeSg;
+        nodeSecurityGroupId = nodeSecurityGroup.id;
+        eksClusterIngressRuleId = eksClusterIngressRule.id;
     }
-
-    // This apply is necessary in s.t. the launchConfiguration picks up a
-    // dependency on the eksClusterIngressRule. The nodes may fail to
-    // connect to the cluster if we attempt to create them before the
-    // ingress rule is applied.
-    const nodeSecurityGroupId = pulumi
-        .all([nodeSecurityGroup.id, eksClusterIngressRule.id])
-        .apply(([id]) => id);
 
     // Collect the IDs of any extra, user-specific security groups.
     const extraSGOutput = pulumi.output(args.extraNodeSecurityGroups);
@@ -942,9 +971,12 @@ function createNodeGroupInternal(
             instanceType: args.instanceType || "t3.medium",
             iamInstanceProfile: instanceProfile,
             keyName: keyName,
-            securityGroups: pulumi
-                .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
-                .apply(([sg, extraSG]) => [sg, ...extraSG]),
+            // This apply is necessary in s.t. the launchConfiguration picks up a
+            // dependency on the eksClusterIngressRule. The nodes may fail to
+            // connect to the cluster if we attempt to create them before the
+            // ingress rule is applied.
+            securityGroups: pulumi.all([nodeSecurityGroupId, extraNodeSecurityGroupIds, eksClusterIngressRuleId])
+                .apply(([sg, extraSG, ingress]) => [sg, ...extraSG]),
             spotPrice: args.spotPrice,
             rootBlockDevice,
             ebsBlockDevices,
@@ -1061,6 +1093,7 @@ function createNodeGroupInternal(
 
     return {
         nodeSecurityGroup: nodeSecurityGroup,
+        nodeSecurityGroupId: nodeSecurityGroupId,
         cfnStack: cfnStack,
         autoScalingGroupName: autoScalingGroupName,
         extraNodeSecurityGroups: args.extraNodeSecurityGroups,
@@ -1096,6 +1129,20 @@ function createNodeGroupV2Internal(
         }
         return args.instanceProfile?.arn ?? c.nodeGroupOptions.instanceProfile!.arn;
     });
+
+    if (args.clusterIngressRule && args.clusterIngressRuleId) {
+        throw new pulumi.ResourceError(
+            `invalid args for node group ${name}, clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
+            parent,
+        );
+    }
+
+    if (args.nodeSecurityGroup && args.nodeSecurityGroupId) {
+        throw new pulumi.ResourceError(
+            `invalid args for node group ${name}, nodeSecurityGroup and nodeSecurityGroupId are mutually exclusive`,
+            parent,
+        );
+    }
 
     const coreSecurityGroupId = core.nodeGroupOptions.nodeSecurityGroup?.apply((sg) => sg?.id);
     pulumi
@@ -1136,7 +1183,8 @@ function createNodeGroupV2Internal(
         );
     }
 
-    let nodeSecurityGroup: aws.ec2.SecurityGroup;
+    let nodeSecurityGroupId: pulumi.Output<string>;
+    let nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
     const eksCluster = core.cluster;
 
     const nodeGroupDeps = core.apply((c) => {
@@ -1150,17 +1198,20 @@ function createNodeGroupV2Internal(
         return result;
     });
 
-    let eksClusterIngressRule: aws.ec2.SecurityGroupRule | undefined = args.clusterIngressRule;
-    if (args.nodeSecurityGroup) {
-        nodeSecurityGroup = args.nodeSecurityGroup;
-        if (eksClusterIngressRule === undefined) {
+    let eksClusterIngressRuleId: pulumi.Output<string>;
+    if (args.nodeSecurityGroup || args.nodeSecurityGroupId) {
+        if (args.clusterIngressRule === undefined && args.clusterIngressRuleId === undefined) {
             throw new pulumi.ResourceError(
-                `invalid args for node group ${name}, clusterIngressRule is required when nodeSecurityGroup is manually specified`,
+                `invalid args for node group ${name}, clusterIngressRule or clusterIngressRuleId is required when nodeSecurityGroup is manually specified`,
                 parent,
             );
         }
+
+        nodeSecurityGroup = args.nodeSecurityGroup;
+        nodeSecurityGroupId = args.nodeSecurityGroup?.id ?? pulumi.output(args.nodeSecurityGroupId!);
+        eksClusterIngressRuleId = args.clusterIngressRule?.id ?? pulumi.output(args.clusterIngressRuleId!);
     } else {
-        [nodeSecurityGroup, eksClusterIngressRule] = createNodeGroupSecurityGroup(
+        const [nodeSg, eksClusterIngressRule] = createNodeGroupSecurityGroup(
             name,
             {
                 vpcId: core.vpcId,
@@ -1178,15 +1229,10 @@ function createNodeGroupV2Internal(
             },
             parent,
         );
+        nodeSecurityGroup = nodeSg;
+        nodeSecurityGroupId = nodeSg.id;
+        eksClusterIngressRuleId = eksClusterIngressRule.id
     }
-
-    // This apply is necessary in s.t. the launchConfiguration picks up a
-    // dependency on the eksClusterIngressRule. The nodes may fail to
-    // connect to the cluster if we attempt to create them before the
-    // ingress rule is applied.
-    const nodeSecurityGroupId = pulumi
-        .all([nodeSecurityGroup.id, eksClusterIngressRule.id])
-        .apply(([id]) => id);
 
     // Collect the IDs of any extra, user-specific security groups.
     const extraNodeSecurityGroupIds = pulumi.all([args.extraNodeSecurityGroups]).apply(([sg]) => {
@@ -1406,9 +1452,12 @@ function createNodeGroupV2Internal(
             networkInterfaces: [
                 {
                     associatePublicIpAddress: String(nodeAssociatePublicIpAddress),
-                    securityGroups: pulumi
-                        .all([nodeSecurityGroupId, extraNodeSecurityGroupIds])
-                        .apply(([sg, extraSG]) => [sg, ...extraSG]),
+                    // This apply is necessary in s.t. the launchTemplate picks up a
+                    // dependency on the eksClusterIngressRule. The nodes may fail to
+                    // connect to the cluster if we attempt to create them before the
+                    // ingress rule is applied.
+                    securityGroups: pulumi.all([nodeSecurityGroupId, extraNodeSecurityGroupIds, eksClusterIngressRuleId])
+                        .apply(([sg, extraSG, ingress]) => [sg, ...extraSG]),
                 },
             ],
             metadataOptions: args.metadataOptions,
@@ -1476,6 +1525,7 @@ function createNodeGroupV2Internal(
 
     return {
         nodeSecurityGroup: nodeSecurityGroup,
+        nodeSecurityGroupId: nodeSecurityGroupId,
         autoScalingGroup: asGroup,
         extraNodeSecurityGroups: args.extraNodeSecurityGroups,
     };
