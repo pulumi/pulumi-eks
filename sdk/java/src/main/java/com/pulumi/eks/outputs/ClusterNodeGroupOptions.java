@@ -85,6 +85,11 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable SecurityGroupRule clusterIngressRule;
     /**
+     * @return The ID of the ingress rule that gives node group access.
+     * 
+     */
+    private @Nullable String clusterIngressRuleId;
+    /**
      * @return The number of worker nodes that should be running in the cluster. Defaults to 2.
      * 
      */
@@ -232,6 +237,18 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable SecurityGroup nodeSecurityGroup;
     /**
+     * @return The ID of the security group for the worker node group to communicate with the cluster.
+     * 
+     * This security group requires specific inbound and outbound rules.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+     * 
+     * Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+     * 
+     */
+    private @Nullable String nodeSecurityGroupId;
+    /**
      * @return The set of subnets to override and use for the worker node group.
      * 
      * Setting this option overrides which subnets to use for the worker node group, regardless if the cluster&#39;s `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -364,6 +381,13 @@ public final class ClusterNodeGroupOptions {
      */
     public Optional<SecurityGroupRule> clusterIngressRule() {
         return Optional.ofNullable(this.clusterIngressRule);
+    }
+    /**
+     * @return The ID of the ingress rule that gives node group access.
+     * 
+     */
+    public Optional<String> clusterIngressRuleId() {
+        return Optional.ofNullable(this.clusterIngressRuleId);
     }
     /**
      * @return The number of worker nodes that should be running in the cluster. Defaults to 2.
@@ -561,6 +585,20 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.nodeSecurityGroup);
     }
     /**
+     * @return The ID of the security group for the worker node group to communicate with the cluster.
+     * 
+     * This security group requires specific inbound and outbound rules.
+     * 
+     * See for more details:
+     * https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
+     * 
+     * Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are mutually exclusive.
+     * 
+     */
+    public Optional<String> nodeSecurityGroupId() {
+        return Optional.ofNullable(this.nodeSecurityGroupId);
+    }
+    /**
      * @return The set of subnets to override and use for the worker node group.
      * 
      * Setting this option overrides which subnets to use for the worker node group, regardless if the cluster&#39;s `subnetIds` is set, or if `publicSubnetIds` and/or `privateSubnetIds` were set.
@@ -650,6 +688,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable Map<String,Object> bottlerocketSettings;
         private @Nullable Map<String,String> cloudFormationTags;
         private @Nullable SecurityGroupRule clusterIngressRule;
+        private @Nullable String clusterIngressRuleId;
         private @Nullable Integer desiredCapacity;
         private @Nullable Boolean enableDetailedMonitoring;
         private @Nullable Boolean encryptRootBlockDevice;
@@ -674,6 +713,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable Integer nodeRootVolumeThroughput;
         private @Nullable String nodeRootVolumeType;
         private @Nullable SecurityGroup nodeSecurityGroup;
+        private @Nullable String nodeSecurityGroupId;
         private @Nullable List<String> nodeSubnetIds;
         private @Nullable String nodeUserData;
         private @Nullable String nodeUserDataOverride;
@@ -692,6 +732,7 @@ public final class ClusterNodeGroupOptions {
     	      this.bottlerocketSettings = defaults.bottlerocketSettings;
     	      this.cloudFormationTags = defaults.cloudFormationTags;
     	      this.clusterIngressRule = defaults.clusterIngressRule;
+    	      this.clusterIngressRuleId = defaults.clusterIngressRuleId;
     	      this.desiredCapacity = defaults.desiredCapacity;
     	      this.enableDetailedMonitoring = defaults.enableDetailedMonitoring;
     	      this.encryptRootBlockDevice = defaults.encryptRootBlockDevice;
@@ -716,6 +757,7 @@ public final class ClusterNodeGroupOptions {
     	      this.nodeRootVolumeThroughput = defaults.nodeRootVolumeThroughput;
     	      this.nodeRootVolumeType = defaults.nodeRootVolumeType;
     	      this.nodeSecurityGroup = defaults.nodeSecurityGroup;
+    	      this.nodeSecurityGroupId = defaults.nodeSecurityGroupId;
     	      this.nodeSubnetIds = defaults.nodeSubnetIds;
     	      this.nodeUserData = defaults.nodeUserData;
     	      this.nodeUserDataOverride = defaults.nodeUserDataOverride;
@@ -766,6 +808,12 @@ public final class ClusterNodeGroupOptions {
         public Builder clusterIngressRule(@Nullable SecurityGroupRule clusterIngressRule) {
 
             this.clusterIngressRule = clusterIngressRule;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder clusterIngressRuleId(@Nullable String clusterIngressRuleId) {
+
+            this.clusterIngressRuleId = clusterIngressRuleId;
             return this;
         }
         @CustomType.Setter
@@ -919,6 +967,12 @@ public final class ClusterNodeGroupOptions {
             return this;
         }
         @CustomType.Setter
+        public Builder nodeSecurityGroupId(@Nullable String nodeSecurityGroupId) {
+
+            this.nodeSecurityGroupId = nodeSecurityGroupId;
+            return this;
+        }
+        @CustomType.Setter
         public Builder nodeSubnetIds(@Nullable List<String> nodeSubnetIds) {
 
             this.nodeSubnetIds = nodeSubnetIds;
@@ -981,6 +1035,7 @@ public final class ClusterNodeGroupOptions {
             _resultValue.bottlerocketSettings = bottlerocketSettings;
             _resultValue.cloudFormationTags = cloudFormationTags;
             _resultValue.clusterIngressRule = clusterIngressRule;
+            _resultValue.clusterIngressRuleId = clusterIngressRuleId;
             _resultValue.desiredCapacity = desiredCapacity;
             _resultValue.enableDetailedMonitoring = enableDetailedMonitoring;
             _resultValue.encryptRootBlockDevice = encryptRootBlockDevice;
@@ -1005,6 +1060,7 @@ public final class ClusterNodeGroupOptions {
             _resultValue.nodeRootVolumeThroughput = nodeRootVolumeThroughput;
             _resultValue.nodeRootVolumeType = nodeRootVolumeType;
             _resultValue.nodeSecurityGroup = nodeSecurityGroup;
+            _resultValue.nodeSecurityGroupId = nodeSecurityGroupId;
             _resultValue.nodeSubnetIds = nodeSubnetIds;
             _resultValue.nodeUserData = nodeUserData;
             _resultValue.nodeUserDataOverride = nodeUserDataOverride;

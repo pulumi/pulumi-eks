@@ -28,6 +28,7 @@ const nodeGroupProvider: pulumi.provider.Provider = {
                 urn: nodegroup.urn,
                 state: {
                     nodeSecurityGroup: nodegroup.nodeSecurityGroup,
+                    nodeSecurityGroupId: nodegroup.nodeSecurityGroupId,
                     extraNodeSecurityGroups: nodegroup.extraNodeSecurityGroups,
                     cfnStack: nodegroup.cfnStack,
                     autoScalingGroupName: nodegroup.autoScalingGroupName,
@@ -85,6 +86,7 @@ const nodeGroupV2Provider: pulumi.provider.Provider = {
                 urn: nodegroup.urn,
                 state: {
                     nodeSecurityGroup: nodegroup.nodeSecurityGroup,
+                    nodeSecurityGroupId: nodegroup.nodeSecurityGroupId,
                     extraNodeSecurityGroups: nodegroup.extraNodeSecurityGroups,
                     autoScalingGroup: nodegroup.autoScalingGroup,
                 },

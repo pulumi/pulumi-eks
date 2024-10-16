@@ -923,6 +923,23 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 
 				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
 				assert.NoError(t, utils.ValidateNodeStorage(t, info.Outputs["kubeconfig"], 4, 100*1_000_000_000, "increased-storage-capacity"))
+
+				// Validate that nodeSecurityGroupId is set to the security group passed in as an input
+				require.NotNil(t, info.Outputs["standardNodeSecurityGroup"])
+				require.NotNil(t, info.Outputs["standardNodeSecurityGroupV2"])
+				standardSecurityGroup := info.Outputs["standardNodeSecurityGroup"].(map[string]interface{})
+				standardSecurityGroupV2 := info.Outputs["standardNodeSecurityGroupV2"].(map[string]interface{})
+				assert.Equal(t, standardSecurityGroup["id"], info.Outputs["standardNodeSecurityGroupId"])
+				assert.Equal(t, standardSecurityGroupV2["id"], info.Outputs["standardNodeSecurityGroupIdV2"])
+
+				// Validate that the nodeSecurityGroupId is set to security group ID passed in as an input
+				assert.Nil(t, info.Outputs["customNodeSecurityGroup"])
+				assert.Nil(t, info.Outputs["customNodeSecurityGroupV2"])
+				require.NotEmpty(t, info.Outputs["clusterNodeSecurityGroupId"])
+				clusterNodeGroupId := info.Outputs["clusterNodeSecurityGroupId"].(string)
+
+				assert.Equal(t, clusterNodeGroupId, info.Outputs["customNodeSecurityGroupId"])
+				assert.Equal(t, clusterNodeGroupId, info.Outputs["customNodeSecurityGroupIdV2"])
 			},
 		})
 
