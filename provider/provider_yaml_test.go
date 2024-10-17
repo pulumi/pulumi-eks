@@ -7,9 +7,11 @@ import (
 
 	"fmt"
 
+	"github.com/pulumi/providertest/pulumitest"
 	"github.com/pulumi/providertest/pulumitest/assertpreview"
 	"github.com/pulumi/providertest/pulumitest/opttest"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEksAuthModeUpgrade(t *testing.T) {
@@ -84,4 +86,78 @@ resources:
 		fmt.Printf("stderr: %s \n", res.StdErr)
 		assertpreview.HasNoReplacements(t, res)
 	})
+}
+
+func TestPublicEndpointInputValidation(t *testing.T) {
+	t.Parallel()
+	if testing.Short() {
+		t.Skipf("Skipping in testing.Short() mode, assuming this is a CI run without credentials")
+	}
+
+	tests := []struct {
+		endpointPublicAccess string
+		publicAccessCidrs    string
+		expectFailure        bool
+	}{
+		{"true", "[0.0.0.0/0]", false},
+		{"", "[0.0.0.0/0]", false},
+		{"", "", false},
+		{"false", "[0.0.0.0/0]", true},
+	}
+
+	for _, tt := range tests {
+		name := fmt.Sprintf("endpointPublicAccess=%s,publicAccessCidrs=%s", tt.endpointPublicAccess, tt.publicAccessCidrs)
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			var endpointPublicAccess string
+			if tt.endpointPublicAccess != "" {
+				endpointPublicAccess = fmt.Sprintf("endpointPublicAccess: %s", tt.endpointPublicAccess)
+			} else {
+				endpointPublicAccess = "# no endpointPublicAccess"
+			}
+
+			var publicAccessCidrs string
+			if tt.publicAccessCidrs != "" {
+				publicAccessCidrs = fmt.Sprintf("publicAccessCidrs: %s", tt.publicAccessCidrs)
+			} else {
+				publicAccessCidrs = "# no publicAccessCidrs"
+			}
+
+			yaml := fmt.Sprintf(`
+name: cluster
+runtime: yaml
+resources:
+  Vpc:
+    type: awsx:ec2:Vpc
+    properties:
+      subnetSpecs:
+        - type: Public
+      natGateways:
+        strategy: None
+  EksCluster:
+    type: eks:Cluster
+    properties:
+      vpcId: ${Vpc.vpcId}
+      skipDefaultNodeGroup: true
+      %s
+      %s
+      publicSubnetIds: ${Vpc.publicSubnetIds}`, endpointPublicAccess, publicAccessCidrs)
+
+			cwd, err := os.Getwd()
+			require.NoError(t, err)
+			options := []opttest.Option{
+				opttest.LocalProviderPath("eks", filepath.Join(cwd, "..", "bin")),
+			}
+			tw := &testWrapper{PT: t, expectFailure: tt.expectFailure}
+			workdir := t.TempDir()
+			err = os.WriteFile(filepath.Join(workdir, "Pulumi.yaml"), []byte(yaml), 0o600)
+			test := pulumitest.NewPulumiTest(tw, workdir, options...)
+			require.NoError(t, err)
+			test.Preview()
+
+			if tt.expectFailure {
+				require.Truef(t, tw.failed, "Expected preview to fail due to invalid inputs but it succeeded")
+			}
+		})
+	}
 }

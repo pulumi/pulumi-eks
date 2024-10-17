@@ -587,7 +587,19 @@ export function createCore(
                 subnetIds: clusterSubnetIds,
                 endpointPrivateAccess: args.endpointPrivateAccess,
                 endpointPublicAccess: args.endpointPublicAccess,
-                publicAccessCidrs: args.publicAccessCidrs,
+                publicAccessCidrs: args.publicAccessCidrs
+                    ? pulumi
+                          .all([args.publicAccessCidrs, args.endpointPublicAccess ?? true])
+                          .apply(([cidrs, publicAccess]) => {
+                              if (!publicAccess && cidrs) {
+                                  throw new pulumi.ResourceError(
+                                      "`publicAccessCidrs` can only be set when `endpointPublicAccess` is true",
+                                      eksCluster,
+                                  );
+                              }
+                              return cidrs;
+                          })
+                    : undefined,
             },
             version: args.version,
             enabledClusterLogTypes: args.enabledClusterLogTypes,
