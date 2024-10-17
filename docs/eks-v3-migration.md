@@ -38,7 +38,7 @@ AWS recently announced the deprecation of two features used by default in Pulumi
 ## VPC CNI Component changes
 
 The VPC CNI cluster component is now configured as an EKS addon as mentioned in the “New Features” section above. This brings the following changes:
-- Removed `enableIpv6` input property. The component automatically configures the IP version now depending on whether the cluster is running in IPv4 or IPv6 mode.  
+- Removed `enableIpv6` input property. The component automatically configures the IP version now, depending on whether the cluster is running in IPv4 or IPv6 mode.
 - Removed `image`, `initImage`, `nodeAgentImage` input properties. The component now automatically selects an image registry in the cluster’s region to pull the images from.
 
 During the update, you'll observe two key changes:
@@ -207,7 +207,7 @@ Because of this change, the `nodeSecurityGroup` output property is now optional.
 
 ### Default Security Groups can now be disabled
 If you do not need the default cluster and node security groups you can disable those now
-with the `skipDefaultSecurityGroups` flag. Those security groups will not be created when setting that flag to true.
+with the `skipDefaultSecurityGroups` flag. Those security groups will not be created when setting this flag to true.
 
 Because of this change, the `clusterSecurityGroup`, `nodeSecurityGroup` and `clusterIngressRule` properties are optional now. If you're using those outputs you'll need to update your code accordingly.
 
