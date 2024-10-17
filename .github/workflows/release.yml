@@ -76,7 +76,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@v6
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -154,7 +154,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@v6
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check worktree clean
@@ -220,7 +220,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -310,7 +310,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -421,7 +421,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@v6
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -519,7 +519,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
