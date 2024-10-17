@@ -1,3 +1,0 @@
-name: example-subnet-tags
-description: EKS cluster example of tagging subnets created with Pulumi
-runtime: nodejs
