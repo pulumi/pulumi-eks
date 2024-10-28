@@ -21,12 +21,11 @@ import (
 
 const (
 	// The baseline version is the version of the provider that the upgrade tests will be run against.
-	baselineVersion = "2.5.2"
+	baselineVersion = "3.0.0"
 	providerName    = "eks"
 )
 
 func TestExamplesUpgrades(t *testing.T) {
-	t.Skip("Temporarily skipping upgrade tests. Needs to be addressed in pulumi/pulumi-eks#1387")
 	t.Run("cluster", func(t *testing.T) {
 		testProviderUpgrade(t, "cluster")
 	})
