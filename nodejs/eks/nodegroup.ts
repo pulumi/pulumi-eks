@@ -2089,6 +2089,7 @@ export function createManagedNodeGroupInternal(
         delete nodeGroupArgs.version;
         delete nodeGroupArgs.releaseVersion;
         delete nodeGroupArgs.amiType;
+        amiType = undefined;
     } else if (amiType === undefined && args.operatingSystem !== undefined) {
         // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
 

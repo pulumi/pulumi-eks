@@ -54,6 +54,16 @@ const managedNodeGroupAL2023 = eks.createManagedNodeGroup("al-2023-mng", {
   nodeRole: role,
 });
 
+// Create a node group with a launch template and custom AMI
+const managedNodeGroup = new eks.ManagedNodeGroup("al-2023-mng-amitype-launch-template", {
+  ...scalingConfig,
+  cluster: cluster,
+  nodeRole: role,
+  amiType: "AL2023_ARM_64_STANDARD",
+  instanceTypes: ["t4g.medium"],
+  kubeletExtraArgs: "--max-pods=110",
+});
+
 const managedNodeGroupAL2023Taints = eks.createManagedNodeGroup("al-2023-mng-taints", {
   ...scalingConfig,
   cluster: cluster,
