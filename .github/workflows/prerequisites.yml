@@ -64,8 +64,6 @@ jobs:
         path: |
           .pulumi/examples-cache
         key: ${{ runner.os }}-${{ hashFiles('provider/go.sum') }}
-    - name: Prepare upstream code
-      run: make upstream
     - name: Setup tools
       uses: ./.github/actions/setup-tools
       with:
