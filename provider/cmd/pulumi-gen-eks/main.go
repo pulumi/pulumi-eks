@@ -22,7 +22,10 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/pkg/errors"
+	dotnetgen "github.com/pulumi/pulumi/pkg/v3/codegen/dotnet"
+	gogen "github.com/pulumi/pulumi/pkg/v3/codegen/go"
 	nodejsgen "github.com/pulumi/pulumi/pkg/v3/codegen/nodejs"
+	pygen "github.com/pulumi/pulumi/pkg/v3/codegen/python"
 	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -71,6 +74,12 @@ func main() {
 	case Nodejs:
 		templateDir := filepath.Join(base, "provider", "cmd", "pulumi-gen-eks", "nodejs-templates")
 		genNodejs(readSchema(schemaFile, version), templateDir, outdir)
+	case DotNet:
+		genDotNet(readSchema(schemaFile, version), outdir)
+	case Go:
+		genGo(readSchema(schemaFile, version), outdir)
+	case Python:
+		genPython(readSchema(schemaFile, version), outdir)
 	case Schema:
 		pkgSpec := generateSchema(semver.MustParse(version))
 		mustWritePulumiSchema(pkgSpec, outdir)
@@ -2666,6 +2675,30 @@ func genNodejs(pkg *schema.Package, templateDir, outdir string) {
 		}
 	}
 	files, err := nodejsgen.GeneratePackage(Tool, pkg, overlays, nil, false)
+	if err != nil {
+		panic(err)
+	}
+	mustWriteFiles(outdir, files)
+}
+
+func genDotNet(pkg *schema.Package, outdir string) {
+	files, err := dotnetgen.GeneratePackage(Tool, pkg, map[string][]byte{}, map[string]string{})
+	if err != nil {
+		panic(err)
+	}
+	mustWriteFiles(outdir, files)
+}
+
+func genGo(pkg *schema.Package, outdir string) {
+	files, err := gogen.GeneratePackage(Tool, pkg, map[string]string{})
+	if err != nil {
+		panic(err)
+	}
+	mustWriteFiles(outdir, files)
+}
+
+func genPython(pkg *schema.Package, outdir string) {
+	files, err := pygen.GeneratePackage(Tool, pkg, map[string][]byte{})
 	if err != nil {
 		panic(err)
 	}
