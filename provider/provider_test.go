@@ -85,7 +85,6 @@ func TestExamplesUpgrades(t *testing.T) {
 	t.Run("subnet-tags", func(t *testing.T) {
 		testProviderUpgrade(t, "subnet-tags")
 	})
-
 	t.Run("tags", func(t *testing.T) {
 		testProviderUpgrade(t, "tags")
 	})
