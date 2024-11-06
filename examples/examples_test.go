@@ -51,10 +51,7 @@ func getCwd(t *testing.T) string {
 }
 
 func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
-	pathEnv, err := providerPluginPathEnv()
-	if err != nil {
-		t.Fatalf("failed to build provider plugin PATH: %v", err)
-	}
+	pathEnv := providerPluginPathEnv(t)
 	return integration.ProgramTestOptions{
 		Env:                  []string{pathEnv},
 		ExpectRefreshChanges: true,
@@ -62,7 +59,8 @@ func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	}
 }
 
-func providerPluginPathEnv() (string, error) {
+func providerPluginPathEnv(t *testing.T) string {
+	t.Helper()
 	// providerDir := filepath.Join("..", "bin")
 	// absProviderDir, err := filepath.Abs(providerDir)
 	// if err != nil {
@@ -73,31 +71,16 @@ func providerPluginPathEnv() (string, error) {
 	pluginDir := filepath.Join("..", "provider", "cmd", "pulumi-resource-eks", "bin")
 	absPluginDir, err := filepath.Abs(pluginDir)
 	if err != nil {
-		return "", err
+		t.Fatalf("failed to build provider plugin PATH: %v", err)
+		return ""
 	}
 
 	pathSeparator := ":"
 	if runtime.GOOS == "windows" {
 		pathSeparator = ";"
 	}
-	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir, nil
+	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir
 	// return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir + pathSeparator + absProviderDir, nil
-}
-
-var envToUnset = [...]string{"AWS_SECRET_ACCESS_KEY", "AWS_ACCESS_KEY_ID", "AWS_SESSION_TOKEN"}
-
-// unsetAWSProfileEnv unsets the AWS_PROFILE and associated environment variables.
-// EKS token retrieval using the AWS_PROFILE seems to prefer the
-// the following variables over AWS_PROFILE so you end up with
-// authentication failures in the tests. So drop these environment
-// variables if set and reapply them after the test.
-func unsetAWSProfileEnv(t *testing.T) {
-	t.Helper()
-
-	for _, envVar := range envToUnset {
-		t.Setenv(envVar, "")
-		assert.NoError(t, os.Unsetenv(envVar)) // Explicitly unset the environment variable, as well.
-	}
 }
 
 type programTestExtraOptions struct {

@@ -300,15 +300,18 @@ func TestAccScopedKubeconfig(t *testing.T) {
 }
 
 func TestAccAwsProfile(t *testing.T) {
-	unsetAWSProfileEnv(t)
-
-	profile := "aws-profile"
+	profile := "aws-profile-node"
 	setProfileCredentials(t, profile)
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "aws-profile"),
-			Env: []string{"ALT_AWS_PROFILE=" + profile},
+			Env: []string{
+				"ALT_AWS_PROFILE=" + profile,
+				"AWS_SECRET_ACCESS_KEY=", // unset
+				"AWS_ACCESS_KEY_ID=",     // unset
+				"AWS_SESSION_TOKEN=",     // unset
+			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				// The `cluster.kubeconfig` output should fail as it does not have the right AWS_PROFILE set.
 				t.Logf("Ensuring cluster.kubeconfig fails without AWS_PROFILE envvar set")
@@ -319,7 +322,6 @@ func TestAccAwsProfile(t *testing.T) {
 					info.Outputs["kubeconfigWithProfile"],
 				)
 			},
-			NoParallel: true,
 		})
 
 	programTestWithExtraOptions(t, &test, nil)
@@ -335,7 +337,6 @@ func TestAccAwsProfileRole(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 			},
-			NoParallel: true,
 		})
 	programTestWithExtraOptions(t, &test, nil)
 }
