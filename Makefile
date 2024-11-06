@@ -240,5 +240,4 @@ provider_dist-linux-arm64: bin/provider/linux-arm64/${PROVIDER}
 provider_dist-linux-amd64: bin/provider/linux-amd64/${PROVIDER}
 provider_dist-darwin-arm64: bin/provider/darwin-arm64/${PROVIDER}
 provider_dist-darwin-amd64: bin/provider/darwin-amd64/${PROVIDER}
-provider_dist-windows-arm64: bin/provider/windows-arm64/${PROVIDER}
-provider_dist-windows-amd64: bin/provider/windows-amd64/${PROVIDER}
+provider_dist-windows-amd64: bin/provider/windows-amd64/${PROVIDER}.exe
