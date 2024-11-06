@@ -45,7 +45,6 @@ jobs:
         uses: ./.github/actions/setup-tools
         with:
           tools: go
-      - run: make upstream
       - uses: pulumi/license-check-action@main
         with:
           module-path: provider
