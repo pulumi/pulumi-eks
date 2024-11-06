@@ -99,6 +99,9 @@ func TestEksClusterInputValidations(t *testing.T) {
 	for _, p := range props {
 		for n := 0; n < 2; n++ {
 			t.Run(fmt.Sprintf("%s_%d", p, n), func(t *testing.T) {
+				if testing.Short() {
+					t.Skipf("Skipping in testing.Short() mode, assuming this is a CI run without credentials")
+				}
 				checkEksClusterInputValidations(t, p, n, n > 0)
 			})
 		}
