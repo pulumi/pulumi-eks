@@ -30,10 +30,14 @@ import (
 func TestAccAwsProfilePy(t *testing.T) {
 	unsetAWSProfileEnv(t)
 
+	profile := "aws-profile-py"
+	setProfileCredentials(t, profile)
+
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			NoParallel: true,
 			Dir:        filepath.Join(getCwd(t), "aws-profile-py"),
+			Env:        []string{"ALT_AWS_PROFILE=" + profile},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				// The `cluster.kubeconfig` output should fail as it does not have the right AWS_PROFILE set.
 				t.Logf("Ensuring cluster.kubeconfig fails without AWS_PROFILE envvar set")

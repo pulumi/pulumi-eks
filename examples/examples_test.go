@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -174,6 +175,27 @@ func loadAwsDefaultConfig(t *testing.T) aws.Config {
 	require.NoError(t, err, "failed to load AWS config")
 
 	return cfg
+}
+
+// setProfileCredentials ensures a profile exists with the given name. It shares ambient credentials.
+func setProfileCredentials(t *testing.T, profile string) {
+	t.Helper()
+
+	keyID := os.Getenv("ALT_AWS_ACCESS_KEY_ID")
+	if keyID == "" {
+		t.Skip("ALT_AWS_ACCESS_KEY_ID is unset")
+	}
+
+	secret := os.Getenv("ALT_AWS_SECRET_ACCESS_KEY")
+	if secret == "" {
+		t.Skip("ALT_AWS_SECRET_ACCESS_KEY is unset")
+	}
+
+	out, err := exec.Command("aws", "configure", "set", "aws_access_key_id", keyID, "--profile", profile).CombinedOutput()
+	require.NoError(t, err, string(out))
+
+	out, err = exec.Command("aws", "configure", "set", "aws_secret_access_key", secret, "--profile", profile).CombinedOutput()
+	require.NoError(t, err, string(out))
 }
 
 func createEksClient(t *testing.T) *eks.Client {
