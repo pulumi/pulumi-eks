@@ -33,10 +33,11 @@ schema::
 
 provider:: bin/${PROVIDER}
 
-.pulumi/bin/pulumi: PULUMI_VERSION := $(shell cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3)
-.pulumi/bin/pulumi: HOME := $(WORKING_DIR)
-.pulumi/bin/pulumi:
-	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
+# Replaced with ci-mgmt target below.
+#.pulumi/bin/pulumi: PULUMI_VERSION := $(shell cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3)
+#.pulumi/bin/pulumi: HOME := $(WORKING_DIR)
+#.pulumi/bin/pulumi:
+#	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
 
 build_nodejs:: .pulumi/bin/pulumi schema
 	cd provider/cmd/$(CODEGEN) && go run main.go nodejs ../../../sdk/nodejs $(CURDIR) ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
@@ -218,10 +219,17 @@ test_provider:
 			HOME=$(WORKING_DIR) sh -s -- --version "$$(cat .pulumi/version)"; \
 	fi
 
-.pulumi/version: provider/go.mod
-	@mkdir -p .pulumi
-	@cd provider && go list -f "{{slice .Version 1}}" -m github.com/pulumi/pulumi/pkg/v3 | tee ../$@
+# Uses a custom target which reads from package.json.
+#.pulumi/version: provider/go.mod
+#	@mkdir -p .pulumi
+#	@cd provider && go list -f "{{slice .Version 1}}" -m github.com/pulumi/pulumi/pkg/v3 | tee ../$@
+.pulumi/version: nodejs/eks/yarn.lock
+	(cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3 > ../../.pulumi/version)
 
 test_shard: install_provider install_sdks
 	cd examples && \
 		go test -tags=$(TAGS) -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} -run $(TESTS) ./...
+
+install_plugins: export PULUMI_HOME := $(WORKING_DIR)/.pulumi
+install_plugins: export PATH := $(WORKING_DIR)/.pulumi/bin:$(PATH)
+install_plugins: .pulumi/bin/pulumi
