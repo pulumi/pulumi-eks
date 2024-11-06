@@ -185,10 +185,6 @@ jobs:
         role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
     - name: Install dependencies
       run: make install_sdks
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     - name: Generate shard
       id: shard
       uses: hashicorp-forge/go-test-split-action@v2.0.0
@@ -202,6 +198,10 @@ jobs:
       env:
         TAGS: all
         TESTS: ${{ steps.shard.outputs.run}}
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
