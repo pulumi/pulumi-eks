@@ -241,3 +241,5 @@ provider_dist-linux-amd64: bin/provider/linux-amd64/${PROVIDER}
 provider_dist-darwin-arm64: bin/provider/darwin-arm64/${PROVIDER}
 provider_dist-darwin-amd64: bin/provider/darwin-amd64/${PROVIDER}
 provider_dist-windows-amd64: bin/provider/windows-amd64/${PROVIDER}.exe
+
+install_sdks: install_nodejs_sdk install_dotnet_sdk install_go_sdk install_python_sdk install_java_sdk
