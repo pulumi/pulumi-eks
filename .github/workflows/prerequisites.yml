@@ -73,7 +73,7 @@ jobs:
     - name: Generate schema
       run: make schema
     - name: Build provider binary
-      run: make provider_no_deps
+      run: make provider
     - name: Unit-test provider code
       run: make test_provider
     - if: inputs.is_pr
