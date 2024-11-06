@@ -228,9 +228,9 @@ test_provider:
 .pulumi/version: nodejs/eks/yarn.lock
 	(cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3 > ../../.pulumi/version)
 
-test_shard: install_provider install_sdks
+test_shard:
 	cd examples && \
-		go test -tags=$(TAGS) -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} -run $(TESTS) ./...
+		go test -tags=$(TAGS) -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} -run "${TESTS}" ./...
 
 install_plugins: export PULUMI_HOME := $(WORKING_DIR)/.pulumi
 install_plugins: export PATH := $(WORKING_DIR)/.pulumi/bin:$(PATH)
