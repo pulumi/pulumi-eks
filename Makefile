@@ -236,10 +236,10 @@ install_plugins: export PULUMI_HOME := $(WORKING_DIR)/.pulumi
 install_plugins: export PATH := $(WORKING_DIR)/.pulumi/bin:$(PATH)
 install_plugins: .pulumi/bin/pulumi
 
-provider_dist-linux-arm64: bin/provider/linux-arm64/${PROVIDER}
-provider_dist-linux-amd64: bin/provider/linux-amd64/${PROVIDER}
-provider_dist-darwin-arm64: bin/provider/darwin-arm64/${PROVIDER}
-provider_dist-darwin-amd64: bin/provider/darwin-amd64/${PROVIDER}
-provider_dist-windows-amd64: bin/provider/windows-amd64/${PROVIDER}.exe
+provider_dist-linux-amd64: dist/${GZIP_PREFIX}-linux-amd64.tar.gz
+provider_dist-linux-arm64: dist/${GZIP_PREFIX}-linux-arm64.tar.gz
+provider_dist-darwin-amd64: dist/${GZIP_PREFIX}-darwin-amd64.tar.gz
+provider_dist-darwin-arm64: dist/${GZIP_PREFIX}-darwin-arm64.tar.gz
+provider_dist-windows-amd64: dist/${GZIP_PREFIX}-windows-amd64.tar.gz
 
 install_sdks: install_nodejs_sdk install_dotnet_sdk install_go_sdk install_python_sdk install_java_sdk
