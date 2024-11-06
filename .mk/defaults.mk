@@ -129,13 +129,34 @@ default.provider:
 
 default.test: export PATH := $(WORKING_DIR)/bin:$(PATH)
 default.test:
-	cd examples && go test -v -tags=all -parallel $(TESTPARALLELISM) -timeout 2h
+	cd examples && go test -v -tags=all -parallel $(TESTPARALLELISM) -timeout 2h .
 
 default.test_provider:
 	@echo ""
 	@echo "== test_provider ==================================================================="
 	@echo ""
-	cd provider && go test -v -short ./... -parallel $(TESTPARALLELISM)
+	cd provider && go test -v -count 1 -short -coverprofile="coverage.txt" -coverpkg=./... -parallel $(TESTPARALLELISM) ./...
+
+default.test_nodejs: PATH := $(WORKING_DIR)/bin:$(PATH)
+default.test_nodejs: intall_provider install_nodejs_sdk
+	cd examples && \
+		go test -tags=nodejs -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} ./...
+
+default.test_python: install_provider install_python_sdk
+	cd examples && \
+		go test -tags=python -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} ./...
+
+default.test_dotnet: install_provider install_dotnet_sdk
+	cd examples && \
+		go test -tags=dotnet -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} ./...
+
+default.test_java: install_provider install_java_sdk
+	cd examples && \
+		go test -tags=java -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} ./...
+
+default.test_shard: install_provider install_sdks
+	cd examples && \
+		go test -tags=$(TAGS) -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} -run $(TESTS) ./...
 
 default.bin/pulumi-java-gen:
 	mkdir -p bin/
