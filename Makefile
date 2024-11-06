@@ -105,10 +105,10 @@ install_provider:: provider install_nodejs_sdk
 
 generate_schema:: schema
 
-install_nodejs_sdk:: build_nodejs
+install_nodejs_sdk:: # Removed build dependency
 	yarn link --cwd $(WORKING_DIR)/sdk/nodejs/bin
 
-install_dotnet_sdk:: build_dotnet
+install_dotnet_sdk:: # Removed build dependency
 	mkdir -p $(WORKING_DIR)/nuget
 	find . -name '*.nupkg' -print -exec cp -p {} ${WORKING_DIR}/nuget \;
 
