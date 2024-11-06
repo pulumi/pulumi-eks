@@ -308,6 +308,7 @@ func TestAccAwsProfile(t *testing.T) {
 			Dir: path.Join(getCwd(t), "aws-profile"),
 			Env: []string{
 				"ALT_AWS_PROFILE=" + profile,
+				"AWS_PROFILE=",           // unset
 				"AWS_SECRET_ACCESS_KEY=", // unset
 				"AWS_ACCESS_KEY_ID=",     // unset
 				"AWS_SESSION_TOKEN=",     // unset
