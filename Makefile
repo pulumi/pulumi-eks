@@ -209,7 +209,9 @@ test_provider:
 	cd provider && go test -v -short ./... -parallel $(TESTPARALLELISM)
 
 
-# ci-mgmt onboarding
+######################
+# ci-mgmt onboarding #
+######################
 
 .pulumi/bin/pulumi: .pulumi/version
 	@if [ -x .pulumi/bin/pulumi ] && [ "v$$(cat .pulumi/version)" = "$$(.pulumi/bin/pulumi version)" ]; then \
@@ -233,3 +235,10 @@ test_shard: install_provider install_sdks
 install_plugins: export PULUMI_HOME := $(WORKING_DIR)/.pulumi
 install_plugins: export PATH := $(WORKING_DIR)/.pulumi/bin:$(PATH)
 install_plugins: .pulumi/bin/pulumi
+
+provider_dist-linux-arm64: bin/provider/linux-arm64/${PROVIDER}
+provider_dist-linux-amd64: bin/provider/linux-amd64/${PROVIDER}
+provider_dist-darwin-arm64: bin/provider/darwin-arm64/${PROVIDER}
+provider_dist-darwin-amd64: bin/provider/darwin-amd64/${PROVIDER}
+provider_dist-windows-arm64: bin/provider/windows-arm64/${PROVIDER}
+provider_dist-windows-amd64: bin/provider/windows-amd64/${PROVIDER}
