@@ -206,3 +206,22 @@ test_provider:
 	@echo "== test_provider ==================================================================="
 	@echo ""
 	cd provider && go test -v -short ./... -parallel $(TESTPARALLELISM)
+
+
+# ci-mgmt onboarding
+
+.pulumi/bin/pulumi: .pulumi/version
+	@if [ -x .pulumi/bin/pulumi ] && [ "v$$(cat .pulumi/version)" = "$$(.pulumi/bin/pulumi version)" ]; then \
+		echo "pulumi/bin/pulumi version: v$$(cat .pulumi/version)"; \
+	else \
+		curl -fsSL https://get.pulumi.com | \
+			HOME=$(WORKING_DIR) sh -s -- --version "$$(cat .pulumi/version)"; \
+	fi
+
+.pulumi/version: provider/go.mod
+	@mkdir -p .pulumi
+	@cd provider && go list -f "{{slice .Version 1}}" -m github.com/pulumi/pulumi/pkg/v3 | tee ../$@
+
+test_shard: install_provider install_sdks
+	cd examples && \
+		go test -tags=$(TAGS) -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} -run $(TESTS) ./...
