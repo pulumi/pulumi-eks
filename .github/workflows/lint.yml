@@ -8,7 +8,6 @@ on:
 
 env:
   ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
-  ALT_AWS_PROFILE: ${{ secrets.ALT_AWS_PROFILE }}
   ALT_AWS_SECRET_ACCESS_KEY: ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-west-2
   GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
