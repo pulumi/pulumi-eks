@@ -22,3 +22,4 @@ env:
   PULUMI_ENABLE_RESOURCE_REFERENCES: 1
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
 template: generic
+freeDiskSpaceBeforeTest: true
