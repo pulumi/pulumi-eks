@@ -61,7 +61,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@v6
       - name: Make Provider Binary
         run: make dist/pulumi-resource-eks-v${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
       - name: Upload
