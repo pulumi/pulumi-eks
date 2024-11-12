@@ -219,7 +219,7 @@ export function generateKubeconfig(
     }
 
     if (includeProfile && opts?.profileName) {
-        env.push({ name: "AWS_PROFILE", value: opts.profileName });
+        args = [...args, "--profile", opts.profileName];
     }
 
     return pulumi.all([args, env]).apply(([tokenArgs, envvars]) => {

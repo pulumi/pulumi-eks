@@ -309,6 +309,7 @@ func TestAccAwsProfile(t *testing.T) {
 			OrderedConfig: []integration.ConfigValue{
 				{Key: "pulumi:disable-default-providers[0]", Value: "aws", Path: true},
 			},
+			RetryFailedSteps: false,
 			Env: []string{
 				"ALT_AWS_PROFILE=" + profile,
 				"AWS_PROFILE=",           // unset

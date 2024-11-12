@@ -29,6 +29,7 @@ kubeconfig_opts = eks.KubeconfigOptionsArgs(profile_name=profile_name)
 cluster = eks.Cluster(project_name,
                       provider_credential_opts=kubeconfig_opts,
                       authentication_mode=eks.AuthenticationMode.API,
+                      # TODO(#1475): bootstrap_self_managed_addons=false, # To speed up the test.
                       opts=pulumi.ResourceOptions(provider=aws_provider))
 
 # Export the cluster kubeconfig.

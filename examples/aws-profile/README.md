@@ -1,5 +1,4 @@
 # examples/cluster
 
-Creates two EKS clusters in the default VPC with two t3.medium nodes.
-- One cluster uses the default configuration.
-- One cluster uses a non-default configuration.
+Creates an EKS cluster in the default VPC with two t3.medium nodes, using a
+non-default AWS profile for credentials.

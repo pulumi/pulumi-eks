@@ -34,6 +34,7 @@ const kubeconfigOpts: eks.KubeconfigOptions = {profileName: profileName};
 const cluster = new eks.Cluster(`${projectName}`, {
     providerCredentialOpts: kubeconfigOpts,
     authenticationMode: eks.AuthenticationMode.Api,
+    // TODO(#1475): bootstrapSelfManagedAddons: false, // To speed up the test.
 }, {provider: awsProvider});
 
 // Export the cluster kubeconfig.
