@@ -1,7 +1,6 @@
 env:
   ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
   ALT_AWS_SECRET_ACCESS_KEY: ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }}
-  ALT_AWS_PROFILE: ${{ secrets.ALT_AWS_PROFILE }}
   AWS_REGION: us-west-2
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GOLANGCI_LINT_VERSION: v1.61.0
@@ -272,12 +271,6 @@ jobs:
           role-duration-seconds: 7200
           role-session-name: ${{ env.PROVIDER }}@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
-      - name: Configure AWS CLI
-        run: |
-          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
       - name: Link nodejs binary for testing
         run: |
           cd ${{ github.workspace }}/bin
@@ -383,12 +376,6 @@ jobs:
           role-duration-seconds: 7200
           role-session-name: ${{ env.PROVIDER }}@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
-      - name: Configure AWS CLI
-        run: |
-          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
       - name: Link nodejs binary for testing
         run: |
           cd ${{ github.workspace }}/bin
@@ -495,12 +482,6 @@ jobs:
           role-duration-seconds: 7200
           role-session-name: ${{ env.PROVIDER }}@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
-      - name: Configure AWS CLI
-        run: |
-          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
       - name: Link nodejs binary for testing
         run: |
           cd ${{ github.workspace }}/bin
@@ -590,12 +571,6 @@ jobs:
           role-duration-seconds: 7200
           role-session-name: ${{ env.PROVIDER }}@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
-      - name: Configure AWS CLI
-        run: |
-          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
       - name: Link nodejs binary for testing
         run: |
           cd ${{ github.workspace }}/bin
