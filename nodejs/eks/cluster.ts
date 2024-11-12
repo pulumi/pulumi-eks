@@ -154,7 +154,7 @@ export interface CoreData {
     oidcProvider?: aws.iam.OpenIdConnectProvider;
     encryptionConfig?: pulumi.Output<aws.types.output.eks.ClusterEncryptionConfig>;
     clusterIamRole: pulumi.Output<aws.iam.Role>;
-    accessEntries?: pulumi.Output<aws.eks.AccessEntry[]>;
+    accessEntries?: pulumi.Output<AccessEntry[]>;
 }
 
 function createOrGetInstanceProfile(
@@ -884,22 +884,26 @@ export function createCore(
         );
     }
 
+    const createdAccessEntries: AccessEntry[] = [];
     // Create the access entries if the authentication mode supports it.
     let accessEntries: aws.eks.AccessEntry[] | undefined = undefined;
     if (supportsAccessEntries(args.authenticationMode)) {
         // This additionally maps the defaultInstanceRole to a EC2_LINUX access entry which allows the nodes to register & communicate with the EKS control plane.
         if (defaultInstanceRole) {
+            const defaultNodeGroupAccessEntry = {
+                principalArn: defaultInstanceRole.arn,
+                type: AccessEntryType.EC2_LINUX,
+            };
             accessEntries = createAccessEntries(
                 name,
                 eksCluster.name,
                 {
-                    defaultNodeGroupInstanceRole: {
-                        principalArn: defaultInstanceRole.arn,
-                        type: AccessEntryType.EC2_LINUX,
-                    },
+                    defaultNodeGroupInstanceRole: defaultNodeGroupAccessEntry,
                 },
                 { parent, provider, dependsOn: [eksCluster] },
             );
+
+            createdAccessEntries.push(defaultNodeGroupAccessEntry);
         }
 
         accessEntries = (accessEntries || []).concat(
@@ -909,6 +913,7 @@ export function createCore(
                 dependsOn: [eksCluster],
             }),
         );
+        createdAccessEntries.push(...Object.values(args.accessEntries || {}));
     }
 
     const authDependencies = [
@@ -1133,7 +1138,7 @@ export function createCore(
         oidcProvider: oidcProvider,
         encryptionConfig: encryptionConfig,
         clusterIamRole: eksRole,
-        accessEntries: accessEntries ? pulumi.output(accessEntries) : undefined,
+        accessEntries: createdAccessEntries ? pulumi.output(createdAccessEntries) : undefined,
     };
 }
 
