@@ -24,6 +24,7 @@ import (
 	"github.com/pulumi/pulumi-eks/examples/utils"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccClusterGo(t *testing.T) {
@@ -71,6 +72,28 @@ func TestAccExtraSecurityGroupsGo(t *testing.T) {
 					info.Deployment.Resources,
 					info.Outputs["kubeconfig"],
 				)
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
+func TestAccAuthenticationModeGo(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getGoBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "tests", "authentication-mode-go"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+
+				require.Contains(t, info.Outputs, "accessEntries")
+				accessEntries := info.Outputs["accessEntries"].([]interface{})
+				assert.Len(t, accessEntries, 1)
 			},
 		})
 
