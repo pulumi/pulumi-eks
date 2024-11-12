@@ -33,6 +33,7 @@ const kubeconfigOpts: eks.KubeconfigOptions = {profileName: profileName};
 // Create the cluster using the AWS provider and credential opts.
 const cluster = new eks.Cluster(`${projectName}`, {
     providerCredentialOpts: kubeconfigOpts,
+    authenticationMode: eks.AuthenticationMode.Api,
 }, {provider: awsProvider});
 
 // Export the cluster kubeconfig.

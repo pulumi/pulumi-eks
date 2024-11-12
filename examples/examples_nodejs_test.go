@@ -306,6 +306,9 @@ func TestAccAwsProfile(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "aws-profile"),
+			OrderedConfig: []integration.ConfigValue{
+				{Key: "pulumi:disable-default-providers[0]", Value: "aws", Path: true},
+			},
 			Env: []string{
 				"ALT_AWS_PROFILE=" + profile,
 				"AWS_PROFILE=",           // unset
