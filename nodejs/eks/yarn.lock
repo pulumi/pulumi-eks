@@ -1656,7 +1656,7 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@pulumi/aws@^6.18.2":
+"@pulumi/aws@6.45.0":
   version "6.45.0"
   resolved "https://registry.yarnpkg.com/@pulumi/aws/-/aws-6.45.0.tgz#f3cf0fea34214906cf2e35f7ab57d6195b4d668a"
   integrity sha512-EhRlYs0Ig53nHRNv3NSgb5TPpJuDmA+N0HCUkPhODUT9n1KTahQnoLbMc+hbvJKPngx6hgye7fagARPO3kWPVw==
@@ -1666,7 +1666,7 @@
     mime "^2.0.0"
     resolve "^1.7.1"
 
-"@pulumi/kubernetes@^4.1.1":
+"@pulumi/kubernetes@4.15.0":
   version "4.15.0"
   resolved "https://registry.yarnpkg.com/@pulumi/kubernetes/-/kubernetes-4.15.0.tgz#a1f1839371504474cecc342cae447db145c4a2eb"
   integrity sha512-X+EFpmcuB+bXGArA4QMvAXDM2IshkvSckcVIXsyR1XolaZ+UyCMrDHLfIzb5+nDj3LWS49A+aOWRjSWr+QynlQ==
