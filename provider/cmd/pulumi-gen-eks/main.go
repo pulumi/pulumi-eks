@@ -47,7 +47,7 @@ const (
 )
 
 type Dependencies struct {
-	Aws    string `json:"@pulumi/aws"`
+	Aws        string `json:"@pulumi/aws"`
 	Kubernetes string `json:"@pulumi/kubernetes"`
 }
 
