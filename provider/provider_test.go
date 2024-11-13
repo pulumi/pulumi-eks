@@ -364,9 +364,13 @@ func setProfileCredentials(t *testing.T, profile string) {
 		t.Skip("ALT_AWS_SECRET_ACCESS_KEY is unset")
 	}
 
-	out, err := exec.Command("aws", "configure", "set", "aws_access_key_id", keyID, "--profile", profile).CombinedOutput()
+	out, err := exec.Command(
+		"aws", "configure", "set", "aws_access_key_id", keyID, "--profile", profile,
+	).CombinedOutput()
 	require.NoError(t, err, string(out))
 
-	out, err = exec.Command("aws", "configure", "set", "aws_secret_access_key", secret, "--profile", profile).CombinedOutput()
+	out, err = exec.Command(
+		"aws", "configure", "set", "aws_secret_access_key", secret, "--profile", profile,
+	).CombinedOutput()
 	require.NoError(t, err, string(out))
 }
