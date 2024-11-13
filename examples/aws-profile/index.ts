@@ -6,17 +6,12 @@ import * as process from "process";
 
 const projectName = pulumi.getProject();
 
-// For CI testing only: used to set profileName to alternate AWS_PROFILE envvar.
-if (!process.env.ALT_AWS_PROFILE) {
-  throw new Error("ALT_AWS_PROFILE must be set");
-}
-
 if (!process.env.AWS_REGION) {
   throw new Error("AWS_REGION must be set");
 }
 
 // AWS named profile to use.
-const profileName = process.env.ALT_AWS_PROFILE;
+const profileName = "aws-profile-node";
 // AWS region to use.
 const region = pulumi.output(process.env.AWS_REGION as aws.types.enums.Region);
 

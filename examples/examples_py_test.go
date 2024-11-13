@@ -28,8 +28,7 @@ import (
 )
 
 func TestAccAwsProfilePy(t *testing.T) {
-	profile := "aws-profile-py"
-	setProfileCredentials(t, profile)
+	setProfileCredentials(t, "aws-profile-py")
 
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -39,7 +38,6 @@ func TestAccAwsProfilePy(t *testing.T) {
 			},
 			RetryFailedSteps: false,
 			Env: []string{
-				"ALT_AWS_PROFILE=" + profile,
 				"AWS_PROFILE=",           // unset
 				"AWS_SECRET_ACCESS_KEY=", // unset
 				"AWS_ACCESS_KEY_ID=",     // unset
