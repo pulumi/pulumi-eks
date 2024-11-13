@@ -17,7 +17,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/blang/semver"
@@ -43,6 +45,30 @@ const (
 	Python Language = "python"
 	Schema Language = "schema"
 )
+
+type Dependencies struct {
+	Aws    string `json:"@pulumi/aws"`
+	Kubernetes string `json:"@pulumi/kubernetes"`
+}
+
+type PackageJson struct {
+	Dependencies Dependencies
+}
+
+func readPackageDependencies(packageDir string) Dependencies {
+	content, err := os.ReadFile(path.Join(packageDir, "package.json"))
+	if err != nil {
+		log.Fatal("Error when opening file: ", err)
+	}
+
+	var payload PackageJson
+	err = json.Unmarshal(content, &payload)
+	if err != nil {
+		log.Fatal("Error during Unmarshal(): ", err)
+	}
+
+	return payload.Dependencies
+}
 
 func main() {
 	printUsage := func() {
@@ -81,7 +107,7 @@ func main() {
 	case Python:
 		genPython(readSchema(schemaFile, version), outdir)
 	case Schema:
-		pkgSpec := generateSchema(semver.MustParse(version))
+		pkgSpec := generateSchema(semver.MustParse(version), outdir)
 		mustWritePulumiSchema(pkgSpec, outdir)
 	default:
 		panic(fmt.Sprintf("Unrecognized language %q", language))
@@ -102,7 +128,8 @@ func k8sRef(ref string) string {
 }
 
 //nolint:lll,goconst
-func generateSchema(version semver.Version) schema.PackageSpec {
+func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
+	dependencies := readPackageDependencies(path.Join(outdir, "..", "..", "..", "nodejs", "eks"))
 	return schema.PackageSpec{
 		Name:        "eks",
 		Description: "Pulumi Amazon Web Services (AWS) EKS Components.",
@@ -2026,8 +2053,8 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
-					"pulumi-aws":        ">=6.0.0,<7.0.0",
-					"pulumi-kubernetes": ">=4.0.0,<5.0.0",
+					"pulumi-aws":        fmt.Sprintf(">=%s,<7.0.0", dependencies.Aws),
+					"pulumi-kubernetes": fmt.Sprintf(">=%s,<5.0.0", dependencies.Kubernetes),
 				},
 				"usesIOClasses": true,
 				// TODO: Embellish the readme
@@ -2047,15 +2074,15 @@ func generateSchema(version semver.Version) schema.PackageSpec {
 			}),
 			"java": rawMessage(map[string]interface{}{
 				"dependencies": map[string]string{
-					"com.pulumi:aws":        "6.18.2",
-					"com.pulumi:kubernetes": "4.4.0",
+					"com.pulumi:aws":        dependencies.Aws,
+					"com.pulumi:kubernetes": dependencies.Kubernetes,
 				},
 			}),
 			"nodejs": rawMessage(map[string]interface{}{
 				"respectSchemaVersion": true,
 				"dependencies": map[string]string{
-					"@pulumi/aws":        "^6.18.2",
-					"@pulumi/kubernetes": "^4.1.1",
+					"@pulumi/aws":        "^" + dependencies.Aws,
+					"@pulumi/kubernetes": "^" + dependencies.Kubernetes,
 					"https-proxy-agent":  "^5.0.1",
 					"jest":               "^29.7.0",
 					"js-yaml":            "^4.1.0",
