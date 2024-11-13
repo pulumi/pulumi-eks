@@ -957,10 +957,10 @@
     tmp "^0.2.1"
     upath "^1.1.0"
 
-"@pulumi/pulumi@^3.134.1":
-  version "3.135.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.135.0.tgz#07d7dddd8e6b2a8c4eb951e2603c36e2a6750bd9"
-  integrity sha512-RYsv44UECC8MHtTEGWS6olVFmI9ad8iEySm9xmgoOk8Au6Lulf4phf1HiXEV8+vR9+3Lmtt4pYYdKrRvf4TfhQ==
+"@pulumi/pulumi@^3.136.0":
+  version "3.138.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.138.0.tgz#71ec3379ae1451ea3b824389a8347a38e7cc2308"
+  integrity sha512-LcQTYwVecIpoA9Dnbq31+3IuOT4QYsGmCbXO0+wJLFlXBxBEoeq4Rft16shxM01n3EXJnTo4w5/pLetoAz0pYg==
   dependencies:
     "@grpc/grpc-js" "^1.10.1"
     "@logdna/tail-file" "^2.0.6"
