@@ -28,7 +28,9 @@ kubeconfig_opts = eks.KubeconfigOptionsArgs(profile_name=profile_name)
 # Create the cluster using the AWS provider and credential opts.
 cluster = eks.Cluster(project_name,
                       provider_credential_opts=kubeconfig_opts,
-                      # TODO(#1475): bootstrap_self_managed_addons=false, # To speed up the test.
+                      coredns_addon_options=eks.CoreDnsAddonOptionsArgs(
+                          enabled=False, # Speed up the test.
+                      ),
                       opts=pulumi.ResourceOptions(provider=aws_provider))
 
 # Export the cluster kubeconfig.

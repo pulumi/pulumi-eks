@@ -31,7 +31,9 @@ func TestExamplesUpgrades(t *testing.T) {
 	})
 
 	t.Run("aws-profile", func(t *testing.T) {
-		t.Skip("Fails with 'ALT_AWS_PROFILE must be set'")
+		if os.Getenv("ALT_AWS_ACCESS_KEY_ID") == "" || os.Getenv("ALT_AWS_SECRET_ACCESS_KEY") == "" {
+			t.Skip("ALT_AWS_ACCESS_KEY_ID and ALT_AWS_SECRET_ACCESS_KEY must be set")
+		}
 		testProviderUpgrade(t, "aws-profile")
 	})
 
