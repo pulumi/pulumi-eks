@@ -51,7 +51,7 @@ type Dependencies struct {
 	Kubernetes string `json:"@pulumi/kubernetes"`
 }
 
-type PackageJson struct {
+type PackageJSON struct {
 	Dependencies Dependencies
 }
 
@@ -61,7 +61,7 @@ func readPackageDependencies(packageDir string) Dependencies {
 		log.Fatal("Error when opening file: ", err)
 	}
 
-	var payload PackageJson
+	var payload PackageJSON
 	err = json.Unmarshal(content, &payload)
 	if err != nil {
 		log.Fatal("Error during Unmarshal(): ", err)
