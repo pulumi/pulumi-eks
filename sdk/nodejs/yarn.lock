@@ -908,7 +908,7 @@
     mime "^2.0.0"
     resolve "^1.7.1"
 
-"@pulumi/kubernetes@^4.15.0":
+"@pulumi/kubernetes@^4.18.3":
   version "4.18.3"
   resolved "https://registry.yarnpkg.com/@pulumi/kubernetes/-/kubernetes-4.18.3.tgz#10e7d25c35282b6fa40b305427b5822cbf78c6de"
   integrity sha512-mv8QbAmAeLw72MIExSPvamODAW4CdJi/kMUEKVrL/XRZjzffX+++L4BAKkjvnsL/XYPXpmr+mA11fQ+otLps7Q==
