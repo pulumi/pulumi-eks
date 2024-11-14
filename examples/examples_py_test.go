@@ -28,12 +28,21 @@ import (
 )
 
 func TestAccAwsProfilePy(t *testing.T) {
-	unsetAWSProfileEnv(t)
+	setProfileCredentials(t, "aws-profile-py")
 
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			NoParallel: true,
-			Dir:        filepath.Join(getCwd(t), "aws-profile-py"),
+			Dir: filepath.Join(getCwd(t), "aws-profile-py"),
+			OrderedConfig: []integration.ConfigValue{
+				{Key: "pulumi:disable-default-providers[0]", Value: "aws", Path: true},
+			},
+			RetryFailedSteps: false,
+			Env: []string{
+				"AWS_PROFILE=",           // unset
+				"AWS_SECRET_ACCESS_KEY=", // unset
+				"AWS_ACCESS_KEY_ID=",     // unset
+				"AWS_SESSION_TOKEN=",     // unset
+			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				// The `cluster.kubeconfig` output should fail as it does not have the right AWS_PROFILE set.
 				t.Logf("Ensuring cluster.kubeconfig fails without AWS_PROFILE envvar set")

@@ -300,11 +300,21 @@ func TestAccScopedKubeconfig(t *testing.T) {
 }
 
 func TestAccAwsProfile(t *testing.T) {
-	unsetAWSProfileEnv(t)
+	setProfileCredentials(t, "aws-profile-node")
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getCwd(t), "aws-profile"),
+			OrderedConfig: []integration.ConfigValue{
+				{Key: "pulumi:disable-default-providers[0]", Value: "aws", Path: true},
+			},
+			RetryFailedSteps: false,
+			Env: []string{
+				"AWS_PROFILE=",           // unset
+				"AWS_SECRET_ACCESS_KEY=", // unset
+				"AWS_ACCESS_KEY_ID=",     // unset
+				"AWS_SESSION_TOKEN=",     // unset
+			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				// The `cluster.kubeconfig` output should fail as it does not have the right AWS_PROFILE set.
 				t.Logf("Ensuring cluster.kubeconfig fails without AWS_PROFILE envvar set")
@@ -315,7 +325,6 @@ func TestAccAwsProfile(t *testing.T) {
 					info.Outputs["kubeconfigWithProfile"],
 				)
 			},
-			NoParallel: true,
 		})
 
 	programTestWithExtraOptions(t, &test, nil)
@@ -331,7 +340,6 @@ func TestAccAwsProfileRole(t *testing.T) {
 					info.Outputs["kubeconfig"],
 				)
 			},
-			NoParallel: true,
 		})
 	programTestWithExtraOptions(t, &test, nil)
 }
@@ -1122,7 +1130,7 @@ func TestAccScalarTypes(t *testing.T) {
 				assert.Equal(t, oidcProviderUrl1, cluster1["oidcProviderUrl"])
 				assert.Equal(t, strings.ReplaceAll(oidcProviderUrl1, "https://", ""), cluster1["oidcIssuer"],
 					"expected oidcIssuer to be the same as the oidcProvider url without the https:// prefix")
-				
+
 				// cluster2 runs with fargate, no default node group, no default security groups and no oidc provider
 				require.NotNil(t, info.Outputs["cluster2"])
 				cluster2 := info.Outputs["cluster2"].(map[string]interface{})
@@ -1130,7 +1138,7 @@ func TestAccScalarTypes(t *testing.T) {
 				eksCluster2 := cluster2["eksCluster"].(map[string]interface{})
 				require.NotNil(t, eksCluster2["vpcConfig"])
 				vpcConfig := eksCluster2["vpcConfig"].(map[string]interface{})
-				
+
 				// AWS EKS always creates a security group for the cluster
 				eksSecurityGroupId := vpcConfig["clusterSecurityGroupId"]
 				require.NotEmpty(t, eksSecurityGroupId)
@@ -1150,10 +1158,10 @@ func TestAccScalarTypes(t *testing.T) {
 
 				require.NotNil(t, cluster2["core"])
 				coreData2 := cluster2["core"].(map[string]interface{})
-				
+
 				// verify that the provider creates no IAM OIDC provider
 				assert.Empty(t, cluster2["oidcProviderArn"])
-				assert.Nil(t, coreData2["oidcProvider"])	
+				assert.Nil(t, coreData2["oidcProvider"])
 
 				// every EKS cluster has an OIDC provider URL, even if no OIDC provider is created
 				oidcProviderUrl2 := cluster2["oidcProviderUrl"].(string)

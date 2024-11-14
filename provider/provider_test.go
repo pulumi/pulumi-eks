@@ -3,6 +3,7 @@ package provider
 import (
 	"encoding/json"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 
@@ -31,7 +32,10 @@ func TestExamplesUpgrades(t *testing.T) {
 	})
 
 	t.Run("aws-profile", func(t *testing.T) {
-		t.Skip("Fails with 'ALT_AWS_PROFILE must be set'")
+		if os.Getenv("ALT_AWS_ACCESS_KEY_ID") == "" || os.Getenv("ALT_AWS_SECRET_ACCESS_KEY") == "" {
+			t.Skip("ALT_AWS_ACCESS_KEY_ID and ALT_AWS_SECRET_ACCESS_KEY must be set")
+		}
+		setProfileCredentials(t, "aws-profile-node")
 		testProviderUpgrade(t, "aws-profile")
 	})
 
@@ -344,4 +348,29 @@ func getEnvRegion(t *testing.T) string {
 	}
 
 	return envRegion
+}
+
+// setProfileCredentials ensures a profile exists with the given name. It does not override any ambient credentials.
+func setProfileCredentials(t *testing.T, profile string) {
+	t.Helper()
+
+	keyID := os.Getenv("ALT_AWS_ACCESS_KEY_ID")
+	if keyID == "" {
+		t.Skip("ALT_AWS_ACCESS_KEY_ID is unset")
+	}
+
+	secret := os.Getenv("ALT_AWS_SECRET_ACCESS_KEY")
+	if secret == "" {
+		t.Skip("ALT_AWS_SECRET_ACCESS_KEY is unset")
+	}
+
+	out, err := exec.Command(
+		"aws", "configure", "set", "aws_access_key_id", keyID, "--profile", profile,
+	).CombinedOutput()
+	require.NoError(t, err, string(out))
+
+	out, err = exec.Command(
+		"aws", "configure", "set", "aws_secret_access_key", secret, "--profile", profile,
+	).CombinedOutput()
+	require.NoError(t, err, string(out))
 }

@@ -219,7 +219,10 @@ export function generateKubeconfig(
     }
 
     if (includeProfile && opts?.profileName) {
-        env.push({ name: "AWS_PROFILE", value: opts.profileName });
+        // Use --profile instead of AWS_PROFILE because the latter can be
+        // overridden by ambient credentials:
+        // https://docs.aws.amazon.com/cli/latest/topic/config-vars.html#id1
+        args = [...args, "--profile", opts.profileName];
     }
 
     return pulumi.all([args, env]).apply(([tokenArgs, envvars]) => {
