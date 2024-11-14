@@ -4,7 +4,7 @@ on:
     inputs:
       runTests:
         type: string
-        description: "The tests in examples to record snapshots for, as a regex for `go test -run`. Defaults to `TestExamplesUpgrades`"
+        description: "The tests to record snapshots for, as a regex for `go test -run`. Defaults to `TestExamplesUpgrades`"
         required: true
         default: "TestExamplesUpgrades"
       targetBranch:
@@ -224,7 +224,7 @@ jobs:
 
       - name: Record provider test snapshots
         run: |
-          cd provider && go test -tags nodejs -run '${{ inputs.runTests }}' -provider-snapshot -v -json -count=1 -cover -timeout 4h -parallel 20 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+          cd tests && go test -tags nodejs -run '${{ inputs.runTests }}' -provider-snapshot -v -json -count=1 -cover -timeout 4h -parallel 20 . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
         # TODO,tkappler Not sure why this is happening, but gotestfmt-action seems to download and unpack into the repository's root folder.
         # https://github.com/GoTestTools/gotestfmt-action/blob/v2/index.js#L6
