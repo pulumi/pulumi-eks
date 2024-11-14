@@ -21,7 +21,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pulumi/pulumi-eks/examples/utils"
+	utils "github.com/pulumi/pulumi-eks/tests/internal"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -33,7 +33,7 @@ func TestAccClusterGo(t *testing.T) {
 	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			RunUpdateTest: false,
-			Dir:           filepath.Join(getCwd(t), "cluster-go", "step1"),
+			Dir:           filepath.Join(getExamples(t), "cluster-go", "step1"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -45,7 +45,7 @@ func TestAccClusterGo(t *testing.T) {
 			EditDirs: []integration.EditDir{
 				{
 					// Step 2 should fail because the `creationRoleProvider` option is not supported in non nodejs Pulumi programs.
-					Dir:           filepath.Join(getCwd(t), "cluster-go", "step2"),
+					Dir:           filepath.Join(getExamples(t), "cluster-go", "step2"),
 					ExpectFailure: true,
 					Additive:      true,
 					Stderr:        &stdErr,
@@ -66,7 +66,7 @@ func TestAccExtraSecurityGroupsGo(t *testing.T) {
 	}
 	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "extra-sg-go"),
+			Dir: filepath.Join(getExamples(t), "extra-sg-go"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -84,7 +84,7 @@ func TestAccAuthenticationModeGo(t *testing.T) {
 	}
 	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "tests", "authentication-mode-go"),
+			Dir: filepath.Join(getTestPrograms(t), "authentication-mode-go"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,

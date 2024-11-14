@@ -20,14 +20,14 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pulumi/pulumi-eks/examples/utils"
+	utils "github.com/pulumi/pulumi-eks/tests/internal"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 )
 
 func TestAccClusterCs(t *testing.T) {
 	test := getCSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "cluster-cs"),
+			Dir: filepath.Join(getExamples(t), "cluster-cs"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,

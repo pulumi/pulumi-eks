@@ -1,6 +1,8 @@
-module github.com/pulumi/pulumi-eks/examples
+module github.com/pulumi/pulumi-eks
 
 go 1.21
+
+replace github.com/pulumi/pulumi-eks/sdk/v3 => ./sdk
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.5
@@ -19,8 +21,6 @@ require (
 	k8s.io/client-go v0.29.3
 	k8s.io/utils v0.0.0-20240310230437-4693a0247e57
 )
-
-replace github.com/pulumi/pulumi-eks/sdk/v3 => ../sdk
 
 require (
 	cloud.google.com/go v0.112.2 // indirect
