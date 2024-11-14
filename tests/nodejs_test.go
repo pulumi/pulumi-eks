@@ -14,7 +14,7 @@
 //go:build nodejs || all
 // +build nodejs all
 
-package example
+package tests
 
 import (
 	"encoding/json"
@@ -34,7 +34,7 @@ import (
 	"github.com/pulumi/providertest/pulumitest"
 	"github.com/pulumi/providertest/pulumitest/optnewstack"
 	"github.com/pulumi/providertest/pulumitest/opttest"
-	"github.com/pulumi/pulumi-eks/examples/utils"
+	utils "github.com/pulumi/pulumi-eks/tests/internal"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto/optup"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
@@ -45,7 +45,7 @@ import (
 func TestAccCluster(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:           path.Join(getCwd(t), "./cluster"),
+			Dir:           path.Join(getExamples(t), "./cluster"),
 			RunUpdateTest: false,
 			RunBuild:      true, // ensure that we can transpile the TypeScript program
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
@@ -83,7 +83,7 @@ func TestAccCluster(t *testing.T) {
 func TestAccKubernetesServiceIPv4RangeForCluster(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:           path.Join(getCwd(t), "./cluster-with-serviceiprange"),
+			Dir:           path.Join(getExamples(t), "./cluster-with-serviceiprange"),
 			RunUpdateTest: false, // this is a new feature so will not be available in the existing package
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				serviceIpv4Range := info.Outputs["kubernetesServiceRange"].(string)
@@ -100,7 +100,7 @@ func TestAccFargate(t *testing.T) {
 	t.Skip("https://github.com/pulumi/pulumi-eks/issues/1041")
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "./fargate"),
+			Dir: path.Join(getExamples(t), "./fargate"),
 			Config: map[string]string{
 				// Hard code to us-east-2 since Fargate support is not yet available in all regions
 				// (specifically us-west-2).
@@ -121,7 +121,7 @@ func TestAccNodeGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			RunUpdateTest: false,
-			Dir:           path.Join(getCwd(t), "nodegroup"),
+			Dir:           path.Join(getExamples(t), "nodegroup"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -132,7 +132,7 @@ func TestAccNodeGroup(t *testing.T) {
 			EditDirs: []integration.EditDir{
 				{
 					// Re-running should not introduce any changes.
-					Dir:             path.Join(getCwd(t), "nodegroup"),
+					Dir:             path.Join(getExamples(t), "nodegroup"),
 					ExpectNoChanges: true,
 					Additive:        true,
 				},
@@ -146,7 +146,7 @@ func TestAccManagedNodeGroup(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			RunUpdateTest: false,
-			Dir:           path.Join(getCwd(t), "managed-nodegroups"),
+			Dir:           path.Join(getExamples(t), "managed-nodegroups"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -161,7 +161,7 @@ func TestAccManagedNodeGroup(t *testing.T) {
 func TestAccMNG_withMissingRole(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:              path.Join(getCwd(t), "tests", "managed-ng-missing-role"),
+			Dir:              path.Join(getTestPrograms(t), "managed-ng-missing-role"),
 			ExpectFailure:    true,
 			RetryFailedSteps: false,
 			SkipRefresh:      true,
@@ -174,7 +174,7 @@ func TestAccMNG_withMissingRole(t *testing.T) {
 func TestAccMNG_withAwsAuth(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "managed-ng-aws-auth"),
+			Dir: path.Join(getTestPrograms(t), "managed-ng-aws-auth"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -183,7 +183,7 @@ func TestAccMNG_withAwsAuth(t *testing.T) {
 			},
 			EditDirs: []integration.EditDir{
 				{
-					Dir:      path.Join(getCwd(t), "tests", "managed-ng-aws-auth", "step1"),
+					Dir:      path.Join(getTestPrograms(t), "managed-ng-aws-auth", "step1"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 						utils.RunEKSSmokeTest(t,
@@ -204,7 +204,7 @@ func TestAccMNG_DiskSize(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "managed-ng-disk-size"),
+			Dir: path.Join(getTestPrograms(t), "managed-ng-disk-size"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -233,7 +233,7 @@ func TestAccMNG_DiskSize(t *testing.T) {
 func TestAccTags(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tags"),
+			Dir: path.Join(getExamples(t), "tags"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -255,7 +255,7 @@ func TestAccTags(t *testing.T) {
 func TestAccStorageClasses(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "storage-classes"),
+			Dir: path.Join(getExamples(t), "storage-classes"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -271,7 +271,7 @@ func TestAccStorageClasses(t *testing.T) {
 func TestAccOidcIam(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "oidc-iam-sa"),
+			Dir: path.Join(getExamples(t), "oidc-iam-sa"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -287,7 +287,7 @@ func TestAccScopedKubeconfig(t *testing.T) {
 	t.Skip("Currently fails with resource apps-0b02f85a/nginx-2eefdacd was not successfully created by the Kubernetes API server : pods \"nginx-2eefdacd\" is forbidden: User \"pulumi:alice\" cannot patch resource \"pods\" in API group \"\" in the namespace \"apps-0b02f85a\"")
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "scoped-kubeconfigs"),
+			Dir: path.Join(getExamples(t), "scoped-kubeconfigs"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -304,7 +304,7 @@ func TestAccAwsProfile(t *testing.T) {
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "aws-profile"),
+			Dir: path.Join(getExamples(t), "aws-profile"),
 			OrderedConfig: []integration.ConfigValue{
 				{Key: "pulumi:disable-default-providers[0]", Value: "aws", Path: true},
 			},
@@ -333,7 +333,7 @@ func TestAccAwsProfile(t *testing.T) {
 func TestAccAwsProfileRole(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "aws-profile-role"),
+			Dir: path.Join(getExamples(t), "aws-profile-role"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -350,7 +350,7 @@ func TestAccEncryptionProvider(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "encryption-provider"),
+			Dir: path.Join(getExamples(t), "encryption-provider"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -368,7 +368,7 @@ func TestAccExtraSecurityGroups(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "extra-sg"),
+			Dir: path.Join(getExamples(t), "extra-sg"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -387,10 +387,10 @@ func TestAccReplaceSecGroup(t *testing.T) {
 	//}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "replace-secgroup"),
+			Dir: path.Join(getTestPrograms(t), "replace-secgroup"),
 			EditDirs: []integration.EditDir{
 				{
-					Dir:      path.Join(getCwd(t), "tests", "replace-secgroup", "step1"),
+					Dir:      path.Join(getTestPrograms(t), "replace-secgroup", "step1"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 						utils.RunEKSSmokeTest(t,
@@ -411,10 +411,10 @@ func TestAccReplaceClusterAddSubnets(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "replace-cluster-add-subnets"),
+			Dir: path.Join(getTestPrograms(t), "replace-cluster-add-subnets"),
 			EditDirs: []integration.EditDir{
 				{
-					Dir:      path.Join(getCwd(t), "tests", "replace-cluster-add-subnets", "step1"),
+					Dir:      path.Join(getTestPrograms(t), "replace-cluster-add-subnets", "step1"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 						utils.RunEKSSmokeTest(t,
@@ -435,7 +435,7 @@ func TestAccTagInputTypes(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "tag-input-types"),
+			Dir: path.Join(getTestPrograms(t), "tag-input-types"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -450,7 +450,7 @@ func TestAccTagInputTypes(t *testing.T) {
 func TestAccNodegroupOptions(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "nodegroup-options"),
+			Dir: path.Join(getTestPrograms(t), "nodegroup-options"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -468,7 +468,7 @@ func TestAccImportDefaultEksSecgroup(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "modify-default-eks-sg"),
+			Dir: path.Join(getExamples(t), "modify-default-eks-sg"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -477,7 +477,7 @@ func TestAccImportDefaultEksSecgroup(t *testing.T) {
 			},
 			EditDirs: []integration.EditDir{
 				{
-					Dir:      path.Join(getCwd(t), "modify-default-eks-sg", "step1"),
+					Dir:      path.Join(getExamples(t), "modify-default-eks-sg", "step1"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 						utils.RunEKSSmokeTest(t,
@@ -498,7 +498,7 @@ func TestAccVpcSubnetTags(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "subnet-tags"),
+			Dir: path.Join(getExamples(t), "subnet-tags"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -517,7 +517,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 	//}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "migrate-nodegroups"),
+			Dir: path.Join(getTestPrograms(t), "migrate-nodegroups"),
 			// Test NGINX on the 2xlarge node group.
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 				endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
@@ -529,7 +529,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 			EditDirs: []integration.EditDir{
 				// Add the new, 4xlarge node group.
 				{
-					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step1"),
+					Dir:      path.Join(getTestPrograms(t), "migrate-nodegroups", "steps", "step1"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 						endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
@@ -543,7 +543,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 				// changing its nodeSelector values, which forces migration via rolling update.
 				// Then, wait & verify all resources are up and running.
 				{
-					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step2"),
+					Dir:      path.Join(getTestPrograms(t), "migrate-nodegroups", "steps", "step2"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 						endpoint := fmt.Sprintf("%s/echoserver", stack.Outputs["nginxServiceUrl"].(string))
@@ -570,7 +570,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 				// Remove the workload namespace, and the aws-cni DaemonSet.
 				// In validation step, kubectl drain & delete the unused 2xlarge node group.
 				{
-					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step3"),
+					Dir:      path.Join(getTestPrograms(t), "migrate-nodegroups", "steps", "step3"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 						// Give it time for the workload namespace to delete.
@@ -578,7 +578,7 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 
 						var err error
 						var out []byte
-						scriptsDir := path.Join(getCwd(t), "tests", "migrate-nodegroups", "scripts")
+						scriptsDir := path.Join(getTestPrograms(t), "migrate-nodegroups", "scripts")
 
 						// Create kubeconfig clients from kubeconfig.
 						kubeconfig, err := json.Marshal(stack.Outputs["kubeconfig"])
@@ -621,12 +621,12 @@ func TestAccMigrateNodeGroups(t *testing.T) {
 				},
 				// Scale down the 2xlarge node group to a desired capacity of 0 workers.
 				{
-					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step4"),
+					Dir:      path.Join(getTestPrograms(t), "migrate-nodegroups", "steps", "step4"),
 					Additive: true,
 				},
 				// Remove the unused 2xlarge node group.
 				{
-					Dir:      path.Join(getCwd(t), "tests", "migrate-nodegroups", "steps", "step5"),
+					Dir:      path.Join(getTestPrograms(t), "migrate-nodegroups", "steps", "step5"),
 					Additive: true,
 				},
 			},
@@ -737,7 +737,7 @@ func TestAccAuthenticationMode(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "authentication-mode"),
+			Dir: path.Join(getExamples(t), "authentication-mode"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				// Verify that the clusters with all three authentication modes are working.
 				utils.RunEKSSmokeTest(t,
@@ -758,7 +758,7 @@ func TestAccMultiRole(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "multi-role"),
+			Dir: path.Join(getTestPrograms(t), "multi-role"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				// Verify that the cluster is working.
 				utils.RunEKSSmokeTest(t,
@@ -778,7 +778,7 @@ func TestAccAuthenticationModeMigration(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			// step1 has authentication mode set to CONFIG_MAP
-			Dir: path.Join(getCwd(t), "tests", "authentication-mode-migration", "step1"),
+			Dir: path.Join(getTestPrograms(t), "authentication-mode-migration", "step1"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -788,7 +788,7 @@ func TestAccAuthenticationModeMigration(t *testing.T) {
 			EditDirs: []integration.EditDir{
 				// step2 changes authentication mode to API_AND_CONFIG_MAP and adds the necessary access entries
 				{
-					Dir:      path.Join(getCwd(t), "tests", "authentication-mode-migration", "step2"),
+					Dir:      path.Join(getTestPrograms(t), "authentication-mode-migration", "step2"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 						utils.RunEKSSmokeTest(t,
@@ -799,7 +799,7 @@ func TestAccAuthenticationModeMigration(t *testing.T) {
 				},
 				// step3 changes the authentication mode to API only, this also deletes the aws-auth config-map
 				{
-					Dir:      path.Join(getCwd(t), "tests", "authentication-mode-migration", "step3"),
+					Dir:      path.Join(getTestPrograms(t), "authentication-mode-migration", "step3"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 						utils.RunEKSSmokeTest(t,
@@ -810,7 +810,7 @@ func TestAccAuthenticationModeMigration(t *testing.T) {
 				},
 				// step4 scale nodegroups up to ensure new instances are able to register with the cluster
 				{
-					Dir:      path.Join(getCwd(t), "tests", "authentication-mode-migration", "step4"),
+					Dir:      path.Join(getTestPrograms(t), "authentication-mode-migration", "step4"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 						utils.RunEKSSmokeTest(t,
@@ -831,7 +831,7 @@ func TestAccManagedNodeGroupCustom(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "custom-managed-nodegroup"),
+			Dir: path.Join(getExamples(t), "custom-managed-nodegroup"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -865,7 +865,7 @@ func TestAccManagedNodeGroupWithVersion(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "managed-ng-with-version"),
+			Dir: path.Join(getTestPrograms(t), "managed-ng-with-version"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -884,7 +884,7 @@ func TestAccManagedNodeGroupOS(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "managed-ng-os"),
+			Dir: path.Join(getTestPrograms(t), "managed-ng-os"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -922,7 +922,7 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "self-managed-ng-os"),
+			Dir: path.Join(getTestPrograms(t), "self-managed-ng-os"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -968,7 +968,7 @@ func TestAccClusterAddons(t *testing.T) {
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "cluster-addons"),
+			Dir: path.Join(getTestPrograms(t), "cluster-addons"),
 			Config: map[string]string{
 				"defaultVpcCniVersion": defaultVpcCniVersion,
 				"latestVpcCniVersion":  mostRecentVpcCniVersion,
@@ -999,7 +999,7 @@ func TestAccClusterAddons(t *testing.T) {
 			// step2 doesn't specify a vpcCniVersion, so it should use the most recent for the cluster's version
 			EditDirs: []integration.EditDir{
 				{
-					Dir:      path.Join(getCwd(t), "tests", "cluster-addons", "step2"),
+					Dir:      path.Join(getTestPrograms(t), "cluster-addons", "step2"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 						utils.RunEKSSmokeTest(t,
@@ -1037,7 +1037,7 @@ func TestAccSkipDefaultSecurityGroups(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "skip-default-security-groups"),
+			Dir: path.Join(getTestPrograms(t), "skip-default-security-groups"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -1058,7 +1058,7 @@ func TestAccNetworkPolicies(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "network-policies"),
+			Dir: path.Join(getExamples(t), "network-policies"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -1076,7 +1076,7 @@ func TestAccPodSecurityGroups(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "pod-security-groups"),
+			Dir: path.Join(getExamples(t), "pod-security-groups"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -1094,7 +1094,7 @@ func TestAccScalarTypes(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "scalar-types"),
+			Dir: path.Join(getTestPrograms(t), "scalar-types"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package example
+package tests
 
 import (
 	"context"
@@ -48,6 +48,16 @@ func getCwd(t *testing.T) string {
 	}
 
 	return cwd
+}
+
+func getExamples(t *testing.T) string {
+	cwd := getCwd(t)
+	return filepath.Join(cwd, "..", "examples")
+}
+
+func getTestPrograms(t *testing.T) string {
+	cwd := getCwd(t)
+	return filepath.Join(cwd, "testdata", "programs")
 }
 
 func getBaseOptions(t *testing.T) integration.ProgramTestOptions {

@@ -401,12 +401,12 @@ jobs:
         id: test_split
         uses: hashicorp-forge/go-test-split-action@v2.0.0
         with:
-          working-directory: examples
+          working-directory: tests
           flags: -tags=nodejs
           total: ${{ matrix.total }}
           index: ${{ matrix.index }}
       - name: Run tests
-        run: cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
     strategy:
       fail-fast: false
       max-parallel: 10
@@ -507,12 +507,12 @@ jobs:
         id: test_split
         uses: hashicorp-forge/go-test-split-action@v2.0.0
         with:
-          working-directory: examples
+          working-directory: tests
           flags: -tags=python
           total: ${{ matrix.total }}
           index: ${{ matrix.index }}
       - name: Run tests
-        run: cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
     strategy:
       fail-fast: false
       max-parallel: 4
@@ -611,7 +611,7 @@ jobs:
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
   test-go:
     name: Run Go Tests
     needs:
@@ -701,4 +701,4 @@ jobs:
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: cd examples && go test -tags=go -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=go -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
