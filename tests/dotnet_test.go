@@ -14,7 +14,7 @@
 //go:build dotnet || all
 // +build dotnet all
 
-package example
+package tests
 
 import (
 	"path/filepath"

@@ -14,7 +14,7 @@
 //go:build go || all
 // +build go all
 
-package example
+package tests
 
 import (
 	"bytes"

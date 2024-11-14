@@ -1,4 +1,4 @@
-package utils
+package internal
 
 import (
 	"context"
@@ -416,13 +416,13 @@ func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod metav1.Object
 }
 
 type VpcCniValidation struct {
-	Kubeconfig interface{}
-	ExpectedAddonVersion string
-	ClusterName string
-	ExpectedInitEnvVars map[string]string
-	ExpectedEnvVars map[string]string
+	Kubeconfig                interface{}
+	ExpectedAddonVersion      string
+	ClusterName               string
+	ExpectedInitEnvVars       map[string]string
+	ExpectedEnvVars           map[string]string
 	SecurityContextPrivileged *bool
-	NetworkPoliciesEnabled *bool
+	NetworkPoliciesEnabled    *bool
 }
 
 func ValidateVpcCni(t *testing.T, eksClient *eks.Client, args VpcCniValidation) {
@@ -884,16 +884,16 @@ func EnsureKubeconfigFails(t *testing.T, kubeconfig any) {
 }
 
 type addonInfo struct {
-	AddonVersion string
+	AddonVersion   string
 	ClusterVersion string
 }
 
 func FindDefaultAddonVersion(eksClient *eks.Client, addonName string) (string, error) {
-	addon, err := findAddonVersion(eksClient, addonName, func (currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo {
+	addon, err := findAddonVersion(eksClient, addonName, func(currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo {
 		if compatibility.DefaultVersion && versionInfo.AddonVersion != nil && compatibility.ClusterVersion != nil {
 			if currentAddon == nil || semver.Compare(currentAddon.ClusterVersion, *compatibility.ClusterVersion) < 0 {
 				return &addonInfo{
-					AddonVersion: *versionInfo.AddonVersion,
+					AddonVersion:   *versionInfo.AddonVersion,
 					ClusterVersion: *compatibility.ClusterVersion,
 				}
 			}
@@ -913,7 +913,7 @@ func FindDefaultAddonVersion(eksClient *eks.Client, addonName string) (string, e
 }
 
 func FindMostRecentAddonVersion(eksClient *eks.Client, addonName string) (string, error) {
-	addon, err := findAddonVersion(eksClient, addonName, func (currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo {
+	addon, err := findAddonVersion(eksClient, addonName, func(currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo {
 		if currentAddon == nil || semver.Compare(currentAddon.AddonVersion, *versionInfo.AddonVersion) < 0 {
 			return &addonInfo{
 				AddonVersion: *versionInfo.AddonVersion,
@@ -933,9 +933,9 @@ func FindMostRecentAddonVersion(eksClient *eks.Client, addonName string) (string
 	return addon.AddonVersion, nil
 }
 
-func findAddonVersion(eksClient *eks.Client, addonName string, selector func (currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo) (*addonInfo, error) {
+func findAddonVersion(eksClient *eks.Client, addonName string, selector func(currentAddon *addonInfo, versionInfo eksTypes.AddonVersionInfo, compatibility eksTypes.Compatibility) *addonInfo) (*addonInfo, error) {
 	input := &eks.DescribeAddonVersionsInput{
-		AddonName:         aws.String(addonName),
+		AddonName: aws.String(addonName),
 	}
 
 	var currentAddon *addonInfo

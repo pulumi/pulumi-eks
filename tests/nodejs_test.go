@@ -14,7 +14,7 @@
 //go:build nodejs || all
 // +build nodejs all
 
-package example
+package tests
 
 import (
 	"encoding/json"

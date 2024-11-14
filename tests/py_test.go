@@ -14,7 +14,7 @@
 //go:build python || all
 // +build python all
 
-package example
+package tests
 
 import (
 	"bytes"
