@@ -167,25 +167,22 @@ dist:: dist/${GZIP_PREFIX}-darwin-amd64.tar.gz
 dist:: dist/${GZIP_PREFIX}-darwin-arm64.tar.gz
 dist:: dist/${GZIP_PREFIX}-windows-amd64.tar.gz
 
-test_build::
-	cd examples/utils/testvpc && yarn install && yarn run tsc
-
 test_nodejs:: PATH := $(WORKING_DIR)/bin:$(PATH)
 test_nodejs:: provider install_nodejs_sdk
-	cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
+	cd tests && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_nodejs_upgrade:: PATH := $(WORKING_DIR)/bin:$(PATH)
 test_nodejs_upgrade:: provider install_nodejs_sdk
-	cd examples && go test -v -run Upgrade -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
+	cd tests && go test -v -run Upgrade -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_python:: install_provider test_build
-	cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
+	cd tests && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_dotnet:: install_provider
-	cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
+	cd tests && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_java:: install_provider
-	cd examples && go test -tags=java -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
+	cd tests && go test -tags=java -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 test_unit_tests:
 	cd nodejs/eks && \
@@ -193,10 +190,10 @@ test_unit_tests:
 		yarn run test
 
 specific_test:: install_nodejs_sdk test_build
-	cd examples && go test -tags=$(LanguageTags) -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName) 2>&1 | tee /tmp/gotest.log | gotestfmt
+	cd tests && go test -tags=$(LanguageTags) -v -json -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} . --run=TestAcc$(TestName) 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 specific_test_local:: install_nodejs_sdk test_build
-	cd examples && go test -tags=$(LanguageTags) -v -count=1 -cover -timeout 3h . --run=TestAcc$(TestName)
+	cd tests && go test -tags=$(LanguageTags) -v -count=1 -cover -timeout 3h . --run=TestAcc$(TestName)
 
 dev:: lint build_nodejs
 test:: test_nodejs

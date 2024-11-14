@@ -2,7 +2,7 @@
 //go:build !dotnet && !go && !nodejs && !python && !java
 // +build !dotnet,!go,!nodejs,!python,!java
 
-package example
+package tests
 
 import (
 	"encoding/json"
@@ -24,8 +24,10 @@ import (
 )
 
 // The baseline version is the version of the provider that the upgrade tests will be run against.
-const _baselineVersion = "3.0.0"
-const _providerName = "eks"
+const (
+	_baselineVersion = "3.0.0"
+	_providerName    = "eks"
+)
 
 func TestExamplesUpgrades(t *testing.T) {
 	t.Run("cluster", func(t *testing.T) {
@@ -108,7 +110,7 @@ func TestIgnoringScalingChanges(t *testing.T) {
 
 	cwd, err := os.Getwd()
 	require.NoError(t, err)
-	dir := filepath.Join("test-programs", "ignore-scaling-changes")
+	dir := filepath.Join(getTestPrograms(t), "ignore-scaling-changes")
 	options := []opttest.Option{
 		opttest.LocalProviderPath("eks", filepath.Join(cwd, "..", "bin")),
 		opttest.YarnLink("@pulumi/eks"),
@@ -120,7 +122,7 @@ func TestIgnoringScalingChanges(t *testing.T) {
 	pt.SetConfig("desiredSize", "1")
 
 	cacheDir := filepath.Join("testdata", "recorded", t.Name())
-	err = os.MkdirAll(cacheDir, 0755)
+	err = os.MkdirAll(cacheDir, 0o755)
 	require.NoError(t, err)
 	stackExportFile := filepath.Join(cacheDir, "stack.json")
 
@@ -218,7 +220,6 @@ resources:
 }
 
 func testProviderUpgrade(t *testing.T, example string) {
-
 	if testing.Short() {
 		t.Skip("Skipping provider upgrade tests in short mode")
 	}
@@ -261,7 +262,7 @@ func testProviderCodeChanges(t *testing.T, opts *testProviderCodeChangesOptions)
 
 	workdir := t.TempDir()
 	cacheDir := filepath.Join("testdata", "recorded", "TestProviderUpgrade", t.Name())
-	err := os.MkdirAll(cacheDir, 0755)
+	err := os.MkdirAll(cacheDir, 0o755)
 	require.NoError(t, err)
 	stackExportFile := filepath.Join(cacheDir, "stack.json")
 
@@ -323,7 +324,7 @@ func writeStackExport(path string, snapshot *apitype.UntypedDeployment, overwrit
 		return fmt.Errorf("stack export must not be nil")
 	}
 	dir := filepath.Dir(path)
-	err := os.MkdirAll(dir, 0755)
+	err := os.MkdirAll(dir, 0o755)
 	if err != nil {
 		return err
 	}
@@ -339,7 +340,7 @@ func writeStackExport(path string, snapshot *apitype.UntypedDeployment, overwrit
 		return fmt.Errorf("stack export already exists at %s", path)
 	}
 	//nolint:gosec // 0644 is the correct permission for this file
-	return os.WriteFile(path, stackBytes, 0644)
+	return os.WriteFile(path, stackBytes, 0o644)
 }
 
 // tryReadStackExport reads a stack export from the given file path.
