@@ -1,3 +1,0 @@
-name: managed-ng-os-py
-description: EKS managed nodegroups with AL2023 and Bottlerocket OS
-runtime: python

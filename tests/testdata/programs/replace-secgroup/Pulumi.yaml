@@ -1,3 +1,0 @@
-name: test-replace-secgroup
-description: Test - Replace a NodeGroup's external nodeSecurityGroup with the default secgroup created.
-runtime: nodejs
