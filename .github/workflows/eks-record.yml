@@ -4,7 +4,7 @@ on:
     inputs:
       runTests:
         type: string
-        description: "The tests in examples to record snapshots for, as a regex for `go test -run`. Defaults to `TestExamplesUpgrades`"
+        description: "The tests to record snapshots for, as a regex for `go test -run`. Defaults to `TestExamplesUpgrades`"
         required: true
         default: "TestExamplesUpgrades"
       targetBranch:
@@ -16,7 +16,6 @@ on:
 env:
   ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
   ALT_AWS_SECRET_ACCESS_KEY: ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }}
-  ALT_AWS_PROFILE: ${{ secrets.ALT_AWS_PROFILE }}
   AWS_REGION: us-west-2
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -209,12 +208,6 @@ jobs:
           role-duration-seconds: 7200
           role-session-name: ${{ env.PROVIDER }}@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
-      - name: Configure AWS CLI
-        run: |
-          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
       - name: Clear GitHub Actions Ubuntu runner disk space
         uses: jlumbroso/free-disk-space@v1.3.1
         with:
@@ -231,7 +224,7 @@ jobs:
 
       - name: Record provider test snapshots
         run: |
-          cd provider && go test -tags nodejs -run '${{ inputs.runTests }}' -provider-snapshot -v -json -count=1 -cover -timeout 4h -parallel 20 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+          cd tests && go test -tags nodejs -run '${{ inputs.runTests }}' -provider-snapshot -v -json -count=1 -cover -timeout 4h -parallel 20 . 2>&1 | tee /tmp/gotest.log | gotestfmt
 
         # TODO,tkappler Not sure why this is happening, but gotestfmt-action seems to download and unpack into the repository's root folder.
         # https://github.com/GoTestTools/gotestfmt-action/blob/v2/index.js#L6

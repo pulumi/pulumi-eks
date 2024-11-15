@@ -1,7 +1,6 @@
 env:
   ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
   ALT_AWS_SECRET_ACCESS_KEY: ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }}
-  ALT_AWS_PROFILE: ${{ secrets.ALT_AWS_PROFILE }}
   AWS_REGION: us-west-2
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GOLANGCI_LINT_VERSION: v1.61.0
@@ -256,12 +255,6 @@ jobs:
           role-duration-seconds: 7200
           role-session-name: ${{ env.PROVIDER }}@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
-      - name: Configure AWS CLI
-        run: |
-          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
       - name: Link nodejs binary for testing
         run: |
           cd ${{ github.workspace }}/bin
@@ -270,12 +263,12 @@ jobs:
         id: test_split
         uses: hashicorp-forge/go-test-split-action@v2.0.0
         with:
-          working-directory: examples
+          working-directory: tests
           flags: -tags=nodejs
           total: ${{ matrix.total }}
           index: ${{ matrix.index }}
       - name: Run tests
-        run: cd examples && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
     strategy:
       fail-fast: false
       max-parallel: 10
@@ -367,12 +360,6 @@ jobs:
           role-duration-seconds: 7200
           role-session-name: ${{ env.PROVIDER }}@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
-      - name: Configure AWS CLI
-        run: |
-          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
       - name: Link nodejs binary for testing
         run: |
           cd ${{ github.workspace }}/bin
@@ -381,12 +368,12 @@ jobs:
         id: test_split
         uses: hashicorp-forge/go-test-split-action@v2.0.0
         with:
-          working-directory: examples
+          working-directory: tests
           flags: -tags=python
           total: ${{ matrix.total }}
           index: ${{ matrix.index }}
       - name: Run tests
-        run: cd examples && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
     strategy:
       fail-fast: false
       matrix:
@@ -478,18 +465,12 @@ jobs:
           role-duration-seconds: 7200
           role-session-name: ${{ env.PROVIDER }}@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
-      - name: Configure AWS CLI
-        run: |
-          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
       - name: Link nodejs binary for testing
         run: |
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: cd examples && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
   test-go:
     name: Run Go Tests
     needs:
@@ -573,18 +554,12 @@ jobs:
           role-duration-seconds: 7200
           role-session-name: ${{ env.PROVIDER }}@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
-      - name: Configure AWS CLI
-        run: |
-          aws configure set default.aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set default.aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws_access_key_id ${{ secrets.ALT_AWS_ACCESS_KEY_ID }} --profile ${{ secrets.ALT_AWS_PROFILE }}
-          aws configure set aws_secret_access_key ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }} --profile ${{ secrets.ALT_AWS_PROFILE }}
       - name: Link nodejs binary for testing
         run: |
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: cd examples && go test -tags=go -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=go -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
 name: cron
 "on":
   schedule:

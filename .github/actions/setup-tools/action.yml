@@ -22,7 +22,9 @@ runs:
       if: inputs.tools == 'all' || contains(inputs.tools, 'go')
       uses: actions/setup-go@v5
       with:
-        go-version: "1.21.x"
+        # TODO: here pulumi-eks diverges from the 1.21.x standard, to upgrade separately.
+        # go-version: "1.21.x"
+        go-version: "1.18.x"
         cache-dependency-path: |
           provider/*.sum
           upstream/*.sum
@@ -51,7 +53,8 @@ runs:
       if: inputs.tools == 'all' || contains(inputs.tools, 'nodejs')
       uses: actions/setup-node@v4
       with:
-        node-version: 20.x
+        # TODO: here pulumi-eks diverges from 20.x standard; will need to update.
+        node-version: 18.x
         registry-url: https://registry.npmjs.org
 
     - name: Setup DotNet
