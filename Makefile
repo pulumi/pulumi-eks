@@ -227,8 +227,7 @@ test_provider:
 
 
 shard:
-	cd tests && \
-		go run github.com/blampe/shard@output --total $(TOTAL) --index $(INDEX) --output env
+	cd tests && go run github.com/blampe/shard@output --total $(TOTAL) --index $(INDEX) --output env
 
 test_shard:
 	cd tests && \
