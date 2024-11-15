@@ -5,15 +5,11 @@ import pulumi_eks as eks
 
 project_name = pulumi.get_project()
 
-# For CI testing only: used to set profileName to alternate AWS_PROFILE envvar.
-if not os.getenv("ALT_AWS_PROFILE"):
-    raise Exception("ALT_AWS_PROFILE must be set")
-
 if not os.getenv("AWS_REGION"):
     raise Exception("AWS_REGION must be set")
 
 # AWS named profile to use.
-profile_name = os.getenv("ALT_AWS_PROFILE")
+profile_name = "aws-profile-py"
 
 # Create an AWS provider instance using the named profile creds
 # and current region.
@@ -28,8 +24,9 @@ kubeconfig_opts = eks.KubeconfigOptionsArgs(profile_name=profile_name)
 # Create the cluster using the AWS provider and credential opts.
 cluster = eks.Cluster(project_name,
                       provider_credential_opts=kubeconfig_opts,
-                      authentication_mode=eks.AuthenticationMode.API,
-                      # TODO(#1475): bootstrap_self_managed_addons=false, # To speed up the test.
+                      coredns_addon_options=eks.CoreDnsAddonOptionsArgs(
+                          enabled=False, # Speed up the test.
+                      ),
                       opts=pulumi.ResourceOptions(provider=aws_provider))
 
 # Export the cluster kubeconfig.

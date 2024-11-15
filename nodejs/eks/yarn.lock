@@ -1656,22 +1656,22 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@pulumi/aws@^6.18.2":
-  version "6.45.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/aws/-/aws-6.45.0.tgz#f3cf0fea34214906cf2e35f7ab57d6195b4d668a"
-  integrity sha512-EhRlYs0Ig53nHRNv3NSgb5TPpJuDmA+N0HCUkPhODUT9n1KTahQnoLbMc+hbvJKPngx6hgye7fagARPO3kWPVw==
+"@pulumi/aws@6.47.0":
+  version "6.47.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/aws/-/aws-6.47.0.tgz#606d71cc9121bf41bbdf662e3e7c84ae5d33eb27"
+  integrity sha512-zd3Mh7Hlen9xAW85Prsxbot8Z89Vnel42qCEkYrvFZYYnGPZl0sxuAWgUG54J6AsJ5syPDYNKpl65x3L6YHLSg==
   dependencies:
     "@pulumi/pulumi" "^3.0.0"
     builtin-modules "3.0.0"
     mime "^2.0.0"
     resolve "^1.7.1"
 
-"@pulumi/kubernetes@^4.1.1":
-  version "4.15.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/kubernetes/-/kubernetes-4.15.0.tgz#a1f1839371504474cecc342cae447db145c4a2eb"
-  integrity sha512-X+EFpmcuB+bXGArA4QMvAXDM2IshkvSckcVIXsyR1XolaZ+UyCMrDHLfIzb5+nDj3LWS49A+aOWRjSWr+QynlQ==
+"@pulumi/kubernetes@4.18.3":
+  version "4.18.3"
+  resolved "https://registry.yarnpkg.com/@pulumi/kubernetes/-/kubernetes-4.18.3.tgz#10e7d25c35282b6fa40b305427b5822cbf78c6de"
+  integrity sha512-mv8QbAmAeLw72MIExSPvamODAW4CdJi/kMUEKVrL/XRZjzffX+++L4BAKkjvnsL/XYPXpmr+mA11fQ+otLps7Q==
   dependencies:
-    "@pulumi/pulumi" "^3.25.0"
+    "@pulumi/pulumi" "^3.136.0"
     "@types/node-fetch" "^2.1.4"
     "@types/tmp" "^0.0.33"
     glob "^10.3.10"
@@ -1679,10 +1679,10 @@
     shell-quote "^1.6.1"
     tmp "^0.0.33"
 
-"@pulumi/pulumi@^3.0.0", "@pulumi/pulumi@^3.25.0", "@pulumi/pulumi@^3.47.0":
-  version "3.124.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.124.0.tgz#520e80c6b0bac41976360aca595e7d79a73633c9"
-  integrity sha512-5ytgK1RQYZD310aj0+RTauBpnB1RVO0j4Ql7tvpioklwRmOclVzTMyeaR2xd02Gpw9iyRwvoWHxgCV0owPdu+w==
+"@pulumi/pulumi@^3.0.0", "@pulumi/pulumi@^3.136.0", "@pulumi/pulumi@^3.138.0":
+  version "3.138.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.138.0.tgz#71ec3379ae1451ea3b824389a8347a38e7cc2308"
+  integrity sha512-LcQTYwVecIpoA9Dnbq31+3IuOT4QYsGmCbXO0+wJLFlXBxBEoeq4Rft16shxM01n3EXJnTo4w5/pLetoAz0pYg==
   dependencies:
     "@grpc/grpc-js" "^1.10.1"
     "@logdna/tail-file" "^2.0.6"

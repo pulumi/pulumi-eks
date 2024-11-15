@@ -14,7 +14,7 @@
 //go:build python || all
 // +build python all
 
-package example
+package tests
 
 import (
 	"bytes"
@@ -22,24 +22,22 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pulumi/pulumi-eks/examples/utils"
+	utils "github.com/pulumi/pulumi-eks/tests/internal"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAccAwsProfilePy(t *testing.T) {
-	profile := "aws-profile-py"
-	setProfileCredentials(t, profile)
+	setProfileCredentials(t, "aws-profile-py")
 
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "aws-profile-py"),
+			Dir: filepath.Join(getExamples(t), "aws-profile-py"),
 			OrderedConfig: []integration.ConfigValue{
 				{Key: "pulumi:disable-default-providers[0]", Value: "aws", Path: true},
 			},
 			RetryFailedSteps: false,
 			Env: []string{
-				"ALT_AWS_PROFILE=" + profile,
 				"AWS_PROFILE=",           // unset
 				"AWS_SECRET_ACCESS_KEY=", // unset
 				"AWS_ACCESS_KEY_ID=",     // unset
@@ -63,7 +61,7 @@ func TestAccAwsProfilePy(t *testing.T) {
 func TestAccAwsProfileRolePy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "aws-profile-role-py"),
+			Dir: filepath.Join(getExamples(t), "aws-profile-role-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -81,7 +79,7 @@ func TestAccClusterPy(t *testing.T) {
 
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "cluster-py"),
+			Dir: filepath.Join(getExamples(t), "cluster-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -92,7 +90,7 @@ func TestAccClusterPy(t *testing.T) {
 			},
 			EditDirs: []integration.EditDir{
 				{
-					Dir:           path.Join(getCwd(t), "cluster-py", "step2"),
+					Dir:           path.Join(getExamples(t), "cluster-py", "step2"),
 					ExpectFailure: true,
 					Additive:      true,
 					Stderr:        &output,
@@ -114,7 +112,7 @@ func TestAccFargatePy(t *testing.T) {
 	t.Skip("https://github.com/pulumi/pulumi-eks/issues/1041")
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "fargate-py"),
+			Dir: filepath.Join(getExamples(t), "fargate-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -130,11 +128,11 @@ func TestAccNodeGroupPy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			RunUpdateTest: false,
-			Dir:           filepath.Join(getCwd(t), "nodegroup-py"),
+			Dir:           filepath.Join(getExamples(t), "nodegroup-py"),
 			EditDirs: []integration.EditDir{
 				{
 					// Re-running should not introduce any changes.
-					Dir:             path.Join(getCwd(t), "nodegroup-py"),
+					Dir:             path.Join(getExamples(t), "nodegroup-py"),
 					ExpectNoChanges: true,
 					Additive:        true,
 				},
@@ -148,7 +146,7 @@ func TestAccManagedNodeGroupPy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			// RunUpdateTest: true,
-			Dir: filepath.Join(getCwd(t), "managed-nodegroups-py"),
+			Dir: filepath.Join(getExamples(t), "managed-nodegroups-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,
@@ -163,7 +161,7 @@ func TestAccManagedNodeGroupPy(t *testing.T) {
 func TestAccManagedNodeGroupOSPy(t *testing.T) {
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getCwd(t), "tests", "managed-ng-os-py"),
+			Dir: path.Join(getTestPrograms(t), "managed-ng-os-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,

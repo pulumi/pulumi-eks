@@ -13,9 +13,9 @@
         "build": "tsc"
     },
     "dependencies": {
-        "@pulumi/aws": "^6.18.2",
-        "@pulumi/kubernetes": "^4.1.1",
-        "@pulumi/pulumi": "^3.134.1",
+        "@pulumi/aws": "^6.47.0",
+        "@pulumi/kubernetes": "^4.18.3",
+        "@pulumi/pulumi": "^3.136.0",
         "https-proxy-agent": "^5.0.1",
         "jest": "^29.7.0",
         "js-yaml": "^4.1.0",

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package example
+package tests
 
 import (
 	"context"
@@ -50,6 +50,16 @@ func getCwd(t *testing.T) string {
 	return cwd
 }
 
+func getExamples(t *testing.T) string {
+	cwd := getCwd(t)
+	return filepath.Join(cwd, "..", "examples")
+}
+
+func getTestPrograms(t *testing.T) string {
+	cwd := getCwd(t)
+	return filepath.Join(cwd, "testdata", "programs")
+}
+
 func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	pathEnv := providerPluginPathEnv(t)
 	return integration.ProgramTestOptions{
@@ -61,11 +71,6 @@ func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
 
 func providerPluginPathEnv(t *testing.T) string {
 	t.Helper()
-	// providerDir := filepath.Join("..", "bin")
-	// absProviderDir, err := filepath.Abs(providerDir)
-	// if err != nil {
-	// 	return "", err
-	// }
 
 	// Local build of eks plugin.
 	pluginDir := filepath.Join("..", "provider", "cmd", "pulumi-resource-eks", "bin")
@@ -80,7 +85,6 @@ func providerPluginPathEnv(t *testing.T) string {
 		pathSeparator = ";"
 	}
 	return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir
-	// return "PATH=" + os.Getenv("PATH") + pathSeparator + absPluginDir + pathSeparator + absTestPluginDir + pathSeparator + absProviderDir, nil
 }
 
 type programTestExtraOptions struct {
@@ -160,7 +164,7 @@ func loadAwsDefaultConfig(t *testing.T) aws.Config {
 	return cfg
 }
 
-// setProfileCredentials ensures a profile exists with the given name. It shares ambient credentials.
+// setProfileCredentials ensures a profile exists with the given name. It does not override any ambient credentials.
 func setProfileCredentials(t *testing.T, profile string) {
 	t.Helper()
 
