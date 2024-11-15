@@ -225,9 +225,14 @@ test_provider:
 .pulumi/version: nodejs/eks/yarn.lock
 	(cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3 > ../../.pulumi/version)
 
+
+shard:
+	cd tests && \
+		go run github.com/blampe/shard@output --total $(TOTAL) --index $(INDEX) --output env
+
 test_shard:
 	cd tests && \
-		go test -tags=$(TAGS) -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} -run "${TESTS}" ./...
+		go test -tags=all -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} -run "$(SHARD_TESTS)" $(SHARD_PATHS)
 
 install_plugins: export PULUMI_HOME := $(WORKING_DIR)/.pulumi
 install_plugins: export PATH := $(WORKING_DIR)/.pulumi/bin:$(PATH)

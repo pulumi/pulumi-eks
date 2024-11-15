@@ -104,20 +104,13 @@ jobs:
     - name: Install dependencies
       run: make install_sdks
 
-    # TODO: This should be a make target.
     - name: Generate shard
-      id: shard
-      uses: hashicorp-forge/go-test-split-action@v2.0.0
-      with:
-        working-directory: examples # TODO: Parameterize this.
-        flags: -tags=all
-        total: ${{ matrix.total }}
-        index: ${{ matrix.index }}
+      run: make shard >> "$GITHUB_ENV"
+      env:
+        TOTAL: ${{ matrix.total }}
+        INDEX: ${{ matrix.index }}
     - name: Run example tests
       run: make test_shard
-      env:
-        TAGS: all
-        TESTS: ${{ steps.shard.outputs.run}}
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4
       env:
