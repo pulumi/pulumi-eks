@@ -226,7 +226,7 @@ test_provider:
 	(cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3 > ../../.pulumi/version)
 
 test_shard:
-	cd examples && \
+	cd tests && \
 		go test -tags=$(TAGS) -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} -run "${TESTS}" ./...
 
 install_plugins: export PULUMI_HOME := $(WORKING_DIR)/.pulumi
