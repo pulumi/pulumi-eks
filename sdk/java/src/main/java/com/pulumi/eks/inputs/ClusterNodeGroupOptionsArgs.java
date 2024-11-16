@@ -330,18 +330,33 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
     }
 
     /**
-     * The ingress rule that gives node group access.
+     * The IAM InstanceProfile to use on the NodeGroup.
      * 
      */
     @Import(name="instanceProfile")
     private @Nullable InstanceProfile instanceProfile;
 
     /**
-     * @return The ingress rule that gives node group access.
+     * @return The IAM InstanceProfile to use on the NodeGroup.
      * 
      */
     public Optional<InstanceProfile> instanceProfile() {
         return Optional.ofNullable(this.instanceProfile);
+    }
+
+    /**
+     * The name of the IAM InstanceProfile to use on the NodeGroup.
+     * 
+     */
+    @Import(name="instanceProfileName")
+    private @Nullable Output<String> instanceProfileName;
+
+    /**
+     * @return The name of the IAM InstanceProfile to use on the NodeGroup.
+     * 
+     */
+    public Optional<Output<String>> instanceProfileName() {
+        return Optional.ofNullable(this.instanceProfileName);
     }
 
     /**
@@ -818,6 +833,7 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         this.gpu = $.gpu;
         this.ignoreScalingChanges = $.ignoreScalingChanges;
         this.instanceProfile = $.instanceProfile;
+        this.instanceProfileName = $.instanceProfileName;
         this.instanceType = $.instanceType;
         this.keyName = $.keyName;
         this.kubeletExtraArgs = $.kubeletExtraArgs;
@@ -1247,7 +1263,7 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         }
 
         /**
-         * @param instanceProfile The ingress rule that gives node group access.
+         * @param instanceProfile The IAM InstanceProfile to use on the NodeGroup.
          * 
          * @return builder
          * 
@@ -1255,6 +1271,27 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         public Builder instanceProfile(@Nullable InstanceProfile instanceProfile) {
             $.instanceProfile = instanceProfile;
             return this;
+        }
+
+        /**
+         * @param instanceProfileName The name of the IAM InstanceProfile to use on the NodeGroup.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder instanceProfileName(@Nullable Output<String> instanceProfileName) {
+            $.instanceProfileName = instanceProfileName;
+            return this;
+        }
+
+        /**
+         * @param instanceProfileName The name of the IAM InstanceProfile to use on the NodeGroup.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder instanceProfileName(String instanceProfileName) {
+            return instanceProfileName(Output.of(instanceProfileName));
         }
 
         /**

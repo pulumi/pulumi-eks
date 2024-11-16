@@ -299,7 +299,11 @@
                 "instanceProfile": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "plain": true,
-                    "description": "The ingress rule that gives node group access."
+                    "description": "The IAM InstanceProfile to use on the NodeGroup."
+                },
+                "instanceProfileName": {
+                    "type": "string",
+                    "description": "The name of the IAM InstanceProfile to use on the NodeGroup."
                 },
                 "instanceType": {
                     "type": "string",
@@ -1778,7 +1782,11 @@
                 "instanceProfile": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "plain": true,
-                    "description": "The ingress rule that gives node group access."
+                    "description": "The IAM InstanceProfile to use on the NodeGroup."
+                },
+                "instanceProfileName": {
+                    "type": "string",
+                    "description": "The name of the IAM InstanceProfile to use on the NodeGroup."
                 },
                 "instanceType": {
                     "type": "string",
@@ -2051,7 +2059,11 @@
                 "instanceProfile": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "plain": true,
-                    "description": "The ingress rule that gives node group access."
+                    "description": "The IAM InstanceProfile to use on the NodeGroup."
+                },
+                "instanceProfileName": {
+                    "type": "string",
+                    "description": "The name of the IAM InstanceProfile to use on the NodeGroup."
                 },
                 "instanceType": {
                     "type": "string",

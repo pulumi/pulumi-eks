@@ -2308,7 +2308,11 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				Ref:   awsRef("#/resources/aws:iam%2FinstanceProfile:InstanceProfile"),
 				Plain: true,
 			},
-			Description: "The ingress rule that gives node group access.",
+			Description: "The IAM InstanceProfile to use on the NodeGroup.",
+		},
+		"instanceProfileName": {
+			TypeSpec: schema.TypeSpec{Type: "string"},
+			Description: "The name of the IAM InstanceProfile to use on the NodeGroup.",
 		},
 		"autoScalingGroupTags": {
 			TypeSpec: schema.TypeSpec{

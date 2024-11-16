@@ -277,6 +277,7 @@ export interface NodeGroupBaseOptions {
      * must be supplied in the ClusterOptions as either: 'instanceRole', or as a role of 'instanceRoles'.
      */
     instanceProfile?: aws.iam.InstanceProfile;
+    instanceProfileName?: pulumi.Input<string>;
 
     /**
      * The tags to apply to the NodeGroup's AutoScalingGroup in the
@@ -1131,10 +1132,25 @@ function createNodeGroupV2Internal(
     provider?: pulumi.ProviderResource,
 ): NodeGroupV2Data {
     const instanceProfileArn = core.apply((c) => {
-        if (!args.instanceProfile && !c.nodeGroupOptions.instanceProfile) {
-            throw new pulumi.ResourceError(`an instanceProfile is required`, parent);
+        if (!args.instanceProfile && !args.instanceProfileName && !c.nodeGroupOptions.instanceProfile) {
+            throw new pulumi.ResourceError(`an instanceProfile or instanceProfileName is required`, parent);
         }
-        return args.instanceProfile?.arn ?? c.nodeGroupOptions.instanceProfile!.arn;
+        if (args.instanceProfile && args.instanceProfileName) {
+            throw new pulumi.ResourceError(
+                `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+                parent,
+            );
+        }
+        if (args.instanceProfile ||c.nodeGroupOptions.instanceProfile) {
+            return args.instanceProfile?.arn ?? c.nodeGroupOptions.instanceProfile!.arn;
+        }
+        return aws.iam.InstanceProfile.get(
+            `${name}-instanceProfile`,
+            args.instanceProfileName!,
+            undefined,
+            { parent, provider },
+        ).arn;
+        
     });
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {

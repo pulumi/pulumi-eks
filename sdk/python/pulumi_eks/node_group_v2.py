@@ -41,6 +41,7 @@ class NodeGroupV2Args:
                  gpu: Optional[pulumi.Input[bool]] = None,
                  ignore_scaling_changes: Optional[bool] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
+                 instance_profile_name: Optional[pulumi.Input[str]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
                  kubelet_extra_args: Optional[pulumi.Input[str]] = None,
@@ -128,7 +129,8 @@ class NodeGroupV2Args:
         :param bool ignore_scaling_changes: Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
                
                See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
-        :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The ingress rule that gives node group access.
+        :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The IAM InstanceProfile to use on the NodeGroup.
+        :param pulumi.Input[str] instance_profile_name: The name of the IAM InstanceProfile to use on the NodeGroup.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
         :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
@@ -220,6 +222,8 @@ class NodeGroupV2Args:
             pulumi.set(__self__, "ignore_scaling_changes", ignore_scaling_changes)
         if instance_profile is not None:
             pulumi.set(__self__, "instance_profile", instance_profile)
+        if instance_profile_name is not None:
+            pulumi.set(__self__, "instance_profile_name", instance_profile_name)
         if instance_type is not None:
             pulumi.set(__self__, "instance_type", instance_type)
         if key_name is not None:
@@ -501,13 +505,25 @@ class NodeGroupV2Args:
     @pulumi.getter(name="instanceProfile")
     def instance_profile(self) -> Optional['pulumi_aws.iam.InstanceProfile']:
         """
-        The ingress rule that gives node group access.
+        The IAM InstanceProfile to use on the NodeGroup.
         """
         return pulumi.get(self, "instance_profile")
 
     @instance_profile.setter
     def instance_profile(self, value: Optional['pulumi_aws.iam.InstanceProfile']):
         pulumi.set(self, "instance_profile", value)
+
+    @property
+    @pulumi.getter(name="instanceProfileName")
+    def instance_profile_name(self) -> Optional[pulumi.Input[str]]:
+        """
+        The name of the IAM InstanceProfile to use on the NodeGroup.
+        """
+        return pulumi.get(self, "instance_profile_name")
+
+    @instance_profile_name.setter
+    def instance_profile_name(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "instance_profile_name", value)
 
     @property
     @pulumi.getter(name="instanceType")
@@ -876,6 +892,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  gpu: Optional[pulumi.Input[bool]] = None,
                  ignore_scaling_changes: Optional[bool] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
+                 instance_profile_name: Optional[pulumi.Input[str]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
                  kubelet_extra_args: Optional[pulumi.Input[str]] = None,
@@ -967,7 +984,8 @@ class NodeGroupV2(pulumi.ComponentResource):
         :param bool ignore_scaling_changes: Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
                
                See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
-        :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The ingress rule that gives node group access.
+        :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The IAM InstanceProfile to use on the NodeGroup.
+        :param pulumi.Input[str] instance_profile_name: The name of the IAM InstanceProfile to use on the NodeGroup.
         :param pulumi.Input[str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param pulumi.Input[str] key_name: Name of the key pair to use for SSH access to worker nodes.
         :param pulumi.Input[str] kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
@@ -1068,6 +1086,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  gpu: Optional[pulumi.Input[bool]] = None,
                  ignore_scaling_changes: Optional[bool] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
+                 instance_profile_name: Optional[pulumi.Input[str]] = None,
                  instance_type: Optional[pulumi.Input[str]] = None,
                  key_name: Optional[pulumi.Input[str]] = None,
                  kubelet_extra_args: Optional[pulumi.Input[str]] = None,
@@ -1123,6 +1142,7 @@ class NodeGroupV2(pulumi.ComponentResource):
             __props__.__dict__["gpu"] = gpu
             __props__.__dict__["ignore_scaling_changes"] = ignore_scaling_changes
             __props__.__dict__["instance_profile"] = instance_profile
+            __props__.__dict__["instance_profile_name"] = instance_profile_name
             __props__.__dict__["instance_type"] = instance_type
             __props__.__dict__["key_name"] = key_name
             __props__.__dict__["kubelet_extra_args"] = kubelet_extra_args
