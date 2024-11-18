@@ -2311,7 +2311,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			Description: "The IAM InstanceProfile to use on the NodeGroup.",
 		},
 		"instanceProfileName": {
-			TypeSpec: schema.TypeSpec{Type: "string"},
+			TypeSpec:    schema.TypeSpec{Type: "string"},
 			Description: "The name of the IAM InstanceProfile to use on the NodeGroup.",
 		},
 		"autoScalingGroupTags": {
