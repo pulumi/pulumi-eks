@@ -1132,21 +1132,22 @@ function createNodeGroupV2Internal(
     provider?: pulumi.ProviderResource,
 ): NodeGroupV2Data {
     const instanceProfileArn = core.apply((c) => {
-        if (!args.instanceProfile && !args.instanceProfileName && !c.nodeGroupOptions.instanceProfile) {
+        if (!args.instanceProfile && !args.instanceProfileName && !c.nodeGroupOptions.instanceProfile && !c.nodeGroupOptions.instanceProfileName) {
             throw new pulumi.ResourceError(`an instanceProfile or instanceProfileName is required`, parent);
         }
-        if (args.instanceProfile && args.instanceProfileName) {
+        if ((args.instanceProfile || c.nodeGroupOptions.instanceProfile) && (args.instanceProfileName || c.nodeGroupOptions.instanceProfileName)) {
             throw new pulumi.ResourceError(
                 `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
                 parent,
             );
         }
-        if (args.instanceProfile ||c.nodeGroupOptions.instanceProfile) {
+        if (args.instanceProfile || c.nodeGroupOptions.instanceProfile) {
             return args.instanceProfile?.arn ?? c.nodeGroupOptions.instanceProfile!.arn;
         }
+        const instanceProfileName = args.instanceProfileName ?? c.nodeGroupOptions.instanceProfileName! 
         return aws.iam.InstanceProfile.get(
             `${name}-instanceProfile`,
-            args.instanceProfileName!,
+            instanceProfileName,
             undefined,
             { parent, provider },
         ).arn;

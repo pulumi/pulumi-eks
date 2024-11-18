@@ -802,7 +802,7 @@ export function createCore(
                 name,
                 parent,
                 args.instanceRole,
-                args.instanceProfileName,
+                args.instanceProfileName ?? nodeGroupOptions.instanceProfileName,
             );
         }
         instanceRoles = pulumi.output([args.instanceRole]);
@@ -854,7 +854,7 @@ export function createCore(
             name,
             parent,
             instanceRole,
-            args.instanceProfileName,
+            args.instanceProfileName ?? nodeGroupOptions.instanceProfileName,
         );
     } else {
         instanceRoles = pulumi.output([]);
