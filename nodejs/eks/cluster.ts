@@ -209,7 +209,7 @@ export function generateKubeconfig(
     opts?: KubeconfigOptions,
 ) {
     let args = [
-        "region",
+        "--region",
         region,
         "eks",
         "get-token",
