@@ -454,6 +454,14 @@ describe("resolveOrGetInstanceProfile", function () {
                     id: string;
                     state: any;
                 } {
+                    if (args.type === "aws:iam/instanceProfile:InstanceProfile") {
+                        return {
+                            id: args.inputs.name + "_id",
+                            state: {
+                                name: args.id,
+                            },
+                        };
+                    }
                     return {
                         id: args.inputs.name + "_id",
                         state: args.inputs,
@@ -574,14 +582,11 @@ describe("resolveOrGetInstanceProfile", function () {
 
     test("args.instanceProfileName returns passed InstanceProfile", async () => {
         const nodeGroupName = "nodegroup-name";
-        const instanceProfileName = "passedInstanceProfile";
-        const instanceProfile = new aws.iam.InstanceProfile(`${nodeGroupName}-instanceProfile`, {
-            name: instanceProfileName,
-        });
+        const existingInstanceProfileName = "existingInstanceProfileName";
         const resolvedInstanceProfile = resolveOrGetInstanceProfile(
             nodeGroupName,
             {
-                instanceProfileName: instanceProfileName,
+                instanceProfileName: existingInstanceProfileName,
             },
             {
                 nodeGroupOptions: {},
@@ -589,34 +594,27 @@ describe("resolveOrGetInstanceProfile", function () {
             undefined as any,
             undefined,
         );
-        // using urn instead of name as received is a return from a mock aws.iam.InstanceProfile.get call
-        // so outputs aren't set
-        const expected = await promisify(instanceProfile.urn);
-        const received = await promisify(resolvedInstanceProfile.urn);
+        const expected = existingInstanceProfileName;
+        const received = await promisify(resolvedInstanceProfile.name);
         expect(received).toEqual(expected);
     });
 
-    test("nodeGroupOptions.instanceProfileName returns passed InstanceProfile", async () => {
+    test("nodeGroupOptions.instanceProfileName returns existing InstanceProfile", async () => {
         const nodeGroupName = "nodegroup-name";
-        const instanceProfileName = "passedInstanceProfile";
-        const instanceProfile = new aws.iam.InstanceProfile(`${nodeGroupName}-instanceProfile`, {
-            name: instanceProfileName,
-        });
+        const existingInstanceProfileName = "existingInstanceProfileName";
         const resolvedInstanceProfile = resolveOrGetInstanceProfile(
             nodeGroupName,
             {},
             {
                 nodeGroupOptions: {
-                    instanceProfileName: instanceProfileName,
+                    instanceProfileName: existingInstanceProfileName,
                 },
             } as pulumi.UnwrappedObject<CoreData>,
             undefined as any,
             undefined,
         );
-        // using urn instead of name as received is a return from a mock aws.iam.InstanceProfile.get call
-        // so outputs aren't set
-        const expected = await promisify(instanceProfile.urn);
-        const received = await promisify(resolvedInstanceProfile.urn);
+        const expected = existingInstanceProfileName;
+        const received = await promisify(resolvedInstanceProfile.name);
         expect(received).toEqual(expected);
     });
 });
