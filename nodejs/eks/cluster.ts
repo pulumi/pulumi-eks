@@ -43,6 +43,7 @@ import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass"
 import { InputTags, UserStorageClasses } from "./utils";
 import { VpcCniAddon, VpcCniAddonOptions } from "./cni-addon";
 import { stringifyAddonConfiguration } from "./addon";
+import { getRegionFromArn } from "./utilities";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -202,11 +203,21 @@ interface ExecEnvVar {
 export function generateKubeconfig(
     clusterName: pulumi.Input<string>,
     clusterEndpoint: pulumi.Input<string>,
+    region: pulumi.Input<string>,
     includeProfile: boolean,
     certData?: pulumi.Input<string>,
     opts?: KubeconfigOptions,
 ) {
-    let args = ["eks", "get-token", "--cluster-name", clusterName, "--output", "json"];
+    let args = [
+        "region",
+        region,
+        "eks",
+        "get-token",
+        "--cluster-name",
+        clusterName,
+        "--output",
+        "json",
+    ];
     const env: ExecEnvVar[] = [
         {
             name: "KUBERNETES_EXEC_INFO",
@@ -723,12 +734,14 @@ export function createCore(
     // depend on the autoscaling group we'll create later so that nothing attempts to use the EKS cluster before
     // its worker nodes have come up.
     const genKubeconfig = (useProfileName: boolean) => {
+        const region = eksCluster.arn.apply(getRegionFromArn);
         const kubeconfig = pulumi
             .all([
                 eksCluster.name,
                 endpoint,
                 eksCluster.certificateAuthority,
                 args.providerCredentialOpts,
+                region,
             ])
             .apply(
                 ([
@@ -736,6 +749,7 @@ export function createCore(
                     clusterEndpoint,
                     clusterCertificateAuthority,
                     providerCredentialOpts,
+                    region,
                 ]) => {
                     let config = {};
 
@@ -745,6 +759,7 @@ export function createCore(
                             return generateKubeconfig(
                                 clusterName,
                                 clusterEndpoint,
+                                region,
                                 useProfileName,
                                 clusterCertificateAuthority?.data,
                                 opts,
@@ -754,6 +769,7 @@ export function createCore(
                         config = generateKubeconfig(
                             clusterName,
                             clusterEndpoint,
+                            region,
                             useProfileName,
                             clusterCertificateAuthority?.data,
                             providerCredentialOpts,
@@ -762,6 +778,7 @@ export function createCore(
                         config = generateKubeconfig(
                             clusterName,
                             clusterEndpoint,
+                            region,
                             useProfileName,
                             clusterCertificateAuthority?.data,
                         );
@@ -2003,9 +2020,11 @@ export class Cluster extends pulumi.ComponentResource {
      * - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
      */
     getKubeconfig(args: KubeconfigOptions): pulumi.Output<string> {
+        const region = this.eksCluster.arn.apply(getRegionFromArn);
         const kc = generateKubeconfig(
             this.eksCluster.name,
             this.eksCluster.endpoint,
+            region,
             true,
             this.eksCluster.certificateAuthority?.data,
             args,
@@ -2275,9 +2294,11 @@ export class ClusterInternal extends pulumi.ComponentResource {
     }
 
     getKubeconfig(args: KubeconfigOptions): pulumi.Output<string> {
+        const region = this.eksCluster.arn.apply(getRegionFromArn);
         const kc = generateKubeconfig(
             this.eksCluster.name,
             this.eksCluster.endpoint,
+            region,
             true,
             this.eksCluster.certificateAuthority?.data,
             args,

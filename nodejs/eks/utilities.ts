@@ -26,3 +26,18 @@ export function getVersion(): string {
 export function isObject(obj: any): obj is Record<string, any> {
     return obj !== null && typeof obj === "object" && !Array.isArray(obj);
 }
+
+/**
+ * Extracts the AWS region from an Amazon Resource Name (ARN).
+ *
+ * @param arn - The ARN from which to extract the region.
+ * @returns The region extracted from the ARN.
+ * @throws Will throw an error if the ARN is invalid.
+ */
+export function getRegionFromArn(arn: string): string {
+    const arnParts = arn.split(":");
+    if (arnParts.length < 4 || arnParts[0] !== "arn") {
+        throw new Error(`Invalid ARN: '${arn}'`);
+    }
+    return arnParts[3];
+}
