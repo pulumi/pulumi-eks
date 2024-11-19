@@ -15,9 +15,9 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 
-import { isGravitonInstance } from "./nodegroup";
+import { isGravitonInstance, resolveOrGetInstanceProfile } from "./nodegroup";
 import { getArchitecture } from "./nodegroup";
-import { CoreData } from "./cluster";
+import { Cluster as ClusterComponent, CoreData } from "./cluster";
 
 const gravitonInstances = [
     "c6g.12xlarge",
@@ -443,6 +443,181 @@ describe("createManagedNodeGroup", function () {
         const configuredVersion = await promisify(mng.version);
 
         expect(configuredVersion).toBeUndefined();
+    });
+});
+
+describe("resolveOrGetInstanceProfile", function () {
+    beforeAll(() => {
+        pulumi.runtime.setMocks(
+            {
+                newResource: function (args: pulumi.runtime.MockResourceArgs): {
+                    id: string;
+                    state: any;
+                } {
+                    return {
+                        id: args.inputs.name + "_id",
+                        state: args.inputs,
+                    };
+                },
+                call: function (args: pulumi.runtime.MockCallArgs) {
+                    return args.inputs;
+                },
+            },
+            "project",
+            "stack",
+            false, // Sets the flag `dryRun`, which indicates if pulumi is running in preview mode.
+        );
+    });
+
+    let ng: typeof import("./nodegroup");
+    beforeEach(async function () {
+        ng = await import("./nodegroup");
+    });
+
+    test("no args, no c.nodeGroupOptions throws", async () => {
+        expect(() =>
+            resolveOrGetInstanceProfile(
+                "nodegroup-name",
+                {},
+                {
+                    nodeGroupOptions: {},
+                } as pulumi.UnwrappedObject<CoreData>,
+                undefined as any,
+                undefined,
+            ),
+        ).toThrowError("an instanceProfile or instanceProfileName is required");
+    });
+
+    test("both args.instanceProfile and args.instanceProfileName throws", async () => {
+        const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {});
+        const name = "nodegroup-name";
+        expect(() =>
+            resolveOrGetInstanceProfile(
+                name,
+                {
+                    instanceProfile: instanceProfile,
+                    instanceProfileName: "instanceProfileName",
+                },
+                {
+                    nodeGroupOptions: {},
+                } as pulumi.UnwrappedObject<CoreData>,
+                undefined as any,
+                undefined,
+            ),
+        ).toThrowError(
+            `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+        );
+    });
+
+    test("both c.nodeGroupOptions.instanceProfileName and c.nodeGroupOptions.instanceProfile throws", async () => {
+        const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {});
+        const name = "nodegroup-name";
+        expect(() =>
+            resolveOrGetInstanceProfile(
+                name,
+                {},
+                {
+                    nodeGroupOptions: {
+                        instanceProfile: instanceProfile,
+                        instanceProfileName: "instanceProfileName",
+                    },
+                } as pulumi.UnwrappedObject<CoreData>,
+                undefined as any,
+                undefined,
+            ),
+        ).toThrowError(
+            `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+        );
+    });
+
+    test("args.instanceProfile returns passed instanceProfile", async () => {
+        const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
+            name: "passedInstanceProfile",
+        });
+        const nodeGroupName = "nodegroup-name";
+        const resolvedInstanceProfile = resolveOrGetInstanceProfile(
+            nodeGroupName,
+            {
+                instanceProfile: instanceProfile,
+            },
+            {
+                nodeGroupOptions: {},
+            } as pulumi.UnwrappedObject<CoreData>,
+            undefined as any,
+            undefined,
+        );
+        const expected = await promisify(instanceProfile.name);
+        const recieved = await promisify(resolvedInstanceProfile.name);
+        expect(recieved).toEqual(expected);
+    });
+
+    test("nodeGroupOptions.instanceProfile returns passed instanceProfile", async () => {
+        const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
+            name: "passedInstanceProfile",
+        });
+        const nodeGroupName = "nodegroup-name";
+        const resolvedInstanceProfile = resolveOrGetInstanceProfile(
+            nodeGroupName,
+            {},
+            {
+                nodeGroupOptions: {
+                    instanceProfile: instanceProfile,
+                },
+            } as pulumi.UnwrappedObject<CoreData>,
+            undefined as any,
+            undefined,
+        );
+        const expected = await promisify(instanceProfile.name);
+        const recieved = await promisify(resolvedInstanceProfile.name);
+        expect(recieved).toEqual(expected);
+    });
+
+    test("args.instanceProfileName returns passed InstanceProfile", async () => {
+        const nodeGroupName = "nodegroup-name";
+        const instanceProfileName = "passedInstanceProfile";
+        const instanceProfile = new aws.iam.InstanceProfile(`${nodeGroupName}-instanceProfile`, {
+            name: instanceProfileName,
+        });
+        const resolvedInstanceProfile = resolveOrGetInstanceProfile(
+            nodeGroupName,
+            {
+                instanceProfileName: instanceProfileName,
+            },
+            {
+                nodeGroupOptions: {},
+            } as pulumi.UnwrappedObject<CoreData>,
+            undefined as any,
+            undefined,
+        );
+        // using urn instead of name as received is a return from a mock aws.iam.InstanceProfile.get call
+        // so outputs aren't set
+        const expected = await promisify(instanceProfile.urn);
+        const received = await promisify(resolvedInstanceProfile.urn);
+        expect(received).toEqual(expected);
+    });
+
+    test("nodeGroupOptions.instanceProfileName returns passed InstanceProfile", async () => {
+        const nodeGroupName = "nodegroup-name";
+        const instanceProfileName = "passedInstanceProfile";
+        const instanceProfile = new aws.iam.InstanceProfile(`${nodeGroupName}-instanceProfile`, {
+            name: instanceProfileName,
+        });
+        const resolvedInstanceProfile = resolveOrGetInstanceProfile(
+            nodeGroupName,
+            {},
+            {
+                nodeGroupOptions: {
+                    instanceProfileName: instanceProfileName,
+                },
+            } as pulumi.UnwrappedObject<CoreData>,
+            undefined as any,
+            undefined,
+        );
+        // using urn instead of name as received is a return from a mock aws.iam.InstanceProfile.get call
+        // so outputs aren't set
+        const expected = await promisify(instanceProfile.urn);
+        const received = await promisify(resolvedInstanceProfile.urn);
+        expect(received).toEqual(expected);
     });
 });
 
