@@ -483,15 +483,16 @@ describe("resolveInstanceProfileName", function () {
     });
 
     test("no args, no c.nodeGroupOptions throws", async () => {
-        expect(promisify(resolveInstanceProfileName(
+        expect(() =>
+            resolveInstanceProfileName(
                 "nodegroup-name",
                 {},
-                pulumi.output({
+                {
                     nodeGroupOptions: {},
-                } as pulumi.UnwrappedObject<CoreData>),
+                } as pulumi.UnwrappedObject<CoreData>,
                 undefined as any,
             ),
-        )).toThrow("an instanceProfile or instanceProfileName is required");
+        ).toThrowError("an instanceProfile or instanceProfileName is required");
     });
 
     test("both args.instanceProfile and args.instanceProfileName throws", async () => {
@@ -504,9 +505,9 @@ describe("resolveInstanceProfileName", function () {
                     instanceProfile: instanceProfile,
                     instanceProfileName: "instanceProfileName",
                 },
-                pulumi.output({
+                {
                     nodeGroupOptions: {},
-                } as pulumi.UnwrappedObject<CoreData>),
+                } as pulumi.UnwrappedObject<CoreData>,
                 undefined as any,
             ),
         ).toThrowError(
@@ -514,54 +515,25 @@ describe("resolveInstanceProfileName", function () {
         );
     });
 
-    // test("both c.nodeGroupOptions.instanceProfileName and c.nodeGroupOptions.instanceProfile throws", async () => {
-    //     const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {});
-    //     const name = "nodegroup-name";
-    //     // const errorOutput = resolveInstanceProfileName(
-    //     //     name,
-    //     //     {},
-    //     //     pulumi.output({
-    //     //         nodeGroupOptions: {
-    //     //             instanceProfile: instanceProfile,
-    //     //             instanceProfileName: "instanceProfileName",
-    //     //         },
-    //     //     } as pulumi.UnwrappedObject<CoreData>),
-    //     //     undefined as any,
-    //     // // )
-    //     // try {
-    //     //     await promisify(resolveInstanceProfileName(
-    //     //         name,
-    //     //         {},
-    //     //         pulumi.output({
-    //     //             nodeGroupOptions: {
-    //     //                 instanceProfile: instanceProfile,
-    //     //                 instanceProfileName: "instanceProfileName",
-    //     //             },
-    //     //         } as pulumi.UnwrappedObject<CoreData>),
-    //     //         undefined as any,
-    //     //     ))
-    //     // } catch (error) {
-    //     //     // expect(error).toMatchObject(new pulumi.ResourceError(
-    //     //     //     `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
-    //     //     //     undefined,
-    //     //     // ))
-    //     // }
-
-    //     // await expect(() => promisify(resolveInstanceProfileName(
-    //     //         name,
-    //     //         {},
-    //     //         pulumi.output({
-    //     //             nodeGroupOptions: {
-    //     //                 instanceProfile: instanceProfile,
-    //     //                 instanceProfileName: "instanceProfileName",
-    //     //             },
-    //     //         } as pulumi.UnwrappedObject<CoreData>),
-    //     //         undefined as any,
-    //     //     )
-    //     // )).toThrowError(
-    //     //     `invalid nodeGroupOptions for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`, undefined
-    //     // );
-    // });
+    test("both c.nodeGroupOptions.instanceProfileName and c.nodeGroupOptions.instanceProfile throws", async () => {
+        const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {});
+        const name = "nodegroup-name";
+        expect(() =>
+            resolveInstanceProfileName(
+                name,
+                {},
+                {
+                    nodeGroupOptions: {
+                        instanceProfile: instanceProfile,
+                        instanceProfileName: "instanceProfileName",
+                    },
+                } as pulumi.UnwrappedObject<CoreData>,
+                undefined as any,
+            ),
+        ).toThrowError(
+            `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+        );
+    });
 
     test("args.instanceProfile returns passed instanceProfile", async () => {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
@@ -573,9 +545,9 @@ describe("resolveInstanceProfileName", function () {
             {
                 instanceProfile: instanceProfile,
             },
-            pulumi.output({
+            {
                 nodeGroupOptions: {},
-            } as pulumi.UnwrappedObject<CoreData>),
+            } as pulumi.UnwrappedObject<CoreData>,
             undefined as any,
         );
         const expected = await promisify(instanceProfile.name);
@@ -591,11 +563,11 @@ describe("resolveInstanceProfileName", function () {
         const resolvedInstanceProfileName = resolveInstanceProfileName(
             nodeGroupName,
             {},
-            pulumi.output({
+            {
                 nodeGroupOptions: {
                     instanceProfile: instanceProfile,
                 },
-            } as pulumi.UnwrappedObject<CoreData>),
+            } as pulumi.UnwrappedObject<CoreData>,
             undefined as any,
         );
         const expected = await promisify(instanceProfile.name);
@@ -611,9 +583,9 @@ describe("resolveInstanceProfileName", function () {
             {
                 instanceProfileName: existingInstanceProfileName,
             },
-            pulumi.output({
+            {
                 nodeGroupOptions: {},
-            } as pulumi.UnwrappedObject<CoreData>),
+            } as pulumi.UnwrappedObject<CoreData>,
             undefined as any,
         );
         const expected = existingInstanceProfileName;
@@ -627,11 +599,11 @@ describe("resolveInstanceProfileName", function () {
         const resolvedInstanceProfileName = resolveInstanceProfileName(
             nodeGroupName,
             {},
-            pulumi.output({
+            {
                 nodeGroupOptions: {
                     instanceProfileName: existingInstanceProfileName,
                 },
-            } as pulumi.UnwrappedObject<CoreData>),
+            } as pulumi.UnwrappedObject<CoreData>,
             undefined as any,
         );
         const expected = existingInstanceProfileName;
