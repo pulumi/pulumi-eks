@@ -39,6 +39,7 @@ import {
     SelfManagedV1NodeUserDataArgs,
     SelfManagedV2NodeUserDataArgs,
 } from "./userdata";
+import { InstanceProfile } from "@pulumi/aws/iam";
 
 export type TaintEffect = "NoSchedule" | "NoExecute" | "PreferNoSchedule";
 
@@ -653,42 +654,185 @@ export function createNodeGroup(
     return createNodeGroupInternal(name, args, pulumi.output(core), parent, provider);
 }
 
-export function resolveOrGetInstanceProfile(
+// export function resolveOrGetInstanceProfile(
+//     name: string,
+//     args: Omit<NodeGroupOptions, "cluster">,
+//     c: pulumi.UnwrappedObject<CoreData>,
+//     parent: pulumi.ComponentResource,
+//     provider?: pulumi.ProviderResource,
+// ): aws.iam.InstanceProfile {
+//     if (
+//         !args.instanceProfile &&
+//         !args.instanceProfileName &&
+//         !c.nodeGroupOptions.instanceProfile &&
+//         !c.nodeGroupOptions.instanceProfileName
+//     ) {
+//         throw new pulumi.ResourceError(
+//             `an instanceProfile or instanceProfileName is required`,
+//             parent,
+//         );
+//     }
+//     if (
+//         (args.instanceProfile || c.nodeGroupOptions.instanceProfile) &&
+//         (args.instanceProfileName || c.nodeGroupOptions.instanceProfileName)
+//     ) {
+//         throw new pulumi.ResourceError(
+//             `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+//             parent,
+//         );
+//     }
+//     if (args.instanceProfile || c.nodeGroupOptions.instanceProfile) {
+//         return args.instanceProfile ?? c.nodeGroupOptions.instanceProfile!;
+//     }
+//     return aws.iam.InstanceProfile.get(
+//         `${name}-instanceProfile`,
+//         args.instanceProfileName ?? c.nodeGroupOptions.instanceProfileName!,
+//         undefined,
+//         { parent, provider },
+//     );
+// }
+
+// export function resolveOrGetInstanceProfileV2(
+//     name: string,
+//     args: Omit<NodeGroupOptions, "cluster">,
+//     c: pulumi.UnwrappedObject<CoreData>,
+//     parent: pulumi.ComponentResource,
+//     provider?: pulumi.ProviderResource,
+// ): aws.iam.InstanceProfile {
+//     if (
+//         !args.instanceProfile &&
+//         !args.instanceProfileName &&
+//         !c.nodeGroupOptions.instanceProfile &&
+//         !c.nodeGroupOptions.instanceProfileName
+//     ) {
+//         throw new pulumi.ResourceError(
+//             `an instanceProfile or instanceProfileName is required`,
+//             parent,
+//         );
+//     }
+//     if (
+//         (args.instanceProfile || c.nodeGroupOptions.instanceProfile) &&
+//         (args.instanceProfileName || c.nodeGroupOptions.instanceProfileName)
+//     ) {
+//         throw new pulumi.ResourceError(
+//             `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+//             parent,
+//         );
+//     }
+//     if (args.instanceProfile || c.nodeGroupOptions.instanceProfile) {
+//         return args.instanceProfile ?? c.nodeGroupOptions.instanceProfile!;
+//     }
+//     return aws.iam.InstanceProfile.get(
+//         `${name}-instanceProfile`,
+//         args.instanceProfileName ?? c.nodeGroupOptions.instanceProfileName!,
+//         undefined,
+//         { parent, provider },
+//     );
+// }
+
+
+// export function resolveInstanceProfileName(
+//     name: string,
+//     args: Omit<NodeGroupOptions, "cluster">,
+//     c: pulumi.UnwrappedObject<CoreData>,
+//     parent: pulumi.ComponentResource,
+//     provider?: pulumi.ProviderResource,
+// ): pulumi.Input<string | InstanceProfile> | undefined {
+//     if (
+//         !args.instanceProfile &&
+//         !args.instanceProfileName &&
+//         !c.nodeGroupOptions.instanceProfile &&
+//         !c.nodeGroupOptions.instanceProfileName
+//     ) {
+//         throw new pulumi.ResourceError(
+//             `an instanceProfile or instanceProfileName is required`,
+//             parent,
+//         );
+//     }
+//     if (
+//         (args.instanceProfile || c.nodeGroupOptions.instanceProfile) &&
+//         (args.instanceProfileName || c.nodeGroupOptions.instanceProfileName)
+//     ) {
+//         throw new pulumi.ResourceError(
+//             `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+//             parent,
+//         );
+//     }
+//     if (args.instanceProfile || c.nodeGroupOptions.instanceProfile) {
+//         return args.instanceProfile ?? c.nodeGroupOptions.instanceProfile;
+//     }
+//     return args.instanceProfileName ?? c.nodeGroupOptions.instanceProfileName!
+// }
+
+// export function resolveInstanceProfileNameV2(
+//     name: string,
+//     args: Omit<NodeGroupOptions, "cluster">,
+//     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
+//     parent: pulumi.ComponentResource,
+//     provider?: pulumi.ProviderResource,
+// ): pulumi.Input<string | InstanceProfile> | undefined {
+//     if (args.instanceProfile && args.instanceProfileName) {
+//         throw new pulumi.ResourceError(
+//             `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+//             parent,
+//         );
+//     }
+//     if (args.instanceProfile || args.instanceProfileName) {
+//         return args.instanceProfile?.name ?? args.instanceProfileName!
+//     }
+//     return core.apply(c => {
+//         if (c.nodeGroupOptions?.instanceProfile && c.nodeGroupOptions?.instanceProfileName) {
+//             throw new pulumi.ResourceError(
+//                 `invalid nodeGroupOptions for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+//                 parent,
+//             );
+//         }
+//         if (!c.nodeGroupOptions?.instanceProfile && !c.nodeGroupOptions.instanceProfileName) {
+//             throw new pulumi.ResourceError(
+//                 `an instanceProfile or instanceProfileName is required`,
+//                 parent,
+//             );
+//         }
+//         return c.nodeGroupOptions?.instanceProfile || c.nodeGroupOptions.instanceProfileName!
+//     })
+// }
+/**
+ * Returns either the name of a passed InstanceProfile resource or a passed instanceProfileName.
+ * If an instanceProfile or instanceProfileName is passed in both the args and c.nodeGroupOptions,
+ * uses the input from args.
+ * Errors if no instanceProfile and no instanceProfileName is passed.
+ * Errors if both an instanceProfile and an instanceProfileName is passed.
+ */
+export function resolveInstanceProfileName(
     name: string,
     args: Omit<NodeGroupOptions, "cluster">,
-    c: pulumi.UnwrappedObject<CoreData>,
+    core: pulumi.Output<pulumi.Unwrap<CoreData>>,
     parent: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource,
-): aws.iam.InstanceProfile {
-    if (
-        !args.instanceProfile &&
-        !args.instanceProfileName &&
-        !c.nodeGroupOptions.instanceProfile &&
-        !c.nodeGroupOptions.instanceProfileName
-    ) {
-        throw new pulumi.ResourceError(
-            `an instanceProfile or instanceProfileName is required`,
-            parent,
-        );
-    }
-    if (
-        (args.instanceProfile || c.nodeGroupOptions.instanceProfile) &&
-        (args.instanceProfileName || c.nodeGroupOptions.instanceProfileName)
-    ) {
+): pulumi.Output<string> | undefined {
+    if (args.instanceProfile && args.instanceProfileName) {
         throw new pulumi.ResourceError(
             `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
             parent,
         );
     }
-    if (args.instanceProfile || c.nodeGroupOptions.instanceProfile) {
-        return args.instanceProfile ?? c.nodeGroupOptions.instanceProfile!;
+    if (args.instanceProfile || args.instanceProfileName) {
+        return args.instanceProfile?.name ?? pulumi.output(args.instanceProfileName!)
     }
-    return aws.iam.InstanceProfile.get(
-        `${name}-instanceProfile`,
-        args.instanceProfileName ?? c.nodeGroupOptions.instanceProfileName!,
-        undefined,
-        { parent, provider },
-    );
+    return pulumi.output(core.apply(c => {
+        if (c.nodeGroupOptions?.instanceProfile && c.nodeGroupOptions?.instanceProfileName) {
+            throw new pulumi.ResourceError(
+                `invalid nodeGroupOptions for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+                parent,
+            );
+        }
+        if (!c.nodeGroupOptions?.instanceProfile && !c.nodeGroupOptions.instanceProfileName) {
+            throw new pulumi.ResourceError(
+                `an instanceProfile or instanceProfileName is required`,
+                parent,
+            );
+        }
+        return c.nodeGroupOptions?.instanceProfile?.name || c.nodeGroupOptions.instanceProfileName!
+    }))
 }
 
 function createNodeGroupInternal(
@@ -698,10 +842,8 @@ function createNodeGroupInternal(
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): NodeGroupData {
-    const instanceProfile = core.apply((c) =>
-        resolveOrGetInstanceProfile(name, args, c, parent, provider),
-    );
-
+    const instanceProfileName = resolveInstanceProfileName(name, args, core, parent)
+    
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         throw new pulumi.ResourceError(
             `invalid args for node group ${name}, clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
@@ -1011,7 +1153,7 @@ function createNodeGroupInternal(
             associatePublicIpAddress: nodeAssociatePublicIpAddress,
             imageId: amiId,
             instanceType: args.instanceType || "t3.medium",
-            iamInstanceProfile: instanceProfile,
+            iamInstanceProfile: instanceProfileName,
             keyName: keyName,
             // This apply is necessary in s.t. the launchConfiguration picks up a
             // dependency on the eksClusterIngressRule. The nodes may fail to
@@ -1166,9 +1308,7 @@ function createNodeGroupV2Internal(
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): NodeGroupV2Data {
-    const instanceProfileArn = core.apply(
-        (c) => resolveOrGetInstanceProfile(name, args, c, parent, provider).arn,
-    );
+    const instanceProfileName = resolveInstanceProfileName(name, args, core, parent)
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         throw new pulumi.ResourceError(
@@ -1491,7 +1631,7 @@ function createNodeGroupV2Internal(
         {
             imageId: amiId,
             instanceType: args.instanceType || "t3.medium",
-            iamInstanceProfile: { arn: instanceProfileArn },
+            iamInstanceProfile: { name: instanceProfileName },
             keyName: keyName,
             instanceMarketOptions: marketOptions,
             blockDeviceMappings,
