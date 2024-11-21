@@ -65,7 +65,7 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-      - uses: pulumi/provider-version-action@v1
+      - uses: pulumi/provider-version-action@7c54f136703646f7d6eaa3d3b3c877e5a805d6ab # v1
         id: provider-version
         with:
           set-env: "PROVIDER_VERSION"
@@ -78,7 +78,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check worktree clean
@@ -126,7 +126,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -211,7 +211,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -303,7 +303,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -407,7 +407,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -491,7 +491,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
