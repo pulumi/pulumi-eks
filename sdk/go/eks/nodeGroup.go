@@ -123,9 +123,9 @@ type nodeGroupArgs struct {
 	// - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
 	// - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
 	Gpu *bool `pulumi:"gpu"`
-	// The IAM InstanceProfile to use on the NodeGroup.
+	// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfile *iam.InstanceProfile `pulumi:"instanceProfile"`
-	// The name of the IAM InstanceProfile to use on the NodeGroup.
+	// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfileName *string `pulumi:"instanceProfileName"`
 	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType *string `pulumi:"instanceType"`
@@ -282,9 +282,9 @@ type NodeGroupArgs struct {
 	// - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
 	// - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
 	Gpu pulumi.BoolPtrInput
-	// The IAM InstanceProfile to use on the NodeGroup.
+	// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfile *iam.InstanceProfile
-	// The name of the IAM InstanceProfile to use on the NodeGroup.
+	// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfileName pulumi.StringPtrInput
 	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType pulumi.StringPtrInput

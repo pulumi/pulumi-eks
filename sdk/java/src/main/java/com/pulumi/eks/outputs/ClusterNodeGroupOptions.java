@@ -138,12 +138,12 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable Boolean ignoreScalingChanges;
     /**
-     * @return The IAM InstanceProfile to use on the NodeGroup.
+     * @return The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     private @Nullable InstanceProfile instanceProfile;
     /**
-     * @return The name of the IAM InstanceProfile to use on the NodeGroup.
+     * @return The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     private @Nullable String instanceProfileName;
@@ -455,14 +455,14 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.ignoreScalingChanges);
     }
     /**
-     * @return The IAM InstanceProfile to use on the NodeGroup.
+     * @return The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     public Optional<InstanceProfile> instanceProfile() {
         return Optional.ofNullable(this.instanceProfile);
     }
     /**
-     * @return The name of the IAM InstanceProfile to use on the NodeGroup.
+     * @return The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     public Optional<String> instanceProfileName() {

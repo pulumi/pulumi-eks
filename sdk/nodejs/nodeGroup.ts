@@ -226,11 +226,11 @@ export interface NodeGroupArgs {
      */
     gpu?: pulumi.Input<boolean>;
     /**
-     * The IAM InstanceProfile to use on the NodeGroup.
+     * The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      */
     instanceProfile?: pulumiAws.iam.InstanceProfile;
     /**
-     * The name of the IAM InstanceProfile to use on the NodeGroup.
+     * The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      */
     instanceProfileName?: pulumi.Input<string>;
     /**

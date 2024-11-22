@@ -226,13 +226,13 @@ namespace Pulumi.Eks
         public bool? IgnoreScalingChanges { get; set; }
 
         /// <summary>
-        /// The IAM InstanceProfile to use on the NodeGroup.
+        /// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         /// </summary>
         [Input("instanceProfile")]
         public Pulumi.Aws.Iam.InstanceProfile? InstanceProfile { get; set; }
 
         /// <summary>
-        /// The name of the IAM InstanceProfile to use on the NodeGroup.
+        /// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         /// </summary>
         [Input("instanceProfileName")]
         public Input<string>? InstanceProfileName { get; set; }

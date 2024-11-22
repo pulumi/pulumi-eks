@@ -684,7 +684,6 @@ export function resolveInstanceProfileName(
             parent,
         );
     }
-    
 }
 
 function createNodeGroupInternal(
@@ -694,8 +693,10 @@ function createNodeGroupInternal(
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): NodeGroupData {
-    const instanceProfileName = core.apply(c => resolveInstanceProfileName(name, args, c, parent))
-    
+    const instanceProfileName = core.apply((c) =>
+        resolveInstanceProfileName(name, args, c, parent),
+    );
+
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         throw new pulumi.ResourceError(
             `invalid args for node group ${name}, clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
@@ -1160,7 +1161,9 @@ function createNodeGroupV2Internal(
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): NodeGroupV2Data {
-    const instanceProfileName = core.apply(c => resolveInstanceProfileName(name, args, c, parent))
+    const instanceProfileName = core.apply((c) =>
+        resolveInstanceProfileName(name, args, c, parent),
+    );
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         throw new pulumi.ResourceError(

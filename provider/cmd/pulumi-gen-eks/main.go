@@ -2308,11 +2308,11 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 				Ref:   awsRef("#/resources/aws:iam%2FinstanceProfile:InstanceProfile"),
 				Plain: true,
 			},
-			Description: "The IAM InstanceProfile to use on the NodeGroup.",
+			Description: "The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.",
 		},
 		"instanceProfileName": {
 			TypeSpec:    schema.TypeSpec{Type: "string"},
-			Description: "The name of the IAM InstanceProfile to use on the NodeGroup.",
+			Description: "The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.",
 		},
 		"autoScalingGroupTags": {
 			TypeSpec: schema.TypeSpec{

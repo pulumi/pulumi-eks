@@ -117,11 +117,11 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly bool? IgnoreScalingChanges;
         /// <summary>
-        /// The IAM InstanceProfile to use on the NodeGroup.
+        /// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         /// </summary>
         public readonly Pulumi.Aws.Iam.InstanceProfile? InstanceProfile;
         /// <summary>
-        /// The name of the IAM InstanceProfile to use on the NodeGroup.
+        /// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         /// </summary>
         public readonly string? InstanceProfileName;
         /// <summary>

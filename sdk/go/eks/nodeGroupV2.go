@@ -123,9 +123,9 @@ type nodeGroupV2Args struct {
 	//
 	// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
 	IgnoreScalingChanges *bool `pulumi:"ignoreScalingChanges"`
-	// The IAM InstanceProfile to use on the NodeGroup.
+	// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfile *iam.InstanceProfile `pulumi:"instanceProfile"`
-	// The name of the IAM InstanceProfile to use on the NodeGroup.
+	// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfileName *string `pulumi:"instanceProfileName"`
 	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType *string `pulumi:"instanceType"`
@@ -290,9 +290,9 @@ type NodeGroupV2Args struct {
 	//
 	// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
 	IgnoreScalingChanges *bool
-	// The IAM InstanceProfile to use on the NodeGroup.
+	// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfile *iam.InstanceProfile
-	// The name of the IAM InstanceProfile to use on the NodeGroup.
+	// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfileName pulumi.StringPtrInput
 	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType pulumi.StringPtrInput

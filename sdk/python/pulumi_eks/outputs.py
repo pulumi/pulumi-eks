@@ -397,8 +397,8 @@ class ClusterNodeGroupOptions(dict):
         :param bool ignore_scaling_changes: Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
                
                See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
-        :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The IAM InstanceProfile to use on the NodeGroup.
-        :param str instance_profile_name: The name of the IAM InstanceProfile to use on the NodeGroup.
+        :param 'pulumi_aws.iam.InstanceProfile' instance_profile: The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+        :param str instance_profile_name: The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         :param str instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param str key_name: Name of the key pair to use for SSH access to worker nodes.
         :param str kubelet_extra_args: Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
@@ -704,7 +704,7 @@ class ClusterNodeGroupOptions(dict):
     @pulumi.getter(name="instanceProfile")
     def instance_profile(self) -> Optional['pulumi_aws.iam.InstanceProfile']:
         """
-        The IAM InstanceProfile to use on the NodeGroup.
+        The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         """
         return pulumi.get(self, "instance_profile")
 
@@ -712,7 +712,7 @@ class ClusterNodeGroupOptions(dict):
     @pulumi.getter(name="instanceProfileName")
     def instance_profile_name(self) -> Optional[str]:
         """
-        The name of the IAM InstanceProfile to use on the NodeGroup.
+        The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         """
         return pulumi.get(self, "instance_profile_name")
 

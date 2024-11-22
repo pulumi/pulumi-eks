@@ -330,14 +330,14 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
     }
 
     /**
-     * The IAM InstanceProfile to use on the NodeGroup.
+     * The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     @Import(name="instanceProfile")
     private @Nullable InstanceProfile instanceProfile;
 
     /**
-     * @return The IAM InstanceProfile to use on the NodeGroup.
+     * @return The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     public Optional<InstanceProfile> instanceProfile() {
@@ -345,14 +345,14 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
     }
 
     /**
-     * The name of the IAM InstanceProfile to use on the NodeGroup.
+     * The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     @Import(name="instanceProfileName")
     private @Nullable Output<String> instanceProfileName;
 
     /**
-     * @return The name of the IAM InstanceProfile to use on the NodeGroup.
+     * @return The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     public Optional<Output<String>> instanceProfileName() {
@@ -1263,7 +1263,7 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         }
 
         /**
-         * @param instanceProfile The IAM InstanceProfile to use on the NodeGroup.
+         * @param instanceProfile The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
          * 
          * @return builder
          * 
@@ -1274,7 +1274,7 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         }
 
         /**
-         * @param instanceProfileName The name of the IAM InstanceProfile to use on the NodeGroup.
+         * @param instanceProfileName The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
          * 
          * @return builder
          * 
@@ -1285,7 +1285,7 @@ public final class ClusterNodeGroupOptionsArgs extends com.pulumi.resources.Reso
         }
 
         /**
-         * @param instanceProfileName The name of the IAM InstanceProfile to use on the NodeGroup.
+         * @param instanceProfileName The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
          * 
          * @return builder
          * 

@@ -299,11 +299,11 @@
                 "instanceProfile": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "plain": true,
-                    "description": "The IAM InstanceProfile to use on the NodeGroup."
+                    "description": "The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive."
                 },
                 "instanceProfileName": {
                     "type": "string",
-                    "description": "The name of the IAM InstanceProfile to use on the NodeGroup."
+                    "description": "The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive."
                 },
                 "instanceType": {
                     "type": "string",
@@ -1782,11 +1782,11 @@
                 "instanceProfile": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "plain": true,
-                    "description": "The IAM InstanceProfile to use on the NodeGroup."
+                    "description": "The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive."
                 },
                 "instanceProfileName": {
                     "type": "string",
-                    "description": "The name of the IAM InstanceProfile to use on the NodeGroup."
+                    "description": "The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive."
                 },
                 "instanceType": {
                     "type": "string",
@@ -2059,11 +2059,11 @@
                 "instanceProfile": {
                     "$ref": "/aws/v6.18.2/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "plain": true,
-                    "description": "The IAM InstanceProfile to use on the NodeGroup."
+                    "description": "The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive."
                 },
                 "instanceProfileName": {
                     "type": "string",
-                    "description": "The name of the IAM InstanceProfile to use on the NodeGroup."
+                    "description": "The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive."
                 },
                 "instanceType": {
                     "type": "string",

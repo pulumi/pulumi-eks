@@ -371,9 +371,9 @@ type ClusterNodeGroupOptions struct {
 	//
 	// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
 	IgnoreScalingChanges *bool `pulumi:"ignoreScalingChanges"`
-	// The IAM InstanceProfile to use on the NodeGroup.
+	// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfile *iam.InstanceProfile `pulumi:"instanceProfile"`
-	// The name of the IAM InstanceProfile to use on the NodeGroup.
+	// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfileName *string `pulumi:"instanceProfileName"`
 	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType *string `pulumi:"instanceType"`
@@ -547,9 +547,9 @@ type ClusterNodeGroupOptionsArgs struct {
 	//
 	// See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.
 	IgnoreScalingChanges *bool `pulumi:"ignoreScalingChanges"`
-	// The IAM InstanceProfile to use on the NodeGroup.
+	// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfile *iam.InstanceProfile `pulumi:"instanceProfile"`
-	// The name of the IAM InstanceProfile to use on the NodeGroup.
+	// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 	InstanceProfileName pulumi.StringPtrInput `pulumi:"instanceProfileName"`
 	// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
 	InstanceType pulumi.StringPtrInput `pulumi:"instanceType"`
@@ -830,12 +830,12 @@ func (o ClusterNodeGroupOptionsOutput) IgnoreScalingChanges() pulumi.BoolPtrOutp
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *bool { return v.IgnoreScalingChanges }).(pulumi.BoolPtrOutput)
 }
 
-// The IAM InstanceProfile to use on the NodeGroup.
+// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 func (o ClusterNodeGroupOptionsOutput) InstanceProfile() iam.InstanceProfileOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *iam.InstanceProfile { return v.InstanceProfile }).(iam.InstanceProfileOutput)
 }
 
-// The name of the IAM InstanceProfile to use on the NodeGroup.
+// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 func (o ClusterNodeGroupOptionsOutput) InstanceProfileName() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) *string { return v.InstanceProfileName }).(pulumi.StringPtrOutput)
 }
@@ -1213,7 +1213,7 @@ func (o ClusterNodeGroupOptionsPtrOutput) IgnoreScalingChanges() pulumi.BoolPtrO
 	}).(pulumi.BoolPtrOutput)
 }
 
-// The IAM InstanceProfile to use on the NodeGroup.
+// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 func (o ClusterNodeGroupOptionsPtrOutput) InstanceProfile() iam.InstanceProfileOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) *iam.InstanceProfile {
 		if v == nil {
@@ -1223,7 +1223,7 @@ func (o ClusterNodeGroupOptionsPtrOutput) InstanceProfile() iam.InstanceProfileO
 	}).(iam.InstanceProfileOutput)
 }
 
-// The name of the IAM InstanceProfile to use on the NodeGroup.
+// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
 func (o ClusterNodeGroupOptionsPtrOutput) InstanceProfileName() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) *string {
 		if v == nil {
