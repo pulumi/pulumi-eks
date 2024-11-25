@@ -345,18 +345,33 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The ingress rule that gives node group access.
+     * The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     @Import(name="instanceProfile")
     private @Nullable InstanceProfile instanceProfile;
 
     /**
-     * @return The ingress rule that gives node group access.
+     * @return The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     public Optional<InstanceProfile> instanceProfile() {
         return Optional.ofNullable(this.instanceProfile);
+    }
+
+    /**
+     * The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+     * 
+     */
+    @Import(name="instanceProfileName")
+    private @Nullable Output<String> instanceProfileName;
+
+    /**
+     * @return The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+     * 
+     */
+    public Optional<Output<String>> instanceProfileName() {
+        return Optional.ofNullable(this.instanceProfileName);
     }
 
     /**
@@ -834,6 +849,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
         this.gpu = $.gpu;
         this.ignoreScalingChanges = $.ignoreScalingChanges;
         this.instanceProfile = $.instanceProfile;
+        this.instanceProfileName = $.instanceProfileName;
         this.instanceType = $.instanceType;
         this.keyName = $.keyName;
         this.kubeletExtraArgs = $.kubeletExtraArgs;
@@ -1304,7 +1320,7 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param instanceProfile The ingress rule that gives node group access.
+         * @param instanceProfile The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
          * 
          * @return builder
          * 
@@ -1312,6 +1328,27 @@ public final class NodeGroupV2Args extends com.pulumi.resources.ResourceArgs {
         public Builder instanceProfile(@Nullable InstanceProfile instanceProfile) {
             $.instanceProfile = instanceProfile;
             return this;
+        }
+
+        /**
+         * @param instanceProfileName The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder instanceProfileName(@Nullable Output<String> instanceProfileName) {
+            $.instanceProfileName = instanceProfileName;
+            return this;
+        }
+
+        /**
+         * @param instanceProfileName The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder instanceProfileName(String instanceProfileName) {
+            return instanceProfileName(Output.of(instanceProfileName));
         }
 
         /**

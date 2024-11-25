@@ -39,6 +39,7 @@ import {
     SelfManagedV1NodeUserDataArgs,
     SelfManagedV2NodeUserDataArgs,
 } from "./userdata";
+import { InstanceProfile } from "@pulumi/aws/iam";
 
 export type TaintEffect = "NoSchedule" | "NoExecute" | "PreferNoSchedule";
 
@@ -277,6 +278,7 @@ export interface NodeGroupBaseOptions {
      * must be supplied in the ClusterOptions as either: 'instanceRole', or as a role of 'instanceRoles'.
      */
     instanceProfile?: aws.iam.InstanceProfile;
+    instanceProfileName?: pulumi.Input<string>;
 
     /**
      * The tags to apply to the NodeGroup's AutoScalingGroup in the
@@ -652,6 +654,38 @@ export function createNodeGroup(
     return createNodeGroupInternal(name, args, pulumi.output(core), parent, provider);
 }
 
+export function resolveInstanceProfileName(
+    name: string,
+    args: Omit<NodeGroupOptions, "cluster">,
+    c: pulumi.UnwrappedObject<CoreData>,
+    parent: pulumi.ComponentResource,
+): pulumi.Output<string> {
+    if (
+        (args.instanceProfile || c.nodeGroupOptions.instanceProfile) &&
+        (args.instanceProfileName || c.nodeGroupOptions.instanceProfileName)
+    ) {
+        throw new pulumi.ResourceError(
+            `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+            parent,
+        );
+    }
+
+    if (args.instanceProfile) {
+        return args.instanceProfile.name;
+    } else if (args.instanceProfileName) {
+        return pulumi.output(args.instanceProfileName);
+    } else if (c.nodeGroupOptions.instanceProfile) {
+        return c.nodeGroupOptions.instanceProfile.name;
+    } else if (c.nodeGroupOptions.instanceProfileName) {
+        return pulumi.output(c.nodeGroupOptions.instanceProfileName!);
+    } else {
+        throw new pulumi.ResourceError(
+            `an instanceProfile or instanceProfileName is required`,
+            parent,
+        );
+    }
+}
+
 function createNodeGroupInternal(
     name: string,
     args: Omit<NodeGroupOptions, "cluster">,
@@ -659,12 +693,9 @@ function createNodeGroupInternal(
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): NodeGroupData {
-    const instanceProfile = core.apply((c) => {
-        if (!args.instanceProfile && !c.nodeGroupOptions.instanceProfile) {
-            throw new pulumi.ResourceError(`an instanceProfile is required`, parent);
-        }
-        return args.instanceProfile ?? c.nodeGroupOptions.instanceProfile!;
-    });
+    const instanceProfileName = core.apply((c) =>
+        resolveInstanceProfileName(name, args, c, parent),
+    );
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         throw new pulumi.ResourceError(
@@ -975,7 +1006,7 @@ function createNodeGroupInternal(
             associatePublicIpAddress: nodeAssociatePublicIpAddress,
             imageId: amiId,
             instanceType: args.instanceType || "t3.medium",
-            iamInstanceProfile: instanceProfile,
+            iamInstanceProfile: instanceProfileName,
             keyName: keyName,
             // This apply is necessary in s.t. the launchConfiguration picks up a
             // dependency on the eksClusterIngressRule. The nodes may fail to
@@ -1130,12 +1161,9 @@ function createNodeGroupV2Internal(
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): NodeGroupV2Data {
-    const instanceProfileArn = core.apply((c) => {
-        if (!args.instanceProfile && !c.nodeGroupOptions.instanceProfile) {
-            throw new pulumi.ResourceError(`an instanceProfile is required`, parent);
-        }
-        return args.instanceProfile?.arn ?? c.nodeGroupOptions.instanceProfile!.arn;
-    });
+    const instanceProfileName = core.apply((c) =>
+        resolveInstanceProfileName(name, args, c, parent),
+    );
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         throw new pulumi.ResourceError(
@@ -1458,7 +1486,7 @@ function createNodeGroupV2Internal(
         {
             imageId: amiId,
             instanceType: args.instanceType || "t3.medium",
-            iamInstanceProfile: { arn: instanceProfileArn },
+            iamInstanceProfile: { name: instanceProfileName },
             keyName: keyName,
             instanceMarketOptions: marketOptions,
             blockDeviceMappings,

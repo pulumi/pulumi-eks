@@ -138,10 +138,15 @@ public final class ClusterNodeGroupOptions {
      */
     private @Nullable Boolean ignoreScalingChanges;
     /**
-     * @return The ingress rule that gives node group access.
+     * @return The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     private @Nullable InstanceProfile instanceProfile;
+    /**
+     * @return The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+     * 
+     */
+    private @Nullable String instanceProfileName;
     /**
      * @return The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t3.medium&#34;.
      * 
@@ -450,11 +455,18 @@ public final class ClusterNodeGroupOptions {
         return Optional.ofNullable(this.ignoreScalingChanges);
     }
     /**
-     * @return The ingress rule that gives node group access.
+     * @return The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      * 
      */
     public Optional<InstanceProfile> instanceProfile() {
         return Optional.ofNullable(this.instanceProfile);
+    }
+    /**
+     * @return The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+     * 
+     */
+    public Optional<String> instanceProfileName() {
+        return Optional.ofNullable(this.instanceProfileName);
     }
     /**
      * @return The instance type to use for the cluster&#39;s nodes. Defaults to &#34;t3.medium&#34;.
@@ -696,6 +708,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable Boolean gpu;
         private @Nullable Boolean ignoreScalingChanges;
         private @Nullable InstanceProfile instanceProfile;
+        private @Nullable String instanceProfileName;
         private @Nullable String instanceType;
         private @Nullable String keyName;
         private @Nullable String kubeletExtraArgs;
@@ -740,6 +753,7 @@ public final class ClusterNodeGroupOptions {
     	      this.gpu = defaults.gpu;
     	      this.ignoreScalingChanges = defaults.ignoreScalingChanges;
     	      this.instanceProfile = defaults.instanceProfile;
+    	      this.instanceProfileName = defaults.instanceProfileName;
     	      this.instanceType = defaults.instanceType;
     	      this.keyName = defaults.keyName;
     	      this.kubeletExtraArgs = defaults.kubeletExtraArgs;
@@ -859,6 +873,12 @@ public final class ClusterNodeGroupOptions {
         public Builder instanceProfile(@Nullable InstanceProfile instanceProfile) {
 
             this.instanceProfile = instanceProfile;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder instanceProfileName(@Nullable String instanceProfileName) {
+
+            this.instanceProfileName = instanceProfileName;
             return this;
         }
         @CustomType.Setter
@@ -1043,6 +1063,7 @@ public final class ClusterNodeGroupOptions {
             _resultValue.gpu = gpu;
             _resultValue.ignoreScalingChanges = ignoreScalingChanges;
             _resultValue.instanceProfile = instanceProfile;
+            _resultValue.instanceProfileName = instanceProfileName;
             _resultValue.instanceType = instanceType;
             _resultValue.keyName = keyName;
             _resultValue.kubeletExtraArgs = kubeletExtraArgs;

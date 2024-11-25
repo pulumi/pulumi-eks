@@ -226,10 +226,16 @@ namespace Pulumi.Eks
         public bool? IgnoreScalingChanges { get; set; }
 
         /// <summary>
-        /// The ingress rule that gives node group access.
+        /// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         /// </summary>
         [Input("instanceProfile")]
         public Pulumi.Aws.Iam.InstanceProfile? InstanceProfile { get; set; }
+
+        /// <summary>
+        /// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+        /// </summary>
+        [Input("instanceProfileName")]
+        public Input<string>? InstanceProfileName { get; set; }
 
         /// <summary>
         /// The instance type to use for the cluster's nodes. Defaults to "t3.medium".

@@ -168,9 +168,13 @@ export interface ClusterNodeGroupOptionsArgs {
      */
     ignoreScalingChanges?: boolean;
     /**
-     * The ingress rule that gives node group access.
+     * The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
      */
     instanceProfile?: pulumiAws.iam.InstanceProfile;
+    /**
+     * The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+     */
+    instanceProfileName?: pulumi.Input<string>;
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t3.medium".
      */

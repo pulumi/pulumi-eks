@@ -117,9 +117,13 @@ namespace Pulumi.Eks.Outputs
         /// </summary>
         public readonly bool? IgnoreScalingChanges;
         /// <summary>
-        /// The ingress rule that gives node group access.
+        /// The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         /// </summary>
         public readonly Pulumi.Aws.Iam.InstanceProfile? InstanceProfile;
+        /// <summary>
+        /// The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
+        /// </summary>
+        public readonly string? InstanceProfileName;
         /// <summary>
         /// The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         /// </summary>
@@ -290,6 +294,8 @@ namespace Pulumi.Eks.Outputs
 
             Pulumi.Aws.Iam.InstanceProfile? instanceProfile,
 
+            string? instanceProfileName,
+
             string? instanceType,
 
             string? keyName,
@@ -357,6 +363,7 @@ namespace Pulumi.Eks.Outputs
             Gpu = gpu;
             IgnoreScalingChanges = ignoreScalingChanges;
             InstanceProfile = instanceProfile;
+            InstanceProfileName = instanceProfileName;
             InstanceType = instanceType;
             KeyName = keyName;
             KubeletExtraArgs = kubeletExtraArgs;

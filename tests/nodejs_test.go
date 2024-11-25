@@ -954,6 +954,46 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 	programTestWithExtraOptions(t, &test, nil)
 }
 
+// TestAccSelfManagedNodeGroupInstanceProfile tests that NodeGroup and NodeGroupV2 can be passed
+// an instanceProfile or instanceProfileName via args or cluster.nodeGroupOptions
+func TestAccSelfManagedNodeGroupInstanceProfile(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getTestPrograms(t), "self-managed-ng-instanceProfile"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+
+				require.NotEmpty(t, info.Outputs["passedInstanceProfileName"])
+				passedInstanceProfileName := info.Outputs["passedInstanceProfileName"].(string)
+
+				for _, resource := range info.Deployment.Resources {
+					utils.PrintAndLog(resource.Type.String(), t)
+					if resource.Type.String() == "aws:ec2/launchTemplate:LaunchTemplate" {
+						require.NotEmpty(t, resource.Outputs["iamInstanceProfile"])
+						instanceProfile := resource.Outputs["iamInstanceProfile"].(map[string]interface{})
+						instanceProfileName := instanceProfile["name"].(string)
+						utils.PrintAndLog(fmt.Sprintf("LaunchTemplate Output iamInstanceProfile.name: %v", instanceProfileName), t)
+						assert.Equal(t, instanceProfileName, passedInstanceProfileName)
+					}
+					if resource.Type.String() == "aws:ec2/launchConfiguration:LaunchConfiguration" {
+						require.NotEmpty(t, resource.Outputs["iamInstanceProfile"])
+						instanceProfileName := resource.Outputs["iamInstanceProfile"].(string)
+						utils.PrintAndLog(fmt.Sprintf("LaunchConfiguration Output iamInstanceProfile: %v", instanceProfileName), t)
+						assert.Equal(t, instanceProfileName, passedInstanceProfileName)
+					}
+				}
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
 // TestAccClusterAddons tests that the cluster addons are applied correctly and can be updated.
 func TestAccClusterAddons(t *testing.T) {
 	if testing.Short() {
