@@ -1,4 +1,4 @@
-name: self-managed-ng-instanceProfile
+name: self-managed-ng-instance-profile-name
 description: A minimal TypeScript Pulumi program
 runtime:
   name: nodejs

@@ -1,5 +1,5 @@
 {
-    "name": "self-managed-ng-os",
+    "name": "self-managed-ng-instance-profile-name",
     "devDependencies": {
         "@types/node": "latest",
         "typescript": "^4.0.0"

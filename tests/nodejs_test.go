@@ -956,13 +956,13 @@ func TestAccSelfManagedNodeGroupOS(t *testing.T) {
 
 // TestAccSelfManagedNodeGroupInstanceProfile tests that NodeGroup and NodeGroupV2 can be passed
 // an instanceProfile or instanceProfileName via args or cluster.nodeGroupOptions
-func TestAccSelfManagedNodeGroupInstanceProfile(t *testing.T) {
+func TestAccSelfManagedNodeGroupInstanceProfileName(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getTestPrograms(t), "self-managed-ng-instanceProfile"),
+			Dir: path.Join(getTestPrograms(t), "self-managed-ng-instance-profile-name"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.RunEKSSmokeTest(t,
 					info.Deployment.Resources,

@@ -277,7 +277,26 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
     /**
      * Extra security groups to attach on all nodes in this worker node group.
      * 
-     * This additional set of security groups captures any user application rules that will be needed for the nodes.
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+     * 
+     */
+    @Import(name="extraNodeSecurityGroupIds")
+    private @Nullable Output<List<String>> extraNodeSecurityGroupIds;
+
+    /**
+     * @return Extra security groups to attach on all nodes in this worker node group.
+     * 
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+     * 
+     */
+    public Optional<Output<List<String>>> extraNodeSecurityGroupIds() {
+        return Optional.ofNullable(this.extraNodeSecurityGroupIds);
+    }
+
+    /**
+     * Extra security groups to attach on all nodes in this worker node group.
+     * 
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
      * 
      */
     @Import(name="extraNodeSecurityGroups")
@@ -286,7 +305,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
     /**
      * @return Extra security groups to attach on all nodes in this worker node group.
      * 
-     * This additional set of security groups captures any user application rules that will be needed for the nodes.
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
      * 
      */
     public Optional<Output<List<SecurityGroup>>> extraNodeSecurityGroups() {
@@ -795,6 +814,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
         this.desiredCapacity = $.desiredCapacity;
         this.enableDetailedMonitoring = $.enableDetailedMonitoring;
         this.encryptRootBlockDevice = $.encryptRootBlockDevice;
+        this.extraNodeSecurityGroupIds = $.extraNodeSecurityGroupIds;
         this.extraNodeSecurityGroups = $.extraNodeSecurityGroups;
         this.gpu = $.gpu;
         this.instanceProfile = $.instanceProfile;
@@ -1180,9 +1200,46 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
+         * @param extraNodeSecurityGroupIds Extra security groups to attach on all nodes in this worker node group.
+         * 
+         * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder extraNodeSecurityGroupIds(@Nullable Output<List<String>> extraNodeSecurityGroupIds) {
+            $.extraNodeSecurityGroupIds = extraNodeSecurityGroupIds;
+            return this;
+        }
+
+        /**
+         * @param extraNodeSecurityGroupIds Extra security groups to attach on all nodes in this worker node group.
+         * 
+         * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder extraNodeSecurityGroupIds(List<String> extraNodeSecurityGroupIds) {
+            return extraNodeSecurityGroupIds(Output.of(extraNodeSecurityGroupIds));
+        }
+
+        /**
+         * @param extraNodeSecurityGroupIds Extra security groups to attach on all nodes in this worker node group.
+         * 
+         * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder extraNodeSecurityGroupIds(String... extraNodeSecurityGroupIds) {
+            return extraNodeSecurityGroupIds(List.of(extraNodeSecurityGroupIds));
+        }
+
+        /**
          * @param extraNodeSecurityGroups Extra security groups to attach on all nodes in this worker node group.
          * 
-         * This additional set of security groups captures any user application rules that will be needed for the nodes.
+         * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
          * 
          * @return builder
          * 
@@ -1195,7 +1252,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
         /**
          * @param extraNodeSecurityGroups Extra security groups to attach on all nodes in this worker node group.
          * 
-         * This additional set of security groups captures any user application rules that will be needed for the nodes.
+         * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
          * 
          * @return builder
          * 
@@ -1207,7 +1264,7 @@ public final class NodeGroupArgs extends com.pulumi.resources.ResourceArgs {
         /**
          * @param extraNodeSecurityGroups Extra security groups to attach on all nodes in this worker node group.
          * 
-         * This additional set of security groups captures any user application rules that will be needed for the nodes.
+         * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
          * 
          * @return builder
          * 

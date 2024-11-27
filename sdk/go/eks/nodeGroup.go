@@ -111,7 +111,11 @@ type nodeGroupArgs struct {
 	EncryptRootBlockDevice *bool `pulumi:"encryptRootBlockDevice"`
 	// Extra security groups to attach on all nodes in this worker node group.
 	//
-	// This additional set of security groups captures any user application rules that will be needed for the nodes.
+	// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+	ExtraNodeSecurityGroupIds []string `pulumi:"extraNodeSecurityGroupIds"`
+	// Extra security groups to attach on all nodes in this worker node group.
+	//
+	// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
 	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
 	// Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 	//
@@ -270,7 +274,11 @@ type NodeGroupArgs struct {
 	EncryptRootBlockDevice pulumi.BoolPtrInput
 	// Extra security groups to attach on all nodes in this worker node group.
 	//
-	// This additional set of security groups captures any user application rules that will be needed for the nodes.
+	// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+	ExtraNodeSecurityGroupIds pulumi.StringArrayInput
+	// Extra security groups to attach on all nodes in this worker node group.
+	//
+	// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
 	ExtraNodeSecurityGroups ec2.SecurityGroupArrayInput
 	// Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 	//

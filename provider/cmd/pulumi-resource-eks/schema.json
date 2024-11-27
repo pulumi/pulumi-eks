@@ -280,12 +280,19 @@
                     "type": "boolean",
                     "description": "Encrypt the root block device of the nodes in the node group."
                 },
+                "extraNodeSecurityGroupIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive."
+                },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
                         "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
-                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
+                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive."
                 },
                 "gpu": {
                     "type": "boolean",
@@ -1768,12 +1775,19 @@
                     "type": "boolean",
                     "description": "Encrypt the root block device of the nodes in the node group."
                 },
+                "extraNodeSecurityGroupIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive."
+                },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
                         "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
-                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
+                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive."
                 },
                 "gpu": {
                     "type": "boolean",
@@ -2040,12 +2054,19 @@
                     "type": "boolean",
                     "description": "Encrypt the root block device of the nodes in the node group."
                 },
+                "extraNodeSecurityGroupIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive."
+                },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
                         "$ref": "/aws/v6.18.2/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
-                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
+                    "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive."
                 },
                 "gpu": {
                     "type": "boolean",

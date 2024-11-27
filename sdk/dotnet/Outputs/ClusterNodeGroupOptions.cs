@@ -95,7 +95,13 @@ namespace Pulumi.Eks.Outputs
         /// <summary>
         /// Extra security groups to attach on all nodes in this worker node group.
         /// 
-        /// This additional set of security groups captures any user application rules that will be needed for the nodes.
+        /// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+        /// </summary>
+        public readonly ImmutableArray<string> ExtraNodeSecurityGroupIds;
+        /// <summary>
+        /// Extra security groups to attach on all nodes in this worker node group.
+        /// 
+        /// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
         /// </summary>
         public readonly ImmutableArray<Pulumi.Aws.Ec2.SecurityGroup> ExtraNodeSecurityGroups;
         /// <summary>
@@ -286,6 +292,8 @@ namespace Pulumi.Eks.Outputs
 
             bool? encryptRootBlockDevice,
 
+            ImmutableArray<string> extraNodeSecurityGroupIds,
+
             ImmutableArray<Pulumi.Aws.Ec2.SecurityGroup> extraNodeSecurityGroups,
 
             bool? gpu,
@@ -359,6 +367,7 @@ namespace Pulumi.Eks.Outputs
             DesiredCapacity = desiredCapacity;
             EnableDetailedMonitoring = enableDetailedMonitoring;
             EncryptRootBlockDevice = encryptRootBlockDevice;
+            ExtraNodeSecurityGroupIds = extraNodeSecurityGroupIds;
             ExtraNodeSecurityGroups = extraNodeSecurityGroups;
             Gpu = gpu;
             IgnoreScalingChanges = ignoreScalingChanges;

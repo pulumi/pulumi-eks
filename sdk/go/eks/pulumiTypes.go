@@ -355,7 +355,11 @@ type ClusterNodeGroupOptions struct {
 	EncryptRootBlockDevice *bool `pulumi:"encryptRootBlockDevice"`
 	// Extra security groups to attach on all nodes in this worker node group.
 	//
-	// This additional set of security groups captures any user application rules that will be needed for the nodes.
+	// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+	ExtraNodeSecurityGroupIds []string `pulumi:"extraNodeSecurityGroupIds"`
+	// Extra security groups to attach on all nodes in this worker node group.
+	//
+	// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
 	ExtraNodeSecurityGroups []*ec2.SecurityGroup `pulumi:"extraNodeSecurityGroups"`
 	// Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 	//
@@ -531,7 +535,11 @@ type ClusterNodeGroupOptionsArgs struct {
 	EncryptRootBlockDevice pulumi.BoolPtrInput `pulumi:"encryptRootBlockDevice"`
 	// Extra security groups to attach on all nodes in this worker node group.
 	//
-	// This additional set of security groups captures any user application rules that will be needed for the nodes.
+	// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+	ExtraNodeSecurityGroupIds pulumi.StringArrayInput `pulumi:"extraNodeSecurityGroupIds"`
+	// Extra security groups to attach on all nodes in this worker node group.
+	//
+	// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
 	ExtraNodeSecurityGroups ec2.SecurityGroupArrayInput `pulumi:"extraNodeSecurityGroups"`
 	// Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 	//
@@ -805,7 +813,14 @@ func (o ClusterNodeGroupOptionsOutput) EncryptRootBlockDevice() pulumi.BoolPtrOu
 
 // Extra security groups to attach on all nodes in this worker node group.
 //
-// This additional set of security groups captures any user application rules that will be needed for the nodes.
+// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+func (o ClusterNodeGroupOptionsOutput) ExtraNodeSecurityGroupIds() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v ClusterNodeGroupOptions) []string { return v.ExtraNodeSecurityGroupIds }).(pulumi.StringArrayOutput)
+}
+
+// Extra security groups to attach on all nodes in this worker node group.
+//
+// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
 func (o ClusterNodeGroupOptionsOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput {
 	return o.ApplyT(func(v ClusterNodeGroupOptions) []*ec2.SecurityGroup { return v.ExtraNodeSecurityGroups }).(ec2.SecurityGroupArrayOutput)
 }
@@ -1173,7 +1188,19 @@ func (o ClusterNodeGroupOptionsPtrOutput) EncryptRootBlockDevice() pulumi.BoolPt
 
 // Extra security groups to attach on all nodes in this worker node group.
 //
-// This additional set of security groups captures any user application rules that will be needed for the nodes.
+// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+func (o ClusterNodeGroupOptionsPtrOutput) ExtraNodeSecurityGroupIds() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *ClusterNodeGroupOptions) []string {
+		if v == nil {
+			return nil
+		}
+		return v.ExtraNodeSecurityGroupIds
+	}).(pulumi.StringArrayOutput)
+}
+
+// Extra security groups to attach on all nodes in this worker node group.
+//
+// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
 func (o ClusterNodeGroupOptionsPtrOutput) ExtraNodeSecurityGroups() ec2.SecurityGroupArrayOutput {
 	return o.ApplyT(func(v *ClusterNodeGroupOptions) []*ec2.SecurityGroup {
 		if v == nil {

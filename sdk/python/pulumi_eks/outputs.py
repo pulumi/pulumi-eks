@@ -228,6 +228,8 @@ class ClusterNodeGroupOptions(dict):
             suggest = "enable_detailed_monitoring"
         elif key == "encryptRootBlockDevice":
             suggest = "encrypt_root_block_device"
+        elif key == "extraNodeSecurityGroupIds":
+            suggest = "extra_node_security_group_ids"
         elif key == "extraNodeSecurityGroups":
             suggest = "extra_node_security_groups"
         elif key == "ignoreScalingChanges":
@@ -306,6 +308,7 @@ class ClusterNodeGroupOptions(dict):
                  desired_capacity: Optional[int] = None,
                  enable_detailed_monitoring: Optional[bool] = None,
                  encrypt_root_block_device: Optional[bool] = None,
+                 extra_node_security_group_ids: Optional[Sequence[str]] = None,
                  extra_node_security_groups: Optional[Sequence['pulumi_aws.ec2.SecurityGroup']] = None,
                  gpu: Optional[bool] = None,
                  ignore_scaling_changes: Optional[bool] = None,
@@ -382,9 +385,12 @@ class ClusterNodeGroupOptions(dict):
                Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.
                For more information, see "Paid tier" and "Example 1 - EC2 Detailed Monitoring" here https://aws.amazon.com/cloudwatch/pricing/.
         :param bool encrypt_root_block_device: Encrypt the root block device of the nodes in the node group.
+        :param Sequence[str] extra_node_security_group_ids: Extra security groups to attach on all nodes in this worker node group.
+               
+               This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
         :param Sequence['pulumi_aws.ec2.SecurityGroup'] extra_node_security_groups: Extra security groups to attach on all nodes in this worker node group.
                
-               This additional set of security groups captures any user application rules that will be needed for the nodes.
+               This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
         :param bool gpu: Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
                
                Defaults to false.
@@ -481,6 +487,8 @@ class ClusterNodeGroupOptions(dict):
             pulumi.set(__self__, "enable_detailed_monitoring", enable_detailed_monitoring)
         if encrypt_root_block_device is not None:
             pulumi.set(__self__, "encrypt_root_block_device", encrypt_root_block_device)
+        if extra_node_security_group_ids is not None:
+            pulumi.set(__self__, "extra_node_security_group_ids", extra_node_security_group_ids)
         if extra_node_security_groups is not None:
             pulumi.set(__self__, "extra_node_security_groups", extra_node_security_groups)
         if gpu is not None:
@@ -665,12 +673,22 @@ class ClusterNodeGroupOptions(dict):
         return pulumi.get(self, "encrypt_root_block_device")
 
     @property
+    @pulumi.getter(name="extraNodeSecurityGroupIds")
+    def extra_node_security_group_ids(self) -> Optional[Sequence[str]]:
+        """
+        Extra security groups to attach on all nodes in this worker node group.
+
+        This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+        """
+        return pulumi.get(self, "extra_node_security_group_ids")
+
+    @property
     @pulumi.getter(name="extraNodeSecurityGroups")
     def extra_node_security_groups(self) -> Optional[Sequence['pulumi_aws.ec2.SecurityGroup']]:
         """
         Extra security groups to attach on all nodes in this worker node group.
 
-        This additional set of security groups captures any user application rules that will be needed for the nodes.
+        This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
         """
         return pulumi.get(self, "extra_node_security_groups")
 

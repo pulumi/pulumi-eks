@@ -73,6 +73,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource {
             resourceInputs["desiredCapacity"] = args ? args.desiredCapacity : undefined;
             resourceInputs["enableDetailedMonitoring"] = args ? args.enableDetailedMonitoring : undefined;
             resourceInputs["encryptRootBlockDevice"] = args ? args.encryptRootBlockDevice : undefined;
+            resourceInputs["extraNodeSecurityGroupIds"] = args ? args.extraNodeSecurityGroupIds : undefined;
             resourceInputs["extraNodeSecurityGroups"] = args ? args.extraNodeSecurityGroups : undefined;
             resourceInputs["gpu"] = args ? args.gpu : undefined;
             resourceInputs["ignoreScalingChanges"] = args ? args.ignoreScalingChanges : undefined;
@@ -203,7 +204,13 @@ export interface NodeGroupV2Args {
     /**
      * Extra security groups to attach on all nodes in this worker node group.
      *
-     * This additional set of security groups captures any user application rules that will be needed for the nodes.
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+     */
+    extraNodeSecurityGroupIds?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * Extra security groups to attach on all nodes in this worker node group.
+     *
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
      */
     extraNodeSecurityGroups?: pulumi.Input<pulumi.Input<pulumiAws.ec2.SecurityGroup>[]>;
     /**

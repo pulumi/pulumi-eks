@@ -113,7 +113,14 @@ public final class ClusterNodeGroupOptions {
     /**
      * @return Extra security groups to attach on all nodes in this worker node group.
      * 
-     * This additional set of security groups captures any user application rules that will be needed for the nodes.
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+     * 
+     */
+    private @Nullable List<String> extraNodeSecurityGroupIds;
+    /**
+     * @return Extra security groups to attach on all nodes in this worker node group.
+     * 
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
      * 
      */
     private @Nullable List<SecurityGroup> extraNodeSecurityGroups;
@@ -424,7 +431,16 @@ public final class ClusterNodeGroupOptions {
     /**
      * @return Extra security groups to attach on all nodes in this worker node group.
      * 
-     * This additional set of security groups captures any user application rules that will be needed for the nodes.
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+     * 
+     */
+    public List<String> extraNodeSecurityGroupIds() {
+        return this.extraNodeSecurityGroupIds == null ? List.of() : this.extraNodeSecurityGroupIds;
+    }
+    /**
+     * @return Extra security groups to attach on all nodes in this worker node group.
+     * 
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
      * 
      */
     public List<SecurityGroup> extraNodeSecurityGroups() {
@@ -704,6 +720,7 @@ public final class ClusterNodeGroupOptions {
         private @Nullable Integer desiredCapacity;
         private @Nullable Boolean enableDetailedMonitoring;
         private @Nullable Boolean encryptRootBlockDevice;
+        private @Nullable List<String> extraNodeSecurityGroupIds;
         private @Nullable List<SecurityGroup> extraNodeSecurityGroups;
         private @Nullable Boolean gpu;
         private @Nullable Boolean ignoreScalingChanges;
@@ -749,6 +766,7 @@ public final class ClusterNodeGroupOptions {
     	      this.desiredCapacity = defaults.desiredCapacity;
     	      this.enableDetailedMonitoring = defaults.enableDetailedMonitoring;
     	      this.encryptRootBlockDevice = defaults.encryptRootBlockDevice;
+    	      this.extraNodeSecurityGroupIds = defaults.extraNodeSecurityGroupIds;
     	      this.extraNodeSecurityGroups = defaults.extraNodeSecurityGroups;
     	      this.gpu = defaults.gpu;
     	      this.ignoreScalingChanges = defaults.ignoreScalingChanges;
@@ -847,6 +865,15 @@ public final class ClusterNodeGroupOptions {
 
             this.encryptRootBlockDevice = encryptRootBlockDevice;
             return this;
+        }
+        @CustomType.Setter
+        public Builder extraNodeSecurityGroupIds(@Nullable List<String> extraNodeSecurityGroupIds) {
+
+            this.extraNodeSecurityGroupIds = extraNodeSecurityGroupIds;
+            return this;
+        }
+        public Builder extraNodeSecurityGroupIds(String... extraNodeSecurityGroupIds) {
+            return extraNodeSecurityGroupIds(List.of(extraNodeSecurityGroupIds));
         }
         @CustomType.Setter
         public Builder extraNodeSecurityGroups(@Nullable List<SecurityGroup> extraNodeSecurityGroups) {
@@ -1059,6 +1086,7 @@ public final class ClusterNodeGroupOptions {
             _resultValue.desiredCapacity = desiredCapacity;
             _resultValue.enableDetailedMonitoring = enableDetailedMonitoring;
             _resultValue.encryptRootBlockDevice = encryptRootBlockDevice;
+            _resultValue.extraNodeSecurityGroupIds = extraNodeSecurityGroupIds;
             _resultValue.extraNodeSecurityGroups = extraNodeSecurityGroups;
             _resultValue.gpu = gpu;
             _resultValue.ignoreScalingChanges = ignoreScalingChanges;

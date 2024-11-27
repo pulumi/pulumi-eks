@@ -2163,7 +2163,16 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			},
 			Description: "Extra security groups to attach on all nodes in this worker node group.\n\n" +
 				"This additional set of security groups captures any user application rules that will be " +
-				"needed for the nodes.",
+				"needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.",
+		},
+		"extraNodeSecurityGroupIds": {
+			TypeSpec: schema.TypeSpec{
+				Type:  "array",
+				Items: &schema.TypeSpec{Type: "string"},
+			},
+			Description: "Extra security groups to attach on all nodes in this worker node group.\n\n" +
+				"This additional set of security groups captures any user application rules that will be " +
+				"needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.",
 		},
 		"encryptRootBlockDevice": {
 			TypeSpec:    schema.TypeSpec{Type: "boolean"},

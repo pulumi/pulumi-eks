@@ -189,13 +189,27 @@ namespace Pulumi.Eks
         [Input("encryptRootBlockDevice")]
         public Input<bool>? EncryptRootBlockDevice { get; set; }
 
+        [Input("extraNodeSecurityGroupIds")]
+        private InputList<string>? _extraNodeSecurityGroupIds;
+
+        /// <summary>
+        /// Extra security groups to attach on all nodes in this worker node group.
+        /// 
+        /// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+        /// </summary>
+        public InputList<string> ExtraNodeSecurityGroupIds
+        {
+            get => _extraNodeSecurityGroupIds ?? (_extraNodeSecurityGroupIds = new InputList<string>());
+            set => _extraNodeSecurityGroupIds = value;
+        }
+
         [Input("extraNodeSecurityGroups")]
         private InputList<Pulumi.Aws.Ec2.SecurityGroup>? _extraNodeSecurityGroups;
 
         /// <summary>
         /// Extra security groups to attach on all nodes in this worker node group.
         /// 
-        /// This additional set of security groups captures any user application rules that will be needed for the nodes.
+        /// This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
         /// </summary>
         public InputList<Pulumi.Aws.Ec2.SecurityGroup> ExtraNodeSecurityGroups
         {

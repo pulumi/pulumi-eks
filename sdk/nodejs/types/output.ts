@@ -146,7 +146,13 @@ export interface ClusterNodeGroupOptions {
     /**
      * Extra security groups to attach on all nodes in this worker node group.
      *
-     * This additional set of security groups captures any user application rules that will be needed for the nodes.
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
+     */
+    extraNodeSecurityGroupIds?: string[];
+    /**
+     * Extra security groups to attach on all nodes in this worker node group.
+     *
+     * This additional set of security groups captures any user application rules that will be needed for the nodes. Properties extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exlusive.
      */
     extraNodeSecurityGroups?: pulumiAws.ec2.SecurityGroup[];
     /**
