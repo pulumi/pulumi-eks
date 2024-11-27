@@ -277,7 +277,7 @@ export interface NodeGroupBaseOptions {
      * The instance profile to use for this node group. Note, the role for the instance profile
      * must be supplied in the ClusterOptions as either: 'instanceRole', or as a role of 'instanceRoles'.
      */
-    instanceProfile?: aws.iam.InstanceProfile;
+    instanceProfile?: pulumi.Input<aws.iam.InstanceProfile>;
     instanceProfileName?: pulumi.Input<string>;
 
     /**
@@ -671,7 +671,7 @@ export function resolveInstanceProfileName(
     }
 
     if (args.instanceProfile) {
-        return args.instanceProfile.name;
+        return pulumi.output(args.instanceProfile).name;
     } else if (args.instanceProfileName) {
         return pulumi.output(args.instanceProfileName);
     } else if (c.nodeGroupOptions.instanceProfile) {

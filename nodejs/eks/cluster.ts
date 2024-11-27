@@ -164,15 +164,17 @@ function createOrGetInstanceProfile(
     instanceRoleName?: pulumi.Input<aws.iam.Role>,
     instanceProfileName?: pulumi.Input<string>,
     provider?: pulumi.ProviderResource,
-): aws.iam.InstanceProfile {
+): pulumi.Output<aws.iam.InstanceProfile> {
     let instanceProfile: aws.iam.InstanceProfile;
     if (instanceProfileName) {
-        instanceProfile = aws.iam.InstanceProfile.get(
-            `${name}-instanceProfile`,
-            instanceProfileName,
-            undefined,
-            { parent, provider },
-        );
+        return pulumi.output(instanceProfileName).apply(name => {
+            return aws.iam.InstanceProfile.get(
+                `${name}-instanceProfile`,
+                instanceProfileName,
+                undefined,
+                { parent, provider },
+            );
+        })
     } else {
         instanceProfile = new aws.iam.InstanceProfile(
             `${name}-instanceProfile`,
@@ -183,7 +185,7 @@ function createOrGetInstanceProfile(
         );
     }
 
-    return instanceProfile;
+    return pulumi.output(instanceProfile);
 }
 
 // ExecEnvVar sets the environment variables using an exec-based auth plugin.
