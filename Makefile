@@ -31,6 +31,9 @@ build:: schema provider build_nodejs build_python build_go build_dotnet build_ja
 schema::
 	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER) $(VERSION_GENERIC))
 
+# Renovate can re-build our schema as a postUpgradeTask.
+renovte: schema
+
 provider:: bin/${PROVIDER}
 
 .pulumi/bin/pulumi: PULUMI_VERSION := $(shell cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3)
