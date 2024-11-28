@@ -32,7 +32,7 @@ schema::
 	(cd provider/cmd/$(CODEGEN) && go run main.go schema ../$(PROVIDER) $(VERSION_GENERIC))
 
 # Renovate can re-build our schema as a postUpgradeTask.
-renovte: schema
+renovate: schema
 
 provider:: bin/${PROVIDER}
 
