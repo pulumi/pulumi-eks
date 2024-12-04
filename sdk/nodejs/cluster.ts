@@ -143,6 +143,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["clusterSecurityGroupTags"] = args ? args.clusterSecurityGroupTags : undefined;
             resourceInputs["clusterTags"] = args ? args.clusterTags : undefined;
             resourceInputs["corednsAddonOptions"] = args ? (args.corednsAddonOptions ? inputs.coreDnsAddonOptionsArgsProvideDefaults(args.corednsAddonOptions) : undefined) : undefined;
+            resourceInputs["createInstanceRole"] = args ? args.createInstanceRole : undefined;
             resourceInputs["createOidcProvider"] = args ? args.createOidcProvider : undefined;
             resourceInputs["creationRoleProvider"] = args ? args.creationRoleProvider : undefined;
             resourceInputs["defaultAddonsToRemove"] = args ? args.defaultAddonsToRemove : undefined;
@@ -288,6 +289,12 @@ export interface ClusterArgs {
      * Options for managing the `coredns` addon.
      */
     corednsAddonOptions?: inputs.CoreDnsAddonOptionsArgs;
+    /**
+     * Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.
+     * If set to false when using the default node group, an instance role or instance profile must be provided.n
+     * Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.
+     */
+    createInstanceRole?: boolean;
     /**
      * Indicates whether an IAM OIDC Provider is created for the EKS cluster.
      *
