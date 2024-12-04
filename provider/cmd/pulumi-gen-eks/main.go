@@ -762,6 +762,16 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						},
 						Description: "Options for managing the `kube-proxy` addon.",
 					},
+					"createInstanceRole": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "boolean",
+							Plain: true,
+						},
+						Description: "Whether to create the instance role for the EKS cluster. " +
+							"Defaults to true when using the default node group, false otherwise.\n" +
+							"If set to false when using the default node group, an instance role or instance profile must be provided.n\n" +
+							"Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.",
+					},
 				},
 				Methods: map[string]string{
 					"getKubeconfig": "eks:index:Cluster/getKubeconfig",
