@@ -824,7 +824,10 @@ export function createCore(
         }
         instanceRoles = pulumi.output([args.instanceRole]);
         defaultInstanceRole = pulumi.output(args.instanceRole);
-    } else if (!args.skipDefaultNodeGroup) {
+    } else if (
+        args.createInstanceRole ||
+        (!args.skipDefaultNodeGroup && args.createInstanceRole === undefined)
+    ) {
         const instanceRole = new ServiceRole(
             `${name}-instanceRole`,
             {
@@ -1772,6 +1775,13 @@ export interface ClusterOptions {
      * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
      */
     accessEntries?: { [key: string]: AccessEntry };
+
+    /**
+     * Whether to create the instance role for the EKS cluster.
+     * Defaults to true when using the default node group, false otherwise.
+     * If set to false when using the default node group, an instance role or instance profile must be provided.
+     */
+    createInstanceRole?: boolean;
 }
 
 /**

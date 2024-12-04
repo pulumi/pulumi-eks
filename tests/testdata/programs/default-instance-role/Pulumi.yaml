@@ -1,0 +1,3 @@
+name: default-instance-role
+description: EKS cluster without default node group but with instance role
+runtime: nodejs

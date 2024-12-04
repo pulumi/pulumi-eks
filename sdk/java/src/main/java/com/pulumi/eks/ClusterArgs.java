@@ -141,6 +141,25 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.
+     * If set to false when using the default node group, an instance role or instance profile must be provided.n
+     * Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.
+     * 
+     */
+    @Import(name="createInstanceRole")
+    private @Nullable Boolean createInstanceRole;
+
+    /**
+     * @return Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.
+     * If set to false when using the default node group, an instance role or instance profile must be provided.n
+     * Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.
+     * 
+     */
+    public Optional<Boolean> createInstanceRole() {
+        return Optional.ofNullable(this.createInstanceRole);
+    }
+
+    /**
      * Indicates whether an IAM OIDC Provider is created for the EKS cluster.
      * 
      * The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -1090,6 +1109,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.clusterSecurityGroupTags = $.clusterSecurityGroupTags;
         this.clusterTags = $.clusterTags;
         this.corednsAddonOptions = $.corednsAddonOptions;
+        this.createInstanceRole = $.createInstanceRole;
         this.createOidcProvider = $.createOidcProvider;
         this.creationRoleProvider = $.creationRoleProvider;
         this.defaultAddonsToRemove = $.defaultAddonsToRemove;
@@ -1260,6 +1280,19 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder corednsAddonOptions(@Nullable CoreDnsAddonOptionsArgs corednsAddonOptions) {
             $.corednsAddonOptions = corednsAddonOptions;
+            return this;
+        }
+
+        /**
+         * @param createInstanceRole Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.
+         * If set to false when using the default node group, an instance role or instance profile must be provided.n
+         * Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder createInstanceRole(@Nullable Boolean createInstanceRole) {
+            $.createInstanceRole = createInstanceRole;
             return this;
         }
 
