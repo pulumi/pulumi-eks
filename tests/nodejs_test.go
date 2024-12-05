@@ -1221,6 +1221,28 @@ func TestAccScalarTypes(t *testing.T) {
 	programTestWithExtraOptions(t, &test, nil)
 }
 
+func TestAccDefaultInstanceRole(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getTestPrograms(t), "default-instance-role"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+
+				require.NotNil(t, info.Outputs["instanceRoles"])
+				instanceRoles := info.Outputs["instanceRoles"].([]interface{})
+				assert.Len(t, instanceRoles, 1, "expected the default instance role to be created")
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
 func getOidcProviderUrl(t *testing.T, eksCluster map[string]interface{}) string {
 	require.NotEmpty(t, eksCluster["identities"])
 	identities := eksCluster["identities"].([]interface{})

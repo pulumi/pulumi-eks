@@ -1227,6 +1227,11 @@
                     "plain": true,
                     "description": "Options for managing the `coredns` addon."
                 },
+                "createInstanceRole": {
+                    "type": "boolean",
+                    "plain": true,
+                    "description": "Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.\nIf set to false when using the default node group, an instance role or instance profile must be provided.n\nNote: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`."
+                },
                 "createOidcProvider": {
                     "type": "boolean",
                     "description": "Indicates whether an IAM OIDC Provider is created for the EKS cluster.\n\nThe OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.\n\nSee for more details:\n - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html\n - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html\n - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/\n - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts"

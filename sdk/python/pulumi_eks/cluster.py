@@ -31,6 +31,7 @@ class ClusterArgs:
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  coredns_addon_options: Optional['CoreDnsAddonOptionsArgs'] = None,
+                 create_instance_role: Optional[bool] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional['CreationRoleProviderArgs'] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
@@ -94,6 +95,9 @@ class ClusterArgs:
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_security_group_tags: The tags to apply to the cluster security group.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_tags: The tags to apply to the EKS cluster.
         :param 'CoreDnsAddonOptionsArgs' coredns_addon_options: Options for managing the `coredns` addon.
+        :param bool create_instance_role: Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.
+               If set to false when using the default node group, an instance role or instance profile must be provided.n
+               Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.
         :param pulumi.Input[bool] create_oidc_provider: Indicates whether an IAM OIDC Provider is created for the EKS cluster.
                
                The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -272,6 +276,8 @@ class ClusterArgs:
             pulumi.set(__self__, "cluster_tags", cluster_tags)
         if coredns_addon_options is not None:
             pulumi.set(__self__, "coredns_addon_options", coredns_addon_options)
+        if create_instance_role is not None:
+            pulumi.set(__self__, "create_instance_role", create_instance_role)
         if create_oidc_provider is not None:
             pulumi.set(__self__, "create_oidc_provider", create_oidc_provider)
         if creation_role_provider is not None:
@@ -446,6 +452,20 @@ class ClusterArgs:
     @coredns_addon_options.setter
     def coredns_addon_options(self, value: Optional['CoreDnsAddonOptionsArgs']):
         pulumi.set(self, "coredns_addon_options", value)
+
+    @property
+    @pulumi.getter(name="createInstanceRole")
+    def create_instance_role(self) -> Optional[bool]:
+        """
+        Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.
+        If set to false when using the default node group, an instance role or instance profile must be provided.n
+        Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.
+        """
+        return pulumi.get(self, "create_instance_role")
+
+    @create_instance_role.setter
+    def create_instance_role(self, value: Optional[bool]):
+        pulumi.set(self, "create_instance_role", value)
 
     @property
     @pulumi.getter(name="createOidcProvider")
@@ -1141,6 +1161,7 @@ class Cluster(pulumi.ComponentResource):
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  coredns_addon_options: Optional[Union['CoreDnsAddonOptionsArgs', 'CoreDnsAddonOptionsArgsDict']] = None,
+                 create_instance_role: Optional[bool] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
@@ -1226,6 +1247,9 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_security_group_tags: The tags to apply to the cluster security group.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] cluster_tags: The tags to apply to the EKS cluster.
         :param Union['CoreDnsAddonOptionsArgs', 'CoreDnsAddonOptionsArgsDict'] coredns_addon_options: Options for managing the `coredns` addon.
+        :param bool create_instance_role: Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.
+               If set to false when using the default node group, an instance role or instance profile must be provided.n
+               Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.
         :param pulumi.Input[bool] create_oidc_provider: Indicates whether an IAM OIDC Provider is created for the EKS cluster.
                
                The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -1440,6 +1464,7 @@ class Cluster(pulumi.ComponentResource):
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  coredns_addon_options: Optional[Union['CoreDnsAddonOptionsArgs', 'CoreDnsAddonOptionsArgsDict']] = None,
+                 create_instance_role: Optional[bool] = None,
                  create_oidc_provider: Optional[pulumi.Input[bool]] = None,
                  creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
                  default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
@@ -1504,6 +1529,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["cluster_security_group_tags"] = cluster_security_group_tags
             __props__.__dict__["cluster_tags"] = cluster_tags
             __props__.__dict__["coredns_addon_options"] = coredns_addon_options
+            __props__.__dict__["create_instance_role"] = create_instance_role
             __props__.__dict__["create_oidc_provider"] = create_oidc_provider
             __props__.__dict__["creation_role_provider"] = creation_role_provider
             __props__.__dict__["default_addons_to_remove"] = default_addons_to_remove

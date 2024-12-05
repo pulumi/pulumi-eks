@@ -138,6 +138,10 @@ type clusterArgs struct {
 	ClusterTags map[string]string `pulumi:"clusterTags"`
 	// Options for managing the `coredns` addon.
 	CorednsAddonOptions *CoreDnsAddonOptions `pulumi:"corednsAddonOptions"`
+	// Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.
+	// If set to false when using the default node group, an instance role or instance profile must be provided.n
+	// Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.
+	CreateInstanceRole *bool `pulumi:"createInstanceRole"`
 	// Indicates whether an IAM OIDC Provider is created for the EKS cluster.
 	//
 	// The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
@@ -374,6 +378,10 @@ type ClusterArgs struct {
 	ClusterTags pulumi.StringMapInput
 	// Options for managing the `coredns` addon.
 	CorednsAddonOptions *CoreDnsAddonOptionsArgs
+	// Whether to create the instance role for the EKS cluster. Defaults to true when using the default node group, false otherwise.
+	// If set to false when using the default node group, an instance role or instance profile must be provided.n
+	// Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.
+	CreateInstanceRole *bool
 	// Indicates whether an IAM OIDC Provider is created for the EKS cluster.
 	//
 	// The OIDC provider is used in the cluster in combination with k8s Service Account annotations to provide IAM roles at the k8s Pod level.
