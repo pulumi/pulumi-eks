@@ -64,6 +64,20 @@ import javax.annotation.Nullable;
 @ResourceType(type="eks:index:Cluster")
 public class Cluster extends com.pulumi.resources.ComponentResource {
     /**
+     * The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+     * 
+     */
+    @Export(name="autoModeNodeRoleName", refs={String.class}, tree="[0]")
+    private Output<String> autoModeNodeRoleName;
+
+    /**
+     * @return The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+     * 
+     */
+    public Output<String> autoModeNodeRoleName() {
+        return this.autoModeNodeRoleName;
+    }
+    /**
      * The AWS resource provider.
      * 
      */

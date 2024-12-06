@@ -8,6 +8,7 @@ __all__ = [
     'AccessEntryType',
     'AmiType',
     'AuthenticationMode',
+    'ClusterNodePools',
     'OperatingSystem',
     'ResolveConflictsOnCreate',
     'ResolveConflictsOnUpdate',
@@ -34,6 +35,10 @@ class AccessEntryType(str, Enum):
     EC2_WINDOWS = "EC2_WINDOWS"
     """
     For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
+    """
+    EC2 = "EC2"
+    """
+    For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
     """
 
 
@@ -70,6 +75,20 @@ class AuthenticationMode(str, Enum):
     API_AND_CONFIG_MAP = "API_AND_CONFIG_MAP"
     """
     Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.
+    """
+
+
+class ClusterNodePools(str, Enum):
+    """
+    Built-in node pools of EKS Auto Mode. For more details see: https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html
+    """
+    SYSTEM = "system"
+    """
+    This NodePool has a `CriticalAddonsOnly` taint. Many EKS addons, such as CoreDNS, tolerate this taint. Use this system node pool to segregate cluster-critical applications. Supports both `amd64` and `arm64` architectures.
+    """
+    GENERAL_PURPOSE = "general-purpose"
+    """
+    This NodePool provides support for launching nodes for general purpose workloads in your cluster. Only supports `amd64` architecture.
     """
 
 

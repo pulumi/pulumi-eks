@@ -34,7 +34,12 @@ import java.util.StringJoiner;
          * For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
          * 
          */
-        EC2Windows("EC2_WINDOWS");
+        EC2Windows("EC2_WINDOWS"),
+        /**
+         * For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
+         * 
+         */
+        EC2("EC2");
 
         private final String value;
 
