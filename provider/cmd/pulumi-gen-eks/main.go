@@ -1453,24 +1453,55 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						},
 						"computeConfig": {
 							TypeSpec: schema.TypeSpec{
-								Ref: awsRef("#/types/aws:eks%2FClusterComputeConfig:ClusterComputeConfig", dependencies.Aws),
+								Ref: "#/types/eks:index:ClusterComputeConfig",
 							},
 							Description: "Compute configuration for EKS Auto Mode.",
 						},
-						"loadBalancerConfig": {
-							TypeSpec: schema.TypeSpec{
-								Ref: awsRef("#/types/aws:eks%2FClusterKubernetesNetworkConfigElasticLoadBalancing:ClusterKubernetesNetworkConfigElasticLoadBalancing", dependencies.Aws),
-							},
-							Description: "Load Balancer configuration for EKS Auto Mode.",
-						},
-						"storageConfig": {
-							TypeSpec: schema.TypeSpec{
-								Ref: awsRef("#/types/aws:eks%2FClusterStorageConfig:ClusterStorageConfig", dependencies.Aws),
-							},
-							Description: "Storage configuration for EKS Auto Mode.",
-						},
 					},
 					Required: []string{"enabled"},
+				},
+			},
+			"eks:index:ClusterComputeConfig": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Properties: map[string]schema.PropertySpec{
+						"nodePools": {
+							TypeSpec: schema.TypeSpec{
+								Type: "array",
+								Items: &schema.TypeSpec{
+									Type: "string",
+								},
+							},
+							Description: "Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.\n\n" +
+								"By default, the built-in `system` and `general-purpose` nodepools are enabled.",
+						},
+						"nodeRoleArn": {
+							TypeSpec: schema.TypeSpec{
+								Type: "string",
+							},
+							Description: "The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.",
+						},
+					},
+					Description: "Configuration for the compute capability of your EKS Auto Mode cluster.",
+				},
+			},
+			"eks:index:ClusterNodePools": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type:        "string",
+					Description: "Built-in node pools of EKS Auto Mode. For more details see: https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:  "System",
+						Value: "system",
+						Description: "This NodePool has a `CriticalAddonsOnly` taint. Many EKS addons, such as CoreDNS, tolerate this taint. Use this system node pool to segregate cluster-critical applications. " +
+							"Supports both `amd64` and `arm64` architectures.",
+					},
+					{
+						Name:        "GeneralPurpose",
+						Value:       "general-purpose",
+						Description: "This NodePool provides support for launching nodes for general purpose workloads in your cluster. Only supports `amd64` architecture.",
+					},
 				},
 			},
 			"eks:index:FargateProfile": {

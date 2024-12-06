@@ -230,6 +230,16 @@ const (
 	AuthenticationModeApiAndConfigMap = AuthenticationMode("API_AND_CONFIG_MAP")
 )
 
+// Built-in node pools of EKS Auto Mode. For more details see: https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html
+type ClusterNodePools string
+
+const (
+	// This NodePool has a `CriticalAddonsOnly` taint. Many EKS addons, such as CoreDNS, tolerate this taint. Use this system node pool to segregate cluster-critical applications. Supports both `amd64` and `arm64` architectures.
+	ClusterNodePoolsSystem = ClusterNodePools("system")
+	// This NodePool provides support for launching nodes for general purpose workloads in your cluster. Only supports `amd64` architecture.
+	ClusterNodePoolsGeneralPurpose = ClusterNodePools("general-purpose")
+)
+
 // The type of EKS optimized Operating System to use for node groups.
 //
 // See for more details:

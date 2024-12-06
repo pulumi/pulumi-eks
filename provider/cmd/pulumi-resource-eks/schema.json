@@ -233,7 +233,7 @@
             "description": "Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.\n\nFor more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html",
             "properties": {
                 "computeConfig": {
-                    "$ref": "/aws/v6.63.0/schema.json#/types/aws:eks%2FClusterComputeConfig:ClusterComputeConfig",
+                    "$ref": "#/types/eks:index:ClusterComputeConfig",
                     "description": "Compute configuration for EKS Auto Mode."
                 },
                 "createNodeRole": {
@@ -246,20 +246,29 @@
                     "type": "boolean",
                     "plain": true,
                     "description": "Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you."
-                },
-                "loadBalancerConfig": {
-                    "$ref": "/aws/v6.63.0/schema.json#/types/aws:eks%2FClusterKubernetesNetworkConfigElasticLoadBalancing:ClusterKubernetesNetworkConfigElasticLoadBalancing",
-                    "description": "Load Balancer configuration for EKS Auto Mode."
-                },
-                "storageConfig": {
-                    "$ref": "/aws/v6.63.0/schema.json#/types/aws:eks%2FClusterStorageConfig:ClusterStorageConfig",
-                    "description": "Storage configuration for EKS Auto Mode."
                 }
             },
             "type": "object",
             "required": [
                 "enabled"
             ]
+        },
+        "eks:index:ClusterComputeConfig": {
+            "description": "Configuration for the compute capability of your EKS Auto Mode cluster.",
+            "properties": {
+                "nodePools": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.\n\nBy default, the built-in `system` and `general-purpose` nodepools are enabled."
+                },
+                "nodeRoleArn": {
+                    "type": "string",
+                    "description": "The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled."
+                }
+            },
+            "type": "object"
         },
         "eks:index:ClusterNodeGroupOptions": {
             "description": "Describes the configuration options accepted by a cluster to create its own node groups.",
@@ -463,6 +472,22 @@
                 }
             },
             "type": "object"
+        },
+        "eks:index:ClusterNodePools": {
+            "description": "Built-in node pools of EKS Auto Mode. For more details see: https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html",
+            "type": "string",
+            "enum": [
+                {
+                    "name": "System",
+                    "description": "This NodePool has a `CriticalAddonsOnly` taint. Many EKS addons, such as CoreDNS, tolerate this taint. Use this system node pool to segregate cluster-critical applications. Supports both `amd64` and `arm64` architectures.",
+                    "value": "system"
+                },
+                {
+                    "name": "GeneralPurpose",
+                    "description": "This NodePool provides support for launching nodes for general purpose workloads in your cluster. Only supports `amd64` architecture.",
+                    "value": "general-purpose"
+                }
+            ]
         },
         "eks:index:CoreData": {
             "description": "Defines the core set of data associated with an EKS cluster, including the network in which it runs.",

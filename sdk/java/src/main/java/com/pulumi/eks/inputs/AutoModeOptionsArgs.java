@@ -3,12 +3,10 @@
 
 package com.pulumi.eks.inputs;
 
-import com.pulumi.aws.eks.inputs.ClusterComputeConfigArgs;
-import com.pulumi.aws.eks.inputs.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs;
-import com.pulumi.aws.eks.inputs.ClusterStorageConfigArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
+import com.pulumi.eks.inputs.ClusterComputeConfigArgs;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;
 import java.util.Objects;
@@ -71,44 +69,12 @@ public final class AutoModeOptionsArgs extends com.pulumi.resources.ResourceArgs
         return this.enabled;
     }
 
-    /**
-     * Load Balancer configuration for EKS Auto Mode.
-     * 
-     */
-    @Import(name="loadBalancerConfig")
-    private @Nullable Output<ClusterKubernetesNetworkConfigElasticLoadBalancingArgs> loadBalancerConfig;
-
-    /**
-     * @return Load Balancer configuration for EKS Auto Mode.
-     * 
-     */
-    public Optional<Output<ClusterKubernetesNetworkConfigElasticLoadBalancingArgs>> loadBalancerConfig() {
-        return Optional.ofNullable(this.loadBalancerConfig);
-    }
-
-    /**
-     * Storage configuration for EKS Auto Mode.
-     * 
-     */
-    @Import(name="storageConfig")
-    private @Nullable Output<ClusterStorageConfigArgs> storageConfig;
-
-    /**
-     * @return Storage configuration for EKS Auto Mode.
-     * 
-     */
-    public Optional<Output<ClusterStorageConfigArgs>> storageConfig() {
-        return Optional.ofNullable(this.storageConfig);
-    }
-
     private AutoModeOptionsArgs() {}
 
     private AutoModeOptionsArgs(AutoModeOptionsArgs $) {
         this.computeConfig = $.computeConfig;
         this.createNodeRole = $.createNodeRole;
         this.enabled = $.enabled;
-        this.loadBalancerConfig = $.loadBalancerConfig;
-        this.storageConfig = $.storageConfig;
     }
 
     public static Builder builder() {
@@ -170,48 +136,6 @@ public final class AutoModeOptionsArgs extends com.pulumi.resources.ResourceArgs
         public Builder enabled(Boolean enabled) {
             $.enabled = enabled;
             return this;
-        }
-
-        /**
-         * @param loadBalancerConfig Load Balancer configuration for EKS Auto Mode.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder loadBalancerConfig(@Nullable Output<ClusterKubernetesNetworkConfigElasticLoadBalancingArgs> loadBalancerConfig) {
-            $.loadBalancerConfig = loadBalancerConfig;
-            return this;
-        }
-
-        /**
-         * @param loadBalancerConfig Load Balancer configuration for EKS Auto Mode.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder loadBalancerConfig(ClusterKubernetesNetworkConfigElasticLoadBalancingArgs loadBalancerConfig) {
-            return loadBalancerConfig(Output.of(loadBalancerConfig));
-        }
-
-        /**
-         * @param storageConfig Storage configuration for EKS Auto Mode.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder storageConfig(@Nullable Output<ClusterStorageConfigArgs> storageConfig) {
-            $.storageConfig = storageConfig;
-            return this;
-        }
-
-        /**
-         * @param storageConfig Storage configuration for EKS Auto Mode.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder storageConfig(ClusterStorageConfigArgs storageConfig) {
-            return storageConfig(Output.of(storageConfig));
         }
 
         public AutoModeOptionsArgs build() {

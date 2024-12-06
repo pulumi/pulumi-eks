@@ -72,7 +72,7 @@ export interface AutoModeOptionsArgs {
     /**
      * Compute configuration for EKS Auto Mode.
      */
-    computeConfig?: pulumi.Input<pulumiAws.types.input.eks.ClusterComputeConfig>;
+    computeConfig?: pulumi.Input<inputs.ClusterComputeConfigArgs>;
     /**
      * Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
      */
@@ -81,14 +81,6 @@ export interface AutoModeOptionsArgs {
      * Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
      */
     enabled: boolean;
-    /**
-     * Load Balancer configuration for EKS Auto Mode.
-     */
-    loadBalancerConfig?: pulumi.Input<pulumiAws.types.input.eks.ClusterKubernetesNetworkConfigElasticLoadBalancing>;
-    /**
-     * Storage configuration for EKS Auto Mode.
-     */
-    storageConfig?: pulumi.Input<pulumiAws.types.input.eks.ClusterStorageConfig>;
 }
 /**
  * autoModeOptionsArgsProvideDefaults sets the appropriate defaults for AutoModeOptionsArgs
@@ -98,6 +90,22 @@ export function autoModeOptionsArgsProvideDefaults(val: AutoModeOptionsArgs): Au
         ...val,
         createNodeRole: (val.createNodeRole) ?? true,
     };
+}
+
+/**
+ * Configuration for the compute capability of your EKS Auto Mode cluster.
+ */
+export interface ClusterComputeConfigArgs {
+    /**
+     * Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.
+     *
+     * By default, the built-in `system` and `general-purpose` nodepools are enabled.
+     */
+    nodePools?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.
+     */
+    nodeRoleArn?: pulumi.Input<string>;
 }
 
 /**

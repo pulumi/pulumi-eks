@@ -21,7 +21,7 @@ namespace Pulumi.Eks.Inputs
         /// Compute configuration for EKS Auto Mode.
         /// </summary>
         [Input("computeConfig")]
-        public Input<Pulumi.Aws.Eks.Inputs.ClusterComputeConfigArgs>? ComputeConfig { get; set; }
+        public Input<Inputs.ClusterComputeConfigArgs>? ComputeConfig { get; set; }
 
         /// <summary>
         /// Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
@@ -34,18 +34,6 @@ namespace Pulumi.Eks.Inputs
         /// </summary>
         [Input("enabled", required: true)]
         public bool Enabled { get; set; }
-
-        /// <summary>
-        /// Load Balancer configuration for EKS Auto Mode.
-        /// </summary>
-        [Input("loadBalancerConfig")]
-        public Input<Pulumi.Aws.Eks.Inputs.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs>? LoadBalancerConfig { get; set; }
-
-        /// <summary>
-        /// Storage configuration for EKS Auto Mode.
-        /// </summary>
-        [Input("storageConfig")]
-        public Input<Pulumi.Aws.Eks.Inputs.ClusterStorageConfigArgs>? StorageConfig { get; set; }
 
         public AutoModeOptionsArgs()
         {

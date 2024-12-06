@@ -25,6 +25,8 @@ __all__ = [
     'AccessPolicyAssociationArgsDict',
     'AutoModeOptionsArgs',
     'AutoModeOptionsArgsDict',
+    'ClusterComputeConfigArgs',
+    'ClusterComputeConfigArgsDict',
     'ClusterNodeGroupOptionsArgs',
     'ClusterNodeGroupOptionsArgsDict',
     'CoreDataArgs',
@@ -270,21 +272,13 @@ if not MYPY:
         """
         Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
         """
-        compute_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgsDict']]
+        compute_config: NotRequired[pulumi.Input['ClusterComputeConfigArgsDict']]
         """
         Compute configuration for EKS Auto Mode.
         """
         create_node_role: NotRequired[bool]
         """
         Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
-        """
-        load_balancer_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgsDict']]
-        """
-        Load Balancer configuration for EKS Auto Mode.
-        """
-        storage_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgsDict']]
-        """
-        Storage configuration for EKS Auto Mode.
         """
 elif False:
     AutoModeOptionsArgsDict: TypeAlias = Mapping[str, Any]
@@ -293,19 +287,15 @@ elif False:
 class AutoModeOptionsArgs:
     def __init__(__self__, *,
                  enabled: bool,
-                 compute_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgs']] = None,
-                 create_node_role: Optional[bool] = None,
-                 load_balancer_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs']] = None,
-                 storage_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgs']] = None):
+                 compute_config: Optional[pulumi.Input['ClusterComputeConfigArgs']] = None,
+                 create_node_role: Optional[bool] = None):
         """
         Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
 
         For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
         :param bool enabled: Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
-        :param pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgs'] compute_config: Compute configuration for EKS Auto Mode.
+        :param pulumi.Input['ClusterComputeConfigArgs'] compute_config: Compute configuration for EKS Auto Mode.
         :param bool create_node_role: Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
-        :param pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs'] load_balancer_config: Load Balancer configuration for EKS Auto Mode.
-        :param pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgs'] storage_config: Storage configuration for EKS Auto Mode.
         """
         pulumi.set(__self__, "enabled", enabled)
         if compute_config is not None:
@@ -314,10 +304,6 @@ class AutoModeOptionsArgs:
             create_node_role = True
         if create_node_role is not None:
             pulumi.set(__self__, "create_node_role", create_node_role)
-        if load_balancer_config is not None:
-            pulumi.set(__self__, "load_balancer_config", load_balancer_config)
-        if storage_config is not None:
-            pulumi.set(__self__, "storage_config", storage_config)
 
     @property
     @pulumi.getter
@@ -333,14 +319,14 @@ class AutoModeOptionsArgs:
 
     @property
     @pulumi.getter(name="computeConfig")
-    def compute_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgs']]:
+    def compute_config(self) -> Optional[pulumi.Input['ClusterComputeConfigArgs']]:
         """
         Compute configuration for EKS Auto Mode.
         """
         return pulumi.get(self, "compute_config")
 
     @compute_config.setter
-    def compute_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgs']]):
+    def compute_config(self, value: Optional[pulumi.Input['ClusterComputeConfigArgs']]):
         pulumi.set(self, "compute_config", value)
 
     @property
@@ -355,29 +341,67 @@ class AutoModeOptionsArgs:
     def create_node_role(self, value: Optional[bool]):
         pulumi.set(self, "create_node_role", value)
 
+
+if not MYPY:
+    class ClusterComputeConfigArgsDict(TypedDict):
+        """
+        Configuration for the compute capability of your EKS Auto Mode cluster.
+        """
+        node_pools: NotRequired[pulumi.Input[Sequence[pulumi.Input[str]]]]
+        """
+        Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.
+
+        By default, the built-in `system` and `general-purpose` nodepools are enabled.
+        """
+        node_role_arn: NotRequired[pulumi.Input[str]]
+        """
+        The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.
+        """
+elif False:
+    ClusterComputeConfigArgsDict: TypeAlias = Mapping[str, Any]
+
+@pulumi.input_type
+class ClusterComputeConfigArgs:
+    def __init__(__self__, *,
+                 node_pools: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 node_role_arn: Optional[pulumi.Input[str]] = None):
+        """
+        Configuration for the compute capability of your EKS Auto Mode cluster.
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] node_pools: Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.
+               
+               By default, the built-in `system` and `general-purpose` nodepools are enabled.
+        :param pulumi.Input[str] node_role_arn: The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.
+        """
+        if node_pools is not None:
+            pulumi.set(__self__, "node_pools", node_pools)
+        if node_role_arn is not None:
+            pulumi.set(__self__, "node_role_arn", node_role_arn)
+
     @property
-    @pulumi.getter(name="loadBalancerConfig")
-    def load_balancer_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs']]:
+    @pulumi.getter(name="nodePools")
+    def node_pools(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
         """
-        Load Balancer configuration for EKS Auto Mode.
-        """
-        return pulumi.get(self, "load_balancer_config")
+        Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.
 
-    @load_balancer_config.setter
-    def load_balancer_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs']]):
-        pulumi.set(self, "load_balancer_config", value)
+        By default, the built-in `system` and `general-purpose` nodepools are enabled.
+        """
+        return pulumi.get(self, "node_pools")
+
+    @node_pools.setter
+    def node_pools(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
+        pulumi.set(self, "node_pools", value)
 
     @property
-    @pulumi.getter(name="storageConfig")
-    def storage_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgs']]:
+    @pulumi.getter(name="nodeRoleArn")
+    def node_role_arn(self) -> Optional[pulumi.Input[str]]:
         """
-        Storage configuration for EKS Auto Mode.
+        The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.
         """
-        return pulumi.get(self, "storage_config")
+        return pulumi.get(self, "node_role_arn")
 
-    @storage_config.setter
-    def storage_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgs']]):
-        pulumi.set(self, "storage_config", value)
+    @node_role_arn.setter
+    def node_role_arn(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "node_role_arn", value)
 
 
 if not MYPY:

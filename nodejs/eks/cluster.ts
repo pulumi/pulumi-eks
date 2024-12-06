@@ -286,8 +286,6 @@ export interface EksAutoModeOptions {
     enabled: boolean;
     createNodeRole?: boolean;
     computeConfig?: pulumi.Input<aws.types.input.eks.ClusterComputeConfig>;
-    loadBalancerConfig?: pulumi.Input<aws.types.input.eks.ClusterKubernetesNetworkConfigElasticLoadBalancing>;
-    storageConfig?: pulumi.Input<aws.types.input.eks.ClusterStorageConfig>;
 }
 
 /**
@@ -610,18 +608,13 @@ export function createCore(
         | undefined;
     if (args.kubernetesServiceIpAddressRange || args.ipFamily || args.autoMode?.enabled) {
         kubernetesNetworkConfig = pulumi
-            .all([
-                args.kubernetesServiceIpAddressRange,
-                args.ipFamily,
-                args.autoMode?.loadBalancerConfig,
-            ])
-            .apply(([serviceIpv4Cidr, ipFamily = "ipv4", elb]) => ({
+            .all([args.kubernetesServiceIpAddressRange, args.ipFamily])
+            .apply(([serviceIpv4Cidr, ipFamily = "ipv4"]) => ({
                 serviceIpv4Cidr: ipFamily === "ipv4" ? serviceIpv4Cidr : undefined, // only applicable for IPv4 IP family
                 ipFamily: ipFamily,
                 elasticLoadBalancing: args.autoMode?.enabled
                     ? {
                           enabled: args.autoMode?.enabled,
-                          ...elb,
                       }
                     : undefined,
             }));
@@ -661,20 +654,7 @@ export function createCore(
         });
     }
 
-    let storageConfig: pulumi.Input<aws.types.input.eks.ClusterStorageConfig> | undefined;
-    if (args.autoMode?.enabled) {
-        storageConfig = pulumi.output(args.autoMode.storageConfig).apply((config) => {
-            const blockStorage: aws.types.input.eks.ClusterStorageConfigBlockStorage = {
-                enabled: true,
-                ...config?.blockStorage,
-            };
-
-            return {
-                ...config,
-                blockStorage,
-            };
-        });
-    }
+    const storageConfig = args.autoMode?.enabled ? { blockStorage: { enabled: true } } : undefined;
 
     // When a cluster is created with EKS Auto Mode, it must be created without the addons
     const bootstrapSelfManagedAddons = args.bootstrapSelfManagedAddons
