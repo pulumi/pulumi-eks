@@ -11,6 +11,8 @@ const eksVpc = new awsx.ec2.Vpc("eks-auto-mode", {
     enableDnsHostnames: true,
     cidrBlock: "10.0.0.0/16",
     subnetSpecs: [
+        // Necessary tags for EKS Auto Mode to identify the subnets for the load balancers.
+        // See: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/deploy/subnet_discovery/
         {type: SubnetType.Public, tags: {[`kubernetes.io/cluster/${clusterName}`]: "shared", "kubernetes.io/role/elb": "1"}},
         {type: SubnetType.Private, tags: {[`kubernetes.io/cluster/${clusterName}`]: "shared", "kubernetes.io/role/internal-elb": "1"}},
     ],
@@ -19,16 +21,22 @@ const eksVpc = new awsx.ec2.Vpc("eks-auto-mode", {
 
 const cluster = new eks.Cluster("eks-auto-mode", {
     name: clusterName,
+    // EKS Auto Mode requires Access Entries, use either the `Api` or `ApiAndConfigMap` authentication mode.
+    authenticationMode: eks.AuthenticationMode.Api,
     skipDefaultNodeGroup: true,
     skipDefaultSecurityGroups: true,
     vpcId: eksVpc.vpcId,
-    authenticationMode: eks.AuthenticationMode.Api,
     publicSubnetIds: eksVpc.publicSubnetIds,
     privateSubnetIds: eksVpc.privateSubnetIds,
+    
+    // Nodes managed by EKS Auto Mode come with vpc-cni and kube-proxy pre-installed.
+    // No need for installing the addons
     kubeProxyAddonOptions: {
         enabled: false,
     },
     useDefaultVpcCni: true,
+
+    // Enables compute, storage and load balancing for the cluster.
     autoMode: {
         enabled: true,
     }
@@ -100,6 +108,7 @@ const ingressClass = new k8s.networking.v1.IngressClass("alb", {
 const ingress = new k8s.networking.v1.Ingress(appName, {
     metadata: {
         namespace: ns.metadata.name,
+        // Annotations for EKS Auto Mode to identify the Ingress as internet-facing and target-type as IP.
         annotations: {
             "alb.ingress.kubernetes.io/scheme": "internet-facing",
             "alb.ingress.kubernetes.io/target-type": "ip",
