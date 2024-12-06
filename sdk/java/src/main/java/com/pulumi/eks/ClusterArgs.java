@@ -97,21 +97,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
-     * 
-     */
-    @Import(name="bootstrapSelfManagedAddons")
-    private @Nullable Output<Boolean> bootstrapSelfManagedAddons;
-
-    /**
-     * @return Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
-     * 
-     */
-    public Optional<Output<Boolean>> bootstrapSelfManagedAddons() {
-        return Optional.ofNullable(this.bootstrapSelfManagedAddons);
-    }
-
-    /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      * 
      * Note: The security group resource should not contain any inline ingress or egress rules.
@@ -1141,7 +1126,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.accessEntries = $.accessEntries;
         this.authenticationMode = $.authenticationMode;
         this.autoMode = $.autoMode;
-        this.bootstrapSelfManagedAddons = $.bootstrapSelfManagedAddons;
         this.clusterSecurityGroup = $.clusterSecurityGroup;
         this.clusterSecurityGroupTags = $.clusterSecurityGroupTags;
         this.clusterTags = $.clusterTags;
@@ -1253,27 +1237,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         public Builder autoMode(@Nullable AutoModeOptionsArgs autoMode) {
             $.autoMode = autoMode;
             return this;
-        }
-
-        /**
-         * @param bootstrapSelfManagedAddons Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrapSelfManagedAddons(@Nullable Output<Boolean> bootstrapSelfManagedAddons) {
-            $.bootstrapSelfManagedAddons = bootstrapSelfManagedAddons;
-            return this;
-        }
-
-        /**
-         * @param bootstrapSelfManagedAddons Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrapSelfManagedAddons(Boolean bootstrapSelfManagedAddons) {
-            return bootstrapSelfManagedAddons(Output.of(bootstrapSelfManagedAddons));
         }
 
         /**

@@ -47,7 +47,6 @@ const cluster = new eks.Cluster("auto-mode-upgrade", {
     authenticationMode: eks.AuthenticationMode.Api,
     publicSubnetIds: eksVpc.publicSubnetIds,
     privateSubnetIds: eksVpc.privateSubnetIds,
-    bootstrapSelfManagedAddons: true,
     autoMode: {
         enabled: true,
         createNodeRole: false,

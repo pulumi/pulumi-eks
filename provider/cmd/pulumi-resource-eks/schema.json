@@ -1269,10 +1269,6 @@
                     "plain": true,
                     "description": "Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.\n\nFor more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html"
                 },
-                "bootstrapSelfManagedAddons": {
-                    "type": "boolean",
-                    "description": "Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise."
-                },
                 "clusterSecurityGroup": {
                     "$ref": "/aws/v6.63.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.\n\nNote: The security group resource should not contain any inline ingress or egress rules."

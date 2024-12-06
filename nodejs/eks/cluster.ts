@@ -656,13 +656,6 @@ export function createCore(
 
     const storageConfig = args.autoMode?.enabled ? { blockStorage: { enabled: true } } : undefined;
 
-    // When a cluster is created with EKS Auto Mode, it must be created without the addons
-    const bootstrapSelfManagedAddons = args.bootstrapSelfManagedAddons
-        ? args.bootstrapSelfManagedAddons
-        : args.autoMode?.enabled
-        ? false
-        : undefined;
-
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(
         `${name}-eksCluster`,
@@ -673,7 +666,8 @@ export function createCore(
                 : eksServiceRole?.directRole.arn!,
             computeConfig,
             storageConfig,
-            bootstrapSelfManagedAddons,
+            // When a cluster is created with EKS Auto Mode, it must be created without the addons
+            bootstrapSelfManagedAddons: args.autoMode?.enabled ? false : undefined,
             vpcConfig: {
                 securityGroupIds: eksClusterSecurityGroup
                     ? [eksClusterSecurityGroup.id]
@@ -724,7 +718,11 @@ export function createCore(
             // ignore changes to the bootstrapClusterCreatorAdminPermissions field because it has bi-modal default behavior
             // in upstream and would cause replacements for users upgrading from older versions of the EKS provider (<=2.7.3).
             // See https://github.com/pulumi/pulumi-aws/issues/3997#issuecomment-2223201333 for more details.
-            ignoreChanges: ["accessConfig.bootstrapClusterCreatorAdminPermissions"],
+            ignoreChanges: [
+                "accessConfig.bootstrapClusterCreatorAdminPermissions",
+                // bootstrapSelfManagedAddons is a creation time property and should not be updated
+                "bootstrapSelfManagedAddons",
+            ],
             dependsOn: [
                 // Ensure the service roles are created before the cluster and all policies are attached.
                 ...(eksServiceRole ? [eksServiceRole.resolvedRole] : []),
@@ -1875,12 +1873,6 @@ export interface ClusterOptions {
      * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
      */
     autoMode?: EksAutoModeOptions;
-
-    /**
-     * Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons.
-     * Changing this value will force a new cluster to be created. Defaults to `true` if EKS Auto Mode is disabled, `false` otherwise.
-     */
-    bootstrapSelfManagedAddons?: pulumi.Input<boolean>;
 }
 
 /**

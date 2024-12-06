@@ -137,8 +137,6 @@ type clusterArgs struct {
 	//
 	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
 	AutoMode *AutoModeOptions `pulumi:"autoMode"`
-	// Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
-	BootstrapSelfManagedAddons *bool `pulumi:"bootstrapSelfManagedAddons"`
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -383,8 +381,6 @@ type ClusterArgs struct {
 	//
 	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
 	AutoMode *AutoModeOptionsArgs
-	// Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
-	BootstrapSelfManagedAddons pulumi.BoolPtrInput
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.

@@ -43,7 +43,6 @@ const cluster = new eks.Cluster("auto-mode-upgrade", {
     authenticationMode: eks.AuthenticationMode.Api,
     publicSubnetIds: eksVpc.publicSubnetIds,
     privateSubnetIds: eksVpc.privateSubnetIds,
-    bootstrapSelfManagedAddons: true,
     autoMode: {
         enabled: true,
         // An upstream bug currently prevents setting a node role for existing clusters: https://github.com/pulumi/pulumi-aws/issues/4885

@@ -28,7 +28,6 @@ class ClusterArgs:
                  access_entries: Optional[Mapping[str, 'AccessEntryArgs']] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  auto_mode: Optional['AutoModeOptionsArgs'] = None,
-                 bootstrap_self_managed_addons: Optional[pulumi.Input[bool]] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -94,7 +93,6 @@ class ClusterArgs:
         :param 'AutoModeOptionsArgs' auto_mode: Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
                
                For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
-        :param pulumi.Input[bool] bootstrap_self_managed_addons: Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
                Note: The security group resource should not contain any inline ingress or egress rules.
@@ -276,8 +274,6 @@ class ClusterArgs:
             pulumi.set(__self__, "authentication_mode", authentication_mode)
         if auto_mode is not None:
             pulumi.set(__self__, "auto_mode", auto_mode)
-        if bootstrap_self_managed_addons is not None:
-            pulumi.set(__self__, "bootstrap_self_managed_addons", bootstrap_self_managed_addons)
         if cluster_security_group is not None:
             pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         if cluster_security_group_tags is not None:
@@ -426,18 +422,6 @@ class ClusterArgs:
     @auto_mode.setter
     def auto_mode(self, value: Optional['AutoModeOptionsArgs']):
         pulumi.set(self, "auto_mode", value)
-
-    @property
-    @pulumi.getter(name="bootstrapSelfManagedAddons")
-    def bootstrap_self_managed_addons(self) -> Optional[pulumi.Input[bool]]:
-        """
-        Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
-        """
-        return pulumi.get(self, "bootstrap_self_managed_addons")
-
-    @bootstrap_self_managed_addons.setter
-    def bootstrap_self_managed_addons(self, value: Optional[pulumi.Input[bool]]):
-        pulumi.set(self, "bootstrap_self_managed_addons", value)
 
     @property
     @pulumi.getter(name="clusterSecurityGroup")
@@ -1194,7 +1178,6 @@ class Cluster(pulumi.ComponentResource):
                  access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  auto_mode: Optional[Union['AutoModeOptionsArgs', 'AutoModeOptionsArgsDict']] = None,
-                 bootstrap_self_managed_addons: Optional[pulumi.Input[bool]] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -1282,7 +1265,6 @@ class Cluster(pulumi.ComponentResource):
         :param Union['AutoModeOptionsArgs', 'AutoModeOptionsArgsDict'] auto_mode: Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
                
                For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
-        :param pulumi.Input[bool] bootstrap_self_managed_addons: Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
                Note: The security group resource should not contain any inline ingress or egress rules.
@@ -1503,7 +1485,6 @@ class Cluster(pulumi.ComponentResource):
                  access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  auto_mode: Optional[Union['AutoModeOptionsArgs', 'AutoModeOptionsArgsDict']] = None,
-                 bootstrap_self_managed_addons: Optional[pulumi.Input[bool]] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -1570,7 +1551,6 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["access_entries"] = access_entries
             __props__.__dict__["authentication_mode"] = authentication_mode
             __props__.__dict__["auto_mode"] = auto_mode
-            __props__.__dict__["bootstrap_self_managed_addons"] = bootstrap_self_managed_addons
             __props__.__dict__["cluster_security_group"] = cluster_security_group
             __props__.__dict__["cluster_security_group_tags"] = cluster_security_group_tags
             __props__.__dict__["cluster_tags"] = cluster_tags
