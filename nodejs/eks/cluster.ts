@@ -724,10 +724,7 @@ export function createCore(
             // ignore changes to the bootstrapClusterCreatorAdminPermissions field because it has bi-modal default behavior
             // in upstream and would cause replacements for users upgrading from older versions of the EKS provider (<=2.7.3).
             // See https://github.com/pulumi/pulumi-aws/issues/3997#issuecomment-2223201333 for more details.
-            ignoreChanges: [
-                "accessConfig.bootstrapClusterCreatorAdminPermissions",
-                "computeConfig.nodeRoleArn",
-            ],
+            ignoreChanges: ["accessConfig.bootstrapClusterCreatorAdminPermissions"],
             dependsOn: [
                 // Ensure the service roles are created before the cluster and all policies are attached.
                 ...(eksServiceRole ? [eksServiceRole.resolvedRole] : []),
@@ -1873,6 +1870,10 @@ export interface ClusterOptions {
      */
     createInstanceRole?: boolean;
 
+    /**
+     * Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+     */
     autoMode?: EksAutoModeOptions;
 
     /**

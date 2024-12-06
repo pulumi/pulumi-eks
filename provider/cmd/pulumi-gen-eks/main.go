@@ -114,11 +114,6 @@ func main() {
 	}
 }
 
-// const (
-// 	awsVersion = "v6.18.2"
-// 	k8sVersion = "v4.4.0"
-// )
-
 func awsRef(ref string, awsVersion string) string {
 	return fmt.Sprintf("/aws/v%s/schema.json%s", awsVersion, ref)
 }
