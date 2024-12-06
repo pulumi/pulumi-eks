@@ -42,6 +42,12 @@ namespace Pulumi.Eks
     public partial class Cluster : global::Pulumi.ComponentResource
     {
         /// <summary>
+        /// The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+        /// </summary>
+        [Output("autoModeNodeRoleName")]
+        public Output<string> AutoModeNodeRoleName { get; private set; } = null!;
+
+        /// <summary>
         /// The AWS resource provider.
         /// </summary>
         [Output("awsProvider")]
@@ -221,6 +227,20 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("authenticationMode")]
         public Pulumi.Eks.AuthenticationMode? AuthenticationMode { get; set; }
+
+        /// <summary>
+        /// Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+        /// 
+        /// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+        /// </summary>
+        [Input("autoMode")]
+        public Inputs.AutoModeOptionsArgs? AutoMode { get; set; }
+
+        /// <summary>
+        /// Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
+        /// </summary>
+        [Input("bootstrapSelfManagedAddons")]
+        public Input<bool>? BootstrapSelfManagedAddons { get; set; }
 
         /// <summary>
         /// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.

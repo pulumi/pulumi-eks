@@ -37,6 +37,10 @@ namespace Pulumi.Eks
         /// For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
         /// </summary>
         public static AccessEntryType EC2Windows { get; } = new AccessEntryType("EC2_WINDOWS");
+        /// <summary>
+        /// For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
+        /// </summary>
+        public static AccessEntryType EC2 { get; } = new AccessEntryType("EC2");
 
         public static bool operator ==(AccessEntryType left, AccessEntryType right) => left.Equals(right);
         public static bool operator !=(AccessEntryType left, AccessEntryType right) => !left.Equals(right);

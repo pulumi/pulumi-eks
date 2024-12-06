@@ -50,6 +50,8 @@ import (
 type Cluster struct {
 	pulumi.ResourceState
 
+	// The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+	AutoModeNodeRoleName pulumi.StringOutput `pulumi:"autoModeNodeRoleName"`
 	// The AWS resource provider.
 	AwsProvider aws.ProviderOutput `pulumi:"awsProvider"`
 	// The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
@@ -99,6 +101,9 @@ func NewCluster(ctx *pulumi.Context,
 		args = &ClusterArgs{}
 	}
 
+	if args.AutoMode != nil {
+		args.AutoMode = args.AutoMode.Defaults()
+	}
 	if args.CorednsAddonOptions != nil {
 		args.CorednsAddonOptions = args.CorednsAddonOptions.Defaults()
 	}
@@ -128,6 +133,12 @@ type clusterArgs struct {
 	// See for more details:
 	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
 	AuthenticationMode *AuthenticationMode `pulumi:"authenticationMode"`
+	// Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+	AutoMode *AutoModeOptions `pulumi:"autoMode"`
+	// Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
+	BootstrapSelfManagedAddons *bool `pulumi:"bootstrapSelfManagedAddons"`
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -368,6 +379,12 @@ type ClusterArgs struct {
 	// See for more details:
 	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
 	AuthenticationMode *AuthenticationMode
+	// Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+	AutoMode *AutoModeOptionsArgs
+	// Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
+	BootstrapSelfManagedAddons pulumi.BoolPtrInput
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -740,6 +757,11 @@ func (o ClusterOutput) ToClusterOutput() ClusterOutput {
 
 func (o ClusterOutput) ToClusterOutputWithContext(ctx context.Context) ClusterOutput {
 	return o
+}
+
+// The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+func (o ClusterOutput) AutoModeNodeRoleName() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.AutoModeNodeRoleName }).(pulumi.StringOutput)
 }
 
 // The AWS resource provider.

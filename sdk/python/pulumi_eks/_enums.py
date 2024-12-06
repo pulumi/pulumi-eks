@@ -35,6 +35,10 @@ class AccessEntryType(str, Enum):
     """
     For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
     """
+    EC2 = "EC2"
+    """
+    For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
+    """
 
 
 class AmiType(str, Enum):

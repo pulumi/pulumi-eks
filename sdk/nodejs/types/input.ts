@@ -64,6 +64,43 @@ export interface AccessPolicyAssociationArgs {
 }
 
 /**
+ * Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+ *
+ * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+ */
+export interface AutoModeOptionsArgs {
+    /**
+     * Compute configuration for EKS Auto Mode.
+     */
+    computeConfig?: pulumi.Input<pulumiAws.types.input.eks.ClusterComputeConfig>;
+    /**
+     * Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+     */
+    createNodeRole?: boolean;
+    /**
+     * Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+     */
+    enabled: boolean;
+    /**
+     * Load Balancer configuration for EKS Auto Mode.
+     */
+    loadBalancerConfig?: pulumi.Input<pulumiAws.types.input.eks.ClusterKubernetesNetworkConfigElasticLoadBalancing>;
+    /**
+     * Storage configuration for EKS Auto Mode.
+     */
+    storageConfig?: pulumi.Input<pulumiAws.types.input.eks.ClusterStorageConfig>;
+}
+/**
+ * autoModeOptionsArgsProvideDefaults sets the appropriate defaults for AutoModeOptionsArgs
+ */
+export function autoModeOptionsArgsProvideDefaults(val: AutoModeOptionsArgs): AutoModeOptionsArgs {
+    return {
+        ...val,
+        createNodeRole: (val.createNodeRole) ?? true,
+    };
+}
+
+/**
  * Describes the configuration options accepted by a cluster to create its own node groups.
  */
 export interface ClusterNodeGroupOptionsArgs {

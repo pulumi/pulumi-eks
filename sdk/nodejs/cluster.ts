@@ -48,6 +48,10 @@ export class Cluster extends pulumi.ComponentResource {
     }
 
     /**
+     * The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+     */
+    public /*out*/ readonly autoModeNodeRoleName!: pulumi.Output<string>;
+    /**
      * The AWS resource provider.
      */
     public /*out*/ readonly awsProvider!: pulumi.Output<pulumiAws.Provider>;
@@ -139,6 +143,8 @@ export class Cluster extends pulumi.ComponentResource {
         if (!opts.id) {
             resourceInputs["accessEntries"] = args ? args.accessEntries : undefined;
             resourceInputs["authenticationMode"] = args ? args.authenticationMode : undefined;
+            resourceInputs["autoMode"] = args ? (args.autoMode ? inputs.autoModeOptionsArgsProvideDefaults(args.autoMode) : undefined) : undefined;
+            resourceInputs["bootstrapSelfManagedAddons"] = args ? args.bootstrapSelfManagedAddons : undefined;
             resourceInputs["clusterSecurityGroup"] = args ? args.clusterSecurityGroup : undefined;
             resourceInputs["clusterSecurityGroupTags"] = args ? args.clusterSecurityGroupTags : undefined;
             resourceInputs["clusterTags"] = args ? args.clusterTags : undefined;
@@ -191,6 +197,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["version"] = args ? args.version : undefined;
             resourceInputs["vpcCniOptions"] = args ? (args.vpcCniOptions ? inputs.vpcCniOptionsArgsProvideDefaults(args.vpcCniOptions) : undefined) : undefined;
             resourceInputs["vpcId"] = args ? args.vpcId : undefined;
+            resourceInputs["autoModeNodeRoleName"] = undefined /*out*/;
             resourceInputs["awsProvider"] = undefined /*out*/;
             resourceInputs["clusterIngressRuleId"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
@@ -209,6 +216,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["oidcProviderArn"] = undefined /*out*/;
             resourceInputs["oidcProviderUrl"] = undefined /*out*/;
         } else {
+            resourceInputs["autoModeNodeRoleName"] = undefined /*out*/;
             resourceInputs["awsProvider"] = undefined /*out*/;
             resourceInputs["clusterIngressRuleId"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroup"] = undefined /*out*/;
@@ -271,6 +279,16 @@ export interface ClusterArgs {
      * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
      */
     authenticationMode?: enums.AuthenticationMode;
+    /**
+     * Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+     *
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+     */
+    autoMode?: inputs.AutoModeOptionsArgs;
+    /**
+     * Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
+     */
+    bootstrapSelfManagedAddons?: pulumi.Input<boolean>;
     /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      *

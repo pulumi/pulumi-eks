@@ -20,6 +20,10 @@ export const AccessEntryType = {
      */
     EC2Windows: "EC2_WINDOWS",
     /**
+     * For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
+     */
+    EC2: "EC2",
+    /**
      * @deprecated Use `Standard` instead`
      */
     STANDARD: "STANDARD",

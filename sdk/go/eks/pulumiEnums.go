@@ -23,6 +23,8 @@ const (
 	AccessEntryTypeEC2Linux = AccessEntryType("EC2_LINUX")
 	// For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
 	AccessEntryTypeEC2Windows = AccessEntryType("EC2_WINDOWS")
+	// For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
+	AccessEntryTypeEC2 = AccessEntryType("EC2")
 )
 
 func (AccessEntryType) ElementType() reflect.Type {
@@ -151,6 +153,7 @@ func (o AccessEntryTypePtrOutput) ToStringPtrOutputWithContext(ctx context.Conte
 //	AccessEntryTypeFargateLinux
 //	AccessEntryTypeEC2Linux
 //	AccessEntryTypeEC2Windows
+//	AccessEntryTypeEC2
 type AccessEntryTypeInput interface {
 	pulumi.Input
 

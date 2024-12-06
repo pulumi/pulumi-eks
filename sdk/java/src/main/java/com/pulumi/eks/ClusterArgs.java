@@ -10,6 +10,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.enums.AuthenticationMode;
 import com.pulumi.eks.inputs.AccessEntryArgs;
+import com.pulumi.eks.inputs.AutoModeOptionsArgs;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
 import com.pulumi.eks.inputs.CoreDnsAddonOptionsArgs;
 import com.pulumi.eks.inputs.CreationRoleProviderArgs;
@@ -74,6 +75,40 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<AuthenticationMode> authenticationMode() {
         return Optional.ofNullable(this.authenticationMode);
+    }
+
+    /**
+     * Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+     * 
+     */
+    @Import(name="autoMode")
+    private @Nullable AutoModeOptionsArgs autoMode;
+
+    /**
+     * @return Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+     * 
+     */
+    public Optional<AutoModeOptionsArgs> autoMode() {
+        return Optional.ofNullable(this.autoMode);
+    }
+
+    /**
+     * Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
+     * 
+     */
+    @Import(name="bootstrapSelfManagedAddons")
+    private @Nullable Output<Boolean> bootstrapSelfManagedAddons;
+
+    /**
+     * @return Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
+     * 
+     */
+    public Optional<Output<Boolean>> bootstrapSelfManagedAddons() {
+        return Optional.ofNullable(this.bootstrapSelfManagedAddons);
     }
 
     /**
@@ -1105,6 +1140,8 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     private ClusterArgs(ClusterArgs $) {
         this.accessEntries = $.accessEntries;
         this.authenticationMode = $.authenticationMode;
+        this.autoMode = $.autoMode;
+        this.bootstrapSelfManagedAddons = $.bootstrapSelfManagedAddons;
         this.clusterSecurityGroup = $.clusterSecurityGroup;
         this.clusterSecurityGroupTags = $.clusterSecurityGroupTags;
         this.clusterTags = $.clusterTags;
@@ -1203,6 +1240,40 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         public Builder authenticationMode(@Nullable AuthenticationMode authenticationMode) {
             $.authenticationMode = authenticationMode;
             return this;
+        }
+
+        /**
+         * @param autoMode Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+         * 
+         * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder autoMode(@Nullable AutoModeOptionsArgs autoMode) {
+            $.autoMode = autoMode;
+            return this;
+        }
+
+        /**
+         * @param bootstrapSelfManagedAddons Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder bootstrapSelfManagedAddons(@Nullable Output<Boolean> bootstrapSelfManagedAddons) {
+            $.bootstrapSelfManagedAddons = bootstrapSelfManagedAddons;
+            return this;
+        }
+
+        /**
+         * @param bootstrapSelfManagedAddons Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `false` if EKS Auto Mode is enabled, `true` otherwise.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder bootstrapSelfManagedAddons(Boolean bootstrapSelfManagedAddons) {
+            return bootstrapSelfManagedAddons(Output.of(bootstrapSelfManagedAddons));
         }
 
         /**

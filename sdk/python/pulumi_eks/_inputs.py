@@ -23,6 +23,8 @@ __all__ = [
     'AccessEntryArgsDict',
     'AccessPolicyAssociationArgs',
     'AccessPolicyAssociationArgsDict',
+    'AutoModeOptionsArgs',
+    'AutoModeOptionsArgsDict',
     'ClusterNodeGroupOptionsArgs',
     'ClusterNodeGroupOptionsArgsDict',
     'CoreDataArgs',
@@ -205,7 +207,7 @@ if not MYPY:
         See for more details:
         https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
         """
-        access_scope: pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs']
+        access_scope: pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgsDict']
         """
         The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
         """
@@ -255,6 +257,127 @@ class AccessPolicyAssociationArgs:
     @policy_arn.setter
     def policy_arn(self, value: pulumi.Input[str]):
         pulumi.set(self, "policy_arn", value)
+
+
+if not MYPY:
+    class AutoModeOptionsArgsDict(TypedDict):
+        """
+        Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+
+        For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+        """
+        enabled: bool
+        """
+        Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+        """
+        compute_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgsDict']]
+        """
+        Compute configuration for EKS Auto Mode.
+        """
+        create_node_role: NotRequired[bool]
+        """
+        Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+        """
+        load_balancer_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgsDict']]
+        """
+        Load Balancer configuration for EKS Auto Mode.
+        """
+        storage_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgsDict']]
+        """
+        Storage configuration for EKS Auto Mode.
+        """
+elif False:
+    AutoModeOptionsArgsDict: TypeAlias = Mapping[str, Any]
+
+@pulumi.input_type
+class AutoModeOptionsArgs:
+    def __init__(__self__, *,
+                 enabled: bool,
+                 compute_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgs']] = None,
+                 create_node_role: Optional[bool] = None,
+                 load_balancer_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs']] = None,
+                 storage_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgs']] = None):
+        """
+        Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+
+        For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+        :param bool enabled: Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+        :param pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgs'] compute_config: Compute configuration for EKS Auto Mode.
+        :param bool create_node_role: Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+        :param pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs'] load_balancer_config: Load Balancer configuration for EKS Auto Mode.
+        :param pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgs'] storage_config: Storage configuration for EKS Auto Mode.
+        """
+        pulumi.set(__self__, "enabled", enabled)
+        if compute_config is not None:
+            pulumi.set(__self__, "compute_config", compute_config)
+        if create_node_role is None:
+            create_node_role = True
+        if create_node_role is not None:
+            pulumi.set(__self__, "create_node_role", create_node_role)
+        if load_balancer_config is not None:
+            pulumi.set(__self__, "load_balancer_config", load_balancer_config)
+        if storage_config is not None:
+            pulumi.set(__self__, "storage_config", storage_config)
+
+    @property
+    @pulumi.getter
+    def enabled(self) -> bool:
+        """
+        Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+        """
+        return pulumi.get(self, "enabled")
+
+    @enabled.setter
+    def enabled(self, value: bool):
+        pulumi.set(self, "enabled", value)
+
+    @property
+    @pulumi.getter(name="computeConfig")
+    def compute_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgs']]:
+        """
+        Compute configuration for EKS Auto Mode.
+        """
+        return pulumi.get(self, "compute_config")
+
+    @compute_config.setter
+    def compute_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterComputeConfigArgs']]):
+        pulumi.set(self, "compute_config", value)
+
+    @property
+    @pulumi.getter(name="createNodeRole")
+    def create_node_role(self) -> Optional[bool]:
+        """
+        Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+        """
+        return pulumi.get(self, "create_node_role")
+
+    @create_node_role.setter
+    def create_node_role(self, value: Optional[bool]):
+        pulumi.set(self, "create_node_role", value)
+
+    @property
+    @pulumi.getter(name="loadBalancerConfig")
+    def load_balancer_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs']]:
+        """
+        Load Balancer configuration for EKS Auto Mode.
+        """
+        return pulumi.get(self, "load_balancer_config")
+
+    @load_balancer_config.setter
+    def load_balancer_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubernetesNetworkConfigElasticLoadBalancingArgs']]):
+        pulumi.set(self, "load_balancer_config", value)
+
+    @property
+    @pulumi.getter(name="storageConfig")
+    def storage_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgs']]:
+        """
+        Storage configuration for EKS Auto Mode.
+        """
+        return pulumi.get(self, "storage_config")
+
+    @storage_config.setter
+    def storage_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterStorageConfigArgs']]):
+        pulumi.set(self, "storage_config", value)
 
 
 if not MYPY:
@@ -386,7 +509,7 @@ if not MYPY:
         """
         Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         """
-        launch_template_tag_specifications: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]]
+        launch_template_tag_specifications: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgsDict']]]]
         """
         The tag specifications to apply to the launch template.
         """
@@ -1382,7 +1505,7 @@ if not MYPY:
         aws_provider: NotRequired[pulumi.Input['pulumi_aws.Provider']]
         cluster_security_group: NotRequired[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]
         eks_node_access: NotRequired[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']]
-        encryption_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']]
+        encryption_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgsDict']]
         fargate_profile: NotRequired[pulumi.Input['pulumi_aws.eks.FargateProfile']]
         """
         The Fargate profile used to manage which pods run on Fargate.
@@ -1923,7 +2046,7 @@ if not MYPY:
         """
         Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
         """
-        selectors: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]]]
+        selectors: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgsDict']]]]
         """
         Specify the namespace and label selectors to use for launching pods into Fargate.
         """
@@ -2370,7 +2493,7 @@ if not MYPY:
         """
         The full Amazon Resource Name of the key to use when encrypting the volume. If none is supplied but encrypted is true, a key is generated by AWS.
         """
-        metadata: NotRequired[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']]
+        metadata: NotRequired[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgsDict']]
         """
         Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
         """

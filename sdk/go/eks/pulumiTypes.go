@@ -297,6 +297,255 @@ func (o AccessPolicyAssociationMapOutput) MapIndex(k pulumi.StringInput) AccessP
 	}).(AccessPolicyAssociationOutput)
 }
 
+// Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+//
+// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+type AutoModeOptions struct {
+	// Compute configuration for EKS Auto Mode.
+	ComputeConfig *eks.ClusterComputeConfig `pulumi:"computeConfig"`
+	// Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+	CreateNodeRole *bool `pulumi:"createNodeRole"`
+	// Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+	Enabled bool `pulumi:"enabled"`
+	// Load Balancer configuration for EKS Auto Mode.
+	LoadBalancerConfig *eks.ClusterKubernetesNetworkConfigElasticLoadBalancing `pulumi:"loadBalancerConfig"`
+	// Storage configuration for EKS Auto Mode.
+	StorageConfig *eks.ClusterStorageConfig `pulumi:"storageConfig"`
+}
+
+// Defaults sets the appropriate defaults for AutoModeOptions
+func (val *AutoModeOptions) Defaults() *AutoModeOptions {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if tmp.CreateNodeRole == nil {
+		createNodeRole_ := true
+		tmp.CreateNodeRole = &createNodeRole_
+	}
+	return &tmp
+}
+
+// AutoModeOptionsInput is an input type that accepts AutoModeOptionsArgs and AutoModeOptionsOutput values.
+// You can construct a concrete instance of `AutoModeOptionsInput` via:
+//
+//	AutoModeOptionsArgs{...}
+type AutoModeOptionsInput interface {
+	pulumi.Input
+
+	ToAutoModeOptionsOutput() AutoModeOptionsOutput
+	ToAutoModeOptionsOutputWithContext(context.Context) AutoModeOptionsOutput
+}
+
+// Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+//
+// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+type AutoModeOptionsArgs struct {
+	// Compute configuration for EKS Auto Mode.
+	ComputeConfig eks.ClusterComputeConfigPtrInput `pulumi:"computeConfig"`
+	// Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+	CreateNodeRole *bool `pulumi:"createNodeRole"`
+	// Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+	Enabled bool `pulumi:"enabled"`
+	// Load Balancer configuration for EKS Auto Mode.
+	LoadBalancerConfig eks.ClusterKubernetesNetworkConfigElasticLoadBalancingPtrInput `pulumi:"loadBalancerConfig"`
+	// Storage configuration for EKS Auto Mode.
+	StorageConfig eks.ClusterStorageConfigPtrInput `pulumi:"storageConfig"`
+}
+
+// Defaults sets the appropriate defaults for AutoModeOptionsArgs
+func (val *AutoModeOptionsArgs) Defaults() *AutoModeOptionsArgs {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if tmp.CreateNodeRole == nil {
+		createNodeRole_ := true
+		tmp.CreateNodeRole = &createNodeRole_
+	}
+	return &tmp
+}
+func (AutoModeOptionsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*AutoModeOptions)(nil)).Elem()
+}
+
+func (i AutoModeOptionsArgs) ToAutoModeOptionsOutput() AutoModeOptionsOutput {
+	return i.ToAutoModeOptionsOutputWithContext(context.Background())
+}
+
+func (i AutoModeOptionsArgs) ToAutoModeOptionsOutputWithContext(ctx context.Context) AutoModeOptionsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AutoModeOptionsOutput)
+}
+
+func (i AutoModeOptionsArgs) ToAutoModeOptionsPtrOutput() AutoModeOptionsPtrOutput {
+	return i.ToAutoModeOptionsPtrOutputWithContext(context.Background())
+}
+
+func (i AutoModeOptionsArgs) ToAutoModeOptionsPtrOutputWithContext(ctx context.Context) AutoModeOptionsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AutoModeOptionsOutput).ToAutoModeOptionsPtrOutputWithContext(ctx)
+}
+
+// AutoModeOptionsPtrInput is an input type that accepts AutoModeOptionsArgs, AutoModeOptionsPtr and AutoModeOptionsPtrOutput values.
+// You can construct a concrete instance of `AutoModeOptionsPtrInput` via:
+//
+//	        AutoModeOptionsArgs{...}
+//
+//	or:
+//
+//	        nil
+type AutoModeOptionsPtrInput interface {
+	pulumi.Input
+
+	ToAutoModeOptionsPtrOutput() AutoModeOptionsPtrOutput
+	ToAutoModeOptionsPtrOutputWithContext(context.Context) AutoModeOptionsPtrOutput
+}
+
+type autoModeOptionsPtrType AutoModeOptionsArgs
+
+func AutoModeOptionsPtr(v *AutoModeOptionsArgs) AutoModeOptionsPtrInput {
+	return (*autoModeOptionsPtrType)(v)
+}
+
+func (*autoModeOptionsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**AutoModeOptions)(nil)).Elem()
+}
+
+func (i *autoModeOptionsPtrType) ToAutoModeOptionsPtrOutput() AutoModeOptionsPtrOutput {
+	return i.ToAutoModeOptionsPtrOutputWithContext(context.Background())
+}
+
+func (i *autoModeOptionsPtrType) ToAutoModeOptionsPtrOutputWithContext(ctx context.Context) AutoModeOptionsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(AutoModeOptionsPtrOutput)
+}
+
+// Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+//
+// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+type AutoModeOptionsOutput struct{ *pulumi.OutputState }
+
+func (AutoModeOptionsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*AutoModeOptions)(nil)).Elem()
+}
+
+func (o AutoModeOptionsOutput) ToAutoModeOptionsOutput() AutoModeOptionsOutput {
+	return o
+}
+
+func (o AutoModeOptionsOutput) ToAutoModeOptionsOutputWithContext(ctx context.Context) AutoModeOptionsOutput {
+	return o
+}
+
+func (o AutoModeOptionsOutput) ToAutoModeOptionsPtrOutput() AutoModeOptionsPtrOutput {
+	return o.ToAutoModeOptionsPtrOutputWithContext(context.Background())
+}
+
+func (o AutoModeOptionsOutput) ToAutoModeOptionsPtrOutputWithContext(ctx context.Context) AutoModeOptionsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v AutoModeOptions) *AutoModeOptions {
+		return &v
+	}).(AutoModeOptionsPtrOutput)
+}
+
+// Compute configuration for EKS Auto Mode.
+func (o AutoModeOptionsOutput) ComputeConfig() eks.ClusterComputeConfigPtrOutput {
+	return o.ApplyT(func(v AutoModeOptions) *eks.ClusterComputeConfig { return v.ComputeConfig }).(eks.ClusterComputeConfigPtrOutput)
+}
+
+// Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+func (o AutoModeOptionsOutput) CreateNodeRole() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v AutoModeOptions) *bool { return v.CreateNodeRole }).(pulumi.BoolPtrOutput)
+}
+
+// Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+func (o AutoModeOptionsOutput) Enabled() pulumi.BoolOutput {
+	return o.ApplyT(func(v AutoModeOptions) bool { return v.Enabled }).(pulumi.BoolOutput)
+}
+
+// Load Balancer configuration for EKS Auto Mode.
+func (o AutoModeOptionsOutput) LoadBalancerConfig() eks.ClusterKubernetesNetworkConfigElasticLoadBalancingPtrOutput {
+	return o.ApplyT(func(v AutoModeOptions) *eks.ClusterKubernetesNetworkConfigElasticLoadBalancing {
+		return v.LoadBalancerConfig
+	}).(eks.ClusterKubernetesNetworkConfigElasticLoadBalancingPtrOutput)
+}
+
+// Storage configuration for EKS Auto Mode.
+func (o AutoModeOptionsOutput) StorageConfig() eks.ClusterStorageConfigPtrOutput {
+	return o.ApplyT(func(v AutoModeOptions) *eks.ClusterStorageConfig { return v.StorageConfig }).(eks.ClusterStorageConfigPtrOutput)
+}
+
+type AutoModeOptionsPtrOutput struct{ *pulumi.OutputState }
+
+func (AutoModeOptionsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**AutoModeOptions)(nil)).Elem()
+}
+
+func (o AutoModeOptionsPtrOutput) ToAutoModeOptionsPtrOutput() AutoModeOptionsPtrOutput {
+	return o
+}
+
+func (o AutoModeOptionsPtrOutput) ToAutoModeOptionsPtrOutputWithContext(ctx context.Context) AutoModeOptionsPtrOutput {
+	return o
+}
+
+func (o AutoModeOptionsPtrOutput) Elem() AutoModeOptionsOutput {
+	return o.ApplyT(func(v *AutoModeOptions) AutoModeOptions {
+		if v != nil {
+			return *v
+		}
+		var ret AutoModeOptions
+		return ret
+	}).(AutoModeOptionsOutput)
+}
+
+// Compute configuration for EKS Auto Mode.
+func (o AutoModeOptionsPtrOutput) ComputeConfig() eks.ClusterComputeConfigPtrOutput {
+	return o.ApplyT(func(v *AutoModeOptions) *eks.ClusterComputeConfig {
+		if v == nil {
+			return nil
+		}
+		return v.ComputeConfig
+	}).(eks.ClusterComputeConfigPtrOutput)
+}
+
+// Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+func (o AutoModeOptionsPtrOutput) CreateNodeRole() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AutoModeOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.CreateNodeRole
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+func (o AutoModeOptionsPtrOutput) Enabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AutoModeOptions) *bool {
+		if v == nil {
+			return nil
+		}
+		return &v.Enabled
+	}).(pulumi.BoolPtrOutput)
+}
+
+// Load Balancer configuration for EKS Auto Mode.
+func (o AutoModeOptionsPtrOutput) LoadBalancerConfig() eks.ClusterKubernetesNetworkConfigElasticLoadBalancingPtrOutput {
+	return o.ApplyT(func(v *AutoModeOptions) *eks.ClusterKubernetesNetworkConfigElasticLoadBalancing {
+		if v == nil {
+			return nil
+		}
+		return v.LoadBalancerConfig
+	}).(eks.ClusterKubernetesNetworkConfigElasticLoadBalancingPtrOutput)
+}
+
+// Storage configuration for EKS Auto Mode.
+func (o AutoModeOptionsPtrOutput) StorageConfig() eks.ClusterStorageConfigPtrOutput {
+	return o.ApplyT(func(v *AutoModeOptions) *eks.ClusterStorageConfig {
+		if v == nil {
+			return nil
+		}
+		return v.StorageConfig
+	}).(eks.ClusterStorageConfigPtrOutput)
+}
+
 // Describes the configuration options accepted by a cluster to create its own node groups.
 type ClusterNodeGroupOptions struct {
 	// The AMI ID to use for the worker nodes.
@@ -4307,6 +4556,8 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*AccessEntryArrayInput)(nil)).Elem(), AccessEntryArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*AccessPolicyAssociationInput)(nil)).Elem(), AccessPolicyAssociationArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*AccessPolicyAssociationMapInput)(nil)).Elem(), AccessPolicyAssociationMap{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AutoModeOptionsInput)(nil)).Elem(), AutoModeOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*AutoModeOptionsPtrInput)(nil)).Elem(), AutoModeOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*ClusterNodeGroupOptionsPtrInput)(nil)).Elem(), ClusterNodeGroupOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*CoreDataInput)(nil)).Elem(), CoreDataArgs{})
@@ -4336,6 +4587,8 @@ func init() {
 	pulumi.RegisterOutputType(AccessEntryArrayOutput{})
 	pulumi.RegisterOutputType(AccessPolicyAssociationOutput{})
 	pulumi.RegisterOutputType(AccessPolicyAssociationMapOutput{})
+	pulumi.RegisterOutputType(AutoModeOptionsOutput{})
+	pulumi.RegisterOutputType(AutoModeOptionsPtrOutput{})
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsOutput{})
 	pulumi.RegisterOutputType(ClusterNodeGroupOptionsPtrOutput{})
 	pulumi.RegisterOutputType(CoreDataOutput{})
