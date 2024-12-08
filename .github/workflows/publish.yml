@@ -61,7 +61,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
       - name: Make Provider Binary
         run: make dist/pulumi-resource-eks-v${{ inputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
       - name: Upload
@@ -154,7 +154,7 @@ jobs:
       with:
         tools: pulumictl, pulumicli, nodejs, python, dotnet, go, java
     - name: Publish SDKs
-      uses: pulumi/pulumi-package-publisher@v0.0.20
+      uses: pulumi/pulumi-package-publisher@1c0359ba74243cf6651efacfd839c751d8ff87e2 # v0.0.20
       with:
         sdk: all
         version: ${{ inputs.version }}
