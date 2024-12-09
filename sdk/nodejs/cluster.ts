@@ -563,11 +563,11 @@ export interface ClusterArgs {
      */
     serviceRole?: pulumi.Input<pulumiAws.iam.Role>;
     /**
-     * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+     * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
      */
     skipDefaultNodeGroup?: boolean;
     /**
-     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
      *
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
      */

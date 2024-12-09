@@ -245,8 +245,8 @@ class ClusterArgs:
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
-        :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+        :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
+        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
         :param Union[str, Mapping[str, 'StorageClassArgs']] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
@@ -1041,7 +1041,7 @@ class ClusterArgs:
     @pulumi.getter(name="skipDefaultNodeGroup")
     def skip_default_node_group(self) -> Optional[bool]:
         """
-        If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+        If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
         """
         return pulumi.get(self, "skip_default_node_group")
 
@@ -1053,7 +1053,7 @@ class ClusterArgs:
     @pulumi.getter(name="skipDefaultSecurityGroups")
     def skip_default_security_groups(self) -> Optional[bool]:
         """
-        If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+        If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
 
         See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
         """
@@ -1417,8 +1417,8 @@ class Cluster(pulumi.ComponentResource):
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Sequence[pulumi.Input[Union['RoleMappingArgs', 'RoleMappingArgsDict']]]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
-        :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+        :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
+        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
         :param Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.

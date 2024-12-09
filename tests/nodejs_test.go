@@ -1261,6 +1261,7 @@ func TestAccEksAutoMode(t *testing.T) {
 			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				assert.NotEmpty(t, info.Outputs["nodeRoleName"].(string), "expected nodeRoleName to be set")
+				assert.Empty(t, info.Outputs["defaultNodeGroup"].(string), "expected no default node group to be created")
 				integration.AssertHTTPResultWithRetry(t, info.Outputs["url"].(string), nil, 6*time.Minute, func(body string) bool {
 					return assert.Contains(t, body, "Hello, Pulumi!")
 				})

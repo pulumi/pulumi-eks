@@ -23,18 +23,9 @@ const cluster = new eks.Cluster("eks-auto-mode", {
     name: clusterName,
     // EKS Auto Mode requires Access Entries, use either the `Api` or `ApiAndConfigMap` authentication mode.
     authenticationMode: eks.AuthenticationMode.Api,
-    skipDefaultNodeGroup: true,
-    skipDefaultSecurityGroups: true,
     vpcId: eksVpc.vpcId,
     publicSubnetIds: eksVpc.publicSubnetIds,
     privateSubnetIds: eksVpc.privateSubnetIds,
-    
-    // Nodes managed by EKS Auto Mode come with vpc-cni and kube-proxy pre-installed.
-    // No need for installing the addons
-    kubeProxyAddonOptions: {
-        enabled: false,
-    },
-    useDefaultVpcCni: true,
 
     // Enables compute, storage and load balancing for the cluster.
     autoMode: {
@@ -135,5 +126,6 @@ const ingress = new k8s.networking.v1.Ingress(appName, {
     }
 }, { provider: cluster.provider });
 
+export const defaultNodeGroup = cluster.defaultNodeGroupAsgName;
 export const nodeRoleName = cluster.autoModeNodeRoleName;
 export const url = ingress.status.loadBalancer.ingress[0].hostname.apply(h => `http://${h}:80`);

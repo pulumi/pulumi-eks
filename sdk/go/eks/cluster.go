@@ -331,9 +331,9 @@ type clusterArgs struct {
 	RoleMappings []RoleMapping `pulumi:"roleMappings"`
 	// IAM Service Role for EKS to use to manage the cluster.
 	ServiceRole *iam.Role `pulumi:"serviceRole"`
-	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
 	SkipDefaultNodeGroup *bool `pulumi:"skipDefaultNodeGroup"`
-	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
 	SkipDefaultSecurityGroups *bool `pulumi:"skipDefaultSecurityGroups"`
@@ -575,9 +575,9 @@ type ClusterArgs struct {
 	RoleMappings RoleMappingArrayInput
 	// IAM Service Role for EKS to use to manage the cluster.
 	ServiceRole iam.RoleInput
-	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
 	SkipDefaultNodeGroup *bool
-	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
 	SkipDefaultSecurityGroups *bool

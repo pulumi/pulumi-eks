@@ -544,11 +544,13 @@ export function createCore(
         );
     }
 
+    const skipDefaultSecurityGroups = args.skipDefaultSecurityGroups || args.autoMode?.enabled;
+
     // Create the EKS cluster security group
     let eksClusterSecurityGroup: aws.ec2.SecurityGroup | undefined;
     if (args.clusterSecurityGroup) {
         eksClusterSecurityGroup = args.clusterSecurityGroup;
-    } else if (!args.skipDefaultSecurityGroups) {
+    } else if (!skipDefaultSecurityGroups) {
         eksClusterSecurityGroup = new aws.ec2.SecurityGroup(
             `${name}-eksClusterSecurityGroup`,
             {
@@ -888,7 +890,7 @@ export function createCore(
         { parent: parent },
     );
 
-    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
+    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate || args.autoMode?.enabled;
 
     let instanceRoles: pulumi.Output<aws.iam.Role[]>;
     let defaultInstanceRole: pulumi.Output<aws.iam.Role> | undefined;

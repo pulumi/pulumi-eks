@@ -947,14 +947,14 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+     * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
      * 
      */
     @Import(name="skipDefaultNodeGroup")
     private @Nullable Boolean skipDefaultNodeGroup;
 
     /**
-     * @return If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+     * @return If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
      * 
      */
     public Optional<Boolean> skipDefaultNodeGroup() {
@@ -962,7 +962,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
      * 
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
      * 
@@ -971,7 +971,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     private @Nullable Boolean skipDefaultSecurityGroups;
 
     /**
-     * @return If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+     * @return If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
      * 
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
      * 
@@ -2382,7 +2382,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param skipDefaultNodeGroup If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+         * @param skipDefaultNodeGroup If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
          * 
          * @return builder
          * 
@@ -2393,7 +2393,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param skipDefaultSecurityGroups If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+         * @param skipDefaultSecurityGroups If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
          * 
          * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
          * 

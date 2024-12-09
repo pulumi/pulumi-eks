@@ -571,7 +571,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Plain: true,
 						},
 						Description: "If this toggle is set to true, the EKS cluster will be created without node " +
-							"group attached. Defaults to false, unless `fargate` input is provided.",
+							"group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.",
 					},
 					"skipDefaultSecurityGroups": {
 						TypeSpec: schema.TypeSpec{
@@ -579,7 +579,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Plain: true,
 						},
 						Description: "If this toggle is set to true, the EKS cluster will be created without the default " +
-							"node and cluster security groups. Defaults to false.\n\n" +
+							"node and cluster security groups. Defaults to false, unless `autoMode` is enabled.\n\n" +
 							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html",
 					},
 					"tags": {
