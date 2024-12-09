@@ -544,7 +544,8 @@ export function createCore(
         );
     }
 
-    const skipDefaultSecurityGroups = args.skipDefaultSecurityGroups || args.autoMode?.enabled;
+    // Do not create the default security group if the user makes an explicit decision or if EKS Auto Mode is enabled.
+    const skipDefaultSecurityGroups = args.skipDefaultSecurityGroups ?? args.autoMode?.enabled;
 
     // Create the EKS cluster security group
     let eksClusterSecurityGroup: aws.ec2.SecurityGroup | undefined;
@@ -733,7 +734,8 @@ export function createCore(
         },
     );
 
-    if (args.kubeProxyAddonOptions?.enabled ?? true) {
+    const kubeProxyAddonEnabled = args.kubeProxyAddonOptions?.enabled ?? !args.autoMode?.enabled;
+    if (kubeProxyAddonEnabled) {
         const kubeProxyVersion: pulumi.Output<string> = args.kubeProxyAddonOptions?.version
             ? pulumi.output(args.kubeProxyAddonOptions?.version)
             : aws.eks
@@ -890,7 +892,9 @@ export function createCore(
         { parent: parent },
     );
 
-    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate || args.autoMode?.enabled;
+    // create the default node group unless the user opts out of it or if Fargate/EKS Auto Mode is enabled
+    const skipDefaultNodeGroup =
+        args.skipDefaultNodeGroup || args.fargate || args.autoMode?.enabled;
 
     let instanceRoles: pulumi.Output<aws.iam.Role[]>;
     let defaultInstanceRole: pulumi.Output<aws.iam.Role> | undefined;
@@ -1053,10 +1057,13 @@ export function createCore(
         }
     }
 
+    // Create the VPC CNI addon if the user has not explicitly disabled it. The VPC CNI addon is enabled by default
+    // unless EKS Auto Mode is enabled.
+    const vpcCniAddonEnabled =
+        args.useDefaultVpcCni !== undefined ? !args.useDefaultVpcCni : !args.autoMode?.enabled;
     // Create the VPC CNI addon
-    const vpcCni = args.useDefaultVpcCni
-        ? undefined
-        : new VpcCniAddon(
+    const vpcCni = vpcCniAddonEnabled
+        ? new VpcCniAddon(
               `${name}-vpc-cni`,
               {
                   ...args.vpcCniOptions,
@@ -1072,7 +1079,8 @@ export function createCore(
                       kubernetes: k8sProvider,
                   },
               },
-          );
+          )
+        : undefined;
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi
         .output(args.fargate)
@@ -2198,7 +2206,8 @@ export function createCluster(
 
     let nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
     let eksClusterIngressRule: aws.ec2.SecurityGroupRule | undefined;
-    if (!args.skipDefaultSecurityGroups) {
+    const skipDefaultSecurityGroups = args.skipDefaultSecurityGroups ?? args.autoMode?.enabled ?? false;
+    if (skipDefaultSecurityGroups) {
         if (!core.clusterSecurityGroup) {
             throw new pulumi.ResourceError(
                 "clusterSecurityGroup is required when creating the default node group.",

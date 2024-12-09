@@ -720,6 +720,7 @@ namespace Pulumi.Eks
 
         /// <summary>
         /// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+        /// Defaults to true, unless `autoMode` is enabled.
         /// </summary>
         [Input("useDefaultVpcCni")]
         public bool? UseDefaultVpcCni { get; set; }

@@ -596,6 +596,7 @@ export interface ClusterArgs {
     tags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+     * Defaults to true, unless `autoMode` is enabled.
      */
     useDefaultVpcCni?: boolean;
     /**

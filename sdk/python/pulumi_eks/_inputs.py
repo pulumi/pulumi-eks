@@ -271,6 +271,7 @@ if not MYPY:
         enabled: bool
         """
         Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+        When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
         """
         compute_config: NotRequired[pulumi.Input['ClusterComputeConfigArgsDict']]
         """
@@ -294,6 +295,7 @@ class AutoModeOptionsArgs:
 
         For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
         :param bool enabled: Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+               When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
         :param pulumi.Input['ClusterComputeConfigArgs'] compute_config: Compute configuration for EKS Auto Mode.
         :param bool create_node_role: Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
         """
@@ -310,6 +312,7 @@ class AutoModeOptionsArgs:
     def enabled(self) -> bool:
         """
         Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+        When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
         """
         return pulumi.get(self, "enabled")
 
@@ -2145,7 +2148,7 @@ if not MYPY:
         """
         enabled: NotRequired[bool]
         """
-        Whether or not to create the `kube-proxy` Addon in the cluster
+        Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
         """
         resolve_conflicts_on_create: NotRequired['ResolveConflictsOnCreate']
         """
@@ -2172,15 +2175,13 @@ class KubeProxyAddonOptionsArgs:
                  version: Optional[pulumi.Input[str]] = None):
         """
         :param pulumi.Input[Mapping[str, Any]] configuration_values: Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
-        :param bool enabled: Whether or not to create the `kube-proxy` Addon in the cluster
+        :param bool enabled: Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
         :param 'ResolveConflictsOnCreate' resolve_conflicts_on_create: How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
         :param 'ResolveConflictsOnUpdate' resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
         :param pulumi.Input[str] version: The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
         """
         if configuration_values is not None:
             pulumi.set(__self__, "configuration_values", configuration_values)
-        if enabled is None:
-            enabled = True
         if enabled is not None:
             pulumi.set(__self__, "enabled", enabled)
         if resolve_conflicts_on_create is None:
@@ -2210,7 +2211,7 @@ class KubeProxyAddonOptionsArgs:
     @pulumi.getter
     def enabled(self) -> Optional[bool]:
         """
-        Whether or not to create the `kube-proxy` Addon in the cluster
+        Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
         """
         return pulumi.get(self, "enabled")
 

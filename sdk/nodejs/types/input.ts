@@ -79,6 +79,7 @@ export interface AutoModeOptionsArgs {
     createNodeRole?: boolean;
     /**
      * Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+     * When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
      */
     enabled: boolean;
 }
@@ -503,7 +504,7 @@ export interface KubeProxyAddonOptionsArgs {
      */
     configurationValues?: pulumi.Input<{[key: string]: any}>;
     /**
-     * Whether or not to create the `kube-proxy` Addon in the cluster
+     * Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
      */
     enabled?: boolean;
     /**
@@ -525,7 +526,6 @@ export interface KubeProxyAddonOptionsArgs {
 export function kubeProxyAddonOptionsArgsProvideDefaults(val: KubeProxyAddonOptionsArgs): KubeProxyAddonOptionsArgs {
     return {
         ...val,
-        enabled: (val.enabled) ?? true,
         resolveConflictsOnCreate: (val.resolveConflictsOnCreate) ?? "OVERWRITE",
         resolveConflictsOnUpdate: (val.resolveConflictsOnUpdate) ?? "OVERWRITE",
     };

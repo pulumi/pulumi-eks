@@ -306,6 +306,7 @@ type AutoModeOptions struct {
 	// Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
 	CreateNodeRole *bool `pulumi:"createNodeRole"`
 	// Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+	// When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
 	Enabled bool `pulumi:"enabled"`
 }
 
@@ -342,6 +343,7 @@ type AutoModeOptionsArgs struct {
 	// Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
 	CreateNodeRole *bool `pulumi:"createNodeRole"`
 	// Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+	// When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
 	Enabled bool `pulumi:"enabled"`
 }
 
@@ -448,6 +450,7 @@ func (o AutoModeOptionsOutput) CreateNodeRole() pulumi.BoolPtrOutput {
 }
 
 // Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+// When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
 func (o AutoModeOptionsOutput) Enabled() pulumi.BoolOutput {
 	return o.ApplyT(func(v AutoModeOptions) bool { return v.Enabled }).(pulumi.BoolOutput)
 }
@@ -497,6 +500,7 @@ func (o AutoModeOptionsPtrOutput) CreateNodeRole() pulumi.BoolPtrOutput {
 }
 
 // Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+// When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
 func (o AutoModeOptionsPtrOutput) Enabled() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *AutoModeOptions) *bool {
 		if v == nil {
@@ -2729,7 +2733,7 @@ func (o FargateProfilePtrOutput) SubnetIds() pulumi.StringArrayOutput {
 type KubeProxyAddonOptions struct {
 	// Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
 	ConfigurationValues map[string]interface{} `pulumi:"configurationValues"`
-	// Whether or not to create the `kube-proxy` Addon in the cluster
+	// Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
 	Enabled *bool `pulumi:"enabled"`
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
 	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
@@ -2745,10 +2749,6 @@ func (val *KubeProxyAddonOptions) Defaults() *KubeProxyAddonOptions {
 		return nil
 	}
 	tmp := *val
-	if tmp.Enabled == nil {
-		enabled_ := true
-		tmp.Enabled = &enabled_
-	}
 	if tmp.ResolveConflictsOnCreate == nil {
 		resolveConflictsOnCreate_ := ResolveConflictsOnCreate("OVERWRITE")
 		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
@@ -2774,7 +2774,7 @@ type KubeProxyAddonOptionsInput interface {
 type KubeProxyAddonOptionsArgs struct {
 	// Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
 	ConfigurationValues pulumi.MapInput `pulumi:"configurationValues"`
-	// Whether or not to create the `kube-proxy` Addon in the cluster
+	// Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
 	Enabled *bool `pulumi:"enabled"`
 	// How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
 	ResolveConflictsOnCreate *ResolveConflictsOnCreate `pulumi:"resolveConflictsOnCreate"`
@@ -2790,10 +2790,6 @@ func (val *KubeProxyAddonOptionsArgs) Defaults() *KubeProxyAddonOptionsArgs {
 		return nil
 	}
 	tmp := *val
-	if tmp.Enabled == nil {
-		enabled_ := true
-		tmp.Enabled = &enabled_
-	}
 	if tmp.ResolveConflictsOnCreate == nil {
 		resolveConflictsOnCreate_ := ResolveConflictsOnCreate("OVERWRITE")
 		tmp.ResolveConflictsOnCreate = &resolveConflictsOnCreate_
@@ -2886,7 +2882,7 @@ func (o KubeProxyAddonOptionsOutput) ConfigurationValues() pulumi.MapOutput {
 	return o.ApplyT(func(v KubeProxyAddonOptions) map[string]interface{} { return v.ConfigurationValues }).(pulumi.MapOutput)
 }
 
-// Whether or not to create the `kube-proxy` Addon in the cluster
+// Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
 func (o KubeProxyAddonOptionsOutput) Enabled() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v KubeProxyAddonOptions) *bool { return v.Enabled }).(pulumi.BoolPtrOutput)
 }
@@ -2940,7 +2936,7 @@ func (o KubeProxyAddonOptionsPtrOutput) ConfigurationValues() pulumi.MapOutput {
 	}).(pulumi.MapOutput)
 }
 
-// Whether or not to create the `kube-proxy` Addon in the cluster
+// Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
 func (o KubeProxyAddonOptionsPtrOutput) Enabled() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *KubeProxyAddonOptions) *bool {
 		if v == nil {

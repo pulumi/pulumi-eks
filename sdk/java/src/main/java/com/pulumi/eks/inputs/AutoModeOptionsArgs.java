@@ -56,6 +56,7 @@ public final class AutoModeOptionsArgs extends com.pulumi.resources.ResourceArgs
 
     /**
      * Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+     * When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
      * 
      */
     @Import(name="enabled", required=true)
@@ -63,6 +64,7 @@ public final class AutoModeOptionsArgs extends com.pulumi.resources.ResourceArgs
 
     /**
      * @return Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+     * When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
      * 
      */
     public Boolean enabled() {
@@ -129,6 +131,7 @@ public final class AutoModeOptionsArgs extends com.pulumi.resources.ResourceArgs
 
         /**
          * @param enabled Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+         * When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
          * 
          * @return builder
          * 

@@ -354,6 +354,7 @@ type clusterArgs struct {
 	// Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
 	Tags map[string]string `pulumi:"tags"`
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+	// Defaults to true, unless `autoMode` is enabled.
 	UseDefaultVpcCni *bool `pulumi:"useDefaultVpcCni"`
 	// Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	UserMappings []UserMapping `pulumi:"userMappings"`
@@ -598,6 +599,7 @@ type ClusterArgs struct {
 	// Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
 	Tags pulumi.StringMapInput
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+	// Defaults to true, unless `autoMode` is enabled.
 	UseDefaultVpcCni *bool
 	// Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	UserMappings UserMappingArrayInput

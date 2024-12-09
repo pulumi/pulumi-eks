@@ -418,7 +418,8 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Type:  "boolean",
 							Plain: true,
 						},
-						Description: "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.",
+						Description: "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.\n" +
+							"Defaults to true, unless `autoMode` is enabled.",
 					},
 					"instanceType": {
 						TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO: aws.ec2.InstanceType is a string enum.
@@ -1430,7 +1431,8 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 								Type:  "boolean",
 								Plain: true,
 							},
-							Description: "Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.",
+							Description: "Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.\n" +
+								"When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.",
 						},
 						"createNodeRole": {
 							TypeSpec: schema.TypeSpec{
@@ -2107,8 +2109,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					Properties: map[string]schema.PropertySpec{
 						"enabled": {
 							TypeSpec:    schema.TypeSpec{Type: "boolean", Plain: true},
-							Default:     true,
-							Description: "Whether or not to create the `kube-proxy` Addon in the cluster",
+							Description: "Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.",
 						},
 						"version": {
 							TypeSpec: schema.TypeSpec{Type: "string"},

@@ -263,6 +263,7 @@ class ClusterArgs:
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
         :param bool use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+               Defaults to true, unless `autoMode` is enabled.
         :param pulumi.Input[Sequence[pulumi.Input['UserMappingArgs']]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         :param 'VpcCniOptionsArgs' vpc_cni_options: The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
@@ -1114,6 +1115,7 @@ class ClusterArgs:
     def use_default_vpc_cni(self) -> Optional[bool]:
         """
         Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+        Defaults to true, unless `autoMode` is enabled.
         """
         return pulumi.get(self, "use_default_vpc_cni")
 
@@ -1435,6 +1437,7 @@ class Cluster(pulumi.ComponentResource):
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
         :param bool use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+               Defaults to true, unless `autoMode` is enabled.
         :param pulumi.Input[Sequence[pulumi.Input[Union['UserMappingArgs', 'UserMappingArgsDict']]]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         :param Union['VpcCniOptionsArgs', 'VpcCniOptionsArgsDict'] vpc_cni_options: The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.

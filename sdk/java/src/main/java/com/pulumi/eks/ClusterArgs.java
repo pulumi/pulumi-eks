@@ -1047,6 +1047,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
     /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+     * Defaults to true, unless `autoMode` is enabled.
      * 
      */
     @Import(name="useDefaultVpcCni")
@@ -1054,6 +1055,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
     /**
      * @return Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+     * Defaults to true, unless `autoMode` is enabled.
      * 
      */
     public Optional<Boolean> useDefaultVpcCni() {
@@ -2520,6 +2522,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
         /**
          * @param useDefaultVpcCni Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+         * Defaults to true, unless `autoMode` is enabled.
          * 
          * @return builder
          * 

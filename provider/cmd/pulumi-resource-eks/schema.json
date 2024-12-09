@@ -245,7 +245,7 @@
                 "enabled": {
                     "type": "boolean",
                     "plain": true,
-                    "description": "Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you."
+                    "description": "Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.\nWhen enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities."
                 }
             },
             "type": "object",
@@ -700,8 +700,7 @@
                 "enabled": {
                     "type": "boolean",
                     "plain": true,
-                    "description": "Whether or not to create the `kube-proxy` Addon in the cluster",
-                    "default": true
+                    "description": "Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled."
                 },
                 "resolveConflictsOnCreate": {
                     "type": "string",
@@ -1530,7 +1529,7 @@
                 "useDefaultVpcCni": {
                     "type": "boolean",
                     "plain": true,
-                    "description": "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`."
+                    "description": "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.\nDefaults to true, unless `autoMode` is enabled."
                 },
                 "userMappings": {
                     "type": "array",
