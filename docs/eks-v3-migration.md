@@ -213,4 +213,5 @@ Because of this change, the `clusterSecurityGroup`, `nodeSecurityGroup` and `clu
 
 ### Cluster does not create extraneous node IAM role if `skipDefaultNodeGroup` is set to `true`
 
-Previously the Cluster component created a default node IAM role even if `skipDefaultNodeGroup` was set to `true`. This role gets correctly omitted now if you are specifying `skipDefaultNodeGroup`.
+Previously the Cluster component created a default node IAM role even if `skipDefaultNodeGroup` was set to `true`. This role gets correctly omitted now if you are specifying `skipDefaultNodeGroup`. If you would like to keep using the default node IAM
+role, you can set `createInstanceRole` to true.
