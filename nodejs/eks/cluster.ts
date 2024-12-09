@@ -2236,7 +2236,8 @@ export function createCluster(
         core.nodeGroupOptions.clusterIngressRule = eksClusterIngressRule;
     }
 
-    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
+    const skipDefaultNodeGroup =
+        args.skipDefaultNodeGroup || args.fargate || args.autoMode?.enabled;
 
     // Create the default worker node group and grant the workers access to the API server.
     let defaultNodeGroup: NodeGroupV2Data | undefined = undefined;
