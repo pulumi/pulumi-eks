@@ -37,14 +37,14 @@ public final class KubeProxyAddonOptionsArgs extends com.pulumi.resources.Resour
     }
 
     /**
-     * Whether or not to create the `kube-proxy` Addon in the cluster
+     * Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
      * 
      */
     @Import(name="enabled")
     private @Nullable Boolean enabled;
 
     /**
-     * @return Whether or not to create the `kube-proxy` Addon in the cluster
+     * @return Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
      * 
      */
     public Optional<Boolean> enabled() {
@@ -146,7 +146,7 @@ public final class KubeProxyAddonOptionsArgs extends com.pulumi.resources.Resour
         }
 
         /**
-         * @param enabled Whether or not to create the `kube-proxy` Addon in the cluster
+         * @param enabled Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
          * 
          * @return builder
          * 
@@ -200,7 +200,6 @@ public final class KubeProxyAddonOptionsArgs extends com.pulumi.resources.Resour
         }
 
         public KubeProxyAddonOptionsArgs build() {
-            $.enabled = Codegen.booleanProp("enabled").arg($.enabled).def(true).getNullable();
             $.resolveConflictsOnCreate = Codegen.objectProp("resolveConflictsOnCreate", ResolveConflictsOnCreate.class).arg($.resolveConflictsOnCreate).def(ResolveConflictsOnCreate.Overwrite).getNullable();
             $.resolveConflictsOnUpdate = Codegen.objectProp("resolveConflictsOnUpdate", ResolveConflictsOnUpdate.class).arg($.resolveConflictsOnUpdate).def(ResolveConflictsOnUpdate.Overwrite).getNullable();
             return $;

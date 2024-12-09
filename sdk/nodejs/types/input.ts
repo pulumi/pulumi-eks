@@ -64,6 +64,52 @@ export interface AccessPolicyAssociationArgs {
 }
 
 /**
+ * Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+ *
+ * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+ */
+export interface AutoModeOptionsArgs {
+    /**
+     * Compute configuration for EKS Auto Mode.
+     */
+    computeConfig?: pulumi.Input<inputs.ClusterComputeConfigArgs>;
+    /**
+     * Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+     */
+    createNodeRole?: boolean;
+    /**
+     * Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+     * When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
+     */
+    enabled: boolean;
+}
+/**
+ * autoModeOptionsArgsProvideDefaults sets the appropriate defaults for AutoModeOptionsArgs
+ */
+export function autoModeOptionsArgsProvideDefaults(val: AutoModeOptionsArgs): AutoModeOptionsArgs {
+    return {
+        ...val,
+        createNodeRole: (val.createNodeRole) ?? true,
+    };
+}
+
+/**
+ * Configuration for the compute capability of your EKS Auto Mode cluster.
+ */
+export interface ClusterComputeConfigArgs {
+    /**
+     * Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.
+     *
+     * By default, the built-in `system` and `general-purpose` nodepools are enabled.
+     */
+    nodePools?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.
+     */
+    nodeRoleArn?: pulumi.Input<string>;
+}
+
+/**
  * Describes the configuration options accepted by a cluster to create its own node groups.
  */
 export interface ClusterNodeGroupOptionsArgs {
@@ -458,7 +504,7 @@ export interface KubeProxyAddonOptionsArgs {
      */
     configurationValues?: pulumi.Input<{[key: string]: any}>;
     /**
-     * Whether or not to create the `kube-proxy` Addon in the cluster
+     * Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
      */
     enabled?: boolean;
     /**
@@ -480,7 +526,6 @@ export interface KubeProxyAddonOptionsArgs {
 export function kubeProxyAddonOptionsArgsProvideDefaults(val: KubeProxyAddonOptionsArgs): KubeProxyAddonOptionsArgs {
     return {
         ...val,
-        enabled: (val.enabled) ?? true,
         resolveConflictsOnCreate: (val.resolveConflictsOnCreate) ?? "OVERWRITE",
         resolveConflictsOnUpdate: (val.resolveConflictsOnUpdate) ?? "OVERWRITE",
     };

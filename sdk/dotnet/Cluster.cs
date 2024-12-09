@@ -42,6 +42,12 @@ namespace Pulumi.Eks
     public partial class Cluster : global::Pulumi.ComponentResource
     {
         /// <summary>
+        /// The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+        /// </summary>
+        [Output("autoModeNodeRoleName")]
+        public Output<string> AutoModeNodeRoleName { get; private set; } = null!;
+
+        /// <summary>
         /// The AWS resource provider.
         /// </summary>
         [Output("awsProvider")]
@@ -221,6 +227,14 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("authenticationMode")]
         public Pulumi.Eks.AuthenticationMode? AuthenticationMode { get; set; }
+
+        /// <summary>
+        /// Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+        /// 
+        /// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+        /// </summary>
+        [Input("autoMode")]
+        public Inputs.AutoModeOptionsArgs? AutoMode { get; set; }
 
         /// <summary>
         /// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
@@ -651,13 +665,13 @@ namespace Pulumi.Eks
         public Input<Pulumi.Aws.Iam.Role>? ServiceRole { get; set; }
 
         /// <summary>
-        /// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+        /// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
         /// </summary>
         [Input("skipDefaultNodeGroup")]
         public bool? SkipDefaultNodeGroup { get; set; }
 
         /// <summary>
-        /// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+        /// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
         /// 
         /// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
         /// </summary>
@@ -706,6 +720,7 @@ namespace Pulumi.Eks
 
         /// <summary>
         /// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+        /// Defaults to true, unless `autoMode` is enabled.
         /// </summary>
         [Input("useDefaultVpcCni")]
         public bool? UseDefaultVpcCni { get; set; }

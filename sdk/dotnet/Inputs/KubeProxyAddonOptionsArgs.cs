@@ -25,7 +25,7 @@ namespace Pulumi.Eks.Inputs
         }
 
         /// <summary>
-        /// Whether or not to create the `kube-proxy` Addon in the cluster
+        /// Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
         /// </summary>
         [Input("enabled")]
         public bool? Enabled { get; set; }
@@ -50,7 +50,6 @@ namespace Pulumi.Eks.Inputs
 
         public KubeProxyAddonOptionsArgs()
         {
-            Enabled = true;
             ResolveConflictsOnCreate = Pulumi.Eks.ResolveConflictsOnCreate.Overwrite;
             ResolveConflictsOnUpdate = Pulumi.Eks.ResolveConflictsOnUpdate.Overwrite;
         }

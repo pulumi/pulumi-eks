@@ -114,17 +114,12 @@ func main() {
 	}
 }
 
-const (
-	awsVersion = "v6.18.2"
-	k8sVersion = "v4.4.0"
-)
-
-func awsRef(ref string) string {
-	return fmt.Sprintf("/aws/%s/schema.json%s", awsVersion, ref)
+func awsRef(ref string, awsVersion string) string {
+	return fmt.Sprintf("/aws/v%s/schema.json%s", awsVersion, ref)
 }
 
-func k8sRef(ref string) string {
-	return fmt.Sprintf("/kubernetes/%s/schema.json%s", k8sVersion, ref)
+func k8sRef(ref string, k8sVersion string) string {
+	return fmt.Sprintf("/kubernetes/v%s/schema.json%s", k8sVersion, ref)
 }
 
 //nolint:lll,goconst
@@ -223,26 +218,26 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Description: "A kubeconfig that can be used to connect to the EKS cluster as a JSON string.",
 						},
 						"awsProvider": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/provider")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/provider", dependencies.Aws)},
 							Description: "The AWS resource provider.",
 						},
 						"clusterSecurityGroup": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 							Description: "The security group for the EKS cluster.",
 						},
 						"instanceRoles": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
-								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role", dependencies.Aws)},
 							},
 							Description: "The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.",
 						},
 						"nodeSecurityGroup": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 							Description: "The security group for the cluster's nodes.",
 						},
 						"eksClusterIngressRule": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule", dependencies.Aws)},
 							Description: "The ingress rule that gives node group access to cluster API server.",
 						},
 						"defaultNodeGroup": {
@@ -251,7 +246,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 								"`skipDefaultNodeGroup` was specified.",
 						},
 						"eksCluster": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster", dependencies.Aws)},
 							Description: "The EKS cluster.",
 						},
 						"core": {
@@ -296,6 +291,10 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 								"This value can be used to associate kubernetes service accounts with IAM roles. For more information, see " +
 								"https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.",
 						},
+						"autoModeNodeRoleName": {
+							TypeSpec:    schema.TypeSpec{Type: "string"},
+							Description: "The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.",
+						},
 					},
 					Required: []string{
 						"kubeconfig",
@@ -313,6 +312,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"oidcProviderArn",
 						"oidcProviderUrl",
 						"oidcIssuer",
+						"autoModeNodeRoleName",
 					},
 				},
 				InputProperties: map[string]schema.PropertySpec{
@@ -418,14 +418,15 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Type:  "boolean",
 							Plain: true,
 						},
-						Description: "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.",
+						Description: "Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.\n" +
+							"Defaults to true, unless `autoMode` is enabled.",
 					},
 					"instanceType": {
 						TypeSpec:    schema.TypeSpec{Type: "string"}, // TODO: aws.ec2.InstanceType is a string enum.
 						Description: "The instance type to use for the cluster's nodes. Defaults to \"t3.medium\".",
 					},
 					"instanceRole": {
-						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role", dependencies.Aws)},
 						Description: "This enables the simple case of only registering a *single* IAM instance role " +
 							"with the cluster, that is required to be shared by *all* node groups in their instance " +
 							"profiles.\n\n" +
@@ -437,7 +438,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"already set in the NodeGroup.",
 					},
 					"serviceRole": {
-						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role", dependencies.Aws)},
 						Description: "IAM Service Role for EKS to use to manage the cluster.",
 					},
 					"creationRoleProvider": {
@@ -454,7 +455,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					"instanceRoles": {
 						TypeSpec: schema.TypeSpec{
 							Type:  "array",
-							Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+							Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role", dependencies.Aws)},
 						},
 						Description: "This enables the advanced case of registering *many* IAM instance roles with " +
 							"the cluster for per node group IAM, instead of the simpler, shared case of " +
@@ -491,7 +492,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					},
 					"clusterSecurityGroup": {
 						TypeSpec: schema.TypeSpec{
-							Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
+							Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws),
 						},
 						Description: "The security group to use for the cluster API endpoint. If not provided, a new " +
 							"security group will be created with full internet egress and ingress from node groups.\n\n" +
@@ -571,7 +572,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Plain: true,
 						},
 						Description: "If this toggle is set to true, the EKS cluster will be created without node " +
-							"group attached. Defaults to false, unless `fargate` input is provided.",
+							"group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.",
 					},
 					"skipDefaultSecurityGroups": {
 						TypeSpec: schema.TypeSpec{
@@ -579,7 +580,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Plain: true,
 						},
 						Description: "If this toggle is set to true, the EKS cluster will be created without the default " +
-							"node and cluster security groups. Defaults to false.\n\n" +
+							"node and cluster security groups. Defaults to false, unless `autoMode` is enabled.\n\n" +
 							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html",
 					},
 					"tags": {
@@ -772,6 +773,15 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"If set to false when using the default node group, an instance role or instance profile must be provided.n\n" +
 							"Note: this option has no effect if a custom instance role is provided with `instanceRole` or `instanceRoles`.",
 					},
+					"autoMode": {
+						TypeSpec: schema.TypeSpec{
+							Plain: true,
+							Ref:   "#/types/eks:index:AutoModeOptions",
+						},
+						Description: "Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster " +
+							"infrastructure on your behalf.\n\n" +
+							"For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html",
+					},
 				},
 				Methods: map[string]string{
 					"getKubeconfig": "eks:index:Cluster/getKubeconfig",
@@ -786,7 +796,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"to run the Pulumi deployment.",
 					Properties: map[string]schema.PropertySpec{
 						"role": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role", dependencies.Aws)},
 						},
 						// Temporarily excluding the provider output since `Output<ProviderResource>`` is currently
 						// unusable from multi-lang because `ResourceOptions` requires a plain `ProviderResource`.
@@ -816,7 +826,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html",
 					Properties: map[string]schema.PropertySpec{
 						"nodeGroup": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FnodeGroup:NodeGroup")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FnodeGroup:NodeGroup", dependencies.Aws)},
 							Description: "The AWS managed node group.",
 						},
 					},
@@ -883,7 +893,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"will not be managed.",
 					},
 					"launchTemplate": {
-						TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate")},
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate", dependencies.Aws)},
 						Description: "Launch Template settings.\n\n" +
 							"Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.",
 					},
@@ -906,7 +916,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"used.",
 					},
 					"nodeRole": {
-						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role", dependencies.Aws)},
 						Description: "The IAM Role that provides permissions for the EKS Node Group.\n\n" +
 							"Note, `nodeRole` and `nodeRoleArn` are mutually exclusive, and a single option must be " +
 							"used.",
@@ -916,11 +926,11 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Description: "AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.",
 					},
 					"remoteAccess": {
-						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupRemoteAccess:NodeGroupRemoteAccess")},
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupRemoteAccess:NodeGroupRemoteAccess", dependencies.Aws)},
 						Description: "Remote access settings.",
 					},
 					"scalingConfig": {
-						TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupScalingConfig:NodeGroupScalingConfig")},
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupScalingConfig:NodeGroupScalingConfig", dependencies.Aws)},
 						Description: "Scaling settings.\n\n" +
 							"Default scaling amounts of the node group autoscaling group are:\n" +
 							"  - desiredSize: 2\n" +
@@ -953,7 +963,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					"taints": {
 						TypeSpec: schema.TypeSpec{
 							Type:  "array",
-							Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupTaint:NodeGroupTaint")},
+							Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FNodeGroupTaint:NodeGroupTaint", dependencies.Aws)},
 						},
 						Description: "The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.",
 					},
@@ -1071,7 +1081,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"capacity for an EKS cluster.",
 					Properties: map[string]schema.PropertySpec{
 						"nodeSecurityGroup": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 							Description: "The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.",
 						},
 						"nodeSecurityGroupId": {
@@ -1081,12 +1091,12 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"extraNodeSecurityGroups": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
-								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 							},
 							Description: "The additional security groups for the node group that captures user-specific rules.",
 						},
 						"cfnStack": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:cloudformation%2Fstack:Stack")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:cloudformation%2Fstack:Stack", dependencies.Aws)},
 							Description: "The CloudFormation Stack which defines the Node AutoScalingGroup.",
 						},
 						"autoScalingGroupName": {
@@ -1102,7 +1112,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					},
 				},
 				DeprecationMessage: "NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.",
-				InputProperties:    nodeGroupProperties(true /*cluster*/, false /*NodeGroupV2*/),
+				InputProperties:    nodeGroupProperties(true /*cluster*/, false /*NodeGroupV2*/, dependencies.Aws),
 				RequiredInputs:     []string{"cluster"},
 			},
 			"eks:index:NodeGroupV2": {
@@ -1112,7 +1122,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"capacity for an EKS cluster.",
 					Properties: map[string]schema.PropertySpec{
 						"nodeSecurityGroup": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 							Description: "The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.",
 						},
 						"nodeSecurityGroupId": {
@@ -1122,12 +1132,12 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"extraNodeSecurityGroups": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
-								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 							},
 							Description: "The additional security groups for the node group that captures user-specific rules.",
 						},
 						"autoScalingGroup": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:autoscaling%2Fgroup:Group")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:autoscaling%2Fgroup:Group", dependencies.Aws)},
 							Description: "The AutoScalingGroup for the Node group.",
 						},
 					},
@@ -1137,7 +1147,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"autoScalingGroup",
 					},
 				},
-				InputProperties: nodeGroupProperties(true /*cluster*/, true /*NodeGroupV2*/),
+				InputProperties: nodeGroupProperties(true /*cluster*/, true /*NodeGroupV2*/, dependencies.Aws),
 				RequiredInputs:  []string{"cluster"},
 			},
 			"eks:index:NodeGroupSecurityGroup": {
@@ -1148,12 +1158,12 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"EKS cluster security group.",
 					Properties: map[string]schema.PropertySpec{
 						"securityGroup": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 							Description: "The security group for node groups with the default ingress & egress rules " +
 								"required to connect and work with the EKS cluster security group.",
 						},
 						"securityGroupRule": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule", dependencies.Aws)},
 							Description: "The EKS cluster ingress rule.",
 						},
 					},
@@ -1168,7 +1178,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Description: "The VPC in which to create the worker node group.",
 					},
 					"clusterSecurityGroup": {
-						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 						Description: "The security group associated with the EKS cluster.",
 					},
 					"tags": {
@@ -1179,7 +1189,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Description: "Key-value mapping of tags to apply to this security group.",
 					},
 					"eksCluster": {
-						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster")},
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster", dependencies.Aws)},
 						Description: "The EKS cluster associated with the worker node group",
 					},
 				},
@@ -1263,7 +1273,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					Description: "Defines the core set of data associated with an EKS cluster, including the network in which it runs.",
 					Properties: map[string]schema.PropertySpec{
 						"cluster": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster")},
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2Fcluster:Cluster", dependencies.Aws)},
 						},
 						"vpcId": {
 							TypeSpec:    schema.TypeSpec{Type: "string"},
@@ -1281,15 +1291,15 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Description: "The EKS cluster's Kubernetes API server endpoint.",
 						},
 						"clusterSecurityGroup": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 						},
 						"provider": {
-							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/provider")},
+							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/provider", dependencies.Kubernetes)},
 						},
 						"instanceRoles": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
-								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role", dependencies.Aws)},
 							},
 							Description: "The IAM instance roles for the cluster's nodes.",
 						},
@@ -1298,7 +1308,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Description: "The cluster's node group options.",
 						},
 						"awsProvider": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider")},
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/provider", dependencies.Aws)},
 						},
 						"publicSubnetIds": {
 							TypeSpec: schema.TypeSpec{
@@ -1315,12 +1325,12 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Description: "List of subnet IDs for the private subnets.",
 						},
 						"eksNodeAccess": {
-							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:core%2Fv1:ConfigMap")},
+							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:core%2Fv1:ConfigMap", dependencies.Kubernetes)},
 						},
 						"storageClasses": {
 							TypeSpec: schema.TypeSpec{
 								Type:                 "object",
-								AdditionalProperties: &schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:storage.k8s.io%2Fv1:StorageClass")},
+								AdditionalProperties: &schema.TypeSpec{Ref: k8sRef("#/resources/kubernetes:storage.k8s.io%2Fv1:StorageClass", dependencies.Kubernetes)},
 							},
 							Description: "The storage class used for persistent storage by the cluster.",
 						},
@@ -1347,18 +1357,18 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Description: "Tags attached to the security groups associated with the cluster's worker nodes.",
 						},
 						"fargateProfile": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FfargateProfile:FargateProfile")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FfargateProfile:FargateProfile", dependencies.Aws)},
 							Description: "The Fargate profile used to manage which pods run on Fargate.",
 						},
 						"oidcProvider": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider")},
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider", dependencies.Aws)},
 						},
 						"encryptionConfig": {
-							TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig")},
+							TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig", dependencies.Aws)},
 						},
 						"clusterIamRole": {
 							Description: "The IAM Role attached to the EKS Cluster",
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:iam%2Frole:Role", dependencies.Aws)},
 						},
 						"accessEntries": {
 							TypeSpec: schema.TypeSpec{
@@ -1392,13 +1402,13 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					Properties: map[string]schema.PropertySpec{
 						"role": {
 							TypeSpec: schema.TypeSpec{
-								Ref:   awsRef("#/resources/aws:iam%2Frole:Role"),
+								Ref:   awsRef("#/resources/aws:iam%2Frole:Role", dependencies.Aws),
 								Plain: true,
 							},
 						},
 						"provider": {
 							TypeSpec: schema.TypeSpec{
-								Ref:   awsRef("#/provider"),
+								Ref:   awsRef("#/provider", dependencies.Aws),
 								Plain: true,
 							},
 						},
@@ -1406,6 +1416,82 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					Required: []string{
 						"role",
 						"provider",
+					},
+				},
+			},
+			"eks:index:AutoModeOptions": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Description: "Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster " +
+						"infrastructure on your behalf.\n\n" +
+						"For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html",
+					Properties: map[string]schema.PropertySpec{
+						"enabled": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "boolean",
+								Plain: true,
+							},
+							Description: "Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.\n" +
+								"When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.",
+						},
+						"createNodeRole": {
+							TypeSpec: schema.TypeSpec{
+								Type:  "boolean",
+								Plain: true,
+							},
+							Description: "Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.",
+							Default:     true,
+						},
+						"computeConfig": {
+							TypeSpec: schema.TypeSpec{
+								Ref: "#/types/eks:index:ClusterComputeConfig",
+							},
+							Description: "Compute configuration for EKS Auto Mode.",
+						},
+					},
+					Required: []string{"enabled"},
+				},
+			},
+			"eks:index:ClusterComputeConfig": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type: "object",
+					Properties: map[string]schema.PropertySpec{
+						"nodePools": {
+							TypeSpec: schema.TypeSpec{
+								Type: "array",
+								Items: &schema.TypeSpec{
+									Type: "string",
+								},
+							},
+							Description: "Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.\n\n" +
+								"By default, the built-in `system` and `general-purpose` nodepools are enabled.",
+						},
+						"nodeRoleArn": {
+							TypeSpec: schema.TypeSpec{
+								Type: "string",
+							},
+							Description: "The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.",
+						},
+					},
+					Description: "Configuration for the compute capability of your EKS Auto Mode cluster.",
+				},
+			},
+			"eks:index:ClusterNodePools": {
+				ObjectTypeSpec: schema.ObjectTypeSpec{
+					Type:        "string",
+					Description: "Built-in node pools of EKS Auto Mode. For more details see: https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html",
+				},
+				Enum: []schema.EnumValueSpec{
+					{
+						Name:  "System",
+						Value: "system",
+						Description: "This NodePool has a `CriticalAddonsOnly` taint. Many EKS addons, such as CoreDNS, tolerate this taint. Use this system node pool to segregate cluster-critical applications. " +
+							"Supports both `amd64` and `arm64` architectures.",
+					},
+					{
+						Name:        "GeneralPurpose",
+						Value:       "general-purpose",
+						Description: "This NodePool provides support for launching nodes for general purpose workloads in your cluster. Only supports `amd64` architecture.",
 					},
 				},
 			},
@@ -1432,7 +1518,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"selectors": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
-								Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FFargateProfileSelector:FargateProfileSelector")},
+								Items: &schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FFargateProfileSelector:FargateProfileSelector", dependencies.Aws)},
 							},
 							Description: "Specify the namespace and label selectors to use for launching pods into Fargate.",
 						},
@@ -1476,18 +1562,18 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					Description: "NodeGroupData describes the resources created for the given NodeGroup.",
 					Properties: map[string]schema.PropertySpec{
 						"nodeSecurityGroup": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 							Description: "The security group for the node group to communicate with the cluster.",
 						},
 						"extraNodeSecurityGroups": {
 							TypeSpec: schema.TypeSpec{
 								Type:  "array",
-								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup")},
+								Items: &schema.TypeSpec{Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", dependencies.Aws)},
 							},
 							Description: "The additional security groups for the node group that captures user-specific rules.",
 						},
 						"autoScalingGroup": {
-							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:autoscaling%2Fgroup:Group")},
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:autoscaling%2Fgroup:Group", dependencies.Aws)},
 							Description: "The AutoScalingGroup for the node group.",
 						},
 					},
@@ -1579,7 +1665,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Description: "AllowVolumeExpansion shows whether the storage class allow volume expand.",
 						},
 						"metadata": {
-							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/types/kubernetes:meta%2Fv1:ObjectMeta")},
+							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/types/kubernetes:meta%2Fv1:ObjectMeta", dependencies.Kubernetes)},
 							Description: "Standard object's metadata. More info: " +
 								"https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
 						},
@@ -1672,7 +1758,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "object",
 					Description: "Describes the configuration options accepted by a cluster to create its own node groups.",
-					Properties:  nodeGroupProperties(false /*cluster*/, true /*NodeGroupV2*/),
+					Properties:  nodeGroupProperties(false /*cluster*/, true /*NodeGroupV2*/, dependencies.Aws),
 				},
 			},
 
@@ -1755,7 +1841,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						},
 						"accessScope": {
 							TypeSpec: schema.TypeSpec{
-								Ref: awsRef("#/types/aws:eks%2FAccessPolicyAssociationAccessScope:AccessPolicyAssociationAccessScope"),
+								Ref: awsRef("#/types/aws:eks%2FAccessPolicyAssociationAccessScope:AccessPolicyAssociationAccessScope", dependencies.Aws),
 							},
 							Description: "The scope of the access policy association. This controls whether the access policy is scoped " +
 								"to the cluster or to a particular namespace.",
@@ -1790,6 +1876,11 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Name:        "EC2Windows",
 						Value:       "EC2_WINDOWS",
 						Description: "For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.",
+					},
+					{
+						Name:        "EC2",
+						Value:       "EC2",
+						Description: "For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.",
 					},
 				},
 			},
@@ -2018,8 +2109,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					Properties: map[string]schema.PropertySpec{
 						"enabled": {
 							TypeSpec:    schema.TypeSpec{Type: "boolean", Plain: true},
-							Default:     true,
-							Description: "Whether or not to create the `kube-proxy` Addon in the cluster",
+							Description: "Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.",
 						},
 						"version": {
 							TypeSpec: schema.TypeSpec{Type: "string"},
@@ -2114,7 +2204,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 }
 
 //nolint:lll
-func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
+func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.PropertySpec {
 	props := map[string]schema.PropertySpec{
 		"nodeSubnetIds": {
 			TypeSpec: schema.TypeSpec{
@@ -2136,7 +2226,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"nodeSecurityGroup": {
 			TypeSpec: schema.TypeSpec{
-				Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
+				Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", awsVersion),
 			},
 			Description: "The security group for the worker node group to communicate with the cluster.\n\n" +
 				"This security group requires specific inbound and outbound rules.\n\n" +
@@ -2156,7 +2246,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"clusterIngressRule": {
 			TypeSpec: schema.TypeSpec{
-				Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule"),
+				Ref: awsRef("#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule", awsVersion),
 			},
 			Description: "The ingress rule that gives node group access.",
 		},
@@ -2168,7 +2258,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			TypeSpec: schema.TypeSpec{
 				Type: "array",
 				Items: &schema.TypeSpec{
-					Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"),
+					Ref: awsRef("#/resources/aws:ec2%2FsecurityGroup:SecurityGroup", awsVersion),
 				},
 			},
 			Description: "Extra security groups to attach on all nodes in this worker node group.\n\n" +
@@ -2315,7 +2405,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 		},
 		"instanceProfile": {
 			TypeSpec: schema.TypeSpec{
-				Ref:   awsRef("#/resources/aws:iam%2FinstanceProfile:InstanceProfile"),
+				Ref:   awsRef("#/resources/aws:iam%2FinstanceProfile:InstanceProfile", awsVersion),
 				Plain: true,
 			},
 			Description: "The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.",
@@ -2425,7 +2515,7 @@ func nodeGroupProperties(cluster, v2 bool) map[string]schema.PropertySpec {
 			TypeSpec: schema.TypeSpec{
 				Type: "array",
 				Items: &schema.TypeSpec{
-					Ref: awsRef("#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification"),
+					Ref: awsRef("#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification", awsVersion),
 				},
 			},
 			Description: "The tag specifications to apply to the launch template.",

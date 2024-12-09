@@ -27,6 +27,7 @@ class ClusterArgs:
     def __init__(__self__, *,
                  access_entries: Optional[Mapping[str, 'AccessEntryArgs']] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
+                 auto_mode: Optional['AutoModeOptionsArgs'] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -89,6 +90,9 @@ class ClusterArgs:
                
                See for more details:
                https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+        :param 'AutoModeOptionsArgs' auto_mode: Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+               
+               For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
                Note: The security group resource should not contain any inline ingress or egress rules.
@@ -241,8 +245,8 @@ class ClusterArgs:
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Sequence[pulumi.Input['RoleMappingArgs']]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
-        :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+        :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
+        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
         :param Union[str, Mapping[str, 'StorageClassArgs']] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
@@ -259,6 +263,7 @@ class ClusterArgs:
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
         :param bool use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+               Defaults to true, unless `autoMode` is enabled.
         :param pulumi.Input[Sequence[pulumi.Input['UserMappingArgs']]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         :param 'VpcCniOptionsArgs' vpc_cni_options: The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
@@ -268,6 +273,8 @@ class ClusterArgs:
             pulumi.set(__self__, "access_entries", access_entries)
         if authentication_mode is not None:
             pulumi.set(__self__, "authentication_mode", authentication_mode)
+        if auto_mode is not None:
+            pulumi.set(__self__, "auto_mode", auto_mode)
         if cluster_security_group is not None:
             pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         if cluster_security_group_tags is not None:
@@ -402,6 +409,20 @@ class ClusterArgs:
     @authentication_mode.setter
     def authentication_mode(self, value: Optional['AuthenticationMode']):
         pulumi.set(self, "authentication_mode", value)
+
+    @property
+    @pulumi.getter(name="autoMode")
+    def auto_mode(self) -> Optional['AutoModeOptionsArgs']:
+        """
+        Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+
+        For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+        """
+        return pulumi.get(self, "auto_mode")
+
+    @auto_mode.setter
+    def auto_mode(self, value: Optional['AutoModeOptionsArgs']):
+        pulumi.set(self, "auto_mode", value)
 
     @property
     @pulumi.getter(name="clusterSecurityGroup")
@@ -1021,7 +1042,7 @@ class ClusterArgs:
     @pulumi.getter(name="skipDefaultNodeGroup")
     def skip_default_node_group(self) -> Optional[bool]:
         """
-        If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+        If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
         """
         return pulumi.get(self, "skip_default_node_group")
 
@@ -1033,7 +1054,7 @@ class ClusterArgs:
     @pulumi.getter(name="skipDefaultSecurityGroups")
     def skip_default_security_groups(self) -> Optional[bool]:
         """
-        If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+        If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
 
         See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
         """
@@ -1094,6 +1115,7 @@ class ClusterArgs:
     def use_default_vpc_cni(self) -> Optional[bool]:
         """
         Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+        Defaults to true, unless `autoMode` is enabled.
         """
         return pulumi.get(self, "use_default_vpc_cni")
 
@@ -1157,6 +1179,7 @@ class Cluster(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
+                 auto_mode: Optional[Union['AutoModeOptionsArgs', 'AutoModeOptionsArgsDict']] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -1241,6 +1264,9 @@ class Cluster(pulumi.ComponentResource):
                
                See for more details:
                https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
+        :param Union['AutoModeOptionsArgs', 'AutoModeOptionsArgsDict'] auto_mode: Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+               
+               For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
                Note: The security group resource should not contain any inline ingress or egress rules.
@@ -1393,8 +1419,8 @@ class Cluster(pulumi.ComponentResource):
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Sequence[pulumi.Input[Union['RoleMappingArgs', 'RoleMappingArgsDict']]]] role_mappings: Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
         :param pulumi.Input['pulumi_aws.iam.Role'] service_role: IAM Service Role for EKS to use to manage the cluster.
-        :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
-        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+        :param bool skip_default_node_group: If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
+        :param bool skip_default_security_groups: If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
                
                See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
         :param Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]] storage_classes: An optional set of StorageClasses to enable for the cluster. If this is a single volume type rather than a map, a single StorageClass will be created for that volume type.
@@ -1411,6 +1437,7 @@ class Cluster(pulumi.ComponentResource):
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
         :param bool use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+               Defaults to true, unless `autoMode` is enabled.
         :param pulumi.Input[Sequence[pulumi.Input[Union['UserMappingArgs', 'UserMappingArgsDict']]]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
         :param pulumi.Input[str] version: Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         :param Union['VpcCniOptionsArgs', 'VpcCniOptionsArgsDict'] vpc_cni_options: The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
@@ -1460,6 +1487,7 @@ class Cluster(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
+                 auto_mode: Optional[Union['AutoModeOptionsArgs', 'AutoModeOptionsArgsDict']] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -1525,6 +1553,7 @@ class Cluster(pulumi.ComponentResource):
 
             __props__.__dict__["access_entries"] = access_entries
             __props__.__dict__["authentication_mode"] = authentication_mode
+            __props__.__dict__["auto_mode"] = auto_mode
             __props__.__dict__["cluster_security_group"] = cluster_security_group
             __props__.__dict__["cluster_security_group_tags"] = cluster_security_group_tags
             __props__.__dict__["cluster_tags"] = cluster_tags
@@ -1577,6 +1606,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["version"] = version
             __props__.__dict__["vpc_cni_options"] = vpc_cni_options
             __props__.__dict__["vpc_id"] = vpc_id
+            __props__.__dict__["auto_mode_node_role_name"] = None
             __props__.__dict__["aws_provider"] = None
             __props__.__dict__["cluster_ingress_rule_id"] = None
             __props__.__dict__["cluster_security_group_id"] = None
@@ -1600,6 +1630,14 @@ class Cluster(pulumi.ComponentResource):
             __props__,
             opts,
             remote=True)
+
+    @property
+    @pulumi.getter(name="autoModeNodeRoleName")
+    def auto_mode_node_role_name(self) -> pulumi.Output[str]:
+        """
+        The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+        """
+        return pulumi.get(self, "auto_mode_node_role_name")
 
     @property
     @pulumi.getter(name="awsProvider")

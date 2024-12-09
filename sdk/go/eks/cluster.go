@@ -50,6 +50,8 @@ import (
 type Cluster struct {
 	pulumi.ResourceState
 
+	// The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+	AutoModeNodeRoleName pulumi.StringOutput `pulumi:"autoModeNodeRoleName"`
 	// The AWS resource provider.
 	AwsProvider aws.ProviderOutput `pulumi:"awsProvider"`
 	// The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
@@ -99,6 +101,9 @@ func NewCluster(ctx *pulumi.Context,
 		args = &ClusterArgs{}
 	}
 
+	if args.AutoMode != nil {
+		args.AutoMode = args.AutoMode.Defaults()
+	}
 	if args.CorednsAddonOptions != nil {
 		args.CorednsAddonOptions = args.CorednsAddonOptions.Defaults()
 	}
@@ -128,6 +133,10 @@ type clusterArgs struct {
 	// See for more details:
 	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
 	AuthenticationMode *AuthenticationMode `pulumi:"authenticationMode"`
+	// Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+	AutoMode *AutoModeOptions `pulumi:"autoMode"`
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -322,9 +331,9 @@ type clusterArgs struct {
 	RoleMappings []RoleMapping `pulumi:"roleMappings"`
 	// IAM Service Role for EKS to use to manage the cluster.
 	ServiceRole *iam.Role `pulumi:"serviceRole"`
-	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
 	SkipDefaultNodeGroup *bool `pulumi:"skipDefaultNodeGroup"`
-	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
 	SkipDefaultSecurityGroups *bool `pulumi:"skipDefaultSecurityGroups"`
@@ -345,6 +354,7 @@ type clusterArgs struct {
 	// Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
 	Tags map[string]string `pulumi:"tags"`
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+	// Defaults to true, unless `autoMode` is enabled.
 	UseDefaultVpcCni *bool `pulumi:"useDefaultVpcCni"`
 	// Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	UserMappings []UserMapping `pulumi:"userMappings"`
@@ -368,6 +378,10 @@ type ClusterArgs struct {
 	// See for more details:
 	// https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
 	AuthenticationMode *AuthenticationMode
+	// Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+	AutoMode *AutoModeOptionsArgs
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -562,9 +576,9 @@ type ClusterArgs struct {
 	RoleMappings RoleMappingArrayInput
 	// IAM Service Role for EKS to use to manage the cluster.
 	ServiceRole iam.RoleInput
-	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+	// If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
 	SkipDefaultNodeGroup *bool
-	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+	// If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
 	//
 	// See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
 	SkipDefaultSecurityGroups *bool
@@ -585,6 +599,7 @@ type ClusterArgs struct {
 	// Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
 	Tags pulumi.StringMapInput
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+	// Defaults to true, unless `autoMode` is enabled.
 	UseDefaultVpcCni *bool
 	// Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
 	UserMappings UserMappingArrayInput
@@ -740,6 +755,11 @@ func (o ClusterOutput) ToClusterOutput() ClusterOutput {
 
 func (o ClusterOutput) ToClusterOutputWithContext(ctx context.Context) ClusterOutput {
 	return o
+}
+
+// The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+func (o ClusterOutput) AutoModeNodeRoleName() pulumi.StringOutput {
+	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.AutoModeNodeRoleName }).(pulumi.StringOutput)
 }
 
 // The AWS resource provider.

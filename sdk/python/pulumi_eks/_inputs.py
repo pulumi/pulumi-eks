@@ -23,6 +23,10 @@ __all__ = [
     'AccessEntryArgsDict',
     'AccessPolicyAssociationArgs',
     'AccessPolicyAssociationArgsDict',
+    'AutoModeOptionsArgs',
+    'AutoModeOptionsArgsDict',
+    'ClusterComputeConfigArgs',
+    'ClusterComputeConfigArgsDict',
     'ClusterNodeGroupOptionsArgs',
     'ClusterNodeGroupOptionsArgsDict',
     'CoreDataArgs',
@@ -205,7 +209,7 @@ if not MYPY:
         See for more details:
         https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
         """
-        access_scope: pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs']
+        access_scope: pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgsDict']
         """
         The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
         """
@@ -255,6 +259,152 @@ class AccessPolicyAssociationArgs:
     @policy_arn.setter
     def policy_arn(self, value: pulumi.Input[str]):
         pulumi.set(self, "policy_arn", value)
+
+
+if not MYPY:
+    class AutoModeOptionsArgsDict(TypedDict):
+        """
+        Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+
+        For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+        """
+        enabled: bool
+        """
+        Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+        When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
+        """
+        compute_config: NotRequired[pulumi.Input['ClusterComputeConfigArgsDict']]
+        """
+        Compute configuration for EKS Auto Mode.
+        """
+        create_node_role: NotRequired[bool]
+        """
+        Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+        """
+elif False:
+    AutoModeOptionsArgsDict: TypeAlias = Mapping[str, Any]
+
+@pulumi.input_type
+class AutoModeOptionsArgs:
+    def __init__(__self__, *,
+                 enabled: bool,
+                 compute_config: Optional[pulumi.Input['ClusterComputeConfigArgs']] = None,
+                 create_node_role: Optional[bool] = None):
+        """
+        Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+
+        For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+        :param bool enabled: Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+               When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
+        :param pulumi.Input['ClusterComputeConfigArgs'] compute_config: Compute configuration for EKS Auto Mode.
+        :param bool create_node_role: Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+        """
+        pulumi.set(__self__, "enabled", enabled)
+        if compute_config is not None:
+            pulumi.set(__self__, "compute_config", compute_config)
+        if create_node_role is None:
+            create_node_role = True
+        if create_node_role is not None:
+            pulumi.set(__self__, "create_node_role", create_node_role)
+
+    @property
+    @pulumi.getter
+    def enabled(self) -> bool:
+        """
+        Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
+        When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
+        """
+        return pulumi.get(self, "enabled")
+
+    @enabled.setter
+    def enabled(self, value: bool):
+        pulumi.set(self, "enabled", value)
+
+    @property
+    @pulumi.getter(name="computeConfig")
+    def compute_config(self) -> Optional[pulumi.Input['ClusterComputeConfigArgs']]:
+        """
+        Compute configuration for EKS Auto Mode.
+        """
+        return pulumi.get(self, "compute_config")
+
+    @compute_config.setter
+    def compute_config(self, value: Optional[pulumi.Input['ClusterComputeConfigArgs']]):
+        pulumi.set(self, "compute_config", value)
+
+    @property
+    @pulumi.getter(name="createNodeRole")
+    def create_node_role(self) -> Optional[bool]:
+        """
+        Whether to create an IAM role for the EKS Auto Mode node group if none is provided in `computeConfig`.
+        """
+        return pulumi.get(self, "create_node_role")
+
+    @create_node_role.setter
+    def create_node_role(self, value: Optional[bool]):
+        pulumi.set(self, "create_node_role", value)
+
+
+if not MYPY:
+    class ClusterComputeConfigArgsDict(TypedDict):
+        """
+        Configuration for the compute capability of your EKS Auto Mode cluster.
+        """
+        node_pools: NotRequired[pulumi.Input[Sequence[pulumi.Input[str]]]]
+        """
+        Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.
+
+        By default, the built-in `system` and `general-purpose` nodepools are enabled.
+        """
+        node_role_arn: NotRequired[pulumi.Input[str]]
+        """
+        The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.
+        """
+elif False:
+    ClusterComputeConfigArgsDict: TypeAlias = Mapping[str, Any]
+
+@pulumi.input_type
+class ClusterComputeConfigArgs:
+    def __init__(__self__, *,
+                 node_pools: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 node_role_arn: Optional[pulumi.Input[str]] = None):
+        """
+        Configuration for the compute capability of your EKS Auto Mode cluster.
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] node_pools: Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.
+               
+               By default, the built-in `system` and `general-purpose` nodepools are enabled.
+        :param pulumi.Input[str] node_role_arn: The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.
+        """
+        if node_pools is not None:
+            pulumi.set(__self__, "node_pools", node_pools)
+        if node_role_arn is not None:
+            pulumi.set(__self__, "node_role_arn", node_role_arn)
+
+    @property
+    @pulumi.getter(name="nodePools")
+    def node_pools(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
+        """
+        Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.
+
+        By default, the built-in `system` and `general-purpose` nodepools are enabled.
+        """
+        return pulumi.get(self, "node_pools")
+
+    @node_pools.setter
+    def node_pools(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
+        pulumi.set(self, "node_pools", value)
+
+    @property
+    @pulumi.getter(name="nodeRoleArn")
+    def node_role_arn(self) -> Optional[pulumi.Input[str]]:
+        """
+        The ARN of the IAM Role EKS will assign to EC2 Managed Instances in your EKS Auto Mode cluster. This value cannot be changed after the compute capability of EKS Auto Mode is enabled.
+        """
+        return pulumi.get(self, "node_role_arn")
+
+    @node_role_arn.setter
+    def node_role_arn(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "node_role_arn", value)
 
 
 if not MYPY:
@@ -386,7 +536,7 @@ if not MYPY:
         """
         Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         """
-        launch_template_tag_specifications: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgs']]]]
+        launch_template_tag_specifications: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.LaunchTemplateTagSpecificationArgsDict']]]]
         """
         The tag specifications to apply to the launch template.
         """
@@ -1382,7 +1532,7 @@ if not MYPY:
         aws_provider: NotRequired[pulumi.Input['pulumi_aws.Provider']]
         cluster_security_group: NotRequired[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]
         eks_node_access: NotRequired[pulumi.Input['pulumi_kubernetes.core.v1.ConfigMap']]
-        encryption_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgs']]
+        encryption_config: NotRequired[pulumi.Input['pulumi_aws.eks.ClusterEncryptionConfigArgsDict']]
         fargate_profile: NotRequired[pulumi.Input['pulumi_aws.eks.FargateProfile']]
         """
         The Fargate profile used to manage which pods run on Fargate.
@@ -1923,7 +2073,7 @@ if not MYPY:
         """
         Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
         """
-        selectors: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]]]
+        selectors: NotRequired[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgsDict']]]]
         """
         Specify the namespace and label selectors to use for launching pods into Fargate.
         """
@@ -1998,7 +2148,7 @@ if not MYPY:
         """
         enabled: NotRequired[bool]
         """
-        Whether or not to create the `kube-proxy` Addon in the cluster
+        Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
         """
         resolve_conflicts_on_create: NotRequired['ResolveConflictsOnCreate']
         """
@@ -2025,15 +2175,13 @@ class KubeProxyAddonOptionsArgs:
                  version: Optional[pulumi.Input[str]] = None):
         """
         :param pulumi.Input[Mapping[str, Any]] configuration_values: Custom configuration values for the kube-proxy addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
-        :param bool enabled: Whether or not to create the `kube-proxy` Addon in the cluster
+        :param bool enabled: Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
         :param 'ResolveConflictsOnCreate' resolve_conflicts_on_create: How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
         :param 'ResolveConflictsOnUpdate' resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
         :param pulumi.Input[str] version: The version of the EKS add-on. The version must match one of the versions returned by [describe-addon-versions](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-versions.html).
         """
         if configuration_values is not None:
             pulumi.set(__self__, "configuration_values", configuration_values)
-        if enabled is None:
-            enabled = True
         if enabled is not None:
             pulumi.set(__self__, "enabled", enabled)
         if resolve_conflicts_on_create is None:
@@ -2063,7 +2211,7 @@ class KubeProxyAddonOptionsArgs:
     @pulumi.getter
     def enabled(self) -> Optional[bool]:
         """
-        Whether or not to create the `kube-proxy` Addon in the cluster
+        Whether or not to create the `kube-proxy` Addon in the cluster. Defaults to true, unless `autoMode` is enabled.
         """
         return pulumi.get(self, "enabled")
 
@@ -2370,7 +2518,7 @@ if not MYPY:
         """
         The full Amazon Resource Name of the key to use when encrypting the volume. If none is supplied but encrypted is true, a key is generated by AWS.
         """
-        metadata: NotRequired[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']]
+        metadata: NotRequired[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgsDict']]
         """
         Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
         """

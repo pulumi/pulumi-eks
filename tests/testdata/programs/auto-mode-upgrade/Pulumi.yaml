@@ -1,0 +1,3 @@
+name: eks-auto-mode
+description: EKS Cluster in auto mode
+runtime: nodejs

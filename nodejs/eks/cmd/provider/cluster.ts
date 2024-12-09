@@ -45,6 +45,7 @@ const clusterProvider: pulumi.provider.Provider = {
                     oidcProviderArn: cluster.oidcProviderArn,
                     oidcProviderUrl: cluster.oidcProviderUrl,
                     oidcIssuer: cluster.oidcIssuer,
+                    autoModeNodeRoleName: cluster.autoModeNodeRoleName,
                 },
             });
         } catch (e) {
