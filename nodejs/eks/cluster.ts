@@ -2206,8 +2206,8 @@ export function createCluster(
 
     let nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
     let eksClusterIngressRule: aws.ec2.SecurityGroupRule | undefined;
-    const skipDefaultSecurityGroups = args.skipDefaultSecurityGroups ?? args.autoMode?.enabled ?? false;
-    if (skipDefaultSecurityGroups) {
+    const skipDefaultSecurityGroups = args.skipDefaultSecurityGroups ?? args.autoMode?.enabled;
+    if (!skipDefaultSecurityGroups) {
         if (!core.clusterSecurityGroup) {
             throw new pulumi.ResourceError(
                 "clusterSecurityGroup is required when creating the default node group.",
