@@ -536,9 +536,7 @@ export function createCore(
                 })),
                 tags: args.tags,
                 // EKS Auto Mode needs "sts:TagSession" in addition to the default "sts:AssumeRole"
-                assumeRoleActions: args.autoMode?.enabled
-                    ? ["sts:AssumeRole", "sts:TagSession"]
-                    : undefined,
+                assumeRoleActions: ["sts:AssumeRole", "sts:TagSession"],
             },
             { parent, provider },
         );

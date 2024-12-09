@@ -1,3 +1,0 @@
-# EKS Auto Mode
-
-TODO

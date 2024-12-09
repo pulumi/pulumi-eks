@@ -1271,6 +1271,8 @@ func TestAccEksAutoMode(t *testing.T) {
 	programTestWithExtraOptions(t, &test, nil)
 }
 
+// TestAccEksAutoModeUpgrade tests that the EKS cluster can be upgraded from a cluster with regular managed node groups
+// to a cluster using EKS Auto Mode
 func TestAccEksAutoModeUpgrade(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
