@@ -425,7 +425,7 @@ export interface NodeGroupData {
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
+    extraNodeSecurityGroups?: pulumi.Output<aws.ec2.SecurityGroup[]>;
 }
 
 export interface NodeGroupV2Data {
@@ -700,34 +700,34 @@ export function resolveInstanceProfileName(
  * the passed extraNodeSecurityGroupIds, or an empty array.
  * Errors if both an extraNodeSecurityGroups and an extraNodeSecurityGroupIds is passed.
  */
-export function resolveExtraNodeSecurityGroupIds(
-    nodeGroupName: string,
-    args: Omit<NodeGroupOptions, "cluster">,
-    c: pulumi.UnwrappedObject<CoreData>,
-    parent: pulumi.ComponentResource,
-): pulumi.Output<string>[] {
-    if (
-        (args.extraNodeSecurityGroups || c.nodeGroupOptions.extraNodeSecurityGroups) && 
-        (args.extraNodeSecurityGroupIds || c.nodeGroupOptions.extraNodeSecurityGroupIds)
-    ) {
-        throw new pulumi.ResourceError(
-            `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
-            parent,
-        );
-    }
+// export function resolveExtraNodeSecurityGroupIds(
+//     nodeGroupName: string,
+//     args: Omit<NodeGroupOptions, "cluster">,
+//     c: pulumi.UnwrappedObject<CoreData>,
+//     parent: pulumi.ComponentResource,
+// ): pulumi.Output<string>[] {
+//     if (
+//         (args.extraNodeSecurityGroups || c.nodeGroupOptions.extraNodeSecurityGroups) && 
+//         (args.extraNodeSecurityGroupIds || c.nodeGroupOptions.extraNodeSecurityGroupIds)
+//     ) {
+//         throw new pulumi.ResourceError(
+//             `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
+//             parent,
+//         );
+//     }
 
-    if (args.extraNodeSecurityGroups) {
-        return args.extraNodeSecurityGroups.map(sg => sg.id)
-    } else if (args.extraNodeSecurityGroupIds) {
-        return args.extraNodeSecurityGroupIds.map(id => pulumi.output(id))
-    } else if (c.nodeGroupOptions.extraNodeSecurityGroups) {
-        return c.nodeGroupOptions.extraNodeSecurityGroups.map(sg => sg.id)
-    } else if (c.nodeGroupOptions.extraNodeSecurityGroupIds) {
-        return c.nodeGroupOptions.extraNodeSecurityGroupIds.map(id => pulumi.output(id))
-    } else {
-        return []
-    }
-}
+//     if (args.extraNodeSecurityGroups) {
+//         return args.extraNodeSecurityGroups.map(sg => sg.id)
+//     } else if (args.extraNodeSecurityGroupIds) {
+//         return args.extraNodeSecurityGroupIds.map(id => pulumi.output(id))
+//     } else if (c.nodeGroupOptions.extraNodeSecurityGroups) {
+//         return c.nodeGroupOptions.extraNodeSecurityGroups.map(sg => sg.id)
+//     } else if (c.nodeGroupOptions.extraNodeSecurityGroupIds) {
+//         return c.nodeGroupOptions.extraNodeSecurityGroupIds.map(id => pulumi.output(id))
+//     } else {
+//         return []
+//     }
+// }
 
 /**
  * Returns either the passed extraNodeSecurityGroups, the security groups fetched using
@@ -771,7 +771,7 @@ function createNodeGroupInternal(
     provider?: pulumi.ProviderResource,
 ): NodeGroupData {
     const instanceProfileName = core.apply(c => resolveInstanceProfileName(name, args, c, parent))
-    const extraNodeSecurityGroupIds = core.apply(c => resolveExtraNodeSecurityGroupIds(name, args, c, parent))
+    const extraNodeSecurityGroups = core.apply(c => resolveOrGetExtraNodeSecurityGroups(name, args, c, parent))
     
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         throw new pulumi.ResourceError(
@@ -881,6 +881,15 @@ function createNodeGroupInternal(
         nodeSecurityGroupId = nodeSecurityGroup.id;
         eksClusterIngressRuleId = eksClusterIngressRule.id;
     }
+
+    // Collect the IDs of any extra, user-specific security groups.
+    const extraNodeSecurityGroupIds = pulumi.all([extraNodeSecurityGroups]).apply(([sg]) => {
+        if (sg === undefined) {
+            return [];
+        }
+        // Map out the security group ids
+        return sg.map((sg) => sg.id);
+    });
 
     // If requested, add a new EC2 KeyPair for SSH access to the instances.
     let keyName = args.keyName;
@@ -1200,7 +1209,7 @@ function createNodeGroupInternal(
         nodeSecurityGroupId: nodeSecurityGroupId,
         cfnStack: cfnStack,
         autoScalingGroupName: autoScalingGroupName,
-        extraNodeSecurityGroups: args.extraNodeSecurityGroups,
+        extraNodeSecurityGroups: extraNodeSecurityGroups,
     };
 }
 
