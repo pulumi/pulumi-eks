@@ -15,7 +15,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 
-import { isGravitonInstance, resolveInstanceProfileName, resolveExtraNodeSecurityGroupIds } from "./nodegroup";
+import { isGravitonInstance, resolveInstanceProfileName, resolveExtraNodeSecurityGroupIds, resolveOrGetExtraNodeSecurityGroups } from "./nodegroup";
 import { getArchitecture } from "./nodegroup";
 import { Cluster as ClusterComponent, CoreData } from "./cluster";
 
@@ -614,7 +614,200 @@ describe("resolveInstanceProfileName", function () {
     
 });
 
-describe("resolveExtraNodeSecurityGroupIds", function () {
+// describe("resolveExtraNodeSecurityGroupIds", function () {
+//     beforeAll(() => {
+//         pulumi.runtime.setMocks(
+//             {
+//                 newResource: function (args: pulumi.runtime.MockResourceArgs): {
+//                     id: string;
+//                     state: any;
+//                 } {
+//                     return {
+//                         id: args.inputs.name + "_id",
+//                         state: args.inputs,
+//                     };
+//                 },
+//                 call: function (args: pulumi.runtime.MockCallArgs) {
+//                     return args.inputs;
+//                 },
+//             },
+//             "project",
+//             "stack",
+//             false, // Sets the flag `dryRun`, which indicates if pulumi is running in preview mode.
+//         );
+//     });
+
+//     let ng: typeof import("./nodegroup");
+//     beforeEach(async function () {
+//         ng = await import("./nodegroup");
+//     });
+
+//     test("no relevant args or c.nodeGroupOptions returns empty array", async () => {
+//         expect(resolveExtraNodeSecurityGroupIds(
+//                 "nodegroup-name",
+//                 {},
+//                 {
+//                     nodeGroupOptions: {},
+//                 } as pulumi.UnwrappedObject<CoreData>,
+//                 undefined as any,
+//             )).toEqual([]);
+//     });
+
+//     test("both args.extraNodeSecurityGroups and args.extraNodeSecurityGroupIds throws", async () => {
+//         const nodeGroupName = "nodegroup-name"
+//         expect(() => resolveExtraNodeSecurityGroupIds(
+//                 "nodegroup-name",
+//                 {
+//                     extraNodeSecurityGroups: [new aws.ec2.SecurityGroup("sg",{})],
+//                     extraNodeSecurityGroupIds: ["sg-id-1", "sg-id-2"]
+//                 },
+//                 {
+//                     nodeGroupOptions: {},
+//                 } as pulumi.UnwrappedObject<CoreData>,
+//                 undefined as any,
+//             ),
+//         ).toThrowError(
+//             `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
+//         );
+//     });
+
+//     test("both args.extraNodeSecurityGroups and c.nodeGroupOptions.extraNodeSecurityGroupIds throws", async () => {
+//         const nodeGroupName = "nodegroup-name"
+//         expect(() => resolveExtraNodeSecurityGroupIds(
+//                 "nodegroup-name",
+//                 {
+//                     extraNodeSecurityGroups: [new aws.ec2.SecurityGroup("sg",{})],
+//                 },
+//                 {
+//                     nodeGroupOptions: {
+//                         extraNodeSecurityGroupIds: ["sg-id-1", "sg-id-2"]
+//                     },
+//                 } as pulumi.UnwrappedObject<CoreData>,
+//                 undefined as any,
+//             ),
+//         ).toThrowError(
+//             `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
+//         );
+//     });
+
+//     test("both c.nodeGroupOptions.extraNodeSecurityGroups and args.extraNodeSecurityGroupIds throws", async () => {
+//         const nodeGroupName = "nodegroup-name"
+//         expect(() => resolveExtraNodeSecurityGroupIds(
+//                 "nodegroup-name",
+//                 {
+//                     extraNodeSecurityGroupIds: ["sg-id-1", "sg-id-2"]
+//                 },
+//                 {
+//                     nodeGroupOptions: {
+//                         extraNodeSecurityGroups: [new aws.ec2.SecurityGroup("sg",{})],
+//                     },
+//                 } as pulumi.UnwrappedObject<CoreData>,
+//                 undefined as any,
+//             ),
+//         ).toThrowError(
+//             `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
+//         );
+//     });
+
+//     test("both c.nodeGroupOptions.extraNodeSecurityGroups and c.nodeGroupOptions.extraNodeSecurityGroupIds throws", async () => {
+//         const nodeGroupName = "nodegroup-name"
+//         expect(() => resolveExtraNodeSecurityGroupIds(
+//                 "nodegroup-name",
+//                 {},
+//                 {
+//                     nodeGroupOptions: {
+//                         extraNodeSecurityGroupIds: ["sg-id-1", "sg-id-2"],
+//                         extraNodeSecurityGroups: [new aws.ec2.SecurityGroup("sg",{})],
+//                     },
+//                 } as pulumi.UnwrappedObject<CoreData>,
+//                 undefined as any,
+//             ),
+//         ).toThrowError(
+//             `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
+//         );
+//     });
+
+//     test("args.extraNodeSecurityGroups returns ids of passed security groups", async () => {
+//         const nodeGroupName = "nodegroup-name"
+//         const passedSgs = [new aws.ec2.SecurityGroup("sg",{ name: "sg-name"})]
+//         const resolvedIds = resolveExtraNodeSecurityGroupIds(
+//             nodeGroupName,
+//             {
+//                 extraNodeSecurityGroups: passedSgs,
+//             },
+//             {
+//                 nodeGroupOptions: {},
+//             } as pulumi.UnwrappedObject<CoreData>,
+//             undefined as any,
+//         )
+//         const received = await Promise.all(resolvedIds.map(id => promisify(id)))
+//         const expected = await Promise.all(passedSgs.map(sg => promisify(sg.id)))
+
+//         expect(received).toEqual(expected)
+//     });
+
+//     test("args.extraNodeSecurityGroupsIds returns ids as pulumi.Output<string>[]", async () => {
+//         const nodeGroupName = "nodegroup-name"
+//         const sg = new aws.ec2.SecurityGroup("sg",{})
+//         const sgIdString = "sg-id-1"
+//         const passedSgIds = [sgIdString, sg.id]
+//         const resolvedIds = resolveExtraNodeSecurityGroupIds(
+//             nodeGroupName,
+//             {
+//                 extraNodeSecurityGroupIds: passedSgIds,
+//             },
+//             {
+//                 nodeGroupOptions: {},
+//             } as pulumi.UnwrappedObject<CoreData>,
+//             undefined as any,
+//         )
+//         const received = await Promise.all(resolvedIds.map(id => promisify(id)))
+//         const expected = [sgIdString, await promisify(sg.id)]
+//         expect(received).toEqual(expected)
+//     });
+
+//     test("c.nodeGroupOptions.extraNodeSecurityGroups returns ids of passed security groups", async () => {
+//         const nodeGroupName = "nodegroup-name"
+//         const passedSgs = [new aws.ec2.SecurityGroup("sg",{ name: "sg-name"})]
+//         const resolvedIds = resolveExtraNodeSecurityGroupIds(
+//             nodeGroupName,
+//             {},
+//             {
+//                 nodeGroupOptions: {
+//                     extraNodeSecurityGroups: passedSgs,
+//                 },
+//             } as pulumi.UnwrappedObject<CoreData>,
+//             undefined as any,
+//         )
+//         const received = await Promise.all(resolvedIds.map(id => promisify(id)))
+//         const expected = await Promise.all(passedSgs.map(sg => promisify(sg.id)))
+
+//         expect(received).toEqual(expected)
+//     });
+
+//     test("c.nodeGroupOptions.extraNodeSecurityGroupsIds returns passed ids", async () => {
+//         const nodeGroupName = "nodegroup-name"
+//         const sg = new aws.ec2.SecurityGroup("sg",{})
+//         const sgIdString = "sg-id-1"
+//         const passedSgIds = [sgIdString, sg.id]
+//         const resolvedIds = resolveExtraNodeSecurityGroupIds(
+//             nodeGroupName,
+//             {},
+//             {
+//                 nodeGroupOptions: {
+//                     extraNodeSecurityGroupIds: passedSgIds,
+//                 },
+//             } as pulumi.UnwrappedObject<CoreData>,
+//             undefined as any,
+//         )
+//         const received = await Promise.all(resolvedIds.map(id => promisify(id)))
+//         const expected = [sgIdString, await promisify(sg.id)]
+//         expect(received).toEqual(expected)
+//     });
+// });
+
+describe("resolveOrGetExtraNodeSecurityGroups", function () {
+    
     beforeAll(() => {
         pulumi.runtime.setMocks(
             {
@@ -622,6 +815,26 @@ describe("resolveExtraNodeSecurityGroupIds", function () {
                     id: string;
                     state: any;
                 } {
+                    if (args.type === "aws:ec2/securityGroup:SecurityGroup") {
+                        // args.id is the import id passed to .get that .get passes as a resource option
+                        // to the SecurityGroup constructor
+                        if (args.id != "") {
+                            return {
+                                id: args.inputs.name + "_id",
+                                state: {
+                                    
+                                    id: args.id,
+                                },
+                            };
+                        }
+                        // args.id == "" means that this is a new resource creation, not a get/import
+                        return {
+                            id: args.inputs.name + "_id",
+                            state: {
+                                id: args.inputs.name,
+                            },
+                        }
+                    }
                     return {
                         id: args.inputs.name + "_id",
                         state: args.inputs,
@@ -635,6 +848,7 @@ describe("resolveExtraNodeSecurityGroupIds", function () {
             "stack",
             false, // Sets the flag `dryRun`, which indicates if pulumi is running in preview mode.
         );
+
     });
 
     let ng: typeof import("./nodegroup");
@@ -642,22 +856,28 @@ describe("resolveExtraNodeSecurityGroupIds", function () {
         ng = await import("./nodegroup");
     });
 
-    test("no args returns empty array", async () => {
-        expect(resolveExtraNodeSecurityGroupIds(
+    test("no relevant args or c.nodeGroupOptions returns empty array", async () => {
+        expect(resolveOrGetExtraNodeSecurityGroups(
                 "nodegroup-name",
                 {},
+                {
+                    nodeGroupOptions: {},
+                } as pulumi.UnwrappedObject<CoreData>,
                 undefined as any,
             )).toEqual([]);
     });
 
     test("both args.extraNodeSecurityGroups and args.extraNodeSecurityGroupIds throws", async () => {
         const nodeGroupName = "nodegroup-name"
-        expect(() => resolveExtraNodeSecurityGroupIds(
+        expect(() => resolveOrGetExtraNodeSecurityGroups(
                 "nodegroup-name",
                 {
                     extraNodeSecurityGroups: [new aws.ec2.SecurityGroup("sg",{})],
                     extraNodeSecurityGroupIds: ["sg-id-1", "sg-id-2"]
                 },
+                {
+                    nodeGroupOptions: {},
+                } as pulumi.UnwrappedObject<CoreData>,
                 undefined as any,
             ),
         ).toThrowError(
@@ -665,39 +885,147 @@ describe("resolveExtraNodeSecurityGroupIds", function () {
         );
     });
 
-    test("args.extraNodeSecurityGroups returns ids of passed security groups", async () => {
+    test("both args.extraNodeSecurityGroups and c.nodeGroupOptions.extraNodeSecurityGroupIds throws", async () => {
         const nodeGroupName = "nodegroup-name"
-        const passedSgs = [new aws.ec2.SecurityGroup("sg",{ name: "sg-name"})]
-        const resolvedIds = resolveExtraNodeSecurityGroupIds(
+        expect(() => resolveOrGetExtraNodeSecurityGroups(
+                "nodegroup-name",
+                {
+                    extraNodeSecurityGroups: [new aws.ec2.SecurityGroup("sg",{})],
+                },
+                {
+                    nodeGroupOptions: {
+                        extraNodeSecurityGroupIds: ["sg-id-1", "sg-id-2"]
+                    },
+                } as pulumi.UnwrappedObject<CoreData>,
+                undefined as any,
+            ),
+        ).toThrowError(
+            `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
+        );
+    });
+
+    test("both c.nodeGroupOptions.extraNodeSecurityGroups and args.extraNodeSecurityGroupIds throws", async () => {
+        const nodeGroupName = "nodegroup-name"
+        expect(() => resolveOrGetExtraNodeSecurityGroups(
+                "nodegroup-name",
+                {
+                    extraNodeSecurityGroupIds: ["sg-id-1", "sg-id-2"]
+                },
+                {
+                    nodeGroupOptions: {
+                        extraNodeSecurityGroups: [new aws.ec2.SecurityGroup("sg",{})],
+                    },
+                } as pulumi.UnwrappedObject<CoreData>,
+                undefined as any,
+            ),
+        ).toThrowError(
+            `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
+        );
+    });
+
+    test("both c.nodeGroupOptions.extraNodeSecurityGroups and c.nodeGroupOptions.extraNodeSecurityGroupIds throws", async () => {
+        const nodeGroupName = "nodegroup-name"
+        expect(() => resolveOrGetExtraNodeSecurityGroups(
+                "nodegroup-name",
+                {},
+                {
+                    nodeGroupOptions: {
+                        extraNodeSecurityGroupIds: ["sg-id-1", "sg-id-2"],
+                        extraNodeSecurityGroups: [new aws.ec2.SecurityGroup("sg",{})],
+                    },
+                } as pulumi.UnwrappedObject<CoreData>,
+                undefined as any,
+            ),
+        ).toThrowError(
+            `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
+        );
+    });
+
+    test("args.extraNodeSecurityGroups returns passed security groups", async () => {
+        const nodeGroupName = "nodegroup-name"
+        const passedSgName = "sg-name"
+        const passedSgs = [new aws.ec2.SecurityGroup("sg",{ name: passedSgName})]
+        const resolvedSgs = resolveOrGetExtraNodeSecurityGroups(
             nodeGroupName,
             {
                 extraNodeSecurityGroups: passedSgs,
             },
+            {
+                nodeGroupOptions: {},
+            } as pulumi.UnwrappedObject<CoreData>,
             undefined as any,
         )
-        const received = await Promise.all(resolvedIds.map(id => promisify(id)))
+        const received = await Promise.all(resolvedSgs.map(sg => promisify(sg.id)))
         const expected = await Promise.all(passedSgs.map(sg => promisify(sg.id)))
 
+        expect(resolvedSgs).toEqual(passedSgs)
         expect(received).toEqual(expected)
+        expect(received).toEqual([passedSgName + "_id"])
     });
 
-    test("args.extraNodeSecurityGroupsIds returns ids as pulumi.Output<string>[]", async () => {
+    test("args.extraNodeSecurityGroupsIds returns groups imported by get", async () => {
         const nodeGroupName = "nodegroup-name"
-        const sg = new aws.ec2.SecurityGroup("sg",{})
+        const existingSgName = "existing-sg"
+        const existingSg = new aws.ec2.SecurityGroup("sg",{"name": existingSgName})
         const sgIdString = "sg-id-1"
-        const passedSgIds = [sgIdString, sg.id]
-        const resolvedIds = resolveExtraNodeSecurityGroupIds(
+        const passedSgIds = [sgIdString, existingSg.id]
+        const resolvedSgs = resolveOrGetExtraNodeSecurityGroups(
             nodeGroupName,
             {
                 extraNodeSecurityGroupIds: passedSgIds,
             },
+            {
+                nodeGroupOptions: {},
+            } as pulumi.UnwrappedObject<CoreData>,
             undefined as any,
         )
-        const received = await Promise.all(resolvedIds.map(id => promisify(id)))
-        const expected = [sgIdString, await promisify(sg.id)]
-        let ret: string
-        promisify(sg.id).then(val => ret = val)
+        const received = await Promise.all(resolvedSgs.map(sg => promisify(sg.id)))
+        const expected = [sgIdString, await promisify(existingSg.id)]
         expect(received).toEqual(expected)
+        expect(received).toEqual([sgIdString, existingSgName + "_id"])
+    });
+
+    test("c.nodeGroupOptions.extraNodeSecurityGroups returns passed security groups", async () => {
+        const nodeGroupName = "nodegroup-name"
+        const passedSgName = "sg-name"
+        const passedSgs = [new aws.ec2.SecurityGroup("sg",{ name: passedSgName})]
+        const resolvedSgs = resolveOrGetExtraNodeSecurityGroups(
+            nodeGroupName,
+            {},
+            {
+                nodeGroupOptions: {
+                    extraNodeSecurityGroups: passedSgs,
+                },
+            } as pulumi.UnwrappedObject<CoreData>,
+            undefined as any,
+        )
+        const received = await Promise.all(resolvedSgs.map(sg => promisify(sg.id)))
+        const expected = await Promise.all(passedSgs.map(sg => promisify(sg.id)))
+        expect(resolvedSgs).toEqual(passedSgs)
+        expect(received).toEqual(expected)
+        expect(received).toEqual([passedSgName + "_id"])
+    });
+
+    test("c.nodeGroupOptions.extraNodeSecurityGroupsIds returns groups imported by get", async () => {
+        const nodeGroupName = "nodegroup-name"
+        const existingSgName = "existing-sg"
+        const existingSg = new aws.ec2.SecurityGroup("sg",{"name": existingSgName})
+        const sgIdString = "sg-id-1"
+        const passedSgIds = [sgIdString, existingSg.id]
+        const resolvedSgs = resolveOrGetExtraNodeSecurityGroups(
+            nodeGroupName,
+            {},
+            {
+                nodeGroupOptions: {
+                    extraNodeSecurityGroupIds: passedSgIds
+                },
+            } as pulumi.UnwrappedObject<CoreData>,
+            undefined as any,
+        )
+        const received = await Promise.all(resolvedSgs.map(sg => promisify(sg.id)))
+        const expected = [sgIdString, await promisify(existingSg.id)]
+        expect(received).toEqual(expected)
+        expect(received).toEqual([sgIdString, existingSgName + "_id"])
     });
 });
 

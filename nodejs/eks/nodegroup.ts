@@ -441,7 +441,7 @@ export interface NodeGroupV2Data {
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    extraNodeSecurityGroups?: aws.ec2.SecurityGroup[];
+    extraNodeSecurityGroups?: pulumi.Output<aws.ec2.SecurityGroup[]>;
 }
 
 /**
@@ -555,7 +555,7 @@ export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    public readonly extraNodeSecurityGroups: aws.ec2.SecurityGroup[];
+    public readonly extraNodeSecurityGroups: pulumi.Output<aws.ec2.SecurityGroup[]>;
 
     /**
      * The AutoScalingGroup name for the Node group.
@@ -695,38 +695,6 @@ export function resolveInstanceProfileName(
     
 }
 
-// /**
-//  * Returns either the ids of the security groups passed in extraNodeSecurityGroups, 
-//  * the passed extraNodeSecurityGroupIds, or an empty array.
-//  * Errors if both an extraNodeSecurityGroups and an extraNodeSecurityGroupIds is passed.
-//  */
-// export function resolveExtraNodeSecurityGroupIds(
-//     nodeGroupName: string,
-//     args: Omit<NodeGroupOptions, "cluster">,
-//     parent: pulumi.ComponentResource,
-// ): pulumi.Output<pulumi.Output<string>[]> {
-//     if (
-//         (args.extraNodeSecurityGroups && args.extraNodeSecurityGroupIds)
-//     ) {
-//         throw new pulumi.ResourceError(
-//             `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
-//             parent,
-//         );
-//     }
-
-//     if (args.extraNodeSecurityGroups) {
-//         return pulumi.output(args.extraNodeSecurityGroups).apply(sg => {
-//             return sg.map((sg) => sg.id);
-//         });
-//     } else if (args.extraNodeSecurityGroupIds) {
-//         return pulumi.output(args.extraNodeSecurityGroupIds).apply(ids => {
-//             return ids.map(id => pulumi.output(id));
-//         })
-//     } else {
-//         return pulumi.output([])
-//     }
-// }
-
 /**
  * Returns either the ids of the security groups passed in extraNodeSecurityGroups, 
  * the passed extraNodeSecurityGroupIds, or an empty array.
@@ -735,10 +703,12 @@ export function resolveInstanceProfileName(
 export function resolveExtraNodeSecurityGroupIds(
     nodeGroupName: string,
     args: Omit<NodeGroupOptions, "cluster">,
+    c: pulumi.UnwrappedObject<CoreData>,
     parent: pulumi.ComponentResource,
 ): pulumi.Output<string>[] {
     if (
-        (args.extraNodeSecurityGroups && args.extraNodeSecurityGroupIds)
+        (args.extraNodeSecurityGroups || c.nodeGroupOptions.extraNodeSecurityGroups) && 
+        (args.extraNodeSecurityGroupIds || c.nodeGroupOptions.extraNodeSecurityGroupIds)
     ) {
         throw new pulumi.ResourceError(
             `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
@@ -747,11 +717,47 @@ export function resolveExtraNodeSecurityGroupIds(
     }
 
     if (args.extraNodeSecurityGroups) {
-        return args.extraNodeSecurityGroups.map((sg) => sg.id);
+        return args.extraNodeSecurityGroups.map(sg => sg.id)
     } else if (args.extraNodeSecurityGroupIds) {
-        return args.extraNodeSecurityGroupIds.map(id => {
-            return pulumi.output(id)
-    });
+        return args.extraNodeSecurityGroupIds.map(id => pulumi.output(id))
+    } else if (c.nodeGroupOptions.extraNodeSecurityGroups) {
+        return c.nodeGroupOptions.extraNodeSecurityGroups.map(sg => sg.id)
+    } else if (c.nodeGroupOptions.extraNodeSecurityGroupIds) {
+        return c.nodeGroupOptions.extraNodeSecurityGroupIds.map(id => pulumi.output(id))
+    } else {
+        return []
+    }
+}
+
+/**
+ * Returns either the passed extraNodeSecurityGroups, the security groups fetched using
+ * the passed extraNodeSecurityGroupIds, or an empty array. Throws if both extraNodeSecurityGroups
+ * and extraNodeSecurityGroupIds are passed. Return prioritizes args over nodeGroupOptions.
+ */
+export function resolveOrGetExtraNodeSecurityGroups(
+    nodeGroupName: string,
+    args: Omit<NodeGroupOptions, "cluster">,
+    c: pulumi.UnwrappedObject<CoreData>,
+    parent: pulumi.ComponentResource,
+): aws.ec2.SecurityGroup[] {
+    if (
+        (args.extraNodeSecurityGroups || c.nodeGroupOptions.extraNodeSecurityGroups) && 
+        (args.extraNodeSecurityGroupIds || c.nodeGroupOptions.extraNodeSecurityGroupIds)
+    ) {
+        throw new pulumi.ResourceError(
+            `invalid args for node group ${nodeGroupName}, extraNodeSecurityGroups and extraNodeSecurityGroupIds are mutually exclusive`,
+            parent,
+        );
+    }
+
+    if (args.extraNodeSecurityGroups) {
+        return args.extraNodeSecurityGroups
+    } else if (args.extraNodeSecurityGroupIds) {
+        return args.extraNodeSecurityGroupIds.map((id, i) => aws.ec2.SecurityGroup.get(`${nodeGroupName}-extraSG-${i}`, id))
+    } else if (c.nodeGroupOptions.extraNodeSecurityGroups) {
+        return c.nodeGroupOptions.extraNodeSecurityGroups
+    } else if (c.nodeGroupOptions.extraNodeSecurityGroupIds) {
+        return c.nodeGroupOptions.extraNodeSecurityGroupIds.map((id, i) => aws.ec2.SecurityGroup.get(`${nodeGroupName}-extraSG-${i}`, id))
     } else {
         return []
     }
@@ -765,7 +771,7 @@ function createNodeGroupInternal(
     provider?: pulumi.ProviderResource,
 ): NodeGroupData {
     const instanceProfileName = core.apply(c => resolveInstanceProfileName(name, args, c, parent))
-    const extraNodeSecurityGroupIds = resolveExtraNodeSecurityGroupIds(name, args, parent)
+    const extraNodeSecurityGroupIds = core.apply(c => resolveExtraNodeSecurityGroupIds(name, args, c, parent))
     
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         throw new pulumi.ResourceError(
@@ -1222,7 +1228,8 @@ function createNodeGroupV2Internal(
     provider?: pulumi.ProviderResource,
 ): NodeGroupV2Data {
     const instanceProfileName = core.apply(c => resolveInstanceProfileName(name, args, c, parent))
-
+    const extraNodeSecurityGroups = core.apply(c => resolveOrGetExtraNodeSecurityGroups(name, args, c, parent))
+    
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         throw new pulumi.ResourceError(
             `invalid args for node group ${name}, clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
@@ -1334,7 +1341,7 @@ function createNodeGroupV2Internal(
     }
 
     // Collect the IDs of any extra, user-specific security groups.
-    const extraNodeSecurityGroupIds = pulumi.all([args.extraNodeSecurityGroups]).apply(([sg]) => {
+    const extraNodeSecurityGroupIds = pulumi.all([extraNodeSecurityGroups]).apply(([sg]) => {
         if (sg === undefined) {
             return [];
         }
@@ -1610,7 +1617,7 @@ function createNodeGroupV2Internal(
             minSize: args?.minSize ?? 1,
             maxSize: args?.maxSize ?? 2,
             desiredCapacity: args?.desiredCapacity ?? 2,
-            launchTemplate: {
+            launchTemplate: { 
                 name: nodeLaunchTemplate.name,
                 version: launchTemplateVersion,
             },
@@ -1631,7 +1638,7 @@ function createNodeGroupV2Internal(
         nodeSecurityGroup: nodeSecurityGroup,
         nodeSecurityGroupId: nodeSecurityGroupId,
         autoScalingGroup: asGroup,
-        extraNodeSecurityGroups: args.extraNodeSecurityGroups,
+        extraNodeSecurityGroups: extraNodeSecurityGroups,
     };
 }
 
