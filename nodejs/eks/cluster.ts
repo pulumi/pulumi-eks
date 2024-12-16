@@ -156,6 +156,7 @@ export interface CoreData {
     encryptionConfig?: pulumi.Output<aws.types.output.eks.ClusterEncryptionConfig>;
     clusterIamRole: pulumi.Output<aws.iam.Role>;
     accessEntries?: pulumi.Output<AccessEntry[]>;
+    autoModeNodeRoleName: pulumi.Output<string>;
 }
 
 function createOrGetInstanceProfile(
@@ -279,6 +280,12 @@ export function generateKubeconfig(
 export interface ClusterCreationRoleProviderOptions {
     region?: pulumi.Input<aws.Region>;
     profile?: pulumi.Input<string>;
+}
+
+export interface EksAutoModeOptions {
+    enabled: boolean;
+    createNodeRole?: boolean;
+    computeConfig?: pulumi.Input<aws.types.input.eks.ClusterComputeConfig>;
 }
 
 /**
@@ -447,6 +454,13 @@ export function createCore(
         );
     }
 
+    if (args.autoMode?.enabled && !supportsAccessEntries(args.authenticationMode)) {
+        throw new pulumi.ResourceError(
+            "Access entries are required when using EKS Auto Mode. Use the authentication mode 'API' or 'API_AND_CONFIG_MAP'.",
+            parent,
+        );
+    }
+
     // Configure the node group options.
     const nodeGroupOptions: ClusterNodeGroupOptions = args.nodeGroupOptions || {
         nodeSubnetIds: args.nodeSubnetIds,
@@ -496,32 +510,46 @@ export function createCore(
     }
 
     // Create the EKS service role
-    let eksRole: pulumi.Output<aws.iam.Role>;
-    if (args.serviceRole) {
-        eksRole = pulumi.output(args.serviceRole);
-    } else {
-        eksRole = new ServiceRole(
+    let eksServiceRole: ServiceRole | undefined;
+    if (!args.serviceRole) {
+        const managedPolicies = ["AmazonEKSClusterPolicy"];
+
+        // EKS auto mode requires additional managed policies
+        // see https://docs.aws.amazon.com/eks/latest/userguide/auto-enable-existing.html#_cli
+        if (args.autoMode?.enabled) {
+            managedPolicies.push(
+                "AmazonEKSComputePolicy",
+                "AmazonEKSBlockStoragePolicy",
+                "AmazonEKSLoadBalancingPolicy",
+                "AmazonEKSNetworkingPolicy",
+            );
+        }
+
+        eksServiceRole = new ServiceRole(
             `${name}-eksRole`,
             {
-                service: "eks.amazonaws.com",
+                service: pulumi.interpolate`eks.${dnsSuffix}`,
                 description: "Allows EKS to manage clusters on your behalf.",
-                managedPolicyArns: [
-                    {
-                        id: "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
-                        arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSClusterPolicy`,
-                    },
-                ],
+                managedPolicyArns: managedPolicies.map((policy) => ({
+                    id: `arn:aws:iam::aws:policy/${policy}`,
+                    arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/${policy}`,
+                })),
                 tags: args.tags,
+                // EKS Auto Mode needs "sts:TagSession" in addition to the default "sts:AssumeRole"
+                assumeRoleActions: ["sts:AssumeRole", "sts:TagSession"],
             },
             { parent, provider },
-        ).role;
+        );
     }
+
+    // Do not create the default security group if the user makes an explicit decision or if EKS Auto Mode is enabled.
+    const skipDefaultSecurityGroups = args.skipDefaultSecurityGroups ?? args.autoMode?.enabled;
 
     // Create the EKS cluster security group
     let eksClusterSecurityGroup: aws.ec2.SecurityGroup | undefined;
     if (args.clusterSecurityGroup) {
         eksClusterSecurityGroup = args.clusterSecurityGroup;
-    } else if (!args.skipDefaultSecurityGroups) {
+    } else if (!skipDefaultSecurityGroups) {
         eksClusterSecurityGroup = new aws.ec2.SecurityGroup(
             `${name}-eksClusterSecurityGroup`,
             {
@@ -579,21 +607,68 @@ export function createCore(
     let kubernetesNetworkConfig:
         | pulumi.Output<aws.types.input.eks.ClusterKubernetesNetworkConfig>
         | undefined;
-    if (args.kubernetesServiceIpAddressRange || args.ipFamily) {
+    if (args.kubernetesServiceIpAddressRange || args.ipFamily || args.autoMode?.enabled) {
         kubernetesNetworkConfig = pulumi
             .all([args.kubernetesServiceIpAddressRange, args.ipFamily])
             .apply(([serviceIpv4Cidr, ipFamily = "ipv4"]) => ({
                 serviceIpv4Cidr: ipFamily === "ipv4" ? serviceIpv4Cidr : undefined, // only applicable for IPv4 IP family
                 ipFamily: ipFamily,
+                elasticLoadBalancing: args.autoMode?.enabled
+                    ? {
+                          enabled: args.autoMode?.enabled,
+                      }
+                    : undefined,
             }));
     }
+
+    let eksAutoNodeRole: ServiceRole | undefined;
+    if (args.autoMode?.enabled && args.autoMode.createNodeRole !== false) {
+        eksAutoNodeRole = new ServiceRole(
+            `${name}-nodeRole`,
+            {
+                service: pulumi.interpolate`ec2.${dnsSuffix}`,
+                managedPolicyArns: [
+                    {
+                        id: "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy",
+                        arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy`,
+                    },
+                    {
+                        id: "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly",
+                        arn: pulumi.interpolate`arn:${partition}:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly`,
+                    },
+                ],
+                tags: args.tags,
+            },
+            { parent, provider },
+        );
+    }
+
+    let computeConfig: pulumi.Input<aws.types.input.eks.ClusterComputeConfig> | undefined;
+    if (args.autoMode?.enabled) {
+        computeConfig = pulumi.output(args.autoMode.computeConfig).apply((config) => {
+            return {
+                enabled: true,
+                nodeRoleArn: eksAutoNodeRole?.directRole.arn,
+                nodePools: ["general-purpose", "system"],
+                ...config,
+            };
+        });
+    }
+
+    const storageConfig = args.autoMode?.enabled ? { blockStorage: { enabled: true } } : undefined;
 
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(
         `${name}-eksCluster`,
         {
             name: args.name,
-            roleArn: eksRole.apply((r) => r.arn),
+            roleArn: args.serviceRole
+                ? pulumi.output(args.serviceRole).arn
+                : eksServiceRole?.directRole.arn!,
+            computeConfig,
+            storageConfig,
+            // When a cluster is created with EKS Auto Mode, it must be created without the addons
+            bootstrapSelfManagedAddons: args.autoMode?.enabled ? false : undefined,
             vpcConfig: {
                 securityGroupIds: eksClusterSecurityGroup
                     ? [eksClusterSecurityGroup.id]
@@ -644,11 +719,21 @@ export function createCore(
             // ignore changes to the bootstrapClusterCreatorAdminPermissions field because it has bi-modal default behavior
             // in upstream and would cause replacements for users upgrading from older versions of the EKS provider (<=2.7.3).
             // See https://github.com/pulumi/pulumi-aws/issues/3997#issuecomment-2223201333 for more details.
-            ignoreChanges: ["accessConfig.bootstrapClusterCreatorAdminPermissions"],
+            ignoreChanges: [
+                "accessConfig.bootstrapClusterCreatorAdminPermissions",
+                // bootstrapSelfManagedAddons is a creation time property and should not be updated
+                "bootstrapSelfManagedAddons",
+            ],
+            dependsOn: [
+                // Ensure the service roles are created before the cluster and all policies are attached.
+                ...(eksServiceRole ? [eksServiceRole.resolvedRole] : []),
+                ...(eksAutoNodeRole ? [eksAutoNodeRole.resolvedRole] : []),
+            ],
         },
     );
 
-    if (args.kubeProxyAddonOptions?.enabled ?? true) {
+    const kubeProxyAddonEnabled = args.kubeProxyAddonOptions?.enabled ?? !args.autoMode?.enabled;
+    if (kubeProxyAddonEnabled) {
         const kubeProxyVersion: pulumi.Output<string> = args.kubeProxyAddonOptions?.version
             ? pulumi.output(args.kubeProxyAddonOptions?.version)
             : aws.eks
@@ -805,7 +890,9 @@ export function createCore(
         { parent: parent },
     );
 
-    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
+    // create the default node group unless the user opts out of it or if Fargate/EKS Auto Mode is enabled
+    const skipDefaultNodeGroup =
+        args.skipDefaultNodeGroup || args.fargate || args.autoMode?.enabled;
 
     let instanceRoles: pulumi.Output<aws.iam.Role[]>;
     let defaultInstanceRole: pulumi.Output<aws.iam.Role> | undefined;
@@ -849,7 +936,7 @@ export function createCore(
                 tags: args.tags,
             },
             { parent, provider },
-        ).role;
+        ).resolvedRole;
 
         defaultInstanceRole = instanceRole;
         instanceRoles = pulumi.output([instanceRole]);
@@ -968,10 +1055,13 @@ export function createCore(
         }
     }
 
+    // Create the VPC CNI addon if the user has not explicitly disabled it. The VPC CNI addon is enabled by default
+    // unless EKS Auto Mode is enabled.
+    const vpcCniAddonEnabled =
+        args.useDefaultVpcCni !== undefined ? !args.useDefaultVpcCni : !args.autoMode?.enabled;
     // Create the VPC CNI addon
-    const vpcCni = args.useDefaultVpcCni
-        ? undefined
-        : new VpcCniAddon(
+    const vpcCni = vpcCniAddonEnabled
+        ? new VpcCniAddon(
               `${name}-vpc-cni`,
               {
                   ...args.vpcCniOptions,
@@ -987,7 +1077,8 @@ export function createCore(
                       kubernetes: k8sProvider,
                   },
               },
-          );
+          )
+        : undefined;
 
     const fargateProfile: pulumi.Output<aws.eks.FargateProfile | undefined> = pulumi
         .output(args.fargate)
@@ -1000,7 +1091,7 @@ export function createCore(
                     new ServiceRole(
                         `${name}-podExecutionRole`,
                         {
-                            service: "eks-fargate-pods.amazonaws.com",
+                            service: pulumi.interpolate`eks-fargate-pods.${dnsSuffix}`,
                             managedPolicyArns: [
                                 {
                                     id: "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
@@ -1010,7 +1101,7 @@ export function createCore(
                             tags: args.tags,
                         },
                         { parent, provider },
-                    ).role.apply((r) => r.arn);
+                    ).resolvedRole.arn;
                 const selectors = fargate.selectors || [
                     // For `fargate: true`, default to including the `default` namespaces and
                     // `kube-system` namespaces so that all pods by default run in Fargate.
@@ -1057,7 +1148,8 @@ export function createCore(
     pulumi.output(args.fargate).apply((fargate) => {
         if (
             corednsExplicitlyEnabled ||
-            ((fargate || !args.skipDefaultNodeGroup) && (args.corednsAddonOptions?.enabled ?? true))
+            ((fargate || !args.skipDefaultNodeGroup || args.autoMode?.enabled) &&
+                (args.corednsAddonOptions?.enabled ?? true))
         ) {
             const corednsVersion: pulumi.Output<string> = args.corednsAddonOptions?.version
                 ? pulumi.output(args.corednsAddonOptions.version)
@@ -1160,8 +1252,9 @@ export function createCore(
         fargateProfile: fargateProfile,
         oidcProvider: oidcProvider,
         encryptionConfig: encryptionConfig,
-        clusterIamRole: eksRole,
+        clusterIamRole: pulumi.output(args.serviceRole ?? eksServiceRole?.directRole!),
         accessEntries: createdAccessEntries ? pulumi.output(createdAccessEntries) : undefined,
+        autoModeNodeRoleName: eksAutoNodeRole?.directRole.name ?? pulumi.output(""),
     };
 }
 
@@ -1782,6 +1875,12 @@ export interface ClusterOptions {
      * If set to false when using the default node group, an instance role or instance profile must be provided.
      */
     createInstanceRole?: boolean;
+
+    /**
+     * Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+     */
+    autoMode?: EksAutoModeOptions;
 }
 
 /**
@@ -1904,6 +2003,10 @@ export const AccessEntryType = {
      * For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
      */
     EC2_WINDOWS: "EC2_WINDOWS",
+    /**
+     * For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
+     */
+    EC2: "EC2",
 } as const;
 
 /**
@@ -2064,6 +2167,7 @@ export interface ClusterResult {
     oidcProviderArn: pulumi.Output<string>;
     oidcProviderUrl: pulumi.Output<string>;
     oidcIssuer: pulumi.Output<string>;
+    autoModeNodeRoleName: pulumi.Output<string>;
 }
 
 /** @internal */
@@ -2100,7 +2204,8 @@ export function createCluster(
 
     let nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
     let eksClusterIngressRule: aws.ec2.SecurityGroupRule | undefined;
-    if (!args.skipDefaultSecurityGroups) {
+    const skipDefaultSecurityGroups = args.skipDefaultSecurityGroups ?? args.autoMode?.enabled;
+    if (!skipDefaultSecurityGroups) {
         if (!core.clusterSecurityGroup) {
             throw new pulumi.ResourceError(
                 "clusterSecurityGroup is required when creating the default node group.",
@@ -2129,7 +2234,8 @@ export function createCluster(
         core.nodeGroupOptions.clusterIngressRule = eksClusterIngressRule;
     }
 
-    const skipDefaultNodeGroup = args.skipDefaultNodeGroup || args.fargate;
+    const skipDefaultNodeGroup =
+        args.skipDefaultNodeGroup || args.fargate || args.autoMode?.enabled;
 
     // Create the default worker node group and grant the workers access to the API server.
     let defaultNodeGroup: NodeGroupV2Data | undefined = undefined;
@@ -2190,6 +2296,7 @@ export function createCluster(
         oidcProviderUrl: oidcIssuerUrl,
         // The issuer is the issuer URL without the protocol part
         oidcIssuer: oidcIssuerUrl.apply((url) => url.replace("https://", "")),
+        autoModeNodeRoleName: core.autoModeNodeRoleName,
     };
 }
 
@@ -2224,6 +2331,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
     public readonly oidcProviderArn: pulumi.Output<string>;
     public readonly oidcProviderUrl: pulumi.Output<string>;
     public readonly oidcIssuer: pulumi.Output<string>;
+    public readonly autoModeNodeRoleName: pulumi.Output<string>;
 
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:Cluster";
@@ -2248,6 +2356,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
                 oidcProviderArn: undefined,
                 oidcProviderUrl: undefined,
                 oidcIssuer: undefined,
+                autoModeNodeRoleName: undefined,
             };
             super(type, name, props, opts);
             return;
@@ -2280,6 +2389,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
         this.oidcProviderArn = pulumi.output(cluster.oidcProviderArn);
         this.oidcProviderUrl = pulumi.output(cluster.oidcProviderUrl);
         this.oidcIssuer = pulumi.output(cluster.oidcIssuer);
+        this.autoModeNodeRoleName = pulumi.output(cluster.autoModeNodeRoleName);
 
         this.registerOutputs({
             clusterSecurityGroup: this.clusterSecurityGroup,
@@ -2300,6 +2410,7 @@ export class ClusterInternal extends pulumi.ComponentResource {
             oidcProviderArn: this.oidcProviderArn,
             oidcProviderUrl: this.oidcProviderUrl,
             oidcIssuer: this.oidcIssuer,
+            autoModeNodeRoleName: this.autoModeNodeRoleName,
         });
     }
 

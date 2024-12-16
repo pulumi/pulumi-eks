@@ -23,6 +23,8 @@ const (
 	AccessEntryTypeEC2Linux = AccessEntryType("EC2_LINUX")
 	// For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
 	AccessEntryTypeEC2Windows = AccessEntryType("EC2_WINDOWS")
+	// For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
+	AccessEntryTypeEC2 = AccessEntryType("EC2")
 )
 
 func (AccessEntryType) ElementType() reflect.Type {
@@ -151,6 +153,7 @@ func (o AccessEntryTypePtrOutput) ToStringPtrOutputWithContext(ctx context.Conte
 //	AccessEntryTypeFargateLinux
 //	AccessEntryTypeEC2Linux
 //	AccessEntryTypeEC2Windows
+//	AccessEntryTypeEC2
 type AccessEntryTypeInput interface {
 	pulumi.Input
 
@@ -225,6 +228,16 @@ const (
 	// Deprecated: The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.
 	// For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.
 	AuthenticationModeApiAndConfigMap = AuthenticationMode("API_AND_CONFIG_MAP")
+)
+
+// Built-in node pools of EKS Auto Mode. For more details see: https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html
+type ClusterNodePools string
+
+const (
+	// This NodePool has a `CriticalAddonsOnly` taint. Many EKS addons, such as CoreDNS, tolerate this taint. Use this system node pool to segregate cluster-critical applications. Supports both `amd64` and `arm64` architectures.
+	ClusterNodePoolsSystem = ClusterNodePools("system")
+	// This NodePool provides support for launching nodes for general purpose workloads in your cluster. Only supports `amd64` architecture.
+	ClusterNodePoolsGeneralPurpose = ClusterNodePools("general-purpose")
 )
 
 // The type of EKS optimized Operating System to use for node groups.

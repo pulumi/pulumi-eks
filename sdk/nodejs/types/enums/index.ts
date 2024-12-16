@@ -20,6 +20,10 @@ export const AccessEntryType = {
      */
     EC2Windows: "EC2_WINDOWS",
     /**
+     * For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
+     */
+    EC2: "EC2",
+    /**
      * @deprecated Use `Standard` instead`
      */
     STANDARD: "STANDARD",
@@ -112,6 +116,22 @@ For more information and instructions how to upgrade, see https://docs.aws.amazo
  * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
  */
 export type AuthenticationMode = (typeof AuthenticationMode)[keyof typeof AuthenticationMode];
+
+export const ClusterNodePools = {
+    /**
+     * This NodePool has a `CriticalAddonsOnly` taint. Many EKS addons, such as CoreDNS, tolerate this taint. Use this system node pool to segregate cluster-critical applications. Supports both `amd64` and `arm64` architectures.
+     */
+    System: "system",
+    /**
+     * This NodePool provides support for launching nodes for general purpose workloads in your cluster. Only supports `amd64` architecture.
+     */
+    GeneralPurpose: "general-purpose",
+} as const;
+
+/**
+ * Built-in node pools of EKS Auto Mode. For more details see: https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html
+ */
+export type ClusterNodePools = (typeof ClusterNodePools)[keyof typeof ClusterNodePools];
 
 export const OperatingSystem = {
     /**

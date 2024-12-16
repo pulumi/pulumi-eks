@@ -45,6 +45,11 @@ export interface ServiceRoleArgs {
      * Tags to apply to the role.
      */
     readonly tags?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
+
+    /**
+     * The actions to allow in the assume role policy. Defaults to ["sts:AssumeRole"].
+     */
+    readonly assumeRoleActions?: pulumi.Input<string[]>;
 }
 
 /**
@@ -52,8 +57,10 @@ export interface ServiceRoleArgs {
  * managed policies.
  */
 export class ServiceRole extends pulumi.ComponentResource {
-    // The service role.
-    public readonly role: pulumi.Output<aws.iam.Role>;
+    // An output that resolves to the role after all policies have been attached.
+    public readonly resolvedRole: pulumi.Output<aws.iam.Role>;
+    // The role itself without any dependencies on attached policies
+    public readonly directRole: aws.iam.Role;
 
     /**
      * Create a new ServiceRole.
@@ -70,7 +77,7 @@ export class ServiceRole extends pulumi.ComponentResource {
                 Version: "2012-10-17",
                 Statement: [
                     {
-                        Action: ["sts:AssumeRole"],
+                        Action: args.assumeRoleActions ?? ["sts:AssumeRole"],
                         Effect: "Allow",
                         Principal: {
                             Service: [service],
@@ -102,10 +109,15 @@ export class ServiceRole extends pulumi.ComponentResource {
                 ),
             );
         }
-        this.role = pulumi
+
+        this.directRole = role;
+        this.resolvedRole = pulumi
             .all([role.arn, ...rolePolicyAttachments.map((r) => r.id)])
             .apply(() => role);
 
-        this.registerOutputs({ role: this.role });
+        this.registerOutputs({
+            resolvedRole: this.resolvedRole,
+            directRole: this.directRole,
+        });
     }
 }

@@ -48,6 +48,10 @@ export class Cluster extends pulumi.ComponentResource {
     }
 
     /**
+     * The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
+     */
+    public /*out*/ readonly autoModeNodeRoleName!: pulumi.Output<string>;
+    /**
      * The AWS resource provider.
      */
     public /*out*/ readonly awsProvider!: pulumi.Output<pulumiAws.Provider>;
@@ -139,6 +143,7 @@ export class Cluster extends pulumi.ComponentResource {
         if (!opts.id) {
             resourceInputs["accessEntries"] = args ? args.accessEntries : undefined;
             resourceInputs["authenticationMode"] = args ? args.authenticationMode : undefined;
+            resourceInputs["autoMode"] = args ? (args.autoMode ? inputs.autoModeOptionsArgsProvideDefaults(args.autoMode) : undefined) : undefined;
             resourceInputs["clusterSecurityGroup"] = args ? args.clusterSecurityGroup : undefined;
             resourceInputs["clusterSecurityGroupTags"] = args ? args.clusterSecurityGroupTags : undefined;
             resourceInputs["clusterTags"] = args ? args.clusterTags : undefined;
@@ -191,6 +196,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["version"] = args ? args.version : undefined;
             resourceInputs["vpcCniOptions"] = args ? (args.vpcCniOptions ? inputs.vpcCniOptionsArgsProvideDefaults(args.vpcCniOptions) : undefined) : undefined;
             resourceInputs["vpcId"] = args ? args.vpcId : undefined;
+            resourceInputs["autoModeNodeRoleName"] = undefined /*out*/;
             resourceInputs["awsProvider"] = undefined /*out*/;
             resourceInputs["clusterIngressRuleId"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
@@ -209,6 +215,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["oidcProviderArn"] = undefined /*out*/;
             resourceInputs["oidcProviderUrl"] = undefined /*out*/;
         } else {
+            resourceInputs["autoModeNodeRoleName"] = undefined /*out*/;
             resourceInputs["awsProvider"] = undefined /*out*/;
             resourceInputs["clusterIngressRuleId"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroup"] = undefined /*out*/;
@@ -271,6 +278,12 @@ export interface ClusterArgs {
      * https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
      */
     authenticationMode?: enums.AuthenticationMode;
+    /**
+     * Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+     *
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+     */
+    autoMode?: inputs.AutoModeOptionsArgs;
     /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      *
@@ -550,11 +563,11 @@ export interface ClusterArgs {
      */
     serviceRole?: pulumi.Input<pulumiAws.iam.Role>;
     /**
-     * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+     * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
      */
     skipDefaultNodeGroup?: boolean;
     /**
-     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
      *
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
      */
@@ -583,6 +596,7 @@ export interface ClusterArgs {
     tags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+     * Defaults to true, unless `autoMode` is enabled.
      */
     useDefaultVpcCni?: boolean;
     /**

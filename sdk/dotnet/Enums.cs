@@ -37,6 +37,10 @@ namespace Pulumi.Eks
         /// For IAM roles associated with self-managed Windows node groups. Allows the nodes to join the cluster.
         /// </summary>
         public static AccessEntryType EC2Windows { get; } = new AccessEntryType("EC2_WINDOWS");
+        /// <summary>
+        /// For IAM roles associated with EC2 instances that need access policies. Allows the nodes to join the cluster.
+        /// </summary>
+        public static AccessEntryType EC2 { get; } = new AccessEntryType("EC2");
 
         public static bool operator ==(AccessEntryType left, AccessEntryType right) => left.Equals(right);
         public static bool operator !=(AccessEntryType left, AccessEntryType right) => !left.Equals(right);
@@ -138,6 +142,43 @@ For more information and instructions how to upgrade, see https://docs.aws.amazo
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override bool Equals(object? obj) => obj is AuthenticationMode other && Equals(other);
         public bool Equals(AuthenticationMode other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override int GetHashCode() => _value?.GetHashCode() ?? 0;
+
+        public override string ToString() => _value;
+    }
+
+    /// <summary>
+    /// Built-in node pools of EKS Auto Mode. For more details see: https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html
+    /// </summary>
+    [EnumType]
+    public readonly struct ClusterNodePools : IEquatable<ClusterNodePools>
+    {
+        private readonly string _value;
+
+        private ClusterNodePools(string value)
+        {
+            _value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        /// <summary>
+        /// This NodePool has a `CriticalAddonsOnly` taint. Many EKS addons, such as CoreDNS, tolerate this taint. Use this system node pool to segregate cluster-critical applications. Supports both `amd64` and `arm64` architectures.
+        /// </summary>
+        public static ClusterNodePools System { get; } = new ClusterNodePools("system");
+        /// <summary>
+        /// This NodePool provides support for launching nodes for general purpose workloads in your cluster. Only supports `amd64` architecture.
+        /// </summary>
+        public static ClusterNodePools GeneralPurpose { get; } = new ClusterNodePools("general-purpose");
+
+        public static bool operator ==(ClusterNodePools left, ClusterNodePools right) => left.Equals(right);
+        public static bool operator !=(ClusterNodePools left, ClusterNodePools right) => !left.Equals(right);
+
+        public static explicit operator string(ClusterNodePools value) => value._value;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override bool Equals(object? obj) => obj is ClusterNodePools other && Equals(other);
+        public bool Equals(ClusterNodePools other) => string.Equals(_value, other._value, StringComparison.Ordinal);
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override int GetHashCode() => _value?.GetHashCode() ?? 0;

@@ -27,6 +27,7 @@ import (
 	"testing"
 	"time"
 
+	"golang.org/x/exp/rand"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/utils/ptr"
@@ -1241,6 +1242,93 @@ func TestAccDefaultInstanceRole(t *testing.T) {
 		})
 
 	programTestWithExtraOptions(t, &test, nil)
+}
+
+func TestAccEksAutoMode(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// The test needs a predictable cluster name for tagging the subnets.
+	// Adding a random suffix to the cluster name to avoid conflicts between test runs.
+	clusterName := fmt.Sprintf("eks-auto-mode-%s", randomString(8))
+
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getExamples(t), "eks-auto-mode"),
+			Config: map[string]string{
+				"clusterName": clusterName,
+			},
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				assert.NotEmpty(t, info.Outputs["nodeRoleName"].(string), "expected nodeRoleName to be set")
+				assert.Empty(t, info.Outputs["defaultNodeGroup"].(string), "expected no default node group to be created")
+				integration.AssertHTTPResultWithRetry(t, info.Outputs["url"].(string), nil, 6*time.Minute, func(body string) bool {
+					return assert.Contains(t, body, "Hello, Pulumi!")
+				})
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
+// TestAccEksAutoModeUpgrade tests that the EKS cluster can be upgraded from a cluster with regular managed node groups
+// to a cluster using EKS Auto Mode
+func TestAccEksAutoModeUpgrade(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// The test needs a predictable cluster name for tagging the subnets.
+	// Adding a random suffix to the cluster name to avoid conflicts between test runs.
+	clusterName := fmt.Sprintf("eks-auto-mode-%s", randomString(8))
+
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getTestPrograms(t), "auto-mode-upgrade"),
+			Config: map[string]string{
+				"clusterName": clusterName,
+			},
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.RunEKSSmokeTest(t,
+					info.Deployment.Resources,
+					info.Outputs["kubeconfig"],
+				)
+			},
+			EditDirs: []integration.EditDir{
+				{
+					Dir:      path.Join(getTestPrograms(t), "auto-mode-upgrade", "step2"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
+				{
+					Dir:      path.Join(getTestPrograms(t), "auto-mode-upgrade", "step3"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+						utils.RunEKSSmokeTest(t,
+							info.Deployment.Resources,
+							info.Outputs["kubeconfig"],
+						)
+					},
+				},
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
+func randomString(lenght int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
+	random := rand.New(rand.NewSource(uint64(time.Now().UnixNano())))
+	b := make([]byte, lenght)
+	for i := range b {
+		b[i] = charset[random.Intn(len(charset))]
+	}
+	return string(b)
 }
 
 func getOidcProviderUrl(t *testing.T, eksCluster map[string]interface{}) string {

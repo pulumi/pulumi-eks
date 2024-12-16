@@ -10,6 +10,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.eks.enums.AuthenticationMode;
 import com.pulumi.eks.inputs.AccessEntryArgs;
+import com.pulumi.eks.inputs.AutoModeOptionsArgs;
 import com.pulumi.eks.inputs.ClusterNodeGroupOptionsArgs;
 import com.pulumi.eks.inputs.CoreDnsAddonOptionsArgs;
 import com.pulumi.eks.inputs.CreationRoleProviderArgs;
@@ -74,6 +75,25 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<AuthenticationMode> authenticationMode() {
         return Optional.ofNullable(this.authenticationMode);
+    }
+
+    /**
+     * Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+     * 
+     */
+    @Import(name="autoMode")
+    private @Nullable AutoModeOptionsArgs autoMode;
+
+    /**
+     * @return Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+     * 
+     */
+    public Optional<AutoModeOptionsArgs> autoMode() {
+        return Optional.ofNullable(this.autoMode);
     }
 
     /**
@@ -927,14 +947,14 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+     * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
      * 
      */
     @Import(name="skipDefaultNodeGroup")
     private @Nullable Boolean skipDefaultNodeGroup;
 
     /**
-     * @return If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+     * @return If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
      * 
      */
     public Optional<Boolean> skipDefaultNodeGroup() {
@@ -942,7 +962,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+     * If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
      * 
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
      * 
@@ -951,7 +971,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     private @Nullable Boolean skipDefaultSecurityGroups;
 
     /**
-     * @return If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+     * @return If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
      * 
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
      * 
@@ -1027,6 +1047,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
     /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+     * Defaults to true, unless `autoMode` is enabled.
      * 
      */
     @Import(name="useDefaultVpcCni")
@@ -1034,6 +1055,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
     /**
      * @return Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+     * Defaults to true, unless `autoMode` is enabled.
      * 
      */
     public Optional<Boolean> useDefaultVpcCni() {
@@ -1105,6 +1127,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     private ClusterArgs(ClusterArgs $) {
         this.accessEntries = $.accessEntries;
         this.authenticationMode = $.authenticationMode;
+        this.autoMode = $.autoMode;
         this.clusterSecurityGroup = $.clusterSecurityGroup;
         this.clusterSecurityGroupTags = $.clusterSecurityGroupTags;
         this.clusterTags = $.clusterTags;
@@ -1202,6 +1225,19 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder authenticationMode(@Nullable AuthenticationMode authenticationMode) {
             $.authenticationMode = authenticationMode;
+            return this;
+        }
+
+        /**
+         * @param autoMode Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
+         * 
+         * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder autoMode(@Nullable AutoModeOptionsArgs autoMode) {
+            $.autoMode = autoMode;
             return this;
         }
 
@@ -2348,7 +2384,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param skipDefaultNodeGroup If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` input is provided.
+         * @param skipDefaultNodeGroup If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
          * 
          * @return builder
          * 
@@ -2359,7 +2395,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param skipDefaultSecurityGroups If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false.
+         * @param skipDefaultSecurityGroups If this toggle is set to true, the EKS cluster will be created without the default node and cluster security groups. Defaults to false, unless `autoMode` is enabled.
          * 
          * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
          * 
@@ -2486,6 +2522,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
 
         /**
          * @param useDefaultVpcCni Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
+         * Defaults to true, unless `autoMode` is enabled.
          * 
          * @return builder
          * 
