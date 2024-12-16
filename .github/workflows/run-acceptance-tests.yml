@@ -283,11 +283,6 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install dependencies
         run: make install_nodejs_sdk
-      - name: Install gotestfmt
-        uses: GoTestTools/gotestfmt-action@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: v2.4.0
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -379,11 +374,6 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install dependencies
         run: make install_nodejs_sdk
-      - name: Install gotestfmt
-        uses: GoTestTools/gotestfmt-action@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: v2.4.0
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -406,7 +396,7 @@ jobs:
           total: ${{ matrix.total }}
           index: ${{ matrix.index }}
       - name: Run tests
-        run: cd tests && go test -tags=nodejs -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=nodejs -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}"
     strategy:
       fail-fast: false
       max-parallel: 10
@@ -476,11 +466,6 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
-      - name: Install gotestfmt
-        uses: GoTestTools/gotestfmt-action@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: v2.4.0
       - name: Download Python SDK
         uses: actions/download-artifact@v4
         with:
@@ -512,7 +497,7 @@ jobs:
           total: ${{ matrix.total }}
           index: ${{ matrix.index }}
       - name: Run tests
-        run: cd tests && go test -tags=python -v -json -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}" 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=python -count=1 -cover -timeout 3h -parallel 6 . --run="${{ steps.test_split.outputs.run}}"
     strategy:
       fail-fast: false
       max-parallel: 4
@@ -582,11 +567,6 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
-      - name: Install gotestfmt
-        uses: GoTestTools/gotestfmt-action@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: v2.4.0
       - name: Download DotNet SDK
         uses: actions/download-artifact@v4
         with:
@@ -611,7 +591,7 @@ jobs:
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: cd tests && go test -tags=dotnet -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=dotnet -count=1 -cover -timeout 3h -parallel 6 .
   test-go:
     name: Run Go Tests
     needs:
@@ -675,11 +655,6 @@ jobs:
         run: tar -zxf ${{ github.workspace}}/nodejs.tar.gz -C ${{github.workspace}}/nodejs
       - name: Install NodeJS SDK
         run: make install_nodejs_sdk
-      - name: Install gotestfmt
-        uses: GoTestTools/gotestfmt-action@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: v2.4.0
       - name: Download Go SDK
         uses: actions/download-artifact@v4
         with:
@@ -701,4 +676,4 @@ jobs:
           cd ${{ github.workspace }}/bin
           yarn install && yarn link @pulumi/eks
       - name: Run tests
-        run: cd tests && go test -tags=go -v -json -count=1 -cover -timeout 3h -parallel 6 . 2>&1 | tee /tmp/gotest.log | gotestfmt
+        run: cd tests && go test -tags=go -count=1 -cover -timeout 3h -parallel 6 .
