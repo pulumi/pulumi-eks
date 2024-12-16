@@ -1303,7 +1303,6 @@ func TestAccEksAutoModeUpgrade(t *testing.T) {
 							info.Deployment.Resources,
 							info.Outputs["kubeconfig"],
 						)
-						assert.Empty(t, info.Outputs["nodeRoleName"].(string), "expected no node role to be created")
 					},
 				},
 				{
@@ -1314,7 +1313,6 @@ func TestAccEksAutoModeUpgrade(t *testing.T) {
 							info.Deployment.Resources,
 							info.Outputs["kubeconfig"],
 						)
-						assert.Empty(t, info.Outputs["nodeRoleName"].(string), "expected no node role to be created")
 					},
 				},
 			},

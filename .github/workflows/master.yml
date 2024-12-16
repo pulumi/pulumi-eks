@@ -23,7 +23,7 @@ env:
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
   GOVERSION: "1.21.x"
   DOTNETVERSION: "6.x"
-  PYTHONVERSION: "3.8"
+  PYTHONVERSION: "3.12"
   JAVAVERSION: "11"
 jobs:
   lint:
