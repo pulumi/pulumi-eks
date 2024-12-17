@@ -131,7 +131,7 @@ const managedNodeGroupAL2023NvidiaGpu = eks.createManagedNodeGroup("al-2023-mng-
   ...scalingConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
-  instanceTypes: ["g4ad.xlarge"],
+  instanceTypes: ["g4dn.xlarge"],
   nodeRole: role,
   gpu: true,
 });
