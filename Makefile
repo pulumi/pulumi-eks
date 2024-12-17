@@ -203,3 +203,6 @@ test_provider:
 	@echo "== test_provider ==================================================================="
 	@echo ""
 	cd provider && go test -v -short ./... -parallel $(TESTPARALLELISM)
+
+renovate::
+	@echo "re-computing dependent files is not implemented yet"
