@@ -127,6 +127,16 @@ const managedNodeGroupAL2023ArmUserData = eks.createManagedNodeGroup("al-2023-ar
   kubeletExtraArgs: `--max-pods=${increasedPodCapacity}`,
 });
 
+const managedNodeGroupAL2023NvidiaGpu = eks.createManagedNodeGroup("al-2023-mng-nvidia-gpu", {
+  ...scalingConfig,
+  cluster: cluster,
+  operatingSystem: eks.OperatingSystem.AL2023,
+  instanceTypes: ["g4ad.xlarge"],
+  nodeRole: role,
+  gpu: true,
+});
+
+
 // Create a simple Bottlerocket node group with x64 instances
 const managedNodeGroupBottlerocket = eks.createManagedNodeGroup("bottlerocket-mng", {
   ...scalingConfig,
