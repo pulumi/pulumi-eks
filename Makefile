@@ -173,7 +173,7 @@ test_nodejs:: provider install_nodejs_sdk
 
 test_nodejs_upgrade:: PATH := $(WORKING_DIR)/bin:$(PATH)
 test_nodejs_upgrade:: provider install_nodejs_sdk
-	cd tests && go test -run Upgrade -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM}
+	cd tests && go test -run Upgrade -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
 
 test_python:: install_provider test_build
 	cd tests && go test -tags=python -count=1 -cover -timeout 3h -parallel ${TESTPARALLELISM} .
