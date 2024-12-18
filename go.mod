@@ -1,6 +1,8 @@
 module github.com/pulumi/pulumi-eks
 
-go 1.21.0
+go 1.21.12
+
+toolchain go1.23.3
 
 replace github.com/pulumi/pulumi-eks/sdk/v3 => ./sdk
 
@@ -10,9 +12,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.48.4
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/pulumi/providertest v0.0.15
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.41.0
-	github.com/pulumi/pulumi-eks/sdk/v3 v3.0.0-alpha.6
+	github.com/pulumi/providertest v0.1.3
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.65.0
+	github.com/pulumi/pulumi-eks/sdk/v3 v3.5.0
 	github.com/pulumi/pulumi/pkg/v3 v3.143.0
 	github.com/pulumi/pulumi/sdk/v3 v3.143.0
 	github.com/stretchr/testify v1.9.0
