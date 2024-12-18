@@ -908,7 +908,7 @@ func TestAccManagedNodeGroupOS(t *testing.T) {
 							foundNodes++
 						}
 					}
-					assert.Equal(t, 1, foundNodes, "Expected %s nodes with GPU")
+					assert.Equal(t, 2, foundNodes, "Expected %s nodes with Nvidia GPUs", foundNodes)
 				}))
 			},
 		})

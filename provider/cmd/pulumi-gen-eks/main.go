@@ -1983,7 +1983,10 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Name:  "AL2023Arm64Standard",
 						Value: "AL2023_ARM_64_STANDARD",
 					},
-
+					{
+						Name:  "AL2023X86_64Nvidia",
+						Value: "AL2023_x86_64_NVIDIA",
+					},
 					{
 						Name:  "BottlerocketArm64",
 						Value: "BOTTLEROCKET_ARM_64",

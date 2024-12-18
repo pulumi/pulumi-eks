@@ -203,6 +203,7 @@ const (
 	AmiTypeAL2Arm64                  = AmiType("AL2_ARM_64")
 	AmiType_AL2023X86_64Standard     = AmiType("AL2023_x86_64_STANDARD")
 	AmiTypeAL2023Arm64Standard       = AmiType("AL2023_ARM_64_STANDARD")
+	AmiType_AL2023X86_64Nvidia       = AmiType("AL2023_x86_64_NVIDIA")
 	AmiTypeBottlerocketArm64         = AmiType("BOTTLEROCKET_ARM_64")
 	AmiType_BottlerocketX86_64       = AmiType("BOTTLEROCKET_x86_64")
 	AmiTypeBottlerocketArm64Nvidia   = AmiType("BOTTLEROCKET_ARM_64_NVIDIA")

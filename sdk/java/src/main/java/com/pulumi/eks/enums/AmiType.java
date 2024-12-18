@@ -40,6 +40,7 @@ See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.ht
         AL2Arm64("AL2_ARM_64"),
         AL2023X86_64Standard("AL2023_x86_64_STANDARD"),
         AL2023Arm64Standard("AL2023_ARM_64_STANDARD"),
+        AL2023X86_64Nvidia("AL2023_x86_64_NVIDIA"),
         BottlerocketArm64("BOTTLEROCKET_ARM_64"),
         BottlerocketX86_64("BOTTLEROCKET_x86_64"),
         BottlerocketArm64Nvidia("BOTTLEROCKET_ARM_64_NVIDIA"),
