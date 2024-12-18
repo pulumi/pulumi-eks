@@ -3,6 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
+import * as k8s from "@pulumi/kubernetes";
 import * as iam from "./iam";
 import * as userdata from "./userdata";
 
@@ -134,7 +135,74 @@ const managedNodeGroupAL2023NvidiaGpu = eks.createManagedNodeGroup("al-2023-mng-
   instanceTypes: ["g4dn.xlarge"],
   nodeRole: role,
   gpu: true,
+  labels: {
+    "nvidia-device-plugin-enabled": "true",
+  },
 });
+
+// Create a DaemonSet for the NVIDIA device plugin. The accelerated Amazon Linux AMIs come with the NVIDIA drivers
+// installed, but without the device plugin. Without it, kubernetes will not be aware of the GPUs.
+const nvidiaDevicePlugin = new k8s.apps.v1.DaemonSet("nvidia-device-plugin", {
+    metadata: {
+        name: "nvidia-device-plugin-daemonset",
+        namespace: "kube-system",
+    },
+    spec: {
+        selector: {
+            matchLabels: {
+                name: "nvidia-device-plugin-ds",
+            },
+        },
+        updateStrategy: {
+            type: "RollingUpdate",
+        },
+        template: {
+            metadata: {
+                labels: {
+                    name: "nvidia-device-plugin-ds",
+                },
+            },
+            spec: {
+                tolerations: [{
+                    key: "nvidia.com/gpu",
+                    operator: "Exists",
+                    effect: "NoSchedule",
+                }],
+                nodeSelector: {
+                    "nvidia-device-plugin-enabled": "true",
+                },
+                priorityClassName: "system-node-critical",
+                containers: [{
+                    name: "nvidia-device-plugin-ctr",
+                    image: "nvcr.io/nvidia/k8s-device-plugin:v0.17.0",
+                    env: [{
+                        name: "FAIL_ON_INIT_ERROR",
+                        value: "false",
+                    }],
+                    securityContext: {
+                        allowPrivilegeEscalation: false,
+                        capabilities: {
+                            drop: ["ALL"],
+                        },
+                    },
+                    volumeMounts: [{
+                        name: "device-plugin",
+                        mountPath: "/var/lib/kubelet/device-plugins",
+                    }],
+                }],
+                volumes: [{
+                    name: "device-plugin",
+                    hostPath: {
+                        path: "/var/lib/kubelet/device-plugins",
+                    },
+                }],
+            },
+        },
+    },
+}, {
+    provider: cluster.provider,
+});
+
 
 
 // Create a simple Bottlerocket node group with x64 instances
