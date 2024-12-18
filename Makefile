@@ -206,3 +206,5 @@ test_provider:
 
 renovate::
 	@echo "re-computing dependent files is not implemented yet"
+
+.PHONY: build build_dotnet build_go build_java build_nodejs build_python dev dist generate_schema install_dotnet_sdk install_java_sdk install_provider install_python_sdk lint lint_fix lint_provider provider renovate schema specific_test specific_test_local test test_dotnet test_java test_nodejs test_nodejs_upgrade test_provider test_python test_unit_tests
