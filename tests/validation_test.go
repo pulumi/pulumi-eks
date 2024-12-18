@@ -36,9 +36,9 @@ func checkEksClusterInputValidations(t *testing.T, property string, n int, expec
 	}
 	tw := &testWrapper{PT: t, expectFailure: expectFailure}
 	test := pulumitest.NewPulumiTest(tw, dir, options...)
-	test.SetConfig("property", property)
-	test.SetConfig("n", fmt.Sprintf("%d", n))
-	test.Preview()
+	test.SetConfig(t, "property", property)
+	test.SetConfig(t, "n", fmt.Sprintf("%d", n))
+	test.Preview(t)
 	if expectFailure {
 		require.Truef(t, tw.failed, "Expected preview to fail due to invalid inputs but it succeeded")
 	}

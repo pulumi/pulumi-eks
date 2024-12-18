@@ -118,8 +118,8 @@ func TestIgnoringScalingChanges(t *testing.T) {
 	}
 
 	pt := pulumitest.NewPulumiTest(t, dir, options...)
-	pt.SetConfig("aws:region", getEnvRegion(t))
-	pt.SetConfig("desiredSize", "1")
+	pt.SetConfig(t, "aws:region", getEnvRegion(t))
+	pt.SetConfig(t, "desiredSize", "1")
 
 	cacheDir := filepath.Join("testdata", "recorded", t.Name())
 	err = os.MkdirAll(cacheDir, 0o755)
@@ -129,25 +129,25 @@ func TestIgnoringScalingChanges(t *testing.T) {
 	var export *apitype.UntypedDeployment
 	export, err = tryReadStackExport(stackExportFile)
 	if err != nil {
-		pt.Up()
-		grpcLog := pt.GrpcLog()
+		pt.Up(t)
+		grpcLog := pt.GrpcLog(t)
 		grpcLogPath := filepath.Join(cacheDir, "grpc.json")
 		t.Logf("writing grpc log to %s", grpcLogPath)
 		err = grpcLog.WriteTo(grpcLogPath)
 		require.NoError(t, err)
 
-		e := pt.ExportStack()
+		e := pt.ExportStack(t)
 		export = &e
 		err = writeStackExport(stackExportFile, export, true)
 		require.NoError(t, err)
 	} else {
-		pt.ImportStack(*export)
+		pt.ImportStack(t, *export)
 	}
 
 	// Change the desiredSize, but expect no changes because it should be ignored
-	pt.SetConfig("desiredSize", "2")
+	pt.SetConfig(t, "desiredSize", "2")
 	// TODO: uncomment after v3
-	pt.Preview( /*optpreview.ExpectNoChanges(),*/ optpreview.Diff())
+	pt.Preview(t /*optpreview.ExpectNoChanges(),*/, optpreview.Diff())
 }
 
 func TestEksAuthModeUpgrade(t *testing.T) {
@@ -212,7 +212,7 @@ resources:
 			},
 		})
 
-		res := pulumiTest.Preview()
+		res := pulumiTest.Preview(t)
 		fmt.Printf("stdout: %s \n", res.StdOut)
 		fmt.Printf("stderr: %s \n", res.StdErr)
 		assertpreview.HasNoReplacements(t, res)
@@ -283,19 +283,19 @@ func testProviderCodeChanges(t *testing.T, opts *testProviderCodeChangesOptions)
 	if opts != nil && opts.region != "" {
 		region = opts.region
 	}
-	pt.SetConfig("aws:region", region)
+	pt.SetConfig(t, "aws:region", region)
 
 	var export *apitype.UntypedDeployment
 	export, err = tryReadStackExport(stackExportFile)
 	if err != nil {
-		pt.Up()
-		grpcLog := pt.GrpcLog()
+		pt.Up(t)
+		grpcLog := pt.GrpcLog(t)
 		grpcLogPath := filepath.Join(cacheDir, "grpc.json")
 		t.Logf("writing grpc log to %s", grpcLogPath)
 		err = grpcLog.WriteTo(grpcLogPath)
 		require.NoError(t, err)
 
-		e := pt.ExportStack()
+		e := pt.ExportStack(t)
 		export = &e
 		err = writeStackExport(stackExportFile, export, true)
 		require.NoError(t, err)
@@ -312,8 +312,8 @@ func testProviderCodeChanges(t *testing.T, opts *testProviderCodeChangesOptions)
 	err = os.WriteFile(filepath.Join(workdir, "Pulumi.yaml"), opts.secondProgram, 0o600)
 	require.NoError(t, err)
 	secondTest := pulumitest.NewPulumiTest(t, workdir, secondOptions...)
-	secondTest.SetConfig("aws:region", region)
-	secondTest.ImportStack(*export)
+	secondTest.SetConfig(t, "aws:region", region)
+	secondTest.ImportStack(t, *export)
 
 	return secondTest
 }
