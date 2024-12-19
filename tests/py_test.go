@@ -48,10 +48,7 @@ func TestAccAwsProfilePy(t *testing.T) {
 				t.Logf("Ensuring cluster.kubeconfig fails without AWS_PROFILE envvar set")
 				utils.EnsureKubeconfigFails(t, info.Outputs["kubeconfig"])
 
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig_with_profile"],
-				)
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig_with_profile"]))
 			},
 		})
 
@@ -63,10 +60,7 @@ func TestAccAwsProfileRolePy(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getExamples(t), "aws-profile-role-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
-				)
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
 			},
 		})
 
@@ -81,12 +75,11 @@ func TestAccClusterPy(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getExamples(t), "cluster-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(
 					info.Outputs["kubeconfig1"],
 					info.Outputs["kubeconfig2"],
 					info.Outputs["kubeconfig3"],
-				)
+				))
 			},
 			EditDirs: []integration.EditDir{
 				{
@@ -114,10 +107,7 @@ func TestAccFargatePy(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getExamples(t), "fargate-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
-				)
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
 			},
 		})
 
@@ -148,10 +138,7 @@ func TestAccManagedNodeGroupPy(t *testing.T) {
 			// RunUpdateTest: true,
 			Dir: filepath.Join(getExamples(t), "managed-nodegroups-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
-				)
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
 			},
 		})
 
@@ -163,10 +150,7 @@ func TestAccManagedNodeGroupOSPy(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getTestPrograms(t), "managed-ng-os-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
-				)
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
 
 				// expect 4 nodes with increased pod capacity of 100
 				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))

@@ -35,12 +35,11 @@ func TestAccClusterGo(t *testing.T) {
 			RunUpdateTest: false,
 			Dir:           filepath.Join(getExamples(t), "cluster-go", "step1"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(
 					info.Outputs["kubeconfig1"],
 					info.Outputs["kubeconfig2"],
 					info.Outputs["kubeconfig3"],
-				)
+				))
 			},
 			EditDirs: []integration.EditDir{
 				{
@@ -68,10 +67,7 @@ func TestAccExtraSecurityGroupsGo(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getExamples(t), "extra-sg-go"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
-				)
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
 			},
 		})
 
@@ -86,10 +82,7 @@ func TestAccAuthenticationModeGo(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getTestPrograms(t), "authentication-mode-go"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
-					info.Outputs["kubeconfig"],
-				)
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
 
 				require.Contains(t, info.Outputs, "accessEntries")
 				accessEntries := info.Outputs["accessEntries"].([]interface{})
