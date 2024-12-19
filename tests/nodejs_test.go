@@ -17,7 +17,6 @@
 package tests
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path"
