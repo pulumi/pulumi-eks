@@ -95,15 +95,9 @@ func TestAccKubernetesServiceIPv4RangeForCluster(t *testing.T) {
 }
 
 func TestAccFargate(t *testing.T) {
-	t.Skip("https://github.com/pulumi/pulumi-eks/issues/1041")
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getExamples(t), "./fargate"),
-			Config: map[string]string{
-				// Hard code to us-east-2 since Fargate support is not yet available in all regions
-				// (specifically us-west-2).
-				"aws:region": "us-east-2",
-			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
 			},
@@ -327,28 +321,6 @@ func TestAccExtraSecurityGroups(t *testing.T) {
 			Dir: path.Join(getExamples(t), "extra-sg"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
-			},
-		})
-
-	programTestWithExtraOptions(t, &test, nil)
-}
-
-func TestAccReplaceSecGroup(t *testing.T) {
-	t.Skip("Temporarily skipping test - needs addressed as https://github.com/pulumi/pulumi-eks/issues/463")
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir: path.Join(getTestPrograms(t), "replace-secgroup"),
-			EditDirs: []integration.EditDir{
-				{
-					Dir:      path.Join(getTestPrograms(t), "replace-secgroup", "step1"),
-					Additive: true,
-					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-						utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
-					},
-				},
 			},
 		})
 

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"testing"
@@ -55,7 +56,7 @@ func APIServerVersionInfo(t *testing.T, clientset *kubernetes.Clientset) {
 }
 
 // assertAwsAuthConfigMapExists ensures that the EKS aws-auth ConfigMap exists and has data.
-func assertAwsAuthConfigMapExists(t *testing.T, clientset *kubernetes.Clientset) error {
+func assertAwsAuthConfigMapExists(t *testing.T, clientset *kubernetes.Clientset, clusterName string) error {
 	configMapName, namespace := "aws-auth", "kube-system"
 
 	awsAuth, err := clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, metav1.GetOptions{})
@@ -71,12 +72,12 @@ func assertAwsAuthConfigMapExists(t *testing.T, clientset *kubernetes.Clientset)
 		return fmt.Errorf("aws-auth ConfigMap %q is empty", configMapName)
 	}
 
-	t.Logf("%q ConfigMap exists in namespace %q and has data", configMapName, namespace)
+	t.Logf("%q ConfigMap exists in namespace %q of cluster %q and has data", configMapName, namespace, clusterName)
 	return nil
 }
 
 // assertAwsAuthConfigMapNotExists ensures that the EKS aws-auth ConfigMap does not exist.
-func assertAwsAuthConfigMapNotExists(t *testing.T, clientset *kubernetes.Clientset) error {
+func assertAwsAuthConfigMapNotExists(t *testing.T, clientset *kubernetes.Clientset, clusterName string) error {
 	configMapName, namespace := "aws-auth", "kube-system"
 
 	_, err := clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, metav1.GetOptions{})
@@ -84,7 +85,7 @@ func assertAwsAuthConfigMapNotExists(t *testing.T, clientset *kubernetes.Clients
 		return fmt.Errorf("%q ConfigMap still exists in namespace %q", configMapName, namespace)
 	}
 
-	t.Logf("%q ConfigMap does not exist in namespace %q", configMapName, namespace)
+	t.Logf("Verified that the %q ConfigMap does not exist in namespace %q of cluster %q", configMapName, namespace, clusterName)
 	return nil
 }
 
@@ -425,8 +426,10 @@ func DefaultOptions() *ClusterValidationOptions {
 
 // ValidateClusters validates the health of the clusters specified in the options.
 // It will return an error if any of the clusters are unhealthy.
-// It validates the node group instances, the authentication mode, the deployments, and the daemonsets.
-// By default it will validate the aws-node/kube-proxy daemonsets and the coredns deployment in the kube-system namespace.
+// It performs a series of health checks on an EKS cluster to ensure it is functioning correctly.
+// It verifies API server connectivity, validates node group instances are healthy and properly joined,
+// checks authentication configuration, and validates specified deployments and daemonsets are running.
+// Any failures are automatically retried with exponential backoff.
 func ValidateClusters(t *testing.T, resources []apitype.ResourceV3, options ...ClusterValidationOption) error {
 	opts := DefaultOptions()
 	for _, option := range options {
@@ -502,6 +505,10 @@ func ValidateClusters(t *testing.T, resources []apitype.ResourceV3, options ...C
 	return nil
 }
 
+// validateCluster performs a series of health checks on an EKS cluster to ensure it is functioning correctly.
+// It verifies API server connectivity, validates node group instances are healthy and properly joined,
+// checks authentication configuration, and validates specified deployments and daemonsets are running.
+// The validation is performed concurrently using goroutines and retries failed checks with exponential backoff.
 func validateCluster(t *testing.T, ctx context.Context, clusterName string, authenticationMode string, clientset *kubernetes.Clientset, asgClient *autoscaling.Client, ec2Client *ec2.Client, expectedNodeGroups map[string]nodeGroupData, opts ClusterValidationOptions) error {
 	// first, make sure the API server is reachable. None of the other checks
 	// will work if the API server is not reachable.
@@ -544,9 +551,9 @@ func validateCluster(t *testing.T, ctx context.Context, clusterName string, auth
 	go func() {
 		err := RetryWithExponentialBackoff(ctx, 2*time.Second, func() error {
 			if authenticationMode == "CONFIG_MAP" || authenticationMode == "API_AND_CONFIG_MAP" {
-				return assertAwsAuthConfigMapExists(t, clientset)
+				return assertAwsAuthConfigMapExists(t, clientset, clusterName)
 			} else {
-				return assertAwsAuthConfigMapNotExists(t, clientset)
+				return assertAwsAuthConfigMapNotExists(t, clientset, clusterName)
 			}
 		})
 		errChan <- err
@@ -725,6 +732,10 @@ func mapClusterToNodeGroups(resources []apitype.ResourceV3) (clusterNodeGroupMap
 	return clusterNodeGroupMap, nil
 }
 
+// EC2InstanceIDPattern matches both old (8 character) and new (17 character) EC2 instance IDs
+// Examples: i-1234567f, i-0123456789abcdef0
+var eC2InstanceIDPattern = regexp.MustCompile(`^i-[a-f0-9]{8,17}$`)
+
 // ValidateNodeGroupInstances validates that all nodes in the cluster are healthy and have successfully joined.
 // It checks that each ASG has the expected number of instances and that all instances are properly registered as nodes.
 func ValidateNodeGroupInstances(t *testing.T, clientset *kubernetes.Clientset, asgClient *autoscaling.Client, ec2Client *ec2.Client, clusterName string, expectedNodeGroups map[string]nodeGroupData) error {
@@ -775,7 +786,14 @@ func ValidateNodeGroupInstances(t *testing.T, clientset *kubernetes.Clientset, a
 		instanceID := strings.TrimPrefix(providerID, "aws:///")
 		instanceID = strings.TrimPrefix(instanceID, strings.Split(instanceID, "/")[0]+"/")
 		instanceIDs = append(instanceIDs, instanceID)
-		instanceIDToNode[instanceID] = node
+
+		// the list of k8s nodes can include nodes that are not EC2 instances (e.g. Fargate),
+		// those are not part of any ASGs. We already validated that all nodes are ready, so we can
+		// skip the nodes that are not EC2 instances. Their ID is not valid input to the
+		// DescribeAutoScalingInstances API used later and would cause an error.
+		if eC2InstanceIDPattern.MatchString(instanceID) {
+			instanceIDToNode[instanceID] = node
+		}
 	}
 
 	// For each node, get its EC2 instance ID, find which ASG it belongs to and verify that EC2 reports the instance as running.
