@@ -785,13 +785,13 @@ func ValidateNodeGroupInstances(t *testing.T, clientset *kubernetes.Clientset, a
 		providerID := node.Spec.ProviderID
 		instanceID := strings.TrimPrefix(providerID, "aws:///")
 		instanceID = strings.TrimPrefix(instanceID, strings.Split(instanceID, "/")[0]+"/")
-		instanceIDs = append(instanceIDs, instanceID)
 
 		// the list of k8s nodes can include nodes that are not EC2 instances (e.g. Fargate),
 		// those are not part of any ASGs. We already validated that all nodes are ready, so we can
 		// skip the nodes that are not EC2 instances. Their ID is not valid input to the
 		// DescribeAutoScalingInstances API used later and would cause an error.
 		if eC2InstanceIDPattern.MatchString(instanceID) {
+			instanceIDs = append(instanceIDs, instanceID)
 			instanceIDToNode[instanceID] = node
 		}
 	}
