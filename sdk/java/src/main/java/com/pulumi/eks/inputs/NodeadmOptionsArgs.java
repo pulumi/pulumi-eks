@@ -21,14 +21,14 @@ public final class NodeadmOptionsArgs extends com.pulumi.resources.ResourceArgs 
     public static final NodeadmOptionsArgs Empty = new NodeadmOptionsArgs();
 
     /**
-     * The ARN of the access policy to associate with the principal
+     * The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
      * 
      */
     @Import(name="content", required=true)
     private Output<String> content;
 
     /**
-     * @return The ARN of the access policy to associate with the principal
+     * @return The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
      * 
      */
     public Output<String> content() {
@@ -76,7 +76,7 @@ public final class NodeadmOptionsArgs extends com.pulumi.resources.ResourceArgs 
         }
 
         /**
-         * @param content The ARN of the access policy to associate with the principal
+         * @param content The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
          * 
          * @return builder
          * 
@@ -87,7 +87,7 @@ public final class NodeadmOptionsArgs extends com.pulumi.resources.ResourceArgs 
         }
 
         /**
-         * @param content The ARN of the access policy to associate with the principal
+         * @param content The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
          * 
          * @return builder
          * 

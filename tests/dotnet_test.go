@@ -29,12 +29,11 @@ func TestAccClusterCs(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getExamples(t), "cluster-cs"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.RunEKSSmokeTest(t,
-					info.Deployment.Resources,
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(
 					info.Outputs["kubeconfig1"],
 					info.Outputs["kubeconfig2"],
 					info.Outputs["kubeconfig3"],
-				)
+				))
 			},
 		})
 

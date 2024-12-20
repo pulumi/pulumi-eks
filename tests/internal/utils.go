@@ -3,15 +3,20 @@ package internal
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"testing"
 	"time"
 
-	"sync/atomic"
-
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/autoscaling"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	eksTypes "github.com/aws/aws-sdk-go-v2/service/eks/types"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
@@ -21,9 +26,7 @@ import (
 	"gopkg.in/yaml.v2"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
 	restclient "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -42,321 +45,48 @@ const MaxRetries = 20
 // to the Kubernetes API Server.
 const RetryInterval = 15
 
-// RunEKSSmokeTest instantiates the EKS Smoke Test.
-func RunEKSSmokeTest(t *testing.T, resources []apitype.ResourceV3, kubeconfigs ...interface{}) {
-	// Map the cluster name to the total desired Node count across all
-	// NodeGroups.
-	clusterNodeCount, err := mapClusterToNodeCount(resources)
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Map the cluster name to the KubeAccess client-go tool bag.
-	kubeAccess, err := mapClusterToKubeAccess(kubeconfigs...)
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Map the cluster name to their authentication mode.
-	clusterAuthenticationMode, err := mapClusterToAuthenticationMode(resources)
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Run the smoke test against each cluster, expecting the total desired
-	// Node count.
-	var wg sync.WaitGroup
-	wg.Add(len(kubeAccess))
-	defer wg.Wait()
-
-	for clusterName := range kubeAccess {
-		clusterName := clusterName
-		PrintAndLog(fmt.Sprintf("Testing Cluster: %s\n", clusterName), t)
-		authenticationMode := clusterAuthenticationMode[clusterName]
-		PrintAndLog(fmt.Sprintf("Detected authentication mode '%s' for Cluster %s\n", authenticationMode, clusterName), t)
-
-		go wgWrapper(&wg, func() {
-			clientset := kubeAccess[clusterName].Clientset
-			eksSmokeTest(t, clientset, clusterNodeCount[clusterName], authenticationMode)
-		})
-	}
-}
-
-// EKSSmokeTest runs a checklist of operational successes required to deem the
-// EKS cluster as successfully running and ready for use.
-func eksSmokeTest(t *testing.T, clientset *kubernetes.Clientset, desiredNodeCount int, authenticationMode string) {
-	APIServerVersionInfo(t, clientset)
-
-	// Run all tests.
-	var wg sync.WaitGroup
-	wg.Add(3)
-	defer wg.Wait()
-
-	if authenticationMode == "CONFIG_MAP" || authenticationMode == "API_AND_CONFIG_MAP" {
-		go wgWrapper(&wg, func() { assertEKSConfigMapReady(t, clientset) })
-	} else {
-		go wgWrapper(&wg, func() { assertEKSConfigMapRemoved(t, clientset) })
-	}
-	go wgWrapper(&wg, func() { AssertAllNodesReady(t, clientset, desiredNodeCount) })
-	go wgWrapper(&wg, func() { AssertKindInAllNamespacesReady(t, clientset, "pods") })
-}
-
-// wgWrapper is a helper func that wraps a WaitGroup's Done() method.
-func wgWrapper(wg *sync.WaitGroup, f func()) {
-	defer wg.Done()
-	f()
-}
-
 // APIServerVersionInfo prints out the API Server versions.
 func APIServerVersionInfo(t *testing.T, clientset *kubernetes.Clientset) {
 	version, err := clientset.DiscoveryClient.ServerVersion()
 	if err != nil {
 		t.Fatal(err)
 	}
-	PrintAndLog(fmt.Sprintf("API Server Version: %s.%s\n", version.Major, version.Minor), t)
-	PrintAndLog(fmt.Sprintf("API Server GitVersion: %s\n", version.GitVersion), t)
+	t.Logf("API Server Version: %s.%s\n", version.Major, version.Minor)
+	t.Logf("API Server GitVersion: %s\n", version.GitVersion)
 }
 
-// assertEKSConfigMapReady ensures that the EKS aws-auth ConfigMap
-// exists and has data.
-func assertEKSConfigMapReady(t *testing.T, clientset *kubernetes.Clientset) {
-	awsAuthReady, retries := false, MaxRetries
+// assertAwsAuthConfigMapExists ensures that the EKS aws-auth ConfigMap exists and has data.
+func assertAwsAuthConfigMapExists(t *testing.T, clientset *kubernetes.Clientset, clusterName string) error {
 	configMapName, namespace := "aws-auth", "kube-system"
-	var awsAuth *corev1.ConfigMap
-	var err error
 
-	// Attempt to validate that the aws-auth ConfigMap exists.
-	for !awsAuthReady && retries > 0 {
-		awsAuth, err = clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, metav1.GetOptions{})
-		retries--
-		if err != nil {
-			waitFor(t, fmt.Sprintf("ConfigMap %q", configMapName), "returned")
-			continue
-		}
-		awsAuthReady = true
-		break
+	awsAuth, err := clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, metav1.GetOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to get aws-auth ConfigMap: %w", err)
 	}
 
-	require.Equal(t, true, awsAuthReady, "EKS ConfigMap %q does not exist in namespace %q", configMapName, namespace)
-	require.NotNil(t, awsAuth.Data, "%s ConfigMap should not be nil", configMapName)
-	require.NotEmpty(t, awsAuth.Data, "%q ConfigMap should not be empty", configMapName)
-	PrintAndLog(fmt.Sprintf("EKS ConfigMap %q exists and has data\n", configMapName), t)
+	if awsAuth.Data == nil {
+		return fmt.Errorf("aws-auth ConfigMap %q is nil", configMapName)
+	}
+
+	if len(awsAuth.Data) == 0 {
+		return fmt.Errorf("aws-auth ConfigMap %q is empty", configMapName)
+	}
+
+	t.Logf("%q ConfigMap exists in namespace %q of cluster %q and has data", configMapName, namespace, clusterName)
+	return nil
 }
 
-// assertEKSConfigMapRemoved is a helper function that asserts the removal of the aws-auth ConfigMap in the kube-system namespace.
-// The function attempts to validate that the aws-auth ConfigMap exists and waits for it to be deleted.
-// If the ConfigMap is still found after the maximum number of retries, the function fails the test.
-func assertEKSConfigMapRemoved(t *testing.T, clientset *kubernetes.Clientset) {
-	awsAuthExists, retries := true, MaxRetries
+// assertAwsAuthConfigMapNotExists ensures that the EKS aws-auth ConfigMap does not exist.
+func assertAwsAuthConfigMapNotExists(t *testing.T, clientset *kubernetes.Clientset, clusterName string) error {
 	configMapName, namespace := "aws-auth", "kube-system"
-	var awsAuth *corev1.ConfigMap
-	var err error
 
-	// Attempt to validate that the aws-auth ConfigMap exists.
-	for awsAuthExists && retries > 0 {
-		awsAuth, err = clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, metav1.GetOptions{})
-		retries--
-		if err == nil {
-			waitFor(t, fmt.Sprintf("ConfigMap %q", configMapName), "deleted")
-			continue
-		}
-		awsAuthExists = false
+	_, err := clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, metav1.GetOptions{})
+	if err == nil {
+		return fmt.Errorf("%q ConfigMap still exists in namespace %q", configMapName, namespace)
 	}
 
-	require.Equal(t, false, awsAuthExists, "EKS ConfigMap %q still exists in namespace %q", configMapName, namespace)
-	require.Nil(t, awsAuth.Data, "%s ConfigMap should be nil", configMapName)
-	PrintAndLog(fmt.Sprintf("EKS ConfigMap %q has been deleted\n", configMapName), t)
-}
-
-// AssertAllNodesReady ensures that all Nodes are running & have a "Ready"
-// status condition.
-func AssertAllNodesReady(t *testing.T, clientset *kubernetes.Clientset, desiredNodeCount int) {
-	var nodes *corev1.NodeList
-	var err error
-
-	PrintAndLog(fmt.Sprintf("Total Desired Worker Node Count: %d\n", desiredNodeCount), t)
-
-	// Skip this validation if no NodeGroups are attached
-	if desiredNodeCount == 0 {
-		return
-	}
-
-	// Attempt to validate that the total desired worker Node count of
-	// instances are up & running.
-	for i := 0; i < MaxRetries; i++ {
-		nodes, err = clientset.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
-		if err != nil {
-			waitFor(t, "list of all Nodes", fmt.Sprintf("returned: %s", err))
-			continue
-		}
-		if desiredNodeCount == len(nodes.Items) {
-			break
-		} else {
-			waitFor(t, fmt.Sprintf("desired worker Node count of (%d) instances", desiredNodeCount), "running")
-		}
-	}
-
-	// Require that the Nodes returned are not empty & match the
-	// desiredNodeCount.
-	require.NotEmpty(t, nodes, "The Nodes list returned should not be empty")
-	require.Equal(t, desiredNodeCount, len(nodes.Items),
-		"%d out of %d desired worker Nodes are instantiated and running", len(nodes.Items), desiredNodeCount)
-
-	// Attempt to validate each Node has a "Ready" status.
-	var readyCount int
-	for _, node := range nodes.Items {
-		nodeReady := false
-		// Attempt to check if a Node is ready, and output the resulting status.
-		for i := 0; i < MaxRetries; i++ {
-			ready, nodePtr := IsNodeReady(t, clientset, &node)
-			if nodePtr != nil {
-				node = *nodePtr
-			}
-			if ready {
-				nodeReady = true
-				readyCount++
-				break
-			} else {
-				waitFor(t, fmt.Sprintf("Node %q", node.GetName()), "ready")
-			}
-		}
-		if nodeReady {
-			PrintAndLog(fmt.Sprintf("Node: %s | Ready Status: %t\n", node.Name, nodeReady), t)
-		} else {
-			pretty, err := json.MarshalIndent(node, "", "  ")
-			if err != nil {
-				PrintAndLog("Error: failed to marshal Node object to json", t)
-			}
-			PrintAndLog(fmt.Sprintf("Node: %s | Ready Status: %t | Node Object: %s\n", node.Name, nodeReady, pretty), t)
-
-		}
-	}
-
-	// Require that the readyCount matches the desiredNodeCount / total Nodes.
-	require.Equal(t, len(nodes.Items), readyCount,
-		"%d out of %d Nodes are ready", readyCount, len(nodes.Items))
-
-	// Output the overall ready status.
-	PrintAndLog(fmt.Sprintf("%d out of %d Nodes are ready\n", readyCount, len(nodes.Items)), t)
-}
-
-// AssertKindInAllNamespacesReady ensures all Deployments have valid & ready status
-// conditions.
-func AssertKindInAllNamespacesReady(t *testing.T, clientset *kubernetes.Clientset, objType string) {
-	var list runtime.Object
-	var err error
-
-	// Assume first non-error return of list is correct & complete,
-	// as we currently do not have a way of knowing ahead of time how many
-	// total to expect in each cluster before it is up and running.
-RetryLoop:
-	for i := 0; i < MaxRetries; i++ {
-		switch n := strings.ToLower(objType); {
-		case n == "deployments" || n == "deployment" || n == "deploy":
-			list, err = clientset.AppsV1().Deployments("").List(context.TODO(), metav1.ListOptions{})
-			if err == nil {
-				break RetryLoop
-			}
-			waitFor(t, "Deployments list", fmt.Sprintf("returned: %s", err))
-		case n == "replicasets" || n == "replicaset" || n == "rs":
-			list, err = clientset.AppsV1().ReplicaSets("").List(context.TODO(), metav1.ListOptions{})
-			if err == nil {
-				break RetryLoop
-			}
-			waitFor(t, "ReplicaSets list", fmt.Sprintf("returned: %s", err))
-		case n == "pods" || n == "pod" || n == "po":
-			list, err = clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
-			if err == nil {
-				break RetryLoop
-			}
-			waitFor(t, "Pods list", fmt.Sprintf("returned: %s", err))
-		default:
-			t.Fatalf("Unknown kind type: %s", objType)
-		}
-	}
-
-	// Require that the list returned is not empty.
-	require.NotEmpty(t, list, "The kind list returned should not be empty")
-	AssertKindListIsReady(t, clientset, list)
-}
-
-// AssertKindListIsReady verifies that each item in a given resource list is
-// marked as ready.
-func AssertKindListIsReady(t *testing.T, clientset *kubernetes.Clientset, list runtime.Object) {
-	if !meta.IsListType(list) {
-		t.Errorf("Expected a list, but got %T", list)
-	}
-
-	var readyCount atomic.Int64
-	var totalItems int
-	var wg sync.WaitGroup
-	var objType string
-
-	err := meta.EachListItem(list, func(obj runtime.Object) error {
-		// Note: we cannout use item.GetObjectKind().GroupVersionKind().Kind to get the object type
-		// as List objects return an empty GVK. We set the objType in the switch statement below as
-		// a workaround instead of using runtime.Scheme.ObjectKinds() which requires registering
-		// a Kubernetes scheme.
-		// See: https://github.com/kubernetes/kubernetes/issues/3030
-		objName := obj.(metav1.Object).GetName()
-		if objName == "" {
-			return fmt.Errorf("object name is empty for object: %+v", obj)
-		}
-
-		wg.Add(1)
-		totalItems++
-		go func() { // Fan-out goroutine to check each item in the list concurrently.
-			defer wg.Done()
-
-			var ready bool
-			for i := 0; i < MaxRetries; i++ {
-				var liveObj runtime.Object
-				switch item := obj.(type) {
-				case *appsv1.Deployment:
-					ready, liveObj = IsDeploymentReady(t, clientset, item)
-					objType = "Deployment"
-				case *appsv1.ReplicaSet:
-					ready, liveObj = IsReplicaSetReady(t, clientset, item)
-					objType = "ReplicaSet"
-				case *corev1.Pod:
-					ready, liveObj = IsPodReady(t, clientset, item)
-					objType = "Pod"
-				}
-
-				if ready {
-					readyCount.Add(1)
-					break
-				}
-				if liveObj != nil {
-					obj = liveObj
-				}
-
-				waitFor(t, fmt.Sprintf("%s %q", objType, objName), "ready")
-			}
-
-			if ready {
-				PrintAndLog(fmt.Sprintf("%s: %s | Ready Status: %t\n", objType, objName, ready), t)
-			} else {
-				pretty, err := json.MarshalIndent(obj, "", "  ")
-				if err != nil {
-					PrintAndLog("Error: failed to marshal Kubernetes object to json", t)
-				}
-				PrintAndLog(fmt.Sprintf("%s: %s | Ready Status: %t| k8s Object: %s\n", objType, objName, ready, pretty), t)
-
-			}
-		}()
-
-		return nil
-	})
-
-	require.NoError(t, err)
-
-	wg.Wait() // Wait until all fan-out goroutine checks are done.
-
-	require.NotEqual(t, 0, totalItems, fmt.Sprintf("List of %s contains no items", objType))
-	require.NotEqual(t, 0, readyCount.Load(), fmt.Sprintf("No %ss are ready", objType))
-	require.Equal(t, totalItems, int(readyCount.Load()), fmt.Sprintf("%d out of %d %ss are ready", readyCount.Load(), totalItems, objType))
-	PrintAndLog(fmt.Sprintf("%d out of %d %ss are ready\n", readyCount.Load(), totalItems, objType), t)
+	t.Logf("Verified that the %q ConfigMap does not exist in namespace %q of cluster %q", configMapName, namespace, clusterName)
+	return nil
 }
 
 // waitFor is a helper func that prints to stdout & sleeps to indicate a
@@ -370,49 +100,6 @@ func waitFor(t *testing.T, resource, status string) {
 // and logs it to the testing logs.
 func PrintAndLog(s string, t *testing.T) {
 	t.Logf("%s", s)
-}
-
-// IsNodeReady attempts to check if the Node status condition is ready.
-func IsNodeReady(t *testing.T, clientset *kubernetes.Clientset, node *corev1.Node) (bool, *corev1.Node) {
-	// Attempt to retrieve Node.
-	o, err := clientset.CoreV1().Nodes().Get(context.TODO(), node.Name, metav1.GetOptions{})
-	if err != nil {
-		return false, nil
-	}
-
-	// Check the returned Node's conditions for readiness.
-	for _, condition := range o.Status.Conditions {
-		if condition.Type == corev1.NodeReady {
-			t.Logf("Checking if Node %q is Ready | Condition.Status: %q | Condition: %v\n", node.Name, condition.Status, condition)
-			return condition.Status == corev1.ConditionTrue, o
-		}
-	}
-
-	return false, o
-}
-
-// IsPodReady attempts to check if the Pod's status & condition is ready.
-func IsPodReady(t *testing.T, clientset *kubernetes.Clientset, pod metav1.Object) (bool, runtime.Object) {
-	// Attempt to retrieve Pod.
-	o, err := clientset.CoreV1().Pods(pod.GetNamespace()).Get(context.TODO(), pod.GetName(), metav1.GetOptions{})
-	if err != nil {
-		return false, nil
-	}
-
-	// Check the returned Pod's status & conditions for readiness.
-	if o.Status.Phase == corev1.PodRunning || o.Status.Phase == corev1.PodSucceeded {
-		for _, condition := range o.Status.Conditions {
-			if condition.Type == corev1.PodReady {
-				t.Logf("Checking if Pod %q is Ready | Condition.Status: %q | Condition.Reason: %q | Condition: %v\n", pod.GetName(), condition.Status, condition.Reason, condition)
-				if o.Status.Phase == corev1.PodSucceeded {
-					return true, o
-				}
-				return condition.Status == corev1.ConditionTrue, o
-			}
-		}
-	}
-
-	return false, o
 }
 
 type VpcCniValidation struct {
@@ -524,48 +211,6 @@ func IsDaemonSetReady(t *testing.T, clientset *kubernetes.Clientset, namespace, 
 	}
 
 	return o, o.Status.DesiredNumberScheduled == o.Status.NumberReady
-}
-
-// IsDeploymentReady attempts to check if the Deployments's status conditions
-// are ready.
-func IsDeploymentReady(t *testing.T, clientset *kubernetes.Clientset, deployment metav1.Object) (bool, runtime.Object) {
-	// Attempt to retrieve Deployment.
-	o, err := clientset.AppsV1().Deployments(deployment.GetNamespace()).Get(context.TODO(), deployment.GetName(), metav1.GetOptions{})
-	if err != nil {
-		return false, nil
-	}
-
-	// Check the returned Deployment's status & conditions for readiness.
-	for _, condition := range o.Status.Conditions {
-		if condition.Type == appsv1.DeploymentAvailable {
-			t.Logf("Checking if Deployment %q is Available | Condition.Status: %q | Condition: %v\n", deployment.GetName(), condition.Status, condition)
-			return condition.Status == corev1.ConditionTrue, o
-		}
-	}
-
-	return false, o
-}
-
-// IsReplicaSetReady attempts to check if the ReplicaSets's status conditions
-// are ready.
-func IsReplicaSetReady(t *testing.T, clientset *kubernetes.Clientset, replicaSet metav1.Object) (bool, runtime.Object) {
-	// Attempt to retrieve ReplicaSet.
-	o, err := clientset.AppsV1().ReplicaSets(replicaSet.GetNamespace()).Get(context.TODO(), replicaSet.GetName(), metav1.GetOptions{})
-	if err != nil {
-		return false, nil
-	}
-
-	// Check the returned ReplicaSet's status conditions for readiness.
-	for _, condition := range o.Status.Conditions {
-		if condition.Type == appsv1.ReplicaSetReplicaFailure {
-			return false, o
-		}
-	}
-	if o.Status.Replicas == o.Status.AvailableReplicas &&
-		o.Status.Replicas == o.Status.ReadyReplicas {
-		return true, o
-	}
-	return false, o
 }
 
 // IsKubeconfigValid checks that the kubeconfig provided is valid and error-free.
@@ -711,24 +356,276 @@ type cloudFormationTemplateBody struct {
 	} `yaml:"Resources"`
 }
 
-// clusterNodeCountMap implements a map of Kubernetes cluster names to their
-// respective total desired worker Node count for *all* NodeGroups.
-type clusterNodeCountMap map[string]int
+type KubernetesResource struct {
+	Namespace string
+	Name      string
+}
 
-// mapClusterToNodeCount iterates through all Pulumi stack resources
-// looking for CloudFormation template bodies to extract, and aggregate
-// the total desired worker Node count per cluster in the Pulumi stack resources.
-//
-// Note: There can be many CF template bodies if multiple NodeGroups are used,
-// but all NodeGroups belonging to the same cluster get their desired Node count
-// aggregated into a total per cluster.
-func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap, error) {
-	clusterToNodeCount := make(clusterNodeCountMap)
+type ClusterValidationOptions struct {
+	kubeConfigs           []interface{}
+	deploymentsToValidate []KubernetesResource
+	daemonsetsToValidate  []KubernetesResource
+	timeout               time.Duration
+}
+
+type ClusterValidationOption interface {
+	Apply(options *ClusterValidationOptions)
+}
+
+type optionFunc func(*ClusterValidationOptions)
+
+func (o optionFunc) Apply(opts *ClusterValidationOptions) {
+	o(opts)
+}
+
+func WithKubeConfigs(kubeConfigs ...interface{}) ClusterValidationOption {
+	return optionFunc(func(o *ClusterValidationOptions) {
+		o.kubeConfigs = append(o.kubeConfigs, kubeConfigs...)
+	})
+}
+
+func ValidateDeployments(deployments ...KubernetesResource) ClusterValidationOption {
+	return optionFunc(func(o *ClusterValidationOptions) {
+		o.deploymentsToValidate = o.deploymentsToValidate
+	})
+}
+
+func ValidateDaemonSets(daemonsets ...KubernetesResource) ClusterValidationOption {
+	return optionFunc(func(o *ClusterValidationOptions) {
+		o.daemonsetsToValidate = daemonsets
+	})
+}
+
+func WithTimeout(timeout time.Duration) ClusterValidationOption {
+	return optionFunc(func(o *ClusterValidationOptions) {
+		o.timeout = timeout
+	})
+}
+
+func DefaultOptions() *ClusterValidationOptions {
+	return &ClusterValidationOptions{
+		timeout: 5 * time.Minute,
+		deploymentsToValidate: []KubernetesResource{
+			{
+				Namespace: "kube-system",
+				Name:      "coredns",
+			},
+		},
+		daemonsetsToValidate: []KubernetesResource{
+			{
+				Namespace: "kube-system",
+				Name:      "aws-node",
+			},
+			{
+				Namespace: "kube-system",
+				Name:      "kube-proxy",
+			},
+		},
+	}
+}
+
+// ValidateClusters validates the health of the clusters specified in the options.
+// It will return an error if any of the clusters are unhealthy.
+// It performs a series of health checks on an EKS cluster to ensure it is functioning correctly.
+// It verifies API server connectivity, validates node group instances are healthy and properly joined,
+// checks authentication configuration, and validates specified deployments and daemonsets are running.
+// Any failures are automatically retried with exponential backoff.
+func ValidateClusters(t *testing.T, resources []apitype.ResourceV3, options ...ClusterValidationOption) error {
+	opts := DefaultOptions()
+	for _, option := range options {
+		option.Apply(opts)
+	}
+
+	if len(opts.kubeConfigs) == 0 {
+		return fmt.Errorf("no kubeconfigs provided")
+	}
+
+	var region string
+	var profile string
+	if p, ok := os.LookupEnv("AWS_PROFILE"); ok {
+		profile = p
+	}
+	if r, ok := os.LookupEnv("AWS_REGION"); ok {
+		region = r
+	}
+
+	awsConfig := loadAwsDefaultConfig(t, region, profile)
+	// Create AWS clients
+	asgClient := autoscaling.NewFromConfig(awsConfig)
+	ec2Client := ec2.NewFromConfig(awsConfig)
+
+	// set up the clientsets for each cluster
+	clusterKubeAccess, err := mapClusterToKubeAccess(opts.kubeConfigs...)
+	if err != nil {
+		return fmt.Errorf("failed to map kubeconfigs to clusters: %v", err)
+	}
+
+	// look up the configured node groups for each cluster
+	clusterNodeGroup, err := mapClusterToNodeGroups(resources)
+	if err != nil {
+		return fmt.Errorf("failed to map resources to node groups: %v", err)
+	}
+
+	// look up the authentication mode for each cluster
+	clusterAuthenticationMode, err := mapClusterToAuthenticationMode(resources)
+	if err != nil {
+		return fmt.Errorf("failed to map resources to authentication mode: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), opts.timeout)
+	defer cancel()
+
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(clusterKubeAccess))
+	wg.Add(len(clusterKubeAccess))
+
+	for clusterName := range clusterKubeAccess {
+		go func(clusterName string) {
+			defer wg.Done()
+			t.Logf("Validating Cluster: %s", clusterName)
+			authenticationMode := clusterAuthenticationMode[clusterName]
+			t.Logf("Detected authentication mode %q for Cluster %s", authenticationMode, clusterName)
+
+			err := validateCluster(t, ctx, clusterName, authenticationMode, clusterKubeAccess[clusterName].Clientset, asgClient, ec2Client, clusterNodeGroup[clusterName], *opts)
+			if err != nil {
+				errChan <- fmt.Errorf("cluster %s is unhealthy: %v", clusterName, err)
+			}
+		}(clusterName)
+	}
+
+	wg.Wait()
+	close(errChan)
+
+	var errs []error
+	for err := range errChan {
+		errs = append(errs, err)
+	}
+
+	require.NoError(t, errors.Join(errs...))
+	return nil
+}
+
+// validateCluster performs a series of health checks on an EKS cluster to ensure it is functioning correctly.
+// It verifies API server connectivity, validates node group instances are healthy and properly joined,
+// checks authentication configuration, and validates specified deployments and daemonsets are running.
+// The validation is performed concurrently using goroutines and retries failed checks with exponential backoff.
+func validateCluster(t *testing.T, ctx context.Context, clusterName string, authenticationMode string, clientset *kubernetes.Clientset, asgClient *autoscaling.Client, ec2Client *ec2.Client, expectedNodeGroups map[string]nodeGroupData, opts ClusterValidationOptions) error {
+	// first, make sure the API server is reachable. None of the other checks
+	// will work if the API server is not reachable.
+	err := RetryWithExponentialBackoff(ctx, 10*time.Millisecond, func() error {
+		version, err := clientset.DiscoveryClient.ServerVersion()
+		if err != nil {
+			return fmt.Errorf("failed to connect to API Server: %v", err)
+		}
+		t.Logf("Successfully connected to API Server of cluster %s\n\tVersion: %s.%s\n\tGitVersion: %s\n", clusterName, version.Major, version.Minor, version.GitVersion)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	var wg sync.WaitGroup
+
+	// 1 for the node group instances
+	// 1 for the auth mode
+	// 1 task each for the deployments and daemonsets
+	numTasks := 1 + 1 + len(opts.deploymentsToValidate) + len(opts.daemonsetsToValidate)
+	errChan := make(chan error, numTasks)
+	wg.Add(numTasks)
+
+	version, err := clientset.DiscoveryClient.ServerVersion()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("API Server Version: %s.%s\n", version.Major, version.Minor)
+	t.Logf("API Server GitVersion: %s\n", version.GitVersion)
+
+	go func() {
+		err := RetryWithExponentialBackoff(ctx, 2*time.Second, func() error {
+			return ValidateNodeGroupInstances(t, clientset, asgClient, ec2Client, clusterName, expectedNodeGroups)
+		})
+		errChan <- err
+		wg.Done()
+	}()
+
+	go func() {
+		err := RetryWithExponentialBackoff(ctx, 2*time.Second, func() error {
+			if authenticationMode == "CONFIG_MAP" || authenticationMode == "API_AND_CONFIG_MAP" {
+				return assertAwsAuthConfigMapExists(t, clientset, clusterName)
+			} else {
+				return assertAwsAuthConfigMapNotExists(t, clientset, clusterName)
+			}
+		})
+		errChan <- err
+		wg.Done()
+	}()
+
+	for _, deployment := range opts.deploymentsToValidate {
+		go func(deployment KubernetesResource) {
+			err := RetryWithExponentialBackoff(ctx, 2*time.Second, func() error {
+				err := ValidateDeploymentHealth(t, clientset, deployment.Namespace, deployment.Name)
+				if err != nil {
+					t.Logf("Detected unhelathy deployment %q in namespace %q of cluster %s: %v", deployment.Name, deployment.Namespace, clusterName, err)
+					labelSelector, selectorErr := findDeploymentLabelSelector(clientset, deployment.Namespace, deployment.Name, clusterName)
+					if selectorErr != nil {
+						return errors.Join(err, selectorErr)
+					}
+					logUnhealthyPodInfo(t, clientset, deployment.Namespace, labelSelector, clusterName)
+				} else {
+					t.Logf("Detected healthy deployment %q in namespace %q of cluster %s", deployment.Name, deployment.Namespace, clusterName)
+				}
+				return err
+			})
+			errChan <- err
+			wg.Done()
+		}(deployment)
+	}
+
+	for _, daemonset := range opts.daemonsetsToValidate {
+		go func(daemonset KubernetesResource) {
+			err := RetryWithExponentialBackoff(ctx, 2*time.Second, func() error {
+				err := ValidateDaemonSetHealth(t, clientset, daemonset.Namespace, daemonset.Name)
+				if err != nil {
+					t.Logf("Detected unhelathy daemonset %q in namespace %q of cluster %s: %v", daemonset.Name, daemonset.Namespace, clusterName, err)
+					labelSelector, selectorErr := findDaemonSetLabelSelector(clientset, daemonset.Namespace, daemonset.Name, clusterName)
+					if selectorErr != nil {
+						return errors.Join(err, selectorErr)
+					}
+					logUnhealthyPodInfo(t, clientset, daemonset.Namespace, labelSelector, clusterName)
+				} else {
+					t.Logf("Detected healthy daemonset %q in namespace %q of cluster %s", daemonset.Name, daemonset.Namespace, clusterName)
+				}
+				return err
+			})
+			errChan <- err
+			wg.Done()
+		}(daemonset)
+	}
+
+	wg.Wait()
+	close(errChan)
+	var errs []error
+	for err := range errChan {
+		errs = append(errs, err)
+	}
+	return errors.Join(errs...)
+}
+
+type nodeGroupData struct {
+	desiredSize int
+}
+
+// clusterNodeGroupMap implements a map of Kubernetes cluster names to their
+// respective AutoScalingGroups. It is a map of cluster name to a map of ASG name to node group data.
+type clusterNodeGroupMap map[string]map[string]nodeGroupData
+
+func mapClusterToNodeGroups(resources []apitype.ResourceV3) (clusterNodeGroupMap, error) {
+	clusterNodeGroupMap := make(clusterNodeGroupMap)
 
 	// Map cluster to its NodeGroups.
-	cfnPrefix := "arn:aws:cloudformation"      // self-managed CF-based node groups
-	ngPrefix := "aws:eks/nodeGroup:NodeGroup"  // AWS managed node groups
-	ng2Prefix := "aws:autoscaling/group:Group" // self-managed ASG-based node groups
+	cfnPrefix := "arn:aws:cloudformation"    // self-managed CF-based node groups
+	mngType := "aws:eks/nodeGroup:NodeGroup" // AWS managed node groups
+	ng2Type := "aws:autoscaling/group:Group" // self-managed ASG-based node groups
 
 	for _, res := range resources {
 		if strings.HasPrefix(res.ID.String(), cfnPrefix) {
@@ -737,6 +634,16 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 			err := yaml.Unmarshal([]byte(body), &templateBody)
 			if err != nil {
 				return nil, err
+			}
+
+			var asgName string
+			if outputs, ok := res.Outputs["outputs"].(map[string]interface{}); ok {
+				if nodeGroupName, ok := outputs["NodeGroup"].(string); ok {
+					asgName = nodeGroupName
+				}
+			}
+			if asgName == "" {
+				return nil, fmt.Errorf("node group name for %s not found in outputs", res.URN)
 			}
 
 			// Find the CF "Name" tag to extract the cluster name.
@@ -749,21 +656,51 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 			}
 			clusterName := strings.Split(nameTag, "-worker")[0]
 
-			// Update map of cluster name to total desired Node count.
-			clusterToNodeCount[clusterName] =
-				clusterToNodeCount[clusterName] +
-					templateBody.Resources.NodeGroup.Properties.DesiredCapacity
-		} else if res.Type.String() == ngPrefix {
+			nodeGroupMap, ok := clusterNodeGroupMap[clusterName]
+			if !ok {
+				nodeGroupMap = make(map[string]nodeGroupData)
+				clusterNodeGroupMap[clusterName] = nodeGroupMap
+			}
+			nodeGroupMap[asgName] = nodeGroupData{
+				desiredSize: templateBody.Resources.NodeGroup.Properties.DesiredCapacity,
+			}
+		} else if res.Type.String() == mngType {
 			// Extract the cluster name.
 			nodegroup := res.Inputs
 			clusterName := nodegroup["clusterName"].(string)
 			// Extract the desired size.
 			scalingConfig := nodegroup["scalingConfig"].(map[string]interface{})
 			desiredSize := int(scalingConfig["desiredSize"].(float64))
-			// Update map of cluster name to total desired Node count.
-			clusterToNodeCount[clusterName] =
-				clusterToNodeCount[clusterName] + desiredSize
-		} else if res.Type.String() == ng2Prefix {
+			// Extract the ASG name
+			var asgName string
+			if resources, ok := res.Outputs["resources"].([]interface{}); ok {
+				for _, resource := range resources {
+					if resourceMap, ok := resource.(map[string]interface{}); ok {
+						if autoscalingGroups, ok := resourceMap["autoscalingGroups"].([]interface{}); ok {
+							for _, autoscalingGroup := range autoscalingGroups {
+								if autoscalingGroupMap, ok := autoscalingGroup.(map[string]interface{}); ok {
+									if name, ok := autoscalingGroupMap["name"].(string); ok {
+										asgName = name
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if asgName == "" {
+				return nil, fmt.Errorf("node group name for %s not found in outputs", res.URN)
+			}
+
+			nodeGroupMap, ok := clusterNodeGroupMap[clusterName]
+			if !ok {
+				nodeGroupMap = make(map[string]nodeGroupData)
+				clusterNodeGroupMap[clusterName] = nodeGroupMap
+			}
+			nodeGroupMap[asgName] = nodeGroupData{
+				desiredSize: desiredSize,
+			}
+		} else if res.Type.String() == ng2Type {
 			asg := res.Outputs
 			nameTag := ""
 			// Find the correct Name tag within the returned array.
@@ -775,16 +712,156 @@ func mapClusterToNodeCount(resources []apitype.ResourceV3) (clusterNodeCountMap,
 				}
 			}
 
+			asgName := asg["name"].(string)
+
 			// Extract the cluster name.
 			clusterName := strings.Split(nameTag, "-worker")[0]
 			desiredSize := int(asg["desiredCapacity"].(float64))
-			// Update map of cluster name to total desired Node count.
-			clusterToNodeCount[clusterName] =
-				clusterToNodeCount[clusterName] + desiredSize
+
+			nodeGroupMap, ok := clusterNodeGroupMap[clusterName]
+			if !ok {
+				nodeGroupMap = make(map[string]nodeGroupData)
+				clusterNodeGroupMap[clusterName] = nodeGroupMap
+			}
+			nodeGroupMap[asgName] = nodeGroupData{
+				desiredSize: desiredSize,
+			}
 		}
 	}
 
-	return clusterToNodeCount, nil
+	return clusterNodeGroupMap, nil
+}
+
+// EC2InstanceIDPattern matches both old (8 character) and new (17 character) EC2 instance IDs
+// Examples: i-1234567f, i-0123456789abcdef0
+var eC2InstanceIDPattern = regexp.MustCompile(`^i-[a-f0-9]{8,17}$`)
+
+// ValidateNodeGroupInstances validates that all nodes in the cluster are healthy and have successfully joined.
+// It checks that each ASG has the expected number of instances and that all instances are properly registered as nodes.
+func ValidateNodeGroupInstances(t *testing.T, clientset *kubernetes.Clientset, asgClient *autoscaling.Client, ec2Client *ec2.Client, clusterName string, expectedNodeGroups map[string]nodeGroupData) error {
+	// Get all nodes in the cluster
+	nodes, err := clientset.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to list nodes: %v", err)
+	}
+
+	// Validate that all nodes are in Ready state
+	for _, node := range nodes.Items {
+		var isReady bool
+		for _, condition := range node.Status.Conditions {
+			if condition.Type == corev1.NodeReady {
+				if condition.Status != corev1.ConditionTrue {
+					return fmt.Errorf("node %s is not ready: %s", node.Name, condition.Message)
+				}
+				isReady = true
+				break
+			}
+		}
+		if !isReady {
+			return fmt.Errorf("node %s does not have Ready condition", node.Name)
+		}
+
+		// Check for any taints that might indicate node problems
+		for _, taint := range node.Spec.Taints {
+			if taint.Effect == corev1.TaintEffectNoSchedule || taint.Effect == corev1.TaintEffectNoExecute {
+				// These taints indicate the node is not ready
+				if strings.Contains(taint.Key, "node.kubernetes.io/not-ready") ||
+					strings.Contains(taint.Key, "node.kubernetes.io/unschedulable") {
+					return fmt.Errorf("node %s is not ready - has taint: %s", node.Name, taint.Key)
+				}
+			}
+		}
+	}
+
+	asgInstanceCounts := make(map[string]int)
+	instanceIDs := make([]string, 0, len(nodes.Items))
+	instanceIDToNode := make(map[string]*corev1.Node)
+
+	// Extract instance IDs from all nodes
+	for i := range nodes.Items {
+		node := &nodes.Items[i]
+		// Extract EC2 instance ID from node provider ID
+		// Provider ID format: aws:///az/i-1234567890abcdef0
+		providerID := node.Spec.ProviderID
+		instanceID := strings.TrimPrefix(providerID, "aws:///")
+		instanceID = strings.TrimPrefix(instanceID, strings.Split(instanceID, "/")[0]+"/")
+
+		// the list of k8s nodes can include nodes that are not EC2 instances (e.g. Fargate),
+		// those are not part of any ASGs. We already validated that all nodes are ready, so we can
+		// skip the nodes that are not EC2 instances. Their ID is not valid input to the
+		// DescribeAutoScalingInstances API used later and would cause an error.
+		if eC2InstanceIDPattern.MatchString(instanceID) {
+			instanceIDs = append(instanceIDs, instanceID)
+			instanceIDToNode[instanceID] = node
+		}
+	}
+
+	// For each node, get its EC2 instance ID, find which ASG it belongs to and verify that EC2 reports the instance as running.
+	// Process instance IDs in batches of 50 because that's the maximum number of instance IDs that can be passed to the DescribeAutoScalingInstances API.
+	for i := 0; i < len(instanceIDs); i += 50 {
+		end := i + 50
+		if end > len(instanceIDs) {
+			end = len(instanceIDs)
+		}
+		batch := instanceIDs[i:end]
+
+		// Get ASG info for this batch of instances
+		input := &autoscaling.DescribeAutoScalingInstancesInput{
+			InstanceIds: batch,
+		}
+		result, err := asgClient.DescribeAutoScalingInstances(context.TODO(), input)
+		if err != nil {
+			return fmt.Errorf("failed to describe ASG instances: %v", err)
+		}
+
+		instanceToAsg := make(map[string]string)
+		for _, instance := range result.AutoScalingInstances {
+			asgName := *instance.AutoScalingGroupName
+			asgInstanceCounts[asgName]++
+			instanceToAsg[*instance.InstanceId] = asgName
+		}
+
+		// Verify instance health status
+		describeInput := &ec2.DescribeInstanceStatusInput{
+			InstanceIds: batch,
+		}
+		statusResult, err := ec2Client.DescribeInstanceStatus(context.TODO(), describeInput)
+		if err != nil {
+			return fmt.Errorf("failed to describe instance statuses: %v", err)
+		}
+
+		for _, status := range statusResult.InstanceStatuses {
+			instanceID := *status.InstanceId
+			asgName := instanceToAsg[instanceID]
+			if status.InstanceState.Name != types.InstanceStateNameRunning {
+				return fmt.Errorf("instance %s of ASG %s is not in running state, current state: %s", instanceID, asgName, status.InstanceState.Name)
+			}
+			if status.InstanceStatus.Status != types.SummaryStatusOk || status.SystemStatus.Status != types.SummaryStatusOk {
+				return fmt.Errorf("instance %s of ASG %s is not healthy. Instance status: %s, System status: %s",
+					instanceID,
+					asgName,
+					status.InstanceStatus.Status,
+					status.SystemStatus.Status)
+			}
+		}
+	}
+
+	// Verify each ASG has the expected number of instances
+	for asgName, ngData := range expectedNodeGroups {
+		actualCount := asgInstanceCounts[asgName]
+		if actualCount != ngData.desiredSize {
+			return fmt.Errorf("ASG %s in cluster %s has %d instances but has a desired size of %d",
+				asgName,
+				clusterName,
+				actualCount,
+				ngData.desiredSize)
+		}
+		t.Logf("ASG %s in cluster %s has expected number of instances: %d", asgName, clusterName, actualCount)
+	}
+
+	t.Logf("All node groups of cluster %s are healthy and have the expected number of instances", clusterName)
+
+	return nil
 }
 
 // ValidateNodes validates the nodes in a cluster contain the expected values.
@@ -970,4 +1047,196 @@ func GetInstalledAddon(t *testing.T, eksClient *eks.Client, clusterName, addonNa
 	}
 
 	return resp.Addon, nil
+}
+
+// ValidateDeploymentHealth checks if a Kubernetes deployment is healthy by verifying its status.
+// It returns an error if the deployment is not found or not healthy.
+func ValidateDeploymentHealth(t *testing.T, clientset *kubernetes.Clientset, namespace, deploymentName string) error {
+	deployment, err := clientset.AppsV1().Deployments(namespace).Get(context.TODO(), deploymentName, metav1.GetOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to get deployment %s/%s: %v", namespace, deploymentName, err)
+	}
+
+	if deployment.Status.ReadyReplicas != deployment.Status.Replicas {
+		return fmt.Errorf("deployment %s/%s is not healthy: %d/%d replicas are ready",
+			namespace,
+			deploymentName,
+			deployment.Status.ReadyReplicas,
+			deployment.Status.Replicas)
+	}
+
+	if deployment.Status.UpdatedReplicas != deployment.Status.Replicas {
+		return fmt.Errorf("deployment %s/%s is not healthy: %d/%d replicas are up-to-date",
+			namespace,
+			deploymentName,
+			deployment.Status.UpdatedReplicas,
+			deployment.Status.Replicas)
+	}
+
+	if deployment.Status.AvailableReplicas != deployment.Status.Replicas {
+		return fmt.Errorf("deployment %s/%s is not healthy: %d/%d replicas are available",
+			namespace,
+			deploymentName,
+			deployment.Status.AvailableReplicas,
+			deployment.Status.Replicas)
+	}
+
+	return nil
+}
+
+// ValidateDaemonSetHealth checks if a Kubernetes daemonset is healthy by verifying its status.
+// It returns an error if the daemonset is not found or not healthy.
+func ValidateDaemonSetHealth(t *testing.T, clientset *kubernetes.Clientset, namespace, daemonsetName string) error {
+	daemonset, err := clientset.AppsV1().DaemonSets(namespace).Get(context.TODO(), daemonsetName, metav1.GetOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to get daemonset %s/%s: %v", namespace, daemonsetName, err)
+	}
+
+	if daemonset.Status.NumberReady != daemonset.Status.DesiredNumberScheduled {
+		return fmt.Errorf("daemonset %s/%s is not healthy: %d/%d pods are ready",
+			namespace,
+			daemonsetName,
+			daemonset.Status.NumberReady,
+			daemonset.Status.DesiredNumberScheduled)
+	}
+
+	if daemonset.Status.UpdatedNumberScheduled != daemonset.Status.DesiredNumberScheduled {
+		return fmt.Errorf("daemonset %s/%s is not healthy: %d/%d pods are up-to-date",
+			namespace,
+			daemonsetName,
+			daemonset.Status.UpdatedNumberScheduled,
+			daemonset.Status.DesiredNumberScheduled)
+	}
+
+	if daemonset.Status.NumberAvailable != daemonset.Status.DesiredNumberScheduled {
+		return fmt.Errorf("daemonset %s/%s is not healthy: %d/%d pods are available",
+			namespace,
+			daemonsetName,
+			daemonset.Status.NumberAvailable,
+			daemonset.Status.DesiredNumberScheduled)
+	}
+
+	return nil
+}
+
+// findDeploymentLabelSelector returns the label selector for a deployment's pods.
+func findDeploymentLabelSelector(clientset *kubernetes.Clientset, namespace, deploymentName string, clusterName string) (string, error) {
+	// Get the deployment
+	deployment, err := clientset.AppsV1().Deployments(namespace).Get(context.TODO(), deploymentName, metav1.GetOptions{})
+	if err != nil {
+		return "", fmt.Errorf("failed to get deployment %s/%s of cluster %s: %v", namespace, deploymentName, clusterName, err)
+	}
+
+	// Get the label selector from the deployment
+	labelSelector := metav1.FormatLabelSelector(deployment.Spec.Selector)
+
+	return labelSelector, nil
+}
+
+// findDaemonSetLabelSelector returns the label selector for a daemonset's pods.
+func findDaemonSetLabelSelector(clientset *kubernetes.Clientset, namespace, daemonsetName, clusterName string) (string, error) {
+	// Get the daemonset
+	daemonset, err := clientset.AppsV1().DaemonSets(namespace).Get(context.TODO(), daemonsetName, metav1.GetOptions{})
+	if err != nil {
+		return "", fmt.Errorf("failed to get daemonset %s/%s of cluster %s: %v", namespace, daemonsetName, clusterName, err)
+	}
+
+	// Get the label selector from the daemonset
+	labelSelector := metav1.FormatLabelSelector(daemonset.Spec.Selector)
+
+	return labelSelector, nil
+}
+
+// logUnhealthyPodInfo logs debug information about pods belonging to a controller
+func logUnhealthyPodInfo(t *testing.T, clientset *kubernetes.Clientset, namespace string, labelSelector string, clusterName string) error {
+	// List pods matching the provided label selector
+	pods, err := clientset.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{
+		LabelSelector: labelSelector,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to list pods of cluster %s: %v", clusterName, err)
+	}
+
+	for _, pod := range pods.Items {
+		var logLines []string
+		logLines = append(logLines, fmt.Sprintf("Pod %s/%s of cluster %s:", pod.Namespace, pod.Name, clusterName))
+		logLines = append(logLines, fmt.Sprintf("  Phase: %s", pod.Status.Phase))
+		logLines = append(logLines, fmt.Sprintf("  Host IP: %s", pod.Status.HostIP))
+		logLines = append(logLines, fmt.Sprintf("  Pod IP: %s", pod.Status.PodIP))
+
+		for _, containerStatus := range pod.Status.ContainerStatuses {
+			logLines = append(logLines, fmt.Sprintf("  Container %s:", containerStatus.Name))
+			logLines = append(logLines, fmt.Sprintf("    Ready: %v", containerStatus.Ready))
+			logLines = append(logLines, fmt.Sprintf("    RestartCount: %d", containerStatus.RestartCount))
+
+			if containerStatus.State.Waiting != nil {
+				logLines = append(logLines, fmt.Sprintf("    Waiting - Reason: %s", containerStatus.State.Waiting.Reason))
+				logLines = append(logLines, fmt.Sprintf("    Waiting - Message: %s", containerStatus.State.Waiting.Message))
+			}
+
+			if containerStatus.State.Terminated != nil {
+				logLines = append(logLines, fmt.Sprintf("    Terminated - Reason: %s", containerStatus.State.Terminated.Reason))
+				logLines = append(logLines, fmt.Sprintf("    Terminated - Message: %s", containerStatus.State.Terminated.Message))
+				logLines = append(logLines, fmt.Sprintf("    Terminated - Exit Code: %d", containerStatus.State.Terminated.ExitCode))
+			}
+		}
+
+		logLines = append(logLines, "  Conditions:")
+		for _, condition := range pod.Status.Conditions {
+			logLines = append(logLines, fmt.Sprintf("    %s: %s (Reason: %s, Message: %s)",
+				condition.Type,
+				condition.Status,
+				condition.Reason,
+				condition.Message))
+		}
+
+		t.Log(strings.Join(logLines, "\n"))
+	}
+
+	return nil
+}
+
+// RetryWithExponentialBackoff retries a function with exponential backoff until it succeeds or context is cancelled.
+// It takes:
+// - ctx: context for cancellation
+// - initialDelay: initial delay duration between retries (will be doubled each retry)
+// - operation: the function to retry that returns (error)
+// Returns the last error encountered if context is cancelled
+func RetryWithExponentialBackoff(ctx context.Context, initialDelay time.Duration, operation func() error) error {
+	var err error
+	currentDelay := initialDelay
+
+	for {
+		select {
+		case <-ctx.Done():
+			return err
+		default:
+			if err = operation(); err == nil {
+				return nil
+			}
+
+			timer := time.NewTimer(currentDelay)
+			select {
+			case <-ctx.Done():
+				timer.Stop()
+				return err
+			case <-timer.C:
+				currentDelay *= 2
+			}
+		}
+	}
+}
+
+func loadAwsDefaultConfig(t *testing.T, region, profile string) aws.Config {
+	loadOpts := []func(*config.LoadOptions) error{}
+	if profile != "" {
+		loadOpts = append(loadOpts, config.WithSharedConfigProfile(profile))
+	}
+	if region != "" {
+		loadOpts = append(loadOpts, config.WithRegion(region))
+	}
+	cfg, err := config.LoadDefaultConfig(context.TODO(), loadOpts...)
+	require.NoError(t, err, "failed to load AWS config")
+
+	return cfg
 }

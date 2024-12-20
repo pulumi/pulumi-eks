@@ -2363,7 +2363,7 @@ if not MYPY:
         """
         content: pulumi.Input[str]
         """
-        The ARN of the access policy to associate with the principal
+        The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
         """
         content_type: pulumi.Input[str]
         """
@@ -2381,7 +2381,7 @@ class NodeadmOptionsArgs:
         MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
 
         See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
-        :param pulumi.Input[str] content: The ARN of the access policy to associate with the principal
+        :param pulumi.Input[str] content: The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
         :param pulumi.Input[str] content_type: The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
         """
         pulumi.set(__self__, "content", content)
@@ -2391,7 +2391,7 @@ class NodeadmOptionsArgs:
     @pulumi.getter
     def content(self) -> pulumi.Input[str]:
         """
-        The ARN of the access policy to associate with the principal
+        The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
         """
         return pulumi.get(self, "content")
 

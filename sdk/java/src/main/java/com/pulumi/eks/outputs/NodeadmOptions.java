@@ -11,7 +11,7 @@ import java.util.Objects;
 @CustomType
 public final class NodeadmOptions {
     /**
-     * @return The ARN of the access policy to associate with the principal
+     * @return The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
      * 
      */
     private String content;
@@ -23,7 +23,7 @@ public final class NodeadmOptions {
 
     private NodeadmOptions() {}
     /**
-     * @return The ARN of the access policy to associate with the principal
+     * @return The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
      * 
      */
     public String content() {
