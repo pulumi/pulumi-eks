@@ -18,7 +18,7 @@ namespace Pulumi.Eks.Inputs
     public sealed class NodeadmOptionsArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
-        /// The ARN of the access policy to associate with the principal
+        /// The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
         /// </summary>
         [Input("content", required: true)]
         public Input<string> Content { get; set; } = null!;
