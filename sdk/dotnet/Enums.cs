@@ -81,6 +81,7 @@ See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.ht
         public static AmiType AL2Arm64 { get; } = new AmiType("AL2_ARM_64");
         public static AmiType AL2023X86_64Standard { get; } = new AmiType("AL2023_x86_64_STANDARD");
         public static AmiType AL2023Arm64Standard { get; } = new AmiType("AL2023_ARM_64_STANDARD");
+        public static AmiType AL2023X86_64Nvidia { get; } = new AmiType("AL2023_x86_64_NVIDIA");
         public static AmiType BottlerocketArm64 { get; } = new AmiType("BOTTLEROCKET_ARM_64");
         public static AmiType BottlerocketX86_64 { get; } = new AmiType("BOTTLEROCKET_x86_64");
         public static AmiType BottlerocketArm64Nvidia { get; } = new AmiType("BOTTLEROCKET_ARM_64_NVIDIA");

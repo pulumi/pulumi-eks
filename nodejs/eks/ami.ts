@@ -89,6 +89,15 @@ const amiTypeMetadata: { [key in AmiType]: AmiMetadata } = {
 
         aliases: ["amazon-linux-2023/arm64/standard"],
     },
+    AL2023_x86_64_NVIDIA: {
+        os: OperatingSystem.AL2023,
+        gpuSupport: true,
+        architecture: "x86_64",
+        ssmParameterName: (clusterVersion: ClusterVersion) =>
+            `/aws/service/eks/optimized-ami/${clusterVersion}/amazon-linux-2023/x86_64/nvidia/recommended/image_id`,
+
+        aliases: ["amazon-linux-2023/x86_64/nvidia"],
+    },
     BOTTLEROCKET_ARM_64: {
         os: OperatingSystem.Bottlerocket,
         gpuSupport: false,
@@ -131,6 +140,7 @@ export const AmiType = {
 
     AL2023X86_64Standard: "AL2023_x86_64_STANDARD",
     AL2023Arm64Standard: "AL2023_ARM_64_STANDARD",
+    AL2023X86_64Nvidia: "AL2023_x86_64_NVIDIA",
 
     BottlerocketArm64: "BOTTLEROCKET_ARM_64",
     BottlerocketX86_64: "BOTTLEROCKET_x86_64",
