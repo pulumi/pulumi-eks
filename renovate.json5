@@ -3,9 +3,10 @@
   extends: ["github>pulumi/renovate-config//default.json5"],
   packageRules: [
     {
-      // Update metadata when eks is bumped.
-      matchDatasources: ["npm"],
-      matchPackageNames: ["@pulumi/eks"],
+      // Dependent files need to be rebuilt when key dependencies change.
+      //
+      // https://docs.renovatebot.com/configuration-options/#postupgradetasks
+      fileFilters: ["go.mod", "nodejs/eks/package.json", "nodejs/eks/yarn.lock"],
       postUpgradeTasks: {
         commands: ["make renovate"],
         executionMode: "branch", // Only run once.
