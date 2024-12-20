@@ -412,7 +412,7 @@ export interface NodeGroupData {
  */
 export interface NodeadmOptions {
     /**
-     * The ARN of the access policy to associate with the principal
+     * The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
      */
     content: string;
     /**

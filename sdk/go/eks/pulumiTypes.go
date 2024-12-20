@@ -3294,7 +3294,7 @@ func (o NodeGroupDataPtrOutput) NodeSecurityGroup() ec2.SecurityGroupOutput {
 //
 // See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
 type NodeadmOptions struct {
-	// The ARN of the access policy to associate with the principal
+	// The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
 	Content string `pulumi:"content"`
 	// The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
 	ContentType string `pulumi:"contentType"`
@@ -3315,7 +3315,7 @@ type NodeadmOptionsInput interface {
 //
 // See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
 type NodeadmOptionsArgs struct {
-	// The ARN of the access policy to associate with the principal
+	// The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
 	Content pulumi.StringInput `pulumi:"content"`
 	// The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
 	ContentType pulumi.StringInput `pulumi:"contentType"`
@@ -3375,7 +3375,7 @@ func (o NodeadmOptionsOutput) ToNodeadmOptionsOutputWithContext(ctx context.Cont
 	return o
 }
 
-// The ARN of the access policy to associate with the principal
+// The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
 func (o NodeadmOptionsOutput) Content() pulumi.StringOutput {
 	return o.ApplyT(func(v NodeadmOptions) string { return v.Content }).(pulumi.StringOutput)
 }
