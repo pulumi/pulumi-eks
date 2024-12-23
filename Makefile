@@ -3,8 +3,10 @@ PROJECT_NAME := Pulumi Amazon Web Services (AWS) EKS Components
 # Override during CI using `make [TARGET] PROVIDER_VERSION=""` or by setting a PROVIDER_VERSION environment variable
 # Local & branch builds will just used this fixed default version unless specified
 PROVIDER_VERSION ?= 3.0.0-alpha.0+dev
-# Use this normalised version everywhere rather than the raw input to ensure consistency.
-VERSION_GENERIC = $(shell pulumictl convert-version --language generic --version "$(PROVIDER_VERSION)")
+
+# Use this normalized version everywhere rather than the raw input to ensure consistency.
+VERSION_GENERIC ?= $(shell make VERSION_GENERIC=$(PROVIDER_VERSION) version_generic)
+# Note recursive call to Make to auto-install pulumictl needs VERSION_GENERIC seeded to avoid infinite recursion.
 
 TESTPARALLELISM := 8
 
@@ -25,6 +27,10 @@ LOCAL_PLAT ?= ""
 PKG_ARGS   := --no-bytecode --public-packages "*" --public
 PKG_TARGET := ./bin/cmd/provider/index.js
 SCHEMA_PATH := provider/cmd/$(PROVIDER)/schema.json
+
+GOPATH := $(shell go env GOPATH)
+PULUMICTL_VERSION := v0.0.47
+PULUMICTL_BIN := $(shell which pulumictl 2>/dev/null)
 
 generate:: schema generate_nodejs generate_python generate_go generate_dotnet generate_java
 build:: schema provider build_nodejs build_python build_go build_dotnet build_java
@@ -51,9 +57,9 @@ bin/pulumi-java-gen.v$(JAVA_GEN_VERSION):
 	@rm -f bin/pulumi-java-gen.v*
 	@echo "$(JAVA_GEN_VERSION)" >"$@"
 
-bin/pulumi-java-gen: bin/pulumi-java-gen.v$(JAVA_GEN_VERSION)
+bin/pulumi-java-gen: bin/pulumi-java-gen.v$(JAVA_GEN_VERSION) ensure-pulumictl
 	@mkdir -p bin/
-	pulumictl download-binary -n pulumi-language-java -v $(JAVA_GEN_VERSION) -r pulumi/pulumi-java
+	@$(PULUMICTL_BIN) download-binary -n pulumi-language-java -v $(JAVA_GEN_VERSION) -r pulumi/pulumi-java
 
 generate_java:: PACKAGE_VERSION := ${VERSION_GENERIC}
 generate_java:: bin/pulumi-java-gen schema
@@ -222,6 +228,15 @@ test_provider:
 	@echo ""
 	cd provider && go test -v -short ./... -parallel $(TESTPARALLELISM)
 
+ensure-pulumictl:
+ifeq ($(PULUMICTL_BIN),)
+	@if [ ! -f "$(GOPATH)/bin/pulumictl" ]; then go install "github.com/pulumi/pulumictl/cmd/pulumictl@$(PULUMICTL_VERSION)"; fi
+	@$(eval PULUMICTL_BIN=$(GOPATH)/bin/pulumictl)
+endif
+
+version_generic: ensure-pulumictl
+	@$(PULUMICTL_BIN) convert-version --language generic --version "$(PROVIDER_VERSION)"
+
 renovate:: generate
 
-.PHONY: build generate generate_dotnet generate_go generate_java generate_nodejs generate_python build_dotnet build_go build_java build_nodejs build_python dev dist generate_schema install_dotnet_sdk install_java_sdk install_provider install_python_sdk lint lint_fix lint_provider provider renovate schema specific_test specific_test_local test test_dotnet test_java test_nodejs test_nodejs_upgrade test_provider test_python test_unit_tests
+.PHONY: build generate generate_dotnet generate_go generate_java generate_nodejs generate_python build_dotnet build_go build_java build_nodejs build_python dev dist ensure-pulumictl generate_schema install_dotnet_sdk install_java_sdk install_provider install_python_sdk lint lint_fix lint_provider provider renovate schema specific_test specific_test_local test test_dotnet test_java test_nodejs test_nodejs_upgrade test_provider test_python test_unit_tests version_generic
