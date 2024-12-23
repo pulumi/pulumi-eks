@@ -30,3 +30,5 @@ sdk/java/gradlew
 sdk/java/gradlew.bat
 
 .envrc
+
+sdk/nodejs/yarn.lock
