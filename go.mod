@@ -1,6 +1,8 @@
 module github.com/pulumi/pulumi-eks
 
-go 1.21.0
+go 1.21.12
+
+toolchain go1.23.4
 
 replace github.com/pulumi/pulumi-eks/sdk/v3 => ./sdk
 
@@ -12,11 +14,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.48.4
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/pulumi/providertest v0.0.15
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.41.0
-	github.com/pulumi/pulumi-eks/sdk/v3 v3.0.0-alpha.6
-	github.com/pulumi/pulumi/pkg/v3 v3.143.0
-	github.com/pulumi/pulumi/sdk/v3 v3.143.0
+	github.com/pulumi/providertest v0.1.3
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.66.1
+	github.com/pulumi/pulumi-eks/sdk/v3 v3.5.0
+	github.com/pulumi/pulumi/pkg/v3 v3.144.1
+	github.com/pulumi/pulumi/sdk/v3 v3.144.1
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8
 	golang.org/x/mod v0.20.0
@@ -187,7 +189,7 @@ require (
 	gocloud.dev v0.37.0 // indirect
 	gocloud.dev/secrets/hashivault v0.37.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
