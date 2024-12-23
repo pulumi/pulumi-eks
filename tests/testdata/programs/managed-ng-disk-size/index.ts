@@ -33,4 +33,5 @@ eks.createManagedNodeGroup(`${projectName}-managed-ng`, {
     // Force creating a custom launch template
     kubeletExtraArgs: "--max-pods=500",
     diskSize: 50,
+    subnetIds: eksVpc.privateSubnetIds,
 });

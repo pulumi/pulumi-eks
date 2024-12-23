@@ -145,21 +145,6 @@ func TestAccManagedNodeGroupPy(t *testing.T) {
 	programTestWithExtraOptions(t, &test, nil)
 }
 
-func TestAccManagedNodeGroupOSPy(t *testing.T) {
-	test := getPythonBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir: path.Join(getTestPrograms(t), "managed-ng-os-py"),
-			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
-
-				// expect 4 nodes with increased pod capacity of 100
-				assert.NoError(t, utils.ValidateNodePodCapacity(t, info.Outputs["kubeconfig"], 4, 100, "increased-pod-capacity"))
-			},
-		})
-
-	programTestWithExtraOptions(t, &test, nil)
-}
-
 func getPythonBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	region := getEnvRegion(t)
 	base := getBaseOptions(t)

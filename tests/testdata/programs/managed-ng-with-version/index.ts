@@ -34,6 +34,7 @@ const managedNodeGroup0 = eks.createManagedNodeGroup("example-managed-ng0", {
     kubeletExtraArgs: "--max-pods=500",
     enableIMDSv2: true,
     version: cluster.eksCluster.version,
+    subnetIds: eksVpc.privateSubnetIds,
 }, cluster);
 
 // Simple managed node group
@@ -42,6 +43,7 @@ const managedNodeGroup1 = eks.createManagedNodeGroup("example-managed-ng1", {
     nodeGroupName: "aws-managed-ng1",
     nodeRoleArn: role1.arn,
     version: cluster.eksCluster.version,
+    subnetIds: eksVpc.privateSubnetIds,
 }, cluster);
 
 // Managed node group with IMDSv2 enabled
@@ -50,4 +52,5 @@ const managedNodeGroup2 = eks.createManagedNodeGroup("example-managed-ng2", {
     nodeRole: role2,
     version: cluster.eksCluster.version,
     enableIMDSv2: true,
+    subnetIds: eksVpc.privateSubnetIds,
 }, cluster);

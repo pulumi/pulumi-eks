@@ -37,4 +37,5 @@ const mng = eks.createManagedNodeGroup("default-instance-role-mng", {
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t3.medium"],
   nodeRole: cluster.instanceRoles.apply(roles => roles[0]),
+  subnetIds: eksVpc.privateSubnetIds,
 });

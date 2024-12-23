@@ -46,6 +46,7 @@ const ng_instanceProfileNameFromNgArgs = new eks.NodeGroup("ng-instanceProfileNa
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceProfileName: instanceProfile.name,
+  subnetIds: eksVpc.privateSubnetIds,
 });
 
 const ngv2_instanceProfileNameFromNgArgs = new eks.NodeGroupV2("ngv2-instanceProfileNameFromNgArgs", {
@@ -54,6 +55,7 @@ const ngv2_instanceProfileNameFromNgArgs = new eks.NodeGroupV2("ngv2-instancePro
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceProfileName: instanceProfile.name,
+  subnetIds: eksVpc.privateSubnetIds,
 });
 
 export const passedInstanceProfileName = instanceProfile.name

@@ -20,7 +20,7 @@ const eksVpc = new awsx.ec2.Vpc("managed-ng-os", {
 const cluster = new eks.Cluster("managed-ng-os", {
   skipDefaultNodeGroup: true,
   vpcId: eksVpc.vpcId,
-  authenticationMode: eks.AuthenticationMode.API,
+  authenticationMode: eks.AuthenticationMode.Api,
   // Public subnets will be used for load balancers
   publicSubnetIds: eksVpc.publicSubnetIds,
   // Private subnets will be used for cluster nodes
@@ -36,19 +36,20 @@ const cluster = new eks.Cluster("managed-ng-os", {
 // Export the cluster's kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
 
-const scalingConfig = {
+const baseConfig = {
   scalingConfig: {
     minSize: 1,
     maxSize: 1,
     desiredSize: 1,
   },
+  subnetIds: eksVpc.privateSubnetIds,
 }
 
 const increasedPodCapacity = 100;
 
 // Create a simple AL 2023 node group with x64 instances
 const managedNodeGroupAL2023 = eks.createManagedNodeGroup("al-2023-mng", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t3.medium"],
@@ -57,7 +58,7 @@ const managedNodeGroupAL2023 = eks.createManagedNodeGroup("al-2023-mng", {
 
 // Create a node group with a launch template and custom AMI
 const managedNodeGroup = new eks.ManagedNodeGroup("al-2023-mng-amitype-launch-template", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   nodeRole: role,
   amiType: "AL2023_ARM_64_STANDARD",
@@ -66,7 +67,7 @@ const managedNodeGroup = new eks.ManagedNodeGroup("al-2023-mng-amitype-launch-te
 });
 
 const managedNodeGroupAL2023Taints = eks.createManagedNodeGroup("al-2023-mng-taints", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t3.medium"],
@@ -91,7 +92,7 @@ const managedNodeGroupAL2023Taints = eks.createManagedNodeGroup("al-2023-mng-tai
 
 // Create a simple AL 2023 node group with arm instances
 const managedNodeGroupAL2023Arm = eks.createManagedNodeGroup("al-2023-arm-mng", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t4g.medium"],
@@ -100,7 +101,7 @@ const managedNodeGroupAL2023Arm = eks.createManagedNodeGroup("al-2023-arm-mng", 
 
 // Create an AL 2023 node group with x64 instances and custom user data
 const managedNodeGroupAL2023UserData = eks.createManagedNodeGroup("al-2023-mng-userdata", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t3.medium"],
@@ -115,7 +116,7 @@ const managedNodeGroupAL2023UserData = eks.createManagedNodeGroup("al-2023-mng-u
 
 // Create an AL 2023 node group with arm instances and custom user data
 const managedNodeGroupAL2023ArmUserData = eks.createManagedNodeGroup("al-2023-arm-mng-userdata", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["t4g.medium"],
@@ -129,7 +130,7 @@ const managedNodeGroupAL2023ArmUserData = eks.createManagedNodeGroup("al-2023-ar
 });
 
 const managedNodeGroupAL2023NvidiaGpu = eks.createManagedNodeGroup("al-2023-mng-nvidia-gpu", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceTypes: ["g4dn.xlarge"],
@@ -207,7 +208,7 @@ const nvidiaDevicePlugin = new k8s.apps.v1.DaemonSet("nvidia-device-plugin", {
 
 // Create a simple Bottlerocket node group with x64 instances
 const managedNodeGroupBottlerocket = eks.createManagedNodeGroup("bottlerocket-mng", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t3.medium"],
@@ -216,7 +217,7 @@ const managedNodeGroupBottlerocket = eks.createManagedNodeGroup("bottlerocket-mn
 
 // Create a Bottlerocket node group with GPU support (it's the cheapest GPU instance type)
 const managedNodeGroupBottlerocketGpu = eks.createManagedNodeGroup("bottlerocket-mng-gpu", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["g5g.xlarge"],
@@ -226,7 +227,7 @@ const managedNodeGroupBottlerocketGpu = eks.createManagedNodeGroup("bottlerocket
 
 // Create a simple Bottlerocket node group with arm instances
 const managedNodeGroupBottlerocketArm = eks.createManagedNodeGroup("bottlerocket-arm-mng", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t4g.medium"],
@@ -235,7 +236,7 @@ const managedNodeGroupBottlerocketArm = eks.createManagedNodeGroup("bottlerocket
 
 // Create a Bottlerocket node group with x64 instances and custom user data
 const managedNodeGroupBottlerocketUserData = eks.createManagedNodeGroup("bottlerocket-mng-userdata", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t3.medium"],
@@ -256,7 +257,7 @@ const managedNodeGroupBottlerocketUserData = eks.createManagedNodeGroup("bottler
 
 // Create a Bottlerocket node group with arm instances and custom user data
 const managedNodeGroupBottlerocketArmUserData = eks.createManagedNodeGroup("bottlerocket-arm-mng-userdata", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t4g.medium"],
@@ -276,7 +277,7 @@ const managedNodeGroupBottlerocketArmUserData = eks.createManagedNodeGroup("bott
 });
 
 const managedNodeGroupBottlerocketTaints = eks.createManagedNodeGroup("bottlerocket-mng-taints", {
-  ...scalingConfig,
+  ...baseConfig,
   cluster: cluster,
   operatingSystem: eks.OperatingSystem.Bottlerocket,
   instanceTypes: ["t3.medium"],
@@ -318,7 +319,7 @@ const customUserData = userdata.createUserData({
 }, `--max-pods=${increasedPodCapacity} --node-labels=increased-pod-capacity=true`);
 
 const managedNodeGroupAL2023CustomUserData = eks.createManagedNodeGroup("al-2023-mng-custom-userdata", {
-  ...scalingConfig,
+  ...baseConfig,
   operatingSystem: eks.OperatingSystem.AL2023,
   cluster: cluster,
   instanceTypes: ["t3.medium"],
@@ -329,7 +330,7 @@ const managedNodeGroupAL2023CustomUserData = eks.createManagedNodeGroup("al-2023
 });
 
 const managedNodeGroupAL2023NodeadmExtraOptions = eks.createManagedNodeGroup("al-2023-mng-extra-options", {
-  ...scalingConfig,
+  ...baseConfig,
   operatingSystem: eks.OperatingSystem.AL2023,
   cluster: cluster,
   instanceTypes: ["t3.medium"],

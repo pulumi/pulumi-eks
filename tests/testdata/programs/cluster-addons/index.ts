@@ -56,4 +56,5 @@ const ng = eks.createManagedNodeGroup("cluster-addons", {
   // need instances that support ENI trunking to support SGs for pods: https://docs.aws.amazon.com/eks/latest/userguide/security-groups-for-pods.html
   instanceTypes: ["c6i.large"],
   nodeRole: role,
+  subnetIds: eksVpc.privateSubnetIds,
 });
