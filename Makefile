@@ -45,8 +45,10 @@ provider:: bin/${PROVIDER}
 .pulumi/bin/pulumi:
 	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
 
-build_nodejs:: .pulumi/bin/pulumi schema
+generate_nodejs:: .pulumi/bin/pulumi schema
 	cd provider/cmd/$(CODEGEN) && go run main.go nodejs ../../../sdk/nodejs $(CURDIR) ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
+
+build_nodejs:: generate_nodejs
 	cd sdk/nodejs && \
 		yarn install --no-progress && \
 		yarn run build && \
