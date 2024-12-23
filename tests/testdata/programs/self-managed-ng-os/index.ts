@@ -36,14 +36,15 @@ const cluster = new eks.Cluster("self-managed-ng-os", {
 // Export the cluster's kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
 
-const capacity = {
+const baseSettings = {
   desiredCapacity: 1,
   minSize: 1,
   maxSize: 1,
+  subnetIds: eksVpc.privateSubnetIds,
 }
 
 const nodeGroupAL2023V1 = new eks.NodeGroup("al-2023-v1-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
@@ -52,7 +53,7 @@ const nodeGroupAL2023V1 = new eks.NodeGroup("al-2023-v1-ng", {
 });
 
 const nodeGroupAL2023V1Storage = new eks.NodeGroup("al-2023-v1-storage-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
@@ -62,7 +63,7 @@ const nodeGroupAL2023V1Storage = new eks.NodeGroup("al-2023-v1-storage-ng", {
 });
 
 const nodeGroupAL2023V1Userdata = new eks.NodeGroup("al-2023-v1-userdata-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
@@ -72,7 +73,7 @@ const nodeGroupAL2023V1Userdata = new eks.NodeGroup("al-2023-v1-userdata-ng", {
 });
 
 const nodeGroupBottlerocketV1 = new eks.NodeGroup("bottlerocket-v1-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.Bottlerocket,
@@ -80,7 +81,7 @@ const nodeGroupBottlerocketV1 = new eks.NodeGroup("bottlerocket-v1-ng", {
 });
 
 const nodeGroupBottlerocketV1Storage = new eks.NodeGroup("bottlerocket-v1-storage-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.Bottlerocket,
@@ -90,7 +91,7 @@ const nodeGroupBottlerocketV1Storage = new eks.NodeGroup("bottlerocket-v1-storag
 });
 
 const nodeGroupBottlerocketV1Userdata = new eks.NodeGroup("bottlerocket-v1-userdata-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.Bottlerocket,
@@ -106,7 +107,7 @@ const nodeGroupBottlerocketV1Userdata = new eks.NodeGroup("bottlerocket-v1-userd
 });
 
 const nodeGroupAL2023 = new eks.NodeGroupV2("al-2023-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
@@ -115,7 +116,7 @@ const nodeGroupAL2023 = new eks.NodeGroupV2("al-2023-ng", {
 });
 
 const nodeGroupAL2023Storage = new eks.NodeGroupV2("al-2023-storage-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
@@ -125,7 +126,7 @@ const nodeGroupAL2023Storage = new eks.NodeGroupV2("al-2023-storage-ng", {
 });
 
 const nodeGroupAL2023Userdata = new eks.NodeGroupV2("al-2023-userdata-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
@@ -135,7 +136,7 @@ const nodeGroupAL2023Userdata = new eks.NodeGroupV2("al-2023-userdata-ng", {
 });
 
 const nodeGroupAL2023Arm = new eks.NodeGroupV2("al-2023-ng-arm", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t4g.medium",
   operatingSystem: eks.OperatingSystem.AL2023,
@@ -144,7 +145,7 @@ const nodeGroupAL2023Arm = new eks.NodeGroupV2("al-2023-ng-arm", {
 });
 
 const nodeGroupBottlerocket = new eks.NodeGroupV2("bottlerocket-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.Bottlerocket,
@@ -153,7 +154,7 @@ const nodeGroupBottlerocket = new eks.NodeGroupV2("bottlerocket-ng", {
 });
 
 const nodeGroupBottlerocketStorage = new eks.NodeGroupV2("bottlerocket-storage-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.Bottlerocket,
@@ -163,7 +164,7 @@ const nodeGroupBottlerocketStorage = new eks.NodeGroupV2("bottlerocket-storage-n
 });
 
 const nodeGroupBottlerocketArm = new eks.NodeGroupV2("bottlerocket-ng-arm", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t4g.medium",
   operatingSystem: eks.OperatingSystem.Bottlerocket,
@@ -172,7 +173,7 @@ const nodeGroupBottlerocketArm = new eks.NodeGroupV2("bottlerocket-ng-arm", {
 });
 
 const nodeGroupBottlerocketUserdata = new eks.NodeGroupV2("bottlerocket-userdata-ng", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   operatingSystem: eks.OperatingSystem.Bottlerocket,
@@ -188,7 +189,7 @@ const nodeGroupBottlerocketUserdata = new eks.NodeGroupV2("bottlerocket-userdata
 });
 
 const nodegroupWithSecurityGroupId = new eks.NodeGroup("ng-security-group-id", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   instanceProfile: instanceProfile,
@@ -197,7 +198,7 @@ const nodegroupWithSecurityGroupId = new eks.NodeGroup("ng-security-group-id", {
 });
 
 const nodegroupV2WithSecurityGroupId = new eks.NodeGroupV2("ng-security-group-id", {
-  ...capacity,
+  ...baseSettings,
   cluster: cluster,
   instanceType: "t3.medium",
   instanceProfile: instanceProfile,

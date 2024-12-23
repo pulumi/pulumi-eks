@@ -35,6 +35,7 @@ const managedNodeGroupAL2023 = eks.createManagedNodeGroup("al-2023-mng", {
   },
   cluster: cluster,
   nodeRole: role,
+  subnetIds: eksVpc.privateSubnetIds,
 });
 
 export const clusterSecurityGroup = cluster.clusterSecurityGroup;
