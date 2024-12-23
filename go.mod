@@ -16,7 +16,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/pulumi/providertest v0.1.3
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.66.1
-	github.com/pulumi/pulumi-eks/sdk/v3 v3.5.0
+	github.com/pulumi/pulumi-eks/sdk/v3 v3.6.0
 	github.com/pulumi/pulumi/pkg/v3 v3.144.1
 	github.com/pulumi/pulumi/sdk/v3 v3.144.1
 	github.com/stretchr/testify v1.9.0
