@@ -439,8 +439,8 @@ func TestAccCNIAcrossUpdates(t *testing.T) {
 	t.Log("Running `pulumi up` with v2.7.9 of the EKS provider")
 
 	pt := pulumitest.NewPulumiTest(t, "ensure-cni-upgrade", opttest.DownloadProviderVersion("eks", "2.7.9"), opttest.NewStackOptions(optnewstack.DisableAutoDestroy()))
-	pt.SetConfig("aws:region", region)
-	result := pt.Up()
+	pt.SetConfig(t, "aws:region", region)
+	result := pt.Up(t)
 
 	t.Log("Ensuring a kubeconfig output is present")
 	kcfg, ok := result.Outputs["kubeconfig"]
@@ -461,23 +461,23 @@ func TestAccCNIAcrossUpdates(t *testing.T) {
 		}
 	}))
 	assert.True(t, awsNodeContainerFound)
-	state := pt.ExportStack()
+	state := pt.ExportStack(t)
 
 	t.Log("Running `pulumi up` with the latest version of the EKS provider")
-	pt = pt.CopyToTempDir(
+	pt = pt.CopyToTempDir(t,
 		opttest.Defaults(),
 		opttest.NewStackOptions(optnewstack.EnableAutoDestroy()),
 		opttest.DownloadProviderVersion("eks", "2.7.9"),
 		opttest.LocalProviderPath("eks", filepath.Join(cwd, "..", "bin")),
 		opttest.YarnLink("@pulumi/eks"),
 	)
-	pt.SetConfig("aws:region", region)
-	pt.ImportStack(state)
+	pt.SetConfig(t, "aws:region", region)
+	pt.ImportStack(t, state)
 
-	prevResult := pt.Preview()
+	prevResult := pt.Preview(t)
 	assert.NotContains(t, prevResult.ChangeSummary, apitype.OpReplace, "Expected no resources to be replaced")
 
-	result = pt.Up()
+	result = pt.Up(t)
 
 	t.Log("Validating that the CNI manifests has been updated to the latest version")
 
@@ -495,7 +495,7 @@ func TestAccCNIAcrossUpdates(t *testing.T) {
 	})
 
 	t.Log("Ensuring that re-running `pulumi up` results in no changes and no spurious diffs")
-	pt.Up(optup.ExpectNoChanges())
+	pt.Up(t, optup.ExpectNoChanges())
 }
 
 func TestAccAuthenticationMode(t *testing.T) {
