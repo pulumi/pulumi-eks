@@ -8,7 +8,6 @@
       //
       // https://docs.renovatebot.com/configuration-options/#postupgradetasks
       postUpgradeTasks: {
-        fileFilters: ["go.mod", "nodejs/eks/package.json", "nodejs/eks/yarn.lock"],
         commands: ["make renovate"],
         executionMode: "branch", // Only run once.
       },
