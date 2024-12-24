@@ -306,8 +306,15 @@ const managedNodeGroupBottlerocketTaints = eks.createManagedNodeGroup("bottleroc
   },
 });
 
-// Create a simple AL2023 node group with a custom user data and a custom AMI
-const amiId = pulumi.interpolate`/aws/service/eks/optimized-ami/${cluster.core.cluster.version}/amazon-linux-2023/x86_64/standard/recommended/image_id`.apply(name =>
+// Fetch the previous minor version. This way we test that the user specified AMI is used instead of the default one.
+// MNGs tolerate a skew of 1 minor version
+export const customAmiId = pulumi.all([cluster.eksCluster.version]).apply(([version]) => {
+  const versionParts = version.split('.');
+  const majorVersion = parseInt(versionParts[0], 10);
+  const minorVersion = parseInt(versionParts[1], 10) - 1;
+  const versionString = `${majorVersion}.${minorVersion}`;
+  return pulumi.interpolate`/aws/service/eks/optimized-ami/${versionString}/amazon-linux-2023/x86_64/standard/recommended/image_id`;
+}).apply(name =>
   aws.ssm.getParameter({ name }, { async: true })
 ).apply(result => result.value);
 
@@ -318,6 +325,7 @@ const customUserData = userdata.createUserData({
   serviceCidr: cluster.core.cluster.kubernetesNetworkConfig.serviceIpv4Cidr,
 }, `--max-pods=${increasedPodCapacity} --node-labels=increased-pod-capacity=true`);
 
+// Create a simple AL2023 node group with a custom user data and a custom AMI
 const managedNodeGroupAL2023CustomUserData = eks.createManagedNodeGroup("al-2023-mng-custom-userdata", {
   ...baseConfig,
   operatingSystem: eks.OperatingSystem.AL2023,
@@ -326,7 +334,16 @@ const managedNodeGroupAL2023CustomUserData = eks.createManagedNodeGroup("al-2023
   nodeRole: role,
   diskSize: 100,
   userData: customUserData,
-  amiId,
+  amiId: customAmiId,
+});
+
+const managedNodeGroupAL2023CustomAmi = eks.createManagedNodeGroup("al-2023-mng-custom-ami", {
+  ...baseConfig,
+  operatingSystem: eks.OperatingSystem.AL2023,
+  cluster: cluster,
+  instanceTypes: ["t3.medium"],
+  nodeRole: role,
+  amiId: customAmiId,
 });
 
 const managedNodeGroupAL2023NodeadmExtraOptions = eks.createManagedNodeGroup("al-2023-mng-extra-options", {

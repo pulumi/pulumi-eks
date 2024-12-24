@@ -565,7 +565,7 @@ func validateCluster(t *testing.T, ctx context.Context, clusterName string, auth
 			err := RetryWithExponentialBackoff(ctx, 2*time.Second, func() error {
 				err := ValidateDeploymentHealth(t, clientset, deployment.Namespace, deployment.Name)
 				if err != nil {
-					t.Logf("Detected unhelathy deployment %q in namespace %q of cluster %s: %v", deployment.Name, deployment.Namespace, clusterName, err)
+					t.Logf("Detected unhealthy deployment %q in namespace %q of cluster %s: %v", deployment.Name, deployment.Namespace, clusterName, err)
 					labelSelector, selectorErr := findDeploymentLabelSelector(clientset, deployment.Namespace, deployment.Name, clusterName)
 					if selectorErr != nil {
 						return errors.Join(err, selectorErr)
@@ -586,7 +586,7 @@ func validateCluster(t *testing.T, ctx context.Context, clusterName string, auth
 			err := RetryWithExponentialBackoff(ctx, 2*time.Second, func() error {
 				err := ValidateDaemonSetHealth(t, clientset, daemonset.Namespace, daemonset.Name)
 				if err != nil {
-					t.Logf("Detected unhelathy daemonset %q in namespace %q of cluster %s: %v", daemonset.Name, daemonset.Namespace, clusterName, err)
+					t.Logf("Detected unhealthy daemonset %q in namespace %q of cluster %s: %v", daemonset.Name, daemonset.Namespace, clusterName, err)
 					labelSelector, selectorErr := findDaemonSetLabelSelector(clientset, daemonset.Namespace, daemonset.Name, clusterName)
 					if selectorErr != nil {
 						return errors.Join(err, selectorErr)
@@ -736,6 +736,36 @@ func mapClusterToNodeGroups(resources []apitype.ResourceV3) (clusterNodeGroupMap
 // Examples: i-1234567f, i-0123456789abcdef0
 var eC2InstanceIDPattern = regexp.MustCompile(`^i-[a-f0-9]{8,17}$`)
 
+// GetEC2InstanceIDs extracts the EC2 instance IDs from the given list of nodes.
+// It returns a map of instance IDs to nodes.
+func GetEC2InstanceIDs(nodes *corev1.NodeList) map[string]*corev1.Node {
+	if nodes == nil {
+		return nil
+	}
+
+	instanceIDToNode := make(map[string]*corev1.Node)
+
+	// Extract instance IDs from all nodes
+	for i := range nodes.Items {
+		node := &nodes.Items[i]
+		// Extract EC2 instance ID from node provider ID
+		// Provider ID format: aws:///az/i-1234567890abcdef0
+		providerID := node.Spec.ProviderID
+		instanceID := strings.TrimPrefix(providerID, "aws:///")
+		instanceID = strings.TrimPrefix(instanceID, strings.Split(instanceID, "/")[0]+"/")
+
+		// the list of k8s nodes can include nodes that are not EC2 instances (e.g. Fargate),
+		// those are not part of any ASGs. We already validated that all nodes are ready, so we can
+		// skip the nodes that are not EC2 instances. Their ID is not valid input to the
+		// DescribeAutoScalingInstances API used later and would cause an error.
+		if eC2InstanceIDPattern.MatchString(instanceID) {
+			instanceIDToNode[instanceID] = node
+		}
+	}
+
+	return instanceIDToNode
+}
+
 // ValidateNodeGroupInstances validates that all nodes in the cluster are healthy and have successfully joined.
 // It checks that each ASG has the expected number of instances and that all instances are properly registered as nodes.
 func ValidateNodeGroupInstances(t *testing.T, clientset *kubernetes.Clientset, asgClient *autoscaling.Client, ec2Client *ec2.Client, clusterName string, expectedNodeGroups map[string]nodeGroupData) error {
@@ -774,26 +804,11 @@ func ValidateNodeGroupInstances(t *testing.T, clientset *kubernetes.Clientset, a
 	}
 
 	asgInstanceCounts := make(map[string]int)
-	instanceIDs := make([]string, 0, len(nodes.Items))
-	instanceIDToNode := make(map[string]*corev1.Node)
 
-	// Extract instance IDs from all nodes
-	for i := range nodes.Items {
-		node := &nodes.Items[i]
-		// Extract EC2 instance ID from node provider ID
-		// Provider ID format: aws:///az/i-1234567890abcdef0
-		providerID := node.Spec.ProviderID
-		instanceID := strings.TrimPrefix(providerID, "aws:///")
-		instanceID = strings.TrimPrefix(instanceID, strings.Split(instanceID, "/")[0]+"/")
-
-		// the list of k8s nodes can include nodes that are not EC2 instances (e.g. Fargate),
-		// those are not part of any ASGs. We already validated that all nodes are ready, so we can
-		// skip the nodes that are not EC2 instances. Their ID is not valid input to the
-		// DescribeAutoScalingInstances API used later and would cause an error.
-		if eC2InstanceIDPattern.MatchString(instanceID) {
-			instanceIDs = append(instanceIDs, instanceID)
-			instanceIDToNode[instanceID] = node
-		}
+	instanceIDToNode := GetEC2InstanceIDs(nodes)
+	instanceIDs := make([]string, 0, len(instanceIDToNode))
+	for instanceID := range instanceIDToNode {
+		instanceIDs = append(instanceIDs, instanceID)
 	}
 
 	// For each node, get its EC2 instance ID, find which ASG it belongs to and verify that EC2 reports the instance as running.
@@ -862,6 +877,70 @@ func ValidateNodeGroupInstances(t *testing.T, clientset *kubernetes.Clientset, a
 	t.Logf("All node groups of cluster %s are healthy and have the expected number of instances", clusterName)
 
 	return nil
+}
+
+// FindNodesWithAmiID finds the nodes in a cluster that have the given AMI ID.
+// It returns a list of EC2 instance IDs.
+func FindNodesWithAmiID(t *testing.T, kubeconfig any, amiID string) ([]string, error) {
+	clientSet, err := clientSetFromKubeconfig(kubeconfig)
+	if err != nil {
+		return nil, err
+	}
+
+	nodes, err := clientSet.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	instanceIDToNode := GetEC2InstanceIDs(nodes)
+	if len(instanceIDToNode) == 0 {
+		return nil, nil
+	}
+
+	var region string
+	var profile string
+	if p, ok := os.LookupEnv("AWS_PROFILE"); ok {
+		profile = p
+	}
+	if r, ok := os.LookupEnv("AWS_REGION"); ok {
+		region = r
+	}
+	awsConfig := loadAwsDefaultConfig(t, region, profile)
+	ec2Client := ec2.NewFromConfig(awsConfig)
+
+	nodesWithAmiID := make([]string, 0, len(instanceIDToNode))
+	// Process instance IDs in batches of 255 (AWS API limit)
+	instanceIDs := make([]string, 0, len(instanceIDToNode))
+	for id := range instanceIDToNode {
+		instanceIDs = append(instanceIDs, id)
+	}
+
+	// Describe instances in batches of 255 (AWS API limit)
+	for i := 0; i < len(instanceIDs); i += 255 {
+		end := i + 255
+		if end > len(instanceIDs) {
+			end = len(instanceIDs)
+		}
+
+		batch := instanceIDs[i:end]
+		describeInput := &ec2.DescribeInstancesInput{
+			InstanceIds: batch,
+		}
+		describeResult, err := ec2Client.DescribeInstances(context.TODO(), describeInput)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, reservation := range describeResult.Reservations {
+			for _, instance := range reservation.Instances {
+				if *instance.ImageId == amiID {
+					nodesWithAmiID = append(nodesWithAmiID, *instance.InstanceId)
+				}
+			}
+		}
+	}
+
+	return nodesWithAmiID, nil
 }
 
 // ValidateNodes validates the nodes in a cluster contain the expected values.
