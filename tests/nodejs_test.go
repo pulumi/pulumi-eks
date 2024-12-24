@@ -17,6 +17,7 @@
 package tests
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path"
@@ -651,6 +652,23 @@ func TestAccManagedNodeGroupOS(t *testing.T) {
 					}
 					assert.Equal(t, 2, foundNodes, "Expected %s nodes with Nvidia GPUs", foundNodes)
 				}))
+
+				// Validate that the nodes with the custom AMI ID are present
+				customAmiId := info.Outputs["customAmiId"].(string)
+				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+				defer cancel()
+				err := utils.RetryWithExponentialBackoff(ctx, 10*time.Second, func() error {
+					nodes, err := utils.FindNodesWithAmiID(t, info.Outputs["kubeconfig"], customAmiId)
+					if err != nil {
+						return err
+					}
+					t.Logf("Found %d nodes with custom AMI ID: %v", len(nodes), nodes)
+					if len(nodes) != 2 {
+						return fmt.Errorf("expected 2 nodes with custom AMI ID, got %d", len(nodes))
+					}
+					return nil
+				})
+				require.NoError(t, err)
 			},
 		})
 
