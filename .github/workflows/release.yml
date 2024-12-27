@@ -140,7 +140,7 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-      - uses: pulumi/provider-version-action@7c54f136703646f7d6eaa3d3b3c877e5a805d6ab # v1
+      - uses: pulumi/provider-version-action@0391d47b9b0d865d33dd0a295b1fcf9f7021dd4c # v1.5.3
         id: provider-version
         with:
           set-env: "PROVIDER_VERSION"
