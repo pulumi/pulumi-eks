@@ -2113,7 +2113,7 @@ export function createManagedNodeGroupInternal(
     // amiType, releaseVersion and version cannot be set if an AMI ID is set in a custom launch template.
     // The AMI ID is set in the launch template if custom user data is required.
     // See https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#mng-ami-id-conditions
-    if (requiresCustomUserData(userDataArgs) || args.userData) {
+    if (requiresCustomUserData(userDataArgs) || args.userData || args.amiId) {
         delete nodeGroupArgs.version;
         delete nodeGroupArgs.releaseVersion;
         delete nodeGroupArgs.amiType;
@@ -2228,7 +2228,9 @@ function createMNGCustomLaunchTemplate(
         });
 
     let userData: pulumi.Output<string> | undefined;
-    if (requiresCustomUserData(customUserDataArgs) || args.userData) {
+    // when amiId is provided, we need to create a custom user data script because
+    // EKS will not provide default user data when an AMI ID is provided.
+    if (requiresCustomUserData(customUserDataArgs) || args.userData || args.amiId) {
         userData = pulumi
             .all([
                 clusterMetadata,
