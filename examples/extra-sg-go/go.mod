@@ -5,8 +5,8 @@ go 1.21.12
 toolchain go1.23.1
 
 require (
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.66.1
-	github.com/pulumi/pulumi-eks/sdk/v3 v3.6.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.66.2
+	github.com/pulumi/pulumi-eks/sdk/v3 v3.7.0
 	github.com/pulumi/pulumi/sdk/v3 v3.144.1
 )
 

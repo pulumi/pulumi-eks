@@ -3,7 +3,7 @@ module github.com/pulumi/pulumi-eks/examples/aws-go-eks-helloworld
 go 1.21
 
 require (
-	github.com/pulumi/pulumi-eks/sdk/v3 v3.6.0
+	github.com/pulumi/pulumi-eks/sdk/v3 v3.7.0
 	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.19.0
 	github.com/pulumi/pulumi/sdk/v3 v3.144.1
 )
