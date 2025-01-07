@@ -147,7 +147,8 @@ install_java_sdk::
 	#Intentionally empty for CI / CD templating
 
 nodejs/eks/node_modules: nodejs/eks/package.json nodejs/eks/yarn.lock
-	yarn install --cwd nodejs/eks --no-progress
+	yarn install --frozen-lockfile --cwd nodejs/eks --no-progress
+	cd nodejs/eks && yarn run check-duplicate-deps
 	@touch nodejs/eks/node_modules
 
 nodejs/eks/bin: nodejs/eks/node_modules ${EKS_SRC}
