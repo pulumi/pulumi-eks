@@ -661,8 +661,8 @@ export function resolveInstanceProfileName(
     parent: pulumi.ComponentResource,
 ): pulumi.Output<string> {
     if (
-        (args.instanceProfile || c.nodeGroupOptions.instanceProfile) &&
-        (args.instanceProfileName || c.nodeGroupOptions.instanceProfileName)
+        (args.instanceProfile || c.nodeGroupOptions?.instanceProfile) &&
+        (args.instanceProfileName || c.nodeGroupOptions?.instanceProfileName)
     ) {
         throw new pulumi.ResourceError(
             `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
@@ -674,9 +674,9 @@ export function resolveInstanceProfileName(
         return args.instanceProfile.name;
     } else if (args.instanceProfileName) {
         return pulumi.output(args.instanceProfileName);
-    } else if (c.nodeGroupOptions.instanceProfile) {
+    } else if (c.nodeGroupOptions?.instanceProfile) {
         return c.nodeGroupOptions.instanceProfile.name;
-    } else if (c.nodeGroupOptions.instanceProfileName) {
+    } else if (c.nodeGroupOptions?.instanceProfileName) {
         return pulumi.output(c.nodeGroupOptions.instanceProfileName!);
     } else {
         throw new pulumi.ResourceError(
