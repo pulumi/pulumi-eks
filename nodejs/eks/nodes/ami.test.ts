@@ -46,29 +46,29 @@ describe("toAmiType", () => {
 });
 describe("getOperatingSystem", () => {
     test("should return the provided operating system if available", () => {
-        const operatingSystem = getOperatingSystem(undefined, OperatingSystem.AL2023, undefined);
+        const operatingSystem = getOperatingSystem(undefined, OperatingSystem.AL2023);
         expect(operatingSystem).toBe(OperatingSystem.AL2023);
     });
 
     test("should return the default operating system if no AMI type or operating system is provided", () => {
-        const operatingSystem = getOperatingSystem(undefined, undefined, undefined);
+        const operatingSystem = getOperatingSystem(undefined, undefined);
         expect(operatingSystem).toBe(DEFAULT_OS);
     });
 
     test("should resolve the operating system based on the provided AMI type", () => {
-        const operatingSystem = getOperatingSystem("AL2023_ARM_64_STANDARD", undefined, undefined);
+        const operatingSystem = getOperatingSystem("AL2023_ARM_64_STANDARD", undefined);
         expect(operatingSystem).toBe(OperatingSystem.AL2023);
     });
 
     test("should throw an error for unknown AMI type", () => {
         expect(() => {
-            getOperatingSystem("unknown-ami-type", undefined, undefined);
+            getOperatingSystem("unknown-ami-type", undefined);
         }).toThrow("Cannot determine OS of unknown AMI type: unknown-ami-type");
     });
 
     test("should throw an error if the operating system does not match the AMI type", () => {
         expect(() => {
-            getOperatingSystem("AL2023_ARM_64_STANDARD", OperatingSystem.Bottlerocket, undefined);
+            getOperatingSystem("AL2023_ARM_64_STANDARD", OperatingSystem.Bottlerocket);
         }).toThrow(
             "Operating system 'Bottlerocket' does not match the detected operating system 'AL2023' of AMI type 'AL2023_ARM_64_STANDARD'.",
         );

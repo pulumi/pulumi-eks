@@ -200,7 +200,6 @@ export function toAmiType(str: string): AmiType | undefined {
 export function getOperatingSystem(
     amiType: string | undefined,
     operatingSystem: OperatingSystem | undefined,
-    parent: pulumi.Resource | undefined,
 ): OperatingSystem {
     if (operatingSystem && !amiType) {
         return operatingSystem;
@@ -210,20 +209,20 @@ export function getOperatingSystem(
 
     const resolvedAmiType = toAmiType(amiType);
     if (!resolvedAmiType) {
-        throw new pulumi.ResourceError(
-            `Cannot determine OS of unknown AMI type: ${amiType}`,
-            parent,
-        );
+        throw new pulumi.InputPropertyError({
+            propertyPath: "amiType",
+            reason: `Cannot determine OS of unknown AMI type: ${amiType}`,
+        });
     }
 
     const resolvedOs = getAmiMetadata(resolvedAmiType).os;
 
     // if users provided both OS and AMI type, we should check if they match
     if (operatingSystem && operatingSystem !== resolvedOs) {
-        throw new pulumi.ResourceError(
-            `Operating system '${operatingSystem}' does not match the detected operating system '${resolvedOs}' of AMI type '${amiType}'.`,
-            parent,
-        );
+        throw new pulumi.InputPropertyError({
+            propertyPath: "operatingSystem",
+            reason: `Operating system '${operatingSystem}' does not match the detected operating system '${resolvedOs}' of AMI type '${amiType}'.`,
+        });
     }
 
     return resolvedOs;

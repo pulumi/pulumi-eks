@@ -307,40 +307,40 @@ const nonGravitonInstances = [
 describe("isGravitonInstance", () => {
     gravitonInstances.forEach((instanceType) => {
         test(`${instanceType} should return true for a Graviton instance`, () => {
-            expect(isGravitonInstance(instanceType, undefined)).toBe(true);
+            expect(isGravitonInstance(instanceType, "instanceTypes")).toBe(true);
         });
     });
 
     nonGravitonInstances.forEach((instanceType) => {
         test(`${instanceType} should return false for non-Graviton instance`, () => {
-            expect(isGravitonInstance(instanceType, undefined)).toBe(false);
+            expect(isGravitonInstance(instanceType, "instanceTypes")).toBe(false);
         });
     });
     describe("getArchitecture", () => {
         test("should return 'x86_64' when only x86_64 instances are provided", () => {
             const instanceTypes = ["c5.large", "m5.large", "t3.large"];
-            const architecture = getArchitecture(instanceTypes, undefined);
+            const architecture = getArchitecture(instanceTypes, "instanceTypes");
             expect(architecture).toBe("x86_64");
         });
 
         test("should return 'arm64' when only arm64 instances are provided", () => {
             const instanceTypes = ["c6g.large", "m6g.large", "t4g.large"];
-            const architecture = getArchitecture(instanceTypes, undefined);
+            const architecture = getArchitecture(instanceTypes, "instanceTypes");
             expect(architecture).toBe("arm64");
         });
 
         test("should throw an error when both x86_64 and arm64 instances are provided", () => {
             const instanceTypes = ["c5.large", "c6g.large"];
             expect(() => {
-                getArchitecture(instanceTypes, undefined);
-            }).toThrowError(
+                getArchitecture(instanceTypes, "instanceTypes");
+            }).toThrow(
                 "Cannot determine architecture of instance types. The provided instance types do not share a common architecture",
             );
         });
 
         test("should return 'x86_64' when no instance types are provided", () => {
             const instanceTypes: string[] = [];
-            const architecture = getArchitecture(instanceTypes, undefined);
+            const architecture = getArchitecture(instanceTypes, "instanceTypes");
             expect(architecture).toBe("x86_64");
         });
     });
@@ -490,7 +490,6 @@ describe("resolveInstanceProfileName", function () {
                 {
                     nodeGroupOptions: {},
                 } as pulumi.UnwrappedObject<CoreData>,
-                undefined as any,
             ),
         ).toThrowError("an instanceProfile or instanceProfileName is required");
     });
@@ -508,9 +507,8 @@ describe("resolveInstanceProfileName", function () {
                 {
                     nodeGroupOptions: {},
                 } as pulumi.UnwrappedObject<CoreData>,
-                undefined as any,
             ),
-        ).toThrowError(
+        ).toThrow(
             `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
         );
     });
@@ -528,9 +526,8 @@ describe("resolveInstanceProfileName", function () {
                         instanceProfileName: "instanceProfileName",
                     },
                 } as pulumi.UnwrappedObject<CoreData>,
-                undefined as any,
             ),
-        ).toThrowError(
+        ).toThrow(
             `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
         );
     });
@@ -548,7 +545,6 @@ describe("resolveInstanceProfileName", function () {
             {
                 nodeGroupOptions: {},
             } as pulumi.UnwrappedObject<CoreData>,
-            undefined as any,
         );
         const expected = await promisify(instanceProfile.name);
         const recieved = await promisify(resolvedInstanceProfileName);
@@ -568,7 +564,6 @@ describe("resolveInstanceProfileName", function () {
                     instanceProfile: instanceProfile,
                 },
             } as pulumi.UnwrappedObject<CoreData>,
-            undefined as any,
         );
         const expected = await promisify(instanceProfile.name);
         const recieved = await promisify(resolvedInstanceProfileName);
@@ -586,7 +581,6 @@ describe("resolveInstanceProfileName", function () {
             {
                 nodeGroupOptions: {},
             } as pulumi.UnwrappedObject<CoreData>,
-            undefined as any,
         );
         const expected = existingInstanceProfileName;
         const received = await promisify(resolvedInstanceProfileName);
@@ -604,7 +598,6 @@ describe("resolveInstanceProfileName", function () {
                     instanceProfileName: existingInstanceProfileName,
                 },
             } as pulumi.UnwrappedObject<CoreData>,
-            undefined as any,
         );
         const expected = existingInstanceProfileName;
         const received = await promisify(resolvedInstanceProfileName);
