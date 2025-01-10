@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { ClusterCreationRoleProvider, ClusterInternal } from "../../cluster";
+import { ClusterCreationRoleProvider, Cluster } from "../../cluster";
 
 const clusterProvider: pulumi.provider.Provider = {
     construct: (
@@ -23,7 +23,7 @@ const clusterProvider: pulumi.provider.Provider = {
         options: pulumi.ComponentResourceOptions,
     ) => {
         try {
-            const cluster = new ClusterInternal(name, inputs, options);
+            const cluster = new Cluster(name, inputs, options);
             return Promise.resolve({
                 urn: cluster.urn,
                 state: {

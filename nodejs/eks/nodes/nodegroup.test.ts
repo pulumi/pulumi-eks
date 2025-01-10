@@ -17,7 +17,7 @@ import * as aws from "@pulumi/aws";
 
 import { isGravitonInstance, resolveInstanceProfileName } from "./nodegroup";
 import { getArchitecture } from "./nodegroup";
-import { Cluster as ClusterComponent, CoreData } from "./cluster";
+import { CoreData } from "../cluster";
 
 const gravitonInstances = [
     "c6g.12xlarge",
@@ -375,7 +375,7 @@ describe("createManagedNodeGroup", function () {
     });
 
     test("should default to the cluster version if no version is provided", async () => {
-        const mng = ng.createManagedNodeGroupInternal(
+        const mng = ng.createManagedNodeGroup(
             "test",
             {
                 nodeRoleArn: pulumi.output("nodeRoleArn"),
@@ -397,7 +397,7 @@ describe("createManagedNodeGroup", function () {
     });
 
     test("should use user defined version if provided", async () => {
-        const mng = ng.createManagedNodeGroupInternal(
+        const mng = ng.createManagedNodeGroup(
             "test",
             {
                 nodeRoleArn: pulumi.output("nodeRoleArn"),
@@ -420,7 +420,7 @@ describe("createManagedNodeGroup", function () {
     });
 
     test("should not default the version if a custom launch template is configured", async () => {
-        const mng = ng.createManagedNodeGroupInternal(
+        const mng = ng.createManagedNodeGroup(
             "test",
             {
                 nodeRoleArn: pulumi.output("nodeRoleArn"),

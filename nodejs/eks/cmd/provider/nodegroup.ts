@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { ManagedNodeGroupInternal, NodeGroupInternal, NodeGroupV2Internal } from "../../nodegroup";
+import { ManagedNodeGroup, NodeGroup, NodeGroupV2 } from "../../nodes";
 
 const nodeGroupProvider: pulumi.provider.Provider = {
     construct: (
@@ -23,7 +23,7 @@ const nodeGroupProvider: pulumi.provider.Provider = {
         options: pulumi.ComponentResourceOptions,
     ) => {
         try {
-            const nodegroup = new NodeGroupInternal(name, <any>inputs, options);
+            const nodegroup = new NodeGroup(name, <any>inputs, options);
             return Promise.resolve({
                 urn: nodegroup.urn,
                 state: {
@@ -54,7 +54,7 @@ const managedNodeGroupProvider: pulumi.provider.Provider = {
         options: pulumi.ComponentResourceOptions,
     ) => {
         try {
-            const nodegroup = new ManagedNodeGroupInternal(name, <any>inputs, options);
+            const nodegroup = new ManagedNodeGroup(name, <any>inputs, options);
             return Promise.resolve({
                 urn: nodegroup.urn,
                 state: {
@@ -81,7 +81,7 @@ const nodeGroupV2Provider: pulumi.provider.Provider = {
         options: pulumi.ComponentResourceOptions,
     ) => {
         try {
-            const nodegroup = new NodeGroupV2Internal(name, <any>inputs, options);
+            const nodegroup = new NodeGroupV2(name, <any>inputs, options);
             return Promise.resolve({
                 urn: nodegroup.urn,
                 state: {

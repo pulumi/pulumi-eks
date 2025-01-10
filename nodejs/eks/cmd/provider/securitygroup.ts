@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { NodeGroupSecurityGroup } from "../../securitygroup";
+import { NodeGroupSecurityGroup } from "../../nodes";
 
 const nodeGroupSecurityGroupProvider: pulumi.provider.Provider = {
     construct: (
