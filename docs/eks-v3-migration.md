@@ -133,7 +133,7 @@ const newToOld = new aws.vpc.SecurityGroupIngressRule("newToOld", {
 
     **For Managed Node Groups:**
 
-    Take a not of the node group name and then run the following kubectl command, replacing `$NODE_GROUP_NAME` with the actual name of the node group:
+    Take a note of the node group name and then run the following kubectl command, replacing `$NODE_GROUP_NAME` with the actual name of the node group:
 
     ```bash
     kubectl get nodes -l eks.amazonaws.com/nodegroup=$NODE_GROUP_NAME -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}'
