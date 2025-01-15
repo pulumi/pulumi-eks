@@ -2187,7 +2187,6 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					"@pulumi/aws":        "^" + dependencies.Aws,
 					"@pulumi/kubernetes": "^" + dependencies.Kubernetes,
 					"https-proxy-agent":  "^5.0.1",
-					"jest":               "^29.7.0",
 					"js-yaml":            "^4.1.0",
 					"netmask":            "^2.0.2",
 					"semver":             "^7.3.7",
