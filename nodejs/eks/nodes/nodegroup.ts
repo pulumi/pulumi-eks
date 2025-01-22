@@ -587,9 +587,7 @@ function createNodeGroup(
 ): NodeGroupData {
     const validationErrors: pulumi.InputPropertyErrorDetails[] = [];
 
-    const instanceProfileName = core.apply((c) =>
-        resolveInstanceProfileName(name, args, c),
-    );
+    const instanceProfileName = core.apply((c) => resolveInstanceProfileName(name, args, c));
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         validationErrors.push({
@@ -616,7 +614,9 @@ function createNodeGroup(
             if (coreSecurityGroup && nodeSecurityGroup) {
                 if (sgTags && coreSecurityGroup !== nodeSecurityGroup) {
                     throw new pulumi.InputPropertyError({
-                        propertyPath: args.nodeSecurityGroup ? "nodeSecurityGroup" : "nodeSecurityGroupId",
+                        propertyPath: args.nodeSecurityGroup
+                            ? "nodeSecurityGroup"
+                            : "nodeSecurityGroupId",
                         reason: `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
                     });
                 }
@@ -1065,9 +1065,7 @@ export function createNodeGroupV2(
 ): NodeGroupV2Data {
     const validationErrors: pulumi.InputPropertyErrorDetails[] = [];
 
-    const instanceProfileName = core.apply((c) =>
-        resolveInstanceProfileName(name, args, c),
-    );
+    const instanceProfileName = core.apply((c) => resolveInstanceProfileName(name, args, c));
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         validationErrors.push({
@@ -1998,7 +1996,13 @@ export function createManagedNodeGroup(
     } else if (amiType === undefined && args.operatingSystem !== undefined) {
         // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
 
-        amiType = determineAmiType(args.operatingSystem, args.gpu, args.instanceTypes, "instanceTypes", parent);
+        amiType = determineAmiType(
+            args.operatingSystem,
+            args.gpu,
+            args.instanceTypes,
+            "instanceTypes",
+            parent,
+        );
     }
 
     const ignoreScalingChanges = args.ignoreScalingChanges
@@ -2270,10 +2274,10 @@ function getRecommendedAMI(
         ? pulumi.output(args.amiType).apply((amiType) => {
               const resolvedType = toAmiType(amiType);
               if (resolvedType === undefined) {
-                throw new pulumi.InputPropertyError({
-                    propertyPath: "amiType",
-                    reason: `Cannot resolve recommended AMI for AMI type: ${amiType}. Please provide the AMI ID and userdata.`,
-                });
+                  throw new pulumi.InputPropertyError({
+                      propertyPath: "amiType",
+                      reason: `Cannot resolve recommended AMI for AMI type: ${amiType}. Please provide the AMI ID and userdata.`,
+                  });
               }
               return resolvedType;
           })
@@ -2308,10 +2312,7 @@ const ec2InstanceRegex = /([a-z]+)([0-9]+)([a-z])?\-?([a-z]+)?\.([a-zA-Z0-9\-]+)
  *
  * See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html.
  */
-export function isGravitonInstance(
-    instanceType: string,
-    propertyPath: string,
-): boolean {
+export function isGravitonInstance(instanceType: string, propertyPath: string): boolean {
     const match = instanceType.toString().match(ec2InstanceRegex);
     if (!match) {
         throw new pulumi.InputPropertyError({
@@ -2354,10 +2355,7 @@ function determineAmiType(
  * @returns The architecture of the instance types, either "arm64" or "x86_64".
  * @throws {pulumi.InputPropertyError} If the provided instance types do not share a common architecture.
  */
-export function getArchitecture(
-    instanceTypes: string[],
-    propertyPath: string,
-): CpuArchitecture {
+export function getArchitecture(instanceTypes: string[], propertyPath: string): CpuArchitecture {
     let hasGravitonInstances = false;
     let hasX64Instances = false;
 
