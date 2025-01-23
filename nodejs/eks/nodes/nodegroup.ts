@@ -548,7 +548,6 @@ export type NodeGroupV2Args = Omit<NodeGroupV2Options, "cluster"> & {
 };
 
 export function resolveInstanceProfileName(
-    name: string,
     args: Omit<NodeGroupOptions, "cluster">,
     c: pulumi.UnwrappedObject<CoreData>,
 ): pulumi.Output<string> {
@@ -558,7 +557,7 @@ export function resolveInstanceProfileName(
     ) {
         throw new pulumi.InputPropertyError({
             propertyPath: "instanceProfile",
-            reason: `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
+            reason: `instanceProfile and instanceProfileName are mutually exclusive`,
         });
     }
 
@@ -587,19 +586,19 @@ function createNodeGroup(
 ): NodeGroupData {
     const validationErrors: pulumi.InputPropertyErrorDetails[] = [];
 
-    const instanceProfileName = core.apply((c) => resolveInstanceProfileName(name, args, c));
+    const instanceProfileName = core.apply((c) => resolveInstanceProfileName(args, c));
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         validationErrors.push({
             propertyPath: "clusterIngressRule",
-            reason: `invalid args for node group ${name}, clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
+            reason: `clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
         });
     }
 
     if (args.nodeSecurityGroup && args.nodeSecurityGroupId) {
         validationErrors.push({
             propertyPath: "nodeSecurityGroup",
-            reason: `invalid args for node group ${name}, nodeSecurityGroup and nodeSecurityGroupId are mutually exclusive`,
+            reason: `nodeSecurityGroup and nodeSecurityGroupId are mutually exclusive`,
         });
     }
 
@@ -1065,7 +1064,7 @@ export function createNodeGroupV2(
 ): NodeGroupV2Data {
     const validationErrors: pulumi.InputPropertyErrorDetails[] = [];
 
-    const instanceProfileName = core.apply((c) => resolveInstanceProfileName(name, args, c));
+    const instanceProfileName = core.apply((c) => resolveInstanceProfileName(args, c));
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
         validationErrors.push({

@@ -484,10 +484,10 @@ describe("resolveInstanceProfileName", function () {
 
     test("no args, no c.nodeGroupOptions throws", async () => {
         expect(() =>
-            resolveInstanceProfileName("nodegroup-name", {}, {
+            resolveInstanceProfileName({}, {
                 nodeGroupOptions: {},
             } as pulumi.UnwrappedObject<CoreData>),
-        ).toThrowError("an instanceProfile or instanceProfileName is required");
+        ).toThrow("an instanceProfile or instanceProfileName is required");
     });
 
     test("both args.instanceProfile and args.instanceProfileName throws", async () => {
@@ -495,7 +495,6 @@ describe("resolveInstanceProfileName", function () {
         const name = "nodegroup-name";
         expect(() =>
             resolveInstanceProfileName(
-                name,
                 {
                     instanceProfile: instanceProfile,
                     instanceProfileName: "instanceProfileName",
@@ -504,33 +503,27 @@ describe("resolveInstanceProfileName", function () {
                     nodeGroupOptions: {},
                 } as pulumi.UnwrappedObject<CoreData>,
             ),
-        ).toThrow(
-            `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
-        );
+        ).toThrow(`instanceProfile and instanceProfileName are mutually exclusive`);
     });
 
     test("both c.nodeGroupOptions.instanceProfileName and c.nodeGroupOptions.instanceProfile throws", async () => {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {});
         const name = "nodegroup-name";
         expect(() =>
-            resolveInstanceProfileName(name, {}, {
+            resolveInstanceProfileName({}, {
                 nodeGroupOptions: {
                     instanceProfile: instanceProfile,
                     instanceProfileName: "instanceProfileName",
                 },
             } as pulumi.UnwrappedObject<CoreData>),
-        ).toThrow(
-            `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
-        );
+        ).toThrow(`instanceProfile and instanceProfileName are mutually exclusive`);
     });
 
     test("args.instanceProfile returns passed instanceProfile", async () => {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
             name: "passedInstanceProfile",
         });
-        const nodeGroupName = "nodegroup-name";
         const resolvedInstanceProfileName = resolveInstanceProfileName(
-            nodeGroupName,
             {
                 instanceProfile: instanceProfile,
             },
@@ -547,8 +540,7 @@ describe("resolveInstanceProfileName", function () {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
             name: "passedInstanceProfile",
         });
-        const nodeGroupName = "nodegroup-name";
-        const resolvedInstanceProfileName = resolveInstanceProfileName(nodeGroupName, {}, {
+        const resolvedInstanceProfileName = resolveInstanceProfileName({}, {
             nodeGroupOptions: {
                 instanceProfile: instanceProfile,
             },
@@ -559,10 +551,9 @@ describe("resolveInstanceProfileName", function () {
     });
 
     test("args.instanceProfileName returns passed InstanceProfile", async () => {
-        const nodeGroupName = "nodegroup-name";
+        const nodeGroupName = "-name";
         const existingInstanceProfileName = "existingInstanceProfileName";
         const resolvedInstanceProfileName = resolveInstanceProfileName(
-            nodeGroupName,
             {
                 instanceProfileName: existingInstanceProfileName,
             },
@@ -576,9 +567,8 @@ describe("resolveInstanceProfileName", function () {
     });
 
     test("nodeGroupOptions.instanceProfileName returns existing InstanceProfile", async () => {
-        const nodeGroupName = "nodegroup-name";
         const existingInstanceProfileName = "existingInstanceProfileName";
-        const resolvedInstanceProfileName = resolveInstanceProfileName(nodeGroupName, {}, {
+        const resolvedInstanceProfileName = resolveInstanceProfileName({}, {
             nodeGroupOptions: {
                 instanceProfileName: existingInstanceProfileName,
             },
