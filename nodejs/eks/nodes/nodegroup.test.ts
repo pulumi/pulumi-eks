@@ -444,6 +444,37 @@ describe("createManagedNodeGroup", function () {
 
         expect(configuredVersion).toBeUndefined();
     });
+
+    test("should throw an error if placementGroupAvailabilityZone is not provided when enabling EFA support", async () => {
+        expect(() => {
+            ng.createManagedNodeGroup(
+                "test",
+                {
+                    nodeRoleArn: pulumi.output("nodeRoleArn"),
+                    enableEfaSupport: true,
+                },
+                pulumi.output({
+                    cluster: {
+                        version: pulumi.output("1.30"),
+                        accessConfig: pulumi.output({
+                            authenticationMode: "API",
+                        }),
+                    } as aws.eks.Cluster,
+                } as CoreData),
+                undefined as any,
+            );
+        }).toThrow(
+            new pulumi.InputPropertiesError({
+                message: "The input properties for the managed node group are invalid.",
+                errors: [
+                    {
+                        propertyPath: "placementGroupAvailabilityZone",
+                        reason: "You must specify placementGroupAvailabilityZone when enabling EFA support.",
+                    },
+                ],
+            }),
+        );
+    });
 });
 
 describe("resolveInstanceProfileName", function () {
