@@ -33,6 +33,7 @@ class ManagedNodeGroupArgs:
                  capacity_type: Optional[pulumi.Input[str]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
+                 enable_efa_support: Optional[bool] = None,
                  enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
@@ -47,6 +48,7 @@ class ManagedNodeGroupArgs:
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
+                 placement_group_availability_zone: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
                  remote_access: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs']] = None,
                  scaling_config: Optional[pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs']] = None,
@@ -84,6 +86,7 @@ class ManagedNodeGroupArgs:
         :param pulumi.Input[str] capacity_type: Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
+        :param bool enable_efa_support: Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
         :param bool enable_imd_sv2: Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
                Defaults to `false`.
                
@@ -128,6 +131,7 @@ class ManagedNodeGroupArgs:
                Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
                
                Defaults to the current recommended OS.
+        :param pulumi.Input[str] placement_group_availability_zone: The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
         :param pulumi.Input[str] release_version: AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
         :param pulumi.Input['pulumi_aws.eks.NodeGroupRemoteAccessArgs'] remote_access: Remote access settings.
         :param pulumi.Input['pulumi_aws.eks.NodeGroupScalingConfigArgs'] scaling_config: Scaling settings.
@@ -165,6 +169,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "cluster_name", cluster_name)
         if disk_size is not None:
             pulumi.set(__self__, "disk_size", disk_size)
+        if enable_efa_support is not None:
+            pulumi.set(__self__, "enable_efa_support", enable_efa_support)
         if enable_imd_sv2 is not None:
             pulumi.set(__self__, "enable_imd_sv2", enable_imd_sv2)
         if force_update_version is not None:
@@ -193,6 +199,8 @@ class ManagedNodeGroupArgs:
             pulumi.set(__self__, "nodeadm_extra_options", nodeadm_extra_options)
         if operating_system is not None:
             pulumi.set(__self__, "operating_system", operating_system)
+        if placement_group_availability_zone is not None:
+            pulumi.set(__self__, "placement_group_availability_zone", placement_group_availability_zone)
         if release_version is not None:
             pulumi.set(__self__, "release_version", release_version)
         if remote_access is not None:
@@ -324,6 +332,18 @@ class ManagedNodeGroupArgs:
     @disk_size.setter
     def disk_size(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "disk_size", value)
+
+    @property
+    @pulumi.getter(name="enableEfaSupport")
+    def enable_efa_support(self) -> Optional[bool]:
+        """
+        Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
+        """
+        return pulumi.get(self, "enable_efa_support")
+
+    @enable_efa_support.setter
+    def enable_efa_support(self, value: Optional[bool]):
+        pulumi.set(self, "enable_efa_support", value)
 
     @property
     @pulumi.getter(name="enableIMDSv2")
@@ -524,6 +544,18 @@ class ManagedNodeGroupArgs:
         pulumi.set(self, "operating_system", value)
 
     @property
+    @pulumi.getter(name="placementGroupAvailabilityZone")
+    def placement_group_availability_zone(self) -> Optional[pulumi.Input[str]]:
+        """
+        The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
+        """
+        return pulumi.get(self, "placement_group_availability_zone")
+
+    @placement_group_availability_zone.setter
+    def placement_group_availability_zone(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "placement_group_availability_zone", value)
+
+    @property
     @pulumi.getter(name="releaseVersion")
     def release_version(self) -> Optional[pulumi.Input[str]]:
         """
@@ -644,6 +676,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
+                 enable_efa_support: Optional[bool] = None,
                  enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
@@ -658,6 +691,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
+                 placement_group_availability_zone: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
                  remote_access: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']]] = None,
                  scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']]] = None,
@@ -702,6 +736,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         :param pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]] cluster: The target EKS cluster.
         :param pulumi.Input[str] cluster_name: Name of the EKS Cluster.
         :param pulumi.Input[int] disk_size: Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
+        :param bool enable_efa_support: Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
         :param bool enable_imd_sv2: Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
                Defaults to `false`.
                
@@ -746,6 +781,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
                
                Defaults to the current recommended OS.
+        :param pulumi.Input[str] placement_group_availability_zone: The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
         :param pulumi.Input[str] release_version: AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
         :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']] remote_access: Remote access settings.
         :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']] scaling_config: Scaling settings.
@@ -803,6 +839,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
                  cluster_name: Optional[pulumi.Input[str]] = None,
                  disk_size: Optional[pulumi.Input[int]] = None,
+                 enable_efa_support: Optional[bool] = None,
                  enable_imd_sv2: Optional[bool] = None,
                  force_update_version: Optional[pulumi.Input[bool]] = None,
                  gpu: Optional[pulumi.Input[bool]] = None,
@@ -817,6 +854,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  node_role_arn: Optional[pulumi.Input[str]] = None,
                  nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
                  operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
+                 placement_group_availability_zone: Optional[pulumi.Input[str]] = None,
                  release_version: Optional[pulumi.Input[str]] = None,
                  remote_access: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupRemoteAccessArgs']]] = None,
                  scaling_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.NodeGroupScalingConfigArgs']]] = None,
@@ -846,6 +884,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["cluster"] = cluster
             __props__.__dict__["cluster_name"] = cluster_name
             __props__.__dict__["disk_size"] = disk_size
+            __props__.__dict__["enable_efa_support"] = enable_efa_support
             __props__.__dict__["enable_imd_sv2"] = enable_imd_sv2
             __props__.__dict__["force_update_version"] = force_update_version
             __props__.__dict__["gpu"] = gpu
@@ -860,6 +899,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["node_role_arn"] = node_role_arn
             __props__.__dict__["nodeadm_extra_options"] = nodeadm_extra_options
             __props__.__dict__["operating_system"] = operating_system
+            __props__.__dict__["placement_group_availability_zone"] = placement_group_availability_zone
             __props__.__dict__["release_version"] = release_version
             __props__.__dict__["remote_access"] = remote_access
             __props__.__dict__["scaling_config"] = scaling_config
@@ -869,6 +909,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             __props__.__dict__["user_data"] = user_data
             __props__.__dict__["version"] = version
             __props__.__dict__["node_group"] = None
+            __props__.__dict__["placement_group_name"] = None
         super(ManagedNodeGroup, __self__).__init__(
             'eks:index:ManagedNodeGroup',
             resource_name,
@@ -883,4 +924,12 @@ class ManagedNodeGroup(pulumi.ComponentResource):
         The AWS managed node group.
         """
         return pulumi.get(self, "node_group")
+
+    @property
+    @pulumi.getter(name="placementGroupName")
+    def placement_group_name(self) -> pulumi.Output[str]:
+        """
+        The name of the placement group created for the managed node group.
+        """
+        return pulumi.get(self, "placement_group_name")
 

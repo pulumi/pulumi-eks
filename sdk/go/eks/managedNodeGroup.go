@@ -23,6 +23,8 @@ type ManagedNodeGroup struct {
 
 	// The AWS managed node group.
 	NodeGroup eks.NodeGroupOutput `pulumi:"nodeGroup"`
+	// The name of the placement group created for the managed node group.
+	PlacementGroupName pulumi.StringOutput `pulumi:"placementGroupName"`
 }
 
 // NewManagedNodeGroup registers a new resource with the given unique name, arguments, and options.
@@ -80,6 +82,8 @@ type managedNodeGroupArgs struct {
 	ClusterName *string `pulumi:"clusterName"`
 	// Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
 	DiskSize *int `pulumi:"diskSize"`
+	// Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
+	EnableEfaSupport *bool `pulumi:"enableEfaSupport"`
 	// Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
 	// Defaults to `false`.
 	//
@@ -138,6 +142,8 @@ type managedNodeGroupArgs struct {
 	//
 	// Defaults to the current recommended OS.
 	OperatingSystem *OperatingSystem `pulumi:"operatingSystem"`
+	// The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
+	PlacementGroupAvailabilityZone *string `pulumi:"placementGroupAvailabilityZone"`
 	// AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
 	ReleaseVersion *string `pulumi:"releaseVersion"`
 	// Remote access settings.
@@ -206,6 +212,8 @@ type ManagedNodeGroupArgs struct {
 	ClusterName pulumi.StringPtrInput
 	// Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
 	DiskSize pulumi.IntPtrInput
+	// Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
+	EnableEfaSupport *bool
 	// Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
 	// Defaults to `false`.
 	//
@@ -264,6 +272,8 @@ type ManagedNodeGroupArgs struct {
 	//
 	// Defaults to the current recommended OS.
 	OperatingSystem OperatingSystemPtrInput
+	// The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
+	PlacementGroupAvailabilityZone pulumi.StringPtrInput
 	// AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
 	ReleaseVersion pulumi.StringPtrInput
 	// Remote access settings.
@@ -385,6 +395,11 @@ func (o ManagedNodeGroupOutput) ToManagedNodeGroupOutputWithContext(ctx context.
 // The AWS managed node group.
 func (o ManagedNodeGroupOutput) NodeGroup() eks.NodeGroupOutput {
 	return o.ApplyT(func(v *ManagedNodeGroup) eks.NodeGroupOutput { return v.NodeGroup }).(eks.NodeGroupOutput)
+}
+
+// The name of the placement group created for the managed node group.
+func (o ManagedNodeGroupOutput) PlacementGroupName() pulumi.StringOutput {
+	return o.ApplyT(func(v *ManagedNodeGroup) pulumi.StringOutput { return v.PlacementGroupName }).(pulumi.StringOutput)
 }
 
 type ManagedNodeGroupArrayOutput struct{ *pulumi.OutputState }
