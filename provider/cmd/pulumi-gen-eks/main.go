@@ -829,9 +829,14 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FnodeGroup:NodeGroup", dependencies.Aws)},
 							Description: "The AWS managed node group.",
 						},
+						"placementGroupName": {
+							TypeSpec: schema.TypeSpec{Type: "string"},
+							Description: "The name of the placement group created for the managed node group.",
+						},
 					},
 					Required: []string{
 						"nodeGroup",
+						"placementGroupName",
 					},
 				},
 				InputProperties: map[string]schema.PropertySpec{
@@ -1070,6 +1075,17 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						},
 						Description: "Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.\n\n" +
 							"See [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details.",
+					},
+					"placementGroupAvailabilityZone": {
+						TypeSpec: schema.TypeSpec{
+							Type:  "string",
+						},
+						Description: "The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.",
+					},
+					"enableEfaSupport": {
+						TypeSpec: schema.TypeSpec{Type: "boolean", Plain: true},
+						Description: "Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, " +
+							"the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.",
 					},
 				},
 				RequiredInputs: []string{"cluster"},
