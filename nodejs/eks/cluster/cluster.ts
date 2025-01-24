@@ -30,20 +30,19 @@ import {
     validateAuthenticationMode,
 } from "./authenticationMode";
 import { getIssuerCAThumbprint } from "./cert-thumprint";
-import { assertCompatibleAWSCLIExists } from "./dependencies";
+import { assertCompatibleAWSCLIExists } from "../dependencies";
 import {
     computeWorkerSubnets,
     createNodeGroupV2,
     NodeGroupBaseOptions,
     NodeGroupV2Data,
-} from "./nodegroup";
-import { createNodeGroupSecurityGroup } from "./securitygroup";
-import { ServiceRole } from "./servicerole";
+} from "../nodes";
+import { createNodeGroupSecurityGroup } from "../nodes";
+import { ServiceRole } from "../servicerole";
 import { createStorageClass, EBSVolumeType, StorageClass } from "./storageclass";
-import { InputTags, UserStorageClasses } from "./utils";
-import { VpcCniAddon, VpcCniAddonOptions } from "./cni-addon";
-import { stringifyAddonConfiguration } from "./addon";
-import { getRegionFromArn } from "./utilities";
+import { InputTags, UserStorageClasses } from "../utils";
+import { stringifyAddonConfiguration, VpcCniAddon, VpcCniAddonOptions } from "../addons";
+import { getRegionFromArn } from "../utilities";
 
 /**
  * RoleMapping describes a mapping from an AWS IAM role to a Kubernetes user and groups.
@@ -2015,137 +2014,6 @@ export const AccessEntryType = {
  */
 export type AccessEntryType = (typeof AccessEntryType)[keyof typeof AccessEntryType];
 
-/**
- * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker
- * nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
- */
-export class Cluster extends pulumi.ComponentResource {
-    /**
-     * A kubeconfig that can be used to connect to the EKS cluster.
-     */
-    public readonly kubeconfig: pulumi.Output<any>;
-
-    /**
-     * A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
-     */
-    public readonly kubeconfigJson: pulumi.Output<string>;
-
-    /**
-     * The AWS resource provider.
-     */
-    public readonly awsProvider: pulumi.ProviderResource;
-
-    /**
-     * A Kubernetes resource provider that can be used to deploy into this cluster. For example, the code below will
-     * create a new Pod in the EKS cluster.
-     *
-     *     let eks = new Cluster("eks");
-     *     let pod = new kubernetes.core.v1.Pod("pod", { ... }, { provider: eks.provider });
-     *
-     */
-    public readonly provider: k8s.Provider;
-
-    /**
-     * The security group for the EKS cluster.
-     */
-    public readonly clusterSecurityGroup: aws.ec2.SecurityGroup | undefined;
-
-    /**
-     * The service roles used by the EKS cluster.
-     */
-    public readonly instanceRoles: pulumi.Output<aws.iam.Role[]>;
-
-    /**
-     * The security group for the cluster's nodes.
-     */
-    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
-
-    /**
-     * The ingress rule that gives node group access to cluster API server
-     */
-    public readonly eksClusterIngressRule: aws.ec2.SecurityGroupRule | undefined;
-
-    /**
-     * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
-     */
-    public readonly defaultNodeGroup: NodeGroupV2Data | undefined;
-
-    /**
-     * The EKS cluster.
-     */
-    public readonly eksCluster: aws.eks.Cluster;
-
-    /**
-     * The EKS cluster and its dependencies.
-     */
-    public readonly core: CoreData;
-
-    /**
-     * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
-     * requested.
-     *
-     * @param name The _unique_ name of this component.
-     * @param args The arguments for this cluster.
-     * @param opts A bag of options that control this component's behavior.
-     */
-    constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
-        const type = "eks:index:Cluster";
-
-        if (opts?.urn) {
-            const props = {
-                kubeconfig: undefined,
-                eksCluster: undefined,
-            };
-            super(type, name, props, opts);
-            return;
-        }
-
-        super(type, name, args, opts);
-
-        const cluster = createCluster(name, this, args, opts);
-        this.kubeconfig = cluster.kubeconfig;
-        this.kubeconfigJson = cluster.kubeconfigJson;
-        this.clusterSecurityGroup = cluster.clusterSecurityGroup;
-        this.instanceRoles = cluster.instanceRoles;
-        this.nodeSecurityGroup = cluster.nodeSecurityGroup;
-        this.eksClusterIngressRule = cluster.eksClusterIngressRule;
-        this.defaultNodeGroup = cluster.defaultNodeGroup;
-        this.eksCluster = cluster.eksCluster;
-        this.core = cluster.core;
-
-        this.registerOutputs({
-            kubeconfig: this.kubeconfig,
-            eksCluster: this.eksCluster,
-        });
-    }
-
-    /**
-     * Generate a kubeconfig for cluster authentication that does not use the
-     * default AWS credential provider chain, and instead is scoped to
-     * the supported options in `KubeconfigOptions`.
-     *
-     * The kubeconfig generated is automatically stringified for ease of use
-     * with the pulumi/kubernetes provider.
-     *
-     * See for more details:
-     * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
-     * - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
-     * - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
-     */
-    getKubeconfig(args: KubeconfigOptions): pulumi.Output<string> {
-        const region = this.eksCluster.arn.apply(getRegionFromArn);
-        const kc = generateKubeconfig(
-            this.eksCluster.name,
-            this.eksCluster.endpoint,
-            region,
-            true,
-            this.eksCluster.certificateAuthority?.data,
-            args,
-        );
-        return pulumi.output(kc).apply(JSON.stringify);
-    }
-}
-
 /** @internal */
 export interface ClusterResult {
     kubeconfig: pulumi.Output<any>;
@@ -2243,9 +2111,9 @@ export function createCluster(
         defaultNodeGroup = createNodeGroupV2(
             name,
             {
-                cluster: core,
                 ...core.nodeGroupOptions,
             },
+            pulumi.output(core),
             self,
         );
     }
@@ -2301,17 +2169,10 @@ export function createCluster(
 }
 
 /**
- * This is a variant of `Cluster` that is used for the MLC `Cluster`. We don't just use `Cluster`,
- * because not all of its output properties are typed as `Output<T>`, which prevents it from being
- * able to be correctly "rehydrated" from a resource reference. So we use this copy instead rather
- * than modifying the public surface area of the existing `Cluster` class, which is still being
- * used directly by users using the Node.js SDK. Once we move Node.js over to the generated MLC SDK,
- * we can clean all this up. Internally, this leverages the same `createCluster` helper method that
- * `Cluster` uses.
- *
- * @internal
+ * Cluster is a component that wraps the AWS and Kubernetes resources necessary to run an EKS cluster, its worker
+ * nodes, its optional StorageClasses, and an optional deployment of the Kubernetes Dashboard.
  */
-export class ClusterInternal extends pulumi.ComponentResource {
+export class Cluster extends pulumi.ComponentResource {
     public readonly clusterSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
     public readonly core!: pulumi.Output<pulumi.Unwrap<CoreData>>;
     public readonly defaultNodeGroup!: pulumi.Output<pulumi.Unwrap<NodeGroupV2Data> | undefined>;

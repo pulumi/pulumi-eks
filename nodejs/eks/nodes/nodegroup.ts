@@ -26,11 +26,9 @@ import {
     OperatingSystem,
     toAmiType,
 } from "./ami";
-import { supportsAccessEntries } from "./authenticationMode";
-import { Cluster, ClusterInternal, CoreData } from "./cluster";
-import randomSuffix from "./randomSuffix";
+import { Cluster, CoreData, supportsAccessEntries } from "../cluster";
 import { createNodeGroupSecurityGroup } from "./securitygroup";
-import { InputTags } from "./utils";
+import { InputTags } from "../utils";
 import {
     createUserData,
     customUserDataArgs,
@@ -39,7 +37,7 @@ import {
     SelfManagedV1NodeUserDataArgs,
     SelfManagedV2NodeUserDataArgs,
 } from "./userdata";
-import { InstanceProfile } from "@pulumi/aws/iam";
+import randomSuffix from "../randomSuffix";
 
 export type TaintEffect = "NoSchedule" | "NoExecute" | "PreferNoSchedule";
 
@@ -446,62 +444,14 @@ export interface NodeGroupV2Data {
 /**
  * NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
  */
-export class NodeGroup extends pulumi.ComponentResource implements NodeGroupData {
-    /**
-     * The security group for the node group to communicate with the cluster.
-     */
-    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
-    public readonly nodeSecurityGroupId: pulumi.Output<string>;
-    /**
-     * The additional security groups for the node group that captures user-specific rules.
-     */
-    public readonly extraNodeSecurityGroups: aws.ec2.SecurityGroup[];
-
-    /**
-     * The CloudFormation Stack which defines the Node AutoScalingGroup.
-     */
-    cfnStack: aws.cloudformation.Stack;
-
-    /**
-     * The AutoScalingGroup name for the Node group.
-     */
-    autoScalingGroupName: pulumi.Output<string>;
-
-    /**
-     * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
-     * requested.
-     *
-     * @param name The _unique_ name of this component.
-     * @param args The arguments for this cluster.
-     * @param opts A bag of options that control this component's behavior.
-     */
-    constructor(name: string, args: NodeGroupOptions, opts?: pulumi.ComponentResourceOptions) {
-        super("eks:index:NodeGroup", name, args, opts);
-
-        const group = createNodeGroup(name, args, this, opts?.provider);
-        this.nodeSecurityGroup = group.nodeSecurityGroup;
-        this.nodeSecurityGroupId = group.nodeSecurityGroupId;
-        this.cfnStack = group.cfnStack;
-        this.autoScalingGroupName = group.autoScalingGroupName;
-        this.registerOutputs(undefined);
-    }
-}
-
-/**
- * This is a variant of `NodeGroup` that is used for the MLC `NodeGroup`. We don't just use `NodeGroup`,
- * because we need to accept `ClusterInternal` as the `cluster` arg, so we can correctly pull out `cluster.core`
- * for use in creating the `NodeGroup`.
- *
- * @internal
- */
-export class NodeGroupInternal extends pulumi.ComponentResource {
+export class NodeGroup extends pulumi.ComponentResource {
     public readonly autoScalingGroupName!: pulumi.Output<string>;
     public readonly cfnStack!: pulumi.Output<aws.cloudformation.Stack>;
     public readonly extraNodeSecurityGroups!: pulumi.Output<aws.ec2.SecurityGroup[]>;
     public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
     public readonly nodeSecurityGroupId!: pulumi.Output<string>;
 
-    constructor(name: string, args: NodeGroupInternalArgs, opts?: pulumi.ComponentResourceOptions) {
+    constructor(name: string, args: NodeGroupArgs, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:NodeGroup";
 
         if (opts?.urn) {
@@ -520,11 +470,11 @@ export class NodeGroupInternal extends pulumi.ComponentResource {
 
         const core = pulumi
             .output(args.cluster)
-            .apply((c) => (c instanceof ClusterInternal ? c.core : c)) as pulumi.Output<
+            .apply((c) => (c instanceof Cluster ? c.core : c)) as pulumi.Output<
             pulumi.Unwrap<CoreData>
         >;
 
-        const group = createNodeGroupInternal(name, args, core, this, opts?.provider);
+        const group = createNodeGroup(name, args, core, this, opts?.provider);
         this.autoScalingGroupName = group.autoScalingGroupName;
         this.cfnStack = pulumi.output(group.cfnStack);
         this.extraNodeSecurityGroups = pulumi.output(group.extraNodeSecurityGroups ?? []);
@@ -541,63 +491,22 @@ export class NodeGroupInternal extends pulumi.ComponentResource {
 }
 
 /** @internal */
-export type NodeGroupInternalArgs = Omit<NodeGroupOptions, "cluster"> & {
-    cluster: pulumi.Input<ClusterInternal | pulumi.Unwrap<CoreData>>;
+export type NodeGroupArgs = Omit<NodeGroupOptions, "cluster"> & {
+    cluster: pulumi.Input<Cluster | pulumi.Unwrap<CoreData>>;
 };
 
-export class NodeGroupV2 extends pulumi.ComponentResource implements NodeGroupV2Data {
-    /**
-     * The security group for the node group to communicate with the cluster.
-     */
-    public readonly nodeSecurityGroup: aws.ec2.SecurityGroup | undefined;
-    public readonly nodeSecurityGroupId: pulumi.Output<string>;
-    /**
-     * The additional security groups for the node group that captures user-specific rules.
-     */
-    public readonly extraNodeSecurityGroups: aws.ec2.SecurityGroup[];
-
-    /**
-     * The AutoScalingGroup name for the Node group.
-     */
-    autoScalingGroup: aws.autoscaling.Group;
-
-    /**
-     * Create a new EKS cluster with worker nodes, optional storage classes, and deploy the Kubernetes Dashboard if
-     * requested.
-     *
-     * @param name The _unique_ name of this component.
-     * @param args The arguments for this cluster.
-     * @param opts A bag of options that control this component's behavior.
-     */
-    constructor(name: string, args: NodeGroupV2Options, opts?: pulumi.ComponentResourceOptions) {
-        super("eks:index:NodeGroupV2", name, args, opts);
-
-        const group = createNodeGroupV2(name, args, this, opts?.provider);
-        this.nodeSecurityGroup = group.nodeSecurityGroup;
-        this.nodeSecurityGroupId = group.nodeSecurityGroupId;
-        this.autoScalingGroup = group.autoScalingGroup;
-        this.registerOutputs(undefined);
-    }
-}
-
 /**
- * This is a variant of `NodeGroupV2` that is used for the MLC `NodeGroupV2`. We don't just use `NodeGroupV2`,
- * because we need to accept `ClusterInternal` as the `cluster` arg, so we can correctly pull out `cluster.core`
- * for use in creating the `NodeGroupV2`.
- *
- * @internal
+ * NodeGroupV2 is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
+ * In contrast to NodeGroup, it uses Launch Templates and AutoScaling Groups to manage the EC2 instances instead
+ * of shelling out to CloudFormation and using the deprecated Launch Configuration resources.
  */
-export class NodeGroupV2Internal extends pulumi.ComponentResource {
+export class NodeGroupV2 extends pulumi.ComponentResource {
     public readonly autoScalingGroup!: pulumi.Output<aws.autoscaling.Group>;
     public readonly extraNodeSecurityGroups!: pulumi.Output<aws.ec2.SecurityGroup[]>;
     public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
     public readonly nodeSecurityGroupId!: pulumi.Output<string>;
 
-    constructor(
-        name: string,
-        args: NodeGroupV2InternalArgs,
-        opts?: pulumi.ComponentResourceOptions,
-    ) {
+    constructor(name: string, args: NodeGroupV2Args, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:NodeGroupV2";
 
         if (opts?.urn) {
@@ -615,11 +524,11 @@ export class NodeGroupV2Internal extends pulumi.ComponentResource {
 
         const core = pulumi
             .output(args.cluster)
-            .apply((c) => (c instanceof ClusterInternal ? c.core : c)) as pulumi.Output<
+            .apply((c) => (c instanceof Cluster ? c.core : c)) as pulumi.Output<
             pulumi.Unwrap<CoreData>
         >;
 
-        const group = createNodeGroupV2Internal(name, args, core, this, opts?.provider);
+        const group = createNodeGroupV2(name, args, core, this, opts?.provider);
         this.autoScalingGroup = pulumi.output(group.autoScalingGroup);
         this.extraNodeSecurityGroups = pulumi.output(group.extraNodeSecurityGroups ?? []);
         this.nodeSecurityGroup = pulumi.output(group.nodeSecurityGroup);
@@ -634,25 +543,9 @@ export class NodeGroupV2Internal extends pulumi.ComponentResource {
 }
 
 /** @internal */
-export type NodeGroupV2InternalArgs = Omit<NodeGroupV2Options, "cluster"> & {
-    cluster: pulumi.Input<ClusterInternal | pulumi.Unwrap<CoreData>>;
+export type NodeGroupV2Args = Omit<NodeGroupV2Options, "cluster"> & {
+    cluster: pulumi.Input<Cluster | pulumi.Unwrap<CoreData>>;
 };
-
-/**
- * Create a self-managed node group using CloudFormation and an ASG.
- *
- * See for more details:
- * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
- */
-export function createNodeGroup(
-    name: string,
-    args: NodeGroupOptions,
-    parent: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource,
-): NodeGroupData {
-    const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
-    return createNodeGroupInternal(name, args, pulumi.output(core), parent, provider);
-}
 
 export function resolveInstanceProfileName(
     name: string,
@@ -686,7 +579,7 @@ export function resolveInstanceProfileName(
     }
 }
 
-function createNodeGroupInternal(
+function createNodeGroup(
     name: string,
     args: Omit<NodeGroupOptions, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
@@ -1145,16 +1038,6 @@ function createNodeGroupInternal(
  * https://docs.aws.amazon.com/eks/latest/userguide/worker.html
  */
 export function createNodeGroupV2(
-    name: string,
-    args: NodeGroupV2Options,
-    parent: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource,
-): NodeGroupV2Data {
-    const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
-    return createNodeGroupV2Internal(name, args, pulumi.output(core), parent, provider);
-}
-
-function createNodeGroupV2Internal(
     name: string,
     args: Omit<NodeGroupV2Options, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
@@ -1879,45 +1762,9 @@ export type ManagedNodeGroupOptions = Omit<
  * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
  */
 export class ManagedNodeGroup extends pulumi.ComponentResource {
-    /**
-     * The AWS managed node group.
-     */
-    public readonly nodeGroup: aws.eks.NodeGroup;
-
-    /**
-     * Create a new AWS managed node group.
-     *
-     * @param name The _unique_ name of this component.
-     * @param args The arguments for this node group.
-     * @param opts A bag of options that control this component's behavior.
-     */
-    constructor(
-        name: string,
-        args: ManagedNodeGroupOptions,
-        opts?: pulumi.ComponentResourceOptions,
-    ) {
-        super("eks:index:ManagedNodeGroup", name, args, opts);
-
-        this.nodeGroup = createManagedNodeGroup(name, args, this, opts?.provider);
-        this.registerOutputs(undefined);
-    }
-}
-
-/**
- * This is a variant of `ManagedNodeGroup` that is used for the MLC `ManagedNodeGroup`. We don't just use
- * `ManagedNodeGroup`, because we need to accept `ClusterInternal` as the `cluster` arg, so we can correctly
- * pull out `cluster.core` for use in creating the `NodeGroupV2`.
- *
- * @internal
- */
-export class ManagedNodeGroupInternal extends pulumi.ComponentResource {
     public readonly nodeGroup!: pulumi.Output<aws.eks.NodeGroup>;
 
-    constructor(
-        name: string,
-        args: ManagedNodeGroupInternalArgs,
-        opts?: pulumi.ComponentResourceOptions,
-    ) {
+    constructor(name: string, args: ManagedNodeGroupArgs, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:ManagedNodeGroup";
 
         if (opts?.urn) {
@@ -1932,11 +1779,11 @@ export class ManagedNodeGroupInternal extends pulumi.ComponentResource {
 
         const core = pulumi
             .output(args.cluster)
-            .apply((c) => (c instanceof ClusterInternal ? c.core : c)) as pulumi.Output<
+            .apply((c) => (c instanceof Cluster ? c.core : c)) as pulumi.Output<
             pulumi.Unwrap<CoreData>
         >;
 
-        const group = createManagedNodeGroupInternal(name, args, core, this, opts?.provider);
+        const group = createManagedNodeGroup(name, args, core, this, opts?.provider);
         this.nodeGroup = pulumi.output(group);
         this.registerOutputs({
             nodeGroup: this.nodeGroup,
@@ -1945,8 +1792,8 @@ export class ManagedNodeGroupInternal extends pulumi.ComponentResource {
 }
 
 /** @internal */
-export type ManagedNodeGroupInternalArgs = Omit<ManagedNodeGroupOptions, "cluster"> & {
-    cluster: pulumi.Input<ClusterInternal | pulumi.Unwrap<CoreData>>;
+export type ManagedNodeGroupArgs = Omit<ManagedNodeGroupOptions, "cluster"> & {
+    cluster: pulumi.Input<Cluster | pulumi.Unwrap<CoreData>>;
 };
 
 /**
@@ -1955,23 +1802,7 @@ export type ManagedNodeGroupInternalArgs = Omit<ManagedNodeGroupOptions, "cluste
  * See for more details:
  * https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
  */
-function createManagedNodeGroup(
-    name: string,
-    args: ManagedNodeGroupOptions,
-    parent?: pulumi.ComponentResource,
-    provider?: pulumi.ProviderResource,
-): aws.eks.NodeGroup {
-    const core = args.cluster instanceof Cluster ? args.cluster.core : args.cluster;
-    return createManagedNodeGroupInternal(
-        name,
-        args,
-        pulumi.output(core),
-        parent ?? core.cluster,
-        provider,
-    );
-}
-
-export function createManagedNodeGroupInternal(
+export function createManagedNodeGroup(
     name: string,
     args: Omit<ManagedNodeGroupOptions, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,

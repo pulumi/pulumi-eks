@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { VpcCniAddon } from "../../cni-addon";
+import { VpcCniAddon } from "../../addons";
 
 const cniAddonProvider: pulumi.provider.Provider = {
     construct: (

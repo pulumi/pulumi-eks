@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as pulumi from "@pulumi/pulumi";
-import { Addon } from "../../addon";
+import { Addon } from "../../addons";
 
 const managedAddonProvider: pulumi.provider.Provider = {
     construct: (

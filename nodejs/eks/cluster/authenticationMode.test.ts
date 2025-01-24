@@ -18,7 +18,7 @@ import {
     validateAuthenticationMode,
 } from "./authenticationMode";
 
-import { ClusterOptions, AuthenticationMode } from "./cluster";
+import { ClusterOptions } from "./cluster";
 
 import * as aws from "@pulumi/aws";
 

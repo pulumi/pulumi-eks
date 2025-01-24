@@ -16,7 +16,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 import { stringifyAddonConfiguration } from "./addon";
-import { isObject } from "./utilities";
+import { isObject } from "../utilities";
 
 export interface VpcCniAddonOptions extends CniEnvVariables {
     clusterName: pulumi.Input<string>;
