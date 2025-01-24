@@ -46,7 +46,7 @@ VERSION=$(jq -r .version "${SCHEMA}")
 yarn install --no-progress --frozen-lockfile
 yarn check-duplicate-deps
 yarn tsc
-cp ${SCHEMA} bin/schema.json
+cp ${SCHEMA} bin/cmd/provider/schema.json
 cp package.json bin/package.json
 yarn --cwd bin version --new-version "${VERSION}" --no-git-tag-version
 yarn run pkg . --no-bytecode --public-packages "*" --public --target "${TARGET}" --output "${OUT}"
