@@ -15,6 +15,8 @@
 package main
 
 import (
+	// used for embedding docs
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -121,6 +123,9 @@ func awsRef(ref string, awsVersion string) string {
 func k8sRef(ref string, k8sVersion string) string {
 	return fmt.Sprintf("/kubernetes/v%s/schema.json%s", k8sVersion, ref)
 }
+
+//go:embed docs/managedNodeGroup.md
+var managedNodeGroupDocs string
 
 //nolint:lll,goconst
 func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
@@ -821,9 +826,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 			"eks:index:ManagedNodeGroup": {
 				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
-					Description: "ManagedNodeGroup is a component that wraps creating an AWS managed node group.\n\n" +
-						"See for more details:\n" +
-						"https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html",
+					Description: managedNodeGroupDocs,
 					Properties: map[string]schema.PropertySpec{
 						"nodeGroup": {
 							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/resources/aws:eks%2FnodeGroup:NodeGroup", dependencies.Aws)},
