@@ -25,7 +25,8 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/pkg/errors"
-	"github.com/pulumi/pulumi-eks/provider/v3/pkg/version"
+	"github.com/spf13/cobra"
+
 	dotnetgen "github.com/pulumi/pulumi/pkg/v3/codegen/dotnet"
 	gogen "github.com/pulumi/pulumi/pkg/v3/codegen/go"
 	nodejsgen "github.com/pulumi/pulumi/pkg/v3/codegen/nodejs"
@@ -33,7 +34,8 @@ import (
 	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"github.com/spf13/cobra"
+
+	"github.com/pulumi/pulumi-eks/provider/v3/pkg/version"
 )
 
 const Tool = "pulumi-gen-eks"
@@ -2801,26 +2803,6 @@ func rawMessage(v interface{}) schema.RawMessage {
 	bytes, err := json.Marshal(v)
 	contract.Assertf(err == nil, "failed to marshal raw message: %v", err)
 	return bytes
-}
-
-func readSchema(schemaPath string, version string) *schema.Package {
-	// Read in, decode, and import the schema.
-	schemaBytes, err := os.ReadFile(schemaPath)
-	if err != nil {
-		panic(err)
-	}
-
-	var pkgSpec schema.PackageSpec
-	if err = json.Unmarshal(schemaBytes, &pkgSpec); err != nil {
-		panic(err)
-	}
-	pkgSpec.Version = version
-
-	pkg, err := schema.ImportSpec(pkgSpec, nil)
-	if err != nil {
-		panic(err)
-	}
-	return pkg
 }
 
 func genNodejs(pkg *schema.Package, templateDir, outdir string) error {
