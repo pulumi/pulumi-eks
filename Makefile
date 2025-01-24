@@ -40,10 +40,11 @@ schema::
 
 provider:: bin/${PROVIDER}
 
-.pulumi/bin/pulumi: PULUMI_VERSION := $(shell cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3)
-.pulumi/bin/pulumi: HOME := $(WORKING_DIR)
-.pulumi/bin/pulumi:
-	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
+# Replaced with ci-mgmt target below.
+#.pulumi/bin/pulumi: PULUMI_VERSION := $(shell cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3)
+#.pulumi/bin/pulumi: HOME := $(WORKING_DIR)
+#.pulumi/bin/pulumi:
+#	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
 
 generate_nodejs:: .pulumi/bin/pulumi schema
 	cd provider/cmd/$(CODEGEN) && go run main.go nodejs ../../../sdk/nodejs $(CURDIR) ../$(PROVIDER)/schema.json $(VERSION_GENERIC)
@@ -130,10 +131,10 @@ install_provider:: provider install_nodejs_sdk
 
 generate_schema:: schema
 
-install_nodejs_sdk:: build_nodejs
+install_nodejs_sdk:: # Removed build dependency
 	yarn link --cwd $(WORKING_DIR)/sdk/nodejs/bin
 
-install_dotnet_sdk:: build_dotnet
+install_dotnet_sdk:: # Removed build dependency
 	mkdir -p $(WORKING_DIR)/nuget
 	find . -name '*.nupkg' -print -exec cp -p {} ${WORKING_DIR}/nuget \;
 
@@ -231,6 +232,7 @@ test_provider:
 	@echo ""
 	cd provider && go test -v -short ./... -parallel $(TESTPARALLELISM)
 
+<<<<<<< HEAD
 ensure-pulumictl:
 ifeq ($(PULUMICTL_BIN),)
 	@if [ ! -f "$(GOPATH)/bin/pulumictl" ]; then go install "github.com/pulumi/pulumictl/cmd/pulumictl@$(PULUMICTL_VERSION)"; fi
@@ -243,3 +245,44 @@ version_generic: ensure-pulumictl
 renovate:: generate
 
 .PHONY: build generate generate_dotnet generate_go generate_java generate_nodejs generate_python build_dotnet build_go build_java build_nodejs build_python dev dist ensure-pulumictl generate_schema install_dotnet_sdk install_java_sdk install_provider install_python_sdk lint lint_fix lint_provider provider renovate schema specific_test specific_test_local test test_dotnet test_java test_nodejs test_nodejs_upgrade test_provider test_python test_unit_tests version_generic
+=======
+
+######################
+# ci-mgmt onboarding #
+######################
+
+.pulumi/bin/pulumi: .pulumi/version
+	@if [ -x .pulumi/bin/pulumi ] && [ "v$$(cat .pulumi/version)" = "$$(.pulumi/bin/pulumi version)" ]; then \
+		echo "pulumi/bin/pulumi version: v$$(cat .pulumi/version)"; \
+	else \
+		curl -fsSL https://get.pulumi.com | \
+			HOME=$(WORKING_DIR) sh -s -- --version "$$(cat .pulumi/version)"; \
+	fi
+
+# Uses a custom target which reads from package.json.
+#.pulumi/version: provider/go.mod
+#	@mkdir -p .pulumi
+#	@cd provider && go list -f "{{slice .Version 1}}" -m github.com/pulumi/pulumi/pkg/v3 | tee ../$@
+.pulumi/version: nodejs/eks/yarn.lock
+	(cd nodejs/eks && yarn list --pattern @pulumi/pulumi --json --no-progress | jq -r '.data.trees[].name' | cut -d'@' -f3 > ../../.pulumi/version)
+
+
+shard:
+	@(cd tests && go run github.com/blampe/shard@9d1f3b21786e18caa1989e19502595143985d61b --total $(TOTAL) --index $(INDEX) --output env)
+
+test_shard:
+	cd tests && \
+		go test -tags=all -v -count=1 -coverprofile="coverage.txt" -coverpkg=./... -timeout 3h -parallel ${TESTPARALLELISM} -run "$(SHARD_TESTS)" $(SHARD_PATHS)
+
+install_plugins: export PULUMI_HOME := $(WORKING_DIR)/.pulumi
+install_plugins: export PATH := $(WORKING_DIR)/.pulumi/bin:$(PATH)
+install_plugins: .pulumi/bin/pulumi
+
+provider_dist-linux-amd64: dist/${GZIP_PREFIX}-linux-amd64.tar.gz
+provider_dist-linux-arm64: dist/${GZIP_PREFIX}-linux-arm64.tar.gz
+provider_dist-darwin-amd64: dist/${GZIP_PREFIX}-darwin-amd64.tar.gz
+provider_dist-darwin-arm64: dist/${GZIP_PREFIX}-darwin-arm64.tar.gz
+provider_dist-windows-amd64: dist/${GZIP_PREFIX}-windows-amd64.tar.gz
+
+install_sdks: install_nodejs_sdk install_dotnet_sdk install_go_sdk install_python_sdk install_java_sdk
+>>>>>>> a2a9a33 (reset to latest head)
