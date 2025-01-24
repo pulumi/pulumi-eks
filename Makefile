@@ -3,7 +3,7 @@
 PACK := eks
 ORG := pulumi
 PROJECT := github.com/$(ORG)/pulumi-$(PACK)
-PROVIDER_PATH := provider/v2
+PROVIDER_PATH := provider/v3
 VERSION_PATH := $(PROVIDER_PATH)/pkg/version.Version
 CODEGEN := pulumi-gen-$(PACK)
 PROVIDER := pulumi-resource-$(PACK)
@@ -23,7 +23,7 @@ PULUMICTL := $(shell which pulumictl || \
 
 # Override during CI using `make [TARGET] PROVIDER_VERSION=""` or by setting a PROVIDER_VERSION environment variable
 # Local & branch builds will just used this fixed default version unless specified
-PROVIDER_VERSION ?= 2.0.0-alpha.0+dev
+PROVIDER_VERSION ?= 3.0.0-alpha.0+dev
 # Use this normalised version everywhere rather than the raw input to ensure consistency.
 VERSION_GENERIC = $(shell $(PULUMICTL) convert-version --language generic --version "$(PROVIDER_VERSION)")
 
