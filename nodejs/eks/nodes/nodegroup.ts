@@ -548,19 +548,17 @@ export type NodeGroupV2Args = Omit<NodeGroupV2Options, "cluster"> & {
 };
 
 export function resolveInstanceProfileName(
-    name: string,
     args: Omit<NodeGroupOptions, "cluster">,
     c: pulumi.UnwrappedObject<CoreData>,
-    parent: pulumi.ComponentResource,
 ): pulumi.Output<string> {
     if (
         (args.instanceProfile || c.nodeGroupOptions.instanceProfile) &&
         (args.instanceProfileName || c.nodeGroupOptions.instanceProfileName)
     ) {
-        throw new pulumi.ResourceError(
-            `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
-            parent,
-        );
+        throw new pulumi.InputPropertyError({
+            propertyPath: "instanceProfile",
+            reason: `instanceProfile and instanceProfileName are mutually exclusive`,
+        });
     }
 
     if (args.instanceProfile) {
@@ -572,10 +570,10 @@ export function resolveInstanceProfileName(
     } else if (c.nodeGroupOptions.instanceProfileName) {
         return pulumi.output(c.nodeGroupOptions.instanceProfileName!);
     } else {
-        throw new pulumi.ResourceError(
-            `an instanceProfile or instanceProfileName is required`,
-            parent,
-        );
+        throw new pulumi.InputPropertyError({
+            propertyPath: "instanceProfile",
+            reason: `an instanceProfile or instanceProfileName is required`,
+        });
     }
 }
 
@@ -586,22 +584,22 @@ function createNodeGroup(
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): NodeGroupData {
-    const instanceProfileName = core.apply((c) =>
-        resolveInstanceProfileName(name, args, c, parent),
-    );
+    const validationErrors: pulumi.InputPropertyErrorDetails[] = [];
+
+    const instanceProfileName = core.apply((c) => resolveInstanceProfileName(args, c));
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
-        throw new pulumi.ResourceError(
-            `invalid args for node group ${name}, clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
-            parent,
-        );
+        validationErrors.push({
+            propertyPath: "clusterIngressRule",
+            reason: `clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
+        });
     }
 
     if (args.nodeSecurityGroup && args.nodeSecurityGroupId) {
-        throw new pulumi.ResourceError(
-            `invalid args for node group ${name}, nodeSecurityGroup and nodeSecurityGroupId are mutually exclusive`,
-            parent,
-        );
+        validationErrors.push({
+            propertyPath: "nodeSecurityGroup",
+            reason: `nodeSecurityGroup and nodeSecurityGroupId are mutually exclusive`,
+        });
     }
 
     const coreSecurityGroupId = core.nodeGroupOptions.nodeSecurityGroup?.apply((sg) => sg?.id);
@@ -614,22 +612,27 @@ function createNodeGroup(
         .apply(([coreSecurityGroup, nodeSecurityGroup, sgTags]) => {
             if (coreSecurityGroup && nodeSecurityGroup) {
                 if (sgTags && coreSecurityGroup !== nodeSecurityGroup) {
-                    throw new pulumi.ResourceError(
-                        `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
-                        parent,
-                    );
+                    throw new pulumi.InputPropertyError({
+                        propertyPath: args.nodeSecurityGroup
+                            ? "nodeSecurityGroup"
+                            : "nodeSecurityGroupId",
+                        reason: `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
+                    });
                 }
             }
         });
     if (args.nodePublicKey && args.keyName) {
-        throw new pulumi.ResourceError(
-            "nodePublicKey and keyName are mutually exclusive. Choose a single approach",
-            parent,
-        );
+        validationErrors.push({
+            propertyPath: "nodePublicKey",
+            reason: "nodePublicKey and keyName are mutually exclusive. Choose a single approach",
+        });
     }
 
     if (args.amiId && args.gpu) {
-        throw new pulumi.ResourceError("amiId and gpu are mutually exclusive.", parent);
+        validationErrors.push({
+            propertyPath: "amiId",
+            reason: "amiId and gpu are mutually exclusive.",
+        });
     }
 
     if (
@@ -640,10 +643,10 @@ function createNodeGroup(
             args.kubeletExtraArgs ||
             args.bootstrapExtraArgs)
     ) {
-        throw new pulumi.ResourceError(
-            "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.",
-            parent,
-        );
+        validationErrors.push({
+            propertyPath: "nodeUserDataOverride",
+            reason: "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.",
+        });
     }
 
     let nodeSecurityGroupId: pulumi.Output<string>;
@@ -664,10 +667,10 @@ function createNodeGroup(
     let eksClusterIngressRuleId: pulumi.Output<string>;
     if (args.nodeSecurityGroup || args.nodeSecurityGroupId) {
         if (args.clusterIngressRule === undefined && args.clusterIngressRuleId === undefined) {
-            throw new pulumi.ResourceError(
-                `invalid args for node group ${name}, clusterIngressRule or clusterIngressRuleId is required when nodeSecurityGroup is manually specified`,
-                parent,
-            );
+            validationErrors.push({
+                propertyPath: "clusterIngressRule",
+                reason: `clusterIngressRule or clusterIngressRuleId is required when nodeSecurityGroup is manually specified`,
+            });
         }
 
         nodeSecurityGroup = args.nodeSecurityGroup;
@@ -729,7 +732,7 @@ function createNodeGroup(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem, parent);
+            return getOperatingSystem(amiType, operatingSystem);
         });
 
     const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
@@ -787,36 +790,44 @@ function createNodeGroup(
     pulumi
         .all([args.nodeRootVolumeIops, args.nodeRootVolumeType, args.nodeRootVolumeThroughput])
         .apply(([nodeRootVolumeIops, nodeRootVolumeType, nodeRootVolumeThroughput]) => {
+            const errors: pulumi.InputPropertyErrorDetails[] = [];
             if (nodeRootVolumeIops && nodeRootVolumeType !== "io1") {
-                throw new pulumi.ResourceError(
-                    "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
-                    parent,
-                );
+                errors.push({
+                    propertyPath: "nodeRootVolumeIops",
+                    reason: "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
+                });
             }
 
             if (nodeRootVolumeType === "io1" && nodeRootVolumeIops) {
                 if (!numeric.test(nodeRootVolumeIops?.toString())) {
-                    throw new pulumi.ResourceError(
-                        "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
-                        parent,
-                    );
+                    errors.push({
+                        propertyPath: "nodeRootVolumeIops",
+                        reason: "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
+                    });
                 }
             }
 
             if (nodeRootVolumeThroughput && nodeRootVolumeType !== "gp3") {
-                throw new pulumi.ResourceError(
-                    "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
-                    parent,
-                );
+                errors.push({
+                    propertyPath: "nodeRootVolumeThroughput",
+                    reason: "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
+                });
             }
 
             if (nodeRootVolumeType === "gp3" && nodeRootVolumeThroughput) {
                 if (!numeric.test(nodeRootVolumeThroughput?.toString())) {
-                    throw new pulumi.ResourceError(
-                        "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
-                        parent,
-                    );
+                    errors.push({
+                        propertyPath: "nodeRootVolumeThroughput",
+                        reason: "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
+                    });
                 }
+            }
+
+            if (errors.length > 0) {
+                throw new pulumi.InputPropertiesError({
+                    message: "Invalid arguments for node group",
+                    errors: errors,
+                });
             }
         });
 
@@ -892,6 +903,13 @@ function createNodeGroup(
                     }),
             };
         });
+
+    if (validationErrors.length > 0) {
+        throw new pulumi.InputPropertiesError({
+            message: "Invalid arguments for node group",
+            errors: validationErrors,
+        });
+    }
 
     const nodeLaunchConfiguration = new aws.ec2.LaunchConfiguration(
         `${name}-nodeLaunchConfiguration`,
@@ -1044,22 +1062,22 @@ export function createNodeGroupV2(
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): NodeGroupV2Data {
-    const instanceProfileName = core.apply((c) =>
-        resolveInstanceProfileName(name, args, c, parent),
-    );
+    const validationErrors: pulumi.InputPropertyErrorDetails[] = [];
+
+    const instanceProfileName = core.apply((c) => resolveInstanceProfileName(args, c));
 
     if (args.clusterIngressRule && args.clusterIngressRuleId) {
-        throw new pulumi.ResourceError(
-            `invalid args for node group ${name}, clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
-            parent,
-        );
+        validationErrors.push({
+            propertyPath: "clusterIngressRule",
+            reason: `clusterIngressRule and clusterIngressRuleId are mutually exclusive`,
+        });
     }
 
     if (args.nodeSecurityGroup && args.nodeSecurityGroupId) {
-        throw new pulumi.ResourceError(
-            `invalid args for node group ${name}, nodeSecurityGroup and nodeSecurityGroupId are mutually exclusive`,
-            parent,
-        );
+        validationErrors.push({
+            propertyPath: "nodeSecurityGroup",
+            reason: `nodeSecurityGroup and nodeSecurityGroupId are mutually exclusive`,
+        });
     }
 
     const coreSecurityGroupId = core.nodeGroupOptions.nodeSecurityGroup?.apply((sg) => sg?.id);
@@ -1072,23 +1090,26 @@ export function createNodeGroupV2(
         .apply(([coreSecurityGroup, nodeSecurityGroup, sgTags]) => {
             if (coreSecurityGroup && nodeSecurityGroup) {
                 if (sgTags && coreSecurityGroup !== nodeSecurityGroup) {
-                    throw new pulumi.ResourceError(
-                        `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
-                        parent,
-                    );
+                    throw new pulumi.InputPropertyError({
+                        propertyPath: "nodeSecurityGroup",
+                        reason: `The NodeGroup's nodeSecurityGroup and the cluster option nodeSecurityGroupTags are mutually exclusive. Choose a single approach`,
+                    });
                 }
             }
         });
 
     if (args.nodePublicKey && args.keyName) {
-        throw new pulumi.ResourceError(
-            "nodePublicKey and keyName are mutually exclusive. Choose a single approach",
-            parent,
-        );
+        validationErrors.push({
+            propertyPath: "nodePublicKey",
+            reason: "nodePublicKey and keyName are mutually exclusive. Choose a single approach",
+        });
     }
 
     if (args.amiId && args.gpu) {
-        throw new pulumi.ResourceError("amiId and gpu are mutually exclusive.", parent);
+        validationErrors.push({
+            propertyPath: "amiId",
+            reason: "amiId and gpu are mutually exclusive.",
+        });
     }
 
     if (
@@ -1099,10 +1120,10 @@ export function createNodeGroupV2(
             args.kubeletExtraArgs ||
             args.bootstrapExtraArgs)
     ) {
-        throw new pulumi.ResourceError(
-            "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.",
-            parent,
-        );
+        validationErrors.push({
+            propertyPath: "nodeUserDataOverride",
+            reason: "nodeUserDataOverride and any combination of {nodeUserData, labels, taints, kubeletExtraArgs, or bootstrapExtraArgs} is mutually exclusive.",
+        });
     }
 
     let nodeSecurityGroupId: pulumi.Output<string>;
@@ -1123,10 +1144,10 @@ export function createNodeGroupV2(
     let eksClusterIngressRuleId: pulumi.Output<string>;
     if (args.nodeSecurityGroup || args.nodeSecurityGroupId) {
         if (args.clusterIngressRule === undefined && args.clusterIngressRuleId === undefined) {
-            throw new pulumi.ResourceError(
-                `invalid args for node group ${name}, clusterIngressRule or clusterIngressRuleId is required when nodeSecurityGroup is manually specified`,
-                parent,
-            );
+            validationErrors.push({
+                propertyPath: "clusterIngressRule",
+                reason: `clusterIngressRule or clusterIngressRuleId is required when nodeSecurityGroup is manually specified`,
+            });
         }
 
         nodeSecurityGroup = args.nodeSecurityGroup;
@@ -1183,7 +1204,7 @@ export function createNodeGroupV2(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem, parent);
+            return getOperatingSystem(amiType, operatingSystem);
         });
 
     const serviceCidr = getClusterServiceCidr(core.cluster.kubernetesNetworkConfig);
@@ -1241,36 +1262,44 @@ export function createNodeGroupV2(
     pulumi
         .all([args.nodeRootVolumeIops, args.nodeRootVolumeType, args.nodeRootVolumeThroughput])
         .apply(([nodeRootVolumeIops, nodeRootVolumeType, nodeRootVolumeThroughput]) => {
+            const errors: pulumi.InputPropertyErrorDetails[] = [];
             if (nodeRootVolumeIops && nodeRootVolumeType !== "io1") {
-                throw new pulumi.ResourceError(
-                    "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
-                    parent,
-                );
+                errors.push({
+                    propertyPath: "nodeRootVolumeIops",
+                    reason: "Cannot create a cluster node root volume of non-io1 type with provisioned IOPS (nodeRootVolumeIops).",
+                });
             }
 
             if (nodeRootVolumeType === "io1" && nodeRootVolumeIops) {
                 if (!numeric.test(nodeRootVolumeIops?.toString())) {
-                    throw new pulumi.ResourceError(
-                        "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
-                        parent,
-                    );
+                    errors.push({
+                        propertyPath: "nodeRootVolumeIops",
+                        reason: "Cannot create a cluster node root volume of io1 type without provisioned IOPS (nodeRootVolumeIops) as integer value.",
+                    });
                 }
             }
 
             if (nodeRootVolumeThroughput && nodeRootVolumeType !== "gp3") {
-                throw new pulumi.ResourceError(
-                    "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
-                    parent,
-                );
+                errors.push({
+                    propertyPath: "nodeRootVolumeThroughput",
+                    reason: "Cannot create a cluster node root volume of non-gp3 type with provisioned throughput (nodeRootVolumeThroughput).",
+                });
             }
 
             if (nodeRootVolumeType === "gp3" && nodeRootVolumeThroughput) {
                 if (!numeric.test(nodeRootVolumeThroughput?.toString())) {
-                    throw new pulumi.ResourceError(
-                        "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
-                        parent,
-                    );
+                    errors.push({
+                        propertyPath: "nodeRootVolumeThroughput",
+                        reason: "Cannot create a cluster node root volume of gp3 type without provisioned throughput (nodeRootVolumeThroughput) as integer value.",
+                    });
                 }
+            }
+
+            if (errors.length > 0) {
+                throw new pulumi.InputPropertiesError({
+                    message: "Invalid arguments for node group",
+                    errors: errors,
+                });
             }
         });
 
@@ -1363,6 +1392,13 @@ export function createNodeGroupV2(
                   },
               ];
     });
+
+    if (validationErrors.length > 0) {
+        throw new pulumi.InputPropertiesError({
+            message: "Invalid arguments for node group",
+            errors: validationErrors,
+        });
+    }
 
     const nodeLaunchTemplate = new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
@@ -1816,20 +1852,13 @@ export function createManagedNodeGroup(
         args.version = pulumi.output(args.version ?? core.cluster.version);
     }
 
-    // Compute the nodegroup role.
-    if (!args.nodeRole && !args.nodeRoleArn) {
-        // throw new pulumi.ResourceError(`An IAM role, or role ARN must be provided to create a managed node group`);
-        throw new pulumi.ResourceError(
-            `An IAM role, or role ARN must be provided to create a managed node group`,
-            parent,
-        );
-    }
+    const validationErrors: pulumi.InputPropertyErrorDetails[] = [];
 
     if (args.nodeRole && args.nodeRoleArn) {
-        throw new pulumi.ResourceError(
-            "You cannot specify both nodeRole and nodeRoleArn when creating a managed node group.",
-            parent,
-        );
+        validationErrors.push({
+            propertyPath: "nodeRole",
+            reason: "You cannot specify both nodeRole and nodeRoleArn when creating a managed node group.",
+        });
     }
 
     const amiIdMutuallyExclusive: (keyof Omit<ManagedNodeGroupOptions, "cluster">)[] = [
@@ -1838,10 +1867,10 @@ export function createManagedNodeGroup(
     ];
     amiIdMutuallyExclusive.forEach((key) => {
         if (args.amiId && args[key]) {
-            throw new pulumi.ResourceError(
-                `You cannot specify both amiId and ${key} when creating a managed node group.`,
-                parent,
-            );
+            validationErrors.push({
+                propertyPath: "amiId",
+                reason: `You cannot specify both amiId and ${key} when creating a managed node group.`,
+            });
         }
     });
 
@@ -1851,7 +1880,14 @@ export function createManagedNodeGroup(
     } else if (args.nodeRole) {
         roleArn = pulumi.output(args.nodeRole).apply((r) => r.arn);
     } else {
-        throw new pulumi.ResourceError("The managed node group role provided is undefined", parent);
+        validationErrors.push({
+            propertyPath: "nodeRole",
+            reason: "An IAM role, or role ARN must be provided to create a managed node group",
+        });
+        throw new pulumi.InputPropertiesError({
+            message: "The input properties for the managed node group are invalid.",
+            errors: validationErrors,
+        });
     }
 
     // Check that the nodegroup role has been set on the cluster to
@@ -1872,10 +1908,10 @@ export function createManagedNodeGroup(
         .apply(([authMode, role]) => {
             // access entries can be added out of band, so we don't require them to be set in the cluster.
             if (!supportsAccessEntries(authMode) && !role) {
-                throw new pulumi.ResourceError(
-                    `A managed node group cannot be created without first setting its role in the cluster's instanceRoles`,
-                    parent,
-                );
+                throw new pulumi.InputPropertyError({
+                    propertyPath: "nodeRole",
+                    reason: "A managed node group cannot be created without first setting its role in the cluster's instanceRoles",
+                });
             }
         });
 
@@ -1907,12 +1943,12 @@ export function createManagedNodeGroup(
     // If the user specifies a custom LaunchTemplate, we throw an error and suggest that the user should include those in the launch template that they are providing.
     // If neither of these are provided, we can use the default launch template for managed node groups.
     if (args.launchTemplate && requiresCustomLaunchTemplate(args)) {
-        throw new pulumi.ResourceError(
-            `If you provide a custom launch template, you cannot provide any of ${customLaunchTemplateArgs.join(
+        validationErrors.push({
+            propertyPath: "launchTemplate",
+            reason: `If you provide a custom launch template, you cannot provide any of ${customLaunchTemplateArgs.join(
                 ", ",
             )}. Please include these in the launch template that you are providing.`,
-            parent,
-        );
+        });
     }
 
     const userDataArgs = {
@@ -1923,12 +1959,19 @@ export function createManagedNodeGroup(
     };
 
     if (requiresCustomUserData(userDataArgs) && args.userData) {
-        throw new pulumi.ResourceError(
-            `If you provide custom userData, you cannot provide any of ${customUserDataArgs.join(
+        validationErrors.push({
+            propertyPath: "userData",
+            reason: `If you provide custom userData, you cannot provide any of ${customUserDataArgs.join(
                 ", ",
             )}. Please include these in the userData that you are providing.`,
-            parent,
-        );
+        });
+    }
+
+    if (validationErrors.length > 0) {
+        throw new pulumi.InputPropertiesError({
+            message: "The input properties for the managed node group are invalid.",
+            errors: validationErrors,
+        });
     }
 
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
@@ -1952,7 +1995,13 @@ export function createManagedNodeGroup(
     } else if (amiType === undefined && args.operatingSystem !== undefined) {
         // if no ami type is provided, but operating system is provided, determine the ami type based on the operating system
 
-        amiType = determineAmiType(args.operatingSystem, args.gpu, args.instanceTypes, parent);
+        amiType = determineAmiType(
+            args.operatingSystem,
+            args.gpu,
+            args.instanceTypes,
+            "instanceTypes",
+            parent,
+        );
     }
 
     const ignoreScalingChanges = args.ignoreScalingChanges
@@ -2019,7 +2068,7 @@ function createMNGCustomLaunchTemplate(
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem, parent);
+            return getOperatingSystem(amiType, operatingSystem);
         });
 
     const taints = args.taints
@@ -2029,7 +2078,7 @@ function createMNGCustomLaunchTemplate(
                       return {
                           [taint.key]: {
                               value: taint.value,
-                              effect: mapMngTaintEffect(taint.effect, parent),
+                              effect: mapMngTaintEffect(taint.effect),
                           },
                       };
                   })
@@ -2159,9 +2208,9 @@ function createMNGCustomLaunchTemplate(
  * @param effect - The taint effect string. Must be one of "NO_SCHEDULE", "NO_EXECUTE", "PREFER_NO_SCHEDULE".
  * @param parent - The parent Pulumi resource.
  * @returns The corresponding Kubernetes taint effect.
- * @throws {pulumi.ResourceError} If the provided effect is invalid.
+ * @throws {pulumi.InputPropertyError} If the provided effect is invalid.
  */
-function mapMngTaintEffect(effect: string, parent: pulumi.Resource): TaintEffect {
+function mapMngTaintEffect(effect: string): TaintEffect {
     switch (effect) {
         case "NO_SCHEDULE":
             return "NoSchedule";
@@ -2170,10 +2219,10 @@ function mapMngTaintEffect(effect: string, parent: pulumi.Resource): TaintEffect
         case "PREFER_NO_SCHEDULE":
             return "PreferNoSchedule";
         default:
-            throw new pulumi.ResourceError(
-                `Invalid taint effect: ${effect}. Must be one of NO_SCHEDULE, NO_EXECUTE, PREFER_NO_SCHEDULE.`,
-                parent,
-            );
+            throw new pulumi.InputPropertyError({
+                propertyPath: "taints",
+                reason: `Invalid taint effect: ${effect}. Must be one of NO_SCHEDULE, NO_EXECUTE, PREFER_NO_SCHEDULE.`,
+            });
     }
 }
 
@@ -2205,30 +2254,33 @@ function getRecommendedAMI(
     parent: pulumi.Resource | undefined,
 ): pulumi.Input<string> {
     let instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined;
+    let instanceTypesPropertyPath: string = "";
     if ("instanceType" in args && args.instanceType) {
         instanceTypes = [args.instanceType];
+        instanceTypesPropertyPath = "instanceType";
     } else if ("instanceTypes" in args) {
         instanceTypes = args.instanceTypes;
+        instanceTypesPropertyPath = "instanceTypes";
     }
 
     const os = pulumi
         .all([args.amiType, args.operatingSystem])
         .apply(([amiType, operatingSystem]) => {
-            return getOperatingSystem(amiType, operatingSystem, parent);
+            return getOperatingSystem(amiType, operatingSystem);
         });
 
     const amiType = args.amiType
         ? pulumi.output(args.amiType).apply((amiType) => {
               const resolvedType = toAmiType(amiType);
               if (resolvedType === undefined) {
-                  throw new pulumi.ResourceError(
-                      `Cannot resolve recommended AMI for AMI type: ${amiType}. Please provide the AMI ID and userdata.`,
-                      parent,
-                  );
+                  throw new pulumi.InputPropertyError({
+                      propertyPath: "amiType",
+                      reason: `Cannot resolve recommended AMI for AMI type: ${amiType}. Please provide the AMI ID and userdata.`,
+                  });
               }
               return resolvedType;
           })
-        : determineAmiType(os, args.gpu, instanceTypes, parent);
+        : determineAmiType(os, args.gpu, instanceTypes, instanceTypesPropertyPath, parent);
 
     // if specified use the version from the args, otherwise use the version from the cluster.
     const version = args.version ? args.version : k8sVersion;
@@ -2259,13 +2311,13 @@ const ec2InstanceRegex = /([a-z]+)([0-9]+)([a-z])?\-?([a-z]+)?\.([a-zA-Z0-9\-]+)
  *
  * See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html.
  */
-export function isGravitonInstance(
-    instanceType: string,
-    parent: pulumi.Resource | undefined,
-): boolean {
+export function isGravitonInstance(instanceType: string, propertyPath: string): boolean {
     const match = instanceType.toString().match(ec2InstanceRegex);
     if (!match) {
-        throw new pulumi.ResourceError(`Invalid EC2 instance type: ${instanceType}`, parent);
+        throw new pulumi.InputPropertyError({
+            propertyPath,
+            reason: `Invalid EC2 instance type: ${instanceType}`,
+        });
     }
 
     const processorFamily = match[3];
@@ -2281,12 +2333,13 @@ function determineAmiType(
     os: pulumi.Input<OperatingSystem>,
     gpu: pulumi.Input<boolean> | undefined,
     instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined,
+    instanceTypesPropertyPath: string,
     parent: pulumi.Resource | undefined,
 ): pulumi.Output<AmiType> {
     const architecture = pulumi.output(instanceTypes).apply((instanceTypes) => {
         return pulumi
             .all(instanceTypes ?? [])
-            .apply((instanceTypes) => getArchitecture(instanceTypes, parent));
+            .apply((instanceTypes) => getArchitecture(instanceTypes, instanceTypesPropertyPath));
     });
 
     return pulumi
@@ -2299,27 +2352,24 @@ function determineAmiType(
  *
  * @param instanceTypes - An array of instance types.
  * @returns The architecture of the instance types, either "arm64" or "x86_64".
- * @throws {pulumi.ResourceError} If the provided instance types do not share a common architecture.
+ * @throws {pulumi.InputPropertyError} If the provided instance types do not share a common architecture.
  */
-export function getArchitecture(
-    instanceTypes: string[],
-    parent: pulumi.Resource | undefined,
-): CpuArchitecture {
+export function getArchitecture(instanceTypes: string[], propertyPath: string): CpuArchitecture {
     let hasGravitonInstances = false;
     let hasX64Instances = false;
 
     instanceTypes.forEach((instanceType) => {
-        if (isGravitonInstance(instanceType, parent)) {
+        if (isGravitonInstance(instanceType, propertyPath)) {
             hasGravitonInstances = true;
         } else {
             hasX64Instances = true;
         }
 
         if (hasGravitonInstances && hasX64Instances) {
-            throw new pulumi.ResourceError(
-                "Cannot determine architecture of instance types. The provided instance types do not share a common architecture",
-                parent,
-            );
+            throw new pulumi.InputPropertyError({
+                propertyPath,
+                reason: "Cannot determine architecture of instance types. The provided instance types do not share a common architecture",
+            });
         }
     });
 

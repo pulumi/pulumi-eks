@@ -307,40 +307,40 @@ const nonGravitonInstances = [
 describe("isGravitonInstance", () => {
     gravitonInstances.forEach((instanceType) => {
         test(`${instanceType} should return true for a Graviton instance`, () => {
-            expect(isGravitonInstance(instanceType, undefined)).toBe(true);
+            expect(isGravitonInstance(instanceType, "instanceTypes")).toBe(true);
         });
     });
 
     nonGravitonInstances.forEach((instanceType) => {
         test(`${instanceType} should return false for non-Graviton instance`, () => {
-            expect(isGravitonInstance(instanceType, undefined)).toBe(false);
+            expect(isGravitonInstance(instanceType, "instanceTypes")).toBe(false);
         });
     });
     describe("getArchitecture", () => {
         test("should return 'x86_64' when only x86_64 instances are provided", () => {
             const instanceTypes = ["c5.large", "m5.large", "t3.large"];
-            const architecture = getArchitecture(instanceTypes, undefined);
+            const architecture = getArchitecture(instanceTypes, "instanceTypes");
             expect(architecture).toBe("x86_64");
         });
 
         test("should return 'arm64' when only arm64 instances are provided", () => {
             const instanceTypes = ["c6g.large", "m6g.large", "t4g.large"];
-            const architecture = getArchitecture(instanceTypes, undefined);
+            const architecture = getArchitecture(instanceTypes, "instanceTypes");
             expect(architecture).toBe("arm64");
         });
 
         test("should throw an error when both x86_64 and arm64 instances are provided", () => {
             const instanceTypes = ["c5.large", "c6g.large"];
             expect(() => {
-                getArchitecture(instanceTypes, undefined);
-            }).toThrowError(
+                getArchitecture(instanceTypes, "instanceTypes");
+            }).toThrow(
                 "Cannot determine architecture of instance types. The provided instance types do not share a common architecture",
             );
         });
 
         test("should return 'x86_64' when no instance types are provided", () => {
             const instanceTypes: string[] = [];
-            const architecture = getArchitecture(instanceTypes, undefined);
+            const architecture = getArchitecture(instanceTypes, "instanceTypes");
             expect(architecture).toBe("x86_64");
         });
     });
@@ -484,15 +484,10 @@ describe("resolveInstanceProfileName", function () {
 
     test("no args, no c.nodeGroupOptions throws", async () => {
         expect(() =>
-            resolveInstanceProfileName(
-                "nodegroup-name",
-                {},
-                {
-                    nodeGroupOptions: {},
-                } as pulumi.UnwrappedObject<CoreData>,
-                undefined as any,
-            ),
-        ).toThrowError("an instanceProfile or instanceProfileName is required");
+            resolveInstanceProfileName({}, {
+                nodeGroupOptions: {},
+            } as pulumi.UnwrappedObject<CoreData>),
+        ).toThrow("an instanceProfile or instanceProfileName is required");
     });
 
     test("both args.instanceProfile and args.instanceProfileName throws", async () => {
@@ -500,7 +495,6 @@ describe("resolveInstanceProfileName", function () {
         const name = "nodegroup-name";
         expect(() =>
             resolveInstanceProfileName(
-                name,
                 {
                     instanceProfile: instanceProfile,
                     instanceProfileName: "instanceProfileName",
@@ -508,47 +502,34 @@ describe("resolveInstanceProfileName", function () {
                 {
                     nodeGroupOptions: {},
                 } as pulumi.UnwrappedObject<CoreData>,
-                undefined as any,
             ),
-        ).toThrowError(
-            `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
-        );
+        ).toThrow(`instanceProfile and instanceProfileName are mutually exclusive`);
     });
 
     test("both c.nodeGroupOptions.instanceProfileName and c.nodeGroupOptions.instanceProfile throws", async () => {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {});
         const name = "nodegroup-name";
         expect(() =>
-            resolveInstanceProfileName(
-                name,
-                {},
-                {
-                    nodeGroupOptions: {
-                        instanceProfile: instanceProfile,
-                        instanceProfileName: "instanceProfileName",
-                    },
-                } as pulumi.UnwrappedObject<CoreData>,
-                undefined as any,
-            ),
-        ).toThrowError(
-            `invalid args for node group ${name}, instanceProfile and instanceProfileName are mutually exclusive`,
-        );
+            resolveInstanceProfileName({}, {
+                nodeGroupOptions: {
+                    instanceProfile: instanceProfile,
+                    instanceProfileName: "instanceProfileName",
+                },
+            } as pulumi.UnwrappedObject<CoreData>),
+        ).toThrow(`instanceProfile and instanceProfileName are mutually exclusive`);
     });
 
     test("args.instanceProfile returns passed instanceProfile", async () => {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
             name: "passedInstanceProfile",
         });
-        const nodeGroupName = "nodegroup-name";
         const resolvedInstanceProfileName = resolveInstanceProfileName(
-            nodeGroupName,
             {
                 instanceProfile: instanceProfile,
             },
             {
                 nodeGroupOptions: {},
             } as pulumi.UnwrappedObject<CoreData>,
-            undefined as any,
         );
         const expected = await promisify(instanceProfile.name);
         const recieved = await promisify(resolvedInstanceProfileName);
@@ -559,34 +540,26 @@ describe("resolveInstanceProfileName", function () {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
             name: "passedInstanceProfile",
         });
-        const nodeGroupName = "nodegroup-name";
-        const resolvedInstanceProfileName = resolveInstanceProfileName(
-            nodeGroupName,
-            {},
-            {
-                nodeGroupOptions: {
-                    instanceProfile: instanceProfile,
-                },
-            } as pulumi.UnwrappedObject<CoreData>,
-            undefined as any,
-        );
+        const resolvedInstanceProfileName = resolveInstanceProfileName({}, {
+            nodeGroupOptions: {
+                instanceProfile: instanceProfile,
+            },
+        } as pulumi.UnwrappedObject<CoreData>);
         const expected = await promisify(instanceProfile.name);
         const recieved = await promisify(resolvedInstanceProfileName);
         expect(recieved).toEqual(expected);
     });
 
     test("args.instanceProfileName returns passed InstanceProfile", async () => {
-        const nodeGroupName = "nodegroup-name";
+        const nodeGroupName = "-name";
         const existingInstanceProfileName = "existingInstanceProfileName";
         const resolvedInstanceProfileName = resolveInstanceProfileName(
-            nodeGroupName,
             {
                 instanceProfileName: existingInstanceProfileName,
             },
             {
                 nodeGroupOptions: {},
             } as pulumi.UnwrappedObject<CoreData>,
-            undefined as any,
         );
         const expected = existingInstanceProfileName;
         const received = await promisify(resolvedInstanceProfileName);
@@ -594,18 +567,12 @@ describe("resolveInstanceProfileName", function () {
     });
 
     test("nodeGroupOptions.instanceProfileName returns existing InstanceProfile", async () => {
-        const nodeGroupName = "nodegroup-name";
         const existingInstanceProfileName = "existingInstanceProfileName";
-        const resolvedInstanceProfileName = resolveInstanceProfileName(
-            nodeGroupName,
-            {},
-            {
-                nodeGroupOptions: {
-                    instanceProfileName: existingInstanceProfileName,
-                },
-            } as pulumi.UnwrappedObject<CoreData>,
-            undefined as any,
-        );
+        const resolvedInstanceProfileName = resolveInstanceProfileName({}, {
+            nodeGroupOptions: {
+                instanceProfileName: existingInstanceProfileName,
+            },
+        } as pulumi.UnwrappedObject<CoreData>);
         const expected = existingInstanceProfileName;
         const received = await promisify(resolvedInstanceProfileName);
         expect(received).toEqual(expected);
