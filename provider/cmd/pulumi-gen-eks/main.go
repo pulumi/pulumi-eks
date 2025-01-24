@@ -129,7 +129,7 @@ func rootCmd() *cobra.Command {
 }
 
 func generate(language Language, cwd, outDir string) error {
-	pkgSpec := generateSchema(semver.MustParse(version.Version), outDir)
+	pkgSpec := generateSchema(semver.MustParse(version.Version), cwd)
 	if language == Schema {
 		mustWritePulumiSchema(pkgSpec, outDir)
 		return nil
@@ -181,7 +181,7 @@ func k8sRef(ref string, k8sVersion string) string {
 
 //nolint:lll,goconst
 func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
-	dependencies := readPackageDependencies(path.Join(outdir, "..", "..", "nodejs", "eks"))
+	dependencies := readPackageDependencies(path.Join(outdir, "nodejs", "eks"))
 	return schema.PackageSpec{
 		Name:        "eks",
 		Description: "Pulumi Amazon Web Services (AWS) EKS Components.",
