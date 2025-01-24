@@ -87,3 +87,5 @@ spec:
 `
     }]
 }, { dependsOn: [efaDevicePlugin] });
+
+export const placementGroupName = efaMng.placementGroupName;

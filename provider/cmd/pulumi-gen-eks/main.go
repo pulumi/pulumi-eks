@@ -830,7 +830,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Description: "The AWS managed node group.",
 						},
 						"placementGroupName": {
-							TypeSpec: schema.TypeSpec{Type: "string"},
+							TypeSpec:    schema.TypeSpec{Type: "string"},
 							Description: "The name of the placement group created for the managed node group.",
 						},
 					},
@@ -1078,7 +1078,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					},
 					"placementGroupAvailabilityZone": {
 						TypeSpec: schema.TypeSpec{
-							Type:  "string",
+							Type: "string",
 						},
 						Description: "The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.",
 					},

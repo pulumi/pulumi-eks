@@ -347,6 +347,8 @@ describe("isGravitonInstance", () => {
 });
 
 describe("createManagedNodeGroup", function () {
+    const callReturnValues = new Map<string, pulumi.runtime.MockCallResult>();
+
     beforeAll(() => {
         pulumi.runtime.setMocks(
             {
@@ -354,12 +356,25 @@ describe("createManagedNodeGroup", function () {
                     id: string;
                     state: any;
                 } {
+                    if (args.type === "aws:ec2/placementGroup:PlacementGroup") {
+                        return {
+                            id: args.inputs.name + "_id",
+                            state: {
+                                name: args.inputs.name + "_id",
+                            },
+                        };
+                    }
                     return {
                         id: args.inputs.name + "_id",
                         state: args.inputs,
                     };
                 },
-                call: function (args: pulumi.runtime.MockCallArgs) {
+                call: function (args: pulumi.runtime.MockCallArgs): pulumi.runtime.MockCallResult {
+                    const callReturnValue = callReturnValues.get(args.token);
+                    if (callReturnValue) {
+                        return callReturnValue;
+                    }
+
                     return args.inputs;
                 },
             },
@@ -391,7 +406,7 @@ describe("createManagedNodeGroup", function () {
             undefined as any,
         );
 
-        const configuredVersion = await promisify(mng.version);
+        const configuredVersion = await promisify(mng.nodeGroup.version);
 
         expect(configuredVersion).toBe("1.30");
     });
@@ -414,7 +429,7 @@ describe("createManagedNodeGroup", function () {
             undefined as any,
         );
 
-        const configuredVersion = await promisify(mng.version);
+        const configuredVersion = await promisify(mng.nodeGroup.version);
 
         expect(configuredVersion).toBe("1.29");
     });
@@ -440,12 +455,12 @@ describe("createManagedNodeGroup", function () {
             undefined as any,
         );
 
-        const configuredVersion = await promisify(mng.version);
+        const configuredVersion = await promisify(mng.nodeGroup.version);
 
         expect(configuredVersion).toBeUndefined();
     });
 
-    test("should throw an error if placementGroupAvailabilityZone is not provided when enabling EFA support", async () => {
+    it("should throw an error if placementGroupAvailabilityZone is not provided when enabling EFA support", async () => {
         expect(() => {
             ng.createManagedNodeGroup(
                 "test",
@@ -474,6 +489,69 @@ describe("createManagedNodeGroup", function () {
                 ],
             }),
         );
+    });
+
+    it("should return empty string for placement group name if efa support is not enabled", async () => {
+        const mng = ng.createManagedNodeGroup(
+            "test",
+            {
+                nodeRoleArn: pulumi.output("nodeRoleArn"),
+            },
+            pulumi.output({
+                cluster: {
+                    version: pulumi.output("1.30"),
+                    accessConfig: pulumi.output({
+                        authenticationMode: "API",
+                    }),
+                } as aws.eks.Cluster,
+            } as CoreData),
+            undefined as any,
+        );
+
+        const placementGroupName = await promisify(pulumi.output(mng.placementGroupName));
+        expect(placementGroupName).toBe("");
+    });
+
+    it("should return a placement group name if efa support is enabled", async () => {
+        callReturnValues.set("aws:ec2/getInstanceTypeOfferings:getInstanceTypeOfferings", {
+            locations: pulumi.output(["us-west-2a", "us-west-2b"]),
+        });
+
+        const subnetIds = ["subnet-12345", "subnet-67890", "subnet-54321"];
+
+        callReturnValues.set("aws:ec2/getSubnets:getSubnets", {
+            ids: pulumi.output([subnetIds[0]]),
+        });
+        callReturnValues.set("aws:ec2/getInstanceType:getInstanceType", {
+            efaSupported: true,
+            maximumNetworkCards: 1,
+        });
+
+        const mng = ng.createManagedNodeGroup(
+            "test",
+            {
+                nodeRoleArn: pulumi.output("nodeRoleArn"),
+                enableEfaSupport: true,
+                placementGroupAvailabilityZone: "us-west-2a",
+                subnetIds,
+            },
+            pulumi.output({
+                cluster: {
+                    version: pulumi.output("1.30"),
+                    accessConfig: pulumi.output({
+                        authenticationMode: "API",
+                    }),
+                    kubernetesNetworkConfig: pulumi.output({
+                        serviceIpv4Cidr: "10.100.0.0/16",
+                        ipFamily: "ipv4",
+                    }),
+                } as aws.eks.Cluster,
+            } as CoreData),
+            undefined as any,
+        );
+
+        const placementGroupName = await promisify(pulumi.output(mng.placementGroupName));
+        expect(placementGroupName).not.toBe("");
     });
 });
 

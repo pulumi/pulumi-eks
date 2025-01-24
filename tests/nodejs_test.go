@@ -1091,6 +1091,8 @@ func TestAccEfa(t *testing.T) {
 				"availabilityZones": strings.Join(supportedAZs, ","),
 			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				require.NotEmpty(t, info.Outputs["placementGroupName"])
+
 				// Verify that the cluster is working.
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
 

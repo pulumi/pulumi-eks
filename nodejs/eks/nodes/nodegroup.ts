@@ -1810,6 +1810,7 @@ export type ManagedNodeGroupOptions = Omit<
  */
 export class ManagedNodeGroup extends pulumi.ComponentResource {
     public readonly nodeGroup!: pulumi.Output<aws.eks.NodeGroup>;
+    public readonly placementGroupName!: pulumi.Output<string>;
 
     constructor(name: string, args: ManagedNodeGroupArgs, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:ManagedNodeGroup";
@@ -1817,6 +1818,7 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
         if (opts?.urn) {
             const props = {
                 nodeGroup: undefined,
+                placementGroupName: undefined,
             };
             super(type, name, props, opts);
             return;
@@ -1830,10 +1832,12 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
             pulumi.Unwrap<CoreData>
         >;
 
-        const group = createManagedNodeGroup(name, args, core, this, opts?.provider);
-        this.nodeGroup = pulumi.output(group);
+        const outputs = createManagedNodeGroup(name, args, core, this, opts?.provider);
+        this.nodeGroup = pulumi.output(outputs.nodeGroup);
+        this.placementGroupName = pulumi.output(outputs.placementGroupName);
         this.registerOutputs({
             nodeGroup: this.nodeGroup,
+            placementGroupName: this.placementGroupName,
         });
     }
 }
@@ -1841,6 +1845,11 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
 /** @internal */
 export type ManagedNodeGroupArgs = Omit<ManagedNodeGroupOptions, "cluster"> & {
     cluster: pulumi.Input<Cluster | pulumi.Unwrap<CoreData>>;
+};
+
+export type ManagedNodeGroupOutput = {
+    nodeGroup: aws.eks.NodeGroup;
+    placementGroupName: pulumi.Output<string> | string;
 };
 
 /**
@@ -1855,7 +1864,7 @@ export function createManagedNodeGroup(
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
     parent: pulumi.Resource,
     provider?: pulumi.ProviderResource,
-): aws.eks.NodeGroup {
+): ManagedNodeGroupOutput {
     // default the version to the cluster version if not provided.
     // we can only do that if the user doesn't provide a launch template. If they do, they're responsible
     // for deciding the k8s version as part of the ami they're choosing.
@@ -2092,7 +2101,10 @@ export function createManagedNodeGroup(
         { parent: parent, dependsOn: ngDeps, provider, ignoreChanges: ignoreScalingChanges },
     );
 
-    return nodeGroup;
+    return {
+        nodeGroup,
+        placementGroupName: placementGroup?.name ?? "",
+    };
 }
 
 const customLaunchTemplateArgs: (keyof Omit<ManagedNodeGroupOptions, "cluster">)[] = [
