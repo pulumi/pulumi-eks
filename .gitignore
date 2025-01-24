@@ -31,3 +31,4 @@ sdk/java/gradlew.bat
 .envrc
 
 sdk/nodejs/yarn.lock
+.make

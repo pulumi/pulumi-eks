@@ -3,6 +3,7 @@
     "version": "${VERSION}",
     "description": "Pulumi Amazon Web Services (AWS) EKS Components.",
     "license": "Apache-2.0",
+    "bin": "bin/index.js",
     "keywords": [
         "pulumi",
         "aws",
@@ -15,7 +16,8 @@
         "lint": "yarn run format && tslint -c ../tslint.json -p tsconfig.json --fix",
         "test": "jest",
         "dedupe-deps": "yarn-deduplicate",
-        "check-duplicate-deps": "yarn-deduplicate --fail"
+        "check-duplicate-deps": "yarn-deduplicate --fail",
+        "build": "SCHEMA=../../provider/cmd/pulumi-resource-eks/schema-embed.json ./scripts/build.sh"
     },
     "homepage": "https://pulumi.com",
     "repository": {
