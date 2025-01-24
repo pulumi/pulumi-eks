@@ -57,6 +57,13 @@ runs:
       with:
         repo: pulumi/schema-tools
 
+    - name: Install Kubectl
+      shell: bash
+      run: |
+        curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x ./kubectl
+        sudo mv kubectl /usr/local/bin
+
     - name: Setup Node
       if: inputs.tools == 'all' || contains(inputs.tools, 'nodejs')
       uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
