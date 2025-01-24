@@ -3,6 +3,7 @@ aws: true
 kubectl: true
 major-version: 3
 template: generic
+test-folder: tests
 
 buildProviderCmd: "OS=$(1) ARCH=$(2) OUT=$(3) yarn --cwd nodejs/eks build"
 renovateCmd: "./scripts/renovate.sh"
