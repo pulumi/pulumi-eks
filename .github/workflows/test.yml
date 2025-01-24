@@ -105,7 +105,7 @@ jobs:
       run: make install_sdks
     - name: Generate test shards
       run: |-
-        cd examples
+        cd tests
         go run github.com/pulumi/shard@861c9ce4aa851e98c19f8376892bf7e47238fa1b \
             --total ${{ matrix.total-shards }} \
             --index ${{ matrix.current-shard }} \
