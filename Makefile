@@ -3,7 +3,7 @@
 PACK := eks
 ORG := pulumi
 PROJECT := github.com/$(ORG)/pulumi-$(PACK)
-PROVIDER_PATH := provider/v3
+PROVIDER_PATH := provider/v2
 VERSION_PATH := $(PROVIDER_PATH)/pkg/version.Version
 CODEGEN := pulumi-gen-$(PACK)
 PROVIDER := pulumi-resource-$(PACK)
@@ -23,7 +23,7 @@ PULUMICTL := $(shell which pulumictl || \
 
 # Override during CI using `make [TARGET] PROVIDER_VERSION=""` or by setting a PROVIDER_VERSION environment variable
 # Local & branch builds will just used this fixed default version unless specified
-PROVIDER_VERSION ?= 3.0.0-alpha.0+dev
+PROVIDER_VERSION ?= 2.0.0-alpha.0+dev
 # Use this normalised version everywhere rather than the raw input to ensure consistency.
 VERSION_GENERIC = $(shell $(PULUMICTL) convert-version --language generic --version "$(PROVIDER_VERSION)")
 
@@ -215,7 +215,7 @@ lint_provider: provider
 lint_provider.fix:
 	cd provider && golangci-lint run --path-prefix provider -c ../.golangci.yml --fix
 .PHONY: lint_provider lint_provider.fix
-build_provider_cmd = cd provider && GOOS=$(1) GOARCH=$(2) CGO_ENABLED=0 go build $(PULUMI_PROVIDER_BUILD_PARALLELISM) -o "$(3)" -ldflags "$(LDFLAGS)" $(PROJECT)/$(PROVIDER_PATH)/cmd/$(PROVIDER)
+build_provider_cmd = OS=$(1) ARCH=$(2) OUT=$(3) yarn --cwd nodejs/eks build
 
 provider: bin/$(PROVIDER)
 
@@ -381,6 +381,10 @@ provider_dist-darwin-arm64: bin/$(PROVIDER)-v$(VERSION_GENERIC)-darwin-arm64.tar
 provider_dist-windows-amd64: bin/$(PROVIDER)-v$(VERSION_GENERIC)-windows-amd64.tar.gz
 provider_dist: provider_dist-linux-amd64 provider_dist-linux-arm64 provider_dist-darwin-amd64 provider_dist-darwin-arm64 provider_dist-windows-amd64
 .PHONY: provider_dist-linux-amd64 provider_dist-linux-arm64 provider_dist-darwin-amd64 provider_dist-darwin-arm64 provider_dist-windows-amd64 provider_dist
+renovate_cmd = ./scripts/renovate.sh
+renovate:
+	$(call renovate_cmd)
+.PHONY: renovate
 
 # Permit providers to extend the Makefile with provider-specific Make includes.
 include $(wildcard .mk/*.mk)
