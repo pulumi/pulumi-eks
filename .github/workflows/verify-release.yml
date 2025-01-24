@@ -42,12 +42,14 @@ on:
         required: false
 
 env:
-  ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
-  ALT_AWS_SECRET_ACCESS_KEY: ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-west-2
-  GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
+  DOTNET_VERSION: 6.x
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GO_VERSION: 1.21.x
   GOLANGCI_LINT_VERSION: v1.61.0
+  JAVA_VERSION: "11"
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NODE_VERSION: 18.x
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
   PROVIDER: eks
@@ -60,6 +62,7 @@ env:
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
   PYPI_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
   PYPI_USERNAME: __token__
+  PYTHON_VERSION: "3.9"
   SIGNING_KEY: ${{ secrets.JAVA_SIGNING_KEY }}
   SIGNING_KEY_ID: ${{ secrets.JAVA_SIGNING_KEY_ID }}
   SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}
@@ -69,18 +72,13 @@ env:
 jobs:
   verify-release:
     name: verify-release
-    # We don't have any release verification configurations, so we never run this workflow.
-    # Configure your .ci-mgmt.yaml files to include the release verification configurations e.g.
-    # releaseVerification:
-    #   nodejs: path/to/nodejs/project
-    #   python: path/to/python/project
-    #   dotnet: path/to/dotnet/project
-    #   go: path/to/go/project
-    if: false
     strategy:
       matrix:
-        # We don't have any release verification configurations, so we only run on Linux to print warnings to help users configure the release verification.
-        runner: ["ubuntu-latest"]
+        # We always run on Linux and Windows, and optionally on MacOS. This is because MacOS runners have limited availability.
+        # Expression expands to ["ubuntu-latest","windows-latest"] or ["ubuntu-latest","windows-latest","macos-latest"]
+        # GitHub expressions don't have 'if' statements, so we use a ternary operator to conditionally include the MacOS runner suffix.
+        # See the docs for a similar example to this: https://docs.github.com/en/actions/learn-github-actions/expressions#fromjson
+        runner: ${{ fromJSON(format('["ubuntu-latest","windows-latest"{0}]', inputs.enableMacRunner && ',"macos-latest"' || '')) }}
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout Repo
@@ -91,3 +89,51 @@ jobs:
         uses: ./.github/actions/setup-tools
         with:
           tools: pulumicli, nodejs, python, dotnet, go, java
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ env.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-duration-seconds: 7200
+          role-session-name: eks@githubActions
+          role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ env.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-duration-seconds: 7200
+          role-session-name: aws@githubActions
+          role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
+      - name: Verify nodejs release
+        uses: pulumi/verify-provider-release@v1
+        with:
+          runtime: nodejs
+          directory: examples/cluster
+          provider: eks
+          providerVersion: ${{ inputs.providerVersion }}
+      - name: Verify python release
+        uses: pulumi/verify-provider-release@v1
+        with:
+          runtime: python
+          directory: examples/cluster-py
+          provider: eks
+          providerVersion: ${{ inputs.providerVersion }}
+          packageVersion: ${{ inputs.pythonVersion || inputs.providerVersion }}
+      - name: Verify dotnet release
+        uses: pulumi/verify-provider-release@v1
+        with:
+          runtime: dotnet
+          directory: examples/cluster-cs
+          provider: eks
+          providerVersion: ${{ inputs.providerVersion }}
+      - name: Verify go release
+        uses: pulumi/verify-provider-release@v1
+        if: inputs.skipGoSdk == false
+        with:
+          runtime: go
+          directory: examples/cluster-go
+          provider: eks
+          providerVersion: ${{ inputs.providerVersion }}

@@ -20,12 +20,14 @@ on:
         value: ${{ jobs.prerequisites.outputs.version }}
 
 env:
-  ALT_AWS_ACCESS_KEY_ID: ${{ secrets.ALT_AWS_ACCESS_KEY_ID }}
-  ALT_AWS_SECRET_ACCESS_KEY: ${{ secrets.ALT_AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-west-2
-  GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
+  DOTNET_VERSION: 6.x
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GO_VERSION: 1.21.x
   GOLANGCI_LINT_VERSION: v1.61.0
+  JAVA_VERSION: "11"
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NODE_VERSION: 18.x
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
   PROVIDER: eks
@@ -38,6 +40,7 @@ env:
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
   PYPI_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
   PYPI_USERNAME: __token__
+  PYTHON_VERSION: "3.9"
   SIGNING_KEY: ${{ secrets.JAVA_SIGNING_KEY }}
   SIGNING_KEY_ID: ${{ secrets.JAVA_SIGNING_KEY_ID }}
   SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}
@@ -71,6 +74,15 @@ jobs:
         tools: go, pulumictl, pulumicli, schema-tools
     - name: Prepare local workspace before restoring previously built files
       run: make prepare_local_workspace
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-region: ${{ env.AWS_REGION }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-duration-seconds: 7200
+        role-session-name: aws@githubActions
+        role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
     - name: Generate schema
       run: make schema
     - name: Build provider binary
