@@ -1,5 +1,6 @@
 provider: eks
 aws: true
+kubectl: true
 major-version: 3
 template: generic
 
