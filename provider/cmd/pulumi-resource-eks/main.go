@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This is an empty file to satisfy ci-mgmt constraints.
-
-//go:build ignore
+//go:generate go run ./generate.go
 
 package main
