@@ -47,6 +47,7 @@ describe("filterEfaSubnets", () => {
     let instances: typeof import("./instances");
     beforeEach(async function () {
         instances = await import("./instances");
+        callReturnValues.clear();
     });
 
     it("should return filtered subnet IDs when the availability zone is supported", async () => {
@@ -101,6 +102,7 @@ describe("getEfaNetworkInterfaces", () => {
     let instances: typeof import("./instances");
     beforeEach(async function () {
         instances = await import("./instances");
+        callReturnValues.clear();
     });
 
     it("should return network interfaces for EFA-enabled instance types with a single network card", async () => {
