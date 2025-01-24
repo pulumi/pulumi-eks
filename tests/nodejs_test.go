@@ -1073,6 +1073,51 @@ func TestAccEksAutoModeUpgrade(t *testing.T) {
 	programTestWithExtraOptions(t, &test, nil)
 }
 
+func TestAccEfa(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// this is one of the cheapest instances that support EFA
+	instanceType := "g6.8xlarge"
+	supportedAZs, err := utils.FindSupportedAZs(t, instanceType)
+	require.NoError(t, err)
+
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getExamples(t), "efa"),
+			Config: map[string]string{
+				"instanceType":      instanceType,
+				"availabilityZones": strings.Join(supportedAZs, ","),
+			},
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				require.NotEmpty(t, info.Outputs["placementGroupName"])
+
+				// Verify that the cluster is working.
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
+
+				// verify that two nodes have EFA enabled
+				assert.NoError(t, utils.ValidateNodes(t, info.Outputs["kubeconfig"], func(nodes *corev1.NodeList) {
+					require.NotNil(t, nodes)
+					assert.NotEmpty(t, nodes.Items)
+
+					var foundNodes = 0
+					for _, node := range nodes.Items {
+						if efas, ok := node.Status.Capacity["vpc.amazonaws.com/efa"]; !ok {
+							continue
+						} else {
+							assert.True(t, efas.CmpInt64(1) == 0)
+							foundNodes++
+						}
+					}
+					assert.Equal(t, 2, foundNodes, "Expected %s nodes with EFA enabled", foundNodes)
+				}))
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
 func randomString(lenght int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
 	random := rand.New(rand.NewSource(uint64(time.Now().UnixNano())))

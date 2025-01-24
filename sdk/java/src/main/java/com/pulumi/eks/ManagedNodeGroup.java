@@ -10,6 +10,7 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.eks.ManagedNodeGroupArgs;
 import com.pulumi.eks.Utilities;
+import java.lang.String;
 import javax.annotation.Nullable;
 
 /**
@@ -34,6 +35,20 @@ public class ManagedNodeGroup extends com.pulumi.resources.ComponentResource {
      */
     public Output<NodeGroup> nodeGroup() {
         return this.nodeGroup;
+    }
+    /**
+     * The name of the placement group created for the managed node group.
+     * 
+     */
+    @Export(name="placementGroupName", refs={String.class}, tree="[0]")
+    private Output<String> placementGroupName;
+
+    /**
+     * @return The name of the placement group created for the managed node group.
+     * 
+     */
+    public Output<String> placementGroupName() {
+        return this.placementGroupName;
     }
 
     /**

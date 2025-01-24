@@ -37,6 +37,10 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
      * The AWS managed node group.
      */
     public /*out*/ readonly nodeGroup!: pulumi.Output<pulumiAws.eks.NodeGroup>;
+    /**
+     * The name of the placement group created for the managed node group.
+     */
+    public /*out*/ readonly placementGroupName!: pulumi.Output<string>;
 
     /**
      * Create a ManagedNodeGroup resource with the given unique name, arguments, and options.
@@ -60,6 +64,7 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
             resourceInputs["cluster"] = args ? args.cluster : undefined;
             resourceInputs["clusterName"] = args ? args.clusterName : undefined;
             resourceInputs["diskSize"] = args ? args.diskSize : undefined;
+            resourceInputs["enableEfaSupport"] = args ? args.enableEfaSupport : undefined;
             resourceInputs["enableIMDSv2"] = args ? args.enableIMDSv2 : undefined;
             resourceInputs["forceUpdateVersion"] = args ? args.forceUpdateVersion : undefined;
             resourceInputs["gpu"] = args ? args.gpu : undefined;
@@ -74,6 +79,7 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
             resourceInputs["nodeRoleArn"] = args ? args.nodeRoleArn : undefined;
             resourceInputs["nodeadmExtraOptions"] = args ? args.nodeadmExtraOptions : undefined;
             resourceInputs["operatingSystem"] = args ? args.operatingSystem : undefined;
+            resourceInputs["placementGroupAvailabilityZone"] = args ? args.placementGroupAvailabilityZone : undefined;
             resourceInputs["releaseVersion"] = args ? args.releaseVersion : undefined;
             resourceInputs["remoteAccess"] = args ? args.remoteAccess : undefined;
             resourceInputs["scalingConfig"] = args ? args.scalingConfig : undefined;
@@ -83,8 +89,10 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
             resourceInputs["userData"] = args ? args.userData : undefined;
             resourceInputs["version"] = args ? args.version : undefined;
             resourceInputs["nodeGroup"] = undefined /*out*/;
+            resourceInputs["placementGroupName"] = undefined /*out*/;
         } else {
             resourceInputs["nodeGroup"] = undefined /*out*/;
+            resourceInputs["placementGroupName"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(ManagedNodeGroup.__pulumiType, name, resourceInputs, opts, true /*remote*/);
@@ -146,6 +154,10 @@ export interface ManagedNodeGroupArgs {
      * Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
      */
     diskSize?: pulumi.Input<number>;
+    /**
+     * Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
+     */
+    enableEfaSupport?: boolean;
     /**
      * Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
      * Defaults to `false`.
@@ -232,6 +244,10 @@ export interface ManagedNodeGroupArgs {
      * Defaults to the current recommended OS.
      */
     operatingSystem?: pulumi.Input<enums.OperatingSystem>;
+    /**
+     * The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
+     */
+    placementGroupAvailabilityZone?: pulumi.Input<string>;
     /**
      * AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
      */

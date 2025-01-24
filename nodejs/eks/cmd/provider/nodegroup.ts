@@ -59,6 +59,7 @@ const managedNodeGroupProvider: pulumi.provider.Provider = {
                 urn: nodegroup.urn,
                 state: {
                     nodeGroup: nodegroup.nodeGroup,
+                    placementGroupName: nodegroup.placementGroupName,
                 },
             });
         } catch (e) {

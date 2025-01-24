@@ -24,6 +24,12 @@ namespace Pulumi.Eks
         [Output("nodeGroup")]
         public Output<Pulumi.Aws.Eks.NodeGroup> NodeGroup { get; private set; } = null!;
 
+        /// <summary>
+        /// The name of the placement group created for the managed node group.
+        /// </summary>
+        [Output("placementGroupName")]
+        public Output<string> PlacementGroupName { get; private set; } = null!;
+
 
         /// <summary>
         /// Create a ManagedNodeGroup resource with the given unique name, arguments, and options.
@@ -124,6 +130,12 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("diskSize")]
         public Input<int>? DiskSize { get; set; }
+
+        /// <summary>
+        /// Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
+        /// </summary>
+        [Input("enableEfaSupport")]
+        public bool? EnableEfaSupport { get; set; }
 
         /// <summary>
         /// Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
@@ -256,6 +268,12 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("operatingSystem")]
         public Input<Pulumi.Eks.OperatingSystem>? OperatingSystem { get; set; }
+
+        /// <summary>
+        /// The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
+        /// </summary>
+        [Input("placementGroupAvailabilityZone")]
+        public Input<string>? PlacementGroupAvailabilityZone { get; set; }
 
         /// <summary>
         /// AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.

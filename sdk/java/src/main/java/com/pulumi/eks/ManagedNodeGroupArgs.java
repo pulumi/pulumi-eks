@@ -190,6 +190,21 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     }
 
     /**
+     * Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
+     * 
+     */
+    @Import(name="enableEfaSupport")
+    private @Nullable Boolean enableEfaSupport;
+
+    /**
+     * @return Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
+     * 
+     */
+    public Optional<Boolean> enableEfaSupport() {
+        return Optional.ofNullable(this.enableEfaSupport);
+    }
+
+    /**
      * Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.
      * Defaults to `false`.
      * 
@@ -460,6 +475,21 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
     }
 
     /**
+     * The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
+     * 
+     */
+    @Import(name="placementGroupAvailabilityZone")
+    private @Nullable Output<String> placementGroupAvailabilityZone;
+
+    /**
+     * @return The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
+     * 
+     */
+    public Optional<Output<String>> placementGroupAvailabilityZone() {
+        return Optional.ofNullable(this.placementGroupAvailabilityZone);
+    }
+
+    /**
      * AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
      * 
      */
@@ -610,6 +640,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         this.cluster = $.cluster;
         this.clusterName = $.clusterName;
         this.diskSize = $.diskSize;
+        this.enableEfaSupport = $.enableEfaSupport;
         this.enableIMDSv2 = $.enableIMDSv2;
         this.forceUpdateVersion = $.forceUpdateVersion;
         this.gpu = $.gpu;
@@ -624,6 +655,7 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
         this.nodeRoleArn = $.nodeRoleArn;
         this.nodeadmExtraOptions = $.nodeadmExtraOptions;
         this.operatingSystem = $.operatingSystem;
+        this.placementGroupAvailabilityZone = $.placementGroupAvailabilityZone;
         this.releaseVersion = $.releaseVersion;
         this.remoteAccess = $.remoteAccess;
         this.scalingConfig = $.scalingConfig;
@@ -864,6 +896,17 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          */
         public Builder diskSize(Integer diskSize) {
             return diskSize(Output.of(diskSize));
+        }
+
+        /**
+         * @param enableEfaSupport Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder enableEfaSupport(@Nullable Boolean enableEfaSupport) {
+            $.enableEfaSupport = enableEfaSupport;
+            return this;
         }
 
         /**
@@ -1212,6 +1255,27 @@ public final class ManagedNodeGroupArgs extends com.pulumi.resources.ResourceArg
          */
         public Builder operatingSystem(OperatingSystem operatingSystem) {
             return operatingSystem(Output.of(operatingSystem));
+        }
+
+        /**
+         * @param placementGroupAvailabilityZone The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder placementGroupAvailabilityZone(@Nullable Output<String> placementGroupAvailabilityZone) {
+            $.placementGroupAvailabilityZone = placementGroupAvailabilityZone;
+            return this;
+        }
+
+        /**
+         * @param placementGroupAvailabilityZone The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder placementGroupAvailabilityZone(String placementGroupAvailabilityZone) {
+            return placementGroupAvailabilityZone(Output.of(placementGroupAvailabilityZone));
         }
 
         /**

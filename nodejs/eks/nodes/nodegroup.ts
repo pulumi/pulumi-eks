@@ -38,6 +38,7 @@ import {
     SelfManagedV2NodeUserDataArgs,
 } from "./userdata";
 import randomSuffix from "../randomSuffix";
+import { DEFAULT_INSTANCE_TYPE, filterEfaSubnets, getEfaNetworkInterfaces } from "./instances";
 
 export type TaintEffect = "NoSchedule" | "NoExecute" | "PreferNoSchedule";
 
@@ -916,7 +917,7 @@ function createNodeGroup(
         {
             associatePublicIpAddress: nodeAssociatePublicIpAddress,
             imageId: amiId,
-            instanceType: args.instanceType || "t3.medium",
+            instanceType: args.instanceType || DEFAULT_INSTANCE_TYPE,
             iamInstanceProfile: instanceProfileName,
             keyName: keyName,
             // This apply is necessary in s.t. the launchConfiguration picks up a
@@ -1404,7 +1405,7 @@ export function createNodeGroupV2(
         `${name}-launchTemplate`,
         {
             imageId: amiId,
-            instanceType: args.instanceType || "t3.medium",
+            instanceType: args.instanceType || DEFAULT_INSTANCE_TYPE,
             iamInstanceProfile: { name: instanceProfileName },
             keyName: keyName,
             instanceMarketOptions: marketOptions,
@@ -1789,6 +1790,16 @@ export type ManagedNodeGroupOptions = Omit<
      * - [Amazon EKS AMI - Nodeadm Configuration](https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/).
      */
     nodeadmExtraOptions?: pulumi.Input<pulumi.Input<NodeadmOptions>[]>;
+
+    /**
+     * The availability zone for the placement group.
+     */
+    placementGroupAvailabilityZone?: pulumi.Input<string>;
+
+    /**
+     * Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group.
+     */
+    enableEfaSupport?: boolean;
 };
 
 /**
@@ -1799,6 +1810,7 @@ export type ManagedNodeGroupOptions = Omit<
  */
 export class ManagedNodeGroup extends pulumi.ComponentResource {
     public readonly nodeGroup!: pulumi.Output<aws.eks.NodeGroup>;
+    public readonly placementGroupName!: pulumi.Output<string>;
 
     constructor(name: string, args: ManagedNodeGroupArgs, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:ManagedNodeGroup";
@@ -1806,6 +1818,7 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
         if (opts?.urn) {
             const props = {
                 nodeGroup: undefined,
+                placementGroupName: undefined,
             };
             super(type, name, props, opts);
             return;
@@ -1819,10 +1832,12 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
             pulumi.Unwrap<CoreData>
         >;
 
-        const group = createManagedNodeGroup(name, args, core, this, opts?.provider);
-        this.nodeGroup = pulumi.output(group);
+        const outputs = createManagedNodeGroup(name, args, core, this, opts?.provider);
+        this.nodeGroup = pulumi.output(outputs.nodeGroup);
+        this.placementGroupName = pulumi.output(outputs.placementGroupName);
         this.registerOutputs({
             nodeGroup: this.nodeGroup,
+            placementGroupName: this.placementGroupName,
         });
     }
 }
@@ -1830,6 +1845,11 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
 /** @internal */
 export type ManagedNodeGroupArgs = Omit<ManagedNodeGroupOptions, "cluster"> & {
     cluster: pulumi.Input<Cluster | pulumi.Unwrap<CoreData>>;
+};
+
+export type ManagedNodeGroupOutput = {
+    nodeGroup: aws.eks.NodeGroup;
+    placementGroupName: pulumi.Output<string> | string;
 };
 
 /**
@@ -1844,7 +1864,7 @@ export function createManagedNodeGroup(
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
     parent: pulumi.Resource,
     provider?: pulumi.ProviderResource,
-): aws.eks.NodeGroup {
+): ManagedNodeGroupOutput {
     // default the version to the cluster version if not provided.
     // we can only do that if the user doesn't provide a launch template. If they do, they're responsible
     // for deciding the k8s version as part of the ami they're choosing.
@@ -1933,6 +1953,39 @@ export function createManagedNodeGroup(
         });
     }
 
+    // Create a placement group if EFA support is enabled
+    const createPlacementGroup = args.enableEfaSupport === true;
+    const placementGroup = createPlacementGroup
+        ? new aws.ec2.PlacementGroup(
+              name,
+              {
+                  strategy: "cluster",
+                  tags: args.tags,
+              },
+              { parent, provider },
+          )
+        : undefined;
+
+    // Require users to be explicit about which AZs they want to use when enabling EFA support or creating a placement group.
+    // We cannot deterministically determine the supported AZs because they can change over time and that would force replacements of the node group.
+    // This way we prevent this footgun from happening.
+    if (args.enableEfaSupport && !args.placementGroupAvailabilityZone) {
+        validationErrors.push({
+            propertyPath: "enableEfaSupport",
+            reason: "You must specify placementGroupAvailabilityZone when enabling EFA support.",
+        });
+    }
+
+    // filter the subnets by the availability zone if the nodes are in any way restricted to a specific AZ (e.g. through a placement group)
+    if (createPlacementGroup && args.placementGroupAvailabilityZone) {
+        subnetIds = filterEfaSubnets(
+            subnetIds,
+            args.placementGroupAvailabilityZone,
+            args.instanceTypes,
+            { provider, parent },
+        );
+    }
+
     // Omit the cluster from the args.
     const nodeGroupArgs = Object.assign({}, args);
     if ("cluster" in nodeGroupArgs) {
@@ -1976,7 +2029,14 @@ export function createManagedNodeGroup(
 
     let launchTemplate: aws.ec2.LaunchTemplate | undefined;
     if (requiresCustomLaunchTemplate(args)) {
-        launchTemplate = createMNGCustomLaunchTemplate(name, args, core, parent, provider);
+        launchTemplate = createMNGCustomLaunchTemplate(
+            name,
+            args,
+            core,
+            placementGroup?.name,
+            parent,
+            provider,
+        );
 
         // Disk size is specified in the launch template.
         delete nodeGroupArgs.diskSize;
@@ -2041,7 +2101,10 @@ export function createManagedNodeGroup(
         { parent: parent, dependsOn: ngDeps, provider, ignoreChanges: ignoreScalingChanges },
     );
 
-    return nodeGroup;
+    return {
+        nodeGroup,
+        placementGroupName: placementGroup?.name ?? "",
+    };
 }
 
 const customLaunchTemplateArgs: (keyof Omit<ManagedNodeGroupOptions, "cluster">)[] = [
@@ -2049,6 +2112,7 @@ const customLaunchTemplateArgs: (keyof Omit<ManagedNodeGroupOptions, "cluster">)
     "enableIMDSv2",
     "userData",
     "amiId",
+    "enableEfaSupport",
 ];
 
 function requiresCustomLaunchTemplate(args: Omit<ManagedNodeGroupOptions, "cluster">): boolean {
@@ -2062,6 +2126,7 @@ function createMNGCustomLaunchTemplate(
     name: string,
     args: Omit<ManagedNodeGroupOptions, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
+    placementGroupName: pulumi.Input<string> | undefined,
     parent: pulumi.Resource,
     provider?: pulumi.ProviderResource,
 ): aws.ec2.LaunchTemplate {
@@ -2186,6 +2251,15 @@ function createMNGCustomLaunchTemplate(
           ]
         : undefined;
 
+    const networkInterfaces = args.enableEfaSupport
+        ? getEfaNetworkInterfaces({
+              instanceTypes: args.instanceTypes,
+              securityGroupIds: [core.cluster.vpcConfig.clusterSecurityGroupId],
+              instanceTypePropertyPath: "instanceTypes",
+              opts: { provider, parent },
+          })
+        : undefined;
+
     return new aws.ec2.LaunchTemplate(
         `${name}-launchTemplate`,
         {
@@ -2197,6 +2271,12 @@ function createMNGCustomLaunchTemplate(
             imageId: userData
                 ? args.amiId ?? getRecommendedAMI(args, core.cluster.version, parent)
                 : undefined,
+            placement: placementGroupName
+                ? {
+                      groupName: placementGroupName,
+                  }
+                : undefined,
+            networkInterfaces: networkInterfaces,
         },
         { parent, provider },
     );

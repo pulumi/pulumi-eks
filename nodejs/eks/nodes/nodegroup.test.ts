@@ -15,9 +15,55 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 
-import { isGravitonInstance, resolveInstanceProfileName } from "./nodegroup";
-import { getArchitecture } from "./nodegroup";
 import { CoreData } from "../cluster";
+import { isGravitonInstance } from "./nodegroup";
+import { getArchitecture } from "./nodegroup";
+
+const callReturnValues = new Map<string, pulumi.runtime.MockCallResult>();
+
+beforeAll(() => {
+    pulumi.runtime.setMocks(
+        {
+            newResource: function (args: pulumi.runtime.MockResourceArgs): {
+                id: string;
+                state: any;
+            } {
+                if (
+                    args.type === "aws:ec2/placementGroup:PlacementGroup" ||
+                    args.type === "aws:iam/instanceProfile:InstanceProfile"
+                ) {
+                    return {
+                        id: args.inputs.name + "_id",
+                        state: {
+                            name: args.inputs.name + "_id",
+                        },
+                    };
+                }
+                return {
+                    id: args.inputs.name + "_id",
+                    state: args.inputs,
+                };
+            },
+            call: function (args: pulumi.runtime.MockCallArgs): pulumi.runtime.MockCallResult {
+                const callReturnValue = callReturnValues.get(args.token);
+                if (callReturnValue) {
+                    return callReturnValue;
+                }
+
+                return args.inputs;
+            },
+        },
+        "project",
+        "stack",
+        false, // Sets the flag `dryRun`, which indicates if pulumi is running in preview mode.
+    );
+});
+
+let ng: typeof import("./nodegroup");
+beforeEach(async function () {
+    ng = await import("./nodegroup");
+    callReturnValues.clear();
+});
 
 const gravitonInstances = [
     "c6g.12xlarge",
@@ -347,33 +393,6 @@ describe("isGravitonInstance", () => {
 });
 
 describe("createManagedNodeGroup", function () {
-    beforeAll(() => {
-        pulumi.runtime.setMocks(
-            {
-                newResource: function (args: pulumi.runtime.MockResourceArgs): {
-                    id: string;
-                    state: any;
-                } {
-                    return {
-                        id: args.inputs.name + "_id",
-                        state: args.inputs,
-                    };
-                },
-                call: function (args: pulumi.runtime.MockCallArgs) {
-                    return args.inputs;
-                },
-            },
-            "project",
-            "stack",
-            false, // Sets the flag `dryRun`, which indicates if pulumi is running in preview mode.
-        );
-    });
-
-    let ng: typeof import("./nodegroup");
-    beforeEach(async function () {
-        ng = await import("./nodegroup");
-    });
-
     test("should default to the cluster version if no version is provided", async () => {
         const mng = ng.createManagedNodeGroup(
             "test",
@@ -391,7 +410,7 @@ describe("createManagedNodeGroup", function () {
             undefined as any,
         );
 
-        const configuredVersion = await promisify(mng.version);
+        const configuredVersion = await promisify(mng.nodeGroup.version);
 
         expect(configuredVersion).toBe("1.30");
     });
@@ -414,7 +433,7 @@ describe("createManagedNodeGroup", function () {
             undefined as any,
         );
 
-        const configuredVersion = await promisify(mng.version);
+        const configuredVersion = await promisify(mng.nodeGroup.version);
 
         expect(configuredVersion).toBe("1.29");
     });
@@ -440,51 +459,112 @@ describe("createManagedNodeGroup", function () {
             undefined as any,
         );
 
-        const configuredVersion = await promisify(mng.version);
+        const configuredVersion = await promisify(mng.nodeGroup.version);
 
         expect(configuredVersion).toBeUndefined();
+    });
+
+    it("should throw an error if placementGroupAvailabilityZone is not provided when enabling EFA support", async () => {
+        expect(() => {
+            ng.createManagedNodeGroup(
+                "test",
+                {
+                    nodeRoleArn: pulumi.output("nodeRoleArn"),
+                    enableEfaSupport: true,
+                },
+                pulumi.output({
+                    cluster: {
+                        version: pulumi.output("1.30"),
+                        accessConfig: pulumi.output({
+                            authenticationMode: "API",
+                        }),
+                    } as aws.eks.Cluster,
+                } as CoreData),
+                undefined as any,
+            );
+        }).toThrow(
+            new pulumi.InputPropertiesError({
+                message: "The input properties for the managed node group are invalid.",
+                errors: [
+                    {
+                        propertyPath: "placementGroupAvailabilityZone",
+                        reason: "You must specify placementGroupAvailabilityZone when enabling EFA support.",
+                    },
+                ],
+            }),
+        );
+    });
+
+    it("should return empty string for placement group name if efa support is not enabled", async () => {
+        const mng = ng.createManagedNodeGroup(
+            "test",
+            {
+                nodeRoleArn: pulumi.output("nodeRoleArn"),
+            },
+            pulumi.output({
+                cluster: {
+                    version: pulumi.output("1.30"),
+                    accessConfig: pulumi.output({
+                        authenticationMode: "API",
+                    }),
+                } as aws.eks.Cluster,
+            } as CoreData),
+            undefined as any,
+        );
+
+        const placementGroupName = await promisify(pulumi.output(mng.placementGroupName));
+        expect(placementGroupName).toBe("");
+    });
+
+    it("should return a placement group name if efa support is enabled", async () => {
+        callReturnValues.set("aws:ec2/getInstanceTypeOfferings:getInstanceTypeOfferings", {
+            locations: pulumi.output(["us-west-2a", "us-west-2b"]),
+        });
+
+        const subnetIds = ["subnet-12345", "subnet-67890", "subnet-54321"];
+
+        callReturnValues.set("aws:ec2/getSubnets:getSubnets", {
+            ids: pulumi.output([subnetIds[0]]),
+        });
+        callReturnValues.set("aws:ec2/getInstanceType:getInstanceType", {
+            efaSupported: true,
+            maximumNetworkCards: 1,
+        });
+
+        const mng = ng.createManagedNodeGroup(
+            "test",
+            {
+                nodeRoleArn: pulumi.output("nodeRoleArn"),
+                enableEfaSupport: true,
+                placementGroupAvailabilityZone: "us-west-2a",
+                subnetIds,
+            },
+            pulumi.output({
+                cluster: {
+                    version: pulumi.output("1.30"),
+                    accessConfig: pulumi.output({
+                        authenticationMode: "API",
+                    }),
+                    kubernetesNetworkConfig: pulumi.output({
+                        serviceIpv4Cidr: "10.100.0.0/16",
+                        ipFamily: "ipv4",
+                    }),
+                } as aws.eks.Cluster,
+            } as CoreData),
+            undefined as any,
+        );
+
+        const nodeGroupId = await promisify(pulumi.output(mng.nodeGroup.id));
+        expect(nodeGroupId).not.toBe("");
+        const placementGroupName = await promisify(pulumi.output(mng.placementGroupName));
+        expect(placementGroupName).not.toBe("");
     });
 });
 
 describe("resolveInstanceProfileName", function () {
-    beforeAll(() => {
-        pulumi.runtime.setMocks(
-            {
-                newResource: function (args: pulumi.runtime.MockResourceArgs): {
-                    id: string;
-                    state: any;
-                } {
-                    if (args.type === "aws:iam/instanceProfile:InstanceProfile") {
-                        return {
-                            id: args.inputs.name + "_id",
-                            state: {
-                                name: args.id,
-                            },
-                        };
-                    }
-                    return {
-                        id: args.inputs.name + "_id",
-                        state: args.inputs,
-                    };
-                },
-                call: function (args: pulumi.runtime.MockCallArgs) {
-                    return args.inputs;
-                },
-            },
-            "project",
-            "stack",
-            false, // Sets the flag `dryRun`, which indicates if pulumi is running in preview mode.
-        );
-    });
-
-    let ng: typeof import("./nodegroup");
-    beforeEach(async function () {
-        ng = await import("./nodegroup");
-    });
-
     test("no args, no c.nodeGroupOptions throws", async () => {
         expect(() =>
-            resolveInstanceProfileName({}, {
+            ng.resolveInstanceProfileName({}, {
                 nodeGroupOptions: {},
             } as pulumi.UnwrappedObject<CoreData>),
         ).toThrow("an instanceProfile or instanceProfileName is required");
@@ -494,7 +574,7 @@ describe("resolveInstanceProfileName", function () {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {});
         const name = "nodegroup-name";
         expect(() =>
-            resolveInstanceProfileName(
+            ng.resolveInstanceProfileName(
                 {
                     instanceProfile: instanceProfile,
                     instanceProfileName: "instanceProfileName",
@@ -510,7 +590,7 @@ describe("resolveInstanceProfileName", function () {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {});
         const name = "nodegroup-name";
         expect(() =>
-            resolveInstanceProfileName({}, {
+            ng.resolveInstanceProfileName({}, {
                 nodeGroupOptions: {
                     instanceProfile: instanceProfile,
                     instanceProfileName: "instanceProfileName",
@@ -523,7 +603,7 @@ describe("resolveInstanceProfileName", function () {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
             name: "passedInstanceProfile",
         });
-        const resolvedInstanceProfileName = resolveInstanceProfileName(
+        const resolvedInstanceProfileName = ng.resolveInstanceProfileName(
             {
                 instanceProfile: instanceProfile,
             },
@@ -540,7 +620,7 @@ describe("resolveInstanceProfileName", function () {
         const instanceProfile = new aws.iam.InstanceProfile("instanceProfile", {
             name: "passedInstanceProfile",
         });
-        const resolvedInstanceProfileName = resolveInstanceProfileName({}, {
+        const resolvedInstanceProfileName = ng.resolveInstanceProfileName({}, {
             nodeGroupOptions: {
                 instanceProfile: instanceProfile,
             },
@@ -553,7 +633,7 @@ describe("resolveInstanceProfileName", function () {
     test("args.instanceProfileName returns passed InstanceProfile", async () => {
         const nodeGroupName = "-name";
         const existingInstanceProfileName = "existingInstanceProfileName";
-        const resolvedInstanceProfileName = resolveInstanceProfileName(
+        const resolvedInstanceProfileName = ng.resolveInstanceProfileName(
             {
                 instanceProfileName: existingInstanceProfileName,
             },
@@ -568,7 +648,7 @@ describe("resolveInstanceProfileName", function () {
 
     test("nodeGroupOptions.instanceProfileName returns existing InstanceProfile", async () => {
         const existingInstanceProfileName = "existingInstanceProfileName";
-        const resolvedInstanceProfileName = resolveInstanceProfileName({}, {
+        const resolvedInstanceProfileName = ng.resolveInstanceProfileName({}, {
             nodeGroupOptions: {
                 instanceProfileName: existingInstanceProfileName,
             },

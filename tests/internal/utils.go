@@ -1306,6 +1306,71 @@ func RetryWithExponentialBackoff(ctx context.Context, initialDelay time.Duration
 	}
 }
 
+// FindSupportedAZs returns the list of supported AZs for a given instance type.
+func FindSupportedAZs(t *testing.T, instanceType string) ([]string, error) {
+	awsConfig := getAwsConfig(t)
+	ec2Client := ec2.NewFromConfig(awsConfig)
+	
+	result, err := ec2Client.DescribeInstanceTypeOfferings(context.TODO(), &ec2.DescribeInstanceTypeOfferingsInput{
+		LocationType: types.LocationTypeAvailabilityZone,
+		Filters: []types.Filter{
+			{
+				Name:   aws.String("instance-type"),
+				Values: []string{instanceType},
+			},
+		},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	var supportedAZs []string
+	for _, offering := range result.InstanceTypeOfferings {
+		supportedAZs = append(supportedAZs, *offering.Location)
+	}
+
+	return supportedAZs, nil
+}
+
+// ListAvailabilityZones returns all availability zones in the current region
+func ListAvailabilityZones(t *testing.T) ([]string, error) {
+	awsConfig := getAwsConfig(t)
+	ec2Client := ec2.NewFromConfig(awsConfig)
+
+	result, err := ec2Client.DescribeAvailabilityZones(context.TODO(), &ec2.DescribeAvailabilityZonesInput{
+		Filters: []types.Filter{
+			{
+				Name:   aws.String("state"),
+				Values: []string{"available"},
+			},
+		},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	var azs []string
+	for _, az := range result.AvailabilityZones {
+		azs = append(azs, *az.ZoneName)
+	}
+
+	return azs, nil
+}
+
+func getAwsConfig(t *testing.T) aws.Config {
+	var region string
+	var profile string
+	if p, ok := os.LookupEnv("AWS_PROFILE"); ok {
+		profile = p
+	}
+	if r, ok := os.LookupEnv("AWS_REGION"); ok {
+		region = r
+	}
+	return loadAwsDefaultConfig(t, region, profile)
+}
+
 func loadAwsDefaultConfig(t *testing.T, region, profile string) aws.Config {
 	loadOpts := []func(*config.LoadOptions) error{}
 	if profile != "" {

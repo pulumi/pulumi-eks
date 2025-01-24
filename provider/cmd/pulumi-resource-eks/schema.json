@@ -1586,10 +1586,15 @@
                 "nodeGroup": {
                     "$ref": "/aws/v6.66.1/schema.json#/resources/aws:eks%2FnodeGroup:NodeGroup",
                     "description": "The AWS managed node group."
+                },
+                "placementGroupName": {
+                    "type": "string",
+                    "description": "The name of the placement group created for the managed node group."
                 }
             },
             "required": [
-                "nodeGroup"
+                "nodeGroup",
+                "placementGroupName"
             ],
             "inputProperties": {
                 "amiId": {
@@ -1634,6 +1639,11 @@
                 "diskSize": {
                     "type": "integer",
                     "description": "Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided."
+                },
+                "enableEfaSupport": {
+                    "type": "boolean",
+                    "plain": true,
+                    "description": "Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set."
                 },
                 "enableIMDSv2": {
                     "type": "boolean",
@@ -1702,6 +1712,10 @@
                 "operatingSystem": {
                     "$ref": "#/types/eks:index:OperatingSystem",
                     "description": "The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.\nValid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.\n\nDefaults to the current recommended OS."
+                },
+                "placementGroupAvailabilityZone": {
+                    "type": "string",
+                    "description": "The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true."
                 },
                 "releaseVersion": {
                     "type": "string",
