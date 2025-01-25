@@ -61,5 +61,4 @@ const ngV2 = new eks.NodeGroupV2("ignore-scaling-config-ngv2", {
   operatingSystem: eks.OperatingSystem.AL2023,
   instanceProfile: new aws.iam.InstanceProfile("ignore-scaling-config-ngv2", {role: ngV2Role}),
   ignoreScalingChanges: true,
-  subnetIds: eksVpc.privateSubnetIds,
 });
