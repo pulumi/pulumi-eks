@@ -1,6 +1,6 @@
 provider: eks
 aws: true
-kubectl: true
+install-kubectl: true
 major-version: 3
 template: generic
 test-folder: tests

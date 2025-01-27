@@ -57,12 +57,11 @@ runs:
       with:
         repo: pulumi/schema-tools
 
-    - name: Install Kubectl
-      shell: bash
-      run: |
-        curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-        chmod +x ./kubectl
-        sudo mv kubectl /usr/local/bin
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v4
+      with:
+        version: 'latest'
+      id: install
 
     - name: Setup Node
       if: inputs.tools == 'all' || contains(inputs.tools, 'nodejs')
