@@ -1380,7 +1380,7 @@ func loadAwsDefaultConfig(t *testing.T, region, profile string) aws.Config {
 		loadOpts = append(loadOpts, config.WithRegion(region))
 	}
 
-	// Increase the number of retry attempts from 3 to 20 to avoid flakyness
+	// Increase the number of retry attempts from 3 to 20 to avoid flakiness
 	// Many of our test take a similar amount of time to complete and we have
 	// high parallelism, so there's spikes of requests for test verification.
 	// This will not add substantial time to the test run, but will reduce
