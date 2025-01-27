@@ -15,8 +15,6 @@
 package main
 
 import (
-	// used for embedding docs
-	_ "embed"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -24,6 +22,9 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+
+	// used for embedding docs
+	_ "embed"
 
 	"github.com/blang/semver"
 	"github.com/pkg/errors"
