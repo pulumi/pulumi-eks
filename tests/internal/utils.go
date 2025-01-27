@@ -1310,7 +1310,7 @@ func RetryWithExponentialBackoff(ctx context.Context, initialDelay time.Duration
 func FindSupportedAZs(t *testing.T, instanceType string) ([]string, error) {
 	awsConfig := getAwsConfig(t)
 	ec2Client := ec2.NewFromConfig(awsConfig)
-	
+
 	result, err := ec2Client.DescribeInstanceTypeOfferings(context.TODO(), &ec2.DescribeInstanceTypeOfferingsInput{
 		LocationType: types.LocationTypeAvailabilityZone,
 		Filters: []types.Filter{
@@ -1379,6 +1379,13 @@ func loadAwsDefaultConfig(t *testing.T, region, profile string) aws.Config {
 	if region != "" {
 		loadOpts = append(loadOpts, config.WithRegion(region))
 	}
+
+	// Increase the number of retry attempts from 3 to 20 to avoid flakyness
+	// Many of our test take a similar amount of time to complete and we have
+	// high parallelism, so there's spikes of requests for test verification.
+	// This will not add substantial time to the test run, but will reduce
+	// flakiness.
+	loadOpts = append(loadOpts, config.WithRetryMaxAttempts(20))
 	cfg, err := config.LoadDefaultConfig(context.TODO(), loadOpts...)
 	require.NoError(t, err, "failed to load AWS config")
 
