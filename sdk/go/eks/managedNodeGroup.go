@@ -14,10 +14,286 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// ManagedNodeGroup is a component that wraps creating an AWS managed node group.
+// Manages an EKS Node Group, which can provision and optionally update an Auto Scaling Group of Kubernetes worker nodes compatible with EKS. Additional documentation about this functionality can be found in the [EKS User Guide](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html).
 //
-// See for more details:
-// https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
+// ## Example Usage
+// ### Basic Managed Node Group
+// This example demonstrates creating a managed node group with typical defaults. The node group uses the latest EKS-optimized Amazon Linux AMI, creates 2 nodes, and runs on t3.medium instances. Instance security groups are automatically configured.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"encoding/json"
+//
+//	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+//	"github.com/pulumi/pulumi-awsx/sdk/v2/go/awsx/ec2"
+//	"github.com/pulumi/pulumi-eks/sdk/v3/go/eks"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			eksVpc, err := ec2.NewVpc(ctx, "eks-vpc", &ec2.VpcArgs{
+//				EnableDnsHostnames: pulumi.Bool(true),
+//				CidrBlock:          "10.0.0.0/16",
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			eksCluster, err := eks.NewCluster(ctx, "eks-cluster", &eks.ClusterArgs{
+//				VpcId:                eksVpc.VpcId,
+//				AuthenticationMode:   eks.AuthenticationModeApi,
+//				PublicSubnetIds:      eksVpc.PublicSubnetIds,
+//				PrivateSubnetIds:     eksVpc.PrivateSubnetIds,
+//				SkipDefaultNodeGroup: true,
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			tmpJSON0, err := json.Marshal(map[string]interface{}{
+//				"Version": "2012-10-17",
+//				"Statement": []map[string]interface{}{
+//					map[string]interface{}{
+//						"Action": "sts:AssumeRole",
+//						"Effect": "Allow",
+//						"Sid":    "",
+//						"Principal": map[string]interface{}{
+//							"Service": "ec2.amazonaws.com",
+//						},
+//					},
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			json0 := string(tmpJSON0)
+//			nodeRole, err := iam.NewRole(ctx, "node-role", &iam.RoleArgs{
+//				AssumeRolePolicy: pulumi.String(json0),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = iam.NewRolePolicyAttachment(ctx, "worker-node-policy", &iam.RolePolicyAttachmentArgs{
+//				Role:      nodeRole.Name,
+//				PolicyArn: pulumi.String("arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = iam.NewRolePolicyAttachment(ctx, "cni-policy", &iam.RolePolicyAttachmentArgs{
+//				Role:      nodeRole.Name,
+//				PolicyArn: pulumi.String("arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = iam.NewRolePolicyAttachment(ctx, "registry-policy", &iam.RolePolicyAttachmentArgs{
+//				Role:      nodeRole.Name,
+//				PolicyArn: pulumi.String("arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = eks.NewManagedNodeGroup(ctx, "node-group", &eks.ManagedNodeGroupArgs{
+//				Cluster:  eksCluster,
+//				NodeRole: nodeRole,
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
+// ### Enabling EFA Support
+//
+// Enabling EFA support for a node group will do the following:
+// - All EFA interfaces supported by the instance will be exposed on the launch template used by the node group
+// - A `clustered` placement group will be created and passed to the launch template
+// - Checks will be performed to ensure that the instance type supports EFA and that the specified AZ is supported by the chosen instance type
+//
+// The GPU optimized AMIs include all necessary drivers and libraries to support EFA. If you're choosing an instance type without GPU acceleration you will need to install the drivers and libraries manually and bake a custom AMI.
+//
+// You can use the [aws-efa-k8s-device-plugin](https://github.com/aws/eks-charts/tree/master/stable/aws-efa-k8s-device-plugin) Helm chart to expose the EFA interfaces on the nodes as an extended resource, and allow pods to request these interfaces to be mounted to their containers.
+// Your application container will need to have the necessary libraries and runtimes in order to leverage the EFA interfaces (e.g. libfabric).
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"encoding/json"
+//
+//	awseks "github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
+//	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+//	"github.com/pulumi/pulumi-awsx/sdk/v2/go/awsx/ec2"
+//	"github.com/pulumi/pulumi-eks/sdk/v3/go/eks"
+//	"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes"
+//	helmv3 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/helm/v3"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			eksVpc, err := ec2.NewVpc(ctx, "eks-vpc", &ec2.VpcArgs{
+//				EnableDnsHostnames: pulumi.Bool(true),
+//				CidrBlock:          "10.0.0.0/16",
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			eksCluster, err := eks.NewCluster(ctx, "eks-cluster", &eks.ClusterArgs{
+//				VpcId:                eksVpc.VpcId,
+//				AuthenticationMode:   eks.AuthenticationModeApi,
+//				PublicSubnetIds:      eksVpc.PublicSubnetIds,
+//				PrivateSubnetIds:     eksVpc.PrivateSubnetIds,
+//				SkipDefaultNodeGroup: true,
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			k8SProvider, err := kubernetes.NewProvider(ctx, "k8sProvider", &kubernetes.ProviderArgs{
+//				Kubeconfig: eksCluster.Kubeconfig,
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			tmpJSON0, err := json.Marshal(map[string]interface{}{
+//				"Version": "2012-10-17",
+//				"Statement": []map[string]interface{}{
+//					map[string]interface{}{
+//						"Action": "sts:AssumeRole",
+//						"Effect": "Allow",
+//						"Sid":    "",
+//						"Principal": map[string]interface{}{
+//							"Service": "ec2.amazonaws.com",
+//						},
+//					},
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			json0 := string(tmpJSON0)
+//			nodeRole, err := iam.NewRole(ctx, "node-role", &iam.RoleArgs{
+//				AssumeRolePolicy: pulumi.String(json0),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = iam.NewRolePolicyAttachment(ctx, "worker-node-policy", &iam.RolePolicyAttachmentArgs{
+//				Role:      nodeRole.Name,
+//				PolicyArn: pulumi.String("arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = iam.NewRolePolicyAttachment(ctx, "cni-policy", &iam.RolePolicyAttachmentArgs{
+//				Role:      nodeRole.Name,
+//				PolicyArn: pulumi.String("arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			_, err = iam.NewRolePolicyAttachment(ctx, "registry-policy", &iam.RolePolicyAttachmentArgs{
+//				Role:      nodeRole.Name,
+//				PolicyArn: pulumi.String("arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//
+//	        // The node group for running system pods (e.g. coredns, etc.)
+//			_, err = eks.NewManagedNodeGroup(ctx, "system-node-group", &eks.ManagedNodeGroupArgs{
+//				Cluster:  eksCluster,
+//				NodeRole: nodeRole,
+//			})
+//			if err != nil {
+//				return err
+//			}
+//
+//	        // The EFA device plugin for exposing EFA interfaces as extended resources
+//			_, err = helmv3.NewRelease(ctx, "device-plugin", &helmv3.ReleaseArgs{
+//				Version: pulumi.String("0.5.7"),
+//				RepositoryOpts: &helmv3.RepositoryOptsArgs{
+//					Repo: pulumi.String("https://aws.github.io/eks-charts"),
+//				},
+//				Chart:     pulumi.String("aws-efa-k8s-device-plugin"),
+//				Namespace: pulumi.String("kube-system"),
+//				Atomic:    pulumi.Bool(true),
+//				Values: pulumi.Map{
+//					"tolerations": pulumi.Any{
+//						[]map[string]interface{}{
+//	                        {
+//	                            "key":      "efa-enabled",
+//	                            "operator": "Exists",
+//	                            "effect":   "NoExecute",
+//	                        }
+//						},
+//					},
+//				},
+//			}, pulumi.Provider(k8SProvider))
+//			if err != nil {
+//				return err
+//			}
+//
+//	        // The node group for running EFA enabled workloads
+//			_, err = eks.NewManagedNodeGroup(ctx, "efa-node-group", &eks.ManagedNodeGroupArgs{
+//				Cluster:  eksCluster,
+//				NodeRole: nodeRole,
+//				InstanceTypes: pulumi.StringArray{
+//					pulumi.String("g6.8xlarge"),
+//				},
+//				Gpu: pulumi.Bool(true),
+//				ScalingConfig: &eks.NodeGroupScalingConfigArgs{
+//					MinSize:     pulumi.Int(2),
+//					DesiredSize: pulumi.Int(2),
+//					MaxSize:     pulumi.Int(4),
+//				},
+//				EnableEfaSupport:               true,
+//				PlacementGroupAvailabilityZone: pulumi.String("us-west-2b"),
+//
+//	            // Taint the nodes so that only pods with the efa-enabled label can be scheduled on them
+//				Taints: eks.NodeGroupTaintArray{
+//					&eks.NodeGroupTaintArgs{
+//						Key:    pulumi.String("efa-enabled"),
+//						Value:  pulumi.String("true"),
+//						Effect: pulumi.String("NO_EXECUTE"),
+//					},
+//				},
+//
+//	            // Instances with GPUs usually have nvme instance store volumes, so we can mount them in RAID-0 for kubelet and containerd
+//	            // These are faster than the regular EBS volumes
+//				NodeadmExtraOptions: eks.NodeadmOptionsArray{
+//					&eks.NodeadmOptionsArgs{
+//						ContentType: pulumi.String("application/node.eks.aws"),
+//						Content: pulumi.String(`apiVersion: node.eks.aws/v1alpha1
+//
+// kind: NodeConfig
+// spec:
+//
+//	instance:
+//	  localStorage:
+//	    strategy: RAID0
+//
+// `),
+//
+//					},
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
 type ManagedNodeGroup struct {
 	pulumi.ResourceState
 

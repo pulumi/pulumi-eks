@@ -702,10 +702,162 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  version: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
-        ManagedNodeGroup is a component that wraps creating an AWS managed node group.
+        Manages an EKS Node Group, which can provision and optionally update an Auto Scaling Group of Kubernetes worker nodes compatible with EKS. Additional documentation about this functionality can be found in the [EKS User Guide](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html).
 
-        See for more details:
-        https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
+        ## Example Usage
+        ### Basic Managed Node Group
+        This example demonstrates creating a managed node group with typical defaults. The node group uses the latest EKS-optimized Amazon Linux AMI, creates 2 nodes, and runs on t3.medium instances. Instance security groups are automatically configured.
+
+        ```python
+        import pulumi
+        import json
+        import pulumi_aws as aws
+        import pulumi_awsx as awsx
+        import pulumi_eks as eks
+
+        eks_vpc = awsx.ec2.Vpc("eks-vpc",
+            enable_dns_hostnames=True,
+            cidr_block="10.0.0.0/16")
+        eks_cluster = eks.Cluster("eks-cluster",
+            vpc_id=eks_vpc.vpc_id,
+            authentication_mode=eks.AuthenticationMode.API,
+            public_subnet_ids=eks_vpc.public_subnet_ids,
+            private_subnet_ids=eks_vpc.private_subnet_ids,
+            skip_default_node_group=True)
+        node_role = aws.iam.Role("node-role", assume_role_policy=json.dumps({
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Sid": "",
+                "Principal": {
+                    "Service": "ec2.amazonaws.com",
+                },
+            }],
+        }))
+        worker_node_policy = aws.iam.RolePolicyAttachment("worker-node-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy")
+        cni_policy = aws.iam.RolePolicyAttachment("cni-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy")
+        registry_policy = aws.iam.RolePolicyAttachment("registry-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly")
+        node_group = eks.ManagedNodeGroup("node-group",
+            cluster=eks_cluster,
+            node_role=node_role)
+
+        ```
+        ### Enabling EFA Support
+
+        Enabling EFA support for a node group will do the following:
+        - All EFA interfaces supported by the instance will be exposed on the launch template used by the node group
+        - A `clustered` placement group will be created and passed to the launch template
+        - Checks will be performed to ensure that the instance type supports EFA and that the specified AZ is supported by the chosen instance type
+
+        The GPU optimized AMIs include all necessary drivers and libraries to support EFA. If you're choosing an instance type without GPU acceleration you will need to install the drivers and libraries manually and bake a custom AMI.
+
+        You can use the [aws-efa-k8s-device-plugin](https://github.com/aws/eks-charts/tree/master/stable/aws-efa-k8s-device-plugin) Helm chart to expose the EFA interfaces on the nodes as an extended resource, and allow pods to request these interfaces to be mounted to their containers.
+        Your application container will need to have the necessary libraries and runtimes in order to leverage the EFA interfaces (e.g. libfabric).
+
+        ```python
+        import pulumi
+        import json
+        import pulumi_aws as aws
+        import pulumi_awsx as awsx
+        import pulumi_eks as eks
+        import pulumi_kubernetes as kubernetes
+
+        eks_vpc = awsx.ec2.Vpc("eks-vpc",
+            enable_dns_hostnames=True,
+            cidr_block="10.0.0.0/16")
+        eks_cluster = eks.Cluster("eks-cluster",
+            vpc_id=eks_vpc.vpc_id,
+            authentication_mode=eks.AuthenticationMode.API,
+            public_subnet_ids=eks_vpc.public_subnet_ids,
+            private_subnet_ids=eks_vpc.private_subnet_ids,
+            skip_default_node_group=True)
+        k8_s_provider = kubernetes.Provider("k8sProvider", kubeconfig=eks_cluster.kubeconfig)
+        node_role = aws.iam.Role("node-role", assume_role_policy=json.dumps({
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Sid": "",
+                "Principal": {
+                    "Service": "ec2.amazonaws.com",
+                },
+            }],
+        }))
+        worker_node_policy = aws.iam.RolePolicyAttachment("worker-node-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy")
+        cni_policy = aws.iam.RolePolicyAttachment("cni-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy")
+        registry_policy = aws.iam.RolePolicyAttachment("registry-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly")
+
+        # The node group for running system pods (e.g. coredns, etc.)
+        system_node_group = eks.ManagedNodeGroup("system-node-group",
+            cluster=eks_cluster,
+            node_role=node_role)
+
+        # The EFA device plugin for exposing EFA interfaces as extended resources
+        device_plugin = kubernetes.helm.v3.Release("device-plugin",
+            version="0.5.7",
+            repository_opts={
+                "repo": "https://aws.github.io/eks-charts",
+            },
+            chart="aws-efa-k8s-device-plugin",
+            namespace="kube-system",
+            atomic=True,
+            values={
+                "tolerations": [{
+                    "key": "efa-enabled",
+                    "operator": "Exists",
+                    "effect": "NoExecute",
+                }],
+            },
+            opts = pulumi.ResourceOptions(provider=k8_s_provider))
+
+        # The node group for running EFA enabled workloads
+        efa_node_group = eks.ManagedNodeGroup("efa-node-group",
+            cluster=eks_cluster,
+            node_role=node_role,
+            instance_types=["g6.8xlarge"],
+            gpu=True,
+            scaling_config={
+                "min_size": 2,
+                "desired_size": 2,
+                "max_size": 4,
+            },
+            enable_efa_support=True,
+            placement_group_availability_zone="us-west-2b",
+
+            # Taint the nodes so that only pods with the efa-enabled label can be scheduled on them
+            taints=[{
+                "key": "efa-enabled",
+                "value": "true",
+                "effect": "NO_EXECUTE",
+            }],
+
+            # Instances with GPUs usually have nvme instance store volumes, so we can mount them in RAID-0 for kubelet and containerd
+            # These are faster than the regular EBS volumes
+            nodeadm_extra_options=[{
+                "content_type": "application/node.eks.aws",
+                "content": \"\"\"apiVersion: node.eks.aws/v1alpha1
+        kind: NodeConfig
+        spec:
+          instance:
+            localStorage:
+              strategy: RAID0
+        \"\"\",
+            }])
+
+        ```
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -811,10 +963,162 @@ class ManagedNodeGroup(pulumi.ComponentResource):
                  args: ManagedNodeGroupArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        ManagedNodeGroup is a component that wraps creating an AWS managed node group.
+        Manages an EKS Node Group, which can provision and optionally update an Auto Scaling Group of Kubernetes worker nodes compatible with EKS. Additional documentation about this functionality can be found in the [EKS User Guide](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html).
 
-        See for more details:
-        https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html
+        ## Example Usage
+        ### Basic Managed Node Group
+        This example demonstrates creating a managed node group with typical defaults. The node group uses the latest EKS-optimized Amazon Linux AMI, creates 2 nodes, and runs on t3.medium instances. Instance security groups are automatically configured.
+
+        ```python
+        import pulumi
+        import json
+        import pulumi_aws as aws
+        import pulumi_awsx as awsx
+        import pulumi_eks as eks
+
+        eks_vpc = awsx.ec2.Vpc("eks-vpc",
+            enable_dns_hostnames=True,
+            cidr_block="10.0.0.0/16")
+        eks_cluster = eks.Cluster("eks-cluster",
+            vpc_id=eks_vpc.vpc_id,
+            authentication_mode=eks.AuthenticationMode.API,
+            public_subnet_ids=eks_vpc.public_subnet_ids,
+            private_subnet_ids=eks_vpc.private_subnet_ids,
+            skip_default_node_group=True)
+        node_role = aws.iam.Role("node-role", assume_role_policy=json.dumps({
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Sid": "",
+                "Principal": {
+                    "Service": "ec2.amazonaws.com",
+                },
+            }],
+        }))
+        worker_node_policy = aws.iam.RolePolicyAttachment("worker-node-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy")
+        cni_policy = aws.iam.RolePolicyAttachment("cni-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy")
+        registry_policy = aws.iam.RolePolicyAttachment("registry-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly")
+        node_group = eks.ManagedNodeGroup("node-group",
+            cluster=eks_cluster,
+            node_role=node_role)
+
+        ```
+        ### Enabling EFA Support
+
+        Enabling EFA support for a node group will do the following:
+        - All EFA interfaces supported by the instance will be exposed on the launch template used by the node group
+        - A `clustered` placement group will be created and passed to the launch template
+        - Checks will be performed to ensure that the instance type supports EFA and that the specified AZ is supported by the chosen instance type
+
+        The GPU optimized AMIs include all necessary drivers and libraries to support EFA. If you're choosing an instance type without GPU acceleration you will need to install the drivers and libraries manually and bake a custom AMI.
+
+        You can use the [aws-efa-k8s-device-plugin](https://github.com/aws/eks-charts/tree/master/stable/aws-efa-k8s-device-plugin) Helm chart to expose the EFA interfaces on the nodes as an extended resource, and allow pods to request these interfaces to be mounted to their containers.
+        Your application container will need to have the necessary libraries and runtimes in order to leverage the EFA interfaces (e.g. libfabric).
+
+        ```python
+        import pulumi
+        import json
+        import pulumi_aws as aws
+        import pulumi_awsx as awsx
+        import pulumi_eks as eks
+        import pulumi_kubernetes as kubernetes
+
+        eks_vpc = awsx.ec2.Vpc("eks-vpc",
+            enable_dns_hostnames=True,
+            cidr_block="10.0.0.0/16")
+        eks_cluster = eks.Cluster("eks-cluster",
+            vpc_id=eks_vpc.vpc_id,
+            authentication_mode=eks.AuthenticationMode.API,
+            public_subnet_ids=eks_vpc.public_subnet_ids,
+            private_subnet_ids=eks_vpc.private_subnet_ids,
+            skip_default_node_group=True)
+        k8_s_provider = kubernetes.Provider("k8sProvider", kubeconfig=eks_cluster.kubeconfig)
+        node_role = aws.iam.Role("node-role", assume_role_policy=json.dumps({
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Sid": "",
+                "Principal": {
+                    "Service": "ec2.amazonaws.com",
+                },
+            }],
+        }))
+        worker_node_policy = aws.iam.RolePolicyAttachment("worker-node-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy")
+        cni_policy = aws.iam.RolePolicyAttachment("cni-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy")
+        registry_policy = aws.iam.RolePolicyAttachment("registry-policy",
+            role=node_role.name,
+            policy_arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly")
+
+        # The node group for running system pods (e.g. coredns, etc.)
+        system_node_group = eks.ManagedNodeGroup("system-node-group",
+            cluster=eks_cluster,
+            node_role=node_role)
+
+        # The EFA device plugin for exposing EFA interfaces as extended resources
+        device_plugin = kubernetes.helm.v3.Release("device-plugin",
+            version="0.5.7",
+            repository_opts={
+                "repo": "https://aws.github.io/eks-charts",
+            },
+            chart="aws-efa-k8s-device-plugin",
+            namespace="kube-system",
+            atomic=True,
+            values={
+                "tolerations": [{
+                    "key": "efa-enabled",
+                    "operator": "Exists",
+                    "effect": "NoExecute",
+                }],
+            },
+            opts = pulumi.ResourceOptions(provider=k8_s_provider))
+
+        # The node group for running EFA enabled workloads
+        efa_node_group = eks.ManagedNodeGroup("efa-node-group",
+            cluster=eks_cluster,
+            node_role=node_role,
+            instance_types=["g6.8xlarge"],
+            gpu=True,
+            scaling_config={
+                "min_size": 2,
+                "desired_size": 2,
+                "max_size": 4,
+            },
+            enable_efa_support=True,
+            placement_group_availability_zone="us-west-2b",
+
+            # Taint the nodes so that only pods with the efa-enabled label can be scheduled on them
+            taints=[{
+                "key": "efa-enabled",
+                "value": "true",
+                "effect": "NO_EXECUTE",
+            }],
+
+            # Instances with GPUs usually have nvme instance store volumes, so we can mount them in RAID-0 for kubelet and containerd
+            # These are faster than the regular EBS volumes
+            nodeadm_extra_options=[{
+                "content_type": "application/node.eks.aws",
+                "content": \"\"\"apiVersion: node.eks.aws/v1alpha1
+        kind: NodeConfig
+        spec:
+          instance:
+            localStorage:
+              strategy: RAID0
+        \"\"\",
+            }])
+
+        ```
 
         :param str resource_name: The name of the resource.
         :param ManagedNodeGroupArgs args: The arguments to use to populate this resource's properties.
