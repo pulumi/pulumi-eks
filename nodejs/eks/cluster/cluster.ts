@@ -642,19 +642,42 @@ export function createCore(
         );
     }
 
-    let computeConfig: pulumi.Input<aws.types.input.eks.ClusterComputeConfig> | undefined;
+    let computeConfig: pulumi.Output<aws.types.input.eks.ClusterComputeConfig> | undefined;
     if (args.autoMode?.enabled) {
-        computeConfig = pulumi.output(args.autoMode.computeConfig).apply((config) => {
-            return {
-                enabled: true,
-                nodeRoleArn: eksAutoNodeRole?.directRole.arn,
-                nodePools: ["general-purpose", "system"],
-                ...config,
-            };
-        });
+        computeConfig = pulumi
+            .all([args.autoMode.computeConfig, eksAutoNodeRole?.directRole.arn])
+            .apply(([config, nodeRoleArn]) => {
+                return {
+                    enabled: true,
+                    nodeRoleArn,
+                    nodePools: ["general-purpose", "system"],
+                    ...config,
+                };
+            });
     }
 
     const storageConfig = args.autoMode?.enabled ? { blockStorage: { enabled: true } } : undefined;
+
+    // The upstream EKS cluster resource requires that all auto mode settings
+    // are either enabled or disabled and does not handle unknown values.
+    // Make all eks auto mode options depend on the other options to ensure
+    // that they're all either known or unknown when auto mode is enabled.
+    const autoModeConfig =
+        args.autoMode?.enabled && computeConfig && storageConfig && kubernetesNetworkConfig
+            ? pulumi
+                  .all([computeConfig, storageConfig, kubernetesNetworkConfig])
+                  .apply(([computeConfig, storageConfig, kubernetesNetworkConfig]) => {
+                      return {
+                          computeConfig,
+                          storageConfig,
+                          kubernetesNetworkConfig,
+                      };
+                  })
+            : {
+                  computeConfig,
+                  storageConfig,
+                  kubernetesNetworkConfig,
+              };
 
     // Create the EKS cluster
     const eksCluster = new aws.eks.Cluster(
@@ -664,8 +687,9 @@ export function createCore(
             roleArn: args.serviceRole
                 ? pulumi.output(args.serviceRole).arn
                 : eksServiceRole?.directRole.arn!,
-            computeConfig,
-            storageConfig,
+            computeConfig: autoModeConfig.computeConfig,
+            storageConfig: autoModeConfig.storageConfig,
+            kubernetesNetworkConfig: autoModeConfig.kubernetesNetworkConfig,
             // When a cluster is created with EKS Auto Mode, it must be created without the addons
             bootstrapSelfManagedAddons: args.autoMode?.enabled ? false : undefined,
             vpcConfig: {
@@ -701,7 +725,6 @@ export function createCore(
                     },
             ),
             encryptionConfig,
-            kubernetesNetworkConfig,
             accessConfig: args.authenticationMode
                 ? {
                       authenticationMode: args.authenticationMode,
