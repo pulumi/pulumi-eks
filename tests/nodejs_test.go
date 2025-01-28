@@ -1118,6 +1118,45 @@ func TestAccEfa(t *testing.T) {
 	programTestWithExtraOptions(t, &test, nil)
 }
 
+func TestAccAutoModeCustomRole(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	test := getJSBaseOptions(t).
+	With(integration.ProgramTestOptions{
+		Dir: path.Join(getTestPrograms(t), "auto-mode-custom-role"),
+		ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+			utils.ValidateClusters(t, info.Deployment.Resources,
+				utils.WithKubeConfigs(info.Outputs["kubeconfig"]),
+				utils.ValidateDaemonSets(), // no daemonsets in auto mode
+				utils.ValidateDeployments(
+					utils.KubernetesResource{Name: "nginx", Namespace: "nginx"},
+					utils.KubernetesResource{Name: "coredns", Namespace: "kube-system"},
+				),
+			)
+		},
+	})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
+func TestAccAutoModePreview(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	cwd, err := os.Getwd()
+	require.NoError(t, err)
+	options := []opttest.Option{
+		opttest.LocalProviderPath("eks", filepath.Join(cwd, "..", "bin")),
+		opttest.YarnLink("@pulumi/eks"),
+	}
+	pt := pulumitest.NewPulumiTest(t, path.Join(getTestPrograms(t), "auto-mode-preview"), options...)
+
+	previewResult := pt.Preview(t)
+	t.Logf("Preview:\n%s", previewResult.StdOut)
+}
+
 func randomString(lenght int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
 	random := rand.New(rand.NewSource(uint64(time.Now().UnixNano())))
