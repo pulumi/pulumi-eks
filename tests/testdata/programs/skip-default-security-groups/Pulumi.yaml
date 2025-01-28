@@ -1,3 +1,0 @@
-name: skip-default-security-groups
-description: EKS cluster without default security groups
-runtime: nodejs
