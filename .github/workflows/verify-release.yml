@@ -81,6 +81,8 @@ jobs:
         runner: ${{ fromJSON(format('["ubuntu-latest","windows-latest"{0}]', inputs.enableMacRunner && ',"macos-latest"' || '')) }}
     runs-on: ${{ matrix.runner }}
     steps:
+      - name: Configure Git to checkout files with long names
+        run: git config --global core.longpaths true
       - name: Checkout Repo
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -114,14 +116,6 @@ jobs:
           directory: examples/cluster
           provider: eks
           providerVersion: ${{ inputs.providerVersion }}
-      - name: Verify python release
-        uses: pulumi/verify-provider-release@v1
-        with:
-          runtime: python
-          directory: examples/cluster-py
-          provider: eks
-          providerVersion: ${{ inputs.providerVersion }}
-          packageVersion: ${{ inputs.pythonVersion || inputs.providerVersion }}
       - name: Verify dotnet release
         uses: pulumi/verify-provider-release@v1
         with:

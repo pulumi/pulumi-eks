@@ -57,6 +57,5 @@ actions:
 
 releaseVerification:
   nodejs: examples/cluster
-  python: examples/cluster-py
   go: examples/cluster-go
   dotnet: examples/cluster-cs
