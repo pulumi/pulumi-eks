@@ -1,0 +1,13 @@
+{
+    "name": "auto-mode-preview",
+    "devDependencies": {
+        "typescript": "^4.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/awsx": "^2.0.2",
+        "@pulumi/eks": "^3.0.0",
+        "@pulumi/pulumi": "^3.113.0",
+        "@pulumi/random": "^4.17.0"
+    }
+}
