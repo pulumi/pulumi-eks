@@ -12,5 +12,6 @@
         executionMode: "branch", // Only run once.
       },
     },
-  ]
+  ],
+  automerge: false
 }
