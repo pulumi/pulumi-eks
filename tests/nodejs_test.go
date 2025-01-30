@@ -1078,16 +1078,16 @@ func TestAccEfa(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// this is one of the cheapest instances that support EFA
-	instanceType := "g6.8xlarge"
-	supportedAZs, err := utils.FindSupportedAZs(t, instanceType)
+	// these are the cheapest instances that support EFA. We're using a mix of instance types to ensure availability
+	instanceTypes := []string{"g6.8xlarge", "g4dn.8xlarge", "gr6.8xlarge", "g5.8xlarge", "g6.16xlarge"}
+	supportedAZs, err := utils.FindSupportedAZs(t, instanceTypes)
 	require.NoError(t, err)
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getExamples(t), "efa"),
 			Config: map[string]string{
-				"instanceType":      instanceType,
+				"instanceTypes":     strings.Join(instanceTypes, ","),
 				"availabilityZones": strings.Join(supportedAZs, ","),
 			},
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
@@ -1124,19 +1124,19 @@ func TestAccAutoModeCustomRole(t *testing.T) {
 	}
 
 	test := getJSBaseOptions(t).
-	With(integration.ProgramTestOptions{
-		Dir: path.Join(getTestPrograms(t), "auto-mode-custom-role"),
-		ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
-			utils.ValidateClusters(t, info.Deployment.Resources,
-				utils.WithKubeConfigs(info.Outputs["kubeconfig"]),
-				utils.ValidateDaemonSets(), // no daemonsets in auto mode
-				utils.ValidateDeployments(
-					utils.KubernetesResource{Name: "nginx", Namespace: "nginx"},
-					utils.KubernetesResource{Name: "coredns", Namespace: "kube-system"},
-				),
-			)
-		},
-	})
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getTestPrograms(t), "auto-mode-custom-role"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.ValidateClusters(t, info.Deployment.Resources,
+					utils.WithKubeConfigs(info.Outputs["kubeconfig"]),
+					utils.ValidateDaemonSets(), // no daemonsets in auto mode
+					utils.ValidateDeployments(
+						utils.KubernetesResource{Name: "nginx", Namespace: "nginx"},
+						utils.KubernetesResource{Name: "coredns", Namespace: "kube-system"},
+					),
+				)
+			},
+		})
 
 	programTestWithExtraOptions(t, &test, nil)
 }

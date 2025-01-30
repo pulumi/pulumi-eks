@@ -36,7 +36,7 @@ func TestEfaInputValidation(t *testing.T) {
 	azs, err := utils.ListAvailabilityZones(t)
 	require.NoError(t, err)
 
-	supportedAZs, err := utils.FindSupportedAZs(t, "g6.8xlarge")
+	supportedAZs, err := utils.FindSupportedAZs(t, []string{"g6.8xlarge"})
 	require.NoError(t, err)
 
 	var unsupportedAZ []string
@@ -83,7 +83,7 @@ func TestEfaInputValidation(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			checkEksClusterInputValidations(t, filepath.Join(getExamples(t), "efa"), func(pt *pulumitest.PulumiTest) {
-				pt.SetConfig(t, "instanceType", tt.instanceType)
+				pt.SetConfig(t, "instanceTypes", tt.instanceType)
 				pt.SetConfig(t, "availabilityZones", tt.azs)
 			}, tt.wantErr)
 		})
