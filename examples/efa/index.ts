@@ -5,7 +5,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as iam from "./iam";
 
 const config = new pulumi.Config();
-const instanceType = config.require("instanceType");
+const instanceTypes = config.require("instanceTypes").split(",");
 const availabilityZones = config.require("availabilityZones").split(",");
 
 const eksVpc = new awsx.ec2.Vpc("efa", {
@@ -54,7 +54,7 @@ const efaDevicePlugin = new k8s.helm.v3.Release("efa-device-plugin", {
 // node group to run EFA enabled workloads
 const efaMng = new eks.ManagedNodeGroup("efa-mng", {
     cluster: cluster,
-    instanceTypes: [instanceType],
+    instanceTypes: instanceTypes,
     // EFA needs at least 2 instances, otherwise there's nothing to communicate with
     scalingConfig: {
         minSize: 2,

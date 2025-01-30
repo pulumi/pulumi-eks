@@ -1306,8 +1306,8 @@ func RetryWithExponentialBackoff(ctx context.Context, initialDelay time.Duration
 	}
 }
 
-// FindSupportedAZs returns the list of supported AZs for a given instance type.
-func FindSupportedAZs(t *testing.T, instanceType string) ([]string, error) {
+// FindSupportedAZs returns the list of AZs that are supported by all of the provided instance types.
+func FindSupportedAZs(t *testing.T, instanceTypes []string) ([]string, error) {
 	awsConfig := getAwsConfig(t)
 	ec2Client := ec2.NewFromConfig(awsConfig)
 
@@ -1316,7 +1316,7 @@ func FindSupportedAZs(t *testing.T, instanceType string) ([]string, error) {
 		Filters: []types.Filter{
 			{
 				Name:   aws.String("instance-type"),
-				Values: []string{instanceType},
+				Values: instanceTypes,
 			},
 		},
 	})
@@ -1325,9 +1325,18 @@ func FindSupportedAZs(t *testing.T, instanceType string) ([]string, error) {
 		return nil, err
 	}
 
-	var supportedAZs []string
+	// Create a map to count how many instance types support each AZ
+	azCounts := make(map[string]int)
 	for _, offering := range result.InstanceTypeOfferings {
-		supportedAZs = append(supportedAZs, *offering.Location)
+		azCounts[*offering.Location]++
+	}
+
+	// Only include AZs that are supported by all instance types
+	var supportedAZs []string
+	for az, count := range azCounts {
+		if count == len(instanceTypes) {
+			supportedAZs = append(supportedAZs, az)
+		}
 	}
 
 	return supportedAZs, nil
