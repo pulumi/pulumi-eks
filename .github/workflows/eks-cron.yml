@@ -541,6 +541,9 @@ jobs:
         run: cd tests && go test -tags=go -count=1 -cover -timeout 3h -parallel 6 .
 name: cron
 "on":
+  push:
+    branches:
+      - rquitales/fix-cron
   schedule:
     # Run every day at 06:00AM UTC
     - cron: "0 6 * * *"
