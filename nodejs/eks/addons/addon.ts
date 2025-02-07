@@ -24,7 +24,7 @@ import { Cluster } from "../cluster";
 export interface AddonOptions
     extends Omit<aws.eks.AddonArgs, "resolveConflicts" | "clusterName" | "configurationValues"> {
     cluster: Cluster;
-    configurationValues?: object;
+    configurationValues?: pulumi.Input<object>;
 }
 
 /**
@@ -47,7 +47,7 @@ export class Addon extends pulumi.ComponentResource {
             {
                 ...args,
                 clusterName: cluster.core.cluster.name,
-                configurationValues: JSON.stringify(args.configurationValues),
+                configurationValues: pulumi.output(args.configurationValues).apply(JSON.stringify),
             },
             { parent: this, provider: opts?.provider },
         );
