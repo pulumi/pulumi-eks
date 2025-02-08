@@ -37,10 +37,9 @@ export class Addon extends pulumi.ComponentResource {
     constructor(name: string, args: AddonOptions, opts?: pulumi.CustomResourceOptions) {
         const cluster = args.cluster;
 
-        super("eks:index:Addon", name, args, {
-            ...opts,
+        super("eks:index:Addon", name, args, pulumi.mergeOptions(opts, {
             parent: cluster,
-        });
+        }));
 
         const addon = new aws.eks.Addon(
             name,
