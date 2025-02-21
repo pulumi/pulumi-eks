@@ -204,9 +204,9 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					"The kubeconfig generated is automatically stringified for ease of use with the " +
 					"pulumi/kubernetes provider.\n\n" +
 					"See for more details:\n" +
-					"- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html\n" +
-					"- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html\n" +
-					"- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html",
+					"- [Connect kubectl to an EKS cluster by creating a kubeconfig file](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)\n" +
+					"- [Using an IAM role in the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html)\n" +
+					"- [Configuration and credential file settings in the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)",
 				Inputs: &schema.ObjectTypeSpec{
 					Properties: map[string]schema.PropertySpec{
 						"__self__": {
@@ -352,7 +352,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							TypeSpec: schema.TypeSpec{Type: "string"},
 							Description: "The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).\n\n" +
 								"This value can be used to associate kubernetes service accounts with IAM roles. For more information, see " +
-								"https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.",
+								"[IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html].",
 						},
 						"autoModeNodeRoleName": {
 							TypeSpec:    schema.TypeSpec{Type: "string"},
@@ -395,7 +395,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"subnets.\n\nIf the list of subnets includes both public and private subnets, the worker " +
 							"nodes will only be attached to the private subnets, and the public subnets will be used " +
 							"for internet-facing load balancers.\n\nSee for more details: " +
-							"https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.\n\nNote: The use of " +
+							"[View Amazon EKS networking requirements for VPC and subnets](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html).\n\nNote: The use of " +
 							"`subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually " +
 							"exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.",
 					},
@@ -414,7 +414,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"(recommended): Set both `privateSubnetIds` and `publicSubnetIds`.\n   - Default all " +
 							"worker nodes to run in private subnets, and use the public subnets for internet-facing " +
 							"load balancers.\n\nSee for more details: " +
-							"https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of " +
+							"[View Amazon EKS networking requirements for VPC and subnets](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html). Note: The use of " +
 							"`subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually " +
 							"exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.",
 					},
@@ -433,7 +433,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"(recommended): Set both `privateSubnetIds` and `publicSubnetIds`.\n   - Default all " +
 							"worker nodes to run in private subnets, and use the public subnets for internet-facing " +
 							"load balancers.\n\nSee for more details: " +
-							"https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of " +
+							"[View Amazon EKS networking requirements for VPC and subnets](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html). Note: The use of " +
 							"`subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually " +
 							"exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.\n\n" +
 							"Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.",
@@ -512,7 +512,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						},
 						Description: "The IAM Role Provider used to create & authenticate against the EKS cluster. " +
 							"This role is given `[system:masters]` permission in K8S, See: " +
-							"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html\n\n" +
+							"[Add IAM principals to your Amazon EKS cluster](https://docs.aws.amazon.com/eks/latest/userguide/auth-configmap.html#aws-auth-users)\n\n" +
 							"Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.",
 					},
 					"instanceRoles": {
@@ -530,20 +530,20 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Description: "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended " +
 							"EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.\n\nNote: " +
 							"`nodeAmiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n" +
-							"- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.",
+							"- [Create nodes with optimized Amazon Linux AMIs](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html).",
 					},
 					"gpu": {
 						TypeSpec: schema.TypeSpec{Type: "boolean"},
 						Description: "Use the latest recommended EKS Optimized Linux AMI with GPU support for the " +
 							"worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\n" +
 							"Note: `gpu` and `nodeAmiId` are mutually exclusive.\n\nSee for more details:\n" +
-							"- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n" +
-							"- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html",
+							"- [Create nodes with optimized Amazon Linux AMIs](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html)\n" +
+							"- [Retrieve recommended Amazon Linux AMI IDs](https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html)",
 					},
 					"nodePublicKey": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "Public key material for SSH access to worker nodes. See allowed formats at:\n" +
-							"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html\n" +
+							"[Amazon EC2 key pairs and Amazon EC2 instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)\n" +
 							"If not provided, no SSH access is enabled on VMs.",
 					},
 					"nodeSubnetIds": {
@@ -627,7 +627,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"volume type.\n\n" +
 							"Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be " +
 							"created automatically for the cluster by the EKS service. See " +
-							"https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html",
+							"[What is Amazon EKS?](https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html)",
 					},
 					"skipDefaultNodeGroup": {
 						TypeSpec: schema.TypeSpec{
@@ -644,7 +644,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						},
 						Description: "If this toggle is set to true, the EKS cluster will be created without the default " +
 							"node and cluster security groups. Defaults to false, unless `autoMode` is enabled.\n\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html",
+							"See for more details: [View Amazon EKS security group requirements for clusters](https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html)",
 					},
 					"tags": {
 						TypeSpec: schema.TypeSpec{
@@ -717,17 +717,17 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Description: "Indicates whether an IAM OIDC Provider is created for the EKS cluster.\n\n" +
 							"The OIDC provider is used in the cluster in combination with k8s Service Account " +
 							"annotations to provide IAM roles at the k8s Pod level.\n\nSee for more details:\n" +
-							" - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html\n" +
-							" - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html\n" +
-							" - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/\n" +
-							" - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts",
+							" - [Obtain the thumbprint for an OpenID Connect identity provider](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html)\n" +
+							" - [Create an IAM OIDC provider for your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html)\n" +
+							" - [Introducing fine-grained IAM roles for service accounts](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/)\n" +
+							" - [aws.eks.Cluster Enabling IAM Roles for Service Accounts](https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts)",
 					},
 					"name": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "The cluster's physical resource name.\n\nIf not specified, the default is to " +
 							"use auto-naming for the cluster's name, resulting in a physical name with the format " +
 							"`${name}-eksCluster-0123abcd`.\n\nSee for more details: " +
-							"https://www.pulumi.com/docs/intro/concepts/programming-model/#autonaming",
+							"[Programming Model: Autonaming](https://www.pulumi.com/docs/intro/concepts/programming-model/#autonaming)",
 					},
 					"proxy": {
 						TypeSpec: schema.TypeSpec{
@@ -754,23 +754,22 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"- Using a named profile configured on the AWS provider via:\n" +
 							"`pulumi config set aws:profile <profileName>`\n\n" +
 							"See for more details:\n" +
-							"- https://www.pulumi.com/registry/packages/aws/api-docs/provider/\n" +
-							"- https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/\n" +
-							"- https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration\n" +
-							"- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html",
+							"- [AWS: Installation & Configuration](https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/)\n" +
+							"- [AWS: Configuration](https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration)\n" +
+							"- [Connect kubectl to an EKS cluster by creating a kubeconfig file](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)",
 					},
 					"enableConfigMapMutable": {
 						TypeSpec: schema.TypeSpec{Type: "boolean"},
 						Description: "Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.\n\n" +
 							"Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.\n" +
-							"https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs",
+							"[kubernetes.Provider: enableConfigMapMutable](https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs)",
 					},
 					"encryptionConfigKeyArn": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "KMS Key ARN to use with the encryption configuration for the cluster.\n\n" +
 							"Only available on Kubernetes 1.13+ clusters created after March 6, 2020.\n" +
 							"See for more details:\n" +
-							"- https://aws.amazon.com/about-aws/whats-new/2020/03/amazon-eks-adds-envelope-encryption-for-secrets-with-aws-kms/",
+							"- [Amazon EKS adds envelope encryption for secrets with AWS KMS](https://aws.amazon.com/about-aws/whats-new/2020/03/amazon-eks-adds-envelope-encryption-for-secrets-with-aws-kms/)",
 					},
 					"ipFamily": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -802,7 +801,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						},
 						Description: "Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. " +
 							"Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.\n\n" +
-							"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/access-entries.html",
+							"See for more details:\n[Grant IAM users access to Kubernetes with EKS access entries](https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html)",
 					},
 					"authenticationMode": {
 						TypeSpec: schema.TypeSpec{
@@ -810,7 +809,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							Plain: true,
 						},
 						Description: "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\n" +
-							"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
+							"See for more details:\n[Grant IAM users and roles access to Kubernetes APIs](https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam)",
 					},
 					"corednsAddonOptions": {
 						TypeSpec: schema.TypeSpec{
@@ -843,7 +842,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						},
 						Description: "Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster " +
 							"infrastructure on your behalf.\n\n" +
-							"For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html",
+							"For more information, see: [Automate cluster infrastructure with EKS Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html)",
 					},
 				},
 				Methods: map[string]string{
@@ -916,7 +915,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					"amiType": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "Type of Amazon Machine Image (AMI) associated with the EKS Node Group. " +
-							"Defaults to `AL2_x86_64`.\nNote: `amiType` and `amiId` are mutually exclusive.\n\nSee the AWS documentation " +
+							"Defaults to `AL2_x86_64`.\nNote: `amiType` and `amiId` are mutually exclusive.\n\nSee the [AWS documentation]" +
 							"(https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) " +
 							"for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.",
 					},
@@ -1016,8 +1015,8 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"  - core.subnetIds\n" +
 							"  - core.privateIds\n" +
 							"  - core.publicSubnetIds\n\n" +
-							"This default logic is based on the existing subnet IDs logic of this package: " +
-							"https://git.io/JeM11",
+							"This default logic is based on the existing [subnet IDs logic of this package]" +
+							"(https://git.io/JeM11)",
 					},
 					"tags": {
 						TypeSpec: schema.TypeSpec{
@@ -1054,7 +1053,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						},
 						Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on " +
 							"available options, see: " +
-							"https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. " +
+							"[bootstrap.sh](https://github.com/awslabs/amazon-eks-ami/blob/main/templates/al2/runtime/bootstrap.sh). " +
 							"Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` " +
 							"flags are included automatically based on other configuration parameters.\n\n" +
 							"Note that this field conflicts with `launchTemplate`.",
@@ -1062,7 +1061,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					"enableIMDSv2": {
 						TypeSpec: schema.TypeSpec{Type: "boolean", Plain: true},
 						Description: "Enables the ability to use EC2 Instance Metadata Service v2, which provides a more secure way to access instance " +
-							"metadata. For more information, see: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html.\n" +
+							"metadata. For more information, see: [Use the Instance Metadata Service to access instance metadata](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html).\n" +
 							"Defaults to `false`.\n\n" +
 							"Note that this field conflicts with `launchTemplate`. If you are providing a custom `launchTemplate`, you should " +
 							"enable this feature within the `launchTemplateMetadataOptions` of the supplied `launchTemplate`.",
@@ -1088,20 +1087,20 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"  - settings.kubernetes.cluster-certificate\n" +
 							"  - settings.kubernetes.cluster-name\n" +
 							"  - settings.kubernetes.cluster-dns-ip\n\n" +
-							"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
+							"For an overview of the available settings, see [Settings Reference](https://bottlerocket.dev/en/os/1.20.x/api/settings/).",
 					},
 					"userData": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
 						Description: "User specified code to run on node startup. This is expected to handle " +
 							"the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.\n\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.",
+							"See for more details: [Customize managed nodes with launch templates](https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data).",
 					},
 					"gpu": {
 						TypeSpec: schema.TypeSpec{Type: "boolean"},
 						Description: "Use the latest recommended EKS Optimized AMI with GPU support for the " +
 							"worker nodes.\nDefaults to false.\n\n" +
 							"Note: `gpu` and `amiId` are mutually exclusive.\n\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.",
+							"See for more details: [Create nodes with optimized Amazon Linux AMIs](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html).",
 					},
 					"amiId": {
 						TypeSpec: schema.TypeSpec{Type: "string"},
@@ -1126,8 +1125,8 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"  - cluster.cidr\n\n" +
 							"Note: This is only applicable when using AL2023.\n" +
 							"See for more details:\n" +
-							"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n" +
-							"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/",
+							"  - [nodeadm](https://awslabs.github.io/amazon-eks-ami/nodeadm/)\n" +
+							"  - [API Reference](https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/)",
 					},
 					"ignoreScalingChanges": {
 						TypeSpec: schema.TypeSpec{
@@ -1280,7 +1279,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Description: "VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.\n" +
-						"For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
+						"For more information see: [Amazon EKS add-ons](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)",
 				},
 				Aliases: []schema.AliasSpec{
 					{Type: pulumi.StringRef("eks:index:VpcCni")},
@@ -1292,7 +1291,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 				IsComponent: true,
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Description: "Addon manages an EKS add-on.\n" +
-						"For more information about supported add-ons, see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
+						"For more information about supported add-ons, see: [Amazon EKS add-ons](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)",
 				},
 				InputProperties: map[string]schema.PropertySpec{
 					"addonName": {
@@ -1474,7 +1473,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					Type: "object",
 					Description: "Contains the AWS Role and Provider necessary to override the `[system:master]` " +
 						"entity ARN. This is an optional argument used when creating `Cluster`. Read more: " +
-						"https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html\n\n" +
+						"[Adding user or role to your Amazon EKS cluster](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html)\n\n" +
 						"Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.",
 					Properties: map[string]schema.PropertySpec{
 						"role": {
@@ -1501,7 +1500,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					Type: "object",
 					Description: "Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster " +
 						"infrastructure on your behalf.\n\n" +
-						"For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html",
+						"For more information, see: [Automate cluster infrastructure with EKS Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html)",
 					Properties: map[string]schema.PropertySpec{
 						"enabled": {
 							TypeSpec: schema.TypeSpec{
@@ -1556,7 +1555,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 			"eks:index:ClusterNodePools": {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type:        "string",
-					Description: "Built-in node pools of EKS Auto Mode. For more details see: https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html",
+					Description: "Built-in node pools of EKS Auto Mode. For more details see: [Enable or Disable Built-in NodePools](https://docs.aws.amazon.com/eks/latest/userguide/set-builtin-node-pools.html)",
 				},
 				Enum: []schema.EnumValueSpec{
 					{
@@ -1615,9 +1614,9 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"     possible by only using a profile, iff the profile includes a role to\n" +
 						"     assume in its settings.\n\n" +
 						"See for more details:\n" +
-						"- https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html\n" +
-						"- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html\n" +
-						"- https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html",
+						"- [Connect kubectl to an EKS cluster by creating a kubeconfig file](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)\n" +
+						"- [Using an IAM role in the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html)\n" +
+						"- [Configuration and credential file settings in the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)",
 					Properties: map[string]schema.PropertySpec{
 						"roleArn": {
 							TypeSpec: schema.TypeSpec{Type: "string"}, // TODO enum `aws.ARN`.
@@ -1731,11 +1730,11 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 								"cluster.\n\n" +
 								"Note: As of Kubernetes v1.11+ on EKS, a default `gp2` storage class will always be " +
 								"created automatically for the cluster by the EKS service. See " +
-								"https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html\n\n" +
+								"[Storage Classes](https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html)\n\n" +
 								"Please note that at most one storage class can be marked as default. If two or more " +
 								"of them are marked as default, a PersistentVolumeClaim without `storageClassName` " +
 								"explicitly specified cannot be created. See: " +
-								"https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/#changing-the-default-storageclass",
+								"[Change the default StorageClass](https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/#changing-the-default-storageclass)",
 						},
 						"allowVolumeExpansion": {
 							TypeSpec:    schema.TypeSpec{Type: "boolean"},
@@ -1744,7 +1743,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"metadata": {
 							TypeSpec: schema.TypeSpec{Ref: k8sRef("#/types/kubernetes:meta%2Fv1:ObjectMeta", dependencies.Kubernetes)},
 							Description: "Standard object's metadata. More info: " +
-								"https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
+								"[Kubernetes API Conventions: Metadata](https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata)",
 						},
 						"mountOptions": {
 							TypeSpec: schema.TypeSpec{
@@ -1774,7 +1773,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type: "object",
 					Description: "Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. " +
-						"See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.",
+						"See [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).",
 					Properties: map[string]schema.PropertySpec{
 						"value": {
 							TypeSpec: schema.TypeSpec{
@@ -1910,7 +1909,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 					Type: "object",
 					Description: "Associates an access policy and its scope to an IAM principal.\n\n" +
 						"See for more details:\n" +
-						"https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html",
+						"[Grant IAM users access to Kubernetes with EKS access entries](https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html)",
 					Properties: map[string]schema.PropertySpec{
 						"policyArn": {
 							TypeSpec:    schema.TypeSpec{Type: "string"},
@@ -1965,7 +1964,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type: "string",
 					Description: "The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`.\n\n" +
-						"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam",
+						"See for more details:\n[Grant IAM users and roles access to Kubernetes APIs](https://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam)",
 				},
 				Enum: []schema.EnumValueSpec{
 					{
@@ -1973,7 +1972,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Value:       "CONFIG_MAP",
 						Description: "Only aws-auth ConfigMap will be used for authenticating to the Kubernetes API.",
 						DeprecationMessage: "The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.\n" +
-							"For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.",
+							"For more information and instructions on how to upgrade, see [Migrating existing aws-auth ConfigMap entries to access entries](https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html).",
 					},
 					{
 						Name:        "Api",
@@ -1985,7 +1984,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Value:       "API_AND_CONFIG_MAP",
 						Description: "Both aws-auth ConfigMap and Access Entries can be used for authenticating to the Kubernetes API.",
 						DeprecationMessage: "The aws-auth ConfigMap is deprecated. The recommended method to manage access to Kubernetes APIs is Access Entries with the AuthenticationMode API.\n" +
-							"For more information and instructions how to upgrade, see https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html.",
+							"For more information and instructions on how to upgrade, see [Migrating existing aws-auth ConfigMap entries to access entries](https://docs.aws.amazon.com/eks/latest/userguide/migrating-access-entries.html).",
 					},
 				},
 			},
@@ -1993,7 +1992,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type: "string",
 					Description: "The type of EKS optimized Operating System to use for node groups.\n\n" +
-						"See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html",
+						"See for more details:\n[Create nodes with pre-built optimized images](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html)",
 				},
 				Enum: []schema.EnumValueSpec{
 					{
@@ -2004,27 +2003,26 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						// While it's still the default (until the next major version), we should warn users if they're
 						// explicitly picking it.
 						DeprecationMessage: "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html",
+							"See for more details: [Upgrade from Amazon Linux 2 to Amazon Linux 2023](https://docs.aws.amazon.com/eks/latest/userguide/al2023.html)",
 					},
 					{
 						Name:  "AL2023",
 						Value: "AL2023",
 						Description: "EKS optimized OS based on Amazon Linux 2023 (AL2023).\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html",
+							"See for more details: [Create nodes with optimized Amazon Linux AMIs](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html)",
 					},
 					{
 						Name:  "Bottlerocket",
 						Value: "Bottlerocket",
 						Description: "EKS optimized Container OS based on Bottlerocket.\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html",
+							"See for more details: [Create nodes with optimized Bottlerocket AMIs](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami-bottlerocket.html)",
 					},
 					{
 						Name:  "RECOMMENDED",
 						Value: "AL2023",
 						Description: "The recommended EKS optimized OS. Currently Amazon Linux 2023 (AL2023).\n" +
 							"This will be kept up to date with AWS' recommendations for EKS optimized operating systems.\n\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html",
-					},
+							"See for more details: [Create nodes with optimized Amazon Linux AMIs](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html)"},
 				},
 			},
 			"eks:index:AmiType": {
@@ -2037,21 +2035,20 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Name:  "AL2X86_64",
 						Value: "AL2_x86_64",
 						DeprecationMessage: "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html",
+							"See for more details: [Upgrade from Amazon Linux 2 to Amazon Linux 2023](https://docs.aws.amazon.com/eks/latest/userguide/al2023.html)",
 					},
 					{
 						Name:  "AL2X86_64GPU",
 						Value: "AL2_x86_64_GPU",
 						DeprecationMessage: "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html",
+							"See for more details: [Upgrade from Amazon Linux 2 to Amazon Linux 2023](https://docs.aws.amazon.com/eks/latest/userguide/al2023.html)",
 					},
 					{
 						Name:  "AL2Arm64",
 						Value: "AL2_ARM_64",
 						DeprecationMessage: "Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.\n" +
-							"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html",
+							"See for more details: [Upgrade from Amazon Linux 2 to Amazon Linux 2023](https://docs.aws.amazon.com/eks/latest/userguide/al2023.html)",
 					},
-
 					{
 						Name:  "AL2023X86_64Standard",
 						Value: "AL2023_x86_64_STANDARD",
@@ -2086,7 +2083,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 				ObjectTypeSpec: schema.ObjectTypeSpec{
 					Type: "object",
 					Description: "MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.\n\n" +
-						"See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.",
+						"See for more details: [nodeadm](https://awslabs.github.io/amazon-eks-ami/nodeadm/).",
 					Properties: map[string]schema.PropertySpec{
 						"content": {
 							TypeSpec:    schema.TypeSpec{Type: "string"},
@@ -2310,7 +2307,7 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 			Description: "The security group for the worker node group to communicate with the cluster.\n\n" +
 				"This security group requires specific inbound and outbound rules.\n\n" +
 				"See for more details:\n" +
-				"https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\n" +
+				"[Amazon EKS security group requirements](https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html)\n\n" +
 				"Note: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are " +
 				"mutually exclusive.",
 		},
@@ -2319,7 +2316,7 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 			Description: "The ID of the security group for the worker node group to communicate with the cluster.\n\n" +
 				"This security group requires specific inbound and outbound rules.\n\n" +
 				"See for more details:\n" +
-				"https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\n" +
+				"[Amazon EKS security group requirements](https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html)\n\n" +
 				"Note: The `nodeSecurityGroupId` option and the cluster option `nodeSecurityGroupTags` are " +
 				"mutually exclusive.",
 		},
@@ -2351,7 +2348,7 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 		"nodePublicKey": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
 			Description: "Public key material for SSH access to worker nodes. See allowed formats at:\n" +
-				"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html\n" +
+				"[Amazon EC2 key pairs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)\n" +
 				"If not provided, no SSH access is enabled on VMs.",
 		},
 		"keyName": {
@@ -2395,7 +2392,7 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 				"the full AWS EKS bootstrapping code and signal node readiness to the managing " +
 				"CloudFormation stack. This code must be a complete and executable user data script in " +
 				"bash (Linux) or powershell (Windows).\n\n" +
-				"See for more details: https://docs.aws.amazon.com/eks/latest/userguide/worker.html",
+				"See for more details: [Launch and configure Amazon EKS worker nodes](https://docs.aws.amazon.com/eks/latest/userguide/worker.html)",
 		},
 		"desiredCapacity": {
 			TypeSpec:    schema.TypeSpec{Type: "integer"},
@@ -2414,7 +2411,7 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 			Description: "The AMI ID to use for the worker nodes.\n\nDefaults to the latest recommended " +
 				"EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.\n\nNote: " +
 				"`amiId` and `gpu` are mutually exclusive.\n\nSee for more details:\n" +
-				"- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.",
+				"- [Create nodes with optimized Amazon Linux AMIs](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html).",
 		},
 		"amiType": {
 			TypeSpec: schema.TypeSpec{Type: "string"},
@@ -2426,8 +2423,8 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 			Description: "Use the latest recommended EKS Optimized Linux AMI with GPU support for the " +
 				"worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\n" +
 				"Note: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details:\n" +
-				"- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n" +
-				"- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html",
+				"- [Create nodes with optimized Amazon Linux AMIs](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html)\n" +
+				"- [Retrieve an Amazon EKS optimized AMI ID](https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html)",
 		},
 		"labels": {
 			TypeSpec: schema.TypeSpec{
@@ -2465,7 +2462,7 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 			},
 			Description: "Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on " +
 				"available options, see: " +
-				"https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. " +
+				"[bootstrap.sh](https://github.com/awslabs/amazon-eks-ami/blob/main/templates/al2/runtime/bootstrap.sh). " +
 				"Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` " +
 				"flags are included automatically based on other configuration parameters.",
 		},
@@ -2502,7 +2499,7 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 				"Stack.\n\nPer AWS, all stack-level tags, including automatically created tags, and the " +
 				"`cloudFormationTags` option are propagated to resources that AWS CloudFormation " +
 				"supports, including the AutoScalingGroup. See " +
-				"https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html\n\n" +
+				"[Tagging AWS CloudFormation resources](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html)\n\n" +
 				"Note: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you " +
 				"should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not " +
 				"both.",
@@ -2525,7 +2522,7 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 				"With detailed monitoring, all metrics, including status check metrics, are available in 1-minute intervals.\n" +
 				"When enabled, you can also get aggregated data across groups of similar instances.\n\n" +
 				"Note: You are charged per metric that is sent to CloudWatch. You are not charged for data storage.\n" +
-				"For more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" here https://aws.amazon.com/cloudwatch/pricing/.",
+				"For more information, see \"Paid tier\" and \"Example 1 - EC2 Detailed Monitoring\" on the [CloudWatch pricing page](https://aws.amazon.com/cloudwatch/pricing/).",
 		},
 		"operatingSystem": {
 			TypeSpec: schema.TypeSpec{
@@ -2548,7 +2545,7 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 				"  - settings.kubernetes.cluster-certificate\n" +
 				"  - settings.kubernetes.cluster-name\n" +
 				"  - settings.kubernetes.cluster-dns-ip\n\n" +
-				"For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.",
+				"For an overview of the available settings, see [Settings Reference](https://bottlerocket.dev/en/os/1.20.x/api/settings/).",
 		},
 		"nodeadmExtraOptions": {
 			TypeSpec: schema.TypeSpec{
@@ -2566,8 +2563,8 @@ func nodeGroupProperties(cluster, v2 bool, awsVersion string) map[string]schema.
 				"  - cluster.cidr\n\n" +
 				"Note: This is only applicable when using AL2023.\n" +
 				"See for more details:\n" +
-				"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/\n" +
-				"  - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/",
+				"  - [nodeadm](https://awslabs.github.io/amazon-eks-ami/nodeadm/)\n" +
+				"  - [API Reference](https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/)",
 		},
 	}
 
@@ -2651,7 +2648,7 @@ func vpcCniProperties(cluster bool) map[string]schema.PropertySpec {
 			TypeSpec: schema.TypeSpec{Type: "integer"},
 			Description: "WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  " +
 				"is consumed with the existing prefix. " +
-				"Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md",
+				"Ref: [Prefix Delegation and IP Target](https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md)",
 		},
 		"enablePrefixDelegation": {
 			TypeSpec:    schema.TypeSpec{Type: "boolean"},
@@ -2682,7 +2679,7 @@ func vpcCniProperties(cluster bool) map[string]schema.PropertySpec {
 			Description: "Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker " +
 				"nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for " +
 				"each Availability Zone\n" +
-				"Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html " +
+				"Ref: [Custom networking with Amazon VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html) " +
 				"(step 5(c))\n\nDefaults to the official AWS CNI image in ECR.",
 		},
 		"enablePodEni": {
