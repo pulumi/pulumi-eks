@@ -103,6 +103,15 @@ jobs:
         role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
     - name: Install prebuilt SDKs
       run: make install_sdks
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-region: ${{ env.AWS_REGION }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-duration-seconds: 7200
+        role-session-name: aws@githubActions
+        role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
     - name: Generate test shards
       run: |-
         cd tests
