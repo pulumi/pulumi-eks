@@ -36,7 +36,7 @@ func TestEfaInputValidation(t *testing.T) {
 	azs, err := utils.ListAvailabilityZones(t)
 	require.NoError(t, err)
 
-	supportedAZs, err := utils.FindSupportedAZs(t, []string{"p4de.24xlarge"})
+	supportedAZs, err := utils.FindSupportedAZs(t, []string{"g6.8xlarge"})
 	require.NoError(t, err)
 
 	var unsupportedAZ []string
@@ -52,7 +52,9 @@ func TestEfaInputValidation(t *testing.T) {
 			unsupportedAZ = append(unsupportedAZ, az)
 		}
 	}
-	require.NotEmpty(t, unsupportedAZ, "Could not find an unsupported AZ")
+	if len(unsupportedAZ) == 0 {
+		t.SkipNow("Could not find an unsupported AZ to test with")
+	}
 
 	tests := []struct {
 		name         string
@@ -62,7 +64,7 @@ func TestEfaInputValidation(t *testing.T) {
 	}{
 		{
 			name:         "valid instance type and azs",
-			instanceType: "p4de.24xlarge",
+			instanceType: "g6.8xlarge",
 			azs:          strings.Join(supportedAZs, ","),
 			wantErr:      false,
 		},
@@ -74,7 +76,7 @@ func TestEfaInputValidation(t *testing.T) {
 		},
 		{
 			name:         "unsupported az",
-			instanceType: "p4de.24xlarge",
+			instanceType: "g6.8xlarge",
 			azs:          strings.Join(unsupportedAZ, ","),
 			wantErr:      true,
 		},
