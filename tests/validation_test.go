@@ -52,7 +52,10 @@ func TestEfaInputValidation(t *testing.T) {
 			unsupportedAZ = append(unsupportedAZ, az)
 		}
 	}
-	require.NotEmpty(t, unsupportedAZ, "Could not find an unsupported AZ")
+	if len(unsupportedAZ) == 0 {
+		// "Could not find an unsupported AZ to test with"
+		t.Skip("Could not find an unsupported AZ to test with")
+	}
 
 	tests := []struct {
 		name         string
