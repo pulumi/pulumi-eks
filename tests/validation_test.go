@@ -53,7 +53,8 @@ func TestEfaInputValidation(t *testing.T) {
 		}
 	}
 	if len(unsupportedAZ) == 0 {
-		t.SkipNow("Could not find an unsupported AZ to test with")
+		// "Could not find an unsupported AZ to test with"
+		t.Skip("Could not find an unsupported AZ to test with")
 	}
 
 	tests := []struct {
