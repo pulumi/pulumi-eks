@@ -2,15 +2,13 @@ module github.com/pulumi/pulumi-eks/provider/v3
 
 go 1.23
 
-toolchain go1.23.4
-
 replace github.com/pulumi/pulumi-eks/sdk/v3 => ../sdk
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/pulumi/pulumi/pkg/v3 v3.147.0
-	github.com/pulumi/pulumi/sdk/v3 v3.147.0
+	github.com/pulumi/pulumi/pkg/v3 v3.156.0
+	github.com/pulumi/pulumi/sdk/v3 v3.156.0
 	github.com/spf13/cobra v1.9.1
 )
 
