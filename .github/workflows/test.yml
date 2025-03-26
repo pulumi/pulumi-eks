@@ -94,7 +94,7 @@ jobs:
         pip3 install pipenv
     - name: Generate Pulumi Access Token
       id: generate_pulumi_token
-      uses: pulumi/auth-actions@80dec0d5e009a11565cbf87d9ef9103fc7d24198 # v1.0.0
+      uses: pulumi/auth-actions@1c89817aab0c66407723cdef72b05266e7376640 # v1.0.1
       with:
         organization: pulumi
         requested-token-type: urn:pulumi:token-type:access_token:organization
