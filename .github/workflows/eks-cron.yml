@@ -50,7 +50,7 @@ jobs:
       - name: Run nodejs linter
         run: yarn --cwd nodejs/eks install --frozen-lockfile && yarn --cwd nodejs/eks lint-check
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           args: -c ../.golangci.yml
