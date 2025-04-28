@@ -1661,15 +1661,13 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@pulumi/aws@6.66.1":
-  version "6.66.1"
-  resolved "https://registry.yarnpkg.com/@pulumi/aws/-/aws-6.66.1.tgz#21789c287c5f6fb1852d7e36330b925fec38ed8e"
-  integrity sha512-/qE/cM1X4RmNn9BDhg3ypK+us4MraxXbvvwrspyqaQixJDFlbOSF2H7cprRK7HcfoCBJaNrViacfendyxQ8zBQ==
+"@pulumi/aws@6.78.0":
+  version "6.78.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/aws/-/aws-6.78.0.tgz#be63d1f835125634d931aec1839b0dd32c0ba534"
+  integrity sha512-RDkXIT8XqzE1OAcZcIiwd5Tfb8q4o3CoLa4VM45I9YAoUIbNoT+7pe+iVly7QoRRDKqrEVpANQ8WUlKBq6DDXg==
   dependencies:
     "@pulumi/pulumi" "^3.142.0"
-    builtin-modules "3.0.0"
     mime "^2.0.0"
-    resolve "^1.7.1"
 
 "@pulumi/kubernetes@4.19.0":
   version "4.19.0"
@@ -2250,11 +2248,6 @@ buffer@^5.5.0:
   dependencies:
     base64-js "^1.3.1"
     ieee754 "^1.1.13"
-
-builtin-modules@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-3.0.0.tgz#1e587d44b006620d90286cc7a9238bbc6129cab1"
-  integrity sha512-hMIeU4K2ilbXV6Uv93ZZ0Avg/M91RaKXucQ+4me2Do1txxBDyDZWCBa5bJSLqoNTRpXTLwEzIk1KmloenDDjhg==
 
 builtin-modules@^1.1.1:
   version "1.1.1"
@@ -4551,7 +4544,7 @@ resolve.exports@^2.0.0:
   resolved "https://registry.yarnpkg.com/resolve.exports/-/resolve.exports-2.0.2.tgz#f8c934b8e6a13f539e38b7098e2e36134f01e800"
   integrity sha512-X2UW6Nw3n/aMgDVy+0rSqgHlv39WZAlZrXCdnbyEiKm17DSqHX4MmQMaST3FbeWR5FTuRcUwYAziZajji0Y7mg==
 
-resolve@^1.14.2, resolve@^1.20.0, resolve@^1.22.0, resolve@^1.22.1, resolve@^1.3.2, resolve@^1.7.1:
+resolve@^1.14.2, resolve@^1.20.0, resolve@^1.22.0, resolve@^1.22.1, resolve@^1.3.2:
   version "1.22.8"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.22.8.tgz#b6c87a9f2aa06dfab52e3d70ac8cde321fa5a48d"
   integrity sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==
