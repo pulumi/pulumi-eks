@@ -5,9 +5,9 @@
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/pulumi": "3.144.1",
-        "@pulumi/awsx": "2.19.0",
-        "@pulumi/aws": "6.66.1",
+        "@pulumi/pulumi": "3.166.0",
+        "@pulumi/awsx": "2.21.1",
+        "@pulumi/aws": "6.78.0",
         "@pulumi/eks": "latest"
     }
 }

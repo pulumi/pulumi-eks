@@ -27,7 +27,7 @@
     "bugs": "https://github.com/pulumi/pulumi-eks/issues",
     "dependencies": {
         "@pulumi/aws": "6.78.0",
-        "@pulumi/kubernetes": "4.19.0",
+        "@pulumi/kubernetes": "4.22.2",
         "@pulumi/pulumi": "^3.143.0",
         "https-proxy-agent": "^5.0.1",
         "js-yaml": "^4.1.0",
