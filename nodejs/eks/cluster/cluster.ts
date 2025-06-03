@@ -734,6 +734,7 @@ export function createCore(
                       bootstrapClusterCreatorAdminPermissions: true,
                   }
                 : undefined,
+            upgradePolicy: args.upgradePolicy,
         },
         {
             parent,
@@ -1903,6 +1904,11 @@ export interface ClusterOptions {
      * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
      */
     autoMode?: EksAutoModeOptions;
+
+    /**
+     * The cluster's upgrade policy. Valid values are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
+     */
+    upgradePolicy?: aws.types.input.eks.ClusterUpgradePolicy;
 }
 
 /**
@@ -2059,6 +2065,7 @@ export interface ClusterResult {
     oidcProviderUrl: pulumi.Output<string>;
     oidcIssuer: pulumi.Output<string>;
     autoModeNodeRoleName: pulumi.Output<string>;
+    upgradePolicy: pulumi.Output<aws.types.output.eks.ClusterUpgradePolicy>;
 }
 
 /** @internal */
@@ -2188,6 +2195,7 @@ export function createCluster(
         // The issuer is the issuer URL without the protocol part
         oidcIssuer: oidcIssuerUrl.apply((url) => url.replace("https://", "")),
         autoModeNodeRoleName: core.autoModeNodeRoleName,
+        upgradePolicy: core.cluster.upgradePolicy,
     };
 }
 

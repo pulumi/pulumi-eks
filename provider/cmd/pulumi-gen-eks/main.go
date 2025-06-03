@@ -358,6 +358,10 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							TypeSpec:    schema.TypeSpec{Type: "string"},
 							Description: "The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.",
 						},
+						"upgradePolicy": {
+							TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterUpgradePolicy:ClusterUpgradePolicy", dependencies.Aws)},
+							Description: "The cluster's upgrade policy.",
+						},
 					},
 					Required: []string{
 						"kubeconfig",
@@ -844,6 +848,10 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						Description: "Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster " +
 							"infrastructure on your behalf.\n\n" +
 							"For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html",
+					},
+					"upgradePolicy": {
+						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterUpgradePolicy:ClusterUpgradePolicy", dependencies.Aws)},
+						Description: `The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".`,
 					},
 				},
 				Methods: map[string]string{

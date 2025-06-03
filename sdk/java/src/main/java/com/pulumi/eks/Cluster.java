@@ -6,6 +6,7 @@ package com.pulumi.eks;
 import com.pulumi.aws.Provider;
 import com.pulumi.aws.ec2.SecurityGroup;
 import com.pulumi.aws.ec2.SecurityGroupRule;
+import com.pulumi.aws.eks.outputs.ClusterUpgradePolicy;
 import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
@@ -346,6 +347,20 @@ public class Cluster extends com.pulumi.resources.ComponentResource {
      */
     public Output<String> oidcProviderUrl() {
         return this.oidcProviderUrl;
+    }
+    /**
+     * The cluster&#39;s upgrade policy.
+     * 
+     */
+    @Export(name="upgradePolicy", refs={ClusterUpgradePolicy.class}, tree="[0]")
+    private Output</* @Nullable */ ClusterUpgradePolicy> upgradePolicy;
+
+    /**
+     * @return The cluster&#39;s upgrade policy.
+     * 
+     */
+    public Output<Optional<ClusterUpgradePolicy>> upgradePolicy() {
+        return Codegen.optional(this.upgradePolicy);
     }
 
     /**

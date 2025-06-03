@@ -75,6 +75,7 @@ class ClusterArgs:
                  storage_classes: Optional[Union[str, Mapping[str, 'StorageClassArgs']]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 upgrade_policy: Optional[pulumi.Input['pulumi_aws.eks.ClusterUpgradePolicyArgs']] = None,
                  use_default_vpc_cni: Optional[bool] = None,
                  user_mappings: Optional[pulumi.Input[Sequence[pulumi.Input['UserMappingArgs']]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
@@ -262,6 +263,7 @@ class ClusterArgs:
                
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
+        :param pulumi.Input['pulumi_aws.eks.ClusterUpgradePolicyArgs'] upgrade_policy: The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
         :param bool use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
                Defaults to true, unless `autoMode` is enabled.
         :param pulumi.Input[Sequence[pulumi.Input['UserMappingArgs']]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
@@ -369,6 +371,8 @@ class ClusterArgs:
             pulumi.set(__self__, "subnet_ids", subnet_ids)
         if tags is not None:
             pulumi.set(__self__, "tags", tags)
+        if upgrade_policy is not None:
+            pulumi.set(__self__, "upgrade_policy", upgrade_policy)
         if use_default_vpc_cni is not None:
             pulumi.set(__self__, "use_default_vpc_cni", use_default_vpc_cni)
         if user_mappings is not None:
@@ -1111,6 +1115,18 @@ class ClusterArgs:
         pulumi.set(self, "tags", value)
 
     @property
+    @pulumi.getter(name="upgradePolicy")
+    def upgrade_policy(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterUpgradePolicyArgs']]:
+        """
+        The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
+        """
+        return pulumi.get(self, "upgrade_policy")
+
+    @upgrade_policy.setter
+    def upgrade_policy(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterUpgradePolicyArgs']]):
+        pulumi.set(self, "upgrade_policy", value)
+
+    @property
     @pulumi.getter(name="useDefaultVpcCni")
     def use_default_vpc_cni(self) -> Optional[bool]:
         """
@@ -1227,6 +1243,7 @@ class Cluster(pulumi.ComponentResource):
                  storage_classes: Optional[Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 upgrade_policy: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterUpgradePolicyArgs']]] = None,
                  use_default_vpc_cni: Optional[bool] = None,
                  user_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[Union['UserMappingArgs', 'UserMappingArgsDict']]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
@@ -1436,6 +1453,7 @@ class Cluster(pulumi.ComponentResource):
                
                Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] tags: Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterUpgradePolicyArgs']] upgrade_policy: The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
         :param bool use_default_vpc_cni: Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
                Defaults to true, unless `autoMode` is enabled.
         :param pulumi.Input[Sequence[pulumi.Input[Union['UserMappingArgs', 'UserMappingArgsDict']]]] user_mappings: Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
@@ -1535,6 +1553,7 @@ class Cluster(pulumi.ComponentResource):
                  storage_classes: Optional[Union[str, Mapping[str, Union['StorageClassArgs', 'StorageClassArgsDict']]]] = None,
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 upgrade_policy: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterUpgradePolicyArgs']]] = None,
                  use_default_vpc_cni: Optional[bool] = None,
                  user_mappings: Optional[pulumi.Input[Sequence[pulumi.Input[Union['UserMappingArgs', 'UserMappingArgsDict']]]]] = None,
                  version: Optional[pulumi.Input[str]] = None,
@@ -1601,6 +1620,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["storage_classes"] = storage_classes
             __props__.__dict__["subnet_ids"] = subnet_ids
             __props__.__dict__["tags"] = tags
+            __props__.__dict__["upgrade_policy"] = upgrade_policy
             __props__.__dict__["use_default_vpc_cni"] = use_default_vpc_cni
             __props__.__dict__["user_mappings"] = user_mappings
             __props__.__dict__["version"] = version
@@ -1792,6 +1812,14 @@ class Cluster(pulumi.ComponentResource):
         Issuer URL for the OpenID Connect identity provider of the EKS cluster.
         """
         return pulumi.get(self, "oidc_provider_url")
+
+    @property
+    @pulumi.getter(name="upgradePolicy")
+    def upgrade_policy(self) -> pulumi.Output[Optional['pulumi_aws.eks.outputs.ClusterUpgradePolicy']]:
+        """
+        The cluster's upgrade policy.
+        """
+        return pulumi.get(self, "upgrade_policy")
 
     @pulumi.output_type
     class GetKubeconfigResult:

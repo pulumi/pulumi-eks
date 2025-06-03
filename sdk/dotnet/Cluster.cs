@@ -163,6 +163,12 @@ namespace Pulumi.Eks
         [Output("oidcProviderUrl")]
         public Output<string> OidcProviderUrl { get; private set; } = null!;
 
+        /// <summary>
+        /// The cluster's upgrade policy.
+        /// </summary>
+        [Output("upgradePolicy")]
+        public Output<Pulumi.Aws.Eks.Outputs.ClusterUpgradePolicy?> UpgradePolicy { get; private set; } = null!;
+
 
         /// <summary>
         /// Create a Cluster resource with the given unique name, arguments, and options.
@@ -717,6 +723,12 @@ namespace Pulumi.Eks
             get => _tags ?? (_tags = new InputMap<string>());
             set => _tags = value;
         }
+
+        /// <summary>
+        /// The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
+        /// </summary>
+        [Input("upgradePolicy")]
+        public Input<Pulumi.Aws.Eks.Inputs.ClusterUpgradePolicyArgs>? UpgradePolicy { get; set; }
 
         /// <summary>
         /// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.

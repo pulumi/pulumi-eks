@@ -92,6 +92,8 @@ type Cluster struct {
 	OidcProviderArn pulumi.StringOutput `pulumi:"oidcProviderArn"`
 	// Issuer URL for the OpenID Connect identity provider of the EKS cluster.
 	OidcProviderUrl pulumi.StringOutput `pulumi:"oidcProviderUrl"`
+	// The cluster's upgrade policy.
+	UpgradePolicy eks.ClusterUpgradePolicyPtrOutput `pulumi:"upgradePolicy"`
 }
 
 // NewCluster registers a new resource with the given unique name, arguments, and options.
@@ -353,6 +355,8 @@ type clusterArgs struct {
 	SubnetIds []string `pulumi:"subnetIds"`
 	// Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
 	Tags map[string]string `pulumi:"tags"`
+	// The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
+	UpgradePolicy *eks.ClusterUpgradePolicy `pulumi:"upgradePolicy"`
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
 	// Defaults to true, unless `autoMode` is enabled.
 	UseDefaultVpcCni *bool `pulumi:"useDefaultVpcCni"`
@@ -598,6 +602,8 @@ type ClusterArgs struct {
 	SubnetIds pulumi.StringArrayInput
 	// Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
 	Tags pulumi.StringMapInput
+	// The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
+	UpgradePolicy eks.ClusterUpgradePolicyPtrInput
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
 	// Defaults to true, unless `autoMode` is enabled.
 	UseDefaultVpcCni *bool
@@ -857,6 +863,11 @@ func (o ClusterOutput) OidcProviderArn() pulumi.StringOutput {
 // Issuer URL for the OpenID Connect identity provider of the EKS cluster.
 func (o ClusterOutput) OidcProviderUrl() pulumi.StringOutput {
 	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.OidcProviderUrl }).(pulumi.StringOutput)
+}
+
+// The cluster's upgrade policy.
+func (o ClusterOutput) UpgradePolicy() eks.ClusterUpgradePolicyPtrOutput {
+	return o.ApplyT(func(v *Cluster) eks.ClusterUpgradePolicyPtrOutput { return v.UpgradePolicy }).(eks.ClusterUpgradePolicyPtrOutput)
 }
 
 type ClusterArrayOutput struct{ *pulumi.OutputState }
