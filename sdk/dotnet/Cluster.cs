@@ -163,12 +163,6 @@ namespace Pulumi.Eks
         [Output("oidcProviderUrl")]
         public Output<string> OidcProviderUrl { get; private set; } = null!;
 
-        /// <summary>
-        /// The cluster's upgrade policy.
-        /// </summary>
-        [Output("upgradePolicy")]
-        public Output<Pulumi.Aws.Eks.Outputs.ClusterUpgradePolicy?> UpgradePolicy { get; private set; } = null!;
-
 
         /// <summary>
         /// Create a Cluster resource with the given unique name, arguments, and options.

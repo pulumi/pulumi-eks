@@ -1231,10 +1231,6 @@
                 "oidcProviderUrl": {
                     "type": "string",
                     "description": "Issuer URL for the OpenID Connect identity provider of the EKS cluster."
-                },
-                "upgradePolicy": {
-                    "$ref": "/aws/v6.79.1/schema.json#/types/aws:eks%2FClusterUpgradePolicy:ClusterUpgradePolicy",
-                    "description": "The cluster's upgrade policy."
                 }
             },
             "required": [

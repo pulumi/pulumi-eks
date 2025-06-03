@@ -129,10 +129,6 @@ export class Cluster extends pulumi.ComponentResource {
      * Issuer URL for the OpenID Connect identity provider of the EKS cluster.
      */
     public /*out*/ readonly oidcProviderUrl!: pulumi.Output<string>;
-    /**
-     * The cluster's upgrade policy.
-     */
-    public readonly upgradePolicy!: pulumi.Output<pulumiAws.types.output.eks.ClusterUpgradePolicy | undefined>;
 
     /**
      * Create a Cluster resource with the given unique name, arguments, and options.
@@ -240,7 +236,6 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["oidcIssuer"] = undefined /*out*/;
             resourceInputs["oidcProviderArn"] = undefined /*out*/;
             resourceInputs["oidcProviderUrl"] = undefined /*out*/;
-            resourceInputs["upgradePolicy"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(Cluster.__pulumiType, name, resourceInputs, opts, true /*remote*/);

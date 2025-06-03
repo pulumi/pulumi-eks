@@ -92,8 +92,6 @@ type Cluster struct {
 	OidcProviderArn pulumi.StringOutput `pulumi:"oidcProviderArn"`
 	// Issuer URL for the OpenID Connect identity provider of the EKS cluster.
 	OidcProviderUrl pulumi.StringOutput `pulumi:"oidcProviderUrl"`
-	// The cluster's upgrade policy.
-	UpgradePolicy eks.ClusterUpgradePolicyPtrOutput `pulumi:"upgradePolicy"`
 }
 
 // NewCluster registers a new resource with the given unique name, arguments, and options.
@@ -863,11 +861,6 @@ func (o ClusterOutput) OidcProviderArn() pulumi.StringOutput {
 // Issuer URL for the OpenID Connect identity provider of the EKS cluster.
 func (o ClusterOutput) OidcProviderUrl() pulumi.StringOutput {
 	return o.ApplyT(func(v *Cluster) pulumi.StringOutput { return v.OidcProviderUrl }).(pulumi.StringOutput)
-}
-
-// The cluster's upgrade policy.
-func (o ClusterOutput) UpgradePolicy() eks.ClusterUpgradePolicyPtrOutput {
-	return o.ApplyT(func(v *Cluster) eks.ClusterUpgradePolicyPtrOutput { return v.UpgradePolicy }).(eks.ClusterUpgradePolicyPtrOutput)
 }
 
 type ClusterArrayOutput struct{ *pulumi.OutputState }

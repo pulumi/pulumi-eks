@@ -1813,14 +1813,6 @@ class Cluster(pulumi.ComponentResource):
         """
         return pulumi.get(self, "oidc_provider_url")
 
-    @property
-    @pulumi.getter(name="upgradePolicy")
-    def upgrade_policy(self) -> pulumi.Output[Optional['pulumi_aws.eks.outputs.ClusterUpgradePolicy']]:
-        """
-        The cluster's upgrade policy.
-        """
-        return pulumi.get(self, "upgrade_policy")
-
     @pulumi.output_type
     class GetKubeconfigResult:
         def __init__(__self__, result=None):
