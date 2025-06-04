@@ -116,14 +116,14 @@ jobs:
           role-session-name: aws@githubActions
           role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
       - name: Verify nodejs release
-        uses: pulumi/verify-provider-release@v1
+        uses: pulumi/verify-provider-release@679d5e6838ac4f68696bfa1bf9e2c5da94509dd6 # v1.3.1
         with:
           runtime: nodejs
           directory: examples/cluster
           provider: eks
           providerVersion: ${{ inputs.providerVersion }}
       - name: Verify dotnet release
-        uses: pulumi/verify-provider-release@v1
+        uses: pulumi/verify-provider-release@679d5e6838ac4f68696bfa1bf9e2c5da94509dd6 # v1.3.1
         with:
           runtime: dotnet
           directory: examples/cluster-cs
