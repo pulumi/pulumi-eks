@@ -719,6 +719,12 @@ namespace Pulumi.Eks
         }
 
         /// <summary>
+        /// The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
+        /// </summary>
+        [Input("upgradePolicy")]
+        public Input<Pulumi.Aws.Eks.Inputs.ClusterUpgradePolicyArgs>? UpgradePolicy { get; set; }
+
+        /// <summary>
         /// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
         /// Defaults to true, unless `autoMode` is enabled.
         /// </summary>

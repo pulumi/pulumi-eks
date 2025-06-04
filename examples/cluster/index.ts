@@ -51,7 +51,10 @@ const cluster3 = new eks.Cluster(`${projectName}-3`, {
         maxSize: 1,
         instanceType: pulumi.output(Promise.resolve("t3.small")),
         enableDetailedMonitoring: false,
-    }
+    },
+    upgradePolicy: {
+        supportType: "STANDARD",
+    },
 })
 
 // cluster4 is a graviton cluster to test the ARM64 architecture

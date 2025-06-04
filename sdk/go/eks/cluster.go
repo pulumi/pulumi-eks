@@ -353,6 +353,8 @@ type clusterArgs struct {
 	SubnetIds []string `pulumi:"subnetIds"`
 	// Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
 	Tags map[string]string `pulumi:"tags"`
+	// The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
+	UpgradePolicy *eks.ClusterUpgradePolicy `pulumi:"upgradePolicy"`
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
 	// Defaults to true, unless `autoMode` is enabled.
 	UseDefaultVpcCni *bool `pulumi:"useDefaultVpcCni"`
@@ -598,6 +600,8 @@ type ClusterArgs struct {
 	SubnetIds pulumi.StringArrayInput
 	// Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
 	Tags pulumi.StringMapInput
+	// The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
+	UpgradePolicy eks.ClusterUpgradePolicyPtrInput
 	// Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
 	// Defaults to true, unless `autoMode` is enabled.
 	UseDefaultVpcCni *bool
