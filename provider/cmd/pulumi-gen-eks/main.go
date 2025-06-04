@@ -160,7 +160,7 @@ func generate(language Language, cwd, outDir string) error {
 
 func bindSchema(pkgSpec schema.PackageSpec, version string) (*schema.Package, error) {
 	pkgSpec.Version = version
-	pkg, err := schema.ImportSpec(pkgSpec, nil)
+	pkg, err := schema.ImportSpec(pkgSpec, nil, schema.ValidationOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -1287,7 +1287,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						"For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html",
 				},
 				Aliases: []schema.AliasSpec{
-					{Type: pulumi.StringRef("eks:index:VpcCni")},
+					{Type: *pulumi.StringRef("eks:index:VpcCni")},
 				},
 				InputProperties: vpcCniProperties(false /*cluster*/),
 				RequiredInputs:  []string{"clusterName"},
@@ -2868,7 +2868,7 @@ func genNodejs(pkg *schema.Package, templateDir, outdir string) error {
 			}
 		}
 	}
-	files, err := nodejsgen.GeneratePackage(Tool, pkg, overlays, nil, false)
+	files, err := nodejsgen.GeneratePackage(Tool, pkg, overlays, nil, false, nil)
 	if err != nil {
 		return err
 	}
@@ -2895,7 +2895,7 @@ func genGo(pkg *schema.Package, outdir string) error {
 }
 
 func genPython(pkg *schema.Package, outdir string) error {
-	files, err := pygen.GeneratePackage(Tool, pkg, map[string][]byte{})
+	files, err := pygen.GeneratePackage(Tool, pkg, map[string][]byte{}, nil)
 	if err != nil {
 		return err
 	}
