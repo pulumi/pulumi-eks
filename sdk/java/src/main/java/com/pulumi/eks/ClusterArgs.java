@@ -4,6 +4,7 @@
 package com.pulumi.eks;
 
 import com.pulumi.aws.ec2.SecurityGroup;
+import com.pulumi.aws.eks.inputs.ClusterUpgradePolicyArgs;
 import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Either;
 import com.pulumi.core.Output;
@@ -1046,6 +1047,21 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * The cluster&#39;s upgrade policy. Valid support types are &#34;STANDARD&#34; and &#34;EXTENDED&#34;. Defaults to &#34;EXTENDED&#34;.
+     * 
+     */
+    @Import(name="upgradePolicy")
+    private @Nullable Output<ClusterUpgradePolicyArgs> upgradePolicy;
+
+    /**
+     * @return The cluster&#39;s upgrade policy. Valid support types are &#34;STANDARD&#34; and &#34;EXTENDED&#34;. Defaults to &#34;EXTENDED&#34;.
+     * 
+     */
+    public Optional<Output<ClusterUpgradePolicyArgs>> upgradePolicy() {
+        return Optional.ofNullable(this.upgradePolicy);
+    }
+
+    /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
      * Defaults to true, unless `autoMode` is enabled.
      * 
@@ -1175,6 +1191,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.storageClasses = $.storageClasses;
         this.subnetIds = $.subnetIds;
         this.tags = $.tags;
+        this.upgradePolicy = $.upgradePolicy;
         this.useDefaultVpcCni = $.useDefaultVpcCni;
         this.userMappings = $.userMappings;
         this.version = $.version;
@@ -2518,6 +2535,27 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder tags(Map<String,String> tags) {
             return tags(Output.of(tags));
+        }
+
+        /**
+         * @param upgradePolicy The cluster&#39;s upgrade policy. Valid support types are &#34;STANDARD&#34; and &#34;EXTENDED&#34;. Defaults to &#34;EXTENDED&#34;.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder upgradePolicy(@Nullable Output<ClusterUpgradePolicyArgs> upgradePolicy) {
+            $.upgradePolicy = upgradePolicy;
+            return this;
+        }
+
+        /**
+         * @param upgradePolicy The cluster&#39;s upgrade policy. Valid support types are &#34;STANDARD&#34; and &#34;EXTENDED&#34;. Defaults to &#34;EXTENDED&#34;.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder upgradePolicy(ClusterUpgradePolicyArgs upgradePolicy) {
+            return upgradePolicy(Output.of(upgradePolicy));
         }
 
         /**

@@ -1529,6 +1529,10 @@
                     },
                     "description": "Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging."
                 },
+                "upgradePolicy": {
+                    "$ref": "/aws/v6.79.1/schema.json#/types/aws:eks%2FClusterUpgradePolicy:ClusterUpgradePolicy",
+                    "description": "The cluster's upgrade policy. Valid support types are \"STANDARD\" and \"EXTENDED\". Defaults to \"EXTENDED\"."
+                },
                 "useDefaultVpcCni": {
                     "type": "boolean",
                     "plain": true,

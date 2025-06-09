@@ -191,6 +191,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["storageClasses"] = args ? args.storageClasses : undefined;
             resourceInputs["subnetIds"] = args ? args.subnetIds : undefined;
             resourceInputs["tags"] = args ? args.tags : undefined;
+            resourceInputs["upgradePolicy"] = args ? args.upgradePolicy : undefined;
             resourceInputs["useDefaultVpcCni"] = args ? args.useDefaultVpcCni : undefined;
             resourceInputs["userMappings"] = args ? args.userMappings : undefined;
             resourceInputs["version"] = args ? args.version : undefined;
@@ -594,6 +595,10 @@ export interface ClusterArgs {
      * Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
      */
     tags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    /**
+     * The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
+     */
+    upgradePolicy?: pulumi.Input<pulumiAws.types.input.eks.ClusterUpgradePolicy>;
     /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
      * Defaults to true, unless `autoMode` is enabled.
