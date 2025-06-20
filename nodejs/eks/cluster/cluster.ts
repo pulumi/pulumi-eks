@@ -813,9 +813,10 @@ export function createCore(
                             agent: agent,
                             timeout: reqTimeoutMilliseconds,
                         };
-                        const req = https.request(options, (res) => {
-                            return res.statusCode === 200 ? resolve(undefined) : reject(); // Verify healthz returns 200
-                        });
+                        const req = https.request(
+                            options,
+                            (res) => (res.statusCode === 200 ? resolve(undefined) : reject()), // Verify healthz returns 200
+                        );
                         req.on("timeout", reject);
                         req.on("error", reject);
                         req.end();
