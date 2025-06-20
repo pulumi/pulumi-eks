@@ -153,11 +153,11 @@ export function filterEfaSubnets(
         opts,
     );
 
-    return pulumi.all([filteredSubnets, supportedAZs]).apply(([subnets, azs]) => {
+    return pulumi.all([filteredSubnets, supportedAZs, zone]).apply(([subnets, azs, zone]) => {
         if (subnets.ids.length === 0) {
             throw new pulumi.InputPropertyError({
                 propertyPath: "placementGroupAvailabilityZone",
-                reason: pulumi.interpolate`None of the configured subnets are in the provided availability zone ('${zone}'). Choose a different availability zone or change the subnets. Supported AZs: [${azs.join(
+                reason: `None of the configured subnets are in the provided availability zone ('${zone}'). Choose a different availability zone or change the subnets. Supported AZs: [${azs.join(
                     ", ",
                 )}]`,
             });
