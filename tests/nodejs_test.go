@@ -355,7 +355,8 @@ func TestAccTagInputTypes(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getTestPrograms(t), "tag-input-types"),
+			Verbose: true,
+			Dir:     path.Join(getTestPrograms(t), "tag-input-types"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
 			},
@@ -527,7 +528,8 @@ func TestAccMultiRole(t *testing.T) {
 	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: path.Join(getTestPrograms(t), "multi-role"),
+			Verbose: true,
+			Dir:     path.Join(getTestPrograms(t), "multi-role"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				// Verify that the cluster is working.
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(info.Outputs["kubeconfig"]))
