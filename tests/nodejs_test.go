@@ -506,6 +506,8 @@ func TestAccAuthenticationMode(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getExamples(t), "authentication-mode"),
+			Verbose:       true,
+			DebugLogLevel: 3,
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				// Verify that the clusters with all three authentication modes are working.
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(
