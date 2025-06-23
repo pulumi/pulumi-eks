@@ -17,7 +17,7 @@ import * as pulumi from "@pulumi/pulumi";
 export type CpuArchitecture = "arm64" | "x86_64";
 export type ClusterVersion = string;
 
-/* tslint:disable-next-line */ // Generating the enum object for OperatingSystem like codegen does
+/* eslint-disable-next-line */ // Generating the enum object for OperatingSystem like codegen does
 export const OperatingSystem = {
     AL2: "AL2",
     AL2023: "AL2023",
@@ -27,7 +27,7 @@ export const OperatingSystem = {
 /**
  * The AMI families supported by the component.
  */
-export type OperatingSystem = (typeof OperatingSystem)[keyof typeof OperatingSystem];
+export type OperatingSystem = (typeof OperatingSystem)[keyof typeof OperatingSystem]; // eslint-disable-line no-redeclare
 export const DEFAULT_OS = OperatingSystem.AL2023;
 
 export interface AmiMetadata {
@@ -132,7 +132,7 @@ export function getAmiMetadata(amiType: AmiType): AmiMetadata {
     return amiTypeMetadata[amiType];
 }
 
-/* tslint:disable-next-line */ // Generating the enum object for AmiType like codegen does
+/* eslint-disable-next-line */ // Generating the enum object for AmiType like codegen does
 export const AmiType = {
     AL2X86_64: "AL2_x86_64",
     AL2X86_64GPU: "AL2_x86_64_GPU",
@@ -153,7 +153,7 @@ export const AmiType = {
 /**
  * The AMI types supported by the component. From here: https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateNodegroup.html
  */
-export type AmiType = (typeof AmiType)[keyof typeof AmiType];
+export type AmiType = (typeof AmiType)[keyof typeof AmiType]; // eslint-disable-line no-redeclare
 
 export const amiTypeValues: AmiType[] = Object.values(AmiType);
 

@@ -199,10 +199,12 @@ install_python_sdk:
 
 lint_provider: upstream
 	cd provider && golangci-lint run --path-prefix provider -c ../.golangci.yml
+	cd nodejs/esk && npm run lint-check
 # `lint_provider.fix` is a utility target meant to be run manually
 # that will run the linter and fix errors when possible.
 lint_provider.fix: upstream
 	cd provider && golangci-lint run --path-prefix provider -c ../.golangci.yml --fix
+	cd nodejs/esk && npm run lint
 .PHONY: lint_provider lint_provider.fix
 build_provider_cmd = OS=$(1) ARCH=$(2) OUT=$(3) yarn --cwd nodejs/eks build
 
