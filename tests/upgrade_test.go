@@ -29,73 +29,71 @@ const (
 	_providerName    = "eks"
 )
 
-func TestExamplesUpgrades(t *testing.T) {
-	t.Run("cluster", func(t *testing.T) {
-		testProviderUpgrade(t, "cluster")
-	})
+func TestExamplesUpgradesCluster(t *testing.T) {
+	testProviderUpgrade(t, "cluster")
+}
 
-	t.Run("aws-profile", func(t *testing.T) {
-		if os.Getenv("ALT_AWS_ACCESS_KEY_ID") == "" || os.Getenv("ALT_AWS_SECRET_ACCESS_KEY") == "" {
-			t.Skip("ALT_AWS_ACCESS_KEY_ID and ALT_AWS_SECRET_ACCESS_KEY must be set")
-		}
-		setProfileCredentials(t, "aws-profile-node")
-		testProviderUpgrade(t, "aws-profile")
-	})
+func TestExamplesUpgradesAWSProfile(t *testing.T) {
+	if os.Getenv("ALT_AWS_ACCESS_KEY_ID") == "" || os.Getenv("ALT_AWS_SECRET_ACCESS_KEY") == "" {
+		t.Skip("ALT_AWS_ACCESS_KEY_ID and ALT_AWS_SECRET_ACCESS_KEY must be set")
+	}
+	setProfileCredentials(t, "aws-profile-node")
+	testProviderUpgrade(t, "aws-profile")
+}
 
-	t.Run("aws-profile-role", func(t *testing.T) {
-		testProviderUpgrade(t, "aws-profile-role")
-	})
+func TestExamplesUpgradesAWSProfileRole(t *testing.T) {
+	testProviderUpgrade(t, "aws-profile-role")
+}
 
-	t.Run("encryption-provider", func(t *testing.T) {
-		testProviderUpgrade(t, "encryption-provider")
-	})
+func TestExamplesUpgradesEncryptionProvider(t *testing.T) {
+	testProviderUpgrade(t, "encryption-provider")
+}
 
-	t.Run("cluster-with-serviceiprange", func(t *testing.T) {
-		testProviderUpgrade(t, "cluster-with-serviceiprange")
-	})
+func TestExamplesUpgradesClusterWithServiceIPRange(t *testing.T) {
+	testProviderUpgrade(t, "cluster-with-serviceiprange")
+}
 
-	t.Run("extra-sg", func(t *testing.T) {
-		testProviderUpgrade(t, "extra-sg")
-	})
+func TestExamplesUpgradesExtraSG(t *testing.T) {
+	testProviderUpgrade(t, "extra-sg")
+}
 
-	t.Run("fargate", func(t *testing.T) {
-		t.Skip("upgradetest doesn't understand invoke getSecurityGroup, tracked by providertest #31")
-		testProviderUpgrade(t, "fargate")
-	})
+func TestExamplesUpgradesFargate(t *testing.T) {
+	t.Skip("upgradetest doesn't understand invoke getSecurityGroup, tracked by providertest #31")
+	testProviderUpgrade(t, "fargate")
+}
 
-	t.Run("managed-nodegroups", func(t *testing.T) {
-		testProviderUpgrade(t, "managed-nodegroups")
-	})
+func TestExamplesUpgradesManagedNodeGroups(t *testing.T) {
+	testProviderUpgrade(t, "managed-nodegroups")
+}
 
-	t.Run("modify-default-eks-sg", func(t *testing.T) {
-		t.Skip("upgradetest doesn't understand invoke aws:ec2/getSecurityGroup:getSecurityGroup")
-		testProviderUpgrade(t, "modify-default-eks-sg")
-	})
+func TestExamplesUpgradesModifyDefaultEKSSG(t *testing.T) {
+	t.Skip("upgradetest doesn't understand invoke aws:ec2/getSecurityGroup:getSecurityGroup")
+	testProviderUpgrade(t, "modify-default-eks-sg")
+}
 
-	t.Run("nodegroup", func(t *testing.T) {
-		testProviderUpgrade(t, "nodegroup")
-	})
+func TestExamplesUpgradesNodeGroup(t *testing.T) {
+	testProviderUpgrade(t, "nodegroup")
+}
 
-	t.Run("oidc-iam-sa", func(t *testing.T) {
-		testProviderUpgrade(t, "oidc-iam-sa")
-	})
+func TestExamplesUpgradesOIDCIAMSA(t *testing.T) {
+	testProviderUpgrade(t, "oidc-iam-sa")
+}
 
-	t.Run("scoped-kubeconfigs", func(t *testing.T) {
-		t.Skip("Requires source change for args of GetCallerIdentityArgs")
-		testProviderUpgrade(t, "scoped-kubeconfigs")
-	})
+func TestExamplesUpgradesScopedKubeconfigs(t *testing.T) {
+	t.Skip("Requires source change for args of GetCallerIdentityArgs")
+	testProviderUpgrade(t, "scoped-kubeconfigs")
+}
 
-	t.Run("storage-classes", func(t *testing.T) {
-		testProviderUpgrade(t, "storage-classes")
-	})
+func TestExamplesUpgradesStorageClasses(t *testing.T) {
+	testProviderUpgrade(t, "storage-classes")
+}
 
-	t.Run("subnet-tags", func(t *testing.T) {
-		testProviderUpgrade(t, "subnet-tags")
-	})
+func TestExamplesUpgradesSubnetTags(t *testing.T) {
+	testProviderUpgrade(t, "subnet-tags")
+}
 
-	t.Run("tags", func(t *testing.T) {
-		testProviderUpgrade(t, "tags")
-	})
+func TestExamplesUpgradesTags(t *testing.T) {
+	testProviderUpgrade(t, "tags")
 }
 
 func TestReportUpgradeCoverage(t *testing.T) {
