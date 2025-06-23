@@ -73,6 +73,8 @@ func TestAccClusterPy(t *testing.T) {
 
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
+			Verbose:       true,
+			DebugLogLevel: 3,
 			Dir: filepath.Join(getExamples(t), "cluster-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(

@@ -33,6 +33,8 @@ func TestAccClusterGo(t *testing.T) {
 	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			RunUpdateTest: false,
+			Verbose:       true,
+			DebugLogLevel: 3,
 			Dir:           filepath.Join(getExamples(t), "cluster-go", "step1"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(
