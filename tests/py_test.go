@@ -18,6 +18,8 @@ package tests
 
 import (
 	"bytes"
+	"io"
+	"os"
 	"path"
 	"path/filepath"
 	"testing"
@@ -70,12 +72,13 @@ func TestAccAwsProfileRolePy(t *testing.T) {
 func TestAccClusterPy(t *testing.T) {
 	// Create io.Writer to capture stderr and stdout from Pulumi CLI.
 	var output bytes.Buffer
+	w := io.MultiWriter(os.Stdout, &output)
 
 	test := getPythonBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Verbose:       true,
 			DebugLogLevel: 3,
-			Dir: filepath.Join(getExamples(t), "cluster-py"),
+			Dir:           filepath.Join(getExamples(t), "cluster-py"),
 			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(
 					info.Outputs["kubeconfig1"],
@@ -88,8 +91,9 @@ func TestAccClusterPy(t *testing.T) {
 					Dir:           path.Join(getExamples(t), "cluster-py", "step2"),
 					ExpectFailure: true,
 					Additive:      true,
-					Stderr:        &output,
-					Stdout:        &output,
+					Verbose:       true,
+					Stderr:        w,
+					Stdout:        w,
 					ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
 						// Ensure that the panic from https://github.com/pulumi/pulumi-eks/issues/1202 does not occur.
 						combinedOutput := output.String()

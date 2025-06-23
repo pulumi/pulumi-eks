@@ -18,6 +18,8 @@ package tests
 
 import (
 	"bytes"
+	"io"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -29,6 +31,7 @@ import (
 
 func TestAccClusterGo(t *testing.T) {
 	var stdErr bytes.Buffer
+	w := io.MultiWriter(os.Stdout, &stdErr)
 
 	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -49,7 +52,9 @@ func TestAccClusterGo(t *testing.T) {
 					Dir:           filepath.Join(getExamples(t), "cluster-go", "step2"),
 					ExpectFailure: true,
 					Additive:      true,
-					Stderr:        &stdErr,
+					Verbose:       true,
+					Stderr:        w,
+					Stdout:        w,
 				},
 			},
 		})
