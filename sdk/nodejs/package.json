@@ -13,7 +13,7 @@
         "build": "tsc"
     },
     "dependencies": {
-        "@pulumi/aws": "^6.79.1",
+        "@pulumi/aws": "^7.0.0-alpha.1",
         "@pulumi/kubernetes": "^4.19.0",
         "@pulumi/pulumi": "^3.142.0",
         "https-proxy-agent": "^5.0.1",

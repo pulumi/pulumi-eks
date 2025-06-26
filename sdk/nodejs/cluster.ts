@@ -144,6 +144,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["accessEntries"] = args ? args.accessEntries : undefined;
             resourceInputs["authenticationMode"] = args ? args.authenticationMode : undefined;
             resourceInputs["autoMode"] = args ? (args.autoMode ? inputs.autoModeOptionsArgsProvideDefaults(args.autoMode) : undefined) : undefined;
+            resourceInputs["bootstrapSelfManagedAddons"] = args ? args.bootstrapSelfManagedAddons : undefined;
             resourceInputs["clusterSecurityGroup"] = args ? args.clusterSecurityGroup : undefined;
             resourceInputs["clusterSecurityGroupTags"] = args ? args.clusterSecurityGroupTags : undefined;
             resourceInputs["clusterTags"] = args ? args.clusterTags : undefined;
@@ -151,7 +152,6 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["createInstanceRole"] = args ? args.createInstanceRole : undefined;
             resourceInputs["createOidcProvider"] = args ? args.createOidcProvider : undefined;
             resourceInputs["creationRoleProvider"] = args ? args.creationRoleProvider : undefined;
-            resourceInputs["defaultAddonsToRemove"] = args ? args.defaultAddonsToRemove : undefined;
             resourceInputs["desiredCapacity"] = args ? args.desiredCapacity : undefined;
             resourceInputs["enableConfigMapMutable"] = args ? args.enableConfigMapMutable : undefined;
             resourceInputs["enabledClusterLogTypes"] = args ? args.enabledClusterLogTypes : undefined;
@@ -286,6 +286,10 @@ export interface ClusterArgs {
      */
     autoMode?: inputs.AutoModeOptionsArgs;
     /**
+     * Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+     */
+    bootstrapSelfManagedAddons?: pulumi.Input<boolean>;
+    /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      *
      * Note: The security group resource should not contain any inline ingress or egress rules.
@@ -327,10 +331,6 @@ export interface ClusterArgs {
      * Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
      */
     creationRoleProvider?: inputs.CreationRoleProviderArgs;
-    /**
-     * List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-     */
-    defaultAddonsToRemove?: pulumi.Input<pulumi.Input<string>[]>;
     /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      */

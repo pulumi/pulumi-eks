@@ -668,14 +668,10 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 							"of values are: [\"api\", \"audit\", \"authenticator\", \"controllerManager\", " +
 							"\"scheduler\"]. By default it is off.",
 					},
-					"defaultAddonsToRemove": {
-						TypeSpec: schema.TypeSpec{
-							Type:  "array",
-							Items: &schema.TypeSpec{Type: "string"},
-						},
-						Description: "List of addons to remove upon creation. Any addon listed will be \"adopted\" and then removed. " +
-							"This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons " +
-							"via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.",
+					"bootstrapSelfManagedAddons": {
+						TypeSpec: schema.TypeSpec{Type: "boolean"},
+						Description: "Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. " +
+							"If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`",
 					},
 					"endpointPublicAccess": {
 						TypeSpec: schema.TypeSpec{Type: "boolean"},
@@ -2229,7 +2225,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 			"csharp": rawMessage(map[string]interface{}{
 				"packageReferences": map[string]string{
 					"Pulumi":            "3.*",
-					"Pulumi.Aws":        "6.*",
+					"Pulumi.Aws":        "7.0.0-alpha.1",
 					"Pulumi.Kubernetes": "4.*",
 				},
 				"liftSingleValueMethodReturns": true,
@@ -2237,7 +2233,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 			}),
 			"python": rawMessage(map[string]interface{}{
 				"requires": map[string]string{
-					"pulumi-aws":        fmt.Sprintf(">=%s,<7.0.0", dependencies.Aws),
+					"pulumi-aws":        fmt.Sprintf(">=%s,<8.0.0", dependencies.Aws),
 					"pulumi-kubernetes": fmt.Sprintf(">=%s,<5.0.0", dependencies.Kubernetes),
 				},
 				"usesIOClasses": true,

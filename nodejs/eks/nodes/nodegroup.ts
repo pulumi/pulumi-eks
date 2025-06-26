@@ -740,7 +740,7 @@ function createNodeGroup(
     const clusterMetadata = {
         name: eksCluster.name,
         apiServerEndpoint: eksCluster.endpoint,
-        certificateAuthority: eksCluster.certificateAuthority.data,
+        certificateAuthority: eksCluster.certificateAuthority[0].data,
         serviceCidr,
     };
 
@@ -1212,7 +1212,7 @@ export function createNodeGroupV2(
     const clusterMetadata = {
         name: eksCluster.name,
         apiServerEndpoint: eksCluster.endpoint,
-        certificateAuthority: eksCluster.certificateAuthority.data,
+        certificateAuthority: eksCluster.certificateAuthority[0].data,
         serviceCidr,
     };
 
@@ -2155,7 +2155,7 @@ function createMNGCustomLaunchTemplate(
     const clusterMetadata = {
         name: args.clusterName || core.cluster.name,
         apiServerEndpoint: core.cluster.endpoint,
-        certificateAuthority: core.cluster.certificateAuthority.data,
+        certificateAuthority: core.cluster.certificateAuthority[0].data,
         serviceCidr,
     };
 
