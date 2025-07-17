@@ -872,7 +872,7 @@ export function createCore(
                                 clusterEndpoint,
                                 region,
                                 useProfileName,
-                                clusterCertificateAuthority[0]?.data,
+                                clusterCertificateAuthority.data,
                                 opts,
                             );
                         });
@@ -882,7 +882,7 @@ export function createCore(
                             clusterEndpoint,
                             region,
                             useProfileName,
-                            clusterCertificateAuthority[0]?.data,
+                            clusterCertificateAuthority.data,
                             providerCredentialOpts,
                         );
                     } else {
@@ -891,7 +891,7 @@ export function createCore(
                             clusterEndpoint,
                             region,
                             useProfileName,
-                            clusterCertificateAuthority[0]?.data,
+                            clusterCertificateAuthority.data,
                         );
                     }
                     return config;
@@ -1739,13 +1739,6 @@ export interface ClusterOptions {
     enabledClusterLogTypes?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
-     * List of addons to remove upon creation. Any addon listed will be "adopted" and then removed.
-     * This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources.
-     * Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-     */
-    defaultAddonsToRemove?: pulumi.Input<pulumi.Input<string>[]>;
-
-    /**
      * Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation.
      * If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
      *
@@ -2324,7 +2317,7 @@ export class Cluster extends pulumi.ComponentResource {
             this.eksCluster.endpoint,
             region,
             true,
-            this.eksCluster.certificateAuthority[0]?.data,
+            this.eksCluster.certificateAuthority.data,
             args,
         );
         return pulumi.output(kc).apply(JSON.stringify);

@@ -14,7 +14,7 @@
             "liftSingleValueMethodReturns": true,
             "packageReferences": {
                 "Pulumi": "3.*",
-                "Pulumi.Aws": "7.0.0-alpha.1",
+                "Pulumi.Aws": "7.*",
                 "Pulumi.Kubernetes": "4.*"
             },
             "respectSchemaVersion": true
@@ -28,13 +28,13 @@
         },
         "java": {
             "dependencies": {
-                "com.pulumi:aws": "7.0.0-alpha.1",
+                "com.pulumi:aws": "7.0.0",
                 "com.pulumi:kubernetes": "4.19.0"
             }
         },
         "nodejs": {
             "dependencies": {
-                "@pulumi/aws": "^7.0.0-alpha.1",
+                "@pulumi/aws": "^7.0.0",
                 "@pulumi/kubernetes": "^4.19.0",
                 "https-proxy-agent": "^5.0.1",
                 "js-yaml": "^4.1.0",
@@ -59,7 +59,7 @@
             },
             "readme": "Pulumi Amazon Web Services (AWS) EKS Components.",
             "requires": {
-                "pulumi-aws": "\u003e=7.0.0-alpha.1,\u003c8.0.0",
+                "pulumi-aws": "\u003e=7.0.0,\u003c8.0.0",
                 "pulumi-kubernetes": "\u003e=4.19.0,\u003c5.0.0"
             },
             "respectSchemaVersion": true,
@@ -146,7 +146,7 @@
             "description": "Associates an access policy and its scope to an IAM principal.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/access-entries.html",
             "properties": {
                 "accessScope": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:eks%2FAccessPolicyAssociationAccessScope:AccessPolicyAssociationAccessScope",
+                    "$ref": "/aws/v7.0.0/schema.json#/types/aws:eks%2FAccessPolicyAssociationAccessScope:AccessPolicyAssociationAccessScope",
                     "description": "The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace."
                 },
                 "policyArn": {
@@ -310,7 +310,7 @@
                     "description": "The tags to apply to the CloudFormation Stack of the Worker NodeGroup.\n\nNote: Given the inheritance of auto-generated CF tags and `cloudFormationTags`, you should either supply the tag in `autoScalingGroupTags` or `cloudFormationTags`, but not both."
                 },
                 "clusterIngressRule": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access."
                 },
                 "clusterIngressRuleId": {
@@ -332,7 +332,7 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
@@ -346,7 +346,7 @@
                     "description": "Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.\n\nSee [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details."
                 },
                 "instanceProfile": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "plain": true,
                     "description": "The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive."
                 },
@@ -376,7 +376,7 @@
                 "launchTemplateTagSpecifications": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification"
+                        "$ref": "/aws/v7.0.0/schema.json#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification"
                     },
                     "description": "The tag specifications to apply to the launch template."
                 },
@@ -425,7 +425,7 @@
                     "description": "Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSecurityGroupId": {
@@ -503,36 +503,36 @@
                     "description": "The access entries added to the cluster."
                 },
                 "awsProvider": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/provider"
+                    "$ref": "/aws/v7.0.0/schema.json#/provider"
                 },
                 "cluster": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:eks%2Fcluster:Cluster"
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:eks%2Fcluster:Cluster"
                 },
                 "clusterIamRole": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2Frole:Role",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2Frole:Role",
                     "description": "The IAM Role attached to the EKS Cluster"
                 },
                 "clusterSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                 },
                 "eksNodeAccess": {
                     "$ref": "/kubernetes/v4.19.0/schema.json#/resources/kubernetes:core%2Fv1:ConfigMap"
                 },
                 "encryptionConfig": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig"
+                    "$ref": "/aws/v7.0.0/schema.json#/types/aws:eks%2FClusterEncryptionConfig:ClusterEncryptionConfig"
                 },
                 "endpoint": {
                     "type": "string",
                     "description": "The EKS cluster's Kubernetes API server endpoint."
                 },
                 "fargateProfile": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:eks%2FfargateProfile:FargateProfile",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:eks%2FfargateProfile:FargateProfile",
                     "description": "The Fargate profile used to manage which pods run on Fargate."
                 },
                 "instanceRoles": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2Frole:Role"
+                        "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2Frole:Role"
                     },
                     "description": "The IAM instance roles for the cluster's nodes."
                 },
@@ -552,7 +552,7 @@
                     "description": "Tags attached to the security groups associated with the cluster's worker nodes."
                 },
                 "oidcProvider": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider"
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2FopenIdConnectProvider:OpenIdConnectProvider"
                 },
                 "privateSubnetIds": {
                     "type": "array",
@@ -653,11 +653,11 @@
             "description": "Contains the AWS Role and Provider necessary to override the `[system:master]` entity ARN. This is an optional argument used when creating `Cluster`. Read more: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html\n\nNote: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.",
             "properties": {
                 "provider": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/provider",
+                    "$ref": "/aws/v7.0.0/schema.json#/provider",
                     "plain": true
                 },
                 "role": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2Frole:Role",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2Frole:Role",
                     "plain": true
                 }
             },
@@ -677,7 +677,7 @@
                 "selectors": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:eks%2FFargateProfileSelector:FargateProfileSelector"
+                        "$ref": "/aws/v7.0.0/schema.json#/types/aws:eks%2FFargateProfileSelector:FargateProfileSelector"
                     },
                     "description": "Specify the namespace and label selectors to use for launching pods into Fargate."
                 },
@@ -744,18 +744,18 @@
             "description": "NodeGroupData describes the resources created for the given NodeGroup.",
             "properties": {
                 "autoScalingGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:autoscaling%2Fgroup:Group",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:autoscaling%2Fgroup:Group",
                     "description": "The AutoScalingGroup for the node group."
                 },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "The additional security groups for the node group that captures user-specific rules."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the node group to communicate with the cluster."
                 }
             },
@@ -1154,7 +1154,7 @@
                     "description": "The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string."
                 },
                 "awsProvider": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/provider",
+                    "$ref": "/aws/v7.0.0/schema.json#/provider",
                     "description": "The AWS resource provider."
                 },
                 "clusterIngressRuleId": {
@@ -1162,7 +1162,7 @@
                     "description": "The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true."
                 },
                 "clusterSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the EKS cluster."
                 },
                 "clusterSecurityGroupId": {
@@ -1182,11 +1182,11 @@
                     "description": "The name of the default node group's AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true."
                 },
                 "eksCluster": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:eks%2Fcluster:Cluster",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:eks%2Fcluster:Cluster",
                     "description": "The EKS cluster."
                 },
                 "eksClusterIngressRule": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access to cluster API server."
                 },
                 "fargateProfileId": {
@@ -1200,7 +1200,7 @@
                 "instanceRoles": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2Frole:Role"
+                        "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2Frole:Role"
                     },
                     "description": "The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`."
                 },
@@ -1213,7 +1213,7 @@
                     "description": "A kubeconfig that can be used to connect to the EKS cluster as a JSON string."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the cluster's nodes."
                 },
                 "nodeSecurityGroupId": {
@@ -1276,7 +1276,7 @@
                     "description": "Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`"
                 },
                 "clusterSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.\n\nNote: The security group resource should not contain any inline ingress or egress rules."
                 },
                 "clusterSecurityGroupTags": {
@@ -1359,13 +1359,13 @@
                     "description": "The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup."
                 },
                 "instanceRole": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2Frole:Role",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2Frole:Role",
                     "description": "This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.\n\nNote: options `instanceRole` and `instanceRoles` are mutually exclusive."
                 },
                 "instanceRoles": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2Frole:Role"
+                        "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2Frole:Role"
                     },
                     "description": "This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.\n\nNote: options `instanceRole` and `instanceRoles` are mutually exclusive."
                 },
@@ -1481,7 +1481,7 @@
                     "description": "Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`"
                 },
                 "serviceRole": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2Frole:Role",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2Frole:Role",
                     "description": "IAM Service Role for EKS to use to manage the cluster."
                 },
                 "skipDefaultNodeGroup": {
@@ -1527,7 +1527,7 @@
                     "description": "Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging."
                 },
                 "upgradePolicy": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:eks%2FClusterUpgradePolicy:ClusterUpgradePolicy",
+                    "$ref": "/aws/v7.0.0/schema.json#/types/aws:eks%2FClusterUpgradePolicy:ClusterUpgradePolicy",
                     "description": "The cluster's upgrade policy. Valid support types are \"STANDARD\" and \"EXTENDED\". Defaults to \"EXTENDED\"."
                 },
                 "useDefaultVpcCni": {
@@ -1565,7 +1565,7 @@
             "description": "ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a specific role to use for the creation of the EKS cluster different from the role being used to run the Pulumi deployment.",
             "properties": {
                 "role": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2Frole:Role"
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2Frole:Role"
                 }
             },
             "required": [
@@ -1585,7 +1585,7 @@
             "description": "Manages an EKS Node Group, which can provision and optionally update an Auto Scaling Group of Kubernetes worker nodes compatible with EKS. Additional documentation about this functionality can be found in the [EKS User Guide](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html).\n\n\n{{% examples %}}\n## Example Usage\n{{% example %}}\n### Basic Managed Node Group\nThis example demonstrates creating a managed node group with typical defaults. The node group uses the latest EKS-optimized Amazon Linux AMI, creates 2 nodes, and runs on t3.medium instances. Instance security groups are automatically configured.\n\n\n```yaml\nresources:\n  eks-vpc:\n    type: awsx:ec2:Vpc\n    properties:\n      enableDnsHostnames: true\n      cidrBlock: 10.0.0.0/16\n  eks-cluster:\n    type: eks:Cluster\n    properties:\n      vpcId: ${eks-vpc.vpcId}\n      authenticationMode: API\n      publicSubnetIds: ${eks-vpc.publicSubnetIds}\n      privateSubnetIds: ${eks-vpc.privateSubnetIds}\n      skipDefaultNodeGroup: true\n  node-role:\n    type: aws:iam:Role\n    properties:\n      assumeRolePolicy:\n        fn::toJSON:\n          Version: 2012-10-17\n          Statement:\n            - Action: sts:AssumeRole\n              Effect: Allow\n              Sid: \"\"\n              Principal:\n                Service: ec2.amazonaws.com\n  worker-node-policy:\n    type: aws:iam:RolePolicyAttachment\n    properties:\n      role: ${node-role.name}\n      policyArn: \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\"\n  cni-policy:\n    type: aws:iam:RolePolicyAttachment\n    properties:\n      role: ${node-role.name}\n      policyArn: \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\"\n  registry-policy:\n    type: aws:iam:RolePolicyAttachment\n    properties:\n      role: ${node-role.name}\n      policyArn: \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\"\n  node-group:\n    type: eks:ManagedNodeGroup\n    properties:\n      cluster: ${eks-cluster}\n      nodeRole: ${node-role}\n\n```\n\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as aws from \"@pulumi/aws\";\nimport * as awsx from \"@pulumi/awsx\";\nimport * as eks from \"@pulumi/eks\";\n\nconst eksVpc = new awsx.ec2.Vpc(\"eks-vpc\", {\n    enableDnsHostnames: true,\n    cidrBlock: \"10.0.0.0/16\",\n});\nconst eksCluster = new eks.Cluster(\"eks-cluster\", {\n    vpcId: eksVpc.vpcId,\n    authenticationMode: eks.AuthenticationMode.Api,\n    publicSubnetIds: eksVpc.publicSubnetIds,\n    privateSubnetIds: eksVpc.privateSubnetIds,\n    skipDefaultNodeGroup: true,\n});\nconst nodeRole = new aws.iam.Role(\"node-role\", {assumeRolePolicy: JSON.stringify({\n    Version: \"2012-10-17\",\n    Statement: [{\n        Action: \"sts:AssumeRole\",\n        Effect: \"Allow\",\n        Sid: \"\",\n        Principal: {\n            Service: \"ec2.amazonaws.com\",\n        },\n    }],\n})});\nconst workerNodePolicy = new aws.iam.RolePolicyAttachment(\"worker-node-policy\", {\n    role: nodeRole.name,\n    policyArn: \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\",\n});\nconst cniPolicy = new aws.iam.RolePolicyAttachment(\"cni-policy\", {\n    role: nodeRole.name,\n    policyArn: \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\",\n});\nconst registryPolicy = new aws.iam.RolePolicyAttachment(\"registry-policy\", {\n    role: nodeRole.name,\n    policyArn: \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\",\n});\nconst nodeGroup = new eks.ManagedNodeGroup(\"node-group\", {\n    cluster: eksCluster,\n    nodeRole: nodeRole,\n});\n\n```\n\n```python\nimport pulumi\nimport json\nimport pulumi_aws as aws\nimport pulumi_awsx as awsx\nimport pulumi_eks as eks\n\neks_vpc = awsx.ec2.Vpc(\"eks-vpc\",\n    enable_dns_hostnames=True,\n    cidr_block=\"10.0.0.0/16\")\neks_cluster = eks.Cluster(\"eks-cluster\",\n    vpc_id=eks_vpc.vpc_id,\n    authentication_mode=eks.AuthenticationMode.API,\n    public_subnet_ids=eks_vpc.public_subnet_ids,\n    private_subnet_ids=eks_vpc.private_subnet_ids,\n    skip_default_node_group=True)\nnode_role = aws.iam.Role(\"node-role\", assume_role_policy=json.dumps({\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [{\n        \"Action\": \"sts:AssumeRole\",\n        \"Effect\": \"Allow\",\n        \"Sid\": \"\",\n        \"Principal\": {\n            \"Service\": \"ec2.amazonaws.com\",\n        },\n    }],\n}))\nworker_node_policy = aws.iam.RolePolicyAttachment(\"worker-node-policy\",\n    role=node_role.name,\n    policy_arn=\"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\")\ncni_policy = aws.iam.RolePolicyAttachment(\"cni-policy\",\n    role=node_role.name,\n    policy_arn=\"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\")\nregistry_policy = aws.iam.RolePolicyAttachment(\"registry-policy\",\n    role=node_role.name,\n    policy_arn=\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\")\nnode_group = eks.ManagedNodeGroup(\"node-group\",\n    cluster=eks_cluster,\n    node_role=node_role)\n\n```\n\n```go\npackage main\n\nimport (\n\t\"encoding/json\"\n\n\t\"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam\"\n\t\"github.com/pulumi/pulumi-awsx/sdk/v2/go/awsx/ec2\"\n\t\"github.com/pulumi/pulumi-eks/sdk/v3/go/eks\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\teksVpc, err := ec2.NewVpc(ctx, \"eks-vpc\", \u0026ec2.VpcArgs{\n\t\t\tEnableDnsHostnames: pulumi.Bool(true),\n\t\t\tCidrBlock:          \"10.0.0.0/16\",\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\teksCluster, err := eks.NewCluster(ctx, \"eks-cluster\", \u0026eks.ClusterArgs{\n\t\t\tVpcId:                eksVpc.VpcId,\n\t\t\tAuthenticationMode:   eks.AuthenticationModeApi,\n\t\t\tPublicSubnetIds:      eksVpc.PublicSubnetIds,\n\t\t\tPrivateSubnetIds:     eksVpc.PrivateSubnetIds,\n\t\t\tSkipDefaultNodeGroup: true,\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\ttmpJSON0, err := json.Marshal(map[string]interface{}{\n\t\t\t\"Version\": \"2012-10-17\",\n\t\t\t\"Statement\": []map[string]interface{}{\n\t\t\t\tmap[string]interface{}{\n\t\t\t\t\t\"Action\": \"sts:AssumeRole\",\n\t\t\t\t\t\"Effect\": \"Allow\",\n\t\t\t\t\t\"Sid\":    \"\",\n\t\t\t\t\t\"Principal\": map[string]interface{}{\n\t\t\t\t\t\t\"Service\": \"ec2.amazonaws.com\",\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tjson0 := string(tmpJSON0)\n\t\tnodeRole, err := iam.NewRole(ctx, \"node-role\", \u0026iam.RoleArgs{\n\t\t\tAssumeRolePolicy: pulumi.String(json0),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = iam.NewRolePolicyAttachment(ctx, \"worker-node-policy\", \u0026iam.RolePolicyAttachmentArgs{\n\t\t\tRole:      nodeRole.Name,\n\t\t\tPolicyArn: pulumi.String(\"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = iam.NewRolePolicyAttachment(ctx, \"cni-policy\", \u0026iam.RolePolicyAttachmentArgs{\n\t\t\tRole:      nodeRole.Name,\n\t\t\tPolicyArn: pulumi.String(\"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = iam.NewRolePolicyAttachment(ctx, \"registry-policy\", \u0026iam.RolePolicyAttachmentArgs{\n\t\t\tRole:      nodeRole.Name,\n\t\t\tPolicyArn: pulumi.String(\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = eks.NewManagedNodeGroup(ctx, \"node-group\", \u0026eks.ManagedNodeGroupArgs{\n\t\t\tCluster:  eksCluster,\n\t\t\tNodeRole: nodeRole,\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\treturn nil\n\t})\n}\n\n```\n\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing System.Text.Json;\nusing Pulumi;\nusing Aws = Pulumi.Aws;\nusing Awsx = Pulumi.Awsx;\nusing Eks = Pulumi.Eks;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var eksVpc = new Awsx.Ec2.Vpc(\"eks-vpc\", new()\n    {\n        EnableDnsHostnames = true,\n        CidrBlock = \"10.0.0.0/16\",\n    });\n\n    var eksCluster = new Eks.Cluster(\"eks-cluster\", new()\n    {\n        VpcId = eksVpc.VpcId,\n        AuthenticationMode = Eks.AuthenticationMode.Api,\n        PublicSubnetIds = eksVpc.PublicSubnetIds,\n        PrivateSubnetIds = eksVpc.PrivateSubnetIds,\n        SkipDefaultNodeGroup = true,\n    });\n\n    var nodeRole = new Aws.Iam.Role(\"node-role\", new()\n    {\n        AssumeRolePolicy = JsonSerializer.Serialize(new Dictionary\u003cstring, object?\u003e\n        {\n            [\"Version\"] = \"2012-10-17\",\n            [\"Statement\"] = new[]\n            {\n                new Dictionary\u003cstring, object?\u003e\n                {\n                    [\"Action\"] = \"sts:AssumeRole\",\n                    [\"Effect\"] = \"Allow\",\n                    [\"Sid\"] = \"\",\n                    [\"Principal\"] = new Dictionary\u003cstring, object?\u003e\n                    {\n                        [\"Service\"] = \"ec2.amazonaws.com\",\n                    },\n                },\n            },\n        }),\n    });\n\n    var workerNodePolicy = new Aws.Iam.RolePolicyAttachment(\"worker-node-policy\", new()\n    {\n        Role = nodeRole.Name,\n        PolicyArn = \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\",\n    });\n\n    var cniPolicy = new Aws.Iam.RolePolicyAttachment(\"cni-policy\", new()\n    {\n        Role = nodeRole.Name,\n        PolicyArn = \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\",\n    });\n\n    var registryPolicy = new Aws.Iam.RolePolicyAttachment(\"registry-policy\", new()\n    {\n        Role = nodeRole.Name,\n        PolicyArn = \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\",\n    });\n\n    var nodeGroup = new Eks.ManagedNodeGroup(\"node-group\", new()\n    {\n        Cluster = eksCluster,\n        NodeRole = nodeRole,\n    });\n\n    return new Dictionary\u003cstring, object?\u003e{};\n});\n\n```\n\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.awsx.ec2.Vpc;\nimport com.pulumi.awsx.ec2.VpcArgs;\nimport com.pulumi.eks.Cluster;\nimport com.pulumi.eks.ClusterArgs;\nimport com.pulumi.aws.iam.Role;\nimport com.pulumi.aws.iam.RoleArgs;\nimport com.pulumi.aws.iam.RolePolicyAttachment;\nimport com.pulumi.aws.iam.RolePolicyAttachmentArgs;\nimport com.pulumi.eks.ManagedNodeGroup;\nimport com.pulumi.eks.ManagedNodeGroupArgs;\nimport static com.pulumi.codegen.internal.Serialization.*;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        var eksVpc = new Vpc(\"eksVpc\", VpcArgs.builder()\n            .enableDnsHostnames(true)\n            .cidrBlock(\"10.0.0.0/16\")\n            .build());\n\n        var eksCluster = new Cluster(\"eksCluster\", ClusterArgs.builder()\n            .vpcId(eksVpc.vpcId())\n            .authenticationMode(\"API\")\n            .publicSubnetIds(eksVpc.publicSubnetIds())\n            .privateSubnetIds(eksVpc.privateSubnetIds())\n            .skipDefaultNodeGroup(true)\n            .build());\n\n        var nodeRole = new Role(\"nodeRole\", RoleArgs.builder()\n            .assumeRolePolicy(serializeJson(\n                jsonObject(\n                    jsonProperty(\"Version\", \"2012-10-17\"),\n                    jsonProperty(\"Statement\", jsonArray(jsonObject(\n                        jsonProperty(\"Action\", \"sts:AssumeRole\"),\n                        jsonProperty(\"Effect\", \"Allow\"),\n                        jsonProperty(\"Sid\", \"\"),\n                        jsonProperty(\"Principal\", jsonObject(\n                            jsonProperty(\"Service\", \"ec2.amazonaws.com\")\n                        ))\n                    )))\n                )))\n            .build());\n\n        var workerNodePolicy = new RolePolicyAttachment(\"workerNodePolicy\", RolePolicyAttachmentArgs.builder()\n            .role(nodeRole.name())\n            .policyArn(\"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\")\n            .build());\n\n        var cniPolicy = new RolePolicyAttachment(\"cniPolicy\", RolePolicyAttachmentArgs.builder()\n            .role(nodeRole.name())\n            .policyArn(\"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\")\n            .build());\n\n        var registryPolicy = new RolePolicyAttachment(\"registryPolicy\", RolePolicyAttachmentArgs.builder()\n            .role(nodeRole.name())\n            .policyArn(\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\")\n            .build());\n\n        var nodeGroup = new ManagedNodeGroup(\"nodeGroup\", ManagedNodeGroupArgs.builder()\n            .cluster(eksCluster)\n            .nodeRole(nodeRole)\n            .build());\n    }\n}\n```\n{{% /example %}}\n\n{{% example %}}\n### Enabling EFA Support\n\nEnabling EFA support for a node group will do the following:\n- All EFA interfaces supported by the instance will be exposed on the launch template used by the node group\n- A `clustered` placement group will be created and passed to the launch template\n- Checks will be performed to ensure that the instance type supports EFA and that the specified AZ is supported by the chosen instance type\n\nThe GPU optimized AMIs include all necessary drivers and libraries to support EFA. If you're choosing an instance type without GPU acceleration you will need to install the drivers and libraries manually and bake a custom AMI.\n\nYou can use the [aws-efa-k8s-device-plugin](https://github.com/aws/eks-charts/tree/master/stable/aws-efa-k8s-device-plugin) Helm chart to expose the EFA interfaces on the nodes as an extended resource, and allow pods to request these interfaces to be mounted to their containers.\nYour application container will need to have the necessary libraries and runtimes in order to leverage the EFA interfaces (e.g. libfabric).\n\n```yaml\nname: eks-mng-docs\ndescription: A Pulumi YAML program to deploy a Kubernetes cluster on AWS\nruntime: yaml\nresources:\n  eks-vpc:\n    type: awsx:ec2:Vpc\n    properties:\n      enableDnsHostnames: true\n      cidrBlock: 10.0.0.0/16\n  eks-cluster:\n    type: eks:Cluster\n    properties:\n      vpcId: ${eks-vpc.vpcId}\n      authenticationMode: API\n      publicSubnetIds: ${eks-vpc.publicSubnetIds}\n      privateSubnetIds: ${eks-vpc.privateSubnetIds}\n      skipDefaultNodeGroup: true\n  k8sProvider:\n    type: pulumi:providers:kubernetes\n    properties:\n      kubeconfig: ${eks-cluster.kubeconfig}\n  node-role:\n    type: aws:iam:Role\n    properties:\n      assumeRolePolicy:\n        fn::toJSON:\n          Version: 2012-10-17\n          Statement:\n            - Action: sts:AssumeRole\n              Effect: Allow\n              Sid: \"\"\n              Principal:\n                Service: ec2.amazonaws.com\n  worker-node-policy:\n    type: aws:iam:RolePolicyAttachment\n    properties:\n      role: ${node-role.name}\n      policyArn: \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\"\n  cni-policy:\n    type: aws:iam:RolePolicyAttachment\n    properties:\n      role: ${node-role.name}\n      policyArn: \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\"\n  registry-policy:\n    type: aws:iam:RolePolicyAttachment\n    properties:\n      role: ${node-role.name}\n      policyArn: \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\"\n  \n  # The node group for running system pods (e.g. coredns, etc.)\n  system-node-group:\n    type: eks:ManagedNodeGroup\n    properties:\n      cluster: ${eks-cluster}\n      nodeRole: ${node-role}\n\n  # EFA device plugin for exposing EFA interfaces as extended resources\n  device-plugin:\n    type: kubernetes:helm.sh/v3:Release\n    properties:\n      version: \"0.5.7\"\n      repositoryOpts:\n        repo: \"https://aws.github.io/eks-charts\"\n      chart: \"aws-efa-k8s-device-plugin\"\n      namespace: \"kube-system\"\n      atomic: true\n      values:\n        tolerations:\n          - key: \"efa-enabled\"\n            operator: \"Exists\"\n            effect: \"NoExecute\"\n    options:\n      provider: ${k8sProvider}\n\n  # The node group for running EFA enabled workloads\n  efa-node-group:\n    type: eks:ManagedNodeGroup\n    properties:\n      cluster: ${eks-cluster}\n      nodeRole: ${node-role}\n      instanceTypes: [\"g6.8xlarge\"]\n      gpu: true\n      scalingConfig:\n        minSize: 2\n        desiredSize: 2\n        maxSize: 4\n      enableEfaSupport: true\n      placementGroupAvailabilityZone: \"us-west-2b\"\n      # Taint the nodes so that only pods with the efa-enabled label can be scheduled on them\n      taints:\n        - key: \"efa-enabled\"\n          value: \"true\"\n          effect: \"NO_EXECUTE\"\n      # Instances with GPUs usually have nvme instance store volumes, so we can mount them in RAID-0 for kubelet and containerd\n      # These are faster than the regular EBS volumes\n      nodeadmExtraOptions:\n        - contentType: \"application/node.eks.aws\"\n          content: |\n            apiVersion: node.eks.aws/v1alpha1\n            kind: NodeConfig\n            spec:\n              instance:\n                localStorage:\n                  strategy: RAID0\n\n```\n\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as aws from \"@pulumi/aws\";\nimport * as awsx from \"@pulumi/awsx\";\nimport * as eks from \"@pulumi/eks\";\nimport * as kubernetes from \"@pulumi/kubernetes\";\n\nconst eksVpc = new awsx.ec2.Vpc(\"eks-vpc\", {\n    enableDnsHostnames: true,\n    cidrBlock: \"10.0.0.0/16\",\n});\nconst eksCluster = new eks.Cluster(\"eks-cluster\", {\n    vpcId: eksVpc.vpcId,\n    authenticationMode: eks.AuthenticationMode.Api,\n    publicSubnetIds: eksVpc.publicSubnetIds,\n    privateSubnetIds: eksVpc.privateSubnetIds,\n    skipDefaultNodeGroup: true,\n});\nconst k8SProvider = new kubernetes.Provider(\"k8sProvider\", {kubeconfig: eksCluster.kubeconfig});\nconst nodeRole = new aws.iam.Role(\"node-role\", {assumeRolePolicy: JSON.stringify({\n    Version: \"2012-10-17\",\n    Statement: [{\n        Action: \"sts:AssumeRole\",\n        Effect: \"Allow\",\n        Sid: \"\",\n        Principal: {\n            Service: \"ec2.amazonaws.com\",\n        },\n    }],\n})});\nconst workerNodePolicy = new aws.iam.RolePolicyAttachment(\"worker-node-policy\", {\n    role: nodeRole.name,\n    policyArn: \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\",\n});\nconst cniPolicy = new aws.iam.RolePolicyAttachment(\"cni-policy\", {\n    role: nodeRole.name,\n    policyArn: \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\",\n});\nconst registryPolicy = new aws.iam.RolePolicyAttachment(\"registry-policy\", {\n    role: nodeRole.name,\n    policyArn: \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\",\n});\n\n// The node group for running system pods (e.g. coredns, etc.)\nconst systemNodeGroup = new eks.ManagedNodeGroup(\"system-node-group\", {\n    cluster: eksCluster,\n    nodeRole: nodeRole,\n});\n\n// The EFA device plugin for exposing EFA interfaces as extended resources\nconst devicePlugin = new kubernetes.helm.v3.Release(\"device-plugin\", {\n    version: \"0.5.7\",\n    repositoryOpts: {\n        repo: \"https://aws.github.io/eks-charts\",\n    },\n    chart: \"aws-efa-k8s-device-plugin\",\n    namespace: \"kube-system\",\n    atomic: true,\n    values: {\n        tolerations: [{\n            key: \"efa-enabled\",\n            operator: \"Exists\",\n            effect: \"NoExecute\",\n        }],\n    },\n}, {\n    provider: k8SProvider,\n});\n\n// The node group for running EFA enabled workloads\nconst efaNodeGroup = new eks.ManagedNodeGroup(\"efa-node-group\", {\n    cluster: eksCluster,\n    nodeRole: nodeRole,\n    instanceTypes: [\"g6.8xlarge\"],\n    gpu: true,\n    scalingConfig: {\n        minSize: 2,\n        desiredSize: 2,\n        maxSize: 4,\n    },\n    enableEfaSupport: true,\n    placementGroupAvailabilityZone: \"us-west-2b\",\n\n    // Taint the nodes so that only pods with the efa-enabled label can be scheduled on them\n    taints: [{\n        key: \"efa-enabled\",\n        value: \"true\",\n        effect: \"NO_EXECUTE\",\n    }],\n\n    // Instances with GPUs usually have nvme instance store volumes, so we can mount them in RAID-0 for kubelet and containerd\n    // These are faster than the regular EBS volumes\n    nodeadmExtraOptions: [{\n        contentType: \"application/node.eks.aws\",\n        content: `apiVersion: node.eks.aws/v1alpha1\nkind: NodeConfig\nspec:\n  instance:\n    localStorage:\n      strategy: RAID0\n`,\n    }],\n});\n\n```\n\n```python\nimport pulumi\nimport json\nimport pulumi_aws as aws\nimport pulumi_awsx as awsx\nimport pulumi_eks as eks\nimport pulumi_kubernetes as kubernetes\n\neks_vpc = awsx.ec2.Vpc(\"eks-vpc\",\n    enable_dns_hostnames=True,\n    cidr_block=\"10.0.0.0/16\")\neks_cluster = eks.Cluster(\"eks-cluster\",\n    vpc_id=eks_vpc.vpc_id,\n    authentication_mode=eks.AuthenticationMode.API,\n    public_subnet_ids=eks_vpc.public_subnet_ids,\n    private_subnet_ids=eks_vpc.private_subnet_ids,\n    skip_default_node_group=True)\nk8_s_provider = kubernetes.Provider(\"k8sProvider\", kubeconfig=eks_cluster.kubeconfig)\nnode_role = aws.iam.Role(\"node-role\", assume_role_policy=json.dumps({\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [{\n        \"Action\": \"sts:AssumeRole\",\n        \"Effect\": \"Allow\",\n        \"Sid\": \"\",\n        \"Principal\": {\n            \"Service\": \"ec2.amazonaws.com\",\n        },\n    }],\n}))\nworker_node_policy = aws.iam.RolePolicyAttachment(\"worker-node-policy\",\n    role=node_role.name,\n    policy_arn=\"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\")\ncni_policy = aws.iam.RolePolicyAttachment(\"cni-policy\",\n    role=node_role.name,\n    policy_arn=\"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\")\nregistry_policy = aws.iam.RolePolicyAttachment(\"registry-policy\",\n    role=node_role.name,\n    policy_arn=\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\")\n\n# The node group for running system pods (e.g. coredns, etc.)\nsystem_node_group = eks.ManagedNodeGroup(\"system-node-group\",\n    cluster=eks_cluster,\n    node_role=node_role)\n\n# The EFA device plugin for exposing EFA interfaces as extended resources\ndevice_plugin = kubernetes.helm.v3.Release(\"device-plugin\",\n    version=\"0.5.7\",\n    repository_opts={\n        \"repo\": \"https://aws.github.io/eks-charts\",\n    },\n    chart=\"aws-efa-k8s-device-plugin\",\n    namespace=\"kube-system\",\n    atomic=True,\n    values={\n        \"tolerations\": [{\n            \"key\": \"efa-enabled\",\n            \"operator\": \"Exists\",\n            \"effect\": \"NoExecute\",\n        }],\n    },\n    opts = pulumi.ResourceOptions(provider=k8_s_provider))\n\n# The node group for running EFA enabled workloads\nefa_node_group = eks.ManagedNodeGroup(\"efa-node-group\",\n    cluster=eks_cluster,\n    node_role=node_role,\n    instance_types=[\"g6.8xlarge\"],\n    gpu=True,\n    scaling_config={\n        \"min_size\": 2,\n        \"desired_size\": 2,\n        \"max_size\": 4,\n    },\n    enable_efa_support=True,\n    placement_group_availability_zone=\"us-west-2b\",\n\n    # Taint the nodes so that only pods with the efa-enabled label can be scheduled on them\n    taints=[{\n        \"key\": \"efa-enabled\",\n        \"value\": \"true\",\n        \"effect\": \"NO_EXECUTE\",\n    }],\n\n    # Instances with GPUs usually have nvme instance store volumes, so we can mount them in RAID-0 for kubelet and containerd\n    # These are faster than the regular EBS volumes\n    nodeadm_extra_options=[{\n        \"content_type\": \"application/node.eks.aws\",\n        \"content\": \"\"\"apiVersion: node.eks.aws/v1alpha1\nkind: NodeConfig\nspec:\n  instance:\n    localStorage:\n      strategy: RAID0\n\"\"\",\n    }])\n\n```\n\n```go\npackage main\n\nimport (\n\t\"encoding/json\"\n\n\tawseks \"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks\"\n\t\"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam\"\n\t\"github.com/pulumi/pulumi-awsx/sdk/v2/go/awsx/ec2\"\n\t\"github.com/pulumi/pulumi-eks/sdk/v3/go/eks\"\n\t\"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes\"\n\thelmv3 \"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/helm/v3\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\teksVpc, err := ec2.NewVpc(ctx, \"eks-vpc\", \u0026ec2.VpcArgs{\n\t\t\tEnableDnsHostnames: pulumi.Bool(true),\n\t\t\tCidrBlock:          \"10.0.0.0/16\",\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\teksCluster, err := eks.NewCluster(ctx, \"eks-cluster\", \u0026eks.ClusterArgs{\n\t\t\tVpcId:                eksVpc.VpcId,\n\t\t\tAuthenticationMode:   eks.AuthenticationModeApi,\n\t\t\tPublicSubnetIds:      eksVpc.PublicSubnetIds,\n\t\t\tPrivateSubnetIds:     eksVpc.PrivateSubnetIds,\n\t\t\tSkipDefaultNodeGroup: true,\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tk8SProvider, err := kubernetes.NewProvider(ctx, \"k8sProvider\", \u0026kubernetes.ProviderArgs{\n\t\t\tKubeconfig: eksCluster.Kubeconfig,\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\ttmpJSON0, err := json.Marshal(map[string]interface{}{\n\t\t\t\"Version\": \"2012-10-17\",\n\t\t\t\"Statement\": []map[string]interface{}{\n\t\t\t\tmap[string]interface{}{\n\t\t\t\t\t\"Action\": \"sts:AssumeRole\",\n\t\t\t\t\t\"Effect\": \"Allow\",\n\t\t\t\t\t\"Sid\":    \"\",\n\t\t\t\t\t\"Principal\": map[string]interface{}{\n\t\t\t\t\t\t\"Service\": \"ec2.amazonaws.com\",\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tjson0 := string(tmpJSON0)\n\t\tnodeRole, err := iam.NewRole(ctx, \"node-role\", \u0026iam.RoleArgs{\n\t\t\tAssumeRolePolicy: pulumi.String(json0),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = iam.NewRolePolicyAttachment(ctx, \"worker-node-policy\", \u0026iam.RolePolicyAttachmentArgs{\n\t\t\tRole:      nodeRole.Name,\n\t\t\tPolicyArn: pulumi.String(\"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = iam.NewRolePolicyAttachment(ctx, \"cni-policy\", \u0026iam.RolePolicyAttachmentArgs{\n\t\t\tRole:      nodeRole.Name,\n\t\t\tPolicyArn: pulumi.String(\"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = iam.NewRolePolicyAttachment(ctx, \"registry-policy\", \u0026iam.RolePolicyAttachmentArgs{\n\t\t\tRole:      nodeRole.Name,\n\t\t\tPolicyArn: pulumi.String(\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\n        // The node group for running system pods (e.g. coredns, etc.)\n\t\t_, err = eks.NewManagedNodeGroup(ctx, \"system-node-group\", \u0026eks.ManagedNodeGroupArgs{\n\t\t\tCluster:  eksCluster,\n\t\t\tNodeRole: nodeRole,\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\n        // The EFA device plugin for exposing EFA interfaces as extended resources\n\t\t_, err = helmv3.NewRelease(ctx, \"device-plugin\", \u0026helmv3.ReleaseArgs{\n\t\t\tVersion: pulumi.String(\"0.5.7\"),\n\t\t\tRepositoryOpts: \u0026helmv3.RepositoryOptsArgs{\n\t\t\t\tRepo: pulumi.String(\"https://aws.github.io/eks-charts\"),\n\t\t\t},\n\t\t\tChart:     pulumi.String(\"aws-efa-k8s-device-plugin\"),\n\t\t\tNamespace: pulumi.String(\"kube-system\"),\n\t\t\tAtomic:    pulumi.Bool(true),\n\t\t\tValues: pulumi.Map{\n\t\t\t\t\"tolerations\": pulumi.Any{\n\t\t\t\t\t[]map[string]interface{}{\n                        {\n                            \"key\":      \"efa-enabled\",\n                            \"operator\": \"Exists\",\n                            \"effect\":   \"NoExecute\",\n                        }\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t}, pulumi.Provider(k8SProvider))\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\n        // The node group for running EFA enabled workloads\n\t\t_, err = eks.NewManagedNodeGroup(ctx, \"efa-node-group\", \u0026eks.ManagedNodeGroupArgs{\n\t\t\tCluster:  eksCluster,\n\t\t\tNodeRole: nodeRole,\n\t\t\tInstanceTypes: pulumi.StringArray{\n\t\t\t\tpulumi.String(\"g6.8xlarge\"),\n\t\t\t},\n\t\t\tGpu: pulumi.Bool(true),\n\t\t\tScalingConfig: \u0026eks.NodeGroupScalingConfigArgs{\n\t\t\t\tMinSize:     pulumi.Int(2),\n\t\t\t\tDesiredSize: pulumi.Int(2),\n\t\t\t\tMaxSize:     pulumi.Int(4),\n\t\t\t},\n\t\t\tEnableEfaSupport:               true,\n\t\t\tPlacementGroupAvailabilityZone: pulumi.String(\"us-west-2b\"),\n\n            // Taint the nodes so that only pods with the efa-enabled label can be scheduled on them\n\t\t\tTaints: eks.NodeGroupTaintArray{\n\t\t\t\t\u0026eks.NodeGroupTaintArgs{\n\t\t\t\t\tKey:    pulumi.String(\"efa-enabled\"),\n\t\t\t\t\tValue:  pulumi.String(\"true\"),\n\t\t\t\t\tEffect: pulumi.String(\"NO_EXECUTE\"),\n\t\t\t\t},\n\t\t\t},\n\n            // Instances with GPUs usually have nvme instance store volumes, so we can mount them in RAID-0 for kubelet and containerd\n            // These are faster than the regular EBS volumes\n\t\t\tNodeadmExtraOptions: eks.NodeadmOptionsArray{\n\t\t\t\t\u0026eks.NodeadmOptionsArgs{\n\t\t\t\t\tContentType: pulumi.String(\"application/node.eks.aws\"),\n\t\t\t\t\tContent: pulumi.String(`apiVersion: node.eks.aws/v1alpha1\nkind: NodeConfig\nspec:\n  instance:\n    localStorage:\n      strategy: RAID0\n`),\n\t\t\t\t},\n\t\t\t},\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\treturn nil\n\t})\n}\n\n```\n\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing System.Text.Json;\nusing Pulumi;\nusing Aws = Pulumi.Aws;\nusing Awsx = Pulumi.Awsx;\nusing Eks = Pulumi.Eks;\nusing Kubernetes = Pulumi.Kubernetes;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var eksVpc = new Awsx.Ec2.Vpc(\"eks-vpc\", new()\n    {\n        EnableDnsHostnames = true,\n        CidrBlock = \"10.0.0.0/16\",\n    });\n\n    var eksCluster = new Eks.Cluster(\"eks-cluster\", new()\n    {\n        VpcId = eksVpc.VpcId,\n        AuthenticationMode = Eks.AuthenticationMode.Api,\n        PublicSubnetIds = eksVpc.PublicSubnetIds,\n        PrivateSubnetIds = eksVpc.PrivateSubnetIds,\n        SkipDefaultNodeGroup = true,\n    });\n\n    var k8SProvider = new Kubernetes.Provider.Provider(\"k8sProvider\", new()\n    {\n        KubeConfig = eksCluster.Kubeconfig,\n    });\n\n    var nodeRole = new Aws.Iam.Role(\"node-role\", new()\n    {\n        AssumeRolePolicy = JsonSerializer.Serialize(new Dictionary\u003cstring, object?\u003e\n        {\n            [\"Version\"] = \"2012-10-17\",\n            [\"Statement\"] = new[]\n            {\n                new Dictionary\u003cstring, object?\u003e\n                {\n                    [\"Action\"] = \"sts:AssumeRole\",\n                    [\"Effect\"] = \"Allow\",\n                    [\"Sid\"] = \"\",\n                    [\"Principal\"] = new Dictionary\u003cstring, object?\u003e\n                    {\n                        [\"Service\"] = \"ec2.amazonaws.com\",\n                    },\n                },\n            },\n        }),\n    });\n\n    var workerNodePolicy = new Aws.Iam.RolePolicyAttachment(\"worker-node-policy\", new()\n    {\n        Role = nodeRole.Name,\n        PolicyArn = \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\",\n    });\n\n    var cniPolicy = new Aws.Iam.RolePolicyAttachment(\"cni-policy\", new()\n    {\n        Role = nodeRole.Name,\n        PolicyArn = \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\",\n    });\n\n    var registryPolicy = new Aws.Iam.RolePolicyAttachment(\"registry-policy\", new()\n    {\n        Role = nodeRole.Name,\n        PolicyArn = \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\",\n    });\n\n    // The node group for running system pods (e.g. coredns, etc.)\n    var systemNodeGroup = new Eks.ManagedNodeGroup(\"system-node-group\", new()\n    {\n        Cluster = eksCluster,\n        NodeRole = nodeRole,\n    });\n\n    // The EFA device plugin for exposing EFA interfaces as extended resources\n    var devicePlugin = new Kubernetes.Helm.V3.Release(\"device-plugin\", new()\n    {\n        Version = \"0.5.7\",\n        RepositoryOpts = new Kubernetes.Types.Inputs.Helm.V3.RepositoryOptsArgs\n        {\n            Repo = \"https://aws.github.io/eks-charts\",\n        },\n        Chart = \"aws-efa-k8s-device-plugin\",\n        Namespace = \"kube-system\",\n        Atomic = true,\n        Values = \n        {\n            { \"tolerations\", new[]\n            {\n                \n                {\n                    { \"key\", \"efa-enabled\" },\n                    { \"operator\", \"Exists\" },\n                    { \"effect\", \"NoExecute\" },\n                },\n            } },\n        },\n    }, new CustomResourceOptions\n    {\n        Provider = k8SProvider,\n    });\n\n    // The node group for running EFA enabled workloads\n    var efaNodeGroup = new Eks.ManagedNodeGroup(\"efa-node-group\", new()\n    {\n        Cluster = eksCluster,\n        NodeRole = nodeRole,\n        InstanceTypes = new[]\n        {\n            \"g6.8xlarge\",\n        },\n        Gpu = true,\n        ScalingConfig = new Aws.Eks.Inputs.NodeGroupScalingConfigArgs\n        {\n            MinSize = 2,\n            DesiredSize = 2,\n            MaxSize = 4,\n        },\n        EnableEfaSupport = true,\n        PlacementGroupAvailabilityZone = \"us-west-2b\",\n\n        // Taint the nodes so that only pods with the efa-enabled label can be scheduled on them\n        Taints = new[]\n        {\n            new Aws.Eks.Inputs.NodeGroupTaintArgs\n            {\n                Key = \"efa-enabled\",\n                Value = \"true\",\n                Effect = \"NO_EXECUTE\",\n            },\n        },\n\n        // Instances with GPUs usually have nvme instance store volumes, so we can mount them in RAID-0 for kubelet and containerd\n        NodeadmExtraOptions = new[]\n        {\n            new Eks.Inputs.NodeadmOptionsArgs\n            {\n                ContentType = \"application/node.eks.aws\",\n                Content = @\"apiVersion: node.eks.aws/v1alpha1\nkind: NodeConfig\nspec:\n  instance:\n    localStorage:\n      strategy: RAID0\n\",\n            },\n        },\n    });\n\n});\n\n```\n\n{{% /example %}}\n{{% /examples %}}\n",
             "properties": {
                 "nodeGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:eks%2FnodeGroup:NodeGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:eks%2FnodeGroup:NodeGroup",
                     "description": "The AWS managed node group."
                 },
                 "placementGroupName": {
@@ -1684,7 +1684,7 @@
                     "description": "Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed."
                 },
                 "launchTemplate": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate",
+                    "$ref": "/aws/v7.0.0/schema.json#/types/aws:eks%2FNodeGroupLaunchTemplate:NodeGroupLaunchTemplate",
                     "description": "Launch Template settings.\n\nNote: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`."
                 },
                 "nodeGroupName": {
@@ -1696,7 +1696,7 @@
                     "description": "Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`."
                 },
                 "nodeRole": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2Frole:Role",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2Frole:Role",
                     "description": "The IAM Role that provides permissions for the EKS Node Group.\n\nNote, `nodeRole` and `nodeRoleArn` are mutually exclusive, and a single option must be used."
                 },
                 "nodeRoleArn": {
@@ -1723,11 +1723,11 @@
                     "description": "AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version."
                 },
                 "remoteAccess": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:eks%2FNodeGroupRemoteAccess:NodeGroupRemoteAccess",
+                    "$ref": "/aws/v7.0.0/schema.json#/types/aws:eks%2FNodeGroupRemoteAccess:NodeGroupRemoteAccess",
                     "description": "Remote access settings."
                 },
                 "scalingConfig": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:eks%2FNodeGroupScalingConfig:NodeGroupScalingConfig",
+                    "$ref": "/aws/v7.0.0/schema.json#/types/aws:eks%2FNodeGroupScalingConfig:NodeGroupScalingConfig",
                     "description": "Scaling settings.\n\nDefault scaling amounts of the node group autoscaling group are:\n  - desiredSize: 2\n  - minSize: 1\n  - maxSize: 2"
                 },
                 "subnetIds": {
@@ -1747,7 +1747,7 @@
                 "taints": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:eks%2FNodeGroupTaint:NodeGroupTaint"
+                        "$ref": "/aws/v7.0.0/schema.json#/types/aws:eks%2FNodeGroupTaint:NodeGroupTaint"
                     },
                     "description": "The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group."
                 },
@@ -1772,18 +1772,18 @@
                     "description": "The AutoScalingGroup name for the Node group."
                 },
                 "cfnStack": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:cloudformation%2Fstack:Stack",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:cloudformation%2Fstack:Stack",
                     "description": "The CloudFormation Stack which defines the Node AutoScalingGroup."
                 },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "The additional security groups for the node group that captures user-specific rules."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`."
                 },
                 "nodeSecurityGroupId": {
@@ -1843,7 +1843,7 @@
                     "description": "The target EKS cluster."
                 },
                 "clusterIngressRule": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access."
                 },
                 "clusterIngressRuleId": {
@@ -1865,7 +1865,7 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
@@ -1874,7 +1874,7 @@
                     "description": "Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.\n\nDefaults to false.\n\nNote: `gpu` and `amiId` are mutually exclusive.\n\nSee for more details:\n- https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html\n- https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html"
                 },
                 "instanceProfile": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "plain": true,
                     "description": "The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive."
                 },
@@ -1942,7 +1942,7 @@
                     "description": "Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSecurityGroupId": {
@@ -2001,11 +2001,11 @@
             "description": "NodeGroupSecurityGroup is a component that wraps creating a security group for node groups with the default ingress \u0026 egress rules required to connect and work with the EKS cluster security group.",
             "properties": {
                 "securityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for node groups with the default ingress \u0026 egress rules required to connect and work with the EKS cluster security group."
                 },
                 "securityGroupRule": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The EKS cluster ingress rule."
                 }
             },
@@ -2015,11 +2015,11 @@
             ],
             "inputProperties": {
                 "clusterSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group associated with the EKS cluster."
                 },
                 "eksCluster": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:eks%2Fcluster:Cluster",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:eks%2Fcluster:Cluster",
                     "description": "The EKS cluster associated with the worker node group"
                 },
                 "tags": {
@@ -2045,18 +2045,18 @@
             "description": "NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.",
             "properties": {
                 "autoScalingGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:autoscaling%2Fgroup:Group",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:autoscaling%2Fgroup:Group",
                     "description": "The AutoScalingGroup for the Node group."
                 },
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "The additional security groups for the node group that captures user-specific rules."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`."
                 },
                 "nodeSecurityGroupId": {
@@ -2115,7 +2115,7 @@
                     "description": "The target EKS cluster."
                 },
                 "clusterIngressRule": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroupRule:SecurityGroupRule",
                     "description": "The ingress rule that gives node group access."
                 },
                 "clusterIngressRuleId": {
@@ -2137,7 +2137,7 @@
                 "extraNodeSecurityGroups": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
+                        "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup"
                     },
                     "description": "Extra security groups to attach on all nodes in this worker node group.\n\nThis additional set of security groups captures any user application rules that will be needed for the nodes."
                 },
@@ -2151,7 +2151,7 @@
                     "description": "Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.\n\nSee [EKS best practices](https://aws.github.io/aws-eks-best-practices/cluster-autoscaling/) for more details."
                 },
                 "instanceProfile": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:iam%2FinstanceProfile:InstanceProfile",
                     "plain": true,
                     "description": "The IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive."
                 },
@@ -2181,7 +2181,7 @@
                 "launchTemplateTagSpecifications": {
                     "type": "array",
                     "items": {
-                        "$ref": "/aws/v7.0.0-alpha.1/schema.json#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification"
+                        "$ref": "/aws/v7.0.0/schema.json#/types/aws:ec2%2FLaunchTemplateTagSpecification:LaunchTemplateTagSpecification"
                     },
                     "description": "The tag specifications to apply to the launch template."
                 },
@@ -2230,7 +2230,7 @@
                     "description": "Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'."
                 },
                 "nodeSecurityGroup": {
-                    "$ref": "/aws/v7.0.0-alpha.1/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
+                    "$ref": "/aws/v7.0.0/schema.json#/resources/aws:ec2%2FsecurityGroup:SecurityGroup",
                     "description": "The security group for the worker node group to communicate with the cluster.\n\nThis security group requires specific inbound and outbound rules.\n\nSee for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html\n\nNote: The `nodeSecurityGroup` option and the cluster option`nodeSecurityGroupTags` are mutually exclusive."
                 },
                 "nodeSecurityGroupId": {

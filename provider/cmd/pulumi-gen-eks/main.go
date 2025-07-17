@@ -2225,7 +2225,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 			"csharp": rawMessage(map[string]interface{}{
 				"packageReferences": map[string]string{
 					"Pulumi":            "3.*",
-					"Pulumi.Aws":        "7.0.0-alpha.1",
+					"Pulumi.Aws":        "7.*",
 					"Pulumi.Kubernetes": "4.*",
 				},
 				"liftSingleValueMethodReturns": true,
