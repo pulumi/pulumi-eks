@@ -695,7 +695,7 @@ export function createCore(
             // When a cluster is created with EKS Auto Mode, it must be created without the addons
             bootstrapSelfManagedAddons: args.autoMode?.enabled
                 ? false
-                : args.bootstrapSelfManagedAddons,
+                : args.bootstrapSelfManagedAddons ?? true,
             vpcConfig: {
                 securityGroupIds: eksClusterSecurityGroup
                     ? [eksClusterSecurityGroup.id]
