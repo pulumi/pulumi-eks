@@ -30,7 +30,7 @@ env:
   DOTNET_VERSION: "6.x"
   GO_VERSION: "1.21.x"
   JAVA_VERSION: "11"
-  NODE_VERSION: "18.x"
+  NODE_VERSION: "20.x"
   PYTHON_VERSION: "3.9"
 
 actions:
