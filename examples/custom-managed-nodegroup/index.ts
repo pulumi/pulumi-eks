@@ -36,7 +36,7 @@ export const defaultInstanceRoles = cluster.instanceRoles;
 // Export the cluster's kubeconfig.
 export const kubeconfig = cluster.kubeconfig;
 
-const ami = pulumi.interpolate`/aws/service/eks/optimized-ami/${cluster.core.cluster.version}/amazon-linux-2/recommended/image_id`.apply(name =>
+const ami = pulumi.interpolate`/aws/service/eks/optimized-ami/${cluster.core.cluster.version}/amazon-linux-2023/x86_64/standard/recommended/image_id`.apply(name =>
   aws.ssm.getParameter({ name }, { async: true })
 ).apply(result => result.value);
 
