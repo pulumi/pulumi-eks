@@ -1,29 +1,30 @@
-import * as eks from "@pulumi/eks";
-import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 
-export function createUserData(cluster: pulumi.Output<aws.eks.Cluster>, extraArgs: string): pulumi.Output<string> {
-    const userdata = pulumi
-        .all([
-            cluster.name,
-            cluster.endpoint,
-            cluster.certificateAuthority.data,
-        ])
-        .apply(([clusterName, clusterEndpoint, clusterCertAuthority]) => {
-            return `MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
+interface ClusterMetadata {
+    name: pulumi.Input<string>;
+    endpoint: pulumi.Input<string>;
+    certificateAuthority: pulumi.Input<string>;
+    serviceCidr: pulumi.Input<string>;
+}
 
---==MYBOUNDARY==
-Content-Type: text/x-shellscript; charset="us-ascii"
+export function createUserData(cluster: ClusterMetadata): pulumi.Output<string> {
+    return pulumi.interpolate`MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY"
 
-#!/bin/bash
+--BOUNDARY
+Content-Type: application/node.eks.aws
 
-/etc/eks/bootstrap.sh --apiserver-endpoint "${clusterEndpoint}" --b64-cluster-ca "${clusterCertAuthority}" "${clusterName}" ${extraArgs}
---==MYBOUNDARY==--`;
-        });
+---
+apiVersion: node.eks.aws/v1alpha1
+kind: NodeConfig
+spec:
+  cluster:
+    name: ${cluster.name}
+    apiServerEndpoint: ${cluster.endpoint}
+    certificateAuthority: >-
+      ${cluster.certificateAuthority}
+    cidr: ${cluster.serviceCidr}
 
-    // Encode the user data as base64.
-    return pulumi
-        .output(userdata)
-        .apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
+--BOUNDARY--
+`.apply((ud) => Buffer.from(ud, "utf-8").toString("base64"));
 }

@@ -6,9 +6,11 @@ toolchain go1.24.1
 
 require (
 	github.com/pulumi/pulumi-aws/sdk/v7 v7.1.0
-	github.com/pulumi/pulumi-eks/sdk/v3 v3.6.0
+	github.com/pulumi/pulumi-eks/sdk/v4 v4.0.0
 	github.com/pulumi/pulumi/sdk/v3 v3.175.0
 )
+
+replace github.com/pulumi/pulumi-eks/sdk/v4 => ../../sdk
 
 require (
 	dario.cat/mergo v1.0.0 // indirect

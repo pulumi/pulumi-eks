@@ -40,6 +40,13 @@ const ami = pulumi.interpolate`/aws/service/eks/optimized-ami/${cluster.core.clu
   aws.ssm.getParameter({ name }, { async: true })
 ).apply(result => result.value);
 
+const customUserData = userdata.createUserData({
+  name: cluster.core.cluster.name,
+  endpoint: cluster.core.cluster.endpoint,
+  certificateAuthority: cluster.core.cluster.certificateAuthority.data,
+  serviceCidr: cluster.core.cluster.kubernetesNetworkConfig.serviceIpv4Cidr,
+});
+
 const launchTemplate = new aws.ec2.LaunchTemplate("managed-ng-launchTemplate",
   {
       blockDeviceMappings: [
@@ -53,8 +60,7 @@ const launchTemplate = new aws.ec2.LaunchTemplate("managed-ng-launchTemplate",
               },
           },
       ],
-      userData: userdata.createUserData(cluster.core.cluster, "--kubelet-extra-args --node-labels=mylabel=myvalue"),
-      metadataOptions: { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" },
+      userData: customUserData,
       // We need to always supply an imageId, otherwise AWS will attempt to merge the user data which will result in
       // nodes failing to join the cluster.
       imageId: ami
@@ -68,6 +74,11 @@ export const launchTemplateName = launchTemplate.name;
 const managedNodeGroup = eks.createManagedNodeGroup("example-managed-ng", {
   cluster: cluster,
   nodeRole: instanceRole,
+  scalingConfig: {
+    minSize: 1,
+    maxSize: 2,
+    desiredSize: 1,
+  },
   launchTemplate: {
     id: launchTemplate.id,
     version: pulumi.interpolate`${launchTemplate.latestVersion}`,
