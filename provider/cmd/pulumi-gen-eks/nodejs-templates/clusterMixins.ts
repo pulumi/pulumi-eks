@@ -186,7 +186,7 @@ export function getRoleProvider(
         {
             region: region,
             profile: profile,
-            assumeRole: {
+            assumeRoles: [{
                 roleArn: iamRole.arn.apply(async (arn) => {
                     // wait 30 seconds to assume the IAM Role https://github.com/pulumi/pulumi-aws/issues/673
                     if (!pulumi.runtime.isDryRun()) {
@@ -194,7 +194,7 @@ export function getRoleProvider(
                     }
                     return arn;
                 }),
-            },
+            }],
         },
         { parent: iamRole, provider },
     );
