@@ -27,7 +27,7 @@
     "bugs": "https://github.com/pulumi/pulumi-eks/issues",
     "dependencies": {
         "@iarna/toml": "^3.0.0",
-        "@pulumi/aws": "7.0.0",
+        "@pulumi/aws": "7.1.0",
         "@pulumi/kubernetes": "4.19.0",
         "@pulumi/pulumi": "^3.143.0",
         "https-proxy-agent": "^5.0.1",
