@@ -1,8 +1,8 @@
 package main
 
 import (
-	awseks "github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
-	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+	awseks "github.com/pulumi/pulumi-aws/sdk/v7/go/aws/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v7/go/aws/iam"
 	"github.com/pulumi/pulumi-eks/sdk/v3/go/eks"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
