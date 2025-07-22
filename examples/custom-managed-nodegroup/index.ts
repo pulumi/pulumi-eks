@@ -54,7 +54,6 @@ const launchTemplate = new aws.ec2.LaunchTemplate("managed-ng-launchTemplate",
           },
       ],
       userData: userdata.createUserData(cluster.core.cluster, "--kubelet-extra-args --node-labels=mylabel=myvalue"),
-      metadataOptions: { httpTokens: "required", httpPutResponseHopLimit: 2, httpEndpoint: "enabled" },
       // We need to always supply an imageId, otherwise AWS will attempt to merge the user data which will result in
       // nodes failing to join the cluster.
       imageId: ami
@@ -68,6 +67,11 @@ export const launchTemplateName = launchTemplate.name;
 const managedNodeGroup = eks.createManagedNodeGroup("example-managed-ng", {
   cluster: cluster,
   nodeRole: instanceRole,
+  scalingConfig: {
+    minSize: 1,
+    maxSize: 2,
+    desiredSize: 1,
+  },
   launchTemplate: {
     id: launchTemplate.id,
     version: pulumi.interpolate`${launchTemplate.latestVersion}`,
