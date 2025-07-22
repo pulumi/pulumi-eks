@@ -29,6 +29,7 @@ class ClusterArgs:
                  access_entries: Optional[Mapping[str, 'AccessEntryArgs']] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  auto_mode: Optional['AutoModeOptionsArgs'] = None,
+                 bootstrap_self_managed_addons: Optional[pulumi.Input[builtins.bool]] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[builtins.str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[builtins.str]]]] = None,
@@ -36,7 +37,6 @@ class ClusterArgs:
                  create_instance_role: Optional[builtins.bool] = None,
                  create_oidc_provider: Optional[pulumi.Input[builtins.bool]] = None,
                  creation_role_provider: Optional['CreationRoleProviderArgs'] = None,
-                 default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[builtins.int]] = None,
                  enable_config_map_mutable: Optional[pulumi.Input[builtins.bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]] = None,
@@ -95,6 +95,7 @@ class ClusterArgs:
         :param 'AutoModeOptionsArgs' auto_mode: Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
                
                For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+        :param pulumi.Input[builtins.bool] bootstrap_self_managed_addons: Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
                Note: The security group resource should not contain any inline ingress or egress rules.
@@ -116,7 +117,6 @@ class ClusterArgs:
         :param 'CreationRoleProviderArgs' creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
                
                Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
-        :param pulumi.Input[Sequence[pulumi.Input[builtins.str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[builtins.int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[builtins.bool] enable_config_map_mutable: Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
                
@@ -278,6 +278,8 @@ class ClusterArgs:
             pulumi.set(__self__, "authentication_mode", authentication_mode)
         if auto_mode is not None:
             pulumi.set(__self__, "auto_mode", auto_mode)
+        if bootstrap_self_managed_addons is not None:
+            pulumi.set(__self__, "bootstrap_self_managed_addons", bootstrap_self_managed_addons)
         if cluster_security_group is not None:
             pulumi.set(__self__, "cluster_security_group", cluster_security_group)
         if cluster_security_group_tags is not None:
@@ -292,8 +294,6 @@ class ClusterArgs:
             pulumi.set(__self__, "create_oidc_provider", create_oidc_provider)
         if creation_role_provider is not None:
             pulumi.set(__self__, "creation_role_provider", creation_role_provider)
-        if default_addons_to_remove is not None:
-            pulumi.set(__self__, "default_addons_to_remove", default_addons_to_remove)
         if desired_capacity is not None:
             pulumi.set(__self__, "desired_capacity", desired_capacity)
         if enable_config_map_mutable is not None:
@@ -430,6 +430,18 @@ class ClusterArgs:
         pulumi.set(self, "auto_mode", value)
 
     @property
+    @pulumi.getter(name="bootstrapSelfManagedAddons")
+    def bootstrap_self_managed_addons(self) -> Optional[pulumi.Input[builtins.bool]]:
+        """
+        Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+        """
+        return pulumi.get(self, "bootstrap_self_managed_addons")
+
+    @bootstrap_self_managed_addons.setter
+    def bootstrap_self_managed_addons(self, value: Optional[pulumi.Input[builtins.bool]]):
+        pulumi.set(self, "bootstrap_self_managed_addons", value)
+
+    @property
     @pulumi.getter(name="clusterSecurityGroup")
     def cluster_security_group(self) -> Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]:
         """
@@ -526,18 +538,6 @@ class ClusterArgs:
     @creation_role_provider.setter
     def creation_role_provider(self, value: Optional['CreationRoleProviderArgs']):
         pulumi.set(self, "creation_role_provider", value)
-
-    @property
-    @pulumi.getter(name="defaultAddonsToRemove")
-    def default_addons_to_remove(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]]:
-        """
-        List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-        """
-        return pulumi.get(self, "default_addons_to_remove")
-
-    @default_addons_to_remove.setter
-    def default_addons_to_remove(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]]):
-        pulumi.set(self, "default_addons_to_remove", value)
 
     @property
     @pulumi.getter(name="desiredCapacity")
@@ -1198,6 +1198,7 @@ class Cluster(pulumi.ComponentResource):
                  access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  auto_mode: Optional[Union['AutoModeOptionsArgs', 'AutoModeOptionsArgsDict']] = None,
+                 bootstrap_self_managed_addons: Optional[pulumi.Input[builtins.bool]] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[builtins.str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[builtins.str]]]] = None,
@@ -1205,7 +1206,6 @@ class Cluster(pulumi.ComponentResource):
                  create_instance_role: Optional[builtins.bool] = None,
                  create_oidc_provider: Optional[pulumi.Input[builtins.bool]] = None,
                  creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
-                 default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[builtins.int]] = None,
                  enable_config_map_mutable: Optional[pulumi.Input[builtins.bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]] = None,
@@ -1286,6 +1286,7 @@ class Cluster(pulumi.ComponentResource):
         :param Union['AutoModeOptionsArgs', 'AutoModeOptionsArgsDict'] auto_mode: Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
                
                For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+        :param pulumi.Input[builtins.bool] bootstrap_self_managed_addons: Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
                
                Note: The security group resource should not contain any inline ingress or egress rules.
@@ -1307,7 +1308,6 @@ class Cluster(pulumi.ComponentResource):
         :param Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict'] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
                
                Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
-        :param pulumi.Input[Sequence[pulumi.Input[builtins.str]]] default_addons_to_remove: List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
         :param pulumi.Input[builtins.int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[builtins.bool] enable_config_map_mutable: Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
                
@@ -1508,6 +1508,7 @@ class Cluster(pulumi.ComponentResource):
                  access_entries: Optional[Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']]] = None,
                  authentication_mode: Optional['AuthenticationMode'] = None,
                  auto_mode: Optional[Union['AutoModeOptionsArgs', 'AutoModeOptionsArgsDict']] = None,
+                 bootstrap_self_managed_addons: Optional[pulumi.Input[builtins.bool]] = None,
                  cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
                  cluster_security_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[builtins.str]]]] = None,
                  cluster_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[builtins.str]]]] = None,
@@ -1515,7 +1516,6 @@ class Cluster(pulumi.ComponentResource):
                  create_instance_role: Optional[builtins.bool] = None,
                  create_oidc_provider: Optional[pulumi.Input[builtins.bool]] = None,
                  creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
-                 default_addons_to_remove: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]] = None,
                  desired_capacity: Optional[pulumi.Input[builtins.int]] = None,
                  enable_config_map_mutable: Optional[pulumi.Input[builtins.bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]] = None,
@@ -1575,6 +1575,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["access_entries"] = access_entries
             __props__.__dict__["authentication_mode"] = authentication_mode
             __props__.__dict__["auto_mode"] = auto_mode
+            __props__.__dict__["bootstrap_self_managed_addons"] = bootstrap_self_managed_addons
             __props__.__dict__["cluster_security_group"] = cluster_security_group
             __props__.__dict__["cluster_security_group_tags"] = cluster_security_group_tags
             __props__.__dict__["cluster_tags"] = cluster_tags
@@ -1582,7 +1583,6 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["create_instance_role"] = create_instance_role
             __props__.__dict__["create_oidc_provider"] = create_oidc_provider
             __props__.__dict__["creation_role_provider"] = creation_role_provider
-            __props__.__dict__["default_addons_to_remove"] = default_addons_to_remove
             __props__.__dict__["desired_capacity"] = desired_capacity
             __props__.__dict__["enable_config_map_mutable"] = enable_config_map_mutable
             __props__.__dict__["enabled_cluster_log_types"] = enabled_cluster_log_types
