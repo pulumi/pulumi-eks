@@ -8,9 +8,9 @@ import (
 	"reflect"
 
 	"errors"
-	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
-	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
-	"github.com/pulumi/pulumi-eks/sdk/v3/go/eks/utilities"
+	"github.com/pulumi/pulumi-aws/sdk/v7/go/aws/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v7/go/aws/iam"
+	"github.com/pulumi/pulumi-eks/sdk/v4/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -29,7 +29,7 @@ import (
 //
 //	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
 //	"github.com/pulumi/pulumi-awsx/sdk/v2/go/awsx/ec2"
-//	"github.com/pulumi/pulumi-eks/sdk/v3/go/eks"
+//	"github.com/pulumi/pulumi-eks/sdk/v4/go/eks"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //
 // )
@@ -131,7 +131,7 @@ import (
 //	awseks "github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
 //	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
 //	"github.com/pulumi/pulumi-awsx/sdk/v2/go/awsx/ec2"
-//	"github.com/pulumi/pulumi-eks/sdk/v3/go/eks"
+//	"github.com/pulumi/pulumi-eks/sdk/v4/go/eks"
 //	"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes"
 //	helmv3 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/helm/v3"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"

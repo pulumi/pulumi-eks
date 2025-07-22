@@ -51,7 +51,7 @@ export interface RoleMapping {
     /**
      * The ARN of the IAM role to add.
      */
-    roleArn: pulumi.Input<aws.ARN>;
+    roleArn: pulumi.Input<string>;
 
     /**
      * The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role.
@@ -71,7 +71,7 @@ export interface UserMapping {
     /**
      * The ARN of the IAM user to add.
      */
-    userArn: pulumi.Input<aws.ARN>;
+    userArn: pulumi.Input<string>;
 
     /**
      * The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user.
@@ -118,7 +118,7 @@ export interface KubeconfigOptions {
      *
      * The role is passed to kubeconfig as an authentication exec argument.
      */
-    roleArn?: pulumi.Input<aws.ARN>;
+    roleArn?: pulumi.Input<string>;
     /**
      * AWS credential profile name to always use instead of the
      * default AWS credential provider chain.
@@ -387,15 +387,17 @@ function getRoleProvider(
         {
             region: region,
             profile: profile,
-            assumeRole: {
-                roleArn: iamRole.arn.apply(async (arn) => {
-                    // wait 30 seconds to assume the IAM Role https://github.com/pulumi/pulumi-aws/issues/673
-                    if (!pulumi.runtime.isDryRun()) {
-                        await new Promise((resolve) => setTimeout(resolve, 30 * 1000));
-                    }
-                    return arn;
-                }),
-            },
+            assumeRoles: [
+                {
+                    roleArn: iamRole.arn.apply(async (arn) => {
+                        // wait 30 seconds to assume the IAM Role https://github.com/pulumi/pulumi-aws/issues/673
+                        if (!pulumi.runtime.isDryRun()) {
+                            await new Promise((resolve) => setTimeout(resolve, 30 * 1000));
+                        }
+                        return arn;
+                    }),
+                },
+            ],
         },
         { parent: iamRole, provider },
     );
@@ -691,7 +693,9 @@ export function createCore(
             storageConfig: autoModeConfig.storageConfig,
             kubernetesNetworkConfig: autoModeConfig.kubernetesNetworkConfig,
             // When a cluster is created with EKS Auto Mode, it must be created without the addons
-            bootstrapSelfManagedAddons: args.autoMode?.enabled ? false : undefined,
+            bootstrapSelfManagedAddons: args.autoMode?.enabled
+                ? false
+                : args.bootstrapSelfManagedAddons ?? true,
             vpcConfig: {
                 securityGroupIds: eksClusterSecurityGroup
                     ? [eksClusterSecurityGroup.id]
@@ -715,7 +719,6 @@ export function createCore(
             },
             version: args.version,
             enabledClusterLogTypes: args.enabledClusterLogTypes,
-            defaultAddonsToRemoves: args.defaultAddonsToRemove,
             tags: pulumi.all([args.tags, args.clusterTags]).apply(
                 ([tags, clusterTags]) =>
                     <aws.Tags>{
@@ -869,7 +872,7 @@ export function createCore(
                                 clusterEndpoint,
                                 region,
                                 useProfileName,
-                                clusterCertificateAuthority?.data,
+                                clusterCertificateAuthority.data,
                                 opts,
                             );
                         });
@@ -879,7 +882,7 @@ export function createCore(
                             clusterEndpoint,
                             region,
                             useProfileName,
-                            clusterCertificateAuthority?.data,
+                            clusterCertificateAuthority.data,
                             providerCredentialOpts,
                         );
                     } else {
@@ -888,7 +891,7 @@ export function createCore(
                             clusterEndpoint,
                             region,
                             useProfileName,
-                            clusterCertificateAuthority?.data,
+                            clusterCertificateAuthority.data,
                         );
                     }
                     return config;
@@ -1736,11 +1739,12 @@ export interface ClusterOptions {
     enabledClusterLogTypes?: pulumi.Input<pulumi.Input<string>[]>;
 
     /**
-     * List of addons to remove upon creation. Any addon listed will be "adopted" and then removed.
-     * This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources.
-     * Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
+     * Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation.
+     * If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+     *
+     * @default true
      */
-    defaultAddonsToRemove?: pulumi.Input<pulumi.Input<string>[]>;
+    bootstrapSelfManagedAddons?: pulumi.Input<boolean>;
 
     /**
      * Options for managing the `coredns` addon.
@@ -2313,7 +2317,7 @@ export class Cluster extends pulumi.ComponentResource {
             this.eksCluster.endpoint,
             region,
             true,
-            this.eksCluster.certificateAuthority?.data,
+            this.eksCluster.certificateAuthority.data,
             args,
         );
         return pulumi.output(kc).apply(JSON.stringify);
