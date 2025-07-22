@@ -38,7 +38,7 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 
-	"github.com/pulumi/pulumi-eks/provider/v3/pkg/version"
+	"github.com/pulumi/pulumi-eks/provider/v4/pkg/version"
 )
 
 const Tool = "pulumi-gen-eks"

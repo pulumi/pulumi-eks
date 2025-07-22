@@ -8,8 +8,6 @@ require (
 	github.com/pulumi/pulumi/sdk/v3 v3.112.0
 )
 
-replace github.com/pulumi/pulumi-eks/sdk/v3 => ../../sdk
-
 require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
