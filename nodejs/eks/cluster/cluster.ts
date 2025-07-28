@@ -295,8 +295,7 @@ export interface EksAutoModeOptions {
  */
 export class ClusterCreationRoleProvider
     extends pulumi.ComponentResource
-    implements CreationRoleProvider
-{
+    implements CreationRoleProvider {
     public readonly role: aws.iam.Role;
     public readonly provider: pulumi.ProviderResource;
 
@@ -817,9 +816,10 @@ export function createCore(
                             agent: agent,
                             timeout: reqTimeoutMilliseconds,
                         };
-                        const req = https.request(options, (res) => {
-                            res.statusCode === 200 ? resolve(undefined) : reject(); // Verify healthz returns 200
-                        });
+                        const req = https.request(
+                            options,
+                            (res) => (res.statusCode === 200 ? resolve(undefined) : reject()), // Verify healthz returns 200
+                        );
                         req.on("timeout", reject);
                         req.on("error", reject);
                         req.end();
@@ -1326,7 +1326,7 @@ function createHttpAgent(proxy?: string): http.Agent {
     });
 }
 
-/* tslint:disable-next-line */ // Generating the enum object for ResolveConflictsOnCreate like codegen does
+/* eslint-disable-next-line */ // Generating the enum object for ResolveConflictsOnCreate like codegen does
 export const ResolveConflictsOnCreate = {
     /**
      * If the self-managed version of the add-on is installed on your cluster, Amazon EKS doesn't change the value. Creation of the add-on might fail.
@@ -1341,10 +1341,10 @@ export const ResolveConflictsOnCreate = {
 /**
  * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
  */
-export type ResolveConflictsOnCreate =
+export type ResolveConflictsOnCreate = // eslint-disable-line no-redeclare
     (typeof ResolveConflictsOnCreate)[keyof typeof ResolveConflictsOnCreate];
 
-/* tslint:disable-next-line */ // Generating the enum object for ResolveConflictsOnUpdate like codegen does
+/* eslint-disable-next-line */ // Generating the enum object for ResolveConflictsOnUpdate like codegen does
 export const ResolveConflictsOnUpdate = {
     /**
      * Amazon EKS doesn't change the value. The update might fail.
@@ -1363,7 +1363,7 @@ export const ResolveConflictsOnUpdate = {
 /**
  * How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are `NONE`, `OVERWRITE`, and `PRESERVE`. For more details see the [UpdateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html) API Docs.
  */
-export type ResolveConflictsOnUpdate =
+export type ResolveConflictsOnUpdate = // eslint-disable-line no-redeclare
     (typeof ResolveConflictsOnUpdate)[keyof typeof ResolveConflictsOnUpdate];
 
 export interface CoreDnsAddonOptions {
@@ -1989,7 +1989,7 @@ export interface AccessPolicyAssociation {
     accessScope: aws.types.input.eks.AccessPolicyAssociationAccessScope;
 }
 
-/* tslint:disable-next-line */ // Generating the enum object for AuthenticationMode like codegen does
+/* eslint-disable-next-line */ // Generating the enum object for AuthenticationMode like codegen does
 export const AuthenticationMode = {
     /**
      * Only Access Entries will be used for authenticating to the Kubernetes API.
@@ -2015,9 +2015,9 @@ export const AuthenticationMode = {
  * The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`
  * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
  */
-export type AuthenticationMode = (typeof AuthenticationMode)[keyof typeof AuthenticationMode];
+export type AuthenticationMode = (typeof AuthenticationMode)[keyof typeof AuthenticationMode]; // eslint-disable-line no-redeclare
 
-/* tslint:disable-next-line */ // Generating the enum object for AccessEntryType like codegen does
+/* eslint-disable-next-line */ // Generating the enum object for AccessEntryType like codegen does
 export const AccessEntryType = {
     /**
      * Standard Access Entry Workflow. Allows users to input a username and kubernetesGroup, and to associate access policies.
@@ -2045,7 +2045,7 @@ export const AccessEntryType = {
  * The authentication mode of the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`
  * See for more details:\nhttps://docs.aws.amazon.com/eks/latest/userguide/grant-k8s-access.html#set-cam
  */
-export type AccessEntryType = (typeof AccessEntryType)[keyof typeof AccessEntryType];
+export type AccessEntryType = (typeof AccessEntryType)[keyof typeof AccessEntryType]; // eslint-disable-line no-redeclare
 
 /** @internal */
 export interface ClusterResult {
