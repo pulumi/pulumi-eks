@@ -237,6 +237,12 @@ namespace Pulumi.Eks
         public Inputs.AutoModeOptionsArgs? AutoMode { get; set; }
 
         /// <summary>
+        /// Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+        /// </summary>
+        [Input("bootstrapSelfManagedAddons")]
+        public Input<bool>? BootstrapSelfManagedAddons { get; set; }
+
+        /// <summary>
         /// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
         /// 
         /// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -303,18 +309,6 @@ namespace Pulumi.Eks
         /// </summary>
         [Input("creationRoleProvider")]
         public Inputs.CreationRoleProviderArgs? CreationRoleProvider { get; set; }
-
-        [Input("defaultAddonsToRemove")]
-        private InputList<string>? _defaultAddonsToRemove;
-
-        /// <summary>
-        /// List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-        /// </summary>
-        public InputList<string> DefaultAddonsToRemove
-        {
-            get => _defaultAddonsToRemove ?? (_defaultAddonsToRemove = new InputList<string>());
-            set => _defaultAddonsToRemove = value;
-        }
 
         /// <summary>
         /// The number of worker nodes that should be running in the cluster. Defaults to 2.

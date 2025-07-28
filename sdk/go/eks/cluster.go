@@ -7,11 +7,11 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"
-	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
-	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/eks"
-	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
-	"github.com/pulumi/pulumi-eks/sdk/v3/go/eks/utilities"
+	"github.com/pulumi/pulumi-aws/sdk/v7/go/aws"
+	"github.com/pulumi/pulumi-aws/sdk/v7/go/aws/ec2"
+	"github.com/pulumi/pulumi-aws/sdk/v7/go/aws/eks"
+	"github.com/pulumi/pulumi-aws/sdk/v7/go/aws/iam"
+	"github.com/pulumi/pulumi-eks/sdk/v4/go/eks/utilities"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -137,6 +137,8 @@ type clusterArgs struct {
 	//
 	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
 	AutoMode *AutoModeOptions `pulumi:"autoMode"`
+	// Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+	BootstrapSelfManagedAddons *bool `pulumi:"bootstrapSelfManagedAddons"`
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -165,8 +167,6 @@ type clusterArgs struct {
 	//
 	// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
 	CreationRoleProvider *CreationRoleProvider `pulumi:"creationRoleProvider"`
-	// List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-	DefaultAddonsToRemove []string `pulumi:"defaultAddonsToRemove"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity *int `pulumi:"desiredCapacity"`
 	// Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
@@ -384,6 +384,8 @@ type ClusterArgs struct {
 	//
 	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
 	AutoMode *AutoModeOptionsArgs
+	// Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+	BootstrapSelfManagedAddons pulumi.BoolPtrInput
 	// The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
 	//
 	// Note: The security group resource should not contain any inline ingress or egress rules.
@@ -412,8 +414,6 @@ type ClusterArgs struct {
 	//
 	// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
 	CreationRoleProvider *CreationRoleProviderArgs
-	// List of addons to remove upon creation. Any addon listed will be "adopted" and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-	DefaultAddonsToRemove pulumi.StringArrayInput
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput
 	// Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.

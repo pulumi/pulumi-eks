@@ -101,7 +101,7 @@ func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 			"aws:region": region,
 		},
 		Dependencies: []string{
-			"github.com/pulumi/pulumi-eks/sdk/v3",
+			"github.com/pulumi/pulumi-eks/sdk/v4=../sdk",
 		},
 		Verbose: true,
 	})

@@ -1,10 +1,10 @@
-module github.com/pulumi/pulumi-eks/provider/v3
+module github.com/pulumi/pulumi-eks/provider/v4
 
 go 1.23.0
 
 toolchain go1.24.2
 
-replace github.com/pulumi/pulumi-eks/sdk/v3 => ../sdk
+replace github.com/pulumi/pulumi-eks/sdk/v4 => ../sdk
 
 require (
 	github.com/blang/semver v3.5.1+incompatible

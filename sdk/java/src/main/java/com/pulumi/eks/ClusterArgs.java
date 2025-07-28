@@ -98,6 +98,21 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+     * 
+     */
+    @Import(name="bootstrapSelfManagedAddons")
+    private @Nullable Output<Boolean> bootstrapSelfManagedAddons;
+
+    /**
+     * @return Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+     * 
+     */
+    public Optional<Output<Boolean>> bootstrapSelfManagedAddons() {
+        return Optional.ofNullable(this.bootstrapSelfManagedAddons);
+    }
+
+    /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      * 
      * Note: The security group resource should not contain any inline ingress or egress rules.
@@ -228,21 +243,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<CreationRoleProviderArgs> creationRoleProvider() {
         return Optional.ofNullable(this.creationRoleProvider);
-    }
-
-    /**
-     * List of addons to remove upon creation. Any addon listed will be &#34;adopted&#34; and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-     * 
-     */
-    @Import(name="defaultAddonsToRemove")
-    private @Nullable Output<List<String>> defaultAddonsToRemove;
-
-    /**
-     * @return List of addons to remove upon creation. Any addon listed will be &#34;adopted&#34; and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-     * 
-     */
-    public Optional<Output<List<String>>> defaultAddonsToRemove() {
-        return Optional.ofNullable(this.defaultAddonsToRemove);
     }
 
     /**
@@ -1144,6 +1144,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.accessEntries = $.accessEntries;
         this.authenticationMode = $.authenticationMode;
         this.autoMode = $.autoMode;
+        this.bootstrapSelfManagedAddons = $.bootstrapSelfManagedAddons;
         this.clusterSecurityGroup = $.clusterSecurityGroup;
         this.clusterSecurityGroupTags = $.clusterSecurityGroupTags;
         this.clusterTags = $.clusterTags;
@@ -1151,7 +1152,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.createInstanceRole = $.createInstanceRole;
         this.createOidcProvider = $.createOidcProvider;
         this.creationRoleProvider = $.creationRoleProvider;
-        this.defaultAddonsToRemove = $.defaultAddonsToRemove;
         this.desiredCapacity = $.desiredCapacity;
         this.enableConfigMapMutable = $.enableConfigMapMutable;
         this.enabledClusterLogTypes = $.enabledClusterLogTypes;
@@ -1256,6 +1256,27 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         public Builder autoMode(@Nullable AutoModeOptionsArgs autoMode) {
             $.autoMode = autoMode;
             return this;
+        }
+
+        /**
+         * @param bootstrapSelfManagedAddons Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+         * 
+         * @return builder
+         * 
+         */
+        public Builder bootstrapSelfManagedAddons(@Nullable Output<Boolean> bootstrapSelfManagedAddons) {
+            $.bootstrapSelfManagedAddons = bootstrapSelfManagedAddons;
+            return this;
+        }
+
+        /**
+         * @param bootstrapSelfManagedAddons Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
+         * 
+         * @return builder
+         * 
+         */
+        public Builder bootstrapSelfManagedAddons(Boolean bootstrapSelfManagedAddons) {
+            return bootstrapSelfManagedAddons(Output.of(bootstrapSelfManagedAddons));
         }
 
         /**
@@ -1397,37 +1418,6 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         public Builder creationRoleProvider(@Nullable CreationRoleProviderArgs creationRoleProvider) {
             $.creationRoleProvider = creationRoleProvider;
             return this;
-        }
-
-        /**
-         * @param defaultAddonsToRemove List of addons to remove upon creation. Any addon listed will be &#34;adopted&#34; and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder defaultAddonsToRemove(@Nullable Output<List<String>> defaultAddonsToRemove) {
-            $.defaultAddonsToRemove = defaultAddonsToRemove;
-            return this;
-        }
-
-        /**
-         * @param defaultAddonsToRemove List of addons to remove upon creation. Any addon listed will be &#34;adopted&#34; and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder defaultAddonsToRemove(List<String> defaultAddonsToRemove) {
-            return defaultAddonsToRemove(Output.of(defaultAddonsToRemove));
-        }
-
-        /**
-         * @param defaultAddonsToRemove List of addons to remove upon creation. Any addon listed will be &#34;adopted&#34; and then removed. This allows for the creation of a baremetal cluster where no addon is deployed and direct management of addons via Pulumi Kubernetes resources. Valid entries are kube-proxy, coredns and vpc-cni. Only works on first creation of a cluster.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder defaultAddonsToRemove(String... defaultAddonsToRemove) {
-            return defaultAddonsToRemove(List.of(defaultAddonsToRemove));
         }
 
         /**
