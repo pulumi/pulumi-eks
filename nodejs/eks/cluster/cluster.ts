@@ -528,7 +528,8 @@ export function createCore(
         eksServiceRole = new ServiceRole(
             `${name}-eksRole`,
             {
-                service: pulumi.interpolate`eks.${dnsSuffix}`,
+                // All aws partitions use same service for eks
+                service: "eks.amazonaws.com",
                 description: "Allows EKS to manage clusters on your behalf.",
                 managedPolicyArns: managedPolicies.map((policy) => ({
                     id: `arn:aws:iam::aws:policy/${policy}`,
@@ -1117,7 +1118,8 @@ export function createCore(
                     new ServiceRole(
                         `${name}-podExecutionRole`,
                         {
-                            service: pulumi.interpolate`eks-fargate-pods.${dnsSuffix}`,
+                            // // All aws partitions use same service for eks fargate pod
+                            service: "eks-fargate-pods.amazonaws.com",
                             managedPolicyArns: [
                                 {
                                     id: "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy",
