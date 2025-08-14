@@ -528,7 +528,7 @@ export function createCore(
         eksServiceRole = new ServiceRole(
             `${name}-eksRole`,
             {
-                service: pulumi.interpolate`eks.${dnsSuffix}`,
+                service: "eks.amazonaws.com",
                 description: "Allows EKS to manage clusters on your behalf.",
                 managedPolicyArns: managedPolicies.map((policy) => ({
                     id: `arn:aws:iam::aws:policy/${policy}`,
