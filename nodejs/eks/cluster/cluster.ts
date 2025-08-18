@@ -295,7 +295,8 @@ export interface EksAutoModeOptions {
  */
 export class ClusterCreationRoleProvider
     extends pulumi.ComponentResource
-    implements CreationRoleProvider {
+    implements CreationRoleProvider
+{
     public readonly role: aws.iam.Role;
     public readonly provider: pulumi.ProviderResource;
 
