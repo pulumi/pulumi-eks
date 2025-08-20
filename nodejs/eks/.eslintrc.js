@@ -87,7 +87,6 @@ module.exports = {
             },
         ],
         "arrow-parens": ["off", "always"],
-        "brace-style": ["error", "1tbs"],
         "comma-dangle": ["error", "always-multiline"],
         curly: "error",
         "default-case": "error",
