@@ -33,27 +33,30 @@ env:
   NODE_VERSION: "20.x"
   PYTHON_VERSION: "3.9"
 
+esc:
+  enabled: true
+
 actions:
   preTest:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-access-key-id: ${{ steps.esc-secrets.outputs.AWS_ACCESS_KEY_ID }}
         aws-region: ${{ env.AWS_REGION }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-secret-access-key: ${{ steps.esc-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
         role-duration-seconds: 7200
         role-session-name: aws@githubActions
-        role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
+        role-to-assume: ${{ steps.esc-secrets.outputs.AWS_CI_ROLE_ARN }}
   preBuild:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-access-key-id: ${{ steps.esc-secrets.outputs.AWS_ACCESS_KEY_ID }}
         aws-region: ${{ env.AWS_REGION }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-secret-access-key: ${{ steps.esc-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
         role-duration-seconds: 7200
         role-session-name: aws@githubActions
-        role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
+        role-to-assume: ${{ steps.esc-secrets.outputs.AWS_CI_ROLE_ARN }}
 
 releaseVerification:
   nodejs: examples/cluster
