@@ -51,6 +51,7 @@ jobs:
         persist-credentials: false    
     - env:
         ESC_ACTION_ENVIRONMENT: github-secrets/${{ github.repository_owner }}-${{ github.event.repository.name }}
+        ESC_ACTION_EXPORT_ENVIRONMENT_VARIABLES: "false"
         ESC_ACTION_OIDC_AUTH: "true"
         ESC_ACTION_OIDC_ORGANIZATION: pulumi
         ESC_ACTION_OIDC_REQUESTED_TOKEN_TYPE: urn:pulumi:token-type:access_token:organization
@@ -74,6 +75,8 @@ jobs:
         tools: go, pulumictl, pulumicli, schema-tools
     - name: Prepare local workspace before restoring previously built files
       run: make prepare_local_workspace
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
