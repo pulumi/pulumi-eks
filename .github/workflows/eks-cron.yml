@@ -19,7 +19,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.14.0
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
         with:
           repo: pulumi/pulumictl
       - name: Setup Node
@@ -36,7 +36,7 @@ jobs:
       - name: Run nodejs linter
         run: yarn --cwd nodejs/eks install --frozen-lockfile && yarn --cwd nodejs/eks lint-check
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           args: -c ../.golangci.yml
@@ -60,11 +60,11 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.14.0
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
+        uses: pulumi/actions@df5a93ad715135263c732ba288301bd044c383c0 # v6
       - name: Build provider binary + schema
         run: make schema provider
       - name: Check worktree clean
@@ -108,11 +108,11 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.14.0
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
+        uses: pulumi/actions@df5a93ad715135263c732ba288301bd044c383c0 # v6
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -204,11 +204,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.14.0
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
+        uses: pulumi/actions@df5a93ad715135263c732ba288301bd044c383c0 # v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -294,7 +294,7 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.14.0
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
         with:
           repo: pulumi/pulumictl
       - name: Setup Python
@@ -306,7 +306,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Install Pulumi CLI
-        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
+        uses: pulumi/actions@df5a93ad715135263c732ba288301bd044c383c0 # v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -412,11 +412,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli --upgrade
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.14.0
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
+        uses: pulumi/actions@df5a93ad715135263c732ba288301bd044c383c0 # v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -501,11 +501,11 @@ jobs:
         with:
           go-version: ${{ env.GOVERSION }}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.14.0
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6
+        uses: pulumi/actions@df5a93ad715135263c732ba288301bd044c383c0 # v6
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
