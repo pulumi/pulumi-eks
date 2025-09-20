@@ -24,7 +24,7 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource {
         return obj['__pulumiType'] === ClusterCreationRoleProvider.__pulumiType;
     }
 
-    public /*out*/ readonly role!: pulumi.Output<pulumiAws.iam.Role>;
+    declare public /*out*/ readonly role: pulumi.Output<pulumiAws.iam.Role>;
 
     /**
      * Create a ClusterCreationRoleProvider resource with the given unique name, arguments, and options.
@@ -37,8 +37,8 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            resourceInputs["profile"] = args ? args.profile : undefined;
-            resourceInputs["region"] = args ? args.region : undefined;
+            resourceInputs["profile"] = args?.profile;
+            resourceInputs["region"] = args?.region;
             resourceInputs["role"] = undefined /*out*/;
         } else {
             resourceInputs["role"] = undefined /*out*/;

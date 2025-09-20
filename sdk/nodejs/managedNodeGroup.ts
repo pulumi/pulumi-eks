@@ -201,11 +201,11 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
     /**
      * The AWS managed node group.
      */
-    public /*out*/ readonly nodeGroup!: pulumi.Output<pulumiAws.eks.NodeGroup>;
+    declare public /*out*/ readonly nodeGroup: pulumi.Output<pulumiAws.eks.NodeGroup>;
     /**
      * The name of the placement group created for the managed node group.
      */
-    public /*out*/ readonly placementGroupName!: pulumi.Output<string>;
+    declare public /*out*/ readonly placementGroupName: pulumi.Output<string>;
 
     /**
      * Create a ManagedNodeGroup resource with the given unique name, arguments, and options.
@@ -218,41 +218,41 @@ export class ManagedNodeGroup extends pulumi.ComponentResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            if ((!args || args.cluster === undefined) && !opts.urn) {
+            if (args?.cluster === undefined && !opts.urn) {
                 throw new Error("Missing required property 'cluster'");
             }
-            resourceInputs["amiId"] = args ? args.amiId : undefined;
-            resourceInputs["amiType"] = args ? args.amiType : undefined;
-            resourceInputs["bootstrapExtraArgs"] = args ? args.bootstrapExtraArgs : undefined;
-            resourceInputs["bottlerocketSettings"] = args ? args.bottlerocketSettings : undefined;
-            resourceInputs["capacityType"] = args ? args.capacityType : undefined;
-            resourceInputs["cluster"] = args ? args.cluster : undefined;
-            resourceInputs["clusterName"] = args ? args.clusterName : undefined;
-            resourceInputs["diskSize"] = args ? args.diskSize : undefined;
-            resourceInputs["enableEfaSupport"] = args ? args.enableEfaSupport : undefined;
-            resourceInputs["enableIMDSv2"] = args ? args.enableIMDSv2 : undefined;
-            resourceInputs["forceUpdateVersion"] = args ? args.forceUpdateVersion : undefined;
-            resourceInputs["gpu"] = args ? args.gpu : undefined;
-            resourceInputs["ignoreScalingChanges"] = args ? args.ignoreScalingChanges : undefined;
-            resourceInputs["instanceTypes"] = args ? args.instanceTypes : undefined;
-            resourceInputs["kubeletExtraArgs"] = args ? args.kubeletExtraArgs : undefined;
-            resourceInputs["labels"] = args ? args.labels : undefined;
-            resourceInputs["launchTemplate"] = args ? args.launchTemplate : undefined;
-            resourceInputs["nodeGroupName"] = args ? args.nodeGroupName : undefined;
-            resourceInputs["nodeGroupNamePrefix"] = args ? args.nodeGroupNamePrefix : undefined;
-            resourceInputs["nodeRole"] = args ? args.nodeRole : undefined;
-            resourceInputs["nodeRoleArn"] = args ? args.nodeRoleArn : undefined;
-            resourceInputs["nodeadmExtraOptions"] = args ? args.nodeadmExtraOptions : undefined;
-            resourceInputs["operatingSystem"] = args ? args.operatingSystem : undefined;
-            resourceInputs["placementGroupAvailabilityZone"] = args ? args.placementGroupAvailabilityZone : undefined;
-            resourceInputs["releaseVersion"] = args ? args.releaseVersion : undefined;
-            resourceInputs["remoteAccess"] = args ? args.remoteAccess : undefined;
-            resourceInputs["scalingConfig"] = args ? args.scalingConfig : undefined;
-            resourceInputs["subnetIds"] = args ? args.subnetIds : undefined;
-            resourceInputs["tags"] = args ? args.tags : undefined;
-            resourceInputs["taints"] = args ? args.taints : undefined;
-            resourceInputs["userData"] = args ? args.userData : undefined;
-            resourceInputs["version"] = args ? args.version : undefined;
+            resourceInputs["amiId"] = args?.amiId;
+            resourceInputs["amiType"] = args?.amiType;
+            resourceInputs["bootstrapExtraArgs"] = args?.bootstrapExtraArgs;
+            resourceInputs["bottlerocketSettings"] = args?.bottlerocketSettings;
+            resourceInputs["capacityType"] = args?.capacityType;
+            resourceInputs["cluster"] = args?.cluster;
+            resourceInputs["clusterName"] = args?.clusterName;
+            resourceInputs["diskSize"] = args?.diskSize;
+            resourceInputs["enableEfaSupport"] = args?.enableEfaSupport;
+            resourceInputs["enableIMDSv2"] = args?.enableIMDSv2;
+            resourceInputs["forceUpdateVersion"] = args?.forceUpdateVersion;
+            resourceInputs["gpu"] = args?.gpu;
+            resourceInputs["ignoreScalingChanges"] = args?.ignoreScalingChanges;
+            resourceInputs["instanceTypes"] = args?.instanceTypes;
+            resourceInputs["kubeletExtraArgs"] = args?.kubeletExtraArgs;
+            resourceInputs["labels"] = args?.labels;
+            resourceInputs["launchTemplate"] = args?.launchTemplate;
+            resourceInputs["nodeGroupName"] = args?.nodeGroupName;
+            resourceInputs["nodeGroupNamePrefix"] = args?.nodeGroupNamePrefix;
+            resourceInputs["nodeRole"] = args?.nodeRole;
+            resourceInputs["nodeRoleArn"] = args?.nodeRoleArn;
+            resourceInputs["nodeadmExtraOptions"] = args?.nodeadmExtraOptions;
+            resourceInputs["operatingSystem"] = args?.operatingSystem;
+            resourceInputs["placementGroupAvailabilityZone"] = args?.placementGroupAvailabilityZone;
+            resourceInputs["releaseVersion"] = args?.releaseVersion;
+            resourceInputs["remoteAccess"] = args?.remoteAccess;
+            resourceInputs["scalingConfig"] = args?.scalingConfig;
+            resourceInputs["subnetIds"] = args?.subnetIds;
+            resourceInputs["tags"] = args?.tags;
+            resourceInputs["taints"] = args?.taints;
+            resourceInputs["userData"] = args?.userData;
+            resourceInputs["version"] = args?.version;
             resourceInputs["nodeGroup"] = undefined /*out*/;
             resourceInputs["placementGroupName"] = undefined /*out*/;
         } else {

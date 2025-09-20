@@ -35,23 +35,23 @@ export class NodeGroup extends pulumi.ComponentResource {
     /**
      * The AutoScalingGroup name for the Node group.
      */
-    public /*out*/ readonly autoScalingGroupName!: pulumi.Output<string>;
+    declare public /*out*/ readonly autoScalingGroupName: pulumi.Output<string>;
     /**
      * The CloudFormation Stack which defines the Node AutoScalingGroup.
      */
-    public /*out*/ readonly cfnStack!: pulumi.Output<pulumiAws.cloudformation.Stack>;
+    declare public /*out*/ readonly cfnStack: pulumi.Output<pulumiAws.cloudformation.Stack>;
     /**
      * The additional security groups for the node group that captures user-specific rules.
      */
-    public readonly extraNodeSecurityGroups!: pulumi.Output<pulumiAws.ec2.SecurityGroup[]>;
+    declare public readonly extraNodeSecurityGroups: pulumi.Output<pulumiAws.ec2.SecurityGroup[]>;
     /**
      * The security group for the node group to communicate with the cluster, or undefined if using `nodeSecurityGroupId`.
      */
-    public readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
+    declare public readonly nodeSecurityGroup: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
     /**
      * The ID of the security group for the node group to communicate with the cluster.
      */
-    public readonly nodeSecurityGroupId!: pulumi.Output<string>;
+    declare public readonly nodeSecurityGroupId: pulumi.Output<string>;
 
     /**
      * Create a NodeGroup resource with the given unique name, arguments, and options.
@@ -66,49 +66,49 @@ export class NodeGroup extends pulumi.ComponentResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            if ((!args || args.cluster === undefined) && !opts.urn) {
+            if (args?.cluster === undefined && !opts.urn) {
                 throw new Error("Missing required property 'cluster'");
             }
-            resourceInputs["amiId"] = args ? args.amiId : undefined;
-            resourceInputs["amiType"] = args ? args.amiType : undefined;
-            resourceInputs["autoScalingGroupTags"] = args ? args.autoScalingGroupTags : undefined;
-            resourceInputs["bootstrapExtraArgs"] = args ? args.bootstrapExtraArgs : undefined;
-            resourceInputs["bottlerocketSettings"] = args ? args.bottlerocketSettings : undefined;
-            resourceInputs["cloudFormationTags"] = args ? args.cloudFormationTags : undefined;
-            resourceInputs["cluster"] = args ? args.cluster : undefined;
-            resourceInputs["clusterIngressRule"] = args ? args.clusterIngressRule : undefined;
-            resourceInputs["clusterIngressRuleId"] = args ? args.clusterIngressRuleId : undefined;
-            resourceInputs["desiredCapacity"] = args ? args.desiredCapacity : undefined;
-            resourceInputs["enableDetailedMonitoring"] = args ? args.enableDetailedMonitoring : undefined;
-            resourceInputs["encryptRootBlockDevice"] = args ? args.encryptRootBlockDevice : undefined;
-            resourceInputs["extraNodeSecurityGroups"] = args ? args.extraNodeSecurityGroups : undefined;
-            resourceInputs["gpu"] = args ? args.gpu : undefined;
-            resourceInputs["instanceProfile"] = args ? args.instanceProfile : undefined;
-            resourceInputs["instanceProfileName"] = args ? args.instanceProfileName : undefined;
-            resourceInputs["instanceType"] = args ? args.instanceType : undefined;
-            resourceInputs["keyName"] = args ? args.keyName : undefined;
-            resourceInputs["kubeletExtraArgs"] = args ? args.kubeletExtraArgs : undefined;
-            resourceInputs["labels"] = args ? args.labels : undefined;
-            resourceInputs["maxSize"] = args ? args.maxSize : undefined;
-            resourceInputs["minSize"] = args ? args.minSize : undefined;
-            resourceInputs["nodeAssociatePublicIpAddress"] = args ? args.nodeAssociatePublicIpAddress : undefined;
-            resourceInputs["nodePublicKey"] = args ? args.nodePublicKey : undefined;
-            resourceInputs["nodeRootVolumeDeleteOnTermination"] = args ? args.nodeRootVolumeDeleteOnTermination : undefined;
-            resourceInputs["nodeRootVolumeEncrypted"] = args ? args.nodeRootVolumeEncrypted : undefined;
-            resourceInputs["nodeRootVolumeIops"] = args ? args.nodeRootVolumeIops : undefined;
-            resourceInputs["nodeRootVolumeSize"] = args ? args.nodeRootVolumeSize : undefined;
-            resourceInputs["nodeRootVolumeThroughput"] = args ? args.nodeRootVolumeThroughput : undefined;
-            resourceInputs["nodeRootVolumeType"] = args ? args.nodeRootVolumeType : undefined;
-            resourceInputs["nodeSecurityGroup"] = args ? args.nodeSecurityGroup : undefined;
-            resourceInputs["nodeSecurityGroupId"] = args ? args.nodeSecurityGroupId : undefined;
-            resourceInputs["nodeSubnetIds"] = args ? args.nodeSubnetIds : undefined;
-            resourceInputs["nodeUserData"] = args ? args.nodeUserData : undefined;
-            resourceInputs["nodeUserDataOverride"] = args ? args.nodeUserDataOverride : undefined;
-            resourceInputs["nodeadmExtraOptions"] = args ? args.nodeadmExtraOptions : undefined;
-            resourceInputs["operatingSystem"] = args ? args.operatingSystem : undefined;
-            resourceInputs["spotPrice"] = args ? args.spotPrice : undefined;
-            resourceInputs["taints"] = args ? args.taints : undefined;
-            resourceInputs["version"] = args ? args.version : undefined;
+            resourceInputs["amiId"] = args?.amiId;
+            resourceInputs["amiType"] = args?.amiType;
+            resourceInputs["autoScalingGroupTags"] = args?.autoScalingGroupTags;
+            resourceInputs["bootstrapExtraArgs"] = args?.bootstrapExtraArgs;
+            resourceInputs["bottlerocketSettings"] = args?.bottlerocketSettings;
+            resourceInputs["cloudFormationTags"] = args?.cloudFormationTags;
+            resourceInputs["cluster"] = args?.cluster;
+            resourceInputs["clusterIngressRule"] = args?.clusterIngressRule;
+            resourceInputs["clusterIngressRuleId"] = args?.clusterIngressRuleId;
+            resourceInputs["desiredCapacity"] = args?.desiredCapacity;
+            resourceInputs["enableDetailedMonitoring"] = args?.enableDetailedMonitoring;
+            resourceInputs["encryptRootBlockDevice"] = args?.encryptRootBlockDevice;
+            resourceInputs["extraNodeSecurityGroups"] = args?.extraNodeSecurityGroups;
+            resourceInputs["gpu"] = args?.gpu;
+            resourceInputs["instanceProfile"] = args?.instanceProfile;
+            resourceInputs["instanceProfileName"] = args?.instanceProfileName;
+            resourceInputs["instanceType"] = args?.instanceType;
+            resourceInputs["keyName"] = args?.keyName;
+            resourceInputs["kubeletExtraArgs"] = args?.kubeletExtraArgs;
+            resourceInputs["labels"] = args?.labels;
+            resourceInputs["maxSize"] = args?.maxSize;
+            resourceInputs["minSize"] = args?.minSize;
+            resourceInputs["nodeAssociatePublicIpAddress"] = args?.nodeAssociatePublicIpAddress;
+            resourceInputs["nodePublicKey"] = args?.nodePublicKey;
+            resourceInputs["nodeRootVolumeDeleteOnTermination"] = args?.nodeRootVolumeDeleteOnTermination;
+            resourceInputs["nodeRootVolumeEncrypted"] = args?.nodeRootVolumeEncrypted;
+            resourceInputs["nodeRootVolumeIops"] = args?.nodeRootVolumeIops;
+            resourceInputs["nodeRootVolumeSize"] = args?.nodeRootVolumeSize;
+            resourceInputs["nodeRootVolumeThroughput"] = args?.nodeRootVolumeThroughput;
+            resourceInputs["nodeRootVolumeType"] = args?.nodeRootVolumeType;
+            resourceInputs["nodeSecurityGroup"] = args?.nodeSecurityGroup;
+            resourceInputs["nodeSecurityGroupId"] = args?.nodeSecurityGroupId;
+            resourceInputs["nodeSubnetIds"] = args?.nodeSubnetIds;
+            resourceInputs["nodeUserData"] = args?.nodeUserData;
+            resourceInputs["nodeUserDataOverride"] = args?.nodeUserDataOverride;
+            resourceInputs["nodeadmExtraOptions"] = args?.nodeadmExtraOptions;
+            resourceInputs["operatingSystem"] = args?.operatingSystem;
+            resourceInputs["spotPrice"] = args?.spotPrice;
+            resourceInputs["taints"] = args?.taints;
+            resourceInputs["version"] = args?.version;
             resourceInputs["autoScalingGroupName"] = undefined /*out*/;
             resourceInputs["cfnStack"] = undefined /*out*/;
         } else {

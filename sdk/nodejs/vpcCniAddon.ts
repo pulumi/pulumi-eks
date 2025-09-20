@@ -38,36 +38,36 @@ export class VpcCniAddon extends pulumi.ComponentResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            if ((!args || args.clusterName === undefined) && !opts.urn) {
+            if (args?.clusterName === undefined && !opts.urn) {
                 throw new Error("Missing required property 'clusterName'");
             }
-            resourceInputs["addonVersion"] = args ? args.addonVersion : undefined;
-            resourceInputs["clusterName"] = args ? args.clusterName : undefined;
-            resourceInputs["clusterVersion"] = args ? args.clusterVersion : undefined;
-            resourceInputs["cniConfigureRpfilter"] = args ? args.cniConfigureRpfilter : undefined;
-            resourceInputs["cniCustomNetworkCfg"] = args ? args.cniCustomNetworkCfg : undefined;
-            resourceInputs["cniExternalSnat"] = args ? args.cniExternalSnat : undefined;
-            resourceInputs["configurationValues"] = args ? args.configurationValues : undefined;
-            resourceInputs["customNetworkConfig"] = args ? args.customNetworkConfig : undefined;
-            resourceInputs["disableTcpEarlyDemux"] = args ? args.disableTcpEarlyDemux : undefined;
-            resourceInputs["enableNetworkPolicy"] = args ? args.enableNetworkPolicy : undefined;
-            resourceInputs["enablePodEni"] = args ? args.enablePodEni : undefined;
-            resourceInputs["enablePrefixDelegation"] = args ? args.enablePrefixDelegation : undefined;
-            resourceInputs["eniConfigLabelDef"] = args ? args.eniConfigLabelDef : undefined;
-            resourceInputs["eniMtu"] = args ? args.eniMtu : undefined;
-            resourceInputs["externalSnat"] = args ? args.externalSnat : undefined;
-            resourceInputs["logFile"] = args ? args.logFile : undefined;
-            resourceInputs["logLevel"] = args ? args.logLevel : undefined;
-            resourceInputs["nodePortSupport"] = args ? args.nodePortSupport : undefined;
-            resourceInputs["resolveConflictsOnCreate"] = (args ? args.resolveConflictsOnCreate : undefined) ?? "OVERWRITE";
-            resourceInputs["resolveConflictsOnUpdate"] = (args ? args.resolveConflictsOnUpdate : undefined) ?? "OVERWRITE";
-            resourceInputs["securityContextPrivileged"] = args ? args.securityContextPrivileged : undefined;
-            resourceInputs["serviceAccountRoleArn"] = args ? args.serviceAccountRoleArn : undefined;
-            resourceInputs["tags"] = args ? args.tags : undefined;
-            resourceInputs["vethPrefix"] = args ? args.vethPrefix : undefined;
-            resourceInputs["warmEniTarget"] = args ? args.warmEniTarget : undefined;
-            resourceInputs["warmIpTarget"] = args ? args.warmIpTarget : undefined;
-            resourceInputs["warmPrefixTarget"] = args ? args.warmPrefixTarget : undefined;
+            resourceInputs["addonVersion"] = args?.addonVersion;
+            resourceInputs["clusterName"] = args?.clusterName;
+            resourceInputs["clusterVersion"] = args?.clusterVersion;
+            resourceInputs["cniConfigureRpfilter"] = args?.cniConfigureRpfilter;
+            resourceInputs["cniCustomNetworkCfg"] = args?.cniCustomNetworkCfg;
+            resourceInputs["cniExternalSnat"] = args?.cniExternalSnat;
+            resourceInputs["configurationValues"] = args?.configurationValues;
+            resourceInputs["customNetworkConfig"] = args?.customNetworkConfig;
+            resourceInputs["disableTcpEarlyDemux"] = args?.disableTcpEarlyDemux;
+            resourceInputs["enableNetworkPolicy"] = args?.enableNetworkPolicy;
+            resourceInputs["enablePodEni"] = args?.enablePodEni;
+            resourceInputs["enablePrefixDelegation"] = args?.enablePrefixDelegation;
+            resourceInputs["eniConfigLabelDef"] = args?.eniConfigLabelDef;
+            resourceInputs["eniMtu"] = args?.eniMtu;
+            resourceInputs["externalSnat"] = args?.externalSnat;
+            resourceInputs["logFile"] = args?.logFile;
+            resourceInputs["logLevel"] = args?.logLevel;
+            resourceInputs["nodePortSupport"] = args?.nodePortSupport;
+            resourceInputs["resolveConflictsOnCreate"] = (args?.resolveConflictsOnCreate) ?? "OVERWRITE";
+            resourceInputs["resolveConflictsOnUpdate"] = (args?.resolveConflictsOnUpdate) ?? "OVERWRITE";
+            resourceInputs["securityContextPrivileged"] = args?.securityContextPrivileged;
+            resourceInputs["serviceAccountRoleArn"] = args?.serviceAccountRoleArn;
+            resourceInputs["tags"] = args?.tags;
+            resourceInputs["vethPrefix"] = args?.vethPrefix;
+            resourceInputs["warmEniTarget"] = args?.warmEniTarget;
+            resourceInputs["warmIpTarget"] = args?.warmIpTarget;
+            resourceInputs["warmPrefixTarget"] = args?.warmPrefixTarget;
         } else {
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
