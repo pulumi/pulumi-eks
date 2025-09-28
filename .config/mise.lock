@@ -1,0 +1,55 @@
+[[tools.dotnet]]
+version = "8.0.414"
+backend = "asdf:dotnet"
+
+[[tools."github:pulumi/pulumictl"]]
+version = "0.0.50"
+backend = "github:pulumi/pulumictl"
+
+[tools."github:pulumi/pulumictl".platforms.linux-x64]
+checksum = "blake3:c128dd74993f779c613296fe7cd21c20cbd323f24e59cb76e007620660b60348"
+size = 27744219
+url = "https://github.com/pulumi/pulumictl/releases/download/v0.0.50/pulumictl-v0.0.50-linux-amd64.tar.gz"
+
+[[tools."github:pulumi/schema-tools"]]
+version = "0.6.0"
+backend = "github:pulumi/schema-tools"
+
+[tools."github:pulumi/schema-tools".platforms.linux-x64]
+checksum = "blake3:82dfe616fee18b4258f6e3d2dc3c4e9f14afd43a0a4cc33eff2d2a04088d6ca3"
+size = 14282746
+url = "https://github.com/pulumi/schema-tools/releases/download/v0.6.0/schema-tools-v0.6.0-linux-amd64.tar.gz"
+
+[[tools.go]]
+version = "1.24.2"
+backend = "core:go"
+
+[tools.go.platforms.linux-x64]
+checksum = "sha256:68097bd680839cbc9d464a0edce4f7c333975e27a90246890e9f1078c7e702ad"
+size = 78516109
+url = "https://dl.google.com/go/go1.24.2.linux-amd64.tar.gz"
+
+[[tools.gradle]]
+version = "7.6.6"
+backend = "aqua:gradle/gradle"
+
+[[tools.java]]
+version = "corretto-11.0.28.6.1"
+backend = "core:java"
+
+[[tools.node]]
+version = "20.19.5"
+backend = "core:node"
+
+[[tools.pulumi]]
+version = "3.173.0"
+backend = "aqua:pulumi/pulumi"
+
+[tools.pulumi.platforms.linux-x64]
+checksum = "sha512:b129c4f4f36ec8f3e1b970f9bac6a82cd8ff6f9b1b9e923a1cc2955ccb19f286cdcdb7f76f4112e5a7249f063fd2c56022cbe0171e0ddc96dcbf2b00a0a55a82"
+size = 91300165
+url = "https://github.com/pulumi/pulumi/releases/download/v3.173.0/pulumi-v3.173.0-linux-x64.tar.gz"
+
+[[tools.python]]
+version = "3.11.8"
+backend = "core:python"
