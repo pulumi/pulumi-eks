@@ -1,0 +1,8 @@
+[[tools.kubectl]]
+version = "1.34.1"
+backend = "aqua:kubernetes/kubernetes/kubectl"
+
+[tools.kubectl.platforms.macos-arm64]
+checksum = "sha256:d80e5fa36f2b14005e5bb35d3a72818acb1aea9a081af05340a000e5fbdb2f76"
+size = 59775314
+url = "https://dl.k8s.io/v1.34.1/bin/darwin/arm64/kubectl"
