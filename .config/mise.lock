@@ -14,6 +14,10 @@ backend = "github:pulumi/schema-tools"
 version = "1.24.2"
 backend = "core:go"
 
+[[tools.golangci-lint]]
+version = "1.64.8"
+backend = "aqua:golangci/golangci-lint"
+
 [[tools.gradle]]
 version = "7.6.6"
 backend = "aqua:gradle/gradle"
