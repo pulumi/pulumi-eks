@@ -12,6 +12,8 @@ on:
 
 env:
   PR_COMMIT_SHA: ${{ github.event.client_payload.pull_request.head.sha }}
+  MISE_ENV: test
+
   AWS_REGION: us-west-2
   DOTNET_VERSION: 6.x
   GO_VERSION: 1.21.x
@@ -54,8 +56,15 @@ jobs:
       with:
         repository: pulumi/examples
         path: p-examples
-    - name: Setup tools
-      uses: ./.github/actions/setup-tools
+    - name: Setup mise
+      uses: jdx/mise-action@v3
+      env:
+        MISE_ENV: test
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        cache_key: "mise-{{platform}}-{{file_hash}}"
+        # also save this cache since we are using a different mise env.
+        cache_save: true
     - name: Prepare local workspace
       run: make prepare_local_workspace
       env:
