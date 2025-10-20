@@ -4,60 +4,55 @@ install-kubectl: true
 major-version: 4
 template: generic
 test-folder: tests
-
 buildProviderCmd: "OS=$(1) ARCH=$(2) OUT=$(3) yarn --cwd nodejs/eks build"
 renovateCmd: "./scripts/renovate.sh"
 shards: 25 # number of shards to use for parallel testing across all languages.
-
 env:
-  AWS_REGION: us-west-2
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GOLANGCI_LINT_VERSION: v1.64.8
-  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  PROVIDER: eks
-  PUBLISH_REPO_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-  PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-  PULUMI_API: https://api.pulumi-staging.io
-  PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
-  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-  SIGNING_KEY: ${{ secrets.JAVA_SIGNING_KEY }}
-  SIGNING_KEY_ID: ${{ secrets.JAVA_SIGNING_KEY_ID }}
-  SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}
-  PULUMI_ENABLE_RESOURCE_REFERENCES: 1
-  PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
-  DOTNET_VERSION: "6.x"
-  GO_VERSION: "1.21.x"
-  JAVA_VERSION: "11"
-  NODE_VERSION: "20.x"
-  PYTHON_VERSION: "3.9"
-
+    AWS_REGION: us-west-2
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    GOLANGCI_LINT_VERSION: v1.64.8
+    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    PROVIDER: eks
+    PUBLISH_REPO_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+    PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+    PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+    PULUMI_API: https://api.pulumi-staging.io
+    PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    SIGNING_KEY: ${{ secrets.JAVA_SIGNING_KEY }}
+    SIGNING_KEY_ID: ${{ secrets.JAVA_SIGNING_KEY_ID }}
+    SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}
+    PULUMI_ENABLE_RESOURCE_REFERENCES: 1
+    PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
+    DOTNET_VERSION: "6.x"
+    GO_VERSION: "1.21.x"
+    JAVA_VERSION: "11"
+    NODE_VERSION: "20.x"
+    PYTHON_VERSION: "3.9"
 esc:
-  enabled: true
-
+    enabled: true
 actions:
-  preTest:
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ steps.esc-secrets.outputs.AWS_ACCESS_KEY_ID }}
-        aws-region: ${{ env.AWS_REGION }}
-        aws-secret-access-key: ${{ steps.esc-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
-        role-duration-seconds: 7200
-        role-session-name: aws@githubActions
-        role-to-assume: ${{ steps.esc-secrets.outputs.AWS_CI_ROLE_ARN }}
-  preBuild:
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ steps.esc-secrets.outputs.AWS_ACCESS_KEY_ID }}
-        aws-region: ${{ env.AWS_REGION }}
-        aws-secret-access-key: ${{ steps.esc-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
-        role-duration-seconds: 7200
-        role-session-name: aws@githubActions
-        role-to-assume: ${{ steps.esc-secrets.outputs.AWS_CI_ROLE_ARN }}
-
+    preTest:
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            aws-access-key-id: ${{ steps.esc-secrets.outputs.AWS_ACCESS_KEY_ID }}
+            aws-region: ${{ env.AWS_REGION }}
+            aws-secret-access-key: ${{ steps.esc-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
+            role-duration-seconds: 7200
+            role-session-name: aws@githubActions
+            role-to-assume: ${{ steps.esc-secrets.outputs.AWS_CI_ROLE_ARN }}
+    preBuild:
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            aws-access-key-id: ${{ steps.esc-secrets.outputs.AWS_ACCESS_KEY_ID }}
+            aws-region: ${{ env.AWS_REGION }}
+            aws-secret-access-key: ${{ steps.esc-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
+            role-duration-seconds: 7200
+            role-session-name: aws@githubActions
+            role-to-assume: ${{ steps.esc-secrets.outputs.AWS_CI_ROLE_ARN }}
 releaseVerification:
-  nodejs: examples/cluster
-  dotnet: examples/cluster-cs
+    nodejs: examples/cluster
+    dotnet: examples/cluster-cs
