@@ -5,6 +5,8 @@ major-version: 4
 template: generic
 test-folder: tests
 
+freeDiskSpaceBeforeTest: true
+
 buildProviderCmd: "OS=$(1) ARCH=$(2) OUT=$(3) yarn --cwd nodejs/eks build"
 renovateCmd: "./scripts/renovate.sh"
 shards: 25 # number of shards to use for parallel testing across all languages.

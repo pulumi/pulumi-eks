@@ -1,0 +1,48 @@
+[[tools.dotnet]]
+version = "8.0.414"
+backend = "asdf:dotnet"
+
+[[tools."github:pulumi/pulumictl"]]
+version = "0.0.50"
+backend = "github:pulumi/pulumictl"
+
+[[tools."github:pulumi/schema-tools"]]
+version = "0.6.0"
+backend = "github:pulumi/schema-tools"
+
+[[tools.go]]
+version = "1.24.2"
+backend = "core:go"
+
+[[tools.golangci-lint]]
+version = "1.64.8"
+backend = "aqua:golangci/golangci-lint"
+
+[[tools.gradle]]
+version = "7.6.6"
+backend = "aqua:gradle/gradle"
+
+[[tools.java]]
+version = "corretto-11.0.29.7.1"
+backend = "core:java"
+
+[[tools.node]]
+version = "20.19.5"
+backend = "core:node"
+
+[[tools."npm:yarn"]]
+version = "1.22.22"
+backend = "npm:yarn"
+
+[[tools.pulumi]]
+version = "3.173.0"
+backend = "aqua:pulumi/pulumi"
+
+[tools.pulumi.platforms.macos-arm64]
+checksum = "sha512:6fca876022e812879ccff0d81f26ac269f06bf4d8ce8d4e492f20bdfbb0fa9255b7ab8752935e42bc5dd14470acef8a2a279ad1bd130a6355b84cbaccdc72171"
+size = 83950975
+url = "https://github.com/pulumi/pulumi/releases/download/v3.173.0/pulumi-v3.173.0-darwin-arm64.tar.gz"
+
+[[tools.python]]
+version = "3.11.8"
+backend = "core:python"
