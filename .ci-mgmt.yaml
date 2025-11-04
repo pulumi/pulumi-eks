@@ -15,7 +15,6 @@ env:
   AWS_REGION: us-west-2
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GOLANGCI_LINT_VERSION: v1.64.8
-  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   PROVIDER: eks
   PUBLISH_REPO_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}

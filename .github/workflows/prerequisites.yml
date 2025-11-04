@@ -108,7 +108,6 @@ jobs:
       run: make test_provider
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NODE_AUTH_TOKEN: ${{ steps.esc-secrets.outputs.NPM_TOKEN }}
         NPM_TOKEN: ${{ steps.esc-secrets.outputs.NPM_TOKEN }}
         PUBLISH_REPO_PASSWORD: ${{ steps.esc-secrets.outputs.OSSRH_PASSWORD }}
         PUBLISH_REPO_USERNAME: ${{ steps.esc-secrets.outputs.OSSRH_USERNAME }}
