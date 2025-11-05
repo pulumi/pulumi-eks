@@ -56,12 +56,15 @@ jobs:
       - uses: MOZGIII/install-ldid-action@v1
         with:
           tag: v2.1.5-procursus2
-      - name: Setup tools
-        uses: ./.github/actions/setup-tools
+      - name: Setup mise
+        uses: jdx/mise-action@v3
         with:
-          tools: pulumictl, go
-          # use per-platform/arch caches instead since we are doing cross-builds
-          cache-go: false
+          # Latest working version. See https://github.com/jdx/mise/discussions/6781
+          version: 2025.10.16
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          cache_key: "mise-{{platform}}-{{file_hash}}"
+          # only saving the cache in the prerequisites job
+          cache_save: false
       # Based on https://github.com/actions/cache/blob/main/examples.md#go---modules
       - name: Get GOCACHE
         id: gocache
@@ -105,7 +108,7 @@ jobs:
         run: make provider_dist-${{ matrix.platform.os }}-${{ matrix.platform.arch }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: pulumi-resource-eks-v${{ inputs.version }}-${{ matrix.platform.os }}-${{ matrix.platform.arch }}.tar.gz
           path: bin/pulumi-resource-eks-v${{ inputs.version }}-${{ matrix.platform.os }}-${{ matrix.platform.arch }}.tar.gz
