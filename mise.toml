@@ -1,5 +1,6 @@
 [tools]
 kubectl = "latest"
+pulumi = "latest"
 
 [settings]
 experimental = true
