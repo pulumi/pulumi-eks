@@ -27,8 +27,8 @@
     "bugs": "https://github.com/pulumi/pulumi-eks/issues",
     "dependencies": {
         "@iarna/toml": "^3.0.0",
-        "@pulumi/aws": "7.1.0",
-        "@pulumi/kubernetes": "4.19.0",
+        "@pulumi/aws": "7.11.0",
+        "@pulumi/kubernetes": "4.24.0",
         "@pulumi/pulumi": "^3.143.0",
         "https-proxy-agent": "^5.0.1",
         "ipaddr.js": "^2.2.0",
@@ -40,7 +40,7 @@
     "devDependencies": {
         "@babel/preset-env": "^7.23.9",
         "@babel/preset-typescript": "^7.23.3",
-        "@pulumi/eslint-plugin": "^0.2.0",
+        "@pulumi/eslint-plugin": "0.2.0",
         "@types/jest": "^29.5.11",
         "@types/js-yaml": "^4.0.5",
         "@types/netmask": "^1.0.30",
