@@ -4,6 +4,7 @@ install-kubectl: true
 major-version: 4
 template: generic
 test-folder: tests
+generate-nightly-test-workflow: true
 
 freeDiskSpaceBeforeTest: true
 
