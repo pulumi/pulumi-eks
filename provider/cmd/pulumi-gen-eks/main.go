@@ -845,6 +845,10 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterUpgradePolicy:ClusterUpgradePolicy", dependencies.Aws)},
 						Description: `The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".`,
 					},
+					"deletionProtection": {
+						TypeSpec:    schema.TypeSpec{Type: "boolean"},
+						Description: "Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.",
+					},
 				},
 				Methods: map[string]string{
 					"getKubeconfig": "eks:index:Cluster/getKubeconfig",

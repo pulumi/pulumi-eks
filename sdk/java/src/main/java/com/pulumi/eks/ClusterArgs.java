@@ -246,6 +246,21 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
+     * 
+     */
+    @Import(name="deletionProtection")
+    private @Nullable Output<Boolean> deletionProtection;
+
+    /**
+     * @return Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
+     * 
+     */
+    public Optional<Output<Boolean>> deletionProtection() {
+        return Optional.ofNullable(this.deletionProtection);
+    }
+
+    /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      * 
      */
@@ -1152,6 +1167,7 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.createInstanceRole = $.createInstanceRole;
         this.createOidcProvider = $.createOidcProvider;
         this.creationRoleProvider = $.creationRoleProvider;
+        this.deletionProtection = $.deletionProtection;
         this.desiredCapacity = $.desiredCapacity;
         this.enableConfigMapMutable = $.enableConfigMapMutable;
         this.enabledClusterLogTypes = $.enabledClusterLogTypes;
@@ -1418,6 +1434,27 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         public Builder creationRoleProvider(@Nullable CreationRoleProviderArgs creationRoleProvider) {
             $.creationRoleProvider = creationRoleProvider;
             return this;
+        }
+
+        /**
+         * @param deletionProtection Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder deletionProtection(@Nullable Output<Boolean> deletionProtection) {
+            $.deletionProtection = deletionProtection;
+            return this;
+        }
+
+        /**
+         * @param deletionProtection Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder deletionProtection(Boolean deletionProtection) {
+            return deletionProtection(Output.of(deletionProtection));
         }
 
         /**

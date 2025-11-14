@@ -152,6 +152,7 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["createInstanceRole"] = args ? args.createInstanceRole : undefined;
             resourceInputs["createOidcProvider"] = args ? args.createOidcProvider : undefined;
             resourceInputs["creationRoleProvider"] = args ? args.creationRoleProvider : undefined;
+            resourceInputs["deletionProtection"] = args ? args.deletionProtection : undefined;
             resourceInputs["desiredCapacity"] = args ? args.desiredCapacity : undefined;
             resourceInputs["enableConfigMapMutable"] = args ? args.enableConfigMapMutable : undefined;
             resourceInputs["enabledClusterLogTypes"] = args ? args.enabledClusterLogTypes : undefined;
@@ -331,6 +332,10 @@ export interface ClusterArgs {
      * Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
      */
     creationRoleProvider?: inputs.CreationRoleProviderArgs;
+    /**
+     * Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
+     */
+    deletionProtection?: pulumi.Input<boolean>;
     /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      */
