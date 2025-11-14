@@ -311,6 +311,12 @@ namespace Pulumi.Eks
         public Inputs.CreationRoleProviderArgs? CreationRoleProvider { get; set; }
 
         /// <summary>
+        /// Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
+        /// </summary>
+        [Input("deletionProtection")]
+        public Input<bool>? DeletionProtection { get; set; }
+
+        /// <summary>
         /// The number of worker nodes that should be running in the cluster. Defaults to 2.
         /// </summary>
         [Input("desiredCapacity")]
