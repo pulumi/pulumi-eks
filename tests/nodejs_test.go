@@ -1161,7 +1161,9 @@ func TestAccAutoModePreview(t *testing.T) {
 // However, since it creates a cluster that cannot be deleted, it is skipped
 // by default and only meant to be run manually.
 func TestAccDeletionPolicy(t *testing.T) {
-	t.Skip("skipping since it creates a cluster that cannot be deleted.")
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: path.Join(getExamples(t), "deletion-policy"),
@@ -1169,6 +1171,20 @@ func TestAccDeletionPolicy(t *testing.T) {
 				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(
 					info.Outputs["kubeconfig1"],
 				))
+			},
+			EditDirs: []integration.EditDir{
+				{
+					// Run the new program which has the cluster removed from the code.
+					Dir:           path.Join(getExamples(t), "deletion-policy", "step2"),
+					ExpectFailure: true, // we expect the up to fail because we can't remove the cluster
+					Additive:      true,
+				},
+				{
+					// We run it again with the cluster back in the code and disable deletion protection
+					// so it can be deleted by the test.
+					Dir:      path.Join(getExamples(t), "deletion-policy", "step3"),
+					Additive: true,
+				},
 			},
 		})
 
