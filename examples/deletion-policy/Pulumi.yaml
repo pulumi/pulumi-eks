@@ -1,0 +1,3 @@
+name: deletion-policy
+description: EKS cluster example with deletion policy
+runtime: nodejs

@@ -1157,6 +1157,40 @@ func TestAccAutoModePreview(t *testing.T) {
 	t.Logf("Preview:\n%s", previewResult.StdOut)
 }
 
+// TestAccDeletionPolicy tests that the EKS cluster can be deleted.
+// However, since it creates a cluster that cannot be deleted, it is skipped
+// by default and only meant to be run manually.
+func TestAccDeletionPolicy(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: path.Join(getExamples(t), "deletion-policy"),
+			ExtraRuntimeValidation: func(t *testing.T, info integration.RuntimeValidationStackInfo) {
+				utils.ValidateClusters(t, info.Deployment.Resources, utils.WithKubeConfigs(
+					info.Outputs["kubeconfig1"],
+				))
+			},
+			EditDirs: []integration.EditDir{
+				{
+					// Run the new program which has the cluster removed from the code.
+					Dir:           path.Join(getExamples(t), "deletion-policy", "step2"),
+					ExpectFailure: true, // we expect the up to fail because we can't remove the cluster
+					Additive:      true,
+				},
+				{
+					// We run it again with the cluster back in the code and disable deletion protection
+					// so it can be deleted by the test.
+					Dir:      path.Join(getExamples(t), "deletion-policy", "step3"),
+					Additive: true,
+				},
+			},
+		})
+
+	programTestWithExtraOptions(t, &test, nil)
+}
+
 func randomString(lenght int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
 	random := rand.New(rand.NewSource(uint64(time.Now().UnixNano())))

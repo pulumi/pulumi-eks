@@ -1,0 +1,16 @@
+{
+    "name": "deletion-policy",
+    "devDependencies": {
+        "typescript": "^4.0.0",
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "3.144.1",
+        "@pulumi/awsx": "2.19.0",
+        "@pulumi/aws": "7.10.0",
+        "@pulumi/eks": "latest"
+    },
+    "scripts": {
+        "build": "tsc"
+    }
+}

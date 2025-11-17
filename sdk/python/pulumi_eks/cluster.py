@@ -37,6 +37,7 @@ class ClusterArgs:
                  create_instance_role: Optional[builtins.bool] = None,
                  create_oidc_provider: Optional[pulumi.Input[builtins.bool]] = None,
                  creation_role_provider: Optional['CreationRoleProviderArgs'] = None,
+                 deletion_protection: Optional[pulumi.Input[builtins.bool]] = None,
                  desired_capacity: Optional[pulumi.Input[builtins.int]] = None,
                  enable_config_map_mutable: Optional[pulumi.Input[builtins.bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]] = None,
@@ -117,6 +118,7 @@ class ClusterArgs:
         :param 'CreationRoleProviderArgs' creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
                
                Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
+        :param pulumi.Input[builtins.bool] deletion_protection: Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
         :param pulumi.Input[builtins.int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[builtins.bool] enable_config_map_mutable: Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
                
@@ -294,6 +296,8 @@ class ClusterArgs:
             pulumi.set(__self__, "create_oidc_provider", create_oidc_provider)
         if creation_role_provider is not None:
             pulumi.set(__self__, "creation_role_provider", creation_role_provider)
+        if deletion_protection is not None:
+            pulumi.set(__self__, "deletion_protection", deletion_protection)
         if desired_capacity is not None:
             pulumi.set(__self__, "desired_capacity", desired_capacity)
         if enable_config_map_mutable is not None:
@@ -538,6 +542,18 @@ class ClusterArgs:
     @creation_role_provider.setter
     def creation_role_provider(self, value: Optional['CreationRoleProviderArgs']):
         pulumi.set(self, "creation_role_provider", value)
+
+    @property
+    @pulumi.getter(name="deletionProtection")
+    def deletion_protection(self) -> Optional[pulumi.Input[builtins.bool]]:
+        """
+        Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
+        """
+        return pulumi.get(self, "deletion_protection")
+
+    @deletion_protection.setter
+    def deletion_protection(self, value: Optional[pulumi.Input[builtins.bool]]):
+        pulumi.set(self, "deletion_protection", value)
 
     @property
     @pulumi.getter(name="desiredCapacity")
@@ -1206,6 +1222,7 @@ class Cluster(pulumi.ComponentResource):
                  create_instance_role: Optional[builtins.bool] = None,
                  create_oidc_provider: Optional[pulumi.Input[builtins.bool]] = None,
                  creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
+                 deletion_protection: Optional[pulumi.Input[builtins.bool]] = None,
                  desired_capacity: Optional[pulumi.Input[builtins.int]] = None,
                  enable_config_map_mutable: Optional[pulumi.Input[builtins.bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]] = None,
@@ -1308,6 +1325,7 @@ class Cluster(pulumi.ComponentResource):
         :param Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict'] creation_role_provider: The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
                
                Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
+        :param pulumi.Input[builtins.bool] deletion_protection: Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
         :param pulumi.Input[builtins.int] desired_capacity: The number of worker nodes that should be running in the cluster. Defaults to 2.
         :param pulumi.Input[builtins.bool] enable_config_map_mutable: Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
                
@@ -1516,6 +1534,7 @@ class Cluster(pulumi.ComponentResource):
                  create_instance_role: Optional[builtins.bool] = None,
                  create_oidc_provider: Optional[pulumi.Input[builtins.bool]] = None,
                  creation_role_provider: Optional[Union['CreationRoleProviderArgs', 'CreationRoleProviderArgsDict']] = None,
+                 deletion_protection: Optional[pulumi.Input[builtins.bool]] = None,
                  desired_capacity: Optional[pulumi.Input[builtins.int]] = None,
                  enable_config_map_mutable: Optional[pulumi.Input[builtins.bool]] = None,
                  enabled_cluster_log_types: Optional[pulumi.Input[Sequence[pulumi.Input[builtins.str]]]] = None,
@@ -1583,6 +1602,7 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["create_instance_role"] = create_instance_role
             __props__.__dict__["create_oidc_provider"] = create_oidc_provider
             __props__.__dict__["creation_role_provider"] = creation_role_provider
+            __props__.__dict__["deletion_protection"] = deletion_protection
             __props__.__dict__["desired_capacity"] = desired_capacity
             __props__.__dict__["enable_config_map_mutable"] = enable_config_map_mutable
             __props__.__dict__["enabled_cluster_log_types"] = enabled_cluster_log_types

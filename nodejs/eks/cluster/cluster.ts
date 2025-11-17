@@ -739,6 +739,7 @@ export function createCore(
                   }
                 : undefined,
             upgradePolicy: args.upgradePolicy,
+            deletionProtection: args.deletionProtection,
         },
         {
             parent,
@@ -1916,6 +1917,11 @@ export interface ClusterOptions {
      * The cluster's upgrade policy. Valid values are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
      */
     upgradePolicy?: aws.types.input.eks.ClusterUpgradePolicy;
+
+    /**
+     * Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
+     */
+    deletionProtection?: pulumi.Input<boolean>;
 }
 
 /**
