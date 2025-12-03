@@ -71,7 +71,7 @@ jobs:
         github_token: ${{ steps.esc-secrets.outputs.PULUMI_BOT_TOKEN }}
         cache_save: false
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+      uses: aws-actions/configure-aws-credentials@8b8c83f061aa565ad33187ddf2af0a8370d4d420 # v5.1.1
       with:
         aws-access-key-id: ${{ steps.esc-secrets.outputs.AWS_ACCESS_KEY_ID }}
         aws-region: us-east-2
