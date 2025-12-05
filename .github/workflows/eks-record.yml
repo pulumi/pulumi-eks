@@ -190,7 +190,7 @@ jobs:
         run: make install_nodejs_sdk
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-access-key-id: ${{ steps.esc-secrets.outputs.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ env.AWS_REGION }}
