@@ -1,6 +1,2 @@
 [tools]
-kubectl = "latest"
-pulumi = "latest"
-
-[settings]
-experimental = true
+kubectl = "1.34.3"
