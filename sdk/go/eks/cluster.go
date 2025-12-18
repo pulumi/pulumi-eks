@@ -167,8 +167,6 @@ type clusterArgs struct {
 	//
 	// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
 	CreationRoleProvider *CreationRoleProvider `pulumi:"creationRoleProvider"`
-	// Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
-	DeletionProtection *bool `pulumi:"deletionProtection"`
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity *int `pulumi:"desiredCapacity"`
 	// Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
@@ -416,8 +414,6 @@ type ClusterArgs struct {
 	//
 	// Note: This option is only supported with Pulumi nodejs programs. Please use `ProviderCredentialOpts` as an alternative instead.
 	CreationRoleProvider *CreationRoleProviderArgs
-	// Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
-	DeletionProtection pulumi.BoolPtrInput
 	// The number of worker nodes that should be running in the cluster. Defaults to 2.
 	DesiredCapacity pulumi.IntPtrInput
 	// Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
