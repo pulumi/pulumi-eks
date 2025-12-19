@@ -32,7 +32,7 @@ const opts: eks.ClusterOptions = {
     authenticationMode: "API",
 };
 
-const testARN: aws.ARN = "arn";
+const testARN: string = "arn";
 
 if (property === "instanceRoles") {
     if (n === 0) {
