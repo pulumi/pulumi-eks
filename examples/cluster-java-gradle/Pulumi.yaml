@@ -1,3 +1,0 @@
-name: cluster-java-gradle
-description: A minimal EKS cluster example that builds with Gradle
-runtime: java
