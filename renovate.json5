@@ -4,7 +4,7 @@
   packageRules: [
     {
       // Override default config: require dashboard approval for all dependencies
-      matchPackagePatterns: ["*"],
+      matchPackageNames: ["*"],
       dependencyDashboardApproval: true,
     },
     {
