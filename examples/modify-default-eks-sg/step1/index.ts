@@ -19,8 +19,7 @@ const defaultSecgroupResult = defaultSecgroupId.apply(id => {
     }, {async: true}));
 });
 
-// Import the default security group into Pulumi.
-// https://www.pulumi.com/docs/guides/adopting/import/#adopting-existing-resources
+// Update the default security group that was imported in the initial step.
 const defaultSecgroup = pulumi.all([
     cluster.core.cluster.name,
     cluster.core.vpcId,
@@ -35,6 +34,5 @@ const defaultSecgroup = pulumi.all([
         egress: [/*{ protocol: "-1", fromPort: 0, toPort: 0, cidrBlocks: ["0.0.0.0/0"]}*/],
         tags: sgResult.tags,
         vpcId,
-        // optional (but suggested): remove the import property after initial import is completed.
-    }, {import: sgResult.id});
+    });
 });
