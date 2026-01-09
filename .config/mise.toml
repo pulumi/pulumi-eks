@@ -2,7 +2,7 @@
 # You can create your own root-level mise.toml file to override/augment this. See https://mise.jdx.dev/configuration.html
 
 [env]
-_.source = "{{config_root}}/scripts/get-versions.sh"
+_.vfox-pulumi = { module_path = "provider" } # Sets GO_VERSION_MISE and PULUMI_VERSION_MISE
 PULUMI_HOME = "{{config_root}}/.pulumi"
 
 [tools]
@@ -27,6 +27,8 @@ golangci-lint = "1.64.8" # See note about about overrides if you need to customi
 [settings]
 experimental = true # Required for Go binaries (e.g. pulumictl).
 lockfile = false
+http_retries = 3
+pin = true # `mise use` should pin versions instead of defaulting to latest.
 
 [plugins]
 vfox-pulumi = "https://github.com/pulumi/vfox-pulumi"
