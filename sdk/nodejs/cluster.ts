@@ -50,85 +50,85 @@ export class Cluster extends pulumi.ComponentResource {
     /**
      * The name of the IAM role created for nodes managed by EKS Auto Mode. Defaults to an empty string.
      */
-    public /*out*/ readonly autoModeNodeRoleName!: pulumi.Output<string>;
+    declare public /*out*/ readonly autoModeNodeRoleName: pulumi.Output<string>;
     /**
      * The AWS resource provider.
      */
-    public /*out*/ readonly awsProvider!: pulumi.Output<pulumiAws.Provider>;
+    declare public /*out*/ readonly awsProvider: pulumi.Output<pulumiAws.Provider>;
     /**
      * The ID of the security group rule that gives node group access to the cluster API server. Defaults to an empty string if `skipDefaultSecurityGroups` is set to true.
      */
-    public /*out*/ readonly clusterIngressRuleId!: pulumi.Output<string>;
+    declare public /*out*/ readonly clusterIngressRuleId: pulumi.Output<string>;
     /**
      * The security group for the EKS cluster.
      */
-    public readonly clusterSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
+    declare public readonly clusterSecurityGroup: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
     /**
      * The cluster security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
      */
-    public /*out*/ readonly clusterSecurityGroupId!: pulumi.Output<string>;
+    declare public /*out*/ readonly clusterSecurityGroupId: pulumi.Output<string>;
     /**
      * The EKS cluster and its dependencies.
      */
-    public /*out*/ readonly core!: pulumi.Output<outputs.CoreData>;
+    declare public /*out*/ readonly core: pulumi.Output<outputs.CoreData>;
     /**
      * The default Node Group configuration, or undefined if `skipDefaultNodeGroup` was specified.
      */
-    public /*out*/ readonly defaultNodeGroup!: pulumi.Output<outputs.NodeGroupData | undefined>;
+    declare public /*out*/ readonly defaultNodeGroup: pulumi.Output<outputs.NodeGroupData | undefined>;
     /**
      * The name of the default node group's AutoScaling Group. Defaults to an empty string if `skipDefaultNodeGroup` is set to true.
      */
-    public /*out*/ readonly defaultNodeGroupAsgName!: pulumi.Output<string>;
+    declare public /*out*/ readonly defaultNodeGroupAsgName: pulumi.Output<string>;
     /**
      * The EKS cluster.
      */
-    public /*out*/ readonly eksCluster!: pulumi.Output<pulumiAws.eks.Cluster>;
+    declare public /*out*/ readonly eksCluster: pulumi.Output<pulumiAws.eks.Cluster>;
     /**
      * The ingress rule that gives node group access to cluster API server.
      */
-    public /*out*/ readonly eksClusterIngressRule!: pulumi.Output<pulumiAws.ec2.SecurityGroupRule | undefined>;
+    declare public /*out*/ readonly eksClusterIngressRule: pulumi.Output<pulumiAws.ec2.SecurityGroupRule | undefined>;
     /**
      * The ID of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
      */
-    public /*out*/ readonly fargateProfileId!: pulumi.Output<string>;
+    declare public /*out*/ readonly fargateProfileId: pulumi.Output<string>;
     /**
      * The status of the Fargate Profile. Defaults to an empty string if no Fargate profile is configured.
      */
-    public /*out*/ readonly fargateProfileStatus!: pulumi.Output<string>;
+    declare public /*out*/ readonly fargateProfileStatus: pulumi.Output<string>;
     /**
      * The service roles used by the EKS cluster. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      */
-    public readonly instanceRoles!: pulumi.Output<pulumiAws.iam.Role[]>;
+    declare public readonly instanceRoles: pulumi.Output<pulumiAws.iam.Role[]>;
     /**
      * A kubeconfig that can be used to connect to the EKS cluster.
      */
-    public /*out*/ readonly kubeconfig!: pulumi.Output<any>;
+    declare public /*out*/ readonly kubeconfig: pulumi.Output<any>;
     /**
      * A kubeconfig that can be used to connect to the EKS cluster as a JSON string.
      */
-    public /*out*/ readonly kubeconfigJson!: pulumi.Output<string>;
+    declare public /*out*/ readonly kubeconfigJson: pulumi.Output<string>;
     /**
      * The security group for the cluster's nodes.
      */
-    public /*out*/ readonly nodeSecurityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
+    declare public /*out*/ readonly nodeSecurityGroup: pulumi.Output<pulumiAws.ec2.SecurityGroup | undefined>;
     /**
      * The node security group ID of the EKS cluster. Returns the EKS created security group if `skipDefaultSecurityGroups` is set to true.
      */
-    public /*out*/ readonly nodeSecurityGroupId!: pulumi.Output<string>;
+    declare public /*out*/ readonly nodeSecurityGroupId: pulumi.Output<string>;
     /**
      * The OIDC Issuer of the EKS cluster (OIDC Provider URL without leading `https://`).
      *
      * This value can be used to associate kubernetes service accounts with IAM roles. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html.
      */
-    public /*out*/ readonly oidcIssuer!: pulumi.Output<string>;
+    declare public /*out*/ readonly oidcIssuer: pulumi.Output<string>;
     /**
      * The ARN of the IAM OpenID Connect Provider for the EKS cluster. Defaults to an empty string if no OIDC provider is configured.
      */
-    public /*out*/ readonly oidcProviderArn!: pulumi.Output<string>;
+    declare public /*out*/ readonly oidcProviderArn: pulumi.Output<string>;
     /**
      * Issuer URL for the OpenID Connect identity provider of the EKS cluster.
      */
-    public /*out*/ readonly oidcProviderUrl!: pulumi.Output<string>;
+    declare public /*out*/ readonly oidcProviderUrl: pulumi.Output<string>;
 
     /**
      * Create a Cluster resource with the given unique name, arguments, and options.
@@ -141,63 +141,63 @@ export class Cluster extends pulumi.ComponentResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            resourceInputs["accessEntries"] = args ? args.accessEntries : undefined;
-            resourceInputs["authenticationMode"] = args ? args.authenticationMode : undefined;
+            resourceInputs["accessEntries"] = args?.accessEntries;
+            resourceInputs["authenticationMode"] = args?.authenticationMode;
             resourceInputs["autoMode"] = args ? (args.autoMode ? inputs.autoModeOptionsArgsProvideDefaults(args.autoMode) : undefined) : undefined;
-            resourceInputs["bootstrapSelfManagedAddons"] = args ? args.bootstrapSelfManagedAddons : undefined;
-            resourceInputs["clusterSecurityGroup"] = args ? args.clusterSecurityGroup : undefined;
-            resourceInputs["clusterSecurityGroupTags"] = args ? args.clusterSecurityGroupTags : undefined;
-            resourceInputs["clusterTags"] = args ? args.clusterTags : undefined;
+            resourceInputs["bootstrapSelfManagedAddons"] = args?.bootstrapSelfManagedAddons;
+            resourceInputs["clusterSecurityGroup"] = args?.clusterSecurityGroup;
+            resourceInputs["clusterSecurityGroupTags"] = args?.clusterSecurityGroupTags;
+            resourceInputs["clusterTags"] = args?.clusterTags;
             resourceInputs["corednsAddonOptions"] = args ? (args.corednsAddonOptions ? inputs.coreDnsAddonOptionsArgsProvideDefaults(args.corednsAddonOptions) : undefined) : undefined;
-            resourceInputs["createInstanceRole"] = args ? args.createInstanceRole : undefined;
-            resourceInputs["createOidcProvider"] = args ? args.createOidcProvider : undefined;
-            resourceInputs["creationRoleProvider"] = args ? args.creationRoleProvider : undefined;
-            resourceInputs["deletionProtection"] = args ? args.deletionProtection : undefined;
-            resourceInputs["desiredCapacity"] = args ? args.desiredCapacity : undefined;
-            resourceInputs["enableConfigMapMutable"] = args ? args.enableConfigMapMutable : undefined;
-            resourceInputs["enabledClusterLogTypes"] = args ? args.enabledClusterLogTypes : undefined;
-            resourceInputs["encryptionConfigKeyArn"] = args ? args.encryptionConfigKeyArn : undefined;
-            resourceInputs["endpointPrivateAccess"] = args ? args.endpointPrivateAccess : undefined;
-            resourceInputs["endpointPublicAccess"] = args ? args.endpointPublicAccess : undefined;
-            resourceInputs["fargate"] = args ? args.fargate : undefined;
-            resourceInputs["gpu"] = args ? args.gpu : undefined;
-            resourceInputs["instanceProfileName"] = args ? args.instanceProfileName : undefined;
-            resourceInputs["instanceRole"] = args ? args.instanceRole : undefined;
-            resourceInputs["instanceRoles"] = args ? args.instanceRoles : undefined;
-            resourceInputs["instanceType"] = args ? args.instanceType : undefined;
-            resourceInputs["ipFamily"] = args ? args.ipFamily : undefined;
+            resourceInputs["createInstanceRole"] = args?.createInstanceRole;
+            resourceInputs["createOidcProvider"] = args?.createOidcProvider;
+            resourceInputs["creationRoleProvider"] = args?.creationRoleProvider;
+            resourceInputs["deletionProtection"] = args?.deletionProtection;
+            resourceInputs["desiredCapacity"] = args?.desiredCapacity;
+            resourceInputs["enableConfigMapMutable"] = args?.enableConfigMapMutable;
+            resourceInputs["enabledClusterLogTypes"] = args?.enabledClusterLogTypes;
+            resourceInputs["encryptionConfigKeyArn"] = args?.encryptionConfigKeyArn;
+            resourceInputs["endpointPrivateAccess"] = args?.endpointPrivateAccess;
+            resourceInputs["endpointPublicAccess"] = args?.endpointPublicAccess;
+            resourceInputs["fargate"] = args?.fargate;
+            resourceInputs["gpu"] = args?.gpu;
+            resourceInputs["instanceProfileName"] = args?.instanceProfileName;
+            resourceInputs["instanceRole"] = args?.instanceRole;
+            resourceInputs["instanceRoles"] = args?.instanceRoles;
+            resourceInputs["instanceType"] = args?.instanceType;
+            resourceInputs["ipFamily"] = args?.ipFamily;
             resourceInputs["kubeProxyAddonOptions"] = args ? (args.kubeProxyAddonOptions ? inputs.kubeProxyAddonOptionsArgsProvideDefaults(args.kubeProxyAddonOptions) : undefined) : undefined;
-            resourceInputs["kubernetesServiceIpAddressRange"] = args ? args.kubernetesServiceIpAddressRange : undefined;
-            resourceInputs["maxSize"] = args ? args.maxSize : undefined;
-            resourceInputs["minSize"] = args ? args.minSize : undefined;
-            resourceInputs["name"] = args ? args.name : undefined;
-            resourceInputs["nodeAmiId"] = args ? args.nodeAmiId : undefined;
-            resourceInputs["nodeAssociatePublicIpAddress"] = args ? args.nodeAssociatePublicIpAddress : undefined;
-            resourceInputs["nodeGroupOptions"] = args ? args.nodeGroupOptions : undefined;
-            resourceInputs["nodePublicKey"] = args ? args.nodePublicKey : undefined;
-            resourceInputs["nodeRootVolumeEncrypted"] = args ? args.nodeRootVolumeEncrypted : undefined;
-            resourceInputs["nodeRootVolumeSize"] = args ? args.nodeRootVolumeSize : undefined;
-            resourceInputs["nodeSecurityGroupTags"] = args ? args.nodeSecurityGroupTags : undefined;
-            resourceInputs["nodeSubnetIds"] = args ? args.nodeSubnetIds : undefined;
-            resourceInputs["nodeUserData"] = args ? args.nodeUserData : undefined;
-            resourceInputs["privateSubnetIds"] = args ? args.privateSubnetIds : undefined;
-            resourceInputs["providerCredentialOpts"] = args ? args.providerCredentialOpts : undefined;
-            resourceInputs["proxy"] = args ? args.proxy : undefined;
-            resourceInputs["publicAccessCidrs"] = args ? args.publicAccessCidrs : undefined;
-            resourceInputs["publicSubnetIds"] = args ? args.publicSubnetIds : undefined;
-            resourceInputs["roleMappings"] = args ? args.roleMappings : undefined;
-            resourceInputs["serviceRole"] = args ? args.serviceRole : undefined;
-            resourceInputs["skipDefaultNodeGroup"] = args ? args.skipDefaultNodeGroup : undefined;
-            resourceInputs["skipDefaultSecurityGroups"] = args ? args.skipDefaultSecurityGroups : undefined;
-            resourceInputs["storageClasses"] = args ? args.storageClasses : undefined;
-            resourceInputs["subnetIds"] = args ? args.subnetIds : undefined;
-            resourceInputs["tags"] = args ? args.tags : undefined;
-            resourceInputs["upgradePolicy"] = args ? args.upgradePolicy : undefined;
-            resourceInputs["useDefaultVpcCni"] = args ? args.useDefaultVpcCni : undefined;
-            resourceInputs["userMappings"] = args ? args.userMappings : undefined;
-            resourceInputs["version"] = args ? args.version : undefined;
+            resourceInputs["kubernetesServiceIpAddressRange"] = args?.kubernetesServiceIpAddressRange;
+            resourceInputs["maxSize"] = args?.maxSize;
+            resourceInputs["minSize"] = args?.minSize;
+            resourceInputs["name"] = args?.name;
+            resourceInputs["nodeAmiId"] = args?.nodeAmiId;
+            resourceInputs["nodeAssociatePublicIpAddress"] = args?.nodeAssociatePublicIpAddress;
+            resourceInputs["nodeGroupOptions"] = args?.nodeGroupOptions;
+            resourceInputs["nodePublicKey"] = args?.nodePublicKey;
+            resourceInputs["nodeRootVolumeEncrypted"] = args?.nodeRootVolumeEncrypted;
+            resourceInputs["nodeRootVolumeSize"] = args?.nodeRootVolumeSize;
+            resourceInputs["nodeSecurityGroupTags"] = args?.nodeSecurityGroupTags;
+            resourceInputs["nodeSubnetIds"] = args?.nodeSubnetIds;
+            resourceInputs["nodeUserData"] = args?.nodeUserData;
+            resourceInputs["privateSubnetIds"] = args?.privateSubnetIds;
+            resourceInputs["providerCredentialOpts"] = args?.providerCredentialOpts;
+            resourceInputs["proxy"] = args?.proxy;
+            resourceInputs["publicAccessCidrs"] = args?.publicAccessCidrs;
+            resourceInputs["publicSubnetIds"] = args?.publicSubnetIds;
+            resourceInputs["roleMappings"] = args?.roleMappings;
+            resourceInputs["serviceRole"] = args?.serviceRole;
+            resourceInputs["skipDefaultNodeGroup"] = args?.skipDefaultNodeGroup;
+            resourceInputs["skipDefaultSecurityGroups"] = args?.skipDefaultSecurityGroups;
+            resourceInputs["storageClasses"] = args?.storageClasses;
+            resourceInputs["subnetIds"] = args?.subnetIds;
+            resourceInputs["tags"] = args?.tags;
+            resourceInputs["upgradePolicy"] = args?.upgradePolicy;
+            resourceInputs["useDefaultVpcCni"] = args?.useDefaultVpcCni;
+            resourceInputs["userMappings"] = args?.userMappings;
+            resourceInputs["version"] = args?.version;
             resourceInputs["vpcCniOptions"] = args ? (args.vpcCniOptions ? inputs.vpcCniOptionsArgsProvideDefaults(args.vpcCniOptions) : undefined) : undefined;
-            resourceInputs["vpcId"] = args ? args.vpcId : undefined;
+            resourceInputs["vpcId"] = args?.vpcId;
             resourceInputs["autoModeNodeRoleName"] = undefined /*out*/;
             resourceInputs["awsProvider"] = undefined /*out*/;
             resourceInputs["clusterIngressRuleId"] = undefined /*out*/;
