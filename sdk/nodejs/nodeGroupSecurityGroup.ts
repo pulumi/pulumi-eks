@@ -27,11 +27,11 @@ export class NodeGroupSecurityGroup extends pulumi.ComponentResource {
     /**
      * The security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
      */
-    public /*out*/ readonly securityGroup!: pulumi.Output<pulumiAws.ec2.SecurityGroup>;
+    declare public /*out*/ readonly securityGroup: pulumi.Output<pulumiAws.ec2.SecurityGroup>;
     /**
      * The EKS cluster ingress rule.
      */
-    public /*out*/ readonly securityGroupRule!: pulumi.Output<pulumiAws.ec2.SecurityGroupRule>;
+    declare public /*out*/ readonly securityGroupRule: pulumi.Output<pulumiAws.ec2.SecurityGroupRule>;
 
     /**
      * Create a NodeGroupSecurityGroup resource with the given unique name, arguments, and options.
@@ -44,19 +44,19 @@ export class NodeGroupSecurityGroup extends pulumi.ComponentResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            if ((!args || args.clusterSecurityGroup === undefined) && !opts.urn) {
+            if (args?.clusterSecurityGroup === undefined && !opts.urn) {
                 throw new Error("Missing required property 'clusterSecurityGroup'");
             }
-            if ((!args || args.eksCluster === undefined) && !opts.urn) {
+            if (args?.eksCluster === undefined && !opts.urn) {
                 throw new Error("Missing required property 'eksCluster'");
             }
-            if ((!args || args.vpcId === undefined) && !opts.urn) {
+            if (args?.vpcId === undefined && !opts.urn) {
                 throw new Error("Missing required property 'vpcId'");
             }
-            resourceInputs["clusterSecurityGroup"] = args ? args.clusterSecurityGroup : undefined;
-            resourceInputs["eksCluster"] = args ? args.eksCluster : undefined;
-            resourceInputs["tags"] = args ? args.tags : undefined;
-            resourceInputs["vpcId"] = args ? args.vpcId : undefined;
+            resourceInputs["clusterSecurityGroup"] = args?.clusterSecurityGroup;
+            resourceInputs["eksCluster"] = args?.eksCluster;
+            resourceInputs["tags"] = args?.tags;
+            resourceInputs["vpcId"] = args?.vpcId;
             resourceInputs["securityGroup"] = undefined /*out*/;
             resourceInputs["securityGroupRule"] = undefined /*out*/;
         } else {

@@ -37,21 +37,21 @@ export class Addon extends pulumi.ComponentResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            if ((!args || args.addonName === undefined) && !opts.urn) {
+            if (args?.addonName === undefined && !opts.urn) {
                 throw new Error("Missing required property 'addonName'");
             }
-            if ((!args || args.cluster === undefined) && !opts.urn) {
+            if (args?.cluster === undefined && !opts.urn) {
                 throw new Error("Missing required property 'cluster'");
             }
-            resourceInputs["addonName"] = args ? args.addonName : undefined;
-            resourceInputs["addonVersion"] = args ? args.addonVersion : undefined;
-            resourceInputs["cluster"] = args ? args.cluster : undefined;
-            resourceInputs["configurationValues"] = args ? args.configurationValues : undefined;
-            resourceInputs["preserve"] = args ? args.preserve : undefined;
-            resourceInputs["resolveConflictsOnCreate"] = args ? args.resolveConflictsOnCreate : undefined;
-            resourceInputs["resolveConflictsOnUpdate"] = args ? args.resolveConflictsOnUpdate : undefined;
-            resourceInputs["serviceAccountRoleArn"] = args ? args.serviceAccountRoleArn : undefined;
-            resourceInputs["tags"] = args ? args.tags : undefined;
+            resourceInputs["addonName"] = args?.addonName;
+            resourceInputs["addonVersion"] = args?.addonVersion;
+            resourceInputs["cluster"] = args?.cluster;
+            resourceInputs["configurationValues"] = args?.configurationValues;
+            resourceInputs["preserve"] = args?.preserve;
+            resourceInputs["resolveConflictsOnCreate"] = args?.resolveConflictsOnCreate;
+            resourceInputs["resolveConflictsOnUpdate"] = args?.resolveConflictsOnUpdate;
+            resourceInputs["serviceAccountRoleArn"] = args?.serviceAccountRoleArn;
+            resourceInputs["tags"] = args?.tags;
         } else {
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
