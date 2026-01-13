@@ -71,18 +71,19 @@ jobs:
         major-version: 4
         set-env: 'PROVIDER_VERSION'
     - name: Cache examples generation
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5
       with:
         path: |
           .pulumi/examples-cache
         key: ${{ runner.os }}-${{ hashFiles('provider/go.sum') }}
     - name: Setup mise
-      uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3
+      uses: blampe/mise-action@blampe/plugins
       env:
         MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 30s
       with:
-        version: 2025.11.6
+        version: 2026.1.1
         github_token: ${{ steps.app-auth.outputs.token }}
+        plugin_install: https://github.com/pulumi/vfox-pulumi
         # only saving the cache in the prerequisites job
         cache_save: true
     - name: Setup Go Cache
