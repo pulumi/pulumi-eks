@@ -167,7 +167,7 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@b374ceb6168550de27c6eba92e01c1a774040e11 # v2.0.0
       - name: Download provider binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.PROVIDER }}-provider.tar.gz
           path: ${{ github.workspace }}/bin
@@ -180,7 +180,7 @@ jobs:
       - name: Update path
         run: echo "${{ github.workspace }}/bin" >> "$GITHUB_PATH"
       - name: Download SDK
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: nodejs-sdk.tar.gz
           path: ${{ github.workspace}}
