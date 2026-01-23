@@ -105,7 +105,7 @@ func rootCmd() *cobra.Command {
 	var outDir string
 	cmd := &cobra.Command{
 		Use:   Tool,
-		Short: "Pulumi Package Schema and SDK generator for pulumi-awsx",
+		Short: "Pulumi Package Schema and SDK generator for pulumi-eks",
 		Args: func(_ *cobra.Command, args []string) error {
 			if len(args) != 1 {
 				return fmt.Errorf("accepts %d arg(s), received %d", 1, len(args))
