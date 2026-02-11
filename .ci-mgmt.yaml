@@ -63,3 +63,5 @@ actions:
 releaseVerification:
   nodejs: examples/cluster
   dotnet: examples/cluster-cs
+
+useJavaPackageGenSdk: true
