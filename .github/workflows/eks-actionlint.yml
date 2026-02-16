@@ -17,6 +17,6 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Lint actions
-        uses: reviewdog/action-actionlint@v1.65.2
+        uses: reviewdog/action-actionlint@v1.70.0
         with:
           actionlint_flags: "-config-file .actionlint.yml"
