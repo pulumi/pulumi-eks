@@ -114,12 +114,10 @@ GEN_ENVS := PULUMI_HOME=$(GEN_PULUMI_HOME) PULUMI_CONVERT_EXAMPLES_CACHE_DIR=$(G
 
 generate_dotnet: .make/generate_dotnet
 build_dotnet: .make/build_dotnet
-.make/generate_dotnet: .make/mise_install bin/$(CODEGEN)
+.make/generate_dotnet: .make/mise_install .make/schema
 .make/generate_dotnet: | mise_env
-	$(GEN_ENVS) $(WORKING_DIR)/bin/$(CODEGEN) dotnet --out sdk/dotnet/
-	cd sdk/dotnet/ && \
-		printf "module fake_dotnet_module // Exclude this directory from Go tools\n\ngo 1.17\n" > go.mod && \
-		echo "$(PROVIDER_VERSION)" >version.txt
+	PULUMI_HOME=$(GEN_PULUMI_HOME) PULUMI_CONVERT_EXAMPLES_CACHE_DIR=$(GEN_PULUMI_CONVERT_EXAMPLES_CACHE_DIR) pulumi package gen-sdk provider/cmd/$(PROVIDER)/schema.json --version ${PROVIDER_VERSION} --language dotnet --out sdk/
+	printf "module fake_dotnet_module // Exclude this directory from Go tools\n\ngo 1.17\n" > sdk/dotnet/go.mod
 	@touch $@
 .make/build_dotnet: .make/generate_dotnet
 	cd sdk/dotnet/ && dotnet build
@@ -128,9 +126,9 @@ build_dotnet: .make/build_dotnet
 
 generate_go: .make/generate_go
 build_go: .make/build_go
-.make/generate_go: .make/mise_install bin/$(CODEGEN)
+.make/generate_go: .make/mise_install .make/schema
 .make/generate_go: | mise_env
-	$(GEN_ENVS) $(WORKING_DIR)/bin/$(CODEGEN) go --out sdk/go/
+	PULUMI_HOME=$(GEN_PULUMI_HOME) PULUMI_CONVERT_EXAMPLES_CACHE_DIR=$(GEN_PULUMI_CONVERT_EXAMPLES_CACHE_DIR) pulumi package gen-sdk provider/cmd/$(PROVIDER)/schema.json --version ${PROVIDER_VERSION} --language go --out sdk/
 	@touch $@
 .make/build_go: .make/generate_go
 	cd sdk && go list "$$(grep -e "^module" go.mod | cut -d ' ' -f 2)/go/..." | xargs -I {} bash -c 'go build {} && go clean -i {}'
@@ -156,9 +154,9 @@ build_java: .make/build_java
 
 generate_nodejs: .make/generate_nodejs
 build_nodejs: .make/build_nodejs
-.make/generate_nodejs: .make/mise_install bin/$(CODEGEN)
+.make/generate_nodejs: .make/mise_install .make/schema
 .make/generate_nodejs: | mise_env
-	$(GEN_ENVS) $(WORKING_DIR)/bin/$(CODEGEN) nodejs --out sdk/nodejs/
+	PULUMI_HOME=$(GEN_PULUMI_HOME) PULUMI_CONVERT_EXAMPLES_CACHE_DIR=$(GEN_PULUMI_CONVERT_EXAMPLES_CACHE_DIR) pulumi package gen-sdk provider/cmd/$(PROVIDER)/schema.json --version ${PROVIDER_VERSION} --language nodejs --out sdk/
 	printf "module fake_nodejs_module // Exclude this directory from Go tools\n\ngo 1.17\n" > sdk/nodejs/go.mod
 	@touch $@
 .make/build_nodejs: .make/generate_nodejs
@@ -171,11 +169,10 @@ build_nodejs: .make/build_nodejs
 
 generate_python: .make/generate_python
 build_python: .make/build_python
-.make/generate_python: .make/mise_install bin/$(CODEGEN)
+.make/generate_python: .make/mise_install .make/schema
 .make/generate_python: | mise_env
-	$(GEN_ENVS) $(WORKING_DIR)/bin/$(CODEGEN) python --out sdk/python/
+	PULUMI_HOME=$(GEN_PULUMI_HOME) PULUMI_CONVERT_EXAMPLES_CACHE_DIR=$(GEN_PULUMI_CONVERT_EXAMPLES_CACHE_DIR) pulumi package gen-sdk provider/cmd/$(PROVIDER)/schema.json --version ${PROVIDER_VERSION} --language python --out sdk/
 	printf "module fake_python_module // Exclude this directory from Go tools\n\ngo 1.17\n" > sdk/python/go.mod
-	cp README.md sdk/python/
 	@touch $@
 .make/build_python: .make/generate_python
 	cd sdk/python/ && \

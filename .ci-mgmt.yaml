@@ -65,3 +65,7 @@ releaseVerification:
   dotnet: examples/cluster-cs
 
 useJavaPackageGenSdk: true
+useDotnetPackageGenSdk: true
+useGoPackageGenSdk: true
+useNodejsPackageGenSdk: true
+usePythonPackageGenSdk: true
