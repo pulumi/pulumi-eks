@@ -24,6 +24,19 @@
         executionMode: "branch", // Only run once.
       },
     },
+    {
+      // Override first-party Pulumi dependencies to update only between 12am and 3am
+      matchManagers: ["gomod"],
+      matchPackageNames: ["github.com/pulumi/**", "!github.com/pulumi/terraform-plugin-sdk/v2"],
+      ignoreUnstable: false, // Accept latest.
+      matchDepTypes: ["require", "indirect"], // pkg can sometimes be an indirect dependency.
+
+      groupName: "first-party Pulumi dependencies",
+      groupSlug: "pulumi",
+      dependencyDashboardApproval: false,
+      "schedule": ["* 0-3 * * *"], // 
+      "updateNotScheduled": false,
+    },
   ],
   automerge: false
 }
