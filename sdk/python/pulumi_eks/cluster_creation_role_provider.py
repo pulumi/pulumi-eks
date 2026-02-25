@@ -61,6 +61,7 @@ class ClusterCreationRoleProvider(pulumi.ComponentResource):
         """
         ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a specific role to use for the creation of the EKS cluster different from the role being used to run the Pulumi deployment.
 
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         """
@@ -72,6 +73,7 @@ class ClusterCreationRoleProvider(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         ClusterCreationRoleProvider is a component that wraps creating a role provider that can be passed to the `Cluster`'s `creationRoleProvider`. This can be used to provide a specific role to use for the creation of the EKS cluster different from the role being used to run the Pulumi deployment.
+
 
         :param str resource_name: The name of the resource.
         :param ClusterCreationRoleProviderArgs args: The arguments to use to populate this resource's properties.

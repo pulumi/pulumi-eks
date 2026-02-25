@@ -70,6 +70,7 @@ class AccessEntry(dict):
 
         You have the following options for authorizing an IAM principal to access Kubernetes objects on your cluster: Kubernetes role-based access control (RBAC), Amazon EKS, or both.
         Kubernetes RBAC authorization requires you to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects, in addition to managing access entries. If you use Amazon EKS authorization exclusively, you don't need to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects.
+
         :param _builtins.str principal_arn: The IAM Principal ARN which requires Authentication access to the EKS cluster.
         :param Mapping[str, 'AccessPolicyAssociation'] access_policies: The access policies to associate to the access entry.
         :param Sequence[_builtins.str] kubernetes_groups: A list of groups within Kubernetes to which the IAM principal is mapped to.
@@ -175,6 +176,7 @@ class AccessPolicyAssociation(dict):
 
         See for more details:
         https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+
         :param 'pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs' access_scope: The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
         :param _builtins.str policy_arn: The ARN of the access policy to associate with the principal
         """
@@ -339,6 +341,7 @@ class ClusterNodeGroupOptions(dict):
                  version: Optional[_builtins.str] = None):
         """
         Describes the configuration options accepted by a cluster to create its own node groups.
+
         :param _builtins.str ami_id: The AMI ID to use for the worker nodes.
                
                Defaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.
@@ -1037,6 +1040,7 @@ class CoreData(dict):
                  vpc_cni: Optional['VpcCniAddon'] = None):
         """
         Defines the core set of data associated with an EKS cluster, including the network in which it runs.
+
         :param 'pulumi_aws.iam.Role' cluster_iam_role: The IAM Role attached to the EKS Cluster
         :param _builtins.str endpoint: The EKS cluster's Kubernetes API server endpoint.
         :param Sequence['pulumi_aws.iam.Role'] instance_roles: The IAM instance roles for the cluster's nodes.
@@ -1278,6 +1282,7 @@ class NodeGroupData(dict):
                  node_security_group: 'pulumi_aws.ec2.SecurityGroup'):
         """
         NodeGroupData describes the resources created for the given NodeGroup.
+
         :param 'pulumi_aws.autoscaling.Group' auto_scaling_group: The AutoScalingGroup for the node group.
         :param Sequence['pulumi_aws.ec2.SecurityGroup'] extra_node_security_groups: The additional security groups for the node group that captures user-specific rules.
         :param 'pulumi_aws.ec2.SecurityGroup' node_security_group: The security group for the node group to communicate with the cluster.
@@ -1342,6 +1347,7 @@ class NodeadmOptions(dict):
         MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
 
         See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+
         :param _builtins.str content: The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
         :param _builtins.str content_type: The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
         """
@@ -1375,6 +1381,7 @@ class Taint(dict):
                  value: _builtins.str):
         """
         Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
+
         :param _builtins.str effect: The effect of the taint.
         :param _builtins.str value: The value of the taint.
         """

@@ -59,6 +59,7 @@ class ManagedNodeGroupArgs:
                  version: Optional[pulumi.Input[_builtins.str]] = None):
         """
         The set of arguments for constructing a ManagedNodeGroup resource.
+
         :param pulumi.Input[Union['Cluster', 'CoreDataArgs']] cluster: The target EKS cluster.
         :param pulumi.Input[_builtins.str] ami_id: The AMI ID to use for the worker nodes.
                Defaults to the latest recommended EKS Optimized AMI from the AWS Systems Manager Parameter Store.
@@ -860,6 +861,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
 
         ```
 
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] ami_id: The AMI ID to use for the worker nodes.
@@ -1120,6 +1122,7 @@ class ManagedNodeGroup(pulumi.ComponentResource):
             }])
 
         ```
+
 
         :param str resource_name: The name of the resource.
         :param ManagedNodeGroupArgs args: The arguments to use to populate this resource's properties.

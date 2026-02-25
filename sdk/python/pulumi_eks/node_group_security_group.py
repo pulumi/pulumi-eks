@@ -26,6 +26,7 @@ class NodeGroupSecurityGroupArgs:
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None):
         """
         The set of arguments for constructing a NodeGroupSecurityGroup resource.
+
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group associated with the EKS cluster.
         :param pulumi.Input['pulumi_aws.eks.Cluster'] eks_cluster: The EKS cluster associated with the worker node group
         :param pulumi.Input[_builtins.str] vpc_id: The VPC in which to create the worker node group.
@@ -100,6 +101,7 @@ class NodeGroupSecurityGroup(pulumi.ComponentResource):
         """
         NodeGroupSecurityGroup is a component that wraps creating a security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
 
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group associated with the EKS cluster.
@@ -115,6 +117,7 @@ class NodeGroupSecurityGroup(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         NodeGroupSecurityGroup is a component that wraps creating a security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
+
 
         :param str resource_name: The name of the resource.
         :param NodeGroupSecurityGroupArgs args: The arguments to use to populate this resource's properties.

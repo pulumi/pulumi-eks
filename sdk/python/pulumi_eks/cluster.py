@@ -84,6 +84,7 @@ class ClusterArgs:
                  vpc_id: Optional[pulumi.Input[_builtins.str]] = None):
         """
         The set of arguments for constructing a Cluster resource.
+
         :param Mapping[str, 'AccessEntryArgs'] access_entries: Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
                
                See for more details:
@@ -1289,6 +1290,7 @@ class Cluster(pulumi.ComponentResource):
         ```
         <!--End PulumiCodeChooser -->
 
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param Mapping[str, Union['AccessEntryArgs', 'AccessEntryArgsDict']] access_entries: Access entries to add to the EKS cluster. They can be used to allow IAM principals to access the cluster. Access entries are only supported with authentication mode `API` or `API_AND_CONFIG_MAP`.
@@ -1506,6 +1508,7 @@ class Cluster(pulumi.ComponentResource):
          pulumi.export("kubeconfig", cluster.kubeconfig)
         ```
         <!--End PulumiCodeChooser -->
+
 
         :param str resource_name: The name of the resource.
         :param ClusterArgs args: The arguments to use to populate this resource's properties.

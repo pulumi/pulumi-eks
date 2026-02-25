@@ -102,6 +102,7 @@ class AccessEntryArgs:
 
         You have the following options for authorizing an IAM principal to access Kubernetes objects on your cluster: Kubernetes role-based access control (RBAC), Amazon EKS, or both.
         Kubernetes RBAC authorization requires you to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects, in addition to managing access entries. If you use Amazon EKS authorization exclusively, you don't need to create and manage Kubernetes Role , ClusterRole , RoleBinding , and ClusterRoleBinding objects.
+
         :param pulumi.Input[_builtins.str] principal_arn: The IAM Principal ARN which requires Authentication access to the EKS cluster.
         :param Mapping[str, pulumi.Input['AccessPolicyAssociationArgs']] access_policies: The access policies to associate to the access entry.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] kubernetes_groups: A list of groups within Kubernetes to which the IAM principal is mapped to.
@@ -222,6 +223,7 @@ class AccessPolicyAssociationArgs:
 
         See for more details:
         https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html
+
         :param pulumi.Input['pulumi_aws.eks.AccessPolicyAssociationAccessScopeArgs'] access_scope: The scope of the access policy association. This controls whether the access policy is scoped to the cluster or to a particular namespace.
         :param pulumi.Input[_builtins.str] policy_arn: The ARN of the access policy to associate with the principal
         """
@@ -283,6 +285,7 @@ class AutoModeOptionsArgs:
         Configuration Options for EKS Auto Mode. If EKS Auto Mode is enabled, AWS will manage cluster infrastructure on your behalf.
 
         For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/automode.html
+
         :param _builtins.bool enabled: Whether to enable EKS Auto Mode. If enabled, EKS will manage node pools, EBS volumes and Load Balancers for you.
                When enabled, the vpc-cni and kube-proxy will not be enabled by default because EKS Auto Mode includes pod networking capabilities.
         :param pulumi.Input['ClusterComputeConfigArgs'] compute_config: Compute configuration for EKS Auto Mode.
@@ -356,6 +359,7 @@ class ClusterComputeConfigArgs:
                  node_role_arn: Optional[pulumi.Input[_builtins.str]] = None):
         """
         Configuration for the compute capability of your EKS Auto Mode cluster.
+
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] node_pools: Configuration for node pools that defines the compute resources for your EKS Auto Mode cluster. Valid options are `general-purpose` and `system`.
                
                By default, the built-in `system` and `general-purpose` nodepools are enabled.
@@ -690,6 +694,7 @@ class ClusterNodeGroupOptionsArgs:
                  version: Optional[pulumi.Input[_builtins.str]] = None):
         """
         Describes the configuration options accepted by a cluster to create its own node groups.
+
         :param pulumi.Input[_builtins.str] ami_id: The AMI ID to use for the worker nodes.
                
                Defaults to the latest recommended EKS Optimized Linux AMI from the AWS Systems Manager Parameter Store.
@@ -1576,6 +1581,7 @@ class CoreDataArgs:
                  vpc_cni: Optional[pulumi.Input['VpcCniAddon']] = None):
         """
         Defines the core set of data associated with an EKS cluster, including the network in which it runs.
+
         :param pulumi.Input['pulumi_aws.iam.Role'] cluster_iam_role: The IAM Role attached to the EKS Cluster
         :param pulumi.Input[_builtins.str] endpoint: The EKS cluster's Kubernetes API server endpoint.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]] instance_roles: The IAM instance roles for the cluster's nodes.
@@ -2063,6 +2069,7 @@ class FargateProfileArgs:
                  subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         Defines how Kubernetes pods are executed in Fargate. See aws.eks.FargateProfileArgs for reference.
+
         :param pulumi.Input[_builtins.str] pod_execution_role_arn: Specify a custom role to use for executing pods in Fargate. Defaults to creating a new role with the `arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy` policy attached.
         :param pulumi.Input[Sequence[pulumi.Input['pulumi_aws.eks.FargateProfileSelectorArgs']]] selectors: Specify the namespace and label selectors to use for launching pods into Fargate.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] subnet_ids: Specify the subnets in which to execute Fargate tasks for pods. Defaults to the private subnets associated with the cluster.
@@ -2278,6 +2285,7 @@ class KubeconfigOptionsArgs:
         - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
         - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html
         - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+
         :param pulumi.Input[_builtins.str] profile_name: AWS credential profile name to always use instead of the default AWS credential provider chain.
                
                The profile is passed to kubeconfig as an authentication environment setting.
@@ -2343,6 +2351,7 @@ class NodeadmOptionsArgs:
         MIME document parts for nodeadm configuration. This can be shell scripts, nodeadm configuration or any other user data compatible script.
 
         See for more details: https://awslabs.github.io/amazon-eks-ami/nodeadm/.
+
         :param pulumi.Input[_builtins.str] content: The actual content of the MIME document part, such as shell script code or nodeadm configuration. Must be compatible with the specified contentType.
         :param pulumi.Input[_builtins.str] content_type: The MIME type of the content. Examples are `text/x-shellscript; charset="us-ascii"` for shell scripts, and `application/node.eks.aws` nodeadm configuration.
         """
@@ -2399,6 +2408,7 @@ class RoleMappingArgs:
                  username: pulumi.Input[_builtins.str]):
         """
         Describes a mapping from an AWS IAM role to a Kubernetes user and groups.
+
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] groups: A list of groups within Kubernetes to which the role is mapped.
         :param pulumi.Input[_builtins.str] role_arn: The ARN of the IAM role to add.
         :param pulumi.Input[_builtins.str] username: The user name within Kubernetes to map to the IAM role. By default, the user name is the ARN of the IAM role.
@@ -2513,6 +2523,7 @@ class StorageClassArgs:
                  zones: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         StorageClass describes the inputs to a single Kubernetes StorageClass provisioned by AWS. Any number of storage classes can be added to a cluster at creation time. One of these storage classes may be configured the default storage class for the cluster.
+
         :param pulumi.Input[_builtins.str] type: The EBS volume type.
         :param pulumi.Input[_builtins.bool] allow_volume_expansion: AllowVolumeExpansion shows whether the storage class allow volume expand.
         :param pulumi.Input[_builtins.bool] default: True if this storage class should be a default storage class for the cluster.
@@ -2708,6 +2719,7 @@ class TaintArgs:
                  value: pulumi.Input[_builtins.str]):
         """
         Represents a Kubernetes `taint` to apply to all Nodes in a NodeGroup. See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/.
+
         :param pulumi.Input[_builtins.str] effect: The effect of the taint.
         :param pulumi.Input[_builtins.str] value: The value of the taint.
         """
@@ -2764,6 +2776,7 @@ class UserMappingArgs:
                  username: pulumi.Input[_builtins.str]):
         """
         Describes a mapping from an AWS IAM user to a Kubernetes user and groups.
+
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] groups: A list of groups within Kubernetes to which the user is mapped to.
         :param pulumi.Input[_builtins.str] user_arn: The ARN of the IAM user to add.
         :param pulumi.Input[_builtins.str] username: The user name within Kubernetes to map to the IAM user. By default, the user name is the ARN of the IAM user.
@@ -2967,6 +2980,7 @@ class VpcCniOptionsArgs:
                  warm_prefix_target: Optional[pulumi.Input[_builtins.int]] = None):
         """
         Describes the configuration options available for the Amazon VPC CNI plugin for Kubernetes.
+
         :param pulumi.Input[_builtins.str] addon_version: The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
         :param pulumi.Input[_builtins.bool] cni_configure_rpfilter: Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         :param pulumi.Input[_builtins.bool] cni_custom_network_cfg: Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`

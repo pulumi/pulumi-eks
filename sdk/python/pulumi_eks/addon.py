@@ -31,6 +31,7 @@ class AddonArgs:
                  tags: Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None):
         """
         The set of arguments for constructing a Addon resource.
+
         :param pulumi.Input[_builtins.str] addon_name: Name of the EKS add-on. The name must match one of the names returned by describe-addon-versions.
         :param pulumi.Input['Cluster'] cluster: The target EKS cluster.
         :param pulumi.Input[_builtins.str] addon_version: The version of the EKS add-on. The version must match one of the versions returned by describe-addon-versions.
@@ -191,6 +192,7 @@ class Addon(pulumi.ComponentResource):
         Addon manages an EKS add-on.
         For more information about supported add-ons, see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
 
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] addon_name: Name of the EKS add-on. The name must match one of the names returned by describe-addon-versions.
@@ -214,6 +216,7 @@ class Addon(pulumi.ComponentResource):
         """
         Addon manages an EKS add-on.
         For more information about supported add-ons, see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
+
 
         :param str resource_name: The name of the resource.
         :param AddonArgs args: The arguments to use to populate this resource's properties.

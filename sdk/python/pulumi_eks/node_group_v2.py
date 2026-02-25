@@ -70,6 +70,7 @@ class NodeGroupV2Args:
                  version: Optional[pulumi.Input[_builtins.str]] = None):
         """
         The set of arguments for constructing a NodeGroupV2 resource.
+
         :param pulumi.Input[Union['Cluster', 'CoreDataArgs']] cluster: The target EKS cluster.
         :param pulumi.Input[_builtins.str] ami_id: The AMI ID to use for the worker nodes.
                
@@ -924,6 +925,7 @@ class NodeGroupV2(pulumi.ComponentResource):
         """
         NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
 
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] ami_id: The AMI ID to use for the worker nodes.
@@ -1055,6 +1057,7 @@ class NodeGroupV2(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
+
 
         :param str resource_name: The name of the resource.
         :param NodeGroupV2Args args: The arguments to use to populate this resource's properties.

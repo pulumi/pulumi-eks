@@ -49,6 +49,7 @@ class VpcCniAddonArgs:
                  warm_prefix_target: Optional[pulumi.Input[_builtins.int]] = None):
         """
         The set of arguments for constructing a VpcCniAddon resource.
+
         :param pulumi.Input[_builtins.str] cluster_name: The name of the EKS cluster.
         :param pulumi.Input[_builtins.str] addon_version: The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
         :param pulumi.Input[_builtins.str] cluster_version: The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
@@ -554,6 +555,7 @@ class VpcCniAddon(pulumi.ComponentResource):
         VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
         For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
 
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] addon_version: The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
@@ -621,6 +623,7 @@ class VpcCniAddon(pulumi.ComponentResource):
         """
         VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
         For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
+
 
         :param str resource_name: The name of the resource.
         :param VpcCniAddonArgs args: The arguments to use to populate this resource's properties.
