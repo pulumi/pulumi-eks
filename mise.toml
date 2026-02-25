@@ -1,2 +1,3 @@
 [tools]
+golangci-lint = "2.7.0"
 kubectl = "1.34.3"

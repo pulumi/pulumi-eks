@@ -97,7 +97,7 @@ func parseLanguage(text string) (Language, error) {
 			allLangStrings = append(allLangStrings, string(lang))
 		}
 		all := strings.Join(allLangStrings, ", ")
-		return "", fmt.Errorf(`Invalid language: %q, supported values include: %s`, text, all)
+		return "", fmt.Errorf(`invalid language: %q, supported values include: %s`, text, all)
 	}
 }
 
