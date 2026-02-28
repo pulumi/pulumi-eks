@@ -3,11 +3,16 @@
   extends: ["github>pulumi/renovate-config//default.json5"],
   packageRules: [
     {
+      // Override default config: require dashboard approval for all dependencies
+      matchPackageNames: ["*"],
+      dependencyDashboardApproval: true,
+    },
+    {
       matchDatasources: ["npm", "gomod"],
       matchPackageNames: ["@pulumi/aws", "github.com/pulumi/pulumi-aws/sdk/v7"],
       postUpgradeTasks: {
         commands: ["make renovate"],
-        executionMode: "branch", // Only run once. 
+        executionMode: "branch", // Only run once.
       },
       groupName: "upstream AWS dependencies",
       groupSlug: "aws",
