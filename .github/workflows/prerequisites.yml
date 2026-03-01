@@ -86,7 +86,7 @@ jobs:
         # only saving the cache in the prerequisites job
         cache_save: true
     - name: Setup Go Cache
-      uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6
+      uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6
       with:
         cache-dependency-path: |
           provider/*.sum
@@ -124,7 +124,7 @@ jobs:
         SIGNING_PASSWORD: ${{ steps.esc-secrets.outputs.JAVA_SIGNING_PASSWORD }}
         SLACK_WEBHOOK_URL: ${{ steps.esc-secrets.outputs.SLACK_WEBHOOK_URL }}
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+      uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
       env:
         CODECOV_TOKEN: ${{ steps.esc-secrets.outputs.CODECOV_TOKEN }}
     - if: inputs.is_pr

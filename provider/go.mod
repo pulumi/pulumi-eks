@@ -9,7 +9,7 @@ replace github.com/pulumi/pulumi-eks/sdk/v4 => ../sdk
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/pulumi/pulumi-dotnet/pulumi-language-dotnet/v3 v3.100.0
+	github.com/pulumi/pulumi-dotnet/pulumi-language-dotnet/v3 v3.101.0
 	github.com/pulumi/pulumi/pkg/v3 v3.220.0
 	github.com/pulumi/pulumi/sdk/v3 v3.220.0
 	github.com/spf13/cobra v1.10.1
