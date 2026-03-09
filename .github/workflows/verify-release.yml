@@ -76,7 +76,7 @@ jobs:
           ESC_ACTION_OIDC_REQUESTED_TOKEN_TYPE: urn:pulumi:token-type:access_token:organization
         id: esc-secrets
         name: Fetch secrets from ESC
-        uses: pulumi/esc-action@9eb774255b1a4afb7855678ae8d4a77359da0d9b
+        uses: pulumi/esc-action@2ef5eed2125c57f99bc3db2a675e33286ac9e590
       - name: Setup mise
         uses: jdx/mise-action@c1a019b8d2586943b4dbebc456323b516910e310
         with:
@@ -108,7 +108,7 @@ jobs:
           iex ((New-Object System.Net.WebClient).DownloadString('https://get.pulumi.com/esc/install.ps1'))
           Copy-Item "$env:USERPROFILE\.pulumi\bin\esc.exe" "C:\Windows\System32\esc.exe"
       - name: Export AWS Credentials
-        uses: pulumi/esc-action@9840934db12128a33f6afb60b17d9de8f7ec5519
+        uses: pulumi/esc-action@2ef5eed2125c57f99bc3db2a675e33286ac9e590
         env:
           PULUMI_ACCESS_TOKEN: ${{ steps.generate_pulumi_token.outputs.pulumi-access-token }}
         with:
