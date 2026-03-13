@@ -9,6 +9,8 @@ CODEGEN := pulumi-gen-$(PACK)
 PROVIDER := pulumi-resource-$(PACK)
 TESTPARALLELISM := 10
 GOTESTARGS := ""
+TESTTAGS ?= all
+GO_TEST_EXEC ?= go test
 WORKING_DIR := $(shell pwd)
 PULUMI_PROVIDER_BUILD_PARALLELISM ?=
 PULUMI_CONVERT := 0
@@ -246,9 +248,9 @@ bin/$(PROVIDER): .make/schema
 
 test: export PATH := $(WORKING_DIR)/bin:$(PATH)
 test:
-	cd tests && go test -v -tags=all -parallel $(TESTPARALLELISM) -timeout 2h $(value GOTESTARGS)
+	cd tests && $(GO_TEST_EXEC) -v -tags=$(TESTTAGS) -parallel $(TESTPARALLELISM) -timeout 2h $(value GOTESTARGS)
 .PHONY: test
-test_provider_cmd = cd provider && go test -v -short \
+test_provider_cmd = cd provider && $(GO_TEST_EXEC) -v -short \
 	-coverprofile="coverage.txt" \
 	-coverpkg="./...,github.com/hashicorp/terraform-provider-..." \
 	-parallel $(TESTPARALLELISM) \
