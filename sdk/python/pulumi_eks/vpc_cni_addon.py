@@ -21,34 +21,35 @@ __all__ = ['VpcCniAddonArgs', 'VpcCniAddon']
 class VpcCniAddonArgs:
     def __init__(__self__, *,
                  cluster_name: pulumi.Input[_builtins.str],
-                 addon_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 cluster_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 cni_configure_rpfilter: Optional[pulumi.Input[_builtins.bool]] = None,
-                 cni_custom_network_cfg: Optional[pulumi.Input[_builtins.bool]] = None,
-                 cni_external_snat: Optional[pulumi.Input[_builtins.bool]] = None,
-                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
-                 custom_network_config: Optional[pulumi.Input[_builtins.bool]] = None,
-                 disable_tcp_early_demux: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_network_policy: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_pod_eni: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_prefix_delegation: Optional[pulumi.Input[_builtins.bool]] = None,
-                 eni_config_label_def: Optional[pulumi.Input[_builtins.str]] = None,
-                 eni_mtu: Optional[pulumi.Input[_builtins.int]] = None,
-                 external_snat: Optional[pulumi.Input[_builtins.bool]] = None,
-                 log_file: Optional[pulumi.Input[_builtins.str]] = None,
-                 log_level: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_port_support: Optional[pulumi.Input[_builtins.bool]] = None,
+                 addon_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 cluster_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 cni_configure_rpfilter: pulumi.Input[Optional[_builtins.bool]] = None,
+                 cni_custom_network_cfg: pulumi.Input[Optional[_builtins.bool]] = None,
+                 cni_external_snat: pulumi.Input[Optional[_builtins.bool]] = None,
+                 configuration_values: pulumi.Input[Optional[Mapping[str, Any]]] = None,
+                 custom_network_config: pulumi.Input[Optional[_builtins.bool]] = None,
+                 disable_tcp_early_demux: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_network_policy: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_pod_eni: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_prefix_delegation: pulumi.Input[Optional[_builtins.bool]] = None,
+                 eni_config_label_def: pulumi.Input[Optional[_builtins.str]] = None,
+                 eni_mtu: pulumi.Input[Optional[_builtins.int]] = None,
+                 external_snat: pulumi.Input[Optional[_builtins.bool]] = None,
+                 log_file: pulumi.Input[Optional[_builtins.str]] = None,
+                 log_level: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_port_support: pulumi.Input[Optional[_builtins.bool]] = None,
                  resolve_conflicts_on_create: Optional['ResolveConflictsOnCreate'] = None,
                  resolve_conflicts_on_update: Optional['ResolveConflictsOnUpdate'] = None,
-                 security_context_privileged: Optional[pulumi.Input[_builtins.bool]] = None,
-                 service_account_role_arn: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
-                 veth_prefix: Optional[pulumi.Input[_builtins.str]] = None,
-                 warm_eni_target: Optional[pulumi.Input[_builtins.int]] = None,
-                 warm_ip_target: Optional[pulumi.Input[_builtins.int]] = None,
-                 warm_prefix_target: Optional[pulumi.Input[_builtins.int]] = None):
+                 security_context_privileged: pulumi.Input[Optional[_builtins.bool]] = None,
+                 service_account_role_arn: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
+                 veth_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 warm_eni_target: pulumi.Input[Optional[_builtins.int]] = None,
+                 warm_ip_target: pulumi.Input[Optional[_builtins.int]] = None,
+                 warm_prefix_target: pulumi.Input[Optional[_builtins.int]] = None):
         """
         The set of arguments for constructing a VpcCniAddon resource.
+
         :param pulumi.Input[_builtins.str] cluster_name: The name of the EKS cluster.
         :param pulumi.Input[_builtins.str] addon_version: The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
         :param pulumi.Input[_builtins.str] cluster_version: The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
@@ -177,79 +178,79 @@ class VpcCniAddonArgs:
 
     @_builtins.property
     @pulumi.getter(name="addonVersion")
-    def addon_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def addon_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
         """
         return pulumi.get(self, "addon_version")
 
     @addon_version.setter
-    def addon_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def addon_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "addon_version", value)
 
     @_builtins.property
     @pulumi.getter(name="clusterVersion")
-    def cluster_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def cluster_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
         """
         return pulumi.get(self, "cluster_version")
 
     @cluster_version.setter
-    def cluster_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def cluster_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "cluster_version", value)
 
     @_builtins.property
     @pulumi.getter(name="cniConfigureRpfilter")
-    def cni_configure_rpfilter(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def cni_configure_rpfilter(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
         """
         return pulumi.get(self, "cni_configure_rpfilter")
 
     @cni_configure_rpfilter.setter
-    def cni_configure_rpfilter(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def cni_configure_rpfilter(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "cni_configure_rpfilter", value)
 
     @_builtins.property
     @pulumi.getter(name="cniCustomNetworkCfg")
-    def cni_custom_network_cfg(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def cni_custom_network_cfg(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
         """
         return pulumi.get(self, "cni_custom_network_cfg")
 
     @cni_custom_network_cfg.setter
-    def cni_custom_network_cfg(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def cni_custom_network_cfg(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "cni_custom_network_cfg", value)
 
     @_builtins.property
     @pulumi.getter(name="cniExternalSnat")
-    def cni_external_snat(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def cni_external_snat(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
         """
         return pulumi.get(self, "cni_external_snat")
 
     @cni_external_snat.setter
-    def cni_external_snat(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def cni_external_snat(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "cni_external_snat", value)
 
     @_builtins.property
     @pulumi.getter(name="configurationValues")
-    def configuration_values(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
+    def configuration_values(self) -> pulumi.Input[Optional[Mapping[str, Any]]]:
         """
         Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
         """
         return pulumi.get(self, "configuration_values")
 
     @configuration_values.setter
-    def configuration_values(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
+    def configuration_values(self, value: pulumi.Input[Optional[Mapping[str, Any]]]):
         pulumi.set(self, "configuration_values", value)
 
     @_builtins.property
     @pulumi.getter(name="customNetworkConfig")
-    def custom_network_config(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def custom_network_config(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
 
@@ -258,24 +259,24 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "custom_network_config")
 
     @custom_network_config.setter
-    def custom_network_config(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def custom_network_config(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "custom_network_config", value)
 
     @_builtins.property
     @pulumi.getter(name="disableTcpEarlyDemux")
-    def disable_tcp_early_demux(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def disable_tcp_early_demux(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
         """
         return pulumi.get(self, "disable_tcp_early_demux")
 
     @disable_tcp_early_demux.setter
-    def disable_tcp_early_demux(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def disable_tcp_early_demux(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "disable_tcp_early_demux", value)
 
     @_builtins.property
     @pulumi.getter(name="enableNetworkPolicy")
-    def enable_network_policy(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enable_network_policy(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
 
@@ -284,36 +285,36 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "enable_network_policy")
 
     @enable_network_policy.setter
-    def enable_network_policy(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enable_network_policy(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enable_network_policy", value)
 
     @_builtins.property
     @pulumi.getter(name="enablePodEni")
-    def enable_pod_eni(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enable_pod_eni(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
         """
         return pulumi.get(self, "enable_pod_eni")
 
     @enable_pod_eni.setter
-    def enable_pod_eni(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enable_pod_eni(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enable_pod_eni", value)
 
     @_builtins.property
     @pulumi.getter(name="enablePrefixDelegation")
-    def enable_prefix_delegation(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enable_prefix_delegation(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
         """
         return pulumi.get(self, "enable_prefix_delegation")
 
     @enable_prefix_delegation.setter
-    def enable_prefix_delegation(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enable_prefix_delegation(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enable_prefix_delegation", value)
 
     @_builtins.property
     @pulumi.getter(name="eniConfigLabelDef")
-    def eni_config_label_def(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def eni_config_label_def(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
         Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
@@ -323,12 +324,12 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "eni_config_label_def")
 
     @eni_config_label_def.setter
-    def eni_config_label_def(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def eni_config_label_def(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "eni_config_label_def", value)
 
     @_builtins.property
     @pulumi.getter(name="eniMtu")
-    def eni_mtu(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def eni_mtu(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Used to configure the MTU size for attached ENIs. The valid range is from 576 to 9001.
 
@@ -337,12 +338,12 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "eni_mtu")
 
     @eni_mtu.setter
-    def eni_mtu(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def eni_mtu(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "eni_mtu", value)
 
     @_builtins.property
     @pulumi.getter(name="externalSnat")
-    def external_snat(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def external_snat(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
 
@@ -351,12 +352,12 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "external_snat")
 
     @external_snat.setter
-    def external_snat(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def external_snat(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "external_snat", value)
 
     @_builtins.property
     @pulumi.getter(name="logFile")
-    def log_file(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def log_file(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Specifies the file path used for logs.
 
@@ -365,12 +366,12 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "log_file")
 
     @log_file.setter
-    def log_file(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def log_file(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "log_file", value)
 
     @_builtins.property
     @pulumi.getter(name="logLevel")
-    def log_level(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def log_level(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Specifies the log level used for logs.
 
@@ -380,12 +381,12 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "log_level")
 
     @log_level.setter
-    def log_level(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def log_level(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "log_level", value)
 
     @_builtins.property
     @pulumi.getter(name="nodePortSupport")
-    def node_port_support(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def node_port_support(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
 
@@ -394,7 +395,7 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "node_port_support")
 
     @node_port_support.setter
-    def node_port_support(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def node_port_support(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "node_port_support", value)
 
     @_builtins.property
@@ -423,19 +424,19 @@ class VpcCniAddonArgs:
 
     @_builtins.property
     @pulumi.getter(name="securityContextPrivileged")
-    def security_context_privileged(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def security_context_privileged(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
         """
         return pulumi.get(self, "security_context_privileged")
 
     @security_context_privileged.setter
-    def security_context_privileged(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def security_context_privileged(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "security_context_privileged", value)
 
     @_builtins.property
     @pulumi.getter(name="serviceAccountRoleArn")
-    def service_account_role_arn(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def service_account_role_arn(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
 
@@ -446,24 +447,24 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "service_account_role_arn")
 
     @service_account_role_arn.setter
-    def service_account_role_arn(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def service_account_role_arn(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "service_account_role_arn", value)
 
     @_builtins.property
     @pulumi.getter
-    def tags(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]]:
+    def tags(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]]:
         """
         Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
         """
         return pulumi.get(self, "tags")
 
     @tags.setter
-    def tags(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]]):
+    def tags(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]]):
         pulumi.set(self, "tags", value)
 
     @_builtins.property
     @pulumi.getter(name="vethPrefix")
-    def veth_prefix(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def veth_prefix(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Specifies the veth prefix used to generate the host-side veth device name for the CNI.
 
@@ -474,12 +475,12 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "veth_prefix")
 
     @veth_prefix.setter
-    def veth_prefix(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def veth_prefix(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "veth_prefix", value)
 
     @_builtins.property
     @pulumi.getter(name="warmEniTarget")
-    def warm_eni_target(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def warm_eni_target(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Specifies the number of free elastic network interfaces (and all of their available IP addresses) that the ipamD daemon should attempt to keep available for pod assignment on the node.
 
@@ -488,31 +489,31 @@ class VpcCniAddonArgs:
         return pulumi.get(self, "warm_eni_target")
 
     @warm_eni_target.setter
-    def warm_eni_target(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def warm_eni_target(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "warm_eni_target", value)
 
     @_builtins.property
     @pulumi.getter(name="warmIpTarget")
-    def warm_ip_target(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def warm_ip_target(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
         """
         return pulumi.get(self, "warm_ip_target")
 
     @warm_ip_target.setter
-    def warm_ip_target(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def warm_ip_target(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "warm_ip_target", value)
 
     @_builtins.property
     @pulumi.getter(name="warmPrefixTarget")
-    def warm_prefix_target(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def warm_prefix_target(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
         """
         return pulumi.get(self, "warm_prefix_target")
 
     @warm_prefix_target.setter
-    def warm_prefix_target(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def warm_prefix_target(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "warm_prefix_target", value)
 
 
@@ -522,37 +523,38 @@ class VpcCniAddon(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 addon_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 cluster_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 cluster_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 cni_configure_rpfilter: Optional[pulumi.Input[_builtins.bool]] = None,
-                 cni_custom_network_cfg: Optional[pulumi.Input[_builtins.bool]] = None,
-                 cni_external_snat: Optional[pulumi.Input[_builtins.bool]] = None,
-                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
-                 custom_network_config: Optional[pulumi.Input[_builtins.bool]] = None,
-                 disable_tcp_early_demux: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_network_policy: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_pod_eni: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_prefix_delegation: Optional[pulumi.Input[_builtins.bool]] = None,
-                 eni_config_label_def: Optional[pulumi.Input[_builtins.str]] = None,
-                 eni_mtu: Optional[pulumi.Input[_builtins.int]] = None,
-                 external_snat: Optional[pulumi.Input[_builtins.bool]] = None,
-                 log_file: Optional[pulumi.Input[_builtins.str]] = None,
-                 log_level: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_port_support: Optional[pulumi.Input[_builtins.bool]] = None,
+                 addon_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 cluster_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 cluster_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 cni_configure_rpfilter: pulumi.Input[Optional[_builtins.bool]] = None,
+                 cni_custom_network_cfg: pulumi.Input[Optional[_builtins.bool]] = None,
+                 cni_external_snat: pulumi.Input[Optional[_builtins.bool]] = None,
+                 configuration_values: pulumi.Input[Optional[Mapping[str, Any]]] = None,
+                 custom_network_config: pulumi.Input[Optional[_builtins.bool]] = None,
+                 disable_tcp_early_demux: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_network_policy: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_pod_eni: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_prefix_delegation: pulumi.Input[Optional[_builtins.bool]] = None,
+                 eni_config_label_def: pulumi.Input[Optional[_builtins.str]] = None,
+                 eni_mtu: pulumi.Input[Optional[_builtins.int]] = None,
+                 external_snat: pulumi.Input[Optional[_builtins.bool]] = None,
+                 log_file: pulumi.Input[Optional[_builtins.str]] = None,
+                 log_level: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_port_support: pulumi.Input[Optional[_builtins.bool]] = None,
                  resolve_conflicts_on_create: Optional['ResolveConflictsOnCreate'] = None,
                  resolve_conflicts_on_update: Optional['ResolveConflictsOnUpdate'] = None,
-                 security_context_privileged: Optional[pulumi.Input[_builtins.bool]] = None,
-                 service_account_role_arn: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
-                 veth_prefix: Optional[pulumi.Input[_builtins.str]] = None,
-                 warm_eni_target: Optional[pulumi.Input[_builtins.int]] = None,
-                 warm_ip_target: Optional[pulumi.Input[_builtins.int]] = None,
-                 warm_prefix_target: Optional[pulumi.Input[_builtins.int]] = None,
+                 security_context_privileged: pulumi.Input[Optional[_builtins.bool]] = None,
+                 service_account_role_arn: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
+                 veth_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 warm_eni_target: pulumi.Input[Optional[_builtins.int]] = None,
+                 warm_ip_target: pulumi.Input[Optional[_builtins.int]] = None,
+                 warm_prefix_target: pulumi.Input[Optional[_builtins.int]] = None,
                  __props__=None):
         """
         VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
         For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
+
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -622,6 +624,7 @@ class VpcCniAddon(pulumi.ComponentResource):
         VpcCniAddon manages the configuration of the Amazon VPC CNI plugin for Kubernetes by leveraging the EKS managed add-on.
         For more information see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
 
+
         :param str resource_name: The name of the resource.
         :param VpcCniAddonArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -637,33 +640,33 @@ class VpcCniAddon(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 addon_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 cluster_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 cluster_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 cni_configure_rpfilter: Optional[pulumi.Input[_builtins.bool]] = None,
-                 cni_custom_network_cfg: Optional[pulumi.Input[_builtins.bool]] = None,
-                 cni_external_snat: Optional[pulumi.Input[_builtins.bool]] = None,
-                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
-                 custom_network_config: Optional[pulumi.Input[_builtins.bool]] = None,
-                 disable_tcp_early_demux: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_network_policy: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_pod_eni: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_prefix_delegation: Optional[pulumi.Input[_builtins.bool]] = None,
-                 eni_config_label_def: Optional[pulumi.Input[_builtins.str]] = None,
-                 eni_mtu: Optional[pulumi.Input[_builtins.int]] = None,
-                 external_snat: Optional[pulumi.Input[_builtins.bool]] = None,
-                 log_file: Optional[pulumi.Input[_builtins.str]] = None,
-                 log_level: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_port_support: Optional[pulumi.Input[_builtins.bool]] = None,
+                 addon_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 cluster_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 cluster_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 cni_configure_rpfilter: pulumi.Input[Optional[_builtins.bool]] = None,
+                 cni_custom_network_cfg: pulumi.Input[Optional[_builtins.bool]] = None,
+                 cni_external_snat: pulumi.Input[Optional[_builtins.bool]] = None,
+                 configuration_values: pulumi.Input[Optional[Mapping[str, Any]]] = None,
+                 custom_network_config: pulumi.Input[Optional[_builtins.bool]] = None,
+                 disable_tcp_early_demux: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_network_policy: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_pod_eni: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_prefix_delegation: pulumi.Input[Optional[_builtins.bool]] = None,
+                 eni_config_label_def: pulumi.Input[Optional[_builtins.str]] = None,
+                 eni_mtu: pulumi.Input[Optional[_builtins.int]] = None,
+                 external_snat: pulumi.Input[Optional[_builtins.bool]] = None,
+                 log_file: pulumi.Input[Optional[_builtins.str]] = None,
+                 log_level: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_port_support: pulumi.Input[Optional[_builtins.bool]] = None,
                  resolve_conflicts_on_create: Optional['ResolveConflictsOnCreate'] = None,
                  resolve_conflicts_on_update: Optional['ResolveConflictsOnUpdate'] = None,
-                 security_context_privileged: Optional[pulumi.Input[_builtins.bool]] = None,
-                 service_account_role_arn: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
-                 veth_prefix: Optional[pulumi.Input[_builtins.str]] = None,
-                 warm_eni_target: Optional[pulumi.Input[_builtins.int]] = None,
-                 warm_ip_target: Optional[pulumi.Input[_builtins.int]] = None,
-                 warm_prefix_target: Optional[pulumi.Input[_builtins.int]] = None,
+                 security_context_privileged: pulumi.Input[Optional[_builtins.bool]] = None,
+                 service_account_role_arn: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
+                 veth_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 warm_eni_target: pulumi.Input[Optional[_builtins.int]] = None,
+                 warm_ip_target: pulumi.Input[Optional[_builtins.int]] = None,
+                 warm_prefix_target: pulumi.Input[Optional[_builtins.int]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):

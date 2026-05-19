@@ -26,47 +26,48 @@ __all__ = ['NodeGroupArgs', 'NodeGroup']
 class NodeGroupArgs:
     def __init__(__self__, *,
                  cluster: pulumi.Input[Union['Cluster', 'CoreDataArgs']],
-                 ami_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 ami_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 bootstrap_extra_args: Optional[pulumi.Input[_builtins.str]] = None,
-                 bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
-                 cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
-                 cluster_ingress_rule_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 desired_capacity: Optional[pulumi.Input[_builtins.int]] = None,
-                 enable_detailed_monitoring: Optional[pulumi.Input[_builtins.bool]] = None,
-                 encrypt_root_block_device: Optional[pulumi.Input[_builtins.bool]] = None,
-                 extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
-                 gpu: Optional[pulumi.Input[_builtins.bool]] = None,
+                 ami_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 ami_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 auto_scaling_group_tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 bootstrap_extra_args: pulumi.Input[Optional[_builtins.str]] = None,
+                 bottlerocket_settings: pulumi.Input[Optional[Mapping[str, Any]]] = None,
+                 cloud_formation_tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 cluster_ingress_rule: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroupRule']] = None,
+                 cluster_ingress_rule_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 desired_capacity: pulumi.Input[Optional[_builtins.int]] = None,
+                 enable_detailed_monitoring: pulumi.Input[Optional[_builtins.bool]] = None,
+                 encrypt_root_block_device: pulumi.Input[Optional[_builtins.bool]] = None,
+                 extra_node_security_groups: pulumi.Input[Optional[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
+                 gpu: pulumi.Input[Optional[_builtins.bool]] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
-                 instance_profile_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 instance_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 key_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 kubelet_extra_args: Optional[pulumi.Input[_builtins.str]] = None,
-                 labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 max_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 min_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_associate_public_ip_address: Optional[pulumi.Input[_builtins.bool]] = None,
-                 node_public_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_root_volume_delete_on_termination: Optional[pulumi.Input[_builtins.bool]] = None,
-                 node_root_volume_encrypted: Optional[pulumi.Input[_builtins.bool]] = None,
-                 node_root_volume_iops: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_root_volume_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_root_volume_throughput: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_root_volume_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
-                 node_security_group_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 node_user_data: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_user_data_override: Optional[pulumi.Input[_builtins.str]] = None,
-                 nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]] = None,
-                 operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
-                 spot_price: Optional[pulumi.Input[_builtins.str]] = None,
-                 taints: Optional[pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]]] = None,
-                 version: Optional[pulumi.Input[_builtins.str]] = None):
+                 instance_profile_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 instance_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 key_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 kubelet_extra_args: pulumi.Input[Optional[_builtins.str]] = None,
+                 labels: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 max_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 min_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_associate_public_ip_address: pulumi.Input[Optional[_builtins.bool]] = None,
+                 node_public_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_root_volume_delete_on_termination: pulumi.Input[Optional[_builtins.bool]] = None,
+                 node_root_volume_encrypted: pulumi.Input[Optional[_builtins.bool]] = None,
+                 node_root_volume_iops: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_root_volume_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_root_volume_throughput: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_root_volume_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_security_group: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroup']] = None,
+                 node_security_group_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_subnet_ids: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 node_user_data: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_user_data_override: pulumi.Input[Optional[_builtins.str]] = None,
+                 nodeadm_extra_options: pulumi.Input[Optional[Sequence[pulumi.Input['NodeadmOptionsArgs']]]] = None,
+                 operating_system: pulumi.Input[Optional['OperatingSystem']] = None,
+                 spot_price: pulumi.Input[Optional[_builtins.str]] = None,
+                 taints: pulumi.Input[Optional[Mapping[str, pulumi.Input['TaintArgs']]]] = None,
+                 version: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a NodeGroup resource.
+
         :param pulumi.Input[Union['Cluster', 'CoreDataArgs']] cluster: The target EKS cluster.
         :param pulumi.Input[_builtins.str] ami_id: The AMI ID to use for the worker nodes.
                
@@ -277,7 +278,7 @@ class NodeGroupArgs:
 
     @_builtins.property
     @pulumi.getter(name="amiId")
-    def ami_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def ami_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The AMI ID to use for the worker nodes.
 
@@ -291,12 +292,12 @@ class NodeGroupArgs:
         return pulumi.get(self, "ami_id")
 
     @ami_id.setter
-    def ami_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def ami_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "ami_id", value)
 
     @_builtins.property
     @pulumi.getter(name="amiType")
-    def ami_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def ami_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The AMI Type to use for the worker nodes. 
 
@@ -307,12 +308,12 @@ class NodeGroupArgs:
         return pulumi.get(self, "ami_type")
 
     @ami_type.setter
-    def ami_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def ami_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "ami_type", value)
 
     @_builtins.property
     @pulumi.getter(name="autoScalingGroupTags")
-    def auto_scaling_group_tags(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def auto_scaling_group_tags(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
         The tags to apply to the NodeGroup's AutoScalingGroup in the CloudFormation Stack.
 
@@ -323,24 +324,24 @@ class NodeGroupArgs:
         return pulumi.get(self, "auto_scaling_group_tags")
 
     @auto_scaling_group_tags.setter
-    def auto_scaling_group_tags(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def auto_scaling_group_tags(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "auto_scaling_group_tags", value)
 
     @_builtins.property
     @pulumi.getter(name="bootstrapExtraArgs")
-    def bootstrap_extra_args(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bootstrap_extra_args(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
         """
         return pulumi.get(self, "bootstrap_extra_args")
 
     @bootstrap_extra_args.setter
-    def bootstrap_extra_args(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bootstrap_extra_args(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bootstrap_extra_args", value)
 
     @_builtins.property
     @pulumi.getter(name="bottlerocketSettings")
-    def bottlerocket_settings(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
+    def bottlerocket_settings(self) -> pulumi.Input[Optional[Mapping[str, Any]]]:
         """
         The configuration settings for Bottlerocket OS.
         The settings will get merged with the base settings the provider uses to configure Bottlerocket.
@@ -356,12 +357,12 @@ class NodeGroupArgs:
         return pulumi.get(self, "bottlerocket_settings")
 
     @bottlerocket_settings.setter
-    def bottlerocket_settings(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
+    def bottlerocket_settings(self, value: pulumi.Input[Optional[Mapping[str, Any]]]):
         pulumi.set(self, "bottlerocket_settings", value)
 
     @_builtins.property
     @pulumi.getter(name="cloudFormationTags")
-    def cloud_formation_tags(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def cloud_formation_tags(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
         The tags to apply to the CloudFormation Stack of the Worker NodeGroup.
 
@@ -370,48 +371,48 @@ class NodeGroupArgs:
         return pulumi.get(self, "cloud_formation_tags")
 
     @cloud_formation_tags.setter
-    def cloud_formation_tags(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def cloud_formation_tags(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "cloud_formation_tags", value)
 
     @_builtins.property
     @pulumi.getter(name="clusterIngressRule")
-    def cluster_ingress_rule(self) -> Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']]:
+    def cluster_ingress_rule(self) -> pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroupRule']]:
         """
         The ingress rule that gives node group access.
         """
         return pulumi.get(self, "cluster_ingress_rule")
 
     @cluster_ingress_rule.setter
-    def cluster_ingress_rule(self, value: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']]):
+    def cluster_ingress_rule(self, value: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroupRule']]):
         pulumi.set(self, "cluster_ingress_rule", value)
 
     @_builtins.property
     @pulumi.getter(name="clusterIngressRuleId")
-    def cluster_ingress_rule_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def cluster_ingress_rule_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The ID of the ingress rule that gives node group access.
         """
         return pulumi.get(self, "cluster_ingress_rule_id")
 
     @cluster_ingress_rule_id.setter
-    def cluster_ingress_rule_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def cluster_ingress_rule_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "cluster_ingress_rule_id", value)
 
     @_builtins.property
     @pulumi.getter(name="desiredCapacity")
-    def desired_capacity(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def desired_capacity(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         The number of worker nodes that should be running in the cluster. Defaults to 2.
         """
         return pulumi.get(self, "desired_capacity")
 
     @desired_capacity.setter
-    def desired_capacity(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def desired_capacity(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "desired_capacity", value)
 
     @_builtins.property
     @pulumi.getter(name="enableDetailedMonitoring")
-    def enable_detailed_monitoring(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enable_detailed_monitoring(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables/disables detailed monitoring of the EC2 instances.
 
@@ -424,24 +425,24 @@ class NodeGroupArgs:
         return pulumi.get(self, "enable_detailed_monitoring")
 
     @enable_detailed_monitoring.setter
-    def enable_detailed_monitoring(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enable_detailed_monitoring(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enable_detailed_monitoring", value)
 
     @_builtins.property
     @pulumi.getter(name="encryptRootBlockDevice")
-    def encrypt_root_block_device(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def encrypt_root_block_device(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Encrypt the root block device of the nodes in the node group.
         """
         return pulumi.get(self, "encrypt_root_block_device")
 
     @encrypt_root_block_device.setter
-    def encrypt_root_block_device(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def encrypt_root_block_device(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "encrypt_root_block_device", value)
 
     @_builtins.property
     @pulumi.getter(name="extraNodeSecurityGroups")
-    def extra_node_security_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]]:
+    def extra_node_security_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]]:
         """
         Extra security groups to attach on all nodes in this worker node group.
 
@@ -450,12 +451,12 @@ class NodeGroupArgs:
         return pulumi.get(self, "extra_node_security_groups")
 
     @extra_node_security_groups.setter
-    def extra_node_security_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]]):
+    def extra_node_security_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]]):
         pulumi.set(self, "extra_node_security_groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def gpu(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def gpu(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
 
@@ -470,7 +471,7 @@ class NodeGroupArgs:
         return pulumi.get(self, "gpu")
 
     @gpu.setter
-    def gpu(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def gpu(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "gpu", value)
 
     @_builtins.property
@@ -487,103 +488,103 @@ class NodeGroupArgs:
 
     @_builtins.property
     @pulumi.getter(name="instanceProfileName")
-    def instance_profile_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def instance_profile_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the IAM InstanceProfile to use on the NodeGroup. Properties instanceProfile and instanceProfileName are mutually exclusive.
         """
         return pulumi.get(self, "instance_profile_name")
 
     @instance_profile_name.setter
-    def instance_profile_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def instance_profile_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "instance_profile_name", value)
 
     @_builtins.property
     @pulumi.getter(name="instanceType")
-    def instance_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def instance_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         """
         return pulumi.get(self, "instance_type")
 
     @instance_type.setter
-    def instance_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def instance_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "instance_type", value)
 
     @_builtins.property
     @pulumi.getter(name="keyName")
-    def key_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def key_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the key pair to use for SSH access to worker nodes.
         """
         return pulumi.get(self, "key_name")
 
     @key_name.setter
-    def key_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def key_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "key_name", value)
 
     @_builtins.property
     @pulumi.getter(name="kubeletExtraArgs")
-    def kubelet_extra_args(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def kubelet_extra_args(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. Note that the `labels` and `taints` properties will be applied to this list (using `--node-labels` and `--register-with-taints` respectively) after to the explicit `kubeletExtraArgs`.
         """
         return pulumi.get(self, "kubelet_extra_args")
 
     @kubelet_extra_args.setter
-    def kubelet_extra_args(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def kubelet_extra_args(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "kubelet_extra_args", value)
 
     @_builtins.property
     @pulumi.getter
-    def labels(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def labels(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
         Custom k8s node labels to be attached to each worker node. Adds the given key/value pairs to the `--node-labels` kubelet argument.
         """
         return pulumi.get(self, "labels")
 
     @labels.setter
-    def labels(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def labels(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "labels", value)
 
     @_builtins.property
     @pulumi.getter(name="maxSize")
-    def max_size(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def max_size(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         The maximum number of worker nodes running in the cluster. Defaults to 2.
         """
         return pulumi.get(self, "max_size")
 
     @max_size.setter
-    def max_size(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def max_size(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "max_size", value)
 
     @_builtins.property
     @pulumi.getter(name="minSize")
-    def min_size(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def min_size(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         The minimum number of worker nodes running in the cluster. Defaults to 1.
         """
         return pulumi.get(self, "min_size")
 
     @min_size.setter
-    def min_size(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def min_size(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "min_size", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeAssociatePublicIpAddress")
-    def node_associate_public_ip_address(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def node_associate_public_ip_address(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether or not to auto-assign public IP addresses on the EKS worker nodes. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
         """
         return pulumi.get(self, "node_associate_public_ip_address")
 
     @node_associate_public_ip_address.setter
-    def node_associate_public_ip_address(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def node_associate_public_ip_address(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "node_associate_public_ip_address", value)
 
     @_builtins.property
     @pulumi.getter(name="nodePublicKey")
-    def node_public_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def node_public_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Public key material for SSH access to worker nodes. See allowed formats at:
         https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
@@ -592,84 +593,84 @@ class NodeGroupArgs:
         return pulumi.get(self, "node_public_key")
 
     @node_public_key.setter
-    def node_public_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def node_public_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "node_public_key", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeRootVolumeDeleteOnTermination")
-    def node_root_volume_delete_on_termination(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def node_root_volume_delete_on_termination(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the root block device should be deleted on termination of the instance. Defaults to true.
         """
         return pulumi.get(self, "node_root_volume_delete_on_termination")
 
     @node_root_volume_delete_on_termination.setter
-    def node_root_volume_delete_on_termination(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def node_root_volume_delete_on_termination(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "node_root_volume_delete_on_termination", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeRootVolumeEncrypted")
-    def node_root_volume_encrypted(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def node_root_volume_encrypted(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether to encrypt a cluster node's root volume. Defaults to false.
         """
         return pulumi.get(self, "node_root_volume_encrypted")
 
     @node_root_volume_encrypted.setter
-    def node_root_volume_encrypted(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def node_root_volume_encrypted(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "node_root_volume_encrypted", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeRootVolumeIops")
-    def node_root_volume_iops(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def node_root_volume_iops(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         The amount of provisioned IOPS. This is only valid with a volumeType of 'io1'.
         """
         return pulumi.get(self, "node_root_volume_iops")
 
     @node_root_volume_iops.setter
-    def node_root_volume_iops(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def node_root_volume_iops(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "node_root_volume_iops", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeRootVolumeSize")
-    def node_root_volume_size(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def node_root_volume_size(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         The size in GiB of a cluster node's root volume. Defaults to 20.
         """
         return pulumi.get(self, "node_root_volume_size")
 
     @node_root_volume_size.setter
-    def node_root_volume_size(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def node_root_volume_size(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "node_root_volume_size", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeRootVolumeThroughput")
-    def node_root_volume_throughput(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def node_root_volume_throughput(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Provisioned throughput performance in integer MiB/s for a cluster node's root volume. This is only valid with a volumeType of 'gp3'.
         """
         return pulumi.get(self, "node_root_volume_throughput")
 
     @node_root_volume_throughput.setter
-    def node_root_volume_throughput(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def node_root_volume_throughput(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "node_root_volume_throughput", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeRootVolumeType")
-    def node_root_volume_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def node_root_volume_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Configured EBS type for a cluster node's root volume. Default is 'gp2'. Supported values are 'standard', 'gp2', 'gp3', 'st1', 'sc1', 'io1'.
         """
         return pulumi.get(self, "node_root_volume_type")
 
     @node_root_volume_type.setter
-    def node_root_volume_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def node_root_volume_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "node_root_volume_type", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeSecurityGroup")
-    def node_security_group(self) -> Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]:
+    def node_security_group(self) -> pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroup']]:
         """
         The security group for the worker node group to communicate with the cluster.
 
@@ -683,12 +684,12 @@ class NodeGroupArgs:
         return pulumi.get(self, "node_security_group")
 
     @node_security_group.setter
-    def node_security_group(self, value: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]):
+    def node_security_group(self, value: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroup']]):
         pulumi.set(self, "node_security_group", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeSecurityGroupId")
-    def node_security_group_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def node_security_group_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The ID of the security group for the worker node group to communicate with the cluster.
 
@@ -702,12 +703,12 @@ class NodeGroupArgs:
         return pulumi.get(self, "node_security_group_id")
 
     @node_security_group_id.setter
-    def node_security_group_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def node_security_group_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "node_security_group_id", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeSubnetIds")
-    def node_subnet_ids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def node_subnet_ids(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         The set of subnets to override and use for the worker node group.
 
@@ -716,24 +717,24 @@ class NodeGroupArgs:
         return pulumi.get(self, "node_subnet_ids")
 
     @node_subnet_ids.setter
-    def node_subnet_ids(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def node_subnet_ids(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "node_subnet_ids", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeUserData")
-    def node_user_data(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def node_user_data(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node signals its readiness to the managing CloudFormation stack. This code must be a typical user data script: critically it must begin with an interpreter directive (i.e. a `#!`).
         """
         return pulumi.get(self, "node_user_data")
 
     @node_user_data.setter
-    def node_user_data(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def node_user_data(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "node_user_data", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeUserDataOverride")
-    def node_user_data_override(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def node_user_data_override(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User specified code to run on node startup. This code is expected to handle the full AWS EKS bootstrapping code and signal node readiness to the managing CloudFormation stack. This code must be a complete and executable user data script in bash (Linux) or powershell (Windows).
 
@@ -742,12 +743,12 @@ class NodeGroupArgs:
         return pulumi.get(self, "node_user_data_override")
 
     @node_user_data_override.setter
-    def node_user_data_override(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def node_user_data_override(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "node_user_data_override", value)
 
     @_builtins.property
     @pulumi.getter(name="nodeadmExtraOptions")
-    def nodeadm_extra_options(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]]:
+    def nodeadm_extra_options(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['NodeadmOptionsArgs']]]]:
         """
         Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
         The base settings the provider sets are:
@@ -764,12 +765,12 @@ class NodeGroupArgs:
         return pulumi.get(self, "nodeadm_extra_options")
 
     @nodeadm_extra_options.setter
-    def nodeadm_extra_options(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['NodeadmOptionsArgs']]]]):
+    def nodeadm_extra_options(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['NodeadmOptionsArgs']]]]):
         pulumi.set(self, "nodeadm_extra_options", value)
 
     @_builtins.property
     @pulumi.getter(name="operatingSystem")
-    def operating_system(self) -> Optional[pulumi.Input['OperatingSystem']]:
+    def operating_system(self) -> pulumi.Input[Optional['OperatingSystem']]:
         """
         The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
         Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
@@ -779,43 +780,43 @@ class NodeGroupArgs:
         return pulumi.get(self, "operating_system")
 
     @operating_system.setter
-    def operating_system(self, value: Optional[pulumi.Input['OperatingSystem']]):
+    def operating_system(self, value: pulumi.Input[Optional['OperatingSystem']]):
         pulumi.set(self, "operating_system", value)
 
     @_builtins.property
     @pulumi.getter(name="spotPrice")
-    def spot_price(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def spot_price(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Bidding price for spot instance. If set, only spot instances will be added as worker node.
         """
         return pulumi.get(self, "spot_price")
 
     @spot_price.setter
-    def spot_price(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def spot_price(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "spot_price", value)
 
     @_builtins.property
     @pulumi.getter
-    def taints(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]]]:
+    def taints(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input['TaintArgs']]]]:
         """
         Custom k8s node taints to be attached to each worker node. Adds the given taints to the `--register-with-taints` kubelet argument
         """
         return pulumi.get(self, "taints")
 
     @taints.setter
-    def taints(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input['TaintArgs']]]]):
+    def taints(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input['TaintArgs']]]]):
         pulumi.set(self, "taints", value)
 
     @_builtins.property
     @pulumi.getter
-    def version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
         """
         return pulumi.get(self, "version")
 
     @version.setter
-    def version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "version", value)
 
 
@@ -830,49 +831,50 @@ class NodeGroup(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 ami_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 ami_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 bootstrap_extra_args: Optional[pulumi.Input[_builtins.str]] = None,
-                 bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
-                 cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
-                 cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
-                 cluster_ingress_rule_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 desired_capacity: Optional[pulumi.Input[_builtins.int]] = None,
-                 enable_detailed_monitoring: Optional[pulumi.Input[_builtins.bool]] = None,
-                 encrypt_root_block_device: Optional[pulumi.Input[_builtins.bool]] = None,
-                 extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
-                 gpu: Optional[pulumi.Input[_builtins.bool]] = None,
+                 ami_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 ami_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 auto_scaling_group_tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 bootstrap_extra_args: pulumi.Input[Optional[_builtins.str]] = None,
+                 bottlerocket_settings: pulumi.Input[Optional[Mapping[str, Any]]] = None,
+                 cloud_formation_tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 cluster: pulumi.Input[Optional[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
+                 cluster_ingress_rule: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroupRule']] = None,
+                 cluster_ingress_rule_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 desired_capacity: pulumi.Input[Optional[_builtins.int]] = None,
+                 enable_detailed_monitoring: pulumi.Input[Optional[_builtins.bool]] = None,
+                 encrypt_root_block_device: pulumi.Input[Optional[_builtins.bool]] = None,
+                 extra_node_security_groups: pulumi.Input[Optional[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
+                 gpu: pulumi.Input[Optional[_builtins.bool]] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
-                 instance_profile_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 instance_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 key_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 kubelet_extra_args: Optional[pulumi.Input[_builtins.str]] = None,
-                 labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 max_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 min_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_associate_public_ip_address: Optional[pulumi.Input[_builtins.bool]] = None,
-                 node_public_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_root_volume_delete_on_termination: Optional[pulumi.Input[_builtins.bool]] = None,
-                 node_root_volume_encrypted: Optional[pulumi.Input[_builtins.bool]] = None,
-                 node_root_volume_iops: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_root_volume_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_root_volume_throughput: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_root_volume_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
-                 node_security_group_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 node_user_data: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_user_data_override: Optional[pulumi.Input[_builtins.str]] = None,
-                 nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
-                 operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
-                 spot_price: Optional[pulumi.Input[_builtins.str]] = None,
-                 taints: Optional[pulumi.Input[Mapping[str, pulumi.Input[Union['TaintArgs', 'TaintArgsDict']]]]] = None,
-                 version: Optional[pulumi.Input[_builtins.str]] = None,
+                 instance_profile_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 instance_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 key_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 kubelet_extra_args: pulumi.Input[Optional[_builtins.str]] = None,
+                 labels: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 max_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 min_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_associate_public_ip_address: pulumi.Input[Optional[_builtins.bool]] = None,
+                 node_public_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_root_volume_delete_on_termination: pulumi.Input[Optional[_builtins.bool]] = None,
+                 node_root_volume_encrypted: pulumi.Input[Optional[_builtins.bool]] = None,
+                 node_root_volume_iops: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_root_volume_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_root_volume_throughput: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_root_volume_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_security_group: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroup']] = None,
+                 node_security_group_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_subnet_ids: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 node_user_data: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_user_data_override: pulumi.Input[Optional[_builtins.str]] = None,
+                 nodeadm_extra_options: pulumi.Input[Optional[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
+                 operating_system: pulumi.Input[Optional['OperatingSystem']] = None,
+                 spot_price: pulumi.Input[Optional[_builtins.str]] = None,
+                 taints: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['TaintArgs', 'TaintArgsDict']]]]] = None,
+                 version: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
+
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -1001,6 +1003,7 @@ class NodeGroup(pulumi.ComponentResource):
         """
         NodeGroup is a component that wraps the AWS EC2 instances that provide compute capacity for an EKS cluster.
 
+
         :param str resource_name: The name of the resource.
         :param NodeGroupArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -1016,46 +1019,46 @@ class NodeGroup(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 ami_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 ami_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 auto_scaling_group_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 bootstrap_extra_args: Optional[pulumi.Input[_builtins.str]] = None,
-                 bottlerocket_settings: Optional[pulumi.Input[Mapping[str, Any]]] = None,
-                 cloud_formation_tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 cluster: Optional[pulumi.Input[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
-                 cluster_ingress_rule: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroupRule']] = None,
-                 cluster_ingress_rule_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 desired_capacity: Optional[pulumi.Input[_builtins.int]] = None,
-                 enable_detailed_monitoring: Optional[pulumi.Input[_builtins.bool]] = None,
-                 encrypt_root_block_device: Optional[pulumi.Input[_builtins.bool]] = None,
-                 extra_node_security_groups: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
-                 gpu: Optional[pulumi.Input[_builtins.bool]] = None,
+                 ami_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 ami_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 auto_scaling_group_tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 bootstrap_extra_args: pulumi.Input[Optional[_builtins.str]] = None,
+                 bottlerocket_settings: pulumi.Input[Optional[Mapping[str, Any]]] = None,
+                 cloud_formation_tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 cluster: pulumi.Input[Optional[Union['Cluster', Union['CoreDataArgs', 'CoreDataArgsDict']]]] = None,
+                 cluster_ingress_rule: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroupRule']] = None,
+                 cluster_ingress_rule_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 desired_capacity: pulumi.Input[Optional[_builtins.int]] = None,
+                 enable_detailed_monitoring: pulumi.Input[Optional[_builtins.bool]] = None,
+                 encrypt_root_block_device: pulumi.Input[Optional[_builtins.bool]] = None,
+                 extra_node_security_groups: pulumi.Input[Optional[Sequence[pulumi.Input['pulumi_aws.ec2.SecurityGroup']]]] = None,
+                 gpu: pulumi.Input[Optional[_builtins.bool]] = None,
                  instance_profile: Optional['pulumi_aws.iam.InstanceProfile'] = None,
-                 instance_profile_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 instance_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 key_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 kubelet_extra_args: Optional[pulumi.Input[_builtins.str]] = None,
-                 labels: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 max_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 min_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_associate_public_ip_address: Optional[pulumi.Input[_builtins.bool]] = None,
-                 node_public_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_root_volume_delete_on_termination: Optional[pulumi.Input[_builtins.bool]] = None,
-                 node_root_volume_encrypted: Optional[pulumi.Input[_builtins.bool]] = None,
-                 node_root_volume_iops: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_root_volume_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_root_volume_throughput: Optional[pulumi.Input[_builtins.int]] = None,
-                 node_root_volume_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
-                 node_security_group_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_subnet_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 node_user_data: Optional[pulumi.Input[_builtins.str]] = None,
-                 node_user_data_override: Optional[pulumi.Input[_builtins.str]] = None,
-                 nodeadm_extra_options: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
-                 operating_system: Optional[pulumi.Input['OperatingSystem']] = None,
-                 spot_price: Optional[pulumi.Input[_builtins.str]] = None,
-                 taints: Optional[pulumi.Input[Mapping[str, pulumi.Input[Union['TaintArgs', 'TaintArgsDict']]]]] = None,
-                 version: Optional[pulumi.Input[_builtins.str]] = None,
+                 instance_profile_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 instance_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 key_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 kubelet_extra_args: pulumi.Input[Optional[_builtins.str]] = None,
+                 labels: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 max_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 min_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_associate_public_ip_address: pulumi.Input[Optional[_builtins.bool]] = None,
+                 node_public_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_root_volume_delete_on_termination: pulumi.Input[Optional[_builtins.bool]] = None,
+                 node_root_volume_encrypted: pulumi.Input[Optional[_builtins.bool]] = None,
+                 node_root_volume_iops: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_root_volume_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_root_volume_throughput: pulumi.Input[Optional[_builtins.int]] = None,
+                 node_root_volume_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_security_group: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroup']] = None,
+                 node_security_group_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_subnet_ids: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 node_user_data: pulumi.Input[Optional[_builtins.str]] = None,
+                 node_user_data_override: pulumi.Input[Optional[_builtins.str]] = None,
+                 nodeadm_extra_options: pulumi.Input[Optional[Sequence[pulumi.Input[Union['NodeadmOptionsArgs', 'NodeadmOptionsArgsDict']]]]] = None,
+                 operating_system: pulumi.Input[Optional['OperatingSystem']] = None,
+                 spot_price: pulumi.Input[Optional[_builtins.str]] = None,
+                 taints: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['TaintArgs', 'TaintArgsDict']]]]] = None,
+                 version: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         pulumi.log.warn("""NodeGroup is deprecated: NodeGroup uses AWS EC2 LaunchConfiguration which has been deprecated by AWS and doesn't support the newest instance types. Please use NodeGroupV2 instead.""")
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
