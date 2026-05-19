@@ -232,7 +232,8 @@ lint.fix: upstream
 	exit $$LINT_EXIT
 
 .PHONY: lint lint.fix
-build_provider_cmd = OS=$(1) ARCH=$(2) OUT=$(3) yarn --cwd nodejs/eks build
+build_provider_cmd = set -x; \
+OS=$(1) ARCH=$(2) OUT=$(3) yarn --cwd nodejs/eks build
 
 provider: bin/$(PROVIDER)
 
