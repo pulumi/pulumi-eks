@@ -2,7 +2,7 @@ import * as pulumi from '@pulumi/pulumi';
 import * as awsInputs from "@pulumi/aws/types/input";
 import * as aws from '@pulumi/aws';
 import { Cluster } from './cluster';
-import { ManagedNodeGroup } from './managedNodeGroup';
+import { ManagedNodeGroup, ManagedNodeGroupArgs } from './managedNodeGroup';
 import { ComponentResource, ProviderResource, ResourceTransformArgs, ResourceTransformResult } from '@pulumi/pulumi';
 import { OperatingSystem } from './types/enums';
 import { NodeadmOptionsArgs } from './types/input';
@@ -189,7 +189,15 @@ export type ManagedNodeGroupOptions = Omit<
  */
 export function createManagedNodeGroup(name: string, args: ManagedNodeGroupOptions, parent?: ComponentResource, provider?: ProviderResource): ManagedNodeGroup {
     const cluster = parent ? parent : args.cluster.eksCluster.urn
-    return new ManagedNodeGroup(name, args, {
+    // ManagedNodeGroupOptions derives its node group fields from
+    // aws.eks.NodeGroupArgs, whose optional scalars are typed pulumi.Input<T |
+    // undefined> (the undefined lives inside the Input). The generated
+    // ManagedNodeGroupArgs types the same fields as pulumi.Input<T> | undefined
+    // (the undefined lives outside). The two are equivalent at runtime, since an
+    // Input that resolves to undefined behaves the same as an unset field, but
+    // they are not mutually assignable to the type checker. We reconcile the
+    // variance once at this boundary rather than narrowing every affected field.
+    return new ManagedNodeGroup(name, args as ManagedNodeGroupArgs, {
         provider,
         transforms: [
             (targs: ResourceTransformArgs): ResourceTransformResult => {
