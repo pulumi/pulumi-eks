@@ -836,6 +836,15 @@ function createNodeGroup(
         aws.ec2.getAmi(
             {
                 owners: ["self", "amazon"],
+                // Resolve deprecated AMIs too. AWS auto-deprecates every AMI two
+                // years after creation, and EKS-optimized AMIs are additionally
+                // deprecated as their Kubernetes version ages out, but a
+                // deprecated AMI is still available and launchable. When a user
+                // pins nodeAmiId to such an image the image-id filter must still
+                // find it; without includeDeprecated this lookup returns no
+                // results once the AMI is deprecated and node group creation
+                // fails even though the AMI is perfectly usable.
+                includeDeprecated: true,
                 filters: [
                     {
                         name: "image-id",
@@ -1317,6 +1326,15 @@ export function createNodeGroupV2(
         aws.ec2.getAmi(
             {
                 owners: ["self", "amazon"],
+                // Resolve deprecated AMIs too. AWS auto-deprecates every AMI two
+                // years after creation, and EKS-optimized AMIs are additionally
+                // deprecated as their Kubernetes version ages out, but a
+                // deprecated AMI is still available and launchable. When a user
+                // pins nodeAmiId to such an image the image-id filter must still
+                // find it; without includeDeprecated this lookup returns no
+                // results once the AMI is deprecated and node group creation
+                // fails even though the AMI is perfectly usable.
+                includeDeprecated: true,
                 filters: [
                     {
                         name: "image-id",
