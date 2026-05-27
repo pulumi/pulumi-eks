@@ -192,7 +192,7 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 		Name:        "eks",
 		Description: "Pulumi Amazon Web Services (AWS) EKS Components.",
 		License:     "Apache-2.0",
-		Keywords:    []string{"pulumi", "aws", "eks"},
+		Keywords:    []string{"pulumi", "aws", "eks", "kind/component"},
 		Homepage:    "https://pulumi.com",
 		Repository:  "https://github.com/pulumi/pulumi-eks",
 
