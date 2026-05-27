@@ -4,7 +4,8 @@
     "keywords": [
         "pulumi",
         "aws",
-        "eks"
+        "eks",
+        "kind/component"
     ],
     "homepage": "https://pulumi.com",
     "license": "Apache-2.0",
