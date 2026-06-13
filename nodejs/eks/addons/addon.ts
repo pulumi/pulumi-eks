@@ -24,7 +24,7 @@ import { Cluster } from "../cluster";
 export interface AddonOptions
     extends Omit<aws.eks.AddonArgs, "resolveConflicts" | "clusterName" | "configurationValues"> {
     cluster: Cluster;
-    configurationValues?: object;
+    configurationValues?: pulumi.Input<object>;
 }
 
 /**
@@ -37,17 +37,16 @@ export class Addon extends pulumi.ComponentResource {
     constructor(name: string, args: AddonOptions, opts?: pulumi.CustomResourceOptions) {
         const cluster = args.cluster;
 
-        super("eks:index:Addon", name, args, {
-            ...opts,
+        super("eks:index:Addon", name, args, pulumi.mergeOptions(opts, {
             parent: cluster,
-        });
+        }));
 
         const addon = new aws.eks.Addon(
             name,
             {
                 ...args,
                 clusterName: cluster.core.cluster.name,
-                configurationValues: JSON.stringify(args.configurationValues),
+                configurationValues: stringifyAddonConfiguration(args.configurationValues),
             },
             { parent: this, provider: opts?.provider },
         );
