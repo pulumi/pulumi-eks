@@ -84,7 +84,7 @@ export interface VpcCniAddonArgs {
     /**
      * The version of the addon to use. If not specified, the latest version of the addon for the cluster's Kubernetes version will be used.
      */
-    addonVersion?: pulumi.Input<string>;
+    addonVersion?: pulumi.Input<string | undefined>;
     /**
      * The name of the EKS cluster.
      */
@@ -92,85 +92,85 @@ export interface VpcCniAddonArgs {
     /**
      * The Kubernetes version of the cluster. This is used to determine the addon version to use if `addonVersion` is not specified.
      */
-    clusterVersion?: pulumi.Input<string>;
+    clusterVersion?: pulumi.Input<string | undefined>;
     /**
      * Specifies whether ipamd should configure rp filter for primary interface. Default is `false`.
      */
-    cniConfigureRpfilter?: pulumi.Input<boolean>;
+    cniConfigureRpfilter?: pulumi.Input<boolean | undefined>;
     /**
      * Specifies that your pods may use subnets and security groups that are independent of your worker node's VPC configuration. By default, pods share the same subnet and security groups as the worker node's primary interface. Setting this variable to true causes ipamd to use the security groups and VPC subnet in a worker node's ENIConfig for elastic network interface allocation. You must create an ENIConfig custom resource for each subnet that your pods will reside in, and then annotate or label each worker node to use a specific ENIConfig (multiple worker nodes can be annotated or labelled with the same ENIConfig). Worker nodes can only be annotated with a single ENIConfig at a time, and the subnet in the ENIConfig must belong to the same Availability Zone that the worker node resides in. For more information, see CNI Custom Networking in the Amazon EKS User Guide. Default is `false`
      */
-    cniCustomNetworkCfg?: pulumi.Input<boolean>;
+    cniCustomNetworkCfg?: pulumi.Input<boolean | undefined>;
     /**
      * Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied. Disable SNAT if you need to allow inbound communication to your pods from external VPNs, direct connections, and external VPCs, and your pods do not need to access the Internet directly via an Internet Gateway. However, your nodes must be running in a private subnet and connected to the internet through an AWS NAT Gateway or another external NAT device. Default is `false`
      */
-    cniExternalSnat?: pulumi.Input<boolean>;
+    cniExternalSnat?: pulumi.Input<boolean | undefined>;
     /**
      * Custom configuration values for the vpc-cni addon. This object must match the schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
      */
-    configurationValues?: pulumi.Input<{[key: string]: any}>;
+    configurationValues?: pulumi.Input<{[key: string]: any} | undefined>;
     /**
      * Specifies that your pods may use subnets and security groups (within the same VPC as your control plane resources) that are independent of your cluster's `resourcesVpcConfig`.
      *
      * Defaults to false.
      */
-    customNetworkConfig?: pulumi.Input<boolean>;
+    customNetworkConfig?: pulumi.Input<boolean | undefined>;
     /**
      * Allows the kubelet's liveness and readiness probes to connect via TCP when pod ENI is enabled. This will slightly increase local TCP connection latency.
      */
-    disableTcpEarlyDemux?: pulumi.Input<boolean>;
+    disableTcpEarlyDemux?: pulumi.Input<boolean | undefined>;
     /**
      * Enables using Kubernetes network policies. In Kubernetes, by default, all pod-to-pod communication is allowed. Communication can be restricted with Kubernetes NetworkPolicy objects.
      *
      * See for more information: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
      */
-    enableNetworkPolicy?: pulumi.Input<boolean>;
+    enableNetworkPolicy?: pulumi.Input<boolean | undefined>;
     /**
      * Specifies whether to allow IPAMD to add the `vpc.amazonaws.com/has-trunk-attached` label to the node if the instance has capacity to attach an additional ENI. Default is `false`. If using liveness and readiness probes, you will also need to disable TCP early demux.
      */
-    enablePodEni?: pulumi.Input<boolean>;
+    enablePodEni?: pulumi.Input<boolean | undefined>;
     /**
      * IPAMD will start allocating (/28) prefixes to the ENIs with ENABLE_PREFIX_DELEGATION set to true.
      */
-    enablePrefixDelegation?: pulumi.Input<boolean>;
+    enablePrefixDelegation?: pulumi.Input<boolean | undefined>;
     /**
      * Specifies the ENI_CONFIG_LABEL_DEF environment variable value for worker nodes. This is used to tell Kubernetes to automatically apply the ENIConfig for each Availability Zone
      * Ref: https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html (step 5(c))
      *
      * Defaults to the official AWS CNI image in ECR.
      */
-    eniConfigLabelDef?: pulumi.Input<string>;
+    eniConfigLabelDef?: pulumi.Input<string | undefined>;
     /**
      * Used to configure the MTU size for attached ENIs. The valid range is from 576 to 9001.
      *
      * Defaults to 9001.
      */
-    eniMtu?: pulumi.Input<number>;
+    eniMtu?: pulumi.Input<number | undefined>;
     /**
      * Specifies whether an external NAT gateway should be used to provide SNAT of secondary ENI IP addresses. If set to true, the SNAT iptables rule and off-VPC IP rule are not applied, and these rules are removed if they have already been applied.
      *
      * Defaults to false.
      */
-    externalSnat?: pulumi.Input<boolean>;
+    externalSnat?: pulumi.Input<boolean | undefined>;
     /**
      * Specifies the file path used for logs.
      *
      * Defaults to "stdout" to emit Pod logs for `kubectl logs`.
      */
-    logFile?: pulumi.Input<string>;
+    logFile?: pulumi.Input<string | undefined>;
     /**
      * Specifies the log level used for logs.
      *
      * Defaults to "DEBUG"
      * Valid values: "DEBUG", "INFO", "WARN", "ERROR", or "FATAL".
      */
-    logLevel?: pulumi.Input<string>;
+    logLevel?: pulumi.Input<string | undefined>;
     /**
      * Specifies whether NodePort services are enabled on a worker node's primary network interface. This requires additional iptables rules and that the kernel's reverse path filter on the primary interface is set to loose.
      *
      * Defaults to true.
      */
-    nodePortSupport?: pulumi.Input<boolean>;
+    nodePortSupport?: pulumi.Input<boolean | undefined>;
     /**
      * How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are `NONE` and `OVERWRITE`. For more details see the [CreateAddon](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateAddon.html) API Docs.
      */
@@ -182,7 +182,7 @@ export interface VpcCniAddonArgs {
     /**
      * Pass privilege to containers securityContext. This is required when SELinux is enabled. This value will not be passed to the CNI config by default
      */
-    securityContextPrivileged?: pulumi.Input<boolean>;
+    securityContextPrivileged?: pulumi.Input<boolean | undefined>;
     /**
      * The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role.
      *
@@ -190,11 +190,11 @@ export interface VpcCniAddonArgs {
      *
      * Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see [Enabling IAM roles for service accounts on your cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) in the Amazon EKS User Guide.
      */
-    serviceAccountRoleArn?: pulumi.Input<string>;
+    serviceAccountRoleArn?: pulumi.Input<string | undefined>;
     /**
      * Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
      */
-    tags?: pulumi.Input<pulumi.Input<{[key: string]: pulumi.Input<string>}>[]>;
+    tags?: pulumi.Input<pulumi.Input<{[key: string]: pulumi.Input<string>}>[] | undefined>;
     /**
      * Specifies the veth prefix used to generate the host-side veth device name for the CNI.
      *
@@ -202,19 +202,19 @@ export interface VpcCniAddonArgs {
      *
      * Defaults to "eni".
      */
-    vethPrefix?: pulumi.Input<string>;
+    vethPrefix?: pulumi.Input<string | undefined>;
     /**
      * Specifies the number of free elastic network interfaces (and all of their available IP addresses) that the ipamD daemon should attempt to keep available for pod assignment on the node.
      *
      * Defaults to 1.
      */
-    warmEniTarget?: pulumi.Input<number>;
+    warmEniTarget?: pulumi.Input<number | undefined>;
     /**
      * Specifies the number of free IP addresses that the ipamD daemon should attempt to keep available for pod assignment on the node.
      */
-    warmIpTarget?: pulumi.Input<number>;
+    warmIpTarget?: pulumi.Input<number | undefined>;
     /**
      * WARM_PREFIX_TARGET will allocate one full (/28) prefix even if a single IP  is consumed with the existing prefix. Ref: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md
      */
-    warmPrefixTarget?: pulumi.Input<number>;
+    warmPrefixTarget?: pulumi.Input<number | undefined>;
 }
