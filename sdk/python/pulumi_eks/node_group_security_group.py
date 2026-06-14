@@ -23,9 +23,10 @@ class NodeGroupSecurityGroupArgs:
                  cluster_security_group: pulumi.Input['pulumi_aws.ec2.SecurityGroup'],
                  eks_cluster: pulumi.Input['pulumi_aws.eks.Cluster'],
                  vpc_id: pulumi.Input[_builtins.str],
-                 tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None):
+                 tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None):
         """
         The set of arguments for constructing a NodeGroupSecurityGroup resource.
+
         :param pulumi.Input['pulumi_aws.ec2.SecurityGroup'] cluster_security_group: The security group associated with the EKS cluster.
         :param pulumi.Input['pulumi_aws.eks.Cluster'] eks_cluster: The EKS cluster associated with the worker node group
         :param pulumi.Input[_builtins.str] vpc_id: The VPC in which to create the worker node group.
@@ -75,14 +76,14 @@ class NodeGroupSecurityGroupArgs:
 
     @_builtins.property
     @pulumi.getter
-    def tags(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def tags(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
         Key-value mapping of tags to apply to this security group.
         """
         return pulumi.get(self, "tags")
 
     @tags.setter
-    def tags(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def tags(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "tags", value)
 
 
@@ -92,13 +93,14 @@ class NodeGroupSecurityGroup(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
-                 eks_cluster: Optional[pulumi.Input['pulumi_aws.eks.Cluster']] = None,
-                 tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 vpc_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 cluster_security_group: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroup']] = None,
+                 eks_cluster: pulumi.Input[Optional['pulumi_aws.eks.Cluster']] = None,
+                 tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 vpc_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         NodeGroupSecurityGroup is a component that wraps creating a security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
+
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -116,6 +118,7 @@ class NodeGroupSecurityGroup(pulumi.ComponentResource):
         """
         NodeGroupSecurityGroup is a component that wraps creating a security group for node groups with the default ingress & egress rules required to connect and work with the EKS cluster security group.
 
+
         :param str resource_name: The name of the resource.
         :param NodeGroupSecurityGroupArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -131,10 +134,10 @@ class NodeGroupSecurityGroup(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 cluster_security_group: Optional[pulumi.Input['pulumi_aws.ec2.SecurityGroup']] = None,
-                 eks_cluster: Optional[pulumi.Input['pulumi_aws.eks.Cluster']] = None,
-                 tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 vpc_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 cluster_security_group: pulumi.Input[Optional['pulumi_aws.ec2.SecurityGroup']] = None,
+                 eks_cluster: pulumi.Input[Optional['pulumi_aws.eks.Cluster']] = None,
+                 tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 vpc_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
