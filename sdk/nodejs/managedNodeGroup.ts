@@ -276,14 +276,14 @@ export interface ManagedNodeGroupArgs {
      *
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
      */
-    amiId?: pulumi.Input<string>;
+    amiId?: pulumi.Input<string | undefined>;
     /**
      * Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to `AL2_x86_64`.
      * Note: `amiType` and `amiId` are mutually exclusive.
      *
      * See the AWS documentation (https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType) for valid AMI Types. This provider will only perform drift detection if a configuration value is provided.
      */
-    amiType?: pulumi.Input<string>;
+    amiType?: pulumi.Input<string | undefined>;
     /**
      * Additional args to pass directly to `/etc/eks/bootstrap.sh`. For details on available options, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/bootstrap.sh. Note that the `--apiserver-endpoint`, `--b64-cluster-ca` and `--kubelet-extra-args` flags are included automatically based on other configuration parameters.
      *
@@ -302,11 +302,11 @@ export interface ManagedNodeGroupArgs {
      *
      * For an overview of the available settings, see https://bottlerocket.dev/en/os/1.20.x/api/settings/.
      */
-    bottlerocketSettings?: pulumi.Input<{[key: string]: any}>;
+    bottlerocketSettings?: pulumi.Input<{[key: string]: any} | undefined>;
     /**
      * Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`. This provider will only perform drift detection if a configuration value is provided.
      */
-    capacityType?: pulumi.Input<string>;
+    capacityType?: pulumi.Input<string | undefined>;
     /**
      * The target EKS cluster.
      */
@@ -314,11 +314,11 @@ export interface ManagedNodeGroupArgs {
     /**
      * Name of the EKS Cluster.
      */
-    clusterName?: pulumi.Input<string>;
+    clusterName?: pulumi.Input<string | undefined>;
     /**
      * Disk size in GiB for worker nodes. Defaults to `20`. This provider will only perform drift detection if a configuration value is provided.
      */
-    diskSize?: pulumi.Input<number>;
+    diskSize?: pulumi.Input<number | undefined>;
     /**
      * Determines whether to enable Elastic Fabric Adapter (EFA) support for the node group. If multiple different instance types are configured for the node group, the first one will be used to determine the network interfaces to use. Requires `placementGroupAvailabilityZone` to be set.
      */
@@ -333,7 +333,7 @@ export interface ManagedNodeGroupArgs {
     /**
      * Force version update if existing pods are unable to be drained due to a pod disruption budget issue.
      */
-    forceUpdateVersion?: pulumi.Input<boolean>;
+    forceUpdateVersion?: pulumi.Input<boolean | undefined>;
     /**
      * Use the latest recommended EKS Optimized AMI with GPU support for the worker nodes.
      * Defaults to false.
@@ -342,7 +342,7 @@ export interface ManagedNodeGroupArgs {
      *
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html.
      */
-    gpu?: pulumi.Input<boolean>;
+    gpu?: pulumi.Input<boolean | undefined>;
     /**
      * Whether to ignore changes to the desired size of the Auto Scaling Group. This is useful when using Cluster Autoscaler.
      *
@@ -352,7 +352,7 @@ export interface ManagedNodeGroupArgs {
     /**
      * Set of instance types associated with the EKS Node Group. Defaults to `["t3.medium"]`. This provider will only perform drift detection if a configuration value is provided. Currently, the EKS API only accepts a single value in the set.
      */
-    instanceTypes?: pulumi.Input<pulumi.Input<string>[]>;
+    instanceTypes?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * Extra args to pass to the Kubelet. Corresponds to the options passed in the `--kubeletExtraArgs` flag to `/etc/eks/bootstrap.sh`. For example, '--port=10251 --address=0.0.0.0'. To escape characters in the extra argsvalue, wrap the value in quotes. For example, `kubeletExtraArgs = '--allowed-unsafe-sysctls "net.core.somaxconn"'`.
      * Note that this field conflicts with `launchTemplate`.
@@ -361,33 +361,33 @@ export interface ManagedNodeGroupArgs {
     /**
      * Key-value map of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed.
      */
-    labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    labels?: pulumi.Input<{[key: string]: pulumi.Input<string>} | undefined>;
     /**
      * Launch Template settings.
      *
      * Note: This field is mutually exclusive with `kubeletExtraArgs` and `bootstrapExtraArgs`.
      */
-    launchTemplate?: pulumi.Input<pulumiAws.types.input.eks.NodeGroupLaunchTemplate>;
+    launchTemplate?: pulumi.Input<pulumiAws.types.input.eks.NodeGroupLaunchTemplate | undefined>;
     /**
      * Name of the EKS Node Group. If omitted, this provider will assign a random, unique name. Conflicts with `nodeGroupNamePrefix`.
      */
-    nodeGroupName?: pulumi.Input<string>;
+    nodeGroupName?: pulumi.Input<string | undefined>;
     /**
      * Creates a unique name beginning with the specified prefix. Conflicts with `nodeGroupName`.
      */
-    nodeGroupNamePrefix?: pulumi.Input<string>;
+    nodeGroupNamePrefix?: pulumi.Input<string | undefined>;
     /**
      * The IAM Role that provides permissions for the EKS Node Group.
      *
      * Note, `nodeRole` and `nodeRoleArn` are mutually exclusive, and a single option must be used.
      */
-    nodeRole?: pulumi.Input<pulumiAws.iam.Role>;
+    nodeRole?: pulumi.Input<pulumiAws.iam.Role | undefined>;
     /**
      * Amazon Resource Name (ARN) of the IAM Role that provides permissions for the EKS Node Group.
      *
      * Note, `nodeRoleArn` and `nodeRole` are mutually exclusive, and a single option must be used.
      */
-    nodeRoleArn?: pulumi.Input<string>;
+    nodeRoleArn?: pulumi.Input<string | undefined>;
     /**
      * Extra nodeadm configuration sections to be added to the nodeadm user data. This can be shell scripts, nodeadm NodeConfig or any other user data compatible script. When configuring additional nodeadm NodeConfig sections, they'll be merged with the base settings the provider sets. You can overwrite base settings or provide additional settings this way.
      * The base settings the provider sets are:
@@ -401,26 +401,26 @@ export interface ManagedNodeGroupArgs {
      *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/
      *   - https://awslabs.github.io/amazon-eks-ami/nodeadm/doc/api/
      */
-    nodeadmExtraOptions?: pulumi.Input<pulumi.Input<inputs.NodeadmOptionsArgs>[]>;
+    nodeadmExtraOptions?: pulumi.Input<pulumi.Input<inputs.NodeadmOptionsArgs>[] | undefined>;
     /**
      * The type of OS to use for the node group. Will be used to determine the right EKS optimized AMI to use based on the instance types and gpu configuration.
      * Valid values are `RECOMMENDED`, `AL2`, `AL2023` and `Bottlerocket`.
      *
      * Defaults to the current recommended OS.
      */
-    operatingSystem?: pulumi.Input<enums.OperatingSystem>;
+    operatingSystem?: pulumi.Input<enums.OperatingSystem | undefined>;
     /**
      * The availability zone of the placement group for EFA support. Required if `enableEfaSupport` is true.
      */
-    placementGroupAvailabilityZone?: pulumi.Input<string>;
+    placementGroupAvailabilityZone?: pulumi.Input<string | undefined>;
     /**
      * AMI version of the EKS Node Group. Defaults to latest version for Kubernetes version.
      */
-    releaseVersion?: pulumi.Input<string>;
+    releaseVersion?: pulumi.Input<string | undefined>;
     /**
      * Remote access settings.
      */
-    remoteAccess?: pulumi.Input<pulumiAws.types.input.eks.NodeGroupRemoteAccess>;
+    remoteAccess?: pulumi.Input<pulumiAws.types.input.eks.NodeGroupRemoteAccess | undefined>;
     /**
      * Scaling settings.
      *
@@ -429,7 +429,7 @@ export interface ManagedNodeGroupArgs {
      *   - minSize: 1
      *   - maxSize: 2
      */
-    scalingConfig?: pulumi.Input<pulumiAws.types.input.eks.NodeGroupScalingConfig>;
+    scalingConfig?: pulumi.Input<pulumiAws.types.input.eks.NodeGroupScalingConfig | undefined>;
     /**
      * Identifiers of EC2 Subnets to associate with the EKS Node Group. These subnets must have the following resource tag: `kubernetes.io/cluster/CLUSTER_NAME` (where `CLUSTER_NAME` is replaced with the name of the EKS Cluster).
      *
@@ -440,20 +440,20 @@ export interface ManagedNodeGroupArgs {
      *
      * This default logic is based on the existing subnet IDs logic of this package: https://git.io/JeM11
      */
-    subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+    subnetIds?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * Key-value mapping of resource tags.
      */
-    tags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    tags?: pulumi.Input<{[key: string]: pulumi.Input<string>} | undefined>;
     /**
      * The Kubernetes taints to be applied to the nodes in the node group. Maximum of 50 taints per node group.
      */
-    taints?: pulumi.Input<pulumi.Input<pulumiAws.types.input.eks.NodeGroupTaint>[]>;
+    taints?: pulumi.Input<pulumi.Input<pulumiAws.types.input.eks.NodeGroupTaint>[] | undefined>;
     /**
      * User specified code to run on node startup. This is expected to handle the full AWS EKS node bootstrapping. If omitted, the provider will configure the user data.
      *
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-user-data.
      */
-    userData?: pulumi.Input<string>;
-    version?: pulumi.Input<string>;
+    userData?: pulumi.Input<string | undefined>;
+    version?: pulumi.Input<string | undefined>;
 }

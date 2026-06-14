@@ -289,21 +289,21 @@ export interface ClusterArgs {
     /**
      * Install default unmanaged add-ons, such as `aws-cni`, `kube-proxy`, and CoreDNS during cluster creation. If `false`, you must manually install desired add-ons. Changing this value will force a new cluster to be created. Defaults to `true`
      */
-    bootstrapSelfManagedAddons?: pulumi.Input<boolean>;
+    bootstrapSelfManagedAddons?: pulumi.Input<boolean | undefined>;
     /**
      * The security group to use for the cluster API endpoint. If not provided, a new security group will be created with full internet egress and ingress from node groups.
      *
      * Note: The security group resource should not contain any inline ingress or egress rules.
      */
-    clusterSecurityGroup?: pulumi.Input<pulumiAws.ec2.SecurityGroup>;
+    clusterSecurityGroup?: pulumi.Input<pulumiAws.ec2.SecurityGroup | undefined>;
     /**
      * The tags to apply to the cluster security group.
      */
-    clusterSecurityGroupTags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    clusterSecurityGroupTags?: pulumi.Input<{[key: string]: pulumi.Input<string>} | undefined>;
     /**
      * The tags to apply to the EKS cluster.
      */
-    clusterTags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    clusterTags?: pulumi.Input<{[key: string]: pulumi.Input<string>} | undefined>;
     /**
      * Options for managing the `coredns` addon.
      */
@@ -325,7 +325,7 @@ export interface ClusterArgs {
      *  - https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/
      *  - https://www.pulumi.com/registry/packages/aws/api-docs/eks/cluster/#enabling-iam-roles-for-service-accounts
      */
-    createOidcProvider?: pulumi.Input<boolean>;
+    createOidcProvider?: pulumi.Input<boolean | undefined>;
     /**
      * The IAM Role Provider used to create & authenticate against the EKS cluster. This role is given `[system:masters]` permission in K8S, See: https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
      *
@@ -335,22 +335,22 @@ export interface ClusterArgs {
     /**
      * Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
      */
-    deletionProtection?: pulumi.Input<boolean>;
+    deletionProtection?: pulumi.Input<boolean | undefined>;
     /**
      * The number of worker nodes that should be running in the cluster. Defaults to 2.
      */
-    desiredCapacity?: pulumi.Input<number>;
+    desiredCapacity?: pulumi.Input<number | undefined>;
     /**
      * Sets the 'enableConfigMapMutable' option on the cluster kubernetes provider.
      *
      * Applies updates to the aws-auth ConfigMap in place over a replace operation if set to true.
      * https://www.pulumi.com/registry/packages/kubernetes/api-docs/provider/#enableconfigmapmutable_nodejs
      */
-    enableConfigMapMutable?: pulumi.Input<boolean>;
+    enableConfigMapMutable?: pulumi.Input<boolean | undefined>;
     /**
      * Enable EKS control plane logging. This sends logs to cloudwatch. Possible list of values are: ["api", "audit", "authenticator", "controllerManager", "scheduler"]. By default it is off.
      */
-    enabledClusterLogTypes?: pulumi.Input<pulumi.Input<string>[]>;
+    enabledClusterLogTypes?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * KMS Key ARN to use with the encryption configuration for the cluster.
      *
@@ -358,19 +358,19 @@ export interface ClusterArgs {
      * See for more details:
      * - https://aws.amazon.com/about-aws/whats-new/2020/03/amazon-eks-adds-envelope-encryption-for-secrets-with-aws-kms/
      */
-    encryptionConfigKeyArn?: pulumi.Input<string>;
+    encryptionConfigKeyArn?: pulumi.Input<string | undefined>;
     /**
      * Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default is `false`.
      */
-    endpointPrivateAccess?: pulumi.Input<boolean>;
+    endpointPrivateAccess?: pulumi.Input<boolean | undefined>;
     /**
      * Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is `true`.
      */
-    endpointPublicAccess?: pulumi.Input<boolean>;
+    endpointPublicAccess?: pulumi.Input<boolean | undefined>;
     /**
      * Add support for launching pods in Fargate. Defaults to launching pods in the `default` namespace.  If specified, the default node group is skipped as though `skipDefaultNodeGroup: true` had been passed.
      */
-    fargate?: pulumi.Input<boolean | inputs.FargateProfileArgs>;
+    fargate?: pulumi.Input<boolean | inputs.FargateProfileArgs | undefined>;
     /**
      * Use the latest recommended EKS Optimized Linux AMI with GPU support for the worker nodes from the AWS Systems Manager Parameter Store.
      *
@@ -382,32 +382,32 @@ export interface ClusterArgs {
      * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
      * - https://docs.aws.amazon.com/eks/latest/userguide/retrieve-ami-id.html
      */
-    gpu?: pulumi.Input<boolean>;
+    gpu?: pulumi.Input<boolean | undefined>;
     /**
      * The default IAM InstanceProfile to use on the Worker NodeGroups, if one is not already set in the NodeGroup.
      */
-    instanceProfileName?: pulumi.Input<string>;
+    instanceProfileName?: pulumi.Input<string | undefined>;
     /**
      * This enables the simple case of only registering a *single* IAM instance role with the cluster, that is required to be shared by *all* node groups in their instance profiles.
      *
      * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
      */
-    instanceRole?: pulumi.Input<pulumiAws.iam.Role>;
+    instanceRole?: pulumi.Input<pulumiAws.iam.Role | undefined>;
     /**
      * This enables the advanced case of registering *many* IAM instance roles with the cluster for per node group IAM, instead of the simpler, shared case of `instanceRole`.
      *
      * Note: options `instanceRole` and `instanceRoles` are mutually exclusive.
      */
-    instanceRoles?: pulumi.Input<pulumi.Input<pulumiAws.iam.Role>[]>;
+    instanceRoles?: pulumi.Input<pulumi.Input<pulumiAws.iam.Role>[] | undefined>;
     /**
      * The instance type to use for the cluster's nodes. Defaults to "t3.medium".
      */
-    instanceType?: pulumi.Input<string>;
+    instanceType?: pulumi.Input<string | undefined>;
     /**
      * The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
      * You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
      */
-    ipFamily?: pulumi.Input<string>;
+    ipFamily?: pulumi.Input<string | undefined>;
     /**
      * Options for managing the `kube-proxy` addon.
      */
@@ -424,15 +424,15 @@ export interface ClusterArgs {
      * - Doesn't overlap with any CIDR block assigned to the VPC that you selected for VPC.
      * - Between /24 and /12.
      */
-    kubernetesServiceIpAddressRange?: pulumi.Input<string>;
+    kubernetesServiceIpAddressRange?: pulumi.Input<string | undefined>;
     /**
      * The maximum number of worker nodes running in the cluster. Defaults to 2.
      */
-    maxSize?: pulumi.Input<number>;
+    maxSize?: pulumi.Input<number | undefined>;
     /**
      * The minimum number of worker nodes running in the cluster. Defaults to 1.
      */
-    minSize?: pulumi.Input<number>;
+    minSize?: pulumi.Input<number | undefined>;
     /**
      * The cluster's physical resource name.
      *
@@ -440,7 +440,7 @@ export interface ClusterArgs {
      *
      * See for more details: https://www.pulumi.com/docs/intro/concepts/programming-model/#autonaming
      */
-    name?: pulumi.Input<string>;
+    name?: pulumi.Input<string | undefined>;
     /**
      * The AMI ID to use for the worker nodes.
      *
@@ -451,7 +451,7 @@ export interface ClusterArgs {
      * See for more details:
      * - https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html.
      */
-    nodeAmiId?: pulumi.Input<string>;
+    nodeAmiId?: pulumi.Input<string | undefined>;
     /**
      * Whether or not to auto-assign the EKS worker nodes public IP addresses. If this toggle is set to true, the EKS workers will be auto-assigned public IPs. If false, they will not be auto-assigned public IPs.
      */
@@ -465,29 +465,29 @@ export interface ClusterArgs {
      * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
      * If not provided, no SSH access is enabled on VMs.
      */
-    nodePublicKey?: pulumi.Input<string>;
+    nodePublicKey?: pulumi.Input<string | undefined>;
     /**
      * Encrypt the root block device of the nodes in the node group.
      */
-    nodeRootVolumeEncrypted?: pulumi.Input<boolean>;
+    nodeRootVolumeEncrypted?: pulumi.Input<boolean | undefined>;
     /**
      * The size in GiB of a cluster node's root volume. Defaults to 20.
      */
-    nodeRootVolumeSize?: pulumi.Input<number>;
+    nodeRootVolumeSize?: pulumi.Input<number | undefined>;
     /**
      * The tags to apply to the default `nodeSecurityGroup` created by the cluster.
      *
      * Note: The `nodeSecurityGroupTags` option and the node group option `nodeSecurityGroup` are mutually exclusive.
      */
-    nodeSecurityGroupTags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    nodeSecurityGroupTags?: pulumi.Input<{[key: string]: pulumi.Input<string>} | undefined>;
     /**
      * The subnets to use for worker nodes. Defaults to the value of subnetIds.
      */
-    nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+    nodeSubnetIds?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * Extra code to run on node startup. This code will run after the AWS EKS bootstrapping code and before the node signals its readiness to the managing CloudFormation stack. This code must be a typical user data script: critically it must begin with an interpreter directive (i.e. a `#!`).
      */
-    nodeUserData?: pulumi.Input<string>;
+    nodeUserData?: pulumi.Input<string | undefined>;
     /**
      * The set of private subnets to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
      *
@@ -505,7 +505,7 @@ export interface ClusterArgs {
      *
      * Also consider setting `nodeAssociatePublicIpAddress: false` for fully private workers.
      */
-    privateSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+    privateSubnetIds?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * The AWS provider credential options to scope the cluster's kubeconfig authentication when using a non-default credential chain.
      *
@@ -521,7 +521,7 @@ export interface ClusterArgs {
      * - https://www.pulumi.com/docs/intro/cloud-providers/aws/#configuration
      * - https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
      */
-    providerCredentialOpts?: pulumi.Input<inputs.KubeconfigOptionsArgs>;
+    providerCredentialOpts?: pulumi.Input<inputs.KubeconfigOptionsArgs | undefined>;
     /**
      * The HTTP(S) proxy to use within a proxied environment.
      *
@@ -543,7 +543,7 @@ export interface ClusterArgs {
     /**
      * Indicates which CIDR blocks can access the Amazon EKS public API server endpoint.
      */
-    publicAccessCidrs?: pulumi.Input<pulumi.Input<string>[]>;
+    publicAccessCidrs?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * The set of public subnets to use for the worker node groups on the EKS cluster. These subnets are automatically tagged by EKS for Kubernetes purposes.
      *
@@ -559,15 +559,15 @@ export interface ClusterArgs {
      *
      * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html.Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
      */
-    publicSubnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+    publicSubnetIds?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * Optional mappings from AWS IAM roles to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`
      */
-    roleMappings?: pulumi.Input<pulumi.Input<inputs.RoleMappingArgs>[]>;
+    roleMappings?: pulumi.Input<pulumi.Input<inputs.RoleMappingArgs>[] | undefined>;
     /**
      * IAM Service Role for EKS to use to manage the cluster.
      */
-    serviceRole?: pulumi.Input<pulumiAws.iam.Role>;
+    serviceRole?: pulumi.Input<pulumiAws.iam.Role | undefined>;
     /**
      * If this toggle is set to true, the EKS cluster will be created without node group attached. Defaults to false, unless `fargate` or `autoMode` is enabled.
      */
@@ -595,15 +595,15 @@ export interface ClusterArgs {
      *
      * Note: The use of `subnetIds`, along with `publicSubnetIds` and/or `privateSubnetIds` is mutually exclusive. The use of `publicSubnetIds` and `privateSubnetIds` is encouraged.
      */
-    subnetIds?: pulumi.Input<pulumi.Input<string>[]>;
+    subnetIds?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * Key-value mapping of tags that are automatically applied to all AWS resources directly under management with this cluster, which support tagging.
      */
-    tags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    tags?: pulumi.Input<{[key: string]: pulumi.Input<string>} | undefined>;
     /**
      * The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".
      */
-    upgradePolicy?: pulumi.Input<pulumiAws.types.input.eks.ClusterUpgradePolicy>;
+    upgradePolicy?: pulumi.Input<pulumiAws.types.input.eks.ClusterUpgradePolicy | undefined>;
     /**
      * Use the default VPC CNI instead of creating a custom one. Should not be used in conjunction with `vpcCniOptions`.
      * Defaults to true, unless `autoMode` is enabled.
@@ -612,11 +612,11 @@ export interface ClusterArgs {
     /**
      * Optional mappings from AWS IAM users to Kubernetes users and groups. Only supported with authentication mode `CONFIG_MAP` or `API_AND_CONFIG_MAP`.
      */
-    userMappings?: pulumi.Input<pulumi.Input<inputs.UserMappingArgs>[]>;
+    userMappings?: pulumi.Input<pulumi.Input<inputs.UserMappingArgs>[] | undefined>;
     /**
      * Desired Kubernetes master / control plane version. If you do not specify a value, the latest available version is used.
      */
-    version?: pulumi.Input<string>;
+    version?: pulumi.Input<string | undefined>;
     /**
      * The configuration of the Amazon VPC CNI plugin for this instance. Defaults are described in the documentation for the VpcCniOptions type.
      */
@@ -624,7 +624,7 @@ export interface ClusterArgs {
     /**
      * The VPC in which to create the cluster and its worker nodes. If unset, the cluster will be created in the default VPC.
      */
-    vpcId?: pulumi.Input<string>;
+    vpcId?: pulumi.Input<string | undefined>;
 }
 
 export namespace Cluster {
@@ -637,13 +637,13 @@ export namespace Cluster {
          *
          * The profile is passed to kubeconfig as an authentication environment setting.
          */
-        profileName?: pulumi.Input<string>;
+        profileName?: pulumi.Input<string | undefined>;
         /**
          * Role ARN to assume instead of the default AWS credential provider chain.
          *
          * The role is passed to kubeconfig as an authentication exec argument.
          */
-        roleArn?: pulumi.Input<string>;
+        roleArn?: pulumi.Input<string | undefined>;
     }
 
     /**

@@ -52,6 +52,6 @@ export class ClusterCreationRoleProvider extends pulumi.ComponentResource {
  * The set of arguments for constructing a ClusterCreationRoleProvider resource.
  */
 export interface ClusterCreationRoleProviderArgs {
-    profile?: pulumi.Input<string>;
-    region?: pulumi.Input<string>;
+    profile?: pulumi.Input<string | undefined>;
+    region?: pulumi.Input<string | undefined>;
 }
