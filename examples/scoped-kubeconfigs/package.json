@@ -1,7 +1,8 @@
 {
     "name": "scoped-kubeconfigs",
     "devDependencies": {
-        "typescript": "^4.0.0"
+        "typescript": "^5.0.0",
+        "@types/node": "^22"
     },
     "dependencies": {
         "@pulumi/aws": "7.25.0",
