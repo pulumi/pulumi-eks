@@ -1,8 +1,8 @@
 {
     "name": "example-aws-profile-role",
     "devDependencies": {
-        "typescript": "^4.0.0",
-        "@types/node": "latest"
+        "typescript": "^5.0.0",
+        "@types/node": "^22"
     },
     "dependencies": {
         "@pulumi/aws": "7.25.0",

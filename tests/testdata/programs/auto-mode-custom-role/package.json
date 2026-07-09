@@ -1,8 +1,8 @@
 {
     "name": "auto-mode-custom-role",
     "devDependencies": {
-        "typescript": "^4.0.0",
-        "@types/node": "latest"
+        "typescript": "^5.0.0",
+        "@types/node": "^22"
     },
     "dependencies": {
         "@pulumi/awsx": "^2.0.2",

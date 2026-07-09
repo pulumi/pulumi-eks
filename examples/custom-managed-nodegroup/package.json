@@ -1,8 +1,8 @@
 {
     "name": "example-managed-nodegroups",
     "devDependencies": {
-        "@types/node": "latest",
-        "typescript": "^4.0.0"
+        "@types/node": "^22",
+        "typescript": "^5.0.0"
     },
     "dependencies": {
         "@pulumi/awsx": "3.5.0",

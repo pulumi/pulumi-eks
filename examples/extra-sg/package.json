@@ -1,7 +1,8 @@
 {
     "name": "extra-sg",
     "devDependencies": {
-        "typescript": "^4.0.0"
+        "typescript": "^5.0.0",
+        "@types/node": "^22"
     },
     "dependencies": {
         "@pulumi/pulumi": "3.144.1",
