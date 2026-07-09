@@ -1,8 +1,8 @@
 {
     "name": "eks-auto-mode",
     "devDependencies": {
-        "typescript": "^4.0.0",
-        "@types/node": "latest"
+        "typescript": "^5.0.0",
+        "@types/node": "^22"
     },
     "dependencies": {
         "@pulumi/pulumi": "^3.0.0",
