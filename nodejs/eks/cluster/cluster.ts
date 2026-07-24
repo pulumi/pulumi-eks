@@ -628,7 +628,8 @@ export function createCore(
         eksAutoNodeRole = new ServiceRole(
             `${name}-nodeRole`,
             {
-                service: pulumi.interpolate`ec2.${dnsSuffix}`,
+                // All aws partitions use same service for ec2
+                service: "ec2.amazonaws.com",
                 managedPolicyArns: [
                     {
                         id: "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy",
@@ -947,7 +948,8 @@ export function createCore(
         const instanceRole = new ServiceRole(
             `${name}-instanceRole`,
             {
-                service: pulumi.interpolate`ec2.${dnsSuffix}`,
+                // All aws partitions use same service for ec2
+                service: "ec2.amazonaws.com",
                 managedPolicyArns: [
                     {
                         id: "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
