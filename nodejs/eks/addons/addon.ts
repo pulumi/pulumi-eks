@@ -46,7 +46,9 @@ export class Addon extends pulumi.ComponentResource {
             {
                 ...args,
                 clusterName: cluster.core.cluster.name,
-                configurationValues: stringifyAddonConfiguration(args.configurationValues),
+                configurationValues: args.configurationValues
+                    ? pulumi.jsonStringify(args.configurationValues)
+                    : undefined,
             },
             { parent: this, provider: opts?.provider },
         );
