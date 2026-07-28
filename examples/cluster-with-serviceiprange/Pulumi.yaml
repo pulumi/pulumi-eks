@@ -1,3 +1,0 @@
-name: example-cluster-with-serviceiprange
-description: EKS cluster example with a Kubernetes Service IPv4 Range
-runtime: nodejs
