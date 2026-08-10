@@ -1,6 +1,6 @@
 module github.com/pulumi/pulumi-eks/provider/v4
 
-go 1.25.0
+go 1.25.11
 
 replace github.com/pulumi/pulumi-eks/sdk/v4 => ../sdk
 
