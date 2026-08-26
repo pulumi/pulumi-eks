@@ -166,7 +166,10 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["instanceRoles"] = args?.instanceRoles;
             resourceInputs["instanceType"] = args?.instanceType;
             resourceInputs["ipFamily"] = args?.ipFamily;
+            resourceInputs["kubeApiServerConfig"] = args?.kubeApiServerConfig;
+            resourceInputs["kubeControllerManagerConfig"] = args?.kubeControllerManagerConfig;
             resourceInputs["kubeProxyAddonOptions"] = args ? (args.kubeProxyAddonOptions ? inputs.kubeProxyAddonOptionsArgsProvideDefaults(args.kubeProxyAddonOptions) : undefined) : undefined;
+            resourceInputs["kubeSchedulerConfig"] = args?.kubeSchedulerConfig;
             resourceInputs["kubernetesServiceIpAddressRange"] = args?.kubernetesServiceIpAddressRange;
             resourceInputs["maxSize"] = args?.maxSize;
             resourceInputs["minSize"] = args?.minSize;
@@ -409,9 +412,27 @@ export interface ClusterArgs {
      */
     ipFamily?: pulumi.Input<string>;
     /**
+     * Advanced configuration for the cluster's Kubernetes API server. Requires Kubernetes version 1.31 or later.
+     *
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     */
+    kubeApiServerConfig?: pulumi.Input<pulumiAws.types.input.eks.ClusterKubeApiServerConfig>;
+    /**
+     * Advanced configuration for the cluster's Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+     *
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     */
+    kubeControllerManagerConfig?: pulumi.Input<pulumiAws.types.input.eks.ClusterKubeControllerManagerConfig>;
+    /**
      * Options for managing the `kube-proxy` addon.
      */
     kubeProxyAddonOptions?: inputs.KubeProxyAddonOptionsArgs;
+    /**
+     * Advanced configuration for the cluster's Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+     *
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     */
+    kubeSchedulerConfig?: pulumi.Input<pulumiAws.types.input.eks.ClusterKubeSchedulerConfig>;
     /**
      * The CIDR block to assign Kubernetes service IP addresses from. If you don't
      * specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or

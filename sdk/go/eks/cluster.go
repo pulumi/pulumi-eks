@@ -215,8 +215,20 @@ type clusterArgs struct {
 	// The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
 	// You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
 	IpFamily *string `pulumi:"ipFamily"`
+	// Advanced configuration for the cluster's Kubernetes API server. Requires Kubernetes version 1.31 or later.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+	KubeApiServerConfig *eks.ClusterKubeApiServerConfig `pulumi:"kubeApiServerConfig"`
+	// Advanced configuration for the cluster's Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+	KubeControllerManagerConfig *eks.ClusterKubeControllerManagerConfig `pulumi:"kubeControllerManagerConfig"`
 	// Options for managing the `kube-proxy` addon.
 	KubeProxyAddonOptions *KubeProxyAddonOptions `pulumi:"kubeProxyAddonOptions"`
+	// Advanced configuration for the cluster's Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+	KubeSchedulerConfig *eks.ClusterKubeSchedulerConfig `pulumi:"kubeSchedulerConfig"`
 	// The CIDR block to assign Kubernetes service IP addresses from. If you don't
 	// specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
 	// 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
@@ -464,8 +476,20 @@ type ClusterArgs struct {
 	// The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
 	// You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
 	IpFamily pulumi.StringPtrInput
+	// Advanced configuration for the cluster's Kubernetes API server. Requires Kubernetes version 1.31 or later.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+	KubeApiServerConfig eks.ClusterKubeApiServerConfigPtrInput
+	// Advanced configuration for the cluster's Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+	KubeControllerManagerConfig eks.ClusterKubeControllerManagerConfigPtrInput
 	// Options for managing the `kube-proxy` addon.
 	KubeProxyAddonOptions *KubeProxyAddonOptionsArgs
+	// Advanced configuration for the cluster's Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+	//
+	// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+	KubeSchedulerConfig eks.ClusterKubeSchedulerConfigPtrInput
 	// The CIDR block to assign Kubernetes service IP addresses from. If you don't
 	// specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
 	// 172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block

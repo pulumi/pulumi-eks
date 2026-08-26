@@ -845,6 +845,21 @@ func generateSchema(version semver.Version, outdir string) schema.PackageSpec {
 						TypeSpec:    schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterUpgradePolicy:ClusterUpgradePolicy", dependencies.Aws)},
 						Description: `The cluster's upgrade policy. Valid support types are "STANDARD" and "EXTENDED". Defaults to "EXTENDED".`,
 					},
+					"kubeApiServerConfig": {
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterKubeApiServerConfig:ClusterKubeApiServerConfig", dependencies.Aws)},
+						Description: "Advanced configuration for the cluster's Kubernetes API server. Requires Kubernetes version 1.31 or later.\n\n" +
+							"For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html",
+					},
+					"kubeControllerManagerConfig": {
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterKubeControllerManagerConfig:ClusterKubeControllerManagerConfig", dependencies.Aws)},
+						Description: "Advanced configuration for the cluster's Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.\n\n" +
+							"For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html",
+					},
+					"kubeSchedulerConfig": {
+						TypeSpec: schema.TypeSpec{Ref: awsRef("#/types/aws:eks%2FClusterKubeSchedulerConfig:ClusterKubeSchedulerConfig", dependencies.Aws)},
+						Description: "Advanced configuration for the cluster's Kubernetes scheduler. Requires Kubernetes version 1.31 or later.\n\n" +
+							"For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html",
+					},
 					"deletionProtection": {
 						TypeSpec:    schema.TypeSpec{Type: "boolean"},
 						Description: "Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.",

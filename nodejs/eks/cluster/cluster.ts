@@ -740,6 +740,9 @@ export function createCore(
                   }
                 : undefined,
             upgradePolicy: args.upgradePolicy,
+            kubeApiServerConfig: args.kubeApiServerConfig,
+            kubeControllerManagerConfig: args.kubeControllerManagerConfig,
+            kubeSchedulerConfig: args.kubeSchedulerConfig,
             deletionProtection: args.deletionProtection,
         },
         {
@@ -1921,6 +1924,28 @@ export interface ClusterOptions {
     upgradePolicy?: aws.types.input.eks.ClusterUpgradePolicy;
 
     /**
+     * Advanced configuration for the cluster's Kubernetes API server. Requires Kubernetes version 1.31 or later.
+     *
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     */
+    kubeApiServerConfig?: aws.types.input.eks.ClusterKubeApiServerConfig;
+
+    /**
+     * Advanced configuration for the cluster's Kubernetes controller manager. Requires Kubernetes version 1.31
+     * or later, and a cluster using EKS Provisioned Control Plane.
+     *
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     */
+    kubeControllerManagerConfig?: aws.types.input.eks.ClusterKubeControllerManagerConfig;
+
+    /**
+     * Advanced configuration for the cluster's Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+     *
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     */
+    kubeSchedulerConfig?: aws.types.input.eks.ClusterKubeSchedulerConfig;
+
+    /**
      * Whether to enable deletion protection for the cluster. When enabled, the cluster cannot be deleted unless deletion protection is first disabled. Default: `false`.
      */
     deletionProtection?: pulumi.Input<boolean>;
@@ -2081,6 +2106,9 @@ export interface ClusterResult {
     oidcIssuer: pulumi.Output<string>;
     autoModeNodeRoleName: pulumi.Output<string>;
     upgradePolicy: pulumi.Output<aws.types.output.eks.ClusterUpgradePolicy>;
+    kubeApiServerConfig: pulumi.Output<aws.types.output.eks.ClusterKubeApiServerConfig>;
+    kubeControllerManagerConfig: pulumi.Output<aws.types.output.eks.ClusterKubeControllerManagerConfig>;
+    kubeSchedulerConfig: pulumi.Output<aws.types.output.eks.ClusterKubeSchedulerConfig>;
 }
 
 /** @internal */
@@ -2211,6 +2239,9 @@ export function createCluster(
         oidcIssuer: oidcIssuerUrl.apply((url) => url.replace("https://", "")),
         autoModeNodeRoleName: core.autoModeNodeRoleName,
         upgradePolicy: core.cluster.upgradePolicy,
+        kubeApiServerConfig: core.cluster.kubeApiServerConfig,
+        kubeControllerManagerConfig: core.cluster.kubeControllerManagerConfig,
+        kubeSchedulerConfig: core.cluster.kubeSchedulerConfig,
     };
 }
 

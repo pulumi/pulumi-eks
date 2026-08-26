@@ -50,7 +50,10 @@ class ClusterArgs:
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[_builtins.str]] = None,
                  ip_family: Optional[pulumi.Input[_builtins.str]] = None,
+                 kube_api_server_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubeApiServerConfigArgs']] = None,
+                 kube_controller_manager_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubeControllerManagerConfigArgs']] = None,
                  kube_proxy_addon_options: Optional['KubeProxyAddonOptionsArgs'] = None,
+                 kube_scheduler_config: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubeSchedulerConfigArgs']] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[_builtins.str]] = None,
                  max_size: Optional[pulumi.Input[_builtins.int]] = None,
                  min_size: Optional[pulumi.Input[_builtins.int]] = None,
@@ -151,7 +154,16 @@ class ClusterArgs:
         :param pulumi.Input[_builtins.str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param pulumi.Input[_builtins.str] ip_family: The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
                You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+        :param pulumi.Input['pulumi_aws.eks.ClusterKubeApiServerConfigArgs'] kube_api_server_config: Advanced configuration for the cluster's Kubernetes API server. Requires Kubernetes version 1.31 or later.
+               
+               For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+        :param pulumi.Input['pulumi_aws.eks.ClusterKubeControllerManagerConfigArgs'] kube_controller_manager_config: Advanced configuration for the cluster's Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+               
+               For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
         :param 'KubeProxyAddonOptionsArgs' kube_proxy_addon_options: Options for managing the `kube-proxy` addon.
+        :param pulumi.Input['pulumi_aws.eks.ClusterKubeSchedulerConfigArgs'] kube_scheduler_config: Advanced configuration for the cluster's Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+               
+               For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
         :param pulumi.Input[_builtins.str] kubernetes_service_ip_address_range: The CIDR block to assign Kubernetes service IP addresses from. If you don't
                specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
                172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
@@ -323,8 +335,14 @@ class ClusterArgs:
             pulumi.set(__self__, "instance_type", instance_type)
         if ip_family is not None:
             pulumi.set(__self__, "ip_family", ip_family)
+        if kube_api_server_config is not None:
+            pulumi.set(__self__, "kube_api_server_config", kube_api_server_config)
+        if kube_controller_manager_config is not None:
+            pulumi.set(__self__, "kube_controller_manager_config", kube_controller_manager_config)
         if kube_proxy_addon_options is not None:
             pulumi.set(__self__, "kube_proxy_addon_options", kube_proxy_addon_options)
+        if kube_scheduler_config is not None:
+            pulumi.set(__self__, "kube_scheduler_config", kube_scheduler_config)
         if kubernetes_service_ip_address_range is not None:
             pulumi.set(__self__, "kubernetes_service_ip_address_range", kubernetes_service_ip_address_range)
         if max_size is not None:
@@ -731,6 +749,34 @@ class ClusterArgs:
         pulumi.set(self, "ip_family", value)
 
     @_builtins.property
+    @pulumi.getter(name="kubeApiServerConfig")
+    def kube_api_server_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterKubeApiServerConfigArgs']]:
+        """
+        Advanced configuration for the cluster's Kubernetes API server. Requires Kubernetes version 1.31 or later.
+
+        For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+        """
+        return pulumi.get(self, "kube_api_server_config")
+
+    @kube_api_server_config.setter
+    def kube_api_server_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubeApiServerConfigArgs']]):
+        pulumi.set(self, "kube_api_server_config", value)
+
+    @_builtins.property
+    @pulumi.getter(name="kubeControllerManagerConfig")
+    def kube_controller_manager_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterKubeControllerManagerConfigArgs']]:
+        """
+        Advanced configuration for the cluster's Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+
+        For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+        """
+        return pulumi.get(self, "kube_controller_manager_config")
+
+    @kube_controller_manager_config.setter
+    def kube_controller_manager_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubeControllerManagerConfigArgs']]):
+        pulumi.set(self, "kube_controller_manager_config", value)
+
+    @_builtins.property
     @pulumi.getter(name="kubeProxyAddonOptions")
     def kube_proxy_addon_options(self) -> Optional['KubeProxyAddonOptionsArgs']:
         """
@@ -741,6 +787,20 @@ class ClusterArgs:
     @kube_proxy_addon_options.setter
     def kube_proxy_addon_options(self, value: Optional['KubeProxyAddonOptionsArgs']):
         pulumi.set(self, "kube_proxy_addon_options", value)
+
+    @_builtins.property
+    @pulumi.getter(name="kubeSchedulerConfig")
+    def kube_scheduler_config(self) -> Optional[pulumi.Input['pulumi_aws.eks.ClusterKubeSchedulerConfigArgs']]:
+        """
+        Advanced configuration for the cluster's Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+
+        For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+        """
+        return pulumi.get(self, "kube_scheduler_config")
+
+    @kube_scheduler_config.setter
+    def kube_scheduler_config(self, value: Optional[pulumi.Input['pulumi_aws.eks.ClusterKubeSchedulerConfigArgs']]):
+        pulumi.set(self, "kube_scheduler_config", value)
 
     @_builtins.property
     @pulumi.getter(name="kubernetesServiceIpAddressRange")
@@ -1235,7 +1295,10 @@ class Cluster(pulumi.ComponentResource):
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[_builtins.str]] = None,
                  ip_family: Optional[pulumi.Input[_builtins.str]] = None,
+                 kube_api_server_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterKubeApiServerConfigArgs']]] = None,
+                 kube_controller_manager_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterKubeControllerManagerConfigArgs']]] = None,
                  kube_proxy_addon_options: Optional[Union['KubeProxyAddonOptionsArgs', 'KubeProxyAddonOptionsArgsDict']] = None,
+                 kube_scheduler_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterKubeSchedulerConfigArgs']]] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[_builtins.str]] = None,
                  max_size: Optional[pulumi.Input[_builtins.int]] = None,
                  min_size: Optional[pulumi.Input[_builtins.int]] = None,
@@ -1358,7 +1421,16 @@ class Cluster(pulumi.ComponentResource):
         :param pulumi.Input[_builtins.str] instance_type: The instance type to use for the cluster's nodes. Defaults to "t3.medium".
         :param pulumi.Input[_builtins.str] ip_family: The IP family used to assign Kubernetes pod and service addresses. Valid values are `ipv4` (default) and `ipv6`.
                You can only specify an IP family when you create a cluster, changing this value will force a new cluster to be created.
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterKubeApiServerConfigArgs']] kube_api_server_config: Advanced configuration for the cluster's Kubernetes API server. Requires Kubernetes version 1.31 or later.
+               
+               For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterKubeControllerManagerConfigArgs']] kube_controller_manager_config: Advanced configuration for the cluster's Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+               
+               For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
         :param Union['KubeProxyAddonOptionsArgs', 'KubeProxyAddonOptionsArgsDict'] kube_proxy_addon_options: Options for managing the `kube-proxy` addon.
+        :param pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterKubeSchedulerConfigArgs']] kube_scheduler_config: Advanced configuration for the cluster's Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+               
+               For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
         :param pulumi.Input[_builtins.str] kubernetes_service_ip_address_range: The CIDR block to assign Kubernetes service IP addresses from. If you don't
                specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or
                172.20.0.0/16 CIDR blocks. This setting only applies to IPv4 clusters. We recommend that you specify a block
@@ -1547,7 +1619,10 @@ class Cluster(pulumi.ComponentResource):
                  instance_roles: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.iam.Role']]]] = None,
                  instance_type: Optional[pulumi.Input[_builtins.str]] = None,
                  ip_family: Optional[pulumi.Input[_builtins.str]] = None,
+                 kube_api_server_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterKubeApiServerConfigArgs']]] = None,
+                 kube_controller_manager_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterKubeControllerManagerConfigArgs']]] = None,
                  kube_proxy_addon_options: Optional[Union['KubeProxyAddonOptionsArgs', 'KubeProxyAddonOptionsArgsDict']] = None,
+                 kube_scheduler_config: Optional[pulumi.Input[pulumi.InputType['pulumi_aws.eks.ClusterKubeSchedulerConfigArgs']]] = None,
                  kubernetes_service_ip_address_range: Optional[pulumi.Input[_builtins.str]] = None,
                  max_size: Optional[pulumi.Input[_builtins.int]] = None,
                  min_size: Optional[pulumi.Input[_builtins.int]] = None,
@@ -1615,7 +1690,10 @@ class Cluster(pulumi.ComponentResource):
             __props__.__dict__["instance_roles"] = instance_roles
             __props__.__dict__["instance_type"] = instance_type
             __props__.__dict__["ip_family"] = ip_family
+            __props__.__dict__["kube_api_server_config"] = kube_api_server_config
+            __props__.__dict__["kube_controller_manager_config"] = kube_controller_manager_config
             __props__.__dict__["kube_proxy_addon_options"] = kube_proxy_addon_options
+            __props__.__dict__["kube_scheduler_config"] = kube_scheduler_config
             __props__.__dict__["kubernetes_service_ip_address_range"] = kubernetes_service_ip_address_range
             __props__.__dict__["max_size"] = max_size
             __props__.__dict__["min_size"] = min_size

@@ -55,6 +55,13 @@ const cluster3 = new eks.Cluster(`${projectName}-3`, {
     upgradePolicy: {
         supportType: "STANDARD",
     },
+    kubeSchedulerConfig: {
+        nodeResourcesFit: {
+            scoringStrategy: {
+                type: "MostAllocated",
+            },
+        },
+    },
 })
 
 // cluster4 is a graviton cluster to test the ARM64 architecture

@@ -4,6 +4,9 @@
 package com.pulumi.eks;
 
 import com.pulumi.aws.ec2.SecurityGroup;
+import com.pulumi.aws.eks.inputs.ClusterKubeApiServerConfigArgs;
+import com.pulumi.aws.eks.inputs.ClusterKubeControllerManagerConfigArgs;
+import com.pulumi.aws.eks.inputs.ClusterKubeSchedulerConfigArgs;
 import com.pulumi.aws.eks.inputs.ClusterUpgradePolicyArgs;
 import com.pulumi.aws.iam.Role;
 import com.pulumi.core.Either;
@@ -496,6 +499,44 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Advanced configuration for the cluster&#39;s Kubernetes API server. Requires Kubernetes version 1.31 or later.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     * 
+     */
+    @Import(name="kubeApiServerConfig")
+    private @Nullable Output<ClusterKubeApiServerConfigArgs> kubeApiServerConfig;
+
+    /**
+     * @return Advanced configuration for the cluster&#39;s Kubernetes API server. Requires Kubernetes version 1.31 or later.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     * 
+     */
+    public Optional<Output<ClusterKubeApiServerConfigArgs>> kubeApiServerConfig() {
+        return Optional.ofNullable(this.kubeApiServerConfig);
+    }
+
+    /**
+     * Advanced configuration for the cluster&#39;s Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     * 
+     */
+    @Import(name="kubeControllerManagerConfig")
+    private @Nullable Output<ClusterKubeControllerManagerConfigArgs> kubeControllerManagerConfig;
+
+    /**
+     * @return Advanced configuration for the cluster&#39;s Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     * 
+     */
+    public Optional<Output<ClusterKubeControllerManagerConfigArgs>> kubeControllerManagerConfig() {
+        return Optional.ofNullable(this.kubeControllerManagerConfig);
+    }
+
+    /**
      * Options for managing the `kube-proxy` addon.
      * 
      */
@@ -508,6 +549,25 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<KubeProxyAddonOptionsArgs> kubeProxyAddonOptions() {
         return Optional.ofNullable(this.kubeProxyAddonOptions);
+    }
+
+    /**
+     * Advanced configuration for the cluster&#39;s Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     * 
+     */
+    @Import(name="kubeSchedulerConfig")
+    private @Nullable Output<ClusterKubeSchedulerConfigArgs> kubeSchedulerConfig;
+
+    /**
+     * @return Advanced configuration for the cluster&#39;s Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+     * 
+     * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+     * 
+     */
+    public Optional<Output<ClusterKubeSchedulerConfigArgs>> kubeSchedulerConfig() {
+        return Optional.ofNullable(this.kubeSchedulerConfig);
     }
 
     /**
@@ -1181,7 +1241,10 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         this.instanceRoles = $.instanceRoles;
         this.instanceType = $.instanceType;
         this.ipFamily = $.ipFamily;
+        this.kubeApiServerConfig = $.kubeApiServerConfig;
+        this.kubeControllerManagerConfig = $.kubeControllerManagerConfig;
         this.kubeProxyAddonOptions = $.kubeProxyAddonOptions;
+        this.kubeSchedulerConfig = $.kubeSchedulerConfig;
         this.kubernetesServiceIpAddressRange = $.kubernetesServiceIpAddressRange;
         this.maxSize = $.maxSize;
         this.minSize = $.minSize;
@@ -1813,6 +1876,56 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
+         * @param kubeApiServerConfig Advanced configuration for the cluster&#39;s Kubernetes API server. Requires Kubernetes version 1.31 or later.
+         * 
+         * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder kubeApiServerConfig(@Nullable Output<ClusterKubeApiServerConfigArgs> kubeApiServerConfig) {
+            $.kubeApiServerConfig = kubeApiServerConfig;
+            return this;
+        }
+
+        /**
+         * @param kubeApiServerConfig Advanced configuration for the cluster&#39;s Kubernetes API server. Requires Kubernetes version 1.31 or later.
+         * 
+         * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder kubeApiServerConfig(ClusterKubeApiServerConfigArgs kubeApiServerConfig) {
+            return kubeApiServerConfig(Output.of(kubeApiServerConfig));
+        }
+
+        /**
+         * @param kubeControllerManagerConfig Advanced configuration for the cluster&#39;s Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+         * 
+         * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder kubeControllerManagerConfig(@Nullable Output<ClusterKubeControllerManagerConfigArgs> kubeControllerManagerConfig) {
+            $.kubeControllerManagerConfig = kubeControllerManagerConfig;
+            return this;
+        }
+
+        /**
+         * @param kubeControllerManagerConfig Advanced configuration for the cluster&#39;s Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+         * 
+         * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder kubeControllerManagerConfig(ClusterKubeControllerManagerConfigArgs kubeControllerManagerConfig) {
+            return kubeControllerManagerConfig(Output.of(kubeControllerManagerConfig));
+        }
+
+        /**
          * @param kubeProxyAddonOptions Options for managing the `kube-proxy` addon.
          * 
          * @return builder
@@ -1821,6 +1934,31 @@ public final class ClusterArgs extends com.pulumi.resources.ResourceArgs {
         public Builder kubeProxyAddonOptions(@Nullable KubeProxyAddonOptionsArgs kubeProxyAddonOptions) {
             $.kubeProxyAddonOptions = kubeProxyAddonOptions;
             return this;
+        }
+
+        /**
+         * @param kubeSchedulerConfig Advanced configuration for the cluster&#39;s Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+         * 
+         * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder kubeSchedulerConfig(@Nullable Output<ClusterKubeSchedulerConfigArgs> kubeSchedulerConfig) {
+            $.kubeSchedulerConfig = kubeSchedulerConfig;
+            return this;
+        }
+
+        /**
+         * @param kubeSchedulerConfig Advanced configuration for the cluster&#39;s Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+         * 
+         * For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+         * 
+         * @return builder
+         * 
+         */
+        public Builder kubeSchedulerConfig(ClusterKubeSchedulerConfigArgs kubeSchedulerConfig) {
+            return kubeSchedulerConfig(Output.of(kubeSchedulerConfig));
         }
 
         /**

@@ -427,10 +427,34 @@ namespace Pulumi.Eks
         public Input<string>? IpFamily { get; set; }
 
         /// <summary>
+        /// Advanced configuration for the cluster's Kubernetes API server. Requires Kubernetes version 1.31 or later.
+        /// 
+        /// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+        /// </summary>
+        [Input("kubeApiServerConfig")]
+        public Input<Pulumi.Aws.Eks.Inputs.ClusterKubeApiServerConfigArgs>? KubeApiServerConfig { get; set; }
+
+        /// <summary>
+        /// Advanced configuration for the cluster's Kubernetes controller manager. Requires Kubernetes version 1.31 or later, and a cluster using EKS Provisioned Control Plane.
+        /// 
+        /// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+        /// </summary>
+        [Input("kubeControllerManagerConfig")]
+        public Input<Pulumi.Aws.Eks.Inputs.ClusterKubeControllerManagerConfigArgs>? KubeControllerManagerConfig { get; set; }
+
+        /// <summary>
         /// Options for managing the `kube-proxy` addon.
         /// </summary>
         [Input("kubeProxyAddonOptions")]
         public Inputs.KubeProxyAddonOptionsArgs? KubeProxyAddonOptions { get; set; }
+
+        /// <summary>
+        /// Advanced configuration for the cluster's Kubernetes scheduler. Requires Kubernetes version 1.31 or later.
+        /// 
+        /// For more information, see: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-configuration.html
+        /// </summary>
+        [Input("kubeSchedulerConfig")]
+        public Input<Pulumi.Aws.Eks.Inputs.ClusterKubeSchedulerConfigArgs>? KubeSchedulerConfig { get; set; }
 
         /// <summary>
         /// The CIDR block to assign Kubernetes service IP addresses from. If you don't
