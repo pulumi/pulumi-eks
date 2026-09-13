@@ -67,7 +67,7 @@ Object.defineProperty(Cluster.prototype, 'provider', {
         if (!this._provider) {
             this._provider = new Provider(`${this.__name}-provider`, {
                 kubeconfig: this.kubeconfigJson,
-            }, { parent: this, aliases: [{ name: this.__name }]});
+            }, { parent: this });
         }
         return this._provider;
     }
