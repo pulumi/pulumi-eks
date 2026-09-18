@@ -1,6 +1,6 @@
 module github.com/pulumi/pulumi-eks/provider/v4
 
-go 1.25.11
+go 1.26.0
 
 replace github.com/pulumi/pulumi-eks/sdk/v4 => ../sdk
 
@@ -109,7 +109,7 @@ require (
 	github.com/zclconf/go-cty v1.14.4 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.50.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/crypto v0.55.0 // indirect
+	golang.org/x/crypto v0.56.0 // indirect
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/mod v0.40.0 // indirect
 	golang.org/x/net v0.58.0 // indirect
