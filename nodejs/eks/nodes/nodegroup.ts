@@ -2156,7 +2156,7 @@ function createMNGCustomLaunchTemplate(
 
     const taints = args.taints
         ? pulumi.output(args.taints).apply((taints) => {
-              return taints
+              return (taints ?? [])
                   .map((taint) => {
                       return {
                           [taint.key]: {
@@ -2351,7 +2351,7 @@ function getRecommendedAMI(
     k8sVersion: pulumi.Output<string>,
     parent: pulumi.Resource | undefined,
 ): pulumi.Input<string> {
-    let instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined;
+    let instanceTypes: pulumi.Input<pulumi.Input<string>[] | undefined> | undefined;
     let instanceTypesPropertyPath: string = "";
     if ("instanceType" in args && args.instanceType) {
         instanceTypes = [args.instanceType];
@@ -2369,7 +2369,7 @@ function getRecommendedAMI(
 
     const amiType = args.amiType
         ? pulumi.output(args.amiType).apply((amiType) => {
-              const resolvedType = toAmiType(amiType);
+              const resolvedType = amiType === undefined ? undefined : toAmiType(amiType);
               if (resolvedType === undefined) {
                   throw new pulumi.InputPropertyError({
                       propertyPath: "amiType",
@@ -2381,7 +2381,9 @@ function getRecommendedAMI(
         : determineAmiType(os, args.gpu, instanceTypes, instanceTypesPropertyPath, parent);
 
     // if specified use the version from the args, otherwise use the version from the cluster.
-    const version = args.version ? args.version : k8sVersion;
+    const version = pulumi
+        .all([args.version, k8sVersion])
+        .apply(([version, clusterVersion]) => version ?? clusterVersion);
 
     return pulumi.all([amiType, version]).apply(([amiType, version]) => {
         const parameterName = getAmiMetadata(amiType).ssmParameterName(version);
@@ -2430,7 +2432,7 @@ export function isGravitonInstance(instanceType: string, propertyPath: string): 
 function determineAmiType(
     os: pulumi.Input<OperatingSystem>,
     gpu: pulumi.Input<boolean> | undefined,
-    instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined,
+    instanceTypes: pulumi.Input<pulumi.Input<string>[] | undefined> | undefined,
     instanceTypesPropertyPath: string,
     parent: pulumi.Resource | undefined,
 ): pulumi.Output<AmiType> {
