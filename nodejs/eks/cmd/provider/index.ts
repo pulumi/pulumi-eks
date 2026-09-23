@@ -27,6 +27,7 @@ import { randomSuffixProviderFactory } from "./randomSuffix";
 import { nodeGroupSecurityGroupProviderFactory } from "./securitygroup";
 import { managedAddonProviderFactory } from "./addon";
 import * as utilities from "../../utilities";
+import { warnNodeCompatibility } from "../../nodeCompatibility";
 
 class Provider implements pulumi.provider.Provider {
     // A map of types to provider factories. Calling a factory may return a new instance each
@@ -61,6 +62,7 @@ class Provider implements pulumi.provider.Provider {
     }
 
     async call(token: string, inputs: pulumi.Inputs): Promise<pulumi.provider.InvokeResult> {
+        await warnNodeCompatibility();
         switch (token) {
             case "eks:index:Cluster/getKubeconfig":
                 const self: Cluster = inputs.__self__;
@@ -77,7 +79,8 @@ class Provider implements pulumi.provider.Provider {
         }
     }
 
-    check(urn: pulumi.URN, olds: any, news: any): Promise<pulumi.provider.CheckResult> {
+    async check(urn: pulumi.URN, olds: any, news: any): Promise<pulumi.provider.CheckResult> {
+        await warnNodeCompatibility();
         const provider = this.getProviderForURN(urn);
         if (!provider) {
             return unknownResourceRejectedPromise(urn);
@@ -87,12 +90,13 @@ class Provider implements pulumi.provider.Provider {
             : Promise.resolve({ inputs: news, failures: [] });
     }
 
-    diff(
+    async diff(
         id: pulumi.ID,
         urn: pulumi.URN,
         olds: any,
         news: any,
     ): Promise<pulumi.provider.DiffResult> {
+        await warnNodeCompatibility();
         const provider = this.getProviderForURN(urn);
         if (!provider) {
             return unknownResourceRejectedPromise(urn);
@@ -100,14 +104,16 @@ class Provider implements pulumi.provider.Provider {
         return provider.diff ? provider.diff(id, urn, olds, news) : Promise.resolve({});
     }
 
-    create(urn: pulumi.URN, inputs: any): Promise<pulumi.provider.CreateResult> {
+    async create(urn: pulumi.URN, inputs: any): Promise<pulumi.provider.CreateResult> {
+        await warnNodeCompatibility();
         const provider = this.getProviderForURN(urn);
         return provider?.create
             ? provider.create(urn, inputs)
             : unknownResourceRejectedPromise(urn);
     }
 
-    read(id: pulumi.ID, urn: pulumi.URN, props?: any): Promise<pulumi.provider.ReadResult> {
+    async read(id: pulumi.ID, urn: pulumi.URN, props?: any): Promise<pulumi.provider.ReadResult> {
+        await warnNodeCompatibility();
         const provider = this.getProviderForURN(urn);
         if (!provider) {
             return unknownResourceRejectedPromise(urn);
@@ -115,12 +121,13 @@ class Provider implements pulumi.provider.Provider {
         return provider.read ? provider.read(id, urn, props) : Promise.resolve({ id, props });
     }
 
-    update(
+    async update(
         id: pulumi.ID,
         urn: pulumi.URN,
         olds: any,
         news: any,
     ): Promise<pulumi.provider.UpdateResult> {
+        await warnNodeCompatibility();
         const provider = this.getProviderForURN(urn);
         if (!provider) {
             return unknownResourceRejectedPromise(urn);
@@ -130,7 +137,8 @@ class Provider implements pulumi.provider.Provider {
             : Promise.resolve({ outs: news });
     }
 
-    delete(id: pulumi.ID, urn: pulumi.URN, props: any): Promise<void> {
+    async delete(id: pulumi.ID, urn: pulumi.URN, props: any): Promise<void> {
+        await warnNodeCompatibility();
         const provider = this.getProviderForURN(urn);
         if (!provider) {
             return unknownResourceRejectedPromise(urn);
@@ -138,12 +146,13 @@ class Provider implements pulumi.provider.Provider {
         return provider.delete ? provider.delete(id, urn, props) : Promise.resolve();
     }
 
-    construct(
+    async construct(
         name: string,
         type: string,
         inputs: pulumi.Inputs,
         options: pulumi.ComponentResourceOptions,
     ): Promise<pulumi.provider.ConstructResult> {
+        await warnNodeCompatibility();
         const provider = this.getProviderForType(type);
         return provider?.construct
             ? provider.construct(name, type, inputs, options)
