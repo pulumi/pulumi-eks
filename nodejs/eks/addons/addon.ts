@@ -21,8 +21,10 @@ import { Cluster } from "../cluster";
  * upstream `aws.eks.AddonArgs` and removes the deprecated `resolveConflicts` field. `clusterName` is also removed as we enable users to
  * pass in the cluster object directly.
  */
-export interface AddonOptions
-    extends Omit<aws.eks.AddonArgs, "resolveConflicts" | "clusterName" | "configurationValues"> {
+export interface AddonOptions extends Omit<
+    aws.eks.AddonArgs,
+    "resolveConflicts" | "clusterName" | "configurationValues"
+> {
     cluster: Cluster;
     configurationValues?: pulumi.Input<object>;
 }
@@ -37,9 +39,14 @@ export class Addon extends pulumi.ComponentResource {
     constructor(name: string, args: AddonOptions, opts?: pulumi.CustomResourceOptions) {
         const cluster = args.cluster;
 
-        super("eks:index:Addon", name, args, pulumi.mergeOptions(opts, {
-            parent: cluster,
-        }));
+        super(
+            "eks:index:Addon",
+            name,
+            args,
+            pulumi.mergeOptions(opts, {
+                parent: cluster,
+            }),
+        );
 
         const addon = new aws.eks.Addon(
             name,
@@ -63,10 +70,13 @@ function stringifyReplacer(key: string, value: any) {
         !(value instanceof Array || value instanceof Date || value instanceof Function)
         ? Object.keys(value)
               .sort()
-              .reduce((sorted, key) => {
-                  sorted[key] = value[key];
-                  return sorted;
-              }, {} as { [key: string]: any })
+              .reduce(
+                  (sorted, key) => {
+                      sorted[key] = value[key];
+                      return sorted;
+                  },
+                  {} as { [key: string]: any },
+              )
         : value;
 }
 

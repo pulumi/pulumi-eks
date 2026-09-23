@@ -44,7 +44,10 @@ class Provider implements pulumi.provider.Provider {
         "eks:index:Addon": managedAddonProviderFactory,
     };
 
-    constructor(readonly version: string, readonly schema: string) {
+    constructor(
+        readonly version: string,
+        readonly schema: string,
+    ) {
         // Register any resources that can come back as resource references that need to be rehydrated.
         pulumi.runtime.registerResourceModule("eks", "index", {
             version: version,

@@ -18,7 +18,7 @@ import * as pulumi from "@pulumi/pulumi";
 
 import * as http from "http";
 import * as https from "https";
-import * as HttpsProxyAgent from "https-proxy-agent";
+import { HttpsProxyAgent } from "https-proxy-agent";
 import * as process from "process";
 import * as url from "url";
 
@@ -690,14 +690,14 @@ export function createCore(
             name: args.name,
             roleArn: args.serviceRole
                 ? pulumi.output(args.serviceRole).arn
-                : eksServiceRole?.directRole.arn!,
+                : eksServiceRole!.directRole.arn,
             computeConfig: autoModeConfig.computeConfig,
             storageConfig: autoModeConfig.storageConfig,
             kubernetesNetworkConfig: autoModeConfig.kubernetesNetworkConfig,
             // When a cluster is created with EKS Auto Mode, it must be created without the addons
             bootstrapSelfManagedAddons: args.autoMode?.enabled
                 ? false
-                : args.bootstrapSelfManagedAddons ?? true,
+                : (args.bootstrapSelfManagedAddons ?? true),
             vpcConfig: {
                 securityGroupIds: eksClusterSecurityGroup
                     ? [eksClusterSecurityGroup.id]
@@ -1284,7 +1284,7 @@ export function createCore(
         fargateProfile: fargateProfile,
         oidcProvider: oidcProvider,
         encryptionConfig: encryptionConfig,
-        clusterIamRole: pulumi.output(args.serviceRole ?? eksServiceRole?.directRole!),
+        clusterIamRole: pulumi.output(args.serviceRole ?? eksServiceRole!.directRole),
         accessEntries: createdAccessEntries ? pulumi.output(createdAccessEntries) : undefined,
         autoModeNodeRoleName: eksAutoNodeRole?.directRole.name ?? pulumi.output(""),
     };
@@ -1320,8 +1320,7 @@ function createHttpAgent(proxy?: string): http.Agent {
          *  - https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT
          *  - https://www.npmjs.com/package/https-proxy-agent
          */
-        return HttpsProxyAgent({
-            ...url.parse(proxy),
+        return new HttpsProxyAgent(proxy, {
             rejectUnauthorized: false, // allow proxy configured with self-signed cert
         });
     }
@@ -2229,16 +2228,16 @@ export class Cluster extends pulumi.ComponentResource {
     public readonly kubeconfigJson!: pulumi.Output<string>;
     public readonly nodeSecurityGroup!: pulumi.Output<aws.ec2.SecurityGroup | undefined>;
 
-    public readonly clusterSecurityGroupId: pulumi.Output<string>;
-    public readonly nodeSecurityGroupId: pulumi.Output<string>;
-    public readonly clusterIngressRuleId: pulumi.Output<string>;
-    public readonly defaultNodeGroupAsgName: pulumi.Output<string>;
-    public readonly fargateProfileId: pulumi.Output<string>;
-    public readonly fargateProfileStatus: pulumi.Output<string>;
-    public readonly oidcProviderArn: pulumi.Output<string>;
-    public readonly oidcProviderUrl: pulumi.Output<string>;
-    public readonly oidcIssuer: pulumi.Output<string>;
-    public readonly autoModeNodeRoleName: pulumi.Output<string>;
+    public readonly clusterSecurityGroupId!: pulumi.Output<string>;
+    public readonly nodeSecurityGroupId!: pulumi.Output<string>;
+    public readonly clusterIngressRuleId!: pulumi.Output<string>;
+    public readonly defaultNodeGroupAsgName!: pulumi.Output<string>;
+    public readonly fargateProfileId!: pulumi.Output<string>;
+    public readonly fargateProfileStatus!: pulumi.Output<string>;
+    public readonly oidcProviderArn!: pulumi.Output<string>;
+    public readonly oidcProviderUrl!: pulumi.Output<string>;
+    public readonly oidcIssuer!: pulumi.Output<string>;
+    public readonly autoModeNodeRoleName!: pulumi.Output<string>;
 
     constructor(name: string, args?: ClusterOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:Cluster";

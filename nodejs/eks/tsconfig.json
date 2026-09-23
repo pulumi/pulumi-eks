@@ -1,9 +1,13 @@
 {
     "compilerOptions": {
         "outDir": "bin",
-        "target": "es6",
+        "target": "ES2022",
+        "lib": ["ES2022"],
+        // TypeScript 6 no longer loads visible @types packages automatically.
+        "types": ["node", "jest"],
         "module": "commonjs",
-        "moduleResolution": "node",
+        // The provider is emitted as CommonJS and packaged into a stand-alone executable.
+        "moduleResolution": "bundler",
         "declaration": true,
         "sourceMap": true,
         "stripInternal": true,

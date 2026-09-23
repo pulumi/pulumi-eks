@@ -248,7 +248,7 @@ export interface CniEnvVariables {
  * For more information about supported add-ons, see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
  */
 export class VpcCniAddon extends pulumi.ComponentResource {
-    public readonly addon: pulumi.Output<aws.eks.Addon>;
+    public readonly addon!: pulumi.Output<aws.eks.Addon>;
 
     constructor(name: string, args?: VpcCniAddonOptions, opts?: pulumi.ComponentResourceOptions) {
         const type = "eks:index:VpcCniAddon";
