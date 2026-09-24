@@ -3,6 +3,8 @@
         "outDir": "bin",
         "target": "ES2022",
         "lib": ["ES2022"],
+        // ComponentResource initializes output properties when rehydrating resource references.
+        "useDefineForClassFields": false,
         // TypeScript 6 no longer loads visible @types packages automatically.
         "types": ["node", "jest"],
         "module": "commonjs",
