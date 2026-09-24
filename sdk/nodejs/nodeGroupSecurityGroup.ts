@@ -83,7 +83,7 @@ export interface NodeGroupSecurityGroupArgs {
     /**
      * Key-value mapping of tags to apply to this security group.
      */
-    tags?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    tags?: pulumi.Input<{[key: string]: pulumi.Input<string>} | undefined>;
     /**
      * The VPC in which to create the worker node group.
      */

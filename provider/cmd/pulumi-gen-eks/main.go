@@ -15,8 +15,10 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path"
@@ -35,6 +37,10 @@ import (
 	nodejsgen "github.com/pulumi/pulumi/pkg/v3/codegen/nodejs"
 	pygen "github.com/pulumi/pulumi/pkg/v3/codegen/python"
 	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
+	pkghost "github.com/pulumi/pulumi/pkg/v3/host"
+	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/diag/colors"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 
@@ -160,11 +166,27 @@ func generate(language Language, cwd, outDir string) error {
 
 func bindSchema(pkgSpec schema.PackageSpec, version string) (*schema.Package, error) {
 	pkgSpec.Version = version
-	pkg, err := schema.ImportSpec(pkgSpec, nil, schema.ValidationOptions{})
+
+	cwd, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
-	return pkg, nil
+
+	ctx := context.Background()
+	sink := diag.DefaultSink(io.Discard, io.Discard, diag.FormatOptions{Color: colors.Never})
+	pluginHost, err := pkghost.New(ctx, sink, sink, nil, nil, schema.NewLoaderServerFromContext, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer pluginHost.Close()
+
+	pluginContext, err := plugin.NewContext(ctx, sink, sink, pluginHost, nil, cwd, nil, false, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer pluginContext.Close()
+
+	return schema.ImportSpec(pkgSpec, nil, schema.NewPluginLoader(pluginContext), schema.ValidationOptions{})
 }
 
 func main() {
