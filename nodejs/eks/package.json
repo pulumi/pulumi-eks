@@ -13,9 +13,7 @@
         "format": "oxfmt --write .",
         "lint": "oxlint --deny-warnings .",
         "test": "jest",
-        "tsc": "yarn typecheck && yarn emit",
-        "typecheck": "node ./node_modules/@typescript/native/bin/tsc --noEmit",
-        "emit": "node ./node_modules/typescript/bin/tsc6 --incremental --noCheck",
+        "tsc": "node ./node_modules/@typescript/native/bin/tsc",
         "dedupe-deps": "yarn-deduplicate",
         "check-duplicate-deps": "yarn-deduplicate --fail",
         "build": "SCHEMA=../../provider/cmd/pulumi-resource-eks/schema-embed.json ./scripts/build.sh"
@@ -54,7 +52,6 @@
         "jest": "^30.5.1",
         "oxfmt": "^0.66.0",
         "oxlint": "^1.81.0",
-        "typescript": "npm:@typescript/typescript6@6.0.2",
         "yarn-deduplicate": "^6.0.2"
     },
     "pulumi": {
