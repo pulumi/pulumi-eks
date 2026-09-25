@@ -168,7 +168,7 @@ const amiTypeAliases: { [key: string]: AmiType } =
                 return { [alias]: key as AmiType };
             });
         })
-        .reduce((acc, val) => (val ? Object.assign(acc ?? {}, val) : acc ?? {})) ?? {};
+        .reduce((acc, val) => (val ? Object.assign(acc ?? {}, val) : (acc ?? {}))) ?? {};
 
 /**
  * Converts the given string to an `AmiType` or returns `undefined` if it's not valid.

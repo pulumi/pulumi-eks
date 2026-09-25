@@ -32,7 +32,7 @@ describe("validateAuthenticationMode", () => {
             authenticationMode: invalidMode,
         };
 
-        expect(() => validateAuthenticationMode(args)).toThrowError(
+        expect(() => validateAuthenticationMode(args)).toThrow(
             "Invalid value for authenticationMode: INVALID_MODE. Allowed values are: CONFIG_MAP, API_AND_CONFIG_MAP, API.",
         );
     });
@@ -49,7 +49,7 @@ describe("validateAuthenticationMode", () => {
             ],
         };
 
-        expect(() => validateAuthenticationMode(args)).toThrowError(
+        expect(() => validateAuthenticationMode(args)).toThrow(
             "The 'roleMappings' property does not support non-empty values when 'authenticationMode' is set to 'API'.",
         );
     });
@@ -66,7 +66,7 @@ describe("validateAuthenticationMode", () => {
             ],
         };
 
-        expect(() => validateAuthenticationMode(args)).toThrowError(
+        expect(() => validateAuthenticationMode(args)).toThrow(
             "The 'userMappings' property does not support non-empty values when 'authenticationMode' is set to 'API'.",
         );
     });
@@ -77,7 +77,7 @@ describe("validateAuthenticationMode", () => {
             instanceRoles: [testRole],
         };
 
-        expect(() => validateAuthenticationMode(args)).toThrowError(
+        expect(() => validateAuthenticationMode(args)).toThrow(
             "The 'instanceRoles' property does not support non-empty values when 'authenticationMode' is set to 'API'.",
         );
     });
@@ -102,7 +102,7 @@ describe("validateAuthenticationMode", () => {
             },
         };
 
-        expect(() => validateAuthenticationMode(args)).toThrowError(
+        expect(() => validateAuthenticationMode(args)).toThrow(
             "The 'accessEntries' property is not supported when 'authenticationMode' is set to 'CONFIG_MAP'.",
         );
     });
@@ -116,7 +116,7 @@ describe("validateAuthenticationMode", () => {
             },
         };
 
-        expect(() => validateAuthenticationMode(args)).toThrowError(
+        expect(() => validateAuthenticationMode(args)).toThrow(
             "The 'accessEntries' property is not supported when 'authenticationMode' is not set.",
         );
     });

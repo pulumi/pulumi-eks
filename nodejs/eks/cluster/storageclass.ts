@@ -116,7 +116,7 @@ export function createStorageClass(
         .apply(([m, isDefault]) => {
             if (isDefault) {
                 m.annotations = {
-                    ...(m.annotations || {}),
+                    ...m.annotations,
                     "storageclass.kubernetes.io/is-default-class": "true",
                 };
             }

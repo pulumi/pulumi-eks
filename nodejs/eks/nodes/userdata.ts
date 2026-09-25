@@ -550,8 +550,9 @@ export function getClusterDnsIp(serviceCidr: string, parent: pulumi.Resource | u
         const clusterDnsIp = ipaddr.fromByteArray(Array.from(newBuf));
         return clusterDnsIp.toString();
     } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
         throw new pulumi.ResourceError(
-            `Couldn't calculate the cluster dns ip based on the service CIDR. ${e.message}`,
+            `Couldn't calculate the cluster dns ip based on the service CIDR. ${message}`,
             parent,
         );
     }

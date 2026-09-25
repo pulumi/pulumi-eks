@@ -1375,7 +1375,7 @@ export function createNodeGroupV2(
                         throughput: args.nodeRootVolumeThroughput,
                         deleteOnTermination: pulumi
                             .output(args.nodeRootVolumeDeleteOnTermination)
-                            .apply((val) => (val ?? true ? "true" : "false")),
+                            .apply((val) => ((val ?? true) ? "true" : "false")),
                     },
                 },
             ];
@@ -2287,7 +2287,7 @@ function createMNGCustomLaunchTemplate(
             // We need to supply an imageId if userData is set, otherwise AWS will attempt to merge the user data which will result in
             // nodes failing to join the cluster.
             imageId: userData
-                ? args.amiId ?? getRecommendedAMI(args, core.cluster.version, parent)
+                ? (args.amiId ?? getRecommendedAMI(args, core.cluster.version, parent))
                 : undefined,
             placement: placementGroupName
                 ? {
@@ -2400,7 +2400,7 @@ function getRecommendedAMI(
  * - size: The instance size (e.g., "large")
  * These parts result in a string of the form: `c52gn.large`
  */
-const ec2InstanceRegex = /([a-z]+)([0-9]+)([a-z])?\-?([a-z]+)?\.([a-zA-Z0-9\-]+)/;
+const ec2InstanceRegex = /([a-z]+)([0-9]+)([a-z])?-?([a-z]+)?\.([a-zA-Z0-9-]+)/;
 
 /**
  * isGravitonInstance returns true if the instance type is a Graviton instance.

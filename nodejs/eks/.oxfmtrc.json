@@ -1,0 +1,8 @@
+{
+    "$schema": "./node_modules/oxfmt/configuration_schema.json",
+    "tabWidth": 4,
+    "trailingComma": "all",
+    "printWidth": 100,
+    "sortPackageJson": false,
+    "ignorePatterns": ["*.json", "*.md", "*.d.ts", "coverage/", "bin/"]
+}
