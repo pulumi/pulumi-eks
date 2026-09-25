@@ -28,7 +28,7 @@
         "@iarna/toml": "^3.0.0",
         "@pulumi/aws": "7.25.0",
         "@pulumi/kubernetes": "4.19.0",
-        "@pulumi/pulumi": "^3.143.0",
+        "@pulumi/pulumi": "3.261.0",
         "https-proxy-agent": "^7.0.6",
         "ipaddr.js": "^2.2.0",
         "js-yaml": "^4.1.0",

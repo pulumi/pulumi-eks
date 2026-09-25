@@ -580,11 +580,12 @@ export function resolveInstanceProfileName(
 
 function createNodeGroup(
     name: string,
-    args: Omit<NodeGroupOptions, "cluster">,
+    rawArgs: Omit<NodeGroupOptions, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
     parent: pulumi.ComponentResource,
     provider?: pulumi.ProviderResource,
 ): NodeGroupData {
+    const args = { ...rawArgs };
     const validationErrors: pulumi.InputPropertyErrorDetails[] = [];
 
     const instanceProfileName = core.apply((c) => resolveInstanceProfileName(args, c));
@@ -1878,11 +1879,13 @@ export type ManagedNodeGroupOutput = {
  */
 export function createManagedNodeGroup(
     name: string,
-    args: Omit<ManagedNodeGroupOptions, "cluster">,
+    rawArgs: Omit<ManagedNodeGroupOptions, "cluster">,
     core: pulumi.Output<pulumi.Unwrap<CoreData>>,
     parent: pulumi.Resource,
     provider?: pulumi.ProviderResource,
 ): ManagedNodeGroupOutput {
+    const args = { ...rawArgs };
+
     // default the version to the cluster version if not provided.
     // we can only do that if the user doesn't provide a launch template. If they do, they're responsible
     // for deciding the k8s version as part of the ami they're choosing.

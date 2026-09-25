@@ -463,21 +463,23 @@ export function createCore(
     }
 
     // Configure the node group options.
-    const nodeGroupOptions: ClusterNodeGroupOptions = args.nodeGroupOptions || {
-        nodeSubnetIds: args.nodeSubnetIds,
-        nodeAssociatePublicIpAddress: args.nodeAssociatePublicIpAddress,
-        instanceType: args.instanceType,
-        nodePublicKey: args.nodePublicKey,
-        nodeRootVolumeEncrypted: args.nodeRootVolumeEncrypted,
-        nodeRootVolumeSize: args.nodeRootVolumeSize,
-        nodeUserData: args.nodeUserData,
-        minSize: args.minSize,
-        maxSize: args.maxSize,
-        desiredCapacity: args.desiredCapacity,
-        amiId: args.nodeAmiId,
-        gpu: args.gpu,
-        version: args.version,
-    };
+    const nodeGroupOptions: ClusterNodeGroupOptions = args.nodeGroupOptions
+        ? { ...args.nodeGroupOptions }
+        : {
+              nodeSubnetIds: args.nodeSubnetIds,
+              nodeAssociatePublicIpAddress: args.nodeAssociatePublicIpAddress,
+              instanceType: args.instanceType,
+              nodePublicKey: args.nodePublicKey,
+              nodeRootVolumeEncrypted: args.nodeRootVolumeEncrypted,
+              nodeRootVolumeSize: args.nodeRootVolumeSize,
+              nodeUserData: args.nodeUserData,
+              minSize: args.minSize,
+              maxSize: args.maxSize,
+              desiredCapacity: args.desiredCapacity,
+              amiId: args.nodeAmiId,
+              gpu: args.gpu,
+              version: args.version,
+          };
 
     const { partition, dnsSuffix } = aws.getPartitionOutput({}, { parent });
 
@@ -1295,19 +1297,13 @@ export function createCore(
  * Using a proxy is supported.
  */
 function createHttpAgent(proxy?: string): http.Agent {
-    if (!proxy) {
-        // Attempt to default to the proxy env vars.
-        //
-        // Note: Envars used are a convention that were based on:
-        // - curl: https://curl.haxx.se/docs/manual.html
-        // - wget: https://www.gnu.org/software/wget/manual/html_node/Proxies.html
-        proxy =
-            process.env.HTTPS_PROXY ||
-            process.env.https_proxy ||
-            process.env.HTTP_PROXY ||
-            process.env.http_proxy;
-    }
-    if (proxy) {
+    const proxyUrl =
+        proxy ||
+        process.env.HTTPS_PROXY ||
+        process.env.https_proxy ||
+        process.env.HTTP_PROXY ||
+        process.env.http_proxy;
+    if (proxyUrl) {
         /**
          * Create an HTTP(s) proxy agent with the given options.
          *
@@ -1320,7 +1316,7 @@ function createHttpAgent(proxy?: string): http.Agent {
          *  - https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT
          *  - https://www.npmjs.com/package/https-proxy-agent
          */
-        return new HttpsProxyAgent(proxy, {
+        return new HttpsProxyAgent(proxyUrl, {
             rejectUnauthorized: false, // allow proxy configured with self-signed cert
         });
     }
@@ -2086,10 +2082,10 @@ export interface ClusterResult {
 export function createCluster(
     name: string,
     self: pulumi.ComponentResource,
-    args?: ClusterOptions,
+    rawArgs?: ClusterOptions,
     opts?: pulumi.ComponentResourceOptions,
 ): ClusterResult {
-    args = args || {};
+    const args = { ...rawArgs };
 
     // Check that AWS provider credential options are set for the kubeconfig
     // to use with the given auth method.

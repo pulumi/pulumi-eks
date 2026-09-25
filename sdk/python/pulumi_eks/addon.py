@@ -22,15 +22,16 @@ class AddonArgs:
     def __init__(__self__, *,
                  addon_name: pulumi.Input[_builtins.str],
                  cluster: pulumi.Input['Cluster'],
-                 addon_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
-                 preserve: Optional[pulumi.Input[_builtins.bool]] = None,
-                 resolve_conflicts_on_create: Optional[pulumi.Input[_builtins.str]] = None,
-                 resolve_conflicts_on_update: Optional[pulumi.Input[_builtins.str]] = None,
-                 service_account_role_arn: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None):
+                 addon_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 configuration_values: pulumi.Input[Optional[Mapping[str, Any]]] = None,
+                 preserve: pulumi.Input[Optional[_builtins.bool]] = None,
+                 resolve_conflicts_on_create: pulumi.Input[Optional[_builtins.str]] = None,
+                 resolve_conflicts_on_update: pulumi.Input[Optional[_builtins.str]] = None,
+                 service_account_role_arn: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None):
         """
         The set of arguments for constructing a Addon resource.
+
         :param pulumi.Input[_builtins.str] addon_name: Name of the EKS add-on. The name must match one of the names returned by describe-addon-versions.
         :param pulumi.Input['Cluster'] cluster: The target EKS cluster.
         :param pulumi.Input[_builtins.str] addon_version: The version of the EKS add-on. The version must match one of the versions returned by describe-addon-versions.
@@ -40,7 +41,7 @@ class AddonArgs:
         :param pulumi.Input[_builtins.str] resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
         :param pulumi.Input[_builtins.str] service_account_role_arn: The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
                
-               						Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+                                       Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
         :param pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]] tags: Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
         """
         pulumi.set(__self__, "addon_name", addon_name)
@@ -86,88 +87,88 @@ class AddonArgs:
 
     @_builtins.property
     @pulumi.getter(name="addonVersion")
-    def addon_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def addon_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The version of the EKS add-on. The version must match one of the versions returned by describe-addon-versions.
         """
         return pulumi.get(self, "addon_version")
 
     @addon_version.setter
-    def addon_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def addon_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "addon_version", value)
 
     @_builtins.property
     @pulumi.getter(name="configurationValues")
-    def configuration_values(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
+    def configuration_values(self) -> pulumi.Input[Optional[Mapping[str, Any]]]:
         """
         Custom configuration values for addons specified as an object. This object value must match the JSON schema derived from describe-addon-configuration.
         """
         return pulumi.get(self, "configuration_values")
 
     @configuration_values.setter
-    def configuration_values(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
+    def configuration_values(self, value: pulumi.Input[Optional[Mapping[str, Any]]]):
         pulumi.set(self, "configuration_values", value)
 
     @_builtins.property
     @pulumi.getter
-    def preserve(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def preserve(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicates if you want to preserve the created resources when deleting the EKS add-on.
         """
         return pulumi.get(self, "preserve")
 
     @preserve.setter
-    def preserve(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def preserve(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "preserve", value)
 
     @_builtins.property
     @pulumi.getter(name="resolveConflictsOnCreate")
-    def resolve_conflicts_on_create(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def resolve_conflicts_on_create(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         How to resolve field value conflicts when migrating a self-managed add-on to an Amazon EKS add-on. Valid values are NONE and OVERWRITE. For more details see the CreateAddon API Docs.
         """
         return pulumi.get(self, "resolve_conflicts_on_create")
 
     @resolve_conflicts_on_create.setter
-    def resolve_conflicts_on_create(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def resolve_conflicts_on_create(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "resolve_conflicts_on_create", value)
 
     @_builtins.property
     @pulumi.getter(name="resolveConflictsOnUpdate")
-    def resolve_conflicts_on_update(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def resolve_conflicts_on_update(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
         """
         return pulumi.get(self, "resolve_conflicts_on_update")
 
     @resolve_conflicts_on_update.setter
-    def resolve_conflicts_on_update(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def resolve_conflicts_on_update(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "resolve_conflicts_on_update", value)
 
     @_builtins.property
     @pulumi.getter(name="serviceAccountRoleArn")
-    def service_account_role_arn(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def service_account_role_arn(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
 
-        						Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+                                Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
         """
         return pulumi.get(self, "service_account_role_arn")
 
     @service_account_role_arn.setter
-    def service_account_role_arn(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def service_account_role_arn(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "service_account_role_arn", value)
 
     @_builtins.property
     @pulumi.getter
-    def tags(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]]:
+    def tags(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]]:
         """
         Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
         """
         return pulumi.get(self, "tags")
 
     @tags.setter
-    def tags(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]]):
+    def tags(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]]):
         pulumi.set(self, "tags", value)
 
 
@@ -177,15 +178,15 @@ class Addon(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 addon_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 addon_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 cluster: Optional[pulumi.Input['Cluster']] = None,
-                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
-                 preserve: Optional[pulumi.Input[_builtins.bool]] = None,
-                 resolve_conflicts_on_create: Optional[pulumi.Input[_builtins.str]] = None,
-                 resolve_conflicts_on_update: Optional[pulumi.Input[_builtins.str]] = None,
-                 service_account_role_arn: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
+                 addon_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 addon_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 cluster: pulumi.Input[Optional['Cluster']] = None,
+                 configuration_values: pulumi.Input[Optional[Mapping[str, Any]]] = None,
+                 preserve: pulumi.Input[Optional[_builtins.bool]] = None,
+                 resolve_conflicts_on_create: pulumi.Input[Optional[_builtins.str]] = None,
+                 resolve_conflicts_on_update: pulumi.Input[Optional[_builtins.str]] = None,
+                 service_account_role_arn: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
                  __props__=None):
         """
         Addon manages an EKS add-on.
@@ -202,7 +203,7 @@ class Addon(pulumi.ComponentResource):
         :param pulumi.Input[_builtins.str] resolve_conflicts_on_update: How to resolve field value conflicts for an Amazon EKS add-on if you've changed a value from the Amazon EKS default value. Valid values are NONE, OVERWRITE, and PRESERVE. For more details see the UpdateAddon API Docs.
         :param pulumi.Input[_builtins.str] service_account_role_arn: The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's service account. The role must be assigned the IAM permissions required by the add-on. If you don't specify an existing IAM role, then the add-on uses the permissions assigned to the node IAM role. For more information, see Amazon EKS node IAM role in the Amazon EKS User Guide.
                
-               						Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
+                                       Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster. For more information, see Enabling IAM roles for service accounts on your cluster in the Amazon EKS User Guide.
         :param pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]] tags: Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.
         """
         ...
@@ -230,15 +231,15 @@ class Addon(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 addon_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 addon_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 cluster: Optional[pulumi.Input['Cluster']] = None,
-                 configuration_values: Optional[pulumi.Input[Mapping[str, Any]]] = None,
-                 preserve: Optional[pulumi.Input[_builtins.bool]] = None,
-                 resolve_conflicts_on_create: Optional[pulumi.Input[_builtins.str]] = None,
-                 resolve_conflicts_on_update: Optional[pulumi.Input[_builtins.str]] = None,
-                 service_account_role_arn: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
+                 addon_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 addon_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 cluster: pulumi.Input[Optional['Cluster']] = None,
+                 configuration_values: pulumi.Input[Optional[Mapping[str, Any]]] = None,
+                 preserve: pulumi.Input[Optional[_builtins.bool]] = None,
+                 resolve_conflicts_on_create: pulumi.Input[Optional[_builtins.str]] = None,
+                 resolve_conflicts_on_update: pulumi.Input[Optional[_builtins.str]] = None,
+                 service_account_role_arn: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):

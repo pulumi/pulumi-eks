@@ -5,6 +5,7 @@
     },
     "rules": {
         "no-empty-file": "off",
+        "no-param-reassign": ["error", { "props": true }],
         "no-unused-vars": "off"
     },
     "ignorePatterns": ["bin/**"]

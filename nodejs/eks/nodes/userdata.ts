@@ -464,7 +464,13 @@ function createBottlerocketUserData(
         });
     }
 
-    const bottlerocketSettings: any = args.bottlerocketSettings ?? {};
+    const inputBottlerocketSettings: any = args.bottlerocketSettings ?? {};
+    const bottlerocketSettings: any = {
+        ...inputBottlerocketSettings,
+        settings: isObject(inputBottlerocketSettings.settings)
+            ? { ...inputBottlerocketSettings.settings }
+            : {},
+    };
 
     if (!("settings" in bottlerocketSettings && isObject(bottlerocketSettings.settings))) {
         bottlerocketSettings.settings = {};
