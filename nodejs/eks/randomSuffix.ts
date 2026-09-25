@@ -35,7 +35,7 @@ class RandomSuffix extends pulumi.CustomResource {
             // This was previously implemented as a dynamic provider, so alias the old type.
             aliases: [{ type: "pulumi-nodejs:dynamic:Resource" }],
         };
-        opts = pulumi.mergeOptions(opts, defaultOpts);
+        const mergedOpts = pulumi.mergeOptions(opts, defaultOpts);
         super(
             "eks:index:RandomSuffix",
             name,
@@ -43,7 +43,7 @@ class RandomSuffix extends pulumi.CustomResource {
                 input: input,
                 output: undefined,
             },
-            opts,
+            mergedOpts,
         );
     }
 }

@@ -70,13 +70,7 @@ function stringifyReplacer(key: string, value: any) {
         !(value instanceof Array || value instanceof Date || value instanceof Function)
         ? Object.keys(value)
               .sort()
-              .reduce(
-                  (sorted, key) => {
-                      sorted[key] = value[key];
-                      return sorted;
-                  },
-                  {} as { [key: string]: any },
-              )
+              .reduce((sorted, key) => ({ ...sorted, [key]: value[key] }), {})
         : value;
 }
 
