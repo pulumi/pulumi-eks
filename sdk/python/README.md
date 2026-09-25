@@ -58,6 +58,16 @@ To use from .NET, install using `dotnet add package`:
 
     $ dotnet add package Pulumi.Eks
 
+### Node.js compatibility warnings
+
+The EKS provider includes its own Node.js runtime. It warns if the provider host might not support the runtime planned for a future major version. The warning applies to all SDK languages and can be suppressed for a stack:
+
+```bash
+pulumi config set eks:suppressNodeCompatibilityWarning true
+```
+
+Remove this setting or set it to `false` to restore warnings.
+
 ## References
 
 * [Tutorial](https://www.pulumi.com/blog/easily-create-and-manage-aws-eks-kubernetes-clusters-with-pulumi/)
