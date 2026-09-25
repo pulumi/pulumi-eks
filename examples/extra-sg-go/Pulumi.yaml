@@ -1,3 +1,0 @@
-name: extra-sg-go
-description: Example of using extra user-specific security groups in Go.
-runtime: go

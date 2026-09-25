@@ -1,3 +1,0 @@
-name: example-aws-profile-py
-description: EKS cluster example that uses an AWS named profile for credentials
-runtime: python

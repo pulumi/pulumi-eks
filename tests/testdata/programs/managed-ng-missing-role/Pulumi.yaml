@@ -1,3 +1,0 @@
-name: managed-ng-missing-role
-description: Tests that missing roles in cluster settings prevents managed node group creation.
-runtime: nodejs

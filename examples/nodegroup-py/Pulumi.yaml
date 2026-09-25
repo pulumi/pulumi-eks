@@ -1,3 +1,0 @@
-name: example-nodegroup-py
-description: EKS nodegroup with IAM examples
-runtime: python

@@ -1,3 +1,0 @@
-name: example-managed-nodegroups-py
-description: EKS managed nodegroups with IAM examples
-runtime: python

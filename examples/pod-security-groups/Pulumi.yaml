@@ -1,3 +1,0 @@
-name: pod-security-groups
-description: EKS cluster with pod security groups
-runtime: nodejs

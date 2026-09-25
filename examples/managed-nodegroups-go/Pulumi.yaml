@@ -1,3 +1,0 @@
-name: managed-nodegroups-go
-runtime: go
-description: Example managed nodegroups in Go
