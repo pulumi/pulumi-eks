@@ -36,9 +36,19 @@ export function assertCompatibleAWSCLIExists() {
     const semverCleaned = semver.clean(version, {
         loose: true,
     });
-    switch (semver.major(semverCleaned!)) {
+    // `semver.clean` returns null for anything it cannot parse, and passing that null on to
+    // `semver.major`/`semver.lt` throws `Invalid version. Must be a string. Got type "object"`
+    // (because `typeof null === "object"`), which tells the user nothing about what went wrong.
+    if (semverCleaned === null) {
+        throw new Error(
+            `Could not determine the aws CLI version. \`aws --version\` returned: ${awscli.trim()}.` +
+                ` At least v${minAWSCLIV1Version} (aws-cli v1) or v${minAWSCLIV2Version} (aws-cli v2) is required.` +
+                ` See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html for installation instructions.`,
+        );
+    }
+    switch (semver.major(semverCleaned)) {
         case 1:
-            if (semver.lt(semverCleaned!, minAWSCLIV1Version)) {
+            if (semver.lt(semverCleaned, minAWSCLIV1Version)) {
                 throw new Error(
                     `At least v${minAWSCLIV1Version} of aws-cli is required.` +
                         ` Current version is: ${semverCleaned}. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html for installation instructions.`,
@@ -46,7 +56,7 @@ export function assertCompatibleAWSCLIExists() {
             }
             break;
         default:
-            if (semver.lt(semverCleaned!, minAWSCLIV2Version)) {
+            if (semver.lt(semverCleaned, minAWSCLIV2Version)) {
                 throw new Error(
                     `At least v${minAWSCLIV2Version} of aws-cli is required.` +
                         ` Current version is: ${semverCleaned}. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html for installation instructions.`,
