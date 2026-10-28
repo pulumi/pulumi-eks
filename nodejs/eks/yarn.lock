@@ -3021,10 +3021,10 @@
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.12.2.tgz#72da0da48d72b1e87831b9c0308931d3f4669027"
   integrity sha512-nAB74NfSNKknqQ1RrYj6uz8FcXEomu/MATJZxh/x+BArzN2U3JbOYC0APYzUIGhVY3m5hRxA8VPNdPBoG8txlA==
 
-"@yao-pkg/pkg-fetch@3.6.5":
-  version "3.6.5"
-  resolved "https://registry.yarnpkg.com/@yao-pkg/pkg-fetch/-/pkg-fetch-3.6.5.tgz#e6eab79062b921ccd54f337f17501ae67bf7e21b"
-  integrity sha512-Sd1Hff7imsF2rcZ2GLQuIzVm2fc3Za+nE4KSWPTwIYegN/r90UFg3bq0MLSugbWQaVht72zzxV0MiKE0wvT1zA==
+"@yao-pkg/pkg-fetch@3.6.7":
+  version "3.6.7"
+  resolved "https://registry.yarnpkg.com/@yao-pkg/pkg-fetch/-/pkg-fetch-3.6.7.tgz#5fb8a55031846ef105efeaf4beae0d4f4ed47540"
+  integrity sha512-uEeU5druVgHffruTAXzW6nf0wHfREWlCq5LBtQ4hCdLBDbwTteuym5NrxREur3EgNcqFRenEi6Rivwo723PkHg==
   dependencies:
     picocolors "^1.1.0"
     progress "^2.0.3"
@@ -3033,17 +3033,17 @@
     undici "^7.28.0"
     yargs "^16.2.0"
 
-"@yao-pkg/pkg@6.22.0":
-  version "6.22.0"
-  resolved "https://registry.yarnpkg.com/@yao-pkg/pkg/-/pkg-6.22.0.tgz#5c7cfe5c1033ccd473c07e24c61ad2f8c75216ab"
-  integrity sha512-u+ZgwLsvEFB+Q1rA+IGymgxnm+anl1qGJWsTH6hDHyy2cCiOvMteDNK7NgqFYxN/zdithtORIlCsYSyhAXAgQA==
+"@yao-pkg/pkg@6.24.0":
+  version "6.24.0"
+  resolved "https://registry.yarnpkg.com/@yao-pkg/pkg/-/pkg-6.24.0.tgz#c556d2e98e8ac437ac7f08065accec8595a13b98"
+  integrity sha512-SMwFLic12noHLbqxhhQVClVX6YZlQtzwwez6dq7Xj64rXX6OFgZTTQbPgw4wgec5IoUN+6rCRKgyW/cnVPOwkA==
   dependencies:
     "@babel/generator" "^7.23.0"
     "@babel/parser" "^7.23.0"
     "@babel/traverse" "^7.23.0"
     "@babel/types" "^7.23.0"
     "@roberts_lando/vfs" "^0.3.3"
-    "@yao-pkg/pkg-fetch" "3.6.5"
+    "@yao-pkg/pkg-fetch" "3.6.7"
     esbuild "^0.28.1"
     into-stream "^9.1.0"
     multistream "^4.1.0"
