@@ -88,9 +88,9 @@ namespace Pulumi.Eks
         public Input<string>? AmiId { get; set; }
 
         /// <summary>
-        /// The AMI Type to use for the worker nodes. 
+        /// The AMI Type to use for the worker nodes.
         /// 
-        /// Only applicable when setting an AMI ID that is of type `arm64`. 
+        /// Only applicable when setting an AMI ID that is of type `arm64`.
         /// 
         /// Note: `amiType` and `gpu` are mutually exclusive.
         /// </summary>

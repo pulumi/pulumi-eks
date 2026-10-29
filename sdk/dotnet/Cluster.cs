@@ -579,7 +579,7 @@ namespace Pulumi.Eks
         /// - Creating and using a new AWS provider instance, or
         /// - Setting the AWS_PROFILE environment variable, or
         /// - Using a named profile configured on the AWS provider via:
-        /// `pulumi config set aws:profile &lt;profileName&gt;`
+        ///   `pulumi config set aws:profile &lt;profileName&gt;`
         /// 
         /// See for more details:
         /// - https://www.pulumi.com/registry/packages/aws/api-docs/provider/
