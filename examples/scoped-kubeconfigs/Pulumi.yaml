@@ -1,3 +1,0 @@
-name: scoped-kubeconfigs
-description: Example of using the getKubeconfig method to generate role and profile based kubeconfigs
-runtime: nodejs

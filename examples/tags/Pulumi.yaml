@@ -1,3 +1,0 @@
-name: example-tags
-description: EKS cluster and nodegroups example with various types of AWS resource tagging
-runtime: nodejs

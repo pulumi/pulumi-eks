@@ -1,3 +1,0 @@
-name: ignore-scaling-changes
-description: Tests ignoring changes to the desired size of node groups
-runtime: nodejs
