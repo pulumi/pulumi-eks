@@ -19,7 +19,7 @@ export const DEFAULT_INSTANCE_TYPE = "t3.medium";
 
 export interface GetEfaNetworkInterfacesArgs {
     // The instance types configured for the node group.
-    instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined;
+    instanceTypes: pulumi.Input<pulumi.Input<string>[] | undefined> | undefined;
     // The security group IDs to associate with the network interfaces.
     securityGroupIds: pulumi.Input<pulumi.Input<string>[]>;
     // The property path to use for the instance type in error messages.
@@ -118,7 +118,7 @@ export function getEfaNetworkInterfaces(
 export function filterEfaSubnets(
     subnetIds: pulumi.Input<pulumi.Input<string>[]>,
     placementGroupAvailabilityZone: pulumi.Input<string>,
-    instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined,
+    instanceTypes: pulumi.Input<pulumi.Input<string>[] | undefined> | undefined,
     opts: pulumi.InvokeOptions,
 ): pulumi.Output<string[]> {
     const instanceType = getEfaInstanceType(instanceTypes);
@@ -199,11 +199,11 @@ function getSupportedAZs(
  * @returns The first instance type from the list, or "t3.medium" if no instance types are provided
  */
 function getEfaInstanceType(
-    instanceTypes: pulumi.Input<pulumi.Input<string>[]> | undefined,
+    instanceTypes: pulumi.Input<pulumi.Input<string>[] | undefined> | undefined,
 ): pulumi.Output<string> {
     return instanceTypes
         ? pulumi.output(instanceTypes).apply((types) => {
-              return types.length > 0 ? types[0] : DEFAULT_INSTANCE_TYPE;
+              return types && types.length > 0 ? types[0] : DEFAULT_INSTANCE_TYPE;
           })
         : pulumi.output(DEFAULT_INSTANCE_TYPE);
 }
