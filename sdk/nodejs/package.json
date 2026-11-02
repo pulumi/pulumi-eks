@@ -15,8 +15,8 @@
     },
     "dependencies": {
         "@pulumi/aws": "^7.25.0",
-        "@pulumi/kubernetes": "^4.19.0",
-        "@pulumi/pulumi": "^3.142.0",
+        "@pulumi/kubernetes": "^4.34.2",
+        "@pulumi/pulumi": "^3.269.0",
         "https-proxy-agent": "^5.0.1",
         "js-yaml": "^4.1.0",
         "netmask": "^2.0.2",
