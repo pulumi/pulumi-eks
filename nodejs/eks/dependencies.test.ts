@@ -93,4 +93,32 @@ describe("assertCompatibleAWSCLIExists", () => {
         expect(which.sync).toHaveBeenCalledTimes(1);
         expect(child_process.execSync).toHaveBeenCalledTimes(1);
     });
+
+    it("should throw an actionable error if the version is not valid semver", () => {
+        (child_process.execSync as jest.Mock).mockImplementation(() => fakeAwsVersion("2.15"));
+
+        expect(() => {
+            assertCompatibleAWSCLIExists();
+        }).toThrow("Could not determine the aws CLI version");
+    });
+
+    it("should include the raw output when the version cannot be parsed", () => {
+        (child_process.execSync as jest.Mock).mockImplementation(
+            () => "aws-cli/0.0.0-unknown+$Format:%H$ Python/3.8.8 Linux/6.1.0 source/x86_64",
+        );
+
+        expect(() => {
+            assertCompatibleAWSCLIExists();
+        }).toThrow(/aws-cli\/0\.0\.0-unknown/);
+    });
+
+    it("should throw an actionable error if `aws --version` returns unexpected output", () => {
+        (child_process.execSync as jest.Mock).mockImplementation(
+            () => "usage: aws [options] <command> <subcommand> [parameters]",
+        );
+
+        expect(() => {
+            assertCompatibleAWSCLIExists();
+        }).toThrow("Could not determine the aws CLI version");
+    });
 });
