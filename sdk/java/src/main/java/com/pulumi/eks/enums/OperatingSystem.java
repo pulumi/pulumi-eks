@@ -20,12 +20,11 @@ import java.util.StringJoiner;
         /**
          * EKS optimized OS based on Amazon Linux 2 (AL2).
          * 
-         * @deprecated
-         * Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
-See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html
+         * @deprecated Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
+         * See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html
+         * 
          */
-        @Deprecated /* Amazon Linux 2 is deprecated. Please use Amazon Linux 2023 instead.
-See for more details: https://docs.aws.amazon.com/eks/latest/userguide/al2023.html */
+        @Deprecated
         AL2("AL2"),
         /**
          * EKS optimized OS based on Amazon Linux 2023 (AL2023).
