@@ -19,6 +19,7 @@ env:
 
 jobs:
   prerequisites:
+    if: github.repository == 'pulumi/pulumi-eks'
     permissions:
       contents: read
       pull-requests: write
@@ -52,10 +53,12 @@ jobs:
       version: ${{ needs.prerequisites.outputs.version }}
 
   lint:
+    if: github.repository == 'pulumi/pulumi-eks'
     name: lint
     uses: ./.github/workflows/lint.yml
     secrets: inherit
   license_check:
+    if: github.repository == 'pulumi/pulumi-eks'
     name: License Check
     uses: ./.github/workflows/license.yml
     secrets: inherit
@@ -93,6 +96,4 @@ jobs:
 
 name: prerelease
 on:
-  push:
-    tags:
-    - v*.*.*-**
+  workflow_call: {}
