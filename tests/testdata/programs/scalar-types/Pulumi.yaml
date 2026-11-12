@@ -1,3 +1,0 @@
-name: scalar-types
-description: Tests retrieving the scalar properties of EKS clusters
-runtime: nodejs

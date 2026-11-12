@@ -1,3 +1,0 @@
-name: test-replace-cluster-add-subnets
-description: Test - Replace an EKS cluster by going from using 2 subnets to 3 subnets
-runtime: nodejs

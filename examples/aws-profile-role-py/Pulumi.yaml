@@ -1,3 +1,0 @@
-name: example-aws-profile-role-py
-description: EKS cluster example that uses an AWS named profile and role for credentials
-runtime: python

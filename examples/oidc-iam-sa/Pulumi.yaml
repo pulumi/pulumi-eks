@@ -1,3 +1,0 @@
-name: example-oidc-iam-sa
-description: OIDC Provider and IAM roles for Service Accounts
-runtime: nodejs
