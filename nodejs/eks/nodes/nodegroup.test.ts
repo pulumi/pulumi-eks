@@ -18,6 +18,8 @@ import * as aws from "@pulumi/aws";
 import { CoreData } from "../cluster";
 import { isGravitonInstance } from "./nodegroup";
 import { getArchitecture } from "./nodegroup";
+import { getNodeVolumeDeviceName } from "./nodegroup";
+import { OperatingSystem } from "./ami";
 
 const callReturnValues = new Map<string, pulumi.runtime.MockCallResult>();
 
@@ -389,6 +391,53 @@ describe("isGravitonInstance", () => {
             const architecture = getArchitecture(instanceTypes, "instanceTypes");
             expect(architecture).toBe("x86_64");
         });
+    });
+});
+
+describe("getNodeVolumeDeviceName", () => {
+    const ebs = { deviceName: "", ebs: {}, noDevice: "", virtualName: "" };
+
+    test("returns the only device of a single-volume AMI", () => {
+        const amiInfo = {
+            rootDeviceName: "/dev/xvda",
+            blockDeviceMappings: [{ ...ebs, deviceName: "/dev/xvda" }],
+        };
+        expect(getNodeVolumeDeviceName(OperatingSystem.AL2, amiInfo)).toBe("/dev/xvda");
+        expect(getNodeVolumeDeviceName(OperatingSystem.AL2023, amiInfo)).toBe("/dev/xvda");
+    });
+
+    // Canonical's Ubuntu EKS AMIs map ephemeral devices next to the root device, and the
+    // order of the mappings returned by the AMI lookup is not guaranteed.
+    test("returns the root device when it is not the first block device mapping", () => {
+        const amiInfo = {
+            rootDeviceName: "/dev/sda1",
+            blockDeviceMappings: [
+                { ...ebs, deviceName: "/dev/sdb", virtualName: "ephemeral0" },
+                { ...ebs, deviceName: "/dev/sda1" },
+                { ...ebs, deviceName: "/dev/sdc", virtualName: "ephemeral1" },
+            ],
+        };
+        expect(getNodeVolumeDeviceName(OperatingSystem.AL2, amiInfo)).toBe("/dev/sda1");
+        expect(getNodeVolumeDeviceName(OperatingSystem.AL2023, amiInfo)).toBe("/dev/sda1");
+    });
+
+    test("returns the data device for Bottlerocket", () => {
+        const amiInfo = {
+            rootDeviceName: "/dev/xvda",
+            blockDeviceMappings: [
+                { ...ebs, deviceName: "/dev/xvda" },
+                { ...ebs, deviceName: "/dev/xvdb" },
+            ],
+        };
+        expect(getNodeVolumeDeviceName(OperatingSystem.Bottlerocket, amiInfo)).toBe("/dev/xvdb");
+    });
+
+    test("falls back to the root device for Bottlerocket AMIs without a data device", () => {
+        const amiInfo = {
+            rootDeviceName: "/dev/xvda",
+            blockDeviceMappings: [{ ...ebs, deviceName: "/dev/xvda" }],
+        };
+        expect(getNodeVolumeDeviceName(OperatingSystem.Bottlerocket, amiInfo)).toBe("/dev/xvda");
     });
 });
 

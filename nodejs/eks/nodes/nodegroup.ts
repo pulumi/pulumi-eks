@@ -1347,18 +1347,9 @@ export function createNodeGroupV2(
         ),
     );
 
-    const deviceName = pulumi.all([os, amiInfo]).apply(([os, amiInfo]) => {
-        if (os !== OperatingSystem.Bottlerocket) {
-            return amiInfo.blockDeviceMappings[0].deviceName;
-        }
-
-        // Bottlerocket has two block devices, the root device stores the OS itself and the other is for data like images, logs, persistent storage
-        // We need to allow users to configure the block device for data
-        const deviceName = amiInfo.blockDeviceMappings.find(
-            (bdm) => bdm.deviceName !== amiInfo.rootDeviceName,
-        )?.deviceName;
-        return deviceName ?? amiInfo.rootDeviceName;
-    });
+    const deviceName = pulumi
+        .all([os, amiInfo])
+        .apply(([os, amiInfo]) => getNodeVolumeDeviceName(os, amiInfo));
 
     const blockDeviceMappings = os.apply((os) => {
         // Old behavior to stay backwards compatible
@@ -1514,6 +1505,30 @@ export function createNodeGroupV2(
         autoScalingGroup: asGroup,
         extraNodeSecurityGroups: args.extraNodeSecurityGroups,
     };
+}
+
+/**
+ * Returns the name of the block device that the `nodeRootVolume*` settings of a node group apply to.
+ *
+ * For Bottlerocket this is the data volume: it has two block devices, the root device stores the OS itself
+ * and the other is for data like images, logs and persistent storage, which is the one users need to size.
+ *
+ * For every other OS it is the root device of the AMI. The order of an AMI's block device mappings is not
+ * guaranteed, and AMIs like Canonical's Ubuntu EKS images additionally map ephemeral devices, so the root
+ * device must be looked up by name rather than assumed to be the first mapping.
+ */
+export function getNodeVolumeDeviceName(
+    os: OperatingSystem,
+    amiInfo: Pick<aws.ec2.GetAmiResult, "rootDeviceName" | "blockDeviceMappings">,
+): string {
+    if (os !== OperatingSystem.Bottlerocket) {
+        return amiInfo.rootDeviceName;
+    }
+
+    const deviceName = amiInfo.blockDeviceMappings.find(
+        (bdm) => bdm.deviceName !== amiInfo.rootDeviceName,
+    )?.deviceName;
+    return deviceName ?? amiInfo.rootDeviceName;
 }
 
 function inputTagsToASGTags(
